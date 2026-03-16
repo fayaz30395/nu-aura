@@ -317,7 +317,13 @@ public class ExpenseClaimService {
             try {
                 String numPart = maxNumber.substring(prefix.length());
                 nextNumber = Integer.parseInt(numPart) + 1;
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException e) {
+                // The stored max claim number has an unexpected suffix format.
+                // Fall back to sequence restart (1) so the insert can proceed,
+                // but log a warning so the issue is visible in monitoring.
+                log.warn("generateClaimNumber: could not parse numeric suffix from '{}' (prefix='{}') — " +
+                        "resetting sequence to 1 for tenant {}. Check for data corruption.", maxNumber, prefix, tenantId);
+            }
         }
 
         return prefix + String.format("%04d", nextNumber);

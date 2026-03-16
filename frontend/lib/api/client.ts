@@ -5,10 +5,14 @@ import { logger } from '@/lib/utils/logger';
 const API_URL = apiConfig.baseUrl;
 
 /**
- * Module-level flag to debounce 401 redirects to login.
- * Prevents multiple concurrent API calls from each triggering a redirect.
- * Resets after a short delay to allow fresh login sessions to work.
+ * Module-level state for 401 handling.
+ *
+ * refreshPromise: holds the in-flight refresh request so concurrent 401s
+ * share a single refresh attempt instead of racing (SEC-F06).
+ *
+ * isRedirecting: prevents multiple concurrent hard-redirects to /auth/login.
  */
+let refreshPromise: Promise<boolean> | null = null;
 let isRedirecting = false;
 
 /**
@@ -62,42 +66,46 @@ class ApiClient {
         logger.error('[ApiClient] Error:', error.config?.method?.toUpperCase(), error.config?.url, error.response?.status, error.message);
         const originalRequest = error.config;
 
-        // Handle 401 Unauthorized - try to refresh token
-        // Refresh token is also in httpOnly cookie, sent automatically
-        // Skip refresh if already on login page or if the failing request IS the refresh call
+        // Handle 401 Unauthorized — try to refresh token.
+        // Uses a shared Promise so concurrent 401s share one refresh call (SEC-F06).
         const isLoginPage = typeof window !== 'undefined' && window.location.pathname.includes('/auth/login');
         const isRefreshRequest = originalRequest?.url?.includes('/auth/refresh');
         if (error.response?.status === 401 && !originalRequest._retry && !isLoginPage && !isRefreshRequest) {
           originalRequest._retry = true;
 
           try {
-            // Refresh request - cookies are sent automatically
-            const response = await this.client.post('/auth/refresh', null);
+            // If a refresh is already in-flight, wait for it instead of firing another
+            if (!refreshPromise) {
+              refreshPromise = this.client.post('/auth/refresh', null)
+                .then((res) => res.status === 200)
+                .catch(() => false)
+                .finally(() => { refreshPromise = null; });
+            }
 
-            // If refresh succeeded, retry original request
-            // New tokens are set via cookies by the backend
-            if (response.status === 200) {
+            const refreshed = await refreshPromise;
+
+            if (refreshed) {
               return this.client(originalRequest);
             }
-          } catch (refreshError) {
-            // Debounce the 401 redirect - prevent multiple concurrent calls from each triggering a redirect
-            if (isRedirecting) {
-              return Promise.reject(refreshError);
-            }
 
-            isRedirecting = true;
-            this.clearTokens();
-
-            // Use setTimeout to allow async state updates to complete in the event loop
-            // before navigating, ensuring Zustand has time to persist state.
-            setTimeout(() => {
+            // Refresh failed — redirect to login (debounced)
+            if (!isRedirecting) {
+              isRedirecting = true;
+              this.clearTokens();
               if (typeof window !== 'undefined') {
                 window.location.href = '/auth/login?reason=expired';
               }
-              // Reset the flag after a delay so that after re-login, the interceptor works again
-              setTimeout(() => { isRedirecting = false; }, 3000);
-            }, 0);
+            }
 
+            return Promise.reject(error);
+          } catch (refreshError) {
+            if (!isRedirecting) {
+              isRedirecting = true;
+              this.clearTokens();
+              if (typeof window !== 'undefined') {
+                window.location.href = '/auth/login?reason=expired';
+              }
+            }
             return Promise.reject(refreshError);
           }
         }
@@ -173,15 +181,6 @@ class ApiClient {
    */
   resetRedirectFlag(): void {
     isRedirecting = false;
-  }
-
-  /**
-   * @deprecated Tokens are now stored in httpOnly cookies.
-   * This method is kept for backward compatibility during migration.
-   */
-  setTokens(_accessToken: string, _refreshToken: string): void {
-    // No-op: tokens are now set via httpOnly cookies by the backend
-    logger.warn('[ApiClient] setTokens() is deprecated. Tokens are now managed via httpOnly cookies.');
   }
 
   get<T>(url: string, config?: AxiosRequestConfig) {

@@ -19,7 +19,7 @@ describe('Employee Validation Schemas', () => {
     });
 
     it('requires employeeCode', () => {
-      const { employeeCode, ...data } = validEmployee;
+      const { employeeCode: _employeeCode, ...data } = validEmployee;
       const result = createEmployeeSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -36,13 +36,13 @@ describe('Employee Validation Schemas', () => {
     });
 
     it('requires firstName', () => {
-      const { firstName, ...data } = validEmployee;
+      const { firstName: _firstName, ...data } = validEmployee;
       const result = createEmployeeSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
 
     it('requires workEmail', () => {
-      const { workEmail, ...data } = validEmployee;
+      const { workEmail: _workEmail, ...data } = validEmployee;
       const result = createEmployeeSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
@@ -72,7 +72,7 @@ describe('Employee Validation Schemas', () => {
     });
 
     it('requires joiningDate', () => {
-      const { joiningDate, ...data } = validEmployee;
+      const { joiningDate: _joiningDate, ...data } = validEmployee;
       const result = createEmployeeSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
@@ -86,7 +86,7 @@ describe('Employee Validation Schemas', () => {
     });
 
     it('requires employmentType', () => {
-      const { employmentType, ...data } = validEmployee;
+      const { employmentType: _employmentType, ...data } = validEmployee;
       const result = createEmployeeSchema.safeParse(data);
       expect(result.success).toBe(false);
     });

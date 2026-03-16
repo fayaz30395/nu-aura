@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Download, Loader2, Plus, Search, X } from 'lucide-react';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -346,7 +345,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
         link.click();
         URL.revokeObjectURL(url);
       }
-    } catch (err) {
+    } catch (_err) {
       // Error handled by mutation
     }
   };
@@ -377,7 +376,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
       });
       setShowAddMemberModal(false);
       await refetchAllocations();
-    } catch (err) {
+    } catch (_err) {
       // Error handled by mutation
     }
   };
@@ -391,7 +390,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
       });
       setEndAllocationTarget(null);
       await refetchAllocations();
-    } catch (err) {
+    } catch (_err) {
       // Error handled by mutation
       setEndAllocationTarget(null);
     }
@@ -403,7 +402,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
     <div className="space-y-6">
       <Card>
         <CardContent className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">Project Roster</h2>
               <p className="text-sm text-[var(--text-muted)]">Allocated employees and their allocation percent.</p>

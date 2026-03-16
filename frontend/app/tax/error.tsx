@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, RefreshCw, Home, Calculator } from 'lucide-react';
+import { RefreshCw, Home, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
@@ -42,7 +42,7 @@ export default function TaxError({ error, reset }: ErrorProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {isDevelopment && (
-              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-3">
+              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-4">
                 <p className="text-sm font-mono text-surface-700 dark:text-surface-300 break-all">
                   {error.message}
                 </p>

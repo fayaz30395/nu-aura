@@ -3,13 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { calendarService } from '@/lib/services/calendar.service';
 import {
   CreateCalendarEventRequest,
   EventType,
-  RecurrencePattern,
   EventVisibility,
-  SyncProvider,
 } from '@/lib/types/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useCreateCalendarEvent } from '@/lib/hooks/queries/useCalendar';
@@ -22,9 +19,7 @@ import {
   MapPin,
   Video,
   FileText,
-  Users,
   Bell,
-  Repeat,
   Globe,
 } from 'lucide-react';
 
@@ -67,14 +62,6 @@ export default function NewEventPage() {
     { value: 'INTERVIEW', label: 'Interview' },
     { value: 'REVIEW', label: 'Review' },
     { value: 'OTHER', label: 'Other' },
-  ];
-
-  const recurrencePatterns: { value: RecurrencePattern; label: string }[] = [
-    { value: 'DAILY', label: 'Daily' },
-    { value: 'WEEKLY', label: 'Weekly' },
-    { value: 'BIWEEKLY', label: 'Bi-Weekly' },
-    { value: 'MONTHLY', label: 'Monthly' },
-    { value: 'YEARLY', label: 'Yearly' },
   ];
 
   const visibilities: { value: EventVisibility; label: string }[] = [
@@ -152,7 +139,7 @@ export default function NewEventPage() {
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-3">
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-4">
             <AlertCircle className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
           </div>
@@ -182,8 +169,8 @@ export default function NewEventPage() {
           </div>
 
           {/* All Day Toggle */}
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-3 cursor-pointer">
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-4 cursor-pointer">
               <input
                 type="checkbox"
                 checked={formData.allDay}
@@ -379,7 +366,7 @@ export default function NewEventPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => router.back()}
             className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"

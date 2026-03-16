@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { itemVariants, microInteractions } from '@/lib/animations/variants';
 import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
 
 export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -101,7 +100,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
       trend,
       variant = 'default',
       size = 'default',
-      animated = true,
+      animated: _animated = true,
       href,
       onAction,
       actionLabel,

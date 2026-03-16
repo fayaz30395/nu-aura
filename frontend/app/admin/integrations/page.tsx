@@ -9,7 +9,6 @@ import {
   Loader2,
   Send,
   TestTube,
-  RefreshCw,
   AlertCircle,
   CheckCircle2,
   XCircle,
@@ -190,8 +189,8 @@ export default function AdminIntegrationsPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25">
+        <div className="flex items-center gap-4">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25">
             <Settings className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -210,7 +209,7 @@ export default function AdminIntegrationsPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
                 <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
@@ -253,7 +252,7 @@ export default function AdminIntegrationsPage() {
               <TestTube className="h-4 w-4" />
               Test SMS Service
             </h3>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <div className="flex-1">
                 <Input
                   placeholder="+1234567890"
@@ -278,7 +277,7 @@ export default function AdminIntegrationsPage() {
             </div>
             {smsTestResult && (
               <div
-                className={`mt-3 p-3 rounded-lg flex items-start gap-2 ${
+                className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
                   smsTestResult.success
                     ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
                     : 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300'
@@ -300,7 +299,7 @@ export default function AdminIntegrationsPage() {
               <Send className="h-4 w-4" />
               Send SMS
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div>
                 <Label>Phone Number</Label>
                 <Input
@@ -355,7 +354,7 @@ export default function AdminIntegrationsPage() {
             </div>
             {smsSendResult && (
               <div
-                className={`mt-3 p-3 rounded-lg flex items-start gap-2 ${
+                className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
                   smsSendResult.success
                     ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
                     : 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300'
@@ -383,7 +382,7 @@ export default function AdminIntegrationsPage() {
 
           {/* Configuration Note */}
           {!smsStatus?.configured && (
-            <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
               <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-amber-900 dark:text-amber-100">
@@ -403,7 +402,7 @@ export default function AdminIntegrationsPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
                 <CreditCard className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
@@ -459,7 +458,7 @@ export default function AdminIntegrationsPage() {
             </Button>
             {paymentTestResult && (
               <div
-                className={`mt-3 p-3 rounded-lg flex items-start gap-2 ${
+                className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
                   paymentTestResult.success
                     ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
                     : 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300'
@@ -496,7 +495,7 @@ export default function AdminIntegrationsPage() {
 
           {/* Configuration Note */}
           {!paymentStatus?.configured && (
-            <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
               <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-amber-900 dark:text-amber-100">

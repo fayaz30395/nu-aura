@@ -10,7 +10,6 @@ import {
   Edit2,
   Trash2,
   X,
-  GripVertical,
   Calendar,
   ExternalLink,
 } from 'lucide-react';
@@ -130,7 +129,7 @@ export default function CompanySpotlightPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4">
                   <Lightbulb className="w-8 h-8 text-amber-500" />
                   Company Spotlight
                 </h1>
@@ -461,7 +460,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
               </div>
 
               {/* CTA Fields */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     CTA URL
@@ -524,7 +523,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
               </div>
 
               {/* Date Fields */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Start Date
@@ -551,7 +550,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
 
               {/* Error */}
               {error && (
-                <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
                   {error}
                 </div>
               )}
@@ -586,7 +585,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-3">
+        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
           <button
             onClick={onClose}
             className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"

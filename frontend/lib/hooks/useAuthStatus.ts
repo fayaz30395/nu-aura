@@ -102,7 +102,10 @@ export function useAutoVerifySession(intervalMs: number = 0) {
 
       return () => clearInterval(interval);
     }
-  }, [intervalMs]); // Intentionally not including authStatus to avoid re-running
+    // authStatus intentionally omitted: including it would cause the interval to be
+    // torn down and re-created on every status change, defeating the polling cadence.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [intervalMs]);
 
   return authStatus;
 }

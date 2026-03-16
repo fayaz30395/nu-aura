@@ -13,10 +13,8 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle,
   Plus,
   Info,
-  ChevronDown,
   Send,
   TrendingUp,
   Eye,
@@ -29,7 +27,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
 import {
-  Skeleton,
   SkeletonStatCard,
   SkeletonTable,
 } from '@/components/ui/Skeleton';
@@ -144,7 +141,7 @@ export default function RegularizationPage() {
   const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
-  const [requestToCancel, setRequestToCancel] = useState<string | null>(null);
+  const [_requestToCancel, setRequestToCancel] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'my-requests' | 'team-requests'>('my-requests');
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [requestToReject, setRequestToReject] = useState<string | null>(null);
@@ -346,7 +343,7 @@ export default function RegularizationPage() {
         {/* Info Banner */}
         <Card className="card-aura tint-info border-[var(--status-info-border)]">
           <CardContent className="p-4">
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]" />
               <div className="text-sm text-[var(--status-info-text)]">
                 <p className="font-semibold mb-1">About Attendance Regularization</p>
@@ -899,7 +896,7 @@ export default function RegularizationPage() {
                           {/* Manager Info */}
                           <Card className="card-aura tint-info border-[var(--status-info-border)]">
                             <CardContent className="p-4">
-                              <div className="flex gap-3">
+                              <div className="flex gap-4">
                                 <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]" />
                                 <div className="text-sm text-[var(--status-info-text)]">
                                   <p className="font-semibold mb-1">Approval Routing</p>
@@ -973,7 +970,7 @@ export default function RegularizationPage() {
 
                 {/* Footer with Buttons */}
                 <div className="border-t border-[var(--border-main)] p-6 bg-[var(--bg-secondary)]/20">
-                  <div className="flex gap-3">
+                  <div className="flex gap-4">
                     <motion.div className="flex-1">
                       <Button
                         type="button"
@@ -1105,7 +1102,7 @@ export default function RegularizationPage() {
 
                 {/* Footer with Buttons */}
                 <div className="border-t border-[var(--border-main)] p-6 bg-[var(--bg-secondary)]/20">
-                  <div className="flex gap-3">
+                  <div className="flex gap-4">
                     <motion.div className="flex-1">
                       <Button
                         type="button"

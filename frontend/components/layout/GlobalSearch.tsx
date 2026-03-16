@@ -210,36 +210,40 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
     };
   }, [query, isFluence]);
 
-  // Build combined results for keyboard navigation
-  const allSelectableItems: { type: 'nav' | 'api'; item: NavigationItem | SearchResult; category: string }[] = [];
+  // Build combined results for keyboard navigation (memoized to prevent useCallback deps churn)
+  const allSelectableItems = useMemo<{ type: 'nav' | 'api'; item: NavigationItem | SearchResult; category: string }[]>(() => {
+    const items: { type: 'nav' | 'api'; item: NavigationItem | SearchResult; category: string }[] = [];
 
-  // Add navigation items first
-  filteredNavItems.forEach((item) => {
-    allSelectableItems.push({ type: 'nav', item, category: item.category });
-  });
+    // Add navigation items first
+    filteredNavItems.forEach((item) => {
+      items.push({ type: 'nav', item, category: item.category });
+    });
 
-  // Add API results — Fluence or default
-  if (isFluence && fluenceResults) {
-    fluenceResults.wikiPages.forEach((item) => {
-      allSelectableItems.push({ type: 'api', item, category: 'Wiki Pages' });
-    });
-    fluenceResults.blogPosts.forEach((item) => {
-      allSelectableItems.push({ type: 'api', item, category: 'Blog Posts' });
-    });
-    fluenceResults.templates.forEach((item) => {
-      allSelectableItems.push({ type: 'api', item, category: 'Templates' });
-    });
-  } else if (!isFluence && apiResults) {
-    apiResults.employees.forEach((item) => {
-      allSelectableItems.push({ type: 'api', item, category: 'People' });
-    });
-    apiResults.projects.forEach((item) => {
-      allSelectableItems.push({ type: 'api', item, category: 'Projects' });
-    });
-    apiResults.departments.forEach((item) => {
-      allSelectableItems.push({ type: 'api', item, category: 'Departments' });
-    });
-  }
+    // Add API results — Fluence or default
+    if (isFluence && fluenceResults) {
+      fluenceResults.wikiPages.forEach((item) => {
+        items.push({ type: 'api', item, category: 'Wiki Pages' });
+      });
+      fluenceResults.blogPosts.forEach((item) => {
+        items.push({ type: 'api', item, category: 'Blog Posts' });
+      });
+      fluenceResults.templates.forEach((item) => {
+        items.push({ type: 'api', item, category: 'Templates' });
+      });
+    } else if (!isFluence && apiResults) {
+      apiResults.employees.forEach((item) => {
+        items.push({ type: 'api', item, category: 'People' });
+      });
+      apiResults.projects.forEach((item) => {
+        items.push({ type: 'api', item, category: 'Projects' });
+      });
+      apiResults.departments.forEach((item) => {
+        items.push({ type: 'api', item, category: 'Departments' });
+      });
+    }
+
+    return items;
+  }, [filteredNavItems, isFluence, fluenceResults, apiResults]);
 
   const handleSelectHref = useCallback((href: string) => {
     setIsOpen(false);

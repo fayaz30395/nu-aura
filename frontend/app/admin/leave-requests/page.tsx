@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { LeaveRequest, LeaveRequestStatus, LeaveType } from '@/lib/types/leave';
+import { LeaveRequest, LeaveRequestStatus } from '@/lib/types/leave';
 import { useToast } from '@/components/notifications/ToastProvider';
 import {
   useActiveLeaveTypes,
@@ -294,7 +294,7 @@ export default function AdminLeaveRequestsPage() {
                 placeholder="Add any comments..."
               />
             </div>
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end space-x-4">
               <button
                 onClick={() => {
                   setShowApproveModal(false);
@@ -339,7 +339,7 @@ export default function AdminLeaveRequestsPage() {
                 required
               />
             </div>
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end space-x-4">
               <button
                 onClick={() => {
                   setShowRejectModal(false);

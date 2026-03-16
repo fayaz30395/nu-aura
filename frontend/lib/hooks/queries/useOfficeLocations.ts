@@ -3,7 +3,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   officeLocationService,
-  OfficeLocation,
   OfficeLocationRequest,
 } from '@/lib/services/office-location.service';
 

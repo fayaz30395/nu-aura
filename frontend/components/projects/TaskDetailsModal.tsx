@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import {
-  X,
   Calendar,
   Clock,
   Users,
@@ -18,7 +17,7 @@ import {
   Timer,
   BarChart2,
 } from 'lucide-react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Badge } from '@/components/ui';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui';
 import {
   GanttTask,
   CalendarEvent,
@@ -27,10 +26,8 @@ import {
   calculateTaskDuration,
   isTaskDelayed,
   isTaskAtRisk,
-  STATUS_COLORS,
-  PRIORITY_COLORS,
 } from '@/lib/types/project-calendar';
-import { format, differenceInDays, differenceInHours } from 'date-fns';
+import { format } from 'date-fns';
 
 interface TaskDetailsModalProps {
   isOpen: boolean;

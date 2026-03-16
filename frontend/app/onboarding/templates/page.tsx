@@ -7,13 +7,9 @@ import {
     Layout,
     Plus,
     Search,
-    ChevronRight,
-    Settings,
-    ShieldCheck,
     Trash2,
     Edit3,
     ClipboardList,
-    AlertCircle
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -45,7 +41,7 @@ export default function TemplatesPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                             <div className="p-2 bg-primary-500/10 rounded-xl">
                                 <Layout className="h-6 w-6 text-primary-600" />
                             </div>
@@ -112,7 +108,7 @@ export default function TemplatesPage() {
                                             >
                                                 <CardContent className="p-6 h-full flex flex-col">
                                                     <div className="flex justify-between items-start mb-4">
-                                                        <div className="p-3 bg-indigo-500/10 rounded-2xl">
+                                                        <div className="p-4 bg-indigo-500/10 rounded-2xl">
                                                             <ClipboardList className="h-6 w-6 text-indigo-600" />
                                                         </div>
                                                         <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-indigo-500/20 text-indigo-600">

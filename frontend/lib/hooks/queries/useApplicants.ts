@@ -4,11 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { applicantService } from '@/lib/services/applicant.service';
 import type {
-  Applicant,
   ApplicantRequest,
   ApplicantStatusUpdate,
-  PipelineData,
-  PageResponse,
 } from '@/lib/types/applicant';
 
 // ==================== Query Keys ====================

@@ -10,17 +10,10 @@ import {
 import { wallService } from '@/lib/services/wall.service';
 import {
   PostType,
-  PostVisibility,
   ReactionType,
   WallPostResponse,
-  CommentResponse,
   CreatePostRequest,
-  CreateCommentRequest,
-  ReactionRequest,
-  VoteRequest,
   PageResponse,
-  AuthorInfo,
-  PollOptionResponse,
 } from '@/lib/services/wall.service';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -209,7 +202,7 @@ export function useDeleteWallComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ commentId, postId }: { commentId: string; postId: string }) =>
+    mutationFn: ({ commentId }: { commentId: string; postId: string }) =>
       wallService.deleteComment(commentId),
     onSuccess: (_data, { postId }) => {
       queryClient.invalidateQueries({ queryKey: wallKeys.commentList(postId) });

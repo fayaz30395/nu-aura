@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import NextImage from 'next/image';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useRouter } from 'next/navigation';
 import {
@@ -34,7 +35,6 @@ import {
   Check,
   Edit3,
   FolderOpen,
-  Plus,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
@@ -85,7 +85,7 @@ type ViewTab = 'my-drive' | 'shared' | 'starred' | 'recent';
 
 function DriveContent() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -125,6 +125,7 @@ function DriveContent() {
   const [previewFile, setPreviewFile] = useState<DriveFile | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewContent, setPreviewContent] = useState<string | null>(null);
+  const [previewImgError, setPreviewImgError] = useState(false);
 
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
@@ -515,7 +516,7 @@ function DriveContent() {
   };
 
   // Check if file type supports inline preview
-  const supportsPreview = (mimeType: string): boolean => {
+  const _supportsPreview = (mimeType: string): boolean => {
     // Folders don't have preview
     if (mimeType === 'application/vnd.google-apps.folder') return false;
 
@@ -551,6 +552,7 @@ function DriveContent() {
     setPreviewFile(file);
     setPreviewLoading(true);
     setPreviewContent(null);
+    setPreviewImgError(false);
     setShowPreviewModal(true);
 
     // For text files, fetch the content
@@ -595,7 +597,7 @@ function DriveContent() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-    } catch (error) {
+    } catch (_error) {
       // Fall back to opening in new tab
       if (file.webViewLink) {
         window.open(file.webViewLink, '_blank');
@@ -621,6 +623,10 @@ function DriveContent() {
     } else {
       setIsLoading(false);
     }
+    // loadDriveFiles and loadDriveStats are intentionally omitted: they take
+    // token/folder params (not React state) and including them without useCallback
+    // would cause an infinite re-render loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated, isAuthenticated, router]);
 
   const loadDriveFiles = async (token: string, folderId: string = 'root', tab: ViewTab = 'my-drive') => {
@@ -826,7 +832,7 @@ function DriveContent() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center">
               <HardDrive className="h-6 w-6 text-white" />
             </div>
@@ -889,7 +895,7 @@ function DriveContent() {
         {error && (
           <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30">
             <CardContent className="py-4">
-              <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-4 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
                 <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
@@ -1077,7 +1083,7 @@ function DriveContent() {
                           : 'Files will appear here when available'}
                     </p>
                     {activeTab === 'my-drive' && !searchQuery && (
-                      <div className="flex items-center justify-center gap-3 mt-4">
+                      <div className="flex items-center justify-center gap-4 mt-4">
                         <Button
                           variant="outline"
                           size="sm"
@@ -1115,7 +1121,7 @@ function DriveContent() {
                       <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                     </button>
                     <div className="flex flex-col items-center text-center">
-                      <div className="mb-3 p-3 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30 transition-colors">
+                      <div className="mb-3 p-4 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30 transition-colors">
                         {getFileIcon(file.mimeType)}
                       </div>
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate w-full">
@@ -1216,7 +1222,7 @@ function DriveContent() {
                 openPreview(contextMenuFile);
                 setShowContextMenu(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
+              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
             >
               <File className="h-4 w-4" />
               Open
@@ -1228,7 +1234,7 @@ function DriveContent() {
                 window.open(contextMenuFile.webViewLink, '_blank');
                 setShowContextMenu(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
+              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
             >
               <ExternalLink className="h-4 w-4" />
               Open in Drive
@@ -1237,7 +1243,7 @@ function DriveContent() {
           {contextMenuFile.mimeType !== 'application/vnd.google-apps.folder' && contextMenuFile.webContentLink && (
             <button
               onClick={() => downloadFile(contextMenuFile)}
-              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
+              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
             >
               <Download className="h-4 w-4" />
               Download
@@ -1245,21 +1251,21 @@ function DriveContent() {
           )}
           <button
             onClick={() => openShareModal(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
+            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
           >
             <Share2 className="h-4 w-4" />
             Share
           </button>
           <button
             onClick={() => toggleStar(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
+            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
           >
             <Star className={`h-4 w-4 ${contextMenuFile.starred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
             {contextMenuFile.starred ? 'Remove star' : 'Add star'}
           </button>
           <button
             onClick={() => openRenameModal(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
+            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
           >
             <Edit3 className="h-4 w-4" />
             Rename
@@ -1269,7 +1275,7 @@ function DriveContent() {
             onClick={() => {
               deleteFile(contextMenuFile.id);
             }}
-            className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-3"
+            className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-4"
           >
             <Trash2 className="h-4 w-4" />
             Delete
@@ -1344,7 +1350,7 @@ function DriveContent() {
             </div>
             <div className="p-4 space-y-4">
               {shareSuccess && (
-                <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg">
+                <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg">
                   <Check className="h-4 w-4" />
                   <span className="text-sm">Shared successfully!</span>
                 </div>
@@ -1481,7 +1487,7 @@ function DriveContent() {
         <div className="fixed inset-0 bg-black/80 flex flex-col z-50">
           {/* Preview Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {getFileIcon(previewFile.mimeType)}
               <div>
                 <h3 className="font-medium text-white truncate max-w-md">{previewFile.name}</h3>
@@ -1552,26 +1558,25 @@ function DriveContent() {
                 </pre>
               </div>
             ) : previewFile.mimeType.startsWith('image/') ? (
-              // Image preview - direct display
-              <div className="flex items-center justify-center p-4 max-h-full max-w-full overflow-auto">
-                <img
-                  src={getPreviewUrl(previewFile) || ''}
-                  alt={previewFile.name}
-                  className="max-h-[calc(100vh-100px)] max-w-full object-contain rounded-lg shadow-2xl"
-                  onError={(e) => {
-                    // Fallback to iframe if direct image fails
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const parent = target.parentElement;
-                    if (parent) {
-                      const iframe = document.createElement('iframe');
-                      iframe.src = `https://drive.google.com/file/d/${previewFile.id}/preview`;
-                      iframe.className = 'w-full h-[calc(100vh-100px)] rounded-lg';
-                      iframe.allow = 'autoplay';
-                      parent.appendChild(iframe);
-                    }
-                  }}
-                />
+              // Image preview - direct display; falls back to Drive iframe on error
+              <div className="relative flex items-center justify-center w-full h-[calc(100vh-100px)]">
+                {previewImgError || !getPreviewUrl(previewFile) ? (
+                  <iframe
+                    src={`https://drive.google.com/file/d/${previewFile.id}/preview`}
+                    className="w-full h-full rounded-lg"
+                    allow="autoplay"
+                    title={previewFile.name}
+                  />
+                ) : (
+                  <NextImage
+                    src={getPreviewUrl(previewFile)!}
+                    alt={previewFile.name}
+                    fill
+                    sizes="100vw"
+                    className="object-contain rounded-lg shadow-2xl"
+                    onError={() => setPreviewImgError(true)}
+                  />
+                )}
               </div>
             ) : (
               // iframe preview for documents, videos, PDFs, etc.

@@ -21,7 +21,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useAttendanceByDateRange, useMyTimeEntries, useCheckIn, useCheckOut, useRequestRegularization } from '@/lib/hooks/queries/useAttendance';
-import { AttendanceRecord, AttendanceStatus, TimeEntry } from '@/lib/types/attendance';
+import { AttendanceRecord, AttendanceStatus } from '@/lib/types/attendance';
 import { getLocalDateString, getMonthStartString, getMonthEndString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 
 export default function MyAttendancePage() {
@@ -324,7 +324,7 @@ export default function MyAttendancePage() {
                   <p className="text-sm text-slate-500 mt-2">No attendance record for today</p>
                 )}
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 {canCheckIn && (
                   <button
                     onClick={handleCheckIn}
@@ -664,7 +664,7 @@ export default function MyAttendancePage() {
                 placeholder="Please explain why you need regularization..."
               />
             </div>
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-4">
               <button
                 onClick={() => {
                   setShowRegularizationModal(false);

@@ -277,7 +277,7 @@ export default function LeaveTypesManagementPage() {
         {/* Error Message */}
         {(uiError || queryError) && (
           <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{uiError || (queryError as any)?.message || 'An error occurred'}</span>
+            <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
@@ -670,7 +670,7 @@ export default function LeaveTypesManagementPage() {
                   </div>
 
                   {/* Form Actions */}
-                  <div className="flex justify-end space-x-3">
+                  <div className="flex justify-end space-x-4">
                     <button
                       type="button"
                       onClick={() => {

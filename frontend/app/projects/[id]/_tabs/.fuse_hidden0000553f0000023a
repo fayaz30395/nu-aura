@@ -1,0 +1,545 @@
+'use client';
+
+import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Download, Loader2, Plus, Search, X } from 'lucide-react';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  ConfirmDialog,
+  Input,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ResponsiveTable,
+  Select,
+  TablePagination,
+} from '@/components/ui';
+import { ProjectAllocation } from '@/lib/types/hrms-allocation';
+import { apiClient } from '@/lib/api/client';
+import {
+  useProjectAllocations,
+  useAssignToProject,
+  useEndAllocation,
+  useExportAllocations,
+} from '@/lib/hooks/queries/useProjects';
+
+interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
+
+interface EmployeeSummary {
+  id: string;
+  employeeCode?: string | null;
+  firstName: string;
+  lastName?: string | null;
+}
+
+interface TeamTabProps {
+  projectId: string;
+}
+
+const ALLOCATION_ROLES = [
+  'MEMBER',
+  'DEVELOPER',
+  'SENIOR_DEVELOPER',
+  'TEAM_LEAD',
+  'QA_ENGINEER',
+  'DESIGNER',
+  'BUSINESS_ANALYST',
+  'ARCHITECT',
+  'CONSULTANT',
+  'PROJECT_MANAGER',
+] as const;
+
+const addMemberFormSchema = z.object({
+  role: z.string().min(1, 'Role is required'),
+  allocationPercentage: z
+    .union([z.string(), z.number()])
+    .transform((v) => typeof v === 'string' ? Number(v) : v)
+    .refine((n) => !Number.isNaN(n) && n >= 1 && n <= 100, 'Allocation % must be between 1 and 100'),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().optional().or(z.literal('')),
+});
+
+type AddMemberFormData = z.infer<typeof addMemberFormSchema>;
+
+const formatDate = (value?: string | null) => {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+};
+
+const formatPercent = (value?: number | null) => {
+  if (value === null || value === undefined) return '—';
+  const numeric = Number(value);
+  if (Number.isNaN(numeric)) return '—';
+  return `${numeric.toFixed(0)}%`;
+};
+
+const buildEmployeeName = (employee?: EmployeeSummary | null) => {
+  if (!employee) return '—';
+  const last = employee.lastName?.trim();
+  if (!last) return employee.firstName;
+  return `${employee.firstName} ${last}`;
+};
+
+interface EmployeeTypeaheadProps {
+  label: string;
+  value: EmployeeSummary | null;
+  onChange: (value: EmployeeSummary | null) => void;
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: EmployeeTypeaheadProps) {
+  const [query, setQuery] = useState(value ? buildEmployeeName(value) : '');
+  const [results, setResults] = useState<EmployeeSummary[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setQuery(value ? buildEmployeeName(value) : '');
+  }, [value]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const term = query.trim();
+    if (term.length < 2) {
+      setResults([]);
+      return;
+    }
+    const handle = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const response = await apiClient.get<PageResponse<EmployeeSummary>>('/employees', {
+          params: { search: term, page: 0, size: 10 },
+        });
+        setResults(response.data.content ?? []);
+      } catch (err) {
+        console.error('Employee search failed', err);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [query, open]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (value) {
+      onChange(null);
+    }
+    setQuery(event.target.value);
+    setOpen(true);
+  };
+
+  const handleSelect = (employee: EmployeeSummary) => {
+    onChange(employee);
+    setOpen(false);
+    setResults([]);
+  };
+
+  const handleClear = () => {
+    onChange(null);
+    setQuery('');
+    setResults([]);
+    setOpen(false);
+  };
+
+  const showClear = Boolean(value) || query.length > 0;
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <Input
+        label={label}
+        placeholder={placeholder}
+        value={query}
+        onChange={handleInputChange}
+        onFocus={() => setOpen(true)}
+        icon={<Search className="h-4 w-4" />}
+        rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin" /> : showClear ? <X className="h-4 w-4" /> : undefined}
+        onRightIconClick={showClear ? handleClear : undefined}
+        disabled={disabled}
+      />
+      {open && query.trim().length >= 2 && (
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+          {loading && (
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching employees...</div>
+          )}
+          {!loading && results.length === 0 && (
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">No employees found</div>
+          )}
+          {!loading && results.length > 0 && (
+            <ul className="max-h-64 overflow-y-auto">
+              {results.map((employee) => (
+                <li key={employee.id}>
+                  <button
+                    type="button"
+                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    onClick={() => handleSelect(employee)}
+                  >
+                    <span className="font-medium text-[var(--text-primary)]">
+                      {buildEmployeeName(employee)}
+                    </span>
+                    {employee.employeeCode && (
+                      <span className="text-xs text-[var(--text-muted)]">
+                        {employee.employeeCode}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function TeamTab({ projectId }: TeamTabProps) {
+  const [allocationsPage, setAllocationsPage] = useState(0);
+  const [allocationsSize, setAllocationsSize] = useState(20);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeSummary | null>(null);
+  const [addMemberError, setAddMemberError] = useState<string | null>(null);
+  const [endAllocationTarget, setEndAllocationTarget] = useState<ProjectAllocation | null>(null);
+
+  const {
+    register: registerAddMember,
+    handleSubmit: handleSubmitAddMember,
+    reset: resetAddMember,
+    formState: { errors: addMemberErrors },
+  } = useForm<AddMemberFormData>({
+    resolver: zodResolver(addMemberFormSchema),
+    defaultValues: {
+      role: 'MEMBER',
+      allocationPercentage: 100,
+      startDate: '',
+      endDate: '',
+    },
+  });
+
+  const {
+    data: allocationsData,
+    isLoading: allocationsLoading,
+    error: allocationsError,
+    refetch: refetchAllocations,
+  } = useProjectAllocations(projectId, allocationsPage, allocationsSize, !!projectId);
+
+  const assignMutation = useAssignToProject();
+  const endAllocationMutation = useEndAllocation();
+  const exportMutation = useExportAllocations();
+
+  const allocations = allocationsData?.content ?? [];
+  const allocationsTotal = allocationsData?.totalElements ?? 0;
+  const allocationsTotalPages = allocationsData?.totalPages ?? 0;
+  const exportingRoster = exportMutation.isPending;
+  const addMemberSaving = assignMutation.isPending;
+  const endAllocationLoading = endAllocationMutation.isPending;
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const isActiveAllocation = (allocation: ProjectAllocation) => {
+    if (!allocation.endDate) return true;
+    return new Date(allocation.endDate) >= new Date(today);
+  };
+
+  const rosterColumns = useMemo(() => [
+    {
+      key: 'employee',
+      header: 'Employee',
+      accessor: (allocation: ProjectAllocation) => (
+        <div className="space-y-1">
+          <div className="font-medium text-[var(--text-primary)]">
+            {allocation.employeeName || allocation.employeeCode || '—'}
+          </div>
+          <div className="text-xs text-[var(--text-muted)]">
+            {allocation.employeeCode || '—'}
+          </div>
+        </div>
+      ),
+      mobilePriority: 'primary' as const,
+    },
+    {
+      key: 'allocation',
+      header: 'Allocation',
+      accessor: (allocation: ProjectAllocation) => (
+        <span className="text-sm text-[var(--text-secondary)]">
+          {formatPercent(allocation.allocationPercent)}
+        </span>
+      ),
+      mobilePriority: 'secondary' as const,
+    },
+    {
+      key: 'start',
+      header: 'Start Date',
+      accessor: (allocation: ProjectAllocation) => (
+        <span className="text-sm text-[var(--text-secondary)]">
+          {formatDate(allocation.startDate)}
+        </span>
+      ),
+      mobilePriority: 'secondary' as const,
+    },
+    {
+      key: 'end',
+      header: 'End Date',
+      accessor: (allocation: ProjectAllocation) => (
+        <span className="text-sm text-[var(--text-secondary)]">
+          {formatDate(allocation.endDate)}
+        </span>
+      ),
+      mobilePriority: 'secondary' as const,
+    },
+    {
+      key: 'actions',
+      header: '',
+      accessor: (allocation: ProjectAllocation) => {
+        if (!isActiveAllocation(allocation)) return null;
+        return (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setEndAllocationTarget(allocation)}
+          >
+            End
+          </Button>
+        );
+      },
+      mobilePriority: 'secondary' as const,
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [today]);
+
+  const handleExportRoster = async () => {
+    try {
+      const result = await exportMutation.mutateAsync(projectId);
+      if (result instanceof Blob) {
+        const url = URL.createObjectURL(result);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'project_roster.csv';
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      // Error handled by mutation
+    }
+  };
+
+  const handleOpenAddMember = () => {
+    setSelectedEmployee(null);
+    setAddMemberError(null);
+    resetAddMember();
+    setShowAddMemberModal(true);
+  };
+
+  const handleAddMemberSubmit = async (data: AddMemberFormData) => {
+    if (!selectedEmployee) {
+      setAddMemberError('Please select an employee before allocating');
+      return;
+    }
+
+    try {
+      await assignMutation.mutateAsync({
+        projectId,
+        data: {
+          employeeId: selectedEmployee.id,
+          role: data.role,
+          allocationPercentage: data.allocationPercentage,
+          startDate: data.startDate,
+          endDate: data.endDate || undefined,
+        },
+      });
+      setShowAddMemberModal(false);
+      await refetchAllocations();
+    } catch (err) {
+      // Error handled by mutation
+    }
+  };
+
+  const handleEndAllocation = async () => {
+    if (!endAllocationTarget) return;
+    try {
+      await endAllocationMutation.mutateAsync({
+        projectId,
+        allocationId: endAllocationTarget.id,
+      });
+      setEndAllocationTarget(null);
+      await refetchAllocations();
+    } catch (err) {
+      // Error handled by mutation
+      setEndAllocationTarget(null);
+    }
+  };
+
+  const allocationsErrorMessage = allocationsError ? (allocationsError instanceof Error ? allocationsError.message : String(allocationsError)) : null;
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Project Roster</h2>
+              <p className="text-sm text-[var(--text-muted)]">Allocated employees and their allocation percent.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                leftIcon={<Plus className="h-4 w-4" />}
+                onClick={handleOpenAddMember}
+              >
+                Add Member
+              </Button>
+              <Button
+                variant="outline"
+                leftIcon={<Download className="h-4 w-4" />}
+                isLoading={exportingRoster}
+                onClick={handleExportRoster}
+              >
+                Export roster
+              </Button>
+            </div>
+          </div>
+
+          {allocationsErrorMessage && (
+            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              {allocationsErrorMessage}
+            </div>
+          )}
+
+          <ResponsiveTable
+            columns={rosterColumns}
+            data={allocations}
+            keyExtractor={(row) => row.id}
+            isLoading={allocationsLoading}
+            emptyMessage="No allocations found for this project."
+          />
+
+          {allocationsTotal > 0 && (
+            <TablePagination
+              currentPage={allocationsPage}
+              totalPages={allocationsTotalPages}
+              totalItems={allocationsTotal}
+              pageSize={allocationsSize}
+              onPageChange={setAllocationsPage}
+              onPageSizeChange={(size) => {
+                setAllocationsSize(size);
+                setAllocationsPage(0);
+              }}
+            />
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Add Member Modal */}
+      <Modal isOpen={showAddMemberModal} onClose={() => setShowAddMemberModal(false)} size="lg">
+        <ModalHeader onClose={() => setShowAddMemberModal(false)}>
+          Add Member
+        </ModalHeader>
+        <form onSubmit={handleSubmitAddMember(handleAddMemberSubmit)}>
+          <ModalBody className="space-y-4">
+            {addMemberError && (
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+                {addMemberError}
+              </div>
+            )}
+
+            {!selectedEmployee && (
+              <div className="rounded-lg border border-warning-200 bg-warning-50 px-4 py-3 text-sm text-warning-700">
+                Please select an employee
+              </div>
+            )}
+
+            <EmployeeTypeahead
+              label="Employee"
+              value={selectedEmployee}
+              onChange={setSelectedEmployee}
+              placeholder="Search employee by name or code..."
+            />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Select label="Role" {...registerAddMember('role')}>
+                  {ALLOCATION_ROLES.map((role) => (
+                    <option key={role} value={role}>
+                      {role.replace(/_/g, ' ')}
+                    </option>
+                  ))}
+                </Select>
+                {addMemberErrors.role && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.role.message}</p>}
+              </div>
+
+              <div>
+                <Input
+                  label="Allocation %"
+                  type="number"
+                  min={1}
+                  max={100}
+                  placeholder="e.g. 100"
+                  {...registerAddMember('allocationPercentage')}
+                />
+                {addMemberErrors.allocationPercentage && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.allocationPercentage.message}</p>}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Input label="Start Date" type="date" {...registerAddMember('startDate')} />
+                {addMemberErrors.startDate && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.startDate.message}</p>}
+              </div>
+              <div>
+                <Input label="End Date (optional)" type="date" {...registerAddMember('endDate')} />
+                {addMemberErrors.endDate && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.endDate.message}</p>}
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="button" variant="outline" onClick={() => setShowAddMemberModal(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" isLoading={addMemberSaving}>
+              Allocate Member
+            </Button>
+          </ModalFooter>
+        </form>
+      </Modal>
+
+      {/* End Allocation Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={Boolean(endAllocationTarget)}
+        onClose={() => setEndAllocationTarget(null)}
+        onConfirm={handleEndAllocation}
+        title="End Allocation"
+        message={`End the allocation for ${endAllocationTarget?.employeeName || endAllocationTarget?.employeeCode || 'this employee'}? This cannot be undone.`}
+        confirmText="End Allocation"
+        type="warning"
+        loading={endAllocationLoading}
+      />
+    </div>
+  );
+}

@@ -35,6 +35,10 @@ export default function CustomFieldsSection({
 
   useEffect(() => {
     loadCustomFields();
+    // loadCustomFields is defined below and intentionally omitted: adding it would cause
+    // an infinite loop since it re-creates on every render. Effect should only re-run
+    // when the entity target changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, entityId]);
 
   const loadCustomFields = async () => {
@@ -197,6 +201,8 @@ export function useCustomFields(entityType: EntityType, entityId?: string) {
 
   useEffect(() => {
     loadData();
+    // loadData is defined below; omitted to prevent infinite-loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, entityId]);
 
   const loadData = async () => {
@@ -209,7 +215,7 @@ export function useCustomFields(entityType: EntityType, entityId?: string) {
         const existingValues = await customFieldsApi.getFieldValues(entityType, entityId);
         setValues(existingValues);
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to load custom fields');
     } finally {
       setLoading(false);

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeLeaveRequests, useLeaveRequestsByStatus, useActiveLeaveTypes } from '@/lib/hooks/queries/useLeaves';
-import { LeaveRequest, LeaveType } from '@/lib/types/leave';
+import { LeaveRequest } from '@/lib/types/leave';
 
 interface Holiday {
   id: string;
@@ -42,13 +42,16 @@ export default function LeaveCalendarPage() {
     if (hasHydrated && !user?.employeeId && viewMode === 'my') {
       setViewMode('team');
     }
-  }, [hasHydrated, user?.employeeId]);
+  }, [hasHydrated, user?.employeeId, viewMode]);
 
   // Generate calendar when data or view mode changes
   useEffect(() => {
     if (leaves.length > 0 || viewMode === 'team') {
       generateCalendar();
     }
+    // generateCalendar is defined below and only depends on currentDate/viewMode/leaves
+    // (all listed). Including it without useCallback would cause an infinite loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate, viewMode, leaves]);
 
   const generateCalendar = () => {
@@ -56,7 +59,7 @@ export default function LeaveCalendarPage() {
     const month = currentDate.getMonth();
 
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
+    const _lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
@@ -102,7 +105,7 @@ export default function LeaveCalendarPage() {
     setCurrentDate(new Date());
   };
 
-  const getLeaveTypeColor = (leaveTypeId: string) => {
+  const _getLeaveTypeColor = (leaveTypeId: string) => {
     const leaveType = leaveTypes.find(t => t.id === leaveTypeId);
     return leaveType?.colorCode || '#3B82F6';
   };

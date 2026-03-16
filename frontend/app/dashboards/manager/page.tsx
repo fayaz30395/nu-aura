@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
   UserCheck,
-  UserX,
-  Home,
   Clock,
   TrendingUp,
   TrendingDown,
@@ -16,30 +14,18 @@ import {
   Calendar,
   ClipboardList,
   Target,
-  Award,
   AlertTriangle,
-  Info,
   FileText,
-  BarChart3,
   Activity,
-  Briefcase,
   Zap,
   Star,
 } from 'lucide-react';
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  LineChart,
-  Line,
   RadarChart,
   PolarGrid,
   PolarAngleAxis,
@@ -64,38 +50,6 @@ const formatDate = (dateStr: string) => {
   });
 };
 
-// Utility function to get health status color
-const getHealthStatusColor = (status: string) => {
-  const colors: Record<string, string> = {
-    EXCELLENT: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-    GOOD: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-    NEEDS_ATTENTION: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-    CRITICAL: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-  };
-  return colors[status] || colors.GOOD;
-};
-
-// Utility function to get alert severity color
-const getSeverityColor = (severity: string) => {
-  const colors: Record<string, string> = {
-    INFO: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-    WARNING: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-    CRITICAL: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-  };
-  return colors[severity] || colors.INFO;
-};
-
-// Utility function to get status icon
-const getSeverityIcon = (severity: string) => {
-  switch (severity) {
-    case 'CRITICAL':
-      return <AlertCircle className="h-5 w-5" />;
-    case 'WARNING':
-      return <AlertTriangle className="h-5 w-5" />;
-    default:
-      return <Info className="h-5 w-5" />;
-  }
-};
 
 export default function ManagerDashboardPage() {
   const router = useRouter();
@@ -160,17 +114,6 @@ export default function ManagerDashboardPage() {
 
   const { teamOverview, teamAttendance, teamLeave, teamPerformance, actionItems, teamAlerts } = dashboardData;
 
-  // Chart colors
-  const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'];
-
-  // Performance distribution data
-  const performanceData = [
-    { name: 'Exceeding', value: teamPerformance.exceeding, color: '#10B981' },
-    { name: 'Meeting', value: teamPerformance.meeting, color: '#3B82F6' },
-    { name: 'Needs Improvement', value: teamPerformance.needsImprovement, color: '#F59E0B' },
-    { name: 'Not Rated', value: teamPerformance.notRated, color: '#94A3B8' },
-  ];
-
   // Attendance trend chart data
   const attendanceTrendData = teamAttendance.weeklyTrend.map((day) => ({
     name: day.dayOfWeek.substring(0, 3),
@@ -222,7 +165,7 @@ export default function ManagerDashboardPage() {
               Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className={`px-4 py-2 rounded-2xl flex items-center gap-2 border shadow-sm transition-all duration-300 ${teamOverview.teamHealthStatus === 'EXCELLENT'
               ? 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400'
               : 'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
@@ -327,7 +270,7 @@ export default function ManagerDashboardPage() {
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
                 <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Activity className="h-6 w-6 text-indigo-500" />
                     <span>Attendance Flow</span>
                   </div>
@@ -345,7 +288,7 @@ export default function ManagerDashboardPage() {
                     </div>
                     <div className="p-6 bg-emerald-500/5 rounded-3xl border border-emerald-500/10">
                       <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Stability</p>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tighter">
                           {teamAttendance.monthlyAttendanceRate?.toFixed(1)}%
                         </span>
@@ -368,7 +311,7 @@ export default function ManagerDashboardPage() {
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" opacity={0.5} />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 12, fontWeight: 700 }} />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--chart-muted)', fontSize: 12, fontWeight: 700 }} />
                         <YAxis hide domain={[0, 110]} />
                         <Tooltip
                           contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', borderRadius: '20px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
@@ -386,7 +329,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden h-full">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
-                <CardTitle className="flex items-center gap-3">
+                <CardTitle className="flex items-center gap-4">
                   <Star className="h-6 w-6 text-amber-500" />
                   <span>Performance DNA</span>
                 </CardTitle>
@@ -396,7 +339,7 @@ export default function ManagerDashboardPage() {
                   <div className="space-y-8">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Avg Rating</p>
-                      <div className="flex items-baseline gap-3">
+                      <div className="flex items-baseline gap-4">
                         <span className="text-5xl font-black text-[var(--text-primary)]">{teamPerformance.avgPerformanceRating?.toFixed(1)}</span>
                         <span className="text-xl font-bold text-[var(--text-muted)]">/ 5.0</span>
                       </div>
@@ -422,7 +365,7 @@ export default function ManagerDashboardPage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart cx="50%" cy="50%" outerRadius="80%" data={pulseData}>
                         <PolarGrid stroke="#94A3B8" opacity={0.5} />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748B', fontSize: 10, fontWeight: 800 }} />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--chart-muted)', fontSize: 10, fontWeight: 800 }} />
                         <PolarRadiusAxis hide />
                         <Radar
                           name="Team"
@@ -448,7 +391,7 @@ export default function ManagerDashboardPage() {
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
                 <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <FileText className="h-6 w-6 text-primary-500" />
                     <span>Approval Pipeline</span>
                   </div>
@@ -470,7 +413,7 @@ export default function ManagerDashboardPage() {
                             {leave.employeeName?.charAt(0)}
                           </div>
                           <div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                               <span className="font-extrabold text-[var(--text-primary)] group-hover:text-primary-500 transition-colors">{leave.employeeName}</span>
                               {leave.urgency === 'HIGH' && (
                                 <span className="animate-pulse flex h-2 w-2 rounded-full bg-red-500" />
@@ -507,7 +450,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] h-full">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
-                <CardTitle className="flex items-center gap-3">
+                <CardTitle className="flex items-center gap-4">
                   <ClipboardList className="h-6 w-6 text-indigo-500" />
                   <span>Immediate Acts</span>
                 </CardTitle>
@@ -522,7 +465,7 @@ export default function ManagerDashboardPage() {
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between p-4 rounded-3xl bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]/50 border border-[var(--border-main)]/20 hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)] transition-all group">
                       <div className="flex items-center gap-4">
-                        <div className={`p-3 rounded-2xl ${item.bg}`}>
+                        <div className={`p-4 rounded-2xl ${item.bg}`}>
                           <item.icon className={`h-6 w-6 ${item.color}`} />
                         </div>
                         <span className="font-extrabold text-[var(--text-primary)]">{item.label}</span>
@@ -567,7 +510,7 @@ export default function ManagerDashboardPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {teamAlerts.slice(0, 3).map((alert) => (
                       <div key={alert.id} className="p-6 rounded-3xl bg-white/40 dark:bg-black/20 border border-red-500/10">
-                        <div className="flex items-center gap-3 mb-4">
+                        <div className="flex items-center gap-4 mb-4">
                           <Badge className="bg-red-500 text-white font-black px-3 py-1">CRITICAL</Badge>
                           <span className="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">{alert.type}</span>
                         </div>
@@ -598,8 +541,8 @@ export default function ManagerDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
                     <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {teamPerformance.goalsOnTrack}
                     </p>
@@ -607,7 +550,7 @@ export default function ManagerDashboardPage() {
                       On Track
                     </p>
                   </div>
-                  <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-center">
+                  <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-center">
                     <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                       {teamPerformance.goalsAtRisk}
                     </p>
@@ -615,7 +558,7 @@ export default function ManagerDashboardPage() {
                       At Risk
                     </p>
                   </div>
-                  <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
+                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {teamPerformance.goalsCompleted}
                     </p>

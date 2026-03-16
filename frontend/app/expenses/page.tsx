@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle, Filter, ChevronDown, Search, Calendar } from 'lucide-react';
+import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle, Filter, ChevronDown, Search } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { ExpenseClaim, ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
-import { StatCard, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
+import { ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
+import { Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
 import { ExpenseAnalytics } from '@/components/expenses';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
@@ -47,7 +47,7 @@ interface Filters {
 }
 
 export default function ExpenseClaims() {
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { user, hasHydrated } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('my-claims');
   const [error, setError] = useState<string | null>(null);
@@ -407,7 +407,7 @@ export default function ExpenseClaims() {
         {/* Statistics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                 <AlertCircle className="w-5 h-5" />
               </div>
@@ -418,7 +418,7 @@ export default function ExpenseClaims() {
             </div>
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                 <CheckCircle className="w-5 h-5" />
               </div>
@@ -429,7 +429,7 @@ export default function ExpenseClaims() {
             </div>
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
                 <DollarSign className="w-5 h-5" />
               </div>
@@ -440,7 +440,7 @@ export default function ExpenseClaims() {
             </div>
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
                 <FileText className="w-5 h-5" />
               </div>
@@ -675,7 +675,7 @@ export default function ExpenseClaims() {
         {/* Bulk Action Toolbar */}
         {selectedClaims.size > 0 && activeTab === 'pending' && (
           <div className="bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <input
                 type="checkbox"
                 checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length}
@@ -773,7 +773,7 @@ export default function ExpenseClaims() {
         <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
           {/* Select All Header for Pending Tab */}
           {activeTab === 'pending' && filteredClaims.filter(c => c.status === 'SUBMITTED').length > 0 && (
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[var(--border-main)]">
+            <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)]">
               <input
                 type="checkbox"
                 checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length && selectedClaims.size > 0}
@@ -809,7 +809,7 @@ export default function ExpenseClaims() {
                   }`}
                 >
                   <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-4">
                       {/* Checkbox for pending claims */}
                       {activeTab === 'pending' && claim.status === 'SUBMITTED' && (
                         <input
@@ -820,7 +820,7 @@ export default function ExpenseClaims() {
                         />
                       )}
                       <div>
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(claim.status)}`}>
                             {claim.status}

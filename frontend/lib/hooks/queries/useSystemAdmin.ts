@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { systemAdminApi } from '@/lib/api/admin-system';
 import {
   SystemOverview,
-  TenantListItem,
   TenantMetrics,
   ImpersonationToken,
   PaginatedTenantList,

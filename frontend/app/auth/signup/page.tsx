@@ -51,7 +51,6 @@ export default function SignupPage() {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<SignupFormData>({
@@ -175,7 +174,7 @@ export default function SignupPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* Error */}
               {error && (
-                <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+                <div className="flex items-start gap-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
                   <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
                 </div>
@@ -245,7 +244,7 @@ export default function SignupPage() {
                 </h3>
 
                 {/* Name Row */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="block text-sm font-medium text-[var(--text-secondary)]">
                       First Name

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -67,7 +67,7 @@ function ProgressBar({ value }: { value: number }) {
 
 export default function MyLearningPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -206,7 +206,7 @@ export default function MyLearningPage() {
             <span>Loading your courses…</span>
           </div>
         ) : enrollments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-3">
+          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-4">
             <BookOpen className="h-12 w-12 text-gray-300" />
             <p className="text-lg font-medium text-[var(--text-muted)]">No courses yet</p>
             <p className="text-sm">

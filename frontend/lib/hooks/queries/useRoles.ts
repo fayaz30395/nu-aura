@@ -5,15 +5,12 @@ import { notifications } from '@mantine/notifications';
 import { rolesApi, permissionsApi } from '@/lib/api/roles';
 import { usersApi } from '@/lib/api/users';
 import {
-  Role,
-  Permission,
   CreateRoleRequest,
   UpdateRoleRequest,
   AssignPermissionsRequest,
   AssignPermissionsWithScopeRequest,
   UpdatePermissionScopeRequest,
 } from '@/lib/types/roles';
-import type { User, AssignRolesRequest } from '@/lib/api/users';
 
 // Query key factory
 const roleKeys = {

@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { Title, Text, Container, Tabs, Card, Table, Group, Badge, Button, Grid, ThemeIcon, Select, Loader, Alert } from '@mantine/core';
 import { IconBuildingBank, IconFirstAidKit, IconReceiptTax, IconSettings, IconCalendar, IconDownload, IconInfoCircle } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
-import { MonthlyStatutoryContribution } from '@/lib/types/statutory';
-import { notifications } from '@mantine/notifications';
 import { useActivePFConfigs, useActiveESIConfigs, usePTSlabsByState, useMonthlyStatutoryContributions } from '@/lib/hooks/queries/useStatutory';
 
 const MONTHS = [
@@ -32,16 +30,15 @@ export default function StatutoryPage() {
     const [reportFetched, setReportFetched] = useState(false);
 
     // React Query hooks
-    const { data: pfConfigs = [], isLoading: pfLoading } = useActivePFConfigs(activeTab === 'pf');
-    const { data: esiConfigs = [], isLoading: esiLoading } = useActiveESIConfigs(activeTab === 'esi');
-    const { data: ptSlabs = [], isLoading: ptLoading } = usePTSlabsByState('MH', activeTab === 'pt');
+    const { data: pfConfigs = [], isLoading: _pfLoading } = useActivePFConfigs(activeTab === 'pf');
+    const { data: esiConfigs = [], isLoading: _esiLoading } = useActiveESIConfigs(activeTab === 'esi');
+    const { data: ptSlabs = [], isLoading: _ptLoading } = usePTSlabsByState('MH', activeTab === 'pt');
     const { data: contributions = [], isLoading: reportLoading, error: reportError, refetch } = useMonthlyStatutoryContributions(
         Number(reportMonth),
         Number(reportYear),
         activeTab === 'report' && reportFetched
     );
 
-    const loading = pfLoading || esiLoading || ptLoading;
 
     const fetchMonthlyReport = async () => {
         setReportFetched(true);
@@ -261,7 +258,7 @@ export default function StatutoryPage() {
 
                         {reportError && (
                             <Alert icon={<IconInfoCircle size={16} />} color="red" mb="md">
-                                {typeof reportError === 'object' && reportError ? (reportError as any).message : String(reportError)}
+                                {typeof reportError === 'object' && reportError ? (reportError as Error).message : String(reportError)}
                             </Alert>
                         )}
 

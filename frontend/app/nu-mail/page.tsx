@@ -15,7 +15,6 @@ import {
   ChevronRight,
   Mail,
   AlertCircle,
-  ExternalLink,
   User,
   Calendar,
   FileText,
@@ -260,6 +259,9 @@ function MailContent() {
     } else {
       setIsLoading(false);
     }
+    // loadLabels, loadEmails, loadSignature take a token param and are intentionally
+    // omitted: including them without useCallback would cause an infinite re-render loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated, isAuthenticated, router, loadContacts]);
 
   // Handle click outside to close suggestions
@@ -940,7 +942,7 @@ function MailContent() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
               <Mail className="h-6 w-6 text-white" />
             </div>
@@ -996,7 +998,7 @@ function MailContent() {
         {error && (
           <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30">
             <CardContent className="py-4">
-              <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-4 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
                 <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
@@ -1054,13 +1056,13 @@ function MailContent() {
                     <button
                       key={label.id}
                       onClick={() => handleLabelSelect(label.id)}
-                      className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      className={`w-full flex items-center justify-between gap-4 px-3 py-2 rounded-lg text-sm transition-colors ${
                         selectedLabel === label.id
                           ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         {getLabelIcon(label.id)}
                         <span>{label.name}</span>
                       </div>
@@ -1078,8 +1080,8 @@ function MailContent() {
             {/* Email List */}
             <Card className="lg:col-span-3">
               {/* Toolbar */}
-              <div className="border-b border-[var(--border-main)] p-3">
-                <div className="flex items-center gap-3">
+              <div className="border-b border-[var(--border-main)] p-4">
+                <div className="flex items-center gap-4">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                     <Input
@@ -1386,14 +1388,14 @@ function MailContent() {
 
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {sendError && (
-                  <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg">
+                  <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg">
                     <AlertCircle className="h-4 w-4" />
                     <span className="text-sm">{sendError}</span>
                   </div>
                 )}
 
                 {sendSuccess && (
-                  <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg">
+                  <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg">
                     <Send className="h-4 w-4" />
                     <span className="text-sm">Email sent successfully!</span>
                   </div>
@@ -1424,11 +1426,11 @@ function MailContent() {
                       ref={suggestionsRef}
                       className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
                     >
-                      {filteredContacts.map((contact, index) => (
+                      {filteredContacts.map((contact, _index) => (
                         <button
                           key={contact.email}
                           onClick={() => selectContact(contact, 'to')}
-                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3 transition-colors"
+                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
                             <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
@@ -1474,11 +1476,11 @@ function MailContent() {
                       ref={suggestionsRef}
                       className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
                     >
-                      {filteredContacts.map((contact, index) => (
+                      {filteredContacts.map((contact, _index) => (
                         <button
                           key={contact.email}
                           onClick={() => selectContact(contact, 'cc')}
-                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3 transition-colors"
+                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
                             <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
@@ -1523,7 +1525,7 @@ function MailContent() {
                   />
                   {/* Signature Preview */}
                   {emailSignatureHtml && (
-                    <div className="border border-t-0 border-[var(--border-main)] dark:border-[var(--border-main)] rounded-b-lg bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50 p-3">
+                    <div className="border border-t-0 border-[var(--border-main)] dark:border-[var(--border-main)] rounded-b-lg bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50 p-4">
                       <p className="text-xs text-[var(--text-muted)] mb-2">-- Signature --</p>
                       <div
                         className="signature-preview text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]"

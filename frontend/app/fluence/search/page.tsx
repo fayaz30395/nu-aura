@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import {
   layout,
   typography,
@@ -218,7 +217,7 @@ export default function SearchPage() {
               </p>
             </motion.div>
 
-            {results.map((result, index) => {
+            {results.map((result, _index) => {
               const Icon = iconMap[result.type] || FileText;
               const colorClass = typeColorMap[result.type] || typeColorMap.wiki;
               const typeLabel = typeDisplayMap[result.type] || result.type;

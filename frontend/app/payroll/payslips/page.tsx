@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Payslip } from '@/lib/types/payroll';
 import { PayslipCard } from '@/components/payroll/PayslipCard';
 import { Button } from '@/components/ui/Button';
-import { Download, Filter, Search } from 'lucide-react';
+import { Download, Search } from 'lucide-react';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { usePayslips } from '@/lib/hooks/queries/usePayroll';
 import { payrollService } from '@/lib/services/payroll.service';
@@ -14,13 +13,7 @@ import { payrollService } from '@/lib/services/payroll.service';
 type PayslipStatus = 'ALL' | 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 
 export default function PayslipsPage() {
-  const router = useRouter();
   const { hasPermission, isReady: permReady } = usePermissions();
-
-  // RBAC guard — redirect if user lacks required permission
-  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
-    return null;
-  }
 
   // Filters
   const [selectedMonth, setSelectedMonth] = useState<string>(
@@ -40,6 +33,11 @@ export default function PayslipsPage() {
   const [downloadLoading, setDownloadLoading] = useState(false);
 
   const { data: response, isLoading: loading, error: fetchError } = usePayslips(currentPage, pageSize);
+
+  // RBAC guard — all hooks declared above; safe to return null after them
+  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
+    return null;
+  }
   const payslips = response?.content || [];
   const totalPages = response?.totalPages || 0;
   const totalElements = response?.totalElements || 0;
@@ -119,7 +117,7 @@ export default function PayslipsPage() {
                   View and download employee payslips
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button
                   variant="outline"
                   leftIcon={<Download className="h-4 w-4" />}

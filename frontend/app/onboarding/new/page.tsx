@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    ArrowLeft,
     User,
     Calendar,
     CheckCircle,
@@ -12,23 +11,19 @@ import {
     ClipboardList,
     Layout,
     Zap,
-    Clock,
     ShieldCheck,
     UserPlus
 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Badge } from '@/components/ui/Badge';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
 import { useOnboardingTemplates, useCreateOnboardingProcess } from '@/lib/hooks/queries/useOnboarding';
 import { OnboardingProcessRequest, OnboardingChecklistTemplate } from '@/lib/types/onboarding';
 
 export default function NewOnboardingPage() {
     const router = useRouter();
-    const { hasHydrated } = useAuth();
     const { data: templates = [] } = useOnboardingTemplates();
     const createProcessMutation = useCreateOnboardingProcess();
 
@@ -147,7 +142,7 @@ export default function NewOnboardingPage() {
                         >
                             <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-3">
+                                    <CardTitle className="flex items-center gap-4">
                                         <User className="h-6 w-6 text-primary-500" />
                                         <span>Candidate Selection</span>
                                     </CardTitle>
@@ -193,7 +188,7 @@ export default function NewOnboardingPage() {
                         >
                             <Card className="lg:col-span-2 border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-3">
+                                    <CardTitle className="flex items-center gap-4">
                                         <ClipboardList className="h-6 w-6 text-indigo-500" />
                                         <span>Checklist Template</span>
                                     </CardTitle>
@@ -230,7 +225,7 @@ export default function NewOnboardingPage() {
 
                             <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-3">
+                                    <CardTitle className="flex items-center gap-4">
                                         <Calendar className="h-6 w-6 text-emerald-500" />
                                         <span>Timeline</span>
                                     </CardTitle>

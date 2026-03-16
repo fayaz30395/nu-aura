@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -16,7 +17,7 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
+import { typography } from '@/lib/design-system';
 import { useBlogPosts, useBlogCategories } from '@/lib/hooks/queries/useFluence';
 
 interface BlogPost {
@@ -268,10 +269,12 @@ export default function BlogsPage() {
                       {/* Image Section */}
                       {featuredPost.coverImageUrl ? (
                         <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400 overflow-hidden relative group">
-                          <img
-                            src={featuredPost.coverImageUrl}
+                          <Image
+                            src={featuredPost.coverImageUrl!}
                             alt={featuredPost.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                         </div>
@@ -380,7 +383,7 @@ export default function BlogsPage() {
               >
                 <Search className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] opacity-50" />
                 <p className="text-[var(--text-secondary)] mb-2">
-                  No posts match "{searchQuery}"
+                  No posts match &ldquo;{searchQuery}&rdquo;
                 </p>
                 <button
                   onClick={() => setSearchQuery('')}
@@ -400,7 +403,7 @@ export default function BlogsPage() {
                 }}
               >
                 <AnimatePresence mode="popLayout">
-                  {filteredPosts.map((post, index) => (
+                  {filteredPosts.map((post, _index) => (
                     <motion.div
                       key={post.id}
                       variants={{
@@ -416,10 +419,12 @@ export default function BlogsPage() {
                         {/* Cover Image */}
                         {post.coverImageUrl ? (
                           <div className="h-40 bg-gradient-to-br from-amber-300 via-orange-300 to-rose-300 overflow-hidden relative group">
-                            <img
-                              src={post.coverImageUrl}
+                            <Image
+                              src={post.coverImageUrl!}
                               alt={post.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              fill
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                              className="object-cover group-hover:scale-110 transition-transform duration-500"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                           </div>

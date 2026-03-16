@@ -42,13 +42,11 @@ import {
   Textarea,
   EmptyState,
   ConfirmDialog,
-  Skeleton,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import type {
   TrainingProgram,
   TrainingProgramRequest,
-  TrainingEnrollment,
   TrainingEnrollmentRequest,
 } from '@/lib/types/training';
 import {
@@ -99,29 +97,6 @@ const statusOptions = [
   { value: ProgramStatus.CANCELLED, label: 'Cancelled' },
 ];
 
-const getStatusColor = (status: ProgramStatus | EnrollmentStatus) => {
-  switch (status) {
-    case ProgramStatus.DRAFT:
-    case EnrollmentStatus.ENROLLED:
-      return 'default';
-    case ProgramStatus.SCHEDULED:
-      return 'info';
-    case ProgramStatus.IN_PROGRESS:
-    case EnrollmentStatus.IN_PROGRESS:
-      return 'warning';
-    case ProgramStatus.COMPLETED:
-    case EnrollmentStatus.COMPLETED:
-      return 'success';
-    case ProgramStatus.CANCELLED:
-    case EnrollmentStatus.CANCELLED:
-    case EnrollmentStatus.DROPPED:
-    case EnrollmentStatus.FAILED:
-      return 'danger';
-    default:
-      return 'default';
-  }
-};
-
 const getStatusIcon = (status: ProgramStatus) => {
   switch (status) {
     case ProgramStatus.DRAFT:
@@ -167,7 +142,7 @@ export default function TrainingPage() {
   const updateProgramMutation = useUpdateTrainingProgram();
   const deleteProgramMutation = useDeleteTrainingProgram();
   const enrollMutation = useEnrollEmployee();
-  const updateEnrollmentMutation = useUpdateEnrollmentStatus();
+  useUpdateEnrollmentStatus();
 
   const programs = programsResponse?.content || [];
   const myEnrollments = enrollmentsResponse || [];
@@ -190,7 +165,7 @@ export default function TrainingPage() {
   const [editingProgram, setEditingProgram] = useState<TrainingProgram | null>(null);
   const [selectedProgram, setSelectedProgram] = useState<TrainingProgram | null>(null);
   const [selectedProgramId, setSelectedProgramId] = useState<string>('');
-  const [enrolling, setEnrolling] = useState(false);
+  const [enrolling] = useState(false);
   const [deleteProgramId, setDeleteProgramId] = useState<string | null>(null);
 
   // Fetch enrollments for the selected program via React Query (replaces imperative service call)
@@ -455,8 +430,8 @@ export default function TrainingPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -468,8 +443,8 @@ export default function TrainingPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <PlayCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
@@ -481,8 +456,8 @@ export default function TrainingPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -494,8 +469,8 @@ export default function TrainingPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <GraduationCap className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -577,7 +552,7 @@ export default function TrainingPage() {
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{enrollment.programName || 'Training Program'}</h3>
                           <Badge variant={toBadgeVariant(enrollment.status)}>
                             {enrollment.status.replace('_', ' ')}

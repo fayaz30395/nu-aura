@@ -2,7 +2,7 @@
 
 import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Download, Loader2, Plus, Search, X, Edit2, MoreHorizontal, Eye } from 'lucide-react';
+import { Download, Loader2, Plus, Search, X, Edit2, Eye } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -643,7 +643,7 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleOpenEdit = (project: HrmsProject) => {
+  const handleOpenEdit = useCallback((project: HrmsProject) => {
     setEditingProject(project);
     editReset({
       name: project.name,
@@ -667,7 +667,7 @@ export default function ProjectsPage() {
     setEditOwnerSelection(owners);
     setEditFormErrorDetails([]);
     setShowEditModal(true);
-  };
+  }, [editReset]);
 
   const handleEditProject = async (data: EditProjectFormData) => {
     if (!editingProject) return;
@@ -681,7 +681,7 @@ export default function ProjectsPage() {
     const payload: ProjectUpdateRequest = {
       name: data.name?.trim(),
       status: data.status,
-      priority: data.priority as any,
+      priority: data.priority as ProjectPriority,
       projectManagerId: primaryOwnerId,
       startDate: data.startDate,
       expectedEndDate: data.expectedEndDate || undefined,
@@ -832,7 +832,7 @@ export default function ProjectsPage() {
       ),
       mobilePriority: 'secondary' as const,
     },
-  ], [handleOpenEdit]);
+  ], [handleOpenEdit, router]);
 
   return (
     <AppLayout breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Projects' }]} activeMenuItem="projects">

@@ -1,11 +1,10 @@
-import { apiClient } from '@/lib/api/client';
 import { homeService } from './home.service';
 import { announcementService } from './announcement.service';
 import { recognitionService } from './recognition.service';
 import { linkedinService } from './linkedin.service';
 import { wallService } from './wall.service';
 import type { WallPostResponse } from './wall.service';
-import type { FeedItem, FeedItemType } from '@/lib/types/feed';
+import type { FeedItem } from '@/lib/types/feed';
 import type { Announcement } from './announcement.service';
 import type { Recognition } from '@/lib/types/recognition';
 import type { LinkedInPost } from '@/lib/types/linkedin';

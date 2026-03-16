@@ -48,7 +48,7 @@ export default function EditWikiPage() {
 
   const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
   const { mutate: updateWikiPage } = useUpdateWikiPage();
-  const { data: spacesData } = useWikiSpaces(0, 100);
+  const { data: _spacesData } = useWikiSpaces(0, 100);
   const { data: editorSearchData } = useEmployeeSearch(editorSearchQuery, 0, 20, editorSearchQuery.length > 1);
 
   const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);

@@ -5,12 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Building2, Plus, Edit2, Trash2, ToggleLeft, ToggleRight, Users, MapPin, Search, X } from 'lucide-react';
+import { Building2, Plus, Edit2, Trash2, ToggleLeft, ToggleRight, Users, Search, X } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Department, DepartmentRequest, Employee, DepartmentType } from '@/lib/types/employee';
+import { Department, DepartmentRequest, DepartmentType } from '@/lib/types/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -74,7 +73,7 @@ export default function DepartmentsPage() {
   const [deleteTarget, setDeleteTarget] = React.useState<string | null>(null);
   const [showToggleConfirm, setShowToggleConfirm] = React.useState(false);
   const [toggleTarget, setToggleTarget] = React.useState<Department | null>(null);
-  const [currentPage, setCurrentPage] = React.useState(0);
+  const [currentPage] = React.useState(0);
   const [pageSize] = React.useState(10);
 
   // React Query hooks
@@ -340,7 +339,7 @@ export default function DepartmentsPage() {
                   {loading ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center gap-3">
+                        <div className="flex flex-col items-center gap-4">
                           <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" aria-label="Loading departments" />
                           <span className="text-[var(--text-muted)]">Loading departments...</span>
                         </div>
@@ -349,7 +348,7 @@ export default function DepartmentsPage() {
                   ) : filteredDepartments.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center gap-3">
+                        <div className="flex flex-col items-center gap-4">
                           <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
                             <Building2 className="h-8 w-8 text-[var(--text-muted)]" />
                           </div>
@@ -366,7 +365,7 @@ export default function DepartmentsPage() {
                     filteredDepartments.map((dept) => (
                       <tr key={dept.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                               <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                             </div>
@@ -446,7 +445,7 @@ export default function DepartmentsPage() {
             <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                       <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                     </div>
@@ -627,7 +626,7 @@ export default function DepartmentsPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-main)]">
+                <div className="flex justify-end gap-4 pt-4 border-t border-[var(--border-main)]">
                   <Button
                     type="button"
                     variant="outline"

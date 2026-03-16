@@ -9,7 +9,7 @@
  */
 
 import { AxiosError } from 'axios';
-import { handleError, ErrorCategory, ErrorSeverity, getUserMessage } from './error-handler';
+import { handleError, ErrorCategory, getUserMessage } from './error-handler';
 import { logger } from './logger';
 
 /**
@@ -296,7 +296,7 @@ export function getApiErrorMessage(err: unknown, fallback = 'An unexpected error
   return fallback;
 }
 
-export default {
+const serviceError = {
   ServiceError,
   transformAxiosError,
   transformError,
@@ -304,3 +304,5 @@ export default {
   createServiceMethod,
   withServiceErrorHandling,
 };
+
+export default serviceError;

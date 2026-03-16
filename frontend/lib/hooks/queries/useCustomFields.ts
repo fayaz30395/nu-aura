@@ -4,10 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { customFieldsApi } from '@/lib/api/custom-fields';
 import {
-  CustomFieldDefinition,
   CustomFieldDefinitionRequest,
   EntityType,
-  Page,
 } from '@/lib/types/custom-fields';
 
 // Query key factory

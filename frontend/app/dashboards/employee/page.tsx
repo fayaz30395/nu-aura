@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar,
   Clock,
-  TrendingUp,
   Award,
   Target,
   FileText,
@@ -151,7 +150,7 @@ export default function EmployeeDashboardPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-3 text-red-600">
+              <div className="flex items-center gap-4 text-red-600">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
@@ -338,7 +337,7 @@ export default function EmployeeDashboardPage() {
                         name="Work Hours"
                         stroke="#3b82f6"
                         strokeWidth={2}
-                        dot={{ fill: '#3b82f6', r: 4 }}
+                        dot={{ fill: 'var(--chart-info)', r: 4 }}
                         activeDot={{ r: 6 }}
                       />
                     </LineChart>
@@ -362,13 +361,13 @@ export default function EmployeeDashboardPage() {
               </CardHeader>
               <CardContent>
                 {data.attendanceSummary.recentHistory.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {data.attendanceSummary.recentHistory.slice(0, 5).map((record, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-3 bg-[var(--bg-secondary)] rounded-lg"
+                        className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-lg"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-lg bg-[var(--bg-card)] flex items-center justify-center shadow-sm">
                             <span className="text-sm font-semibold text-[var(--text-primary)]">
                               {new Date(record.date).getDate()}
@@ -476,14 +475,14 @@ export default function EmployeeDashboardPage() {
 
                 {/* Goals List */}
                 {data.careerProgress.currentGoals.length > 0 && (
-                  <div className="mt-6 space-y-3">
+                  <div className="mt-6 space-y-4">
                     <h4 className="text-sm font-semibold text-[var(--text-primary)]">
                       Current Goals
                     </h4>
                     {data.careerProgress.currentGoals.map((goal) => (
                       <div
                         key={goal.id}
-                        className="p-3 bg-[var(--bg-secondary)] rounded-lg"
+                        className="p-4 bg-[var(--bg-secondary)] rounded-lg"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -589,11 +588,11 @@ export default function EmployeeDashboardPage() {
                 <CardTitle>Upcoming Events</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {data.upcomingEvents.slice(0, 5).map((event) => (
                     <div
                       key={event.id}
-                      className={`flex items-start gap-3 p-3 rounded-lg ${getEventColor(event.type)}`}
+                      className={`flex items-start gap-4 p-4 rounded-lg ${getEventColor(event.type)}`}
                     >
                       <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center shadow-sm">
                         {getEventIcon(event.type)}

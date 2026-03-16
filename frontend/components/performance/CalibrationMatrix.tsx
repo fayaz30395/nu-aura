@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { Star, TrendingUp, AlertTriangle, Users, GripVertical } from 'lucide-react';
-import { EmployeeCalibration, PerformanceRating, PotentialRating } from '@/lib/types/performance-360';
+import { EmployeeCalibration } from '@/lib/types/performance-360';
 
 interface CalibrationMatrixProps {
   employees: EmployeeCalibration[];
@@ -11,10 +11,6 @@ interface CalibrationMatrixProps {
   readOnly?: boolean;
 }
 
-type MatrixPosition = {
-  performance: number; // 1-3 (Low to High)
-  potential: number; // 1-3 (Low to High)
-};
 
 const matrixLabels: Record<string, { title: string; description: string; color: string }> = {
   '3-3': {

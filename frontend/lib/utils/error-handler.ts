@@ -11,7 +11,7 @@
  * sent to an error tracking service (Sentry, Rollbar, etc.).
  */
 
-import { isProduction, isDevelopment } from '@/lib/config';
+import { isProduction } from '@/lib/config';
 import { logger } from './logger';
 
 /**
@@ -299,6 +299,7 @@ export function createQueryErrorHandler() {
     // Show Mantine notification to user
     // Dynamic import to avoid circular dependencies and SSR issues
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { notifications } = require('@mantine/notifications');
       const category = categorizeError(error);
       const message = getErrorMessage(error);
@@ -311,7 +312,7 @@ export function createQueryErrorHandler() {
         icon: null,
         autoClose: 5000,
       });
-    } catch (e) {
+    } catch (_e) {
       // Silently fail if Mantine notifications is not available (e.g., during SSR)
       // The error is still logged via handleError() above
     }
@@ -360,7 +361,7 @@ export function isAuthError(error: unknown): boolean {
   return isErrorCategory(error, ErrorCategory.AUTH);
 }
 
-export default {
+const errorHandler = {
   handleError,
   initGlobalErrorHandlers,
   setErrorTracker,
@@ -372,3 +373,5 @@ export default {
   ErrorSeverity,
   ErrorCategory,
 };
+
+export default errorHandler;

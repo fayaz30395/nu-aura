@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { departmentService } from '@/lib/services/department.service';
-import { Department, DepartmentRequest, Page } from '@/lib/types/employee';
+import { Department, DepartmentRequest } from '@/lib/types/employee';
 
 // Query keys for cache management
 export const departmentKeys = {

@@ -36,7 +36,8 @@ export default function AdminDashboardPage() {
   const { data: health, isLoading: healthLoading } = useSystemHealth();
   const updateRoleMutation = useUpdateUserRole();
 
-  const users: AdminUserSummary[] = usersPage?.content ?? [];
+  // Stable reference: wrap in useMemo so downstream useMemo hooks don't re-run on every render.
+  const users = useMemo<AdminUserSummary[]>(() => usersPage?.content ?? [], [usersPage]);
 
   const totalPages = usersPage ? usersPage.totalPages : 0;
 
@@ -79,7 +80,7 @@ export default function AdminDashboardPage() {
       setRoleEmail('');
       setSelectedRole(ROLE_OPTIONS[0]?.value ?? Roles.SUPER_ADMIN);
       setConfirmDialog({ isOpen: false, email: '', role: '' });
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by React Query
     }
   };
@@ -138,7 +139,7 @@ export default function AdminDashboardPage() {
 
       {/* All employees table */}
       <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-[var(--border-main)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 py-3 border-b border-[var(--border-main)]">
           <div>
             <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
               All Employees
@@ -429,7 +430,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
+          className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
         >
           {Object.entries(health.components).map(([componentName, component]: [string, HealthComponent], index) => {
             const status = component.status?.toUpperCase();
@@ -465,7 +466,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: 0.05 + index * 0.05 }}
-                className={`${componentColor} rounded-lg p-3 border border-[var(--border-main)]`}
+                className={`${componentColor} rounded-lg p-4 border border-[var(--border-main)]`}
               >
                 <div className="flex items-start gap-2">
                   <div className={`${dotColor} w-2 h-2 rounded-full mt-1 flex-shrink-0`} />

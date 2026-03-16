@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,6 @@ import {
   Edit2,
   Trash2,
   Search,
-  ChevronRight,
   X,
   ExternalLink,
   Heart,
@@ -99,7 +98,7 @@ export default function LinkedInPostsPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4">
                   <Linkedin className="w-8 h-8 text-blue-600" />
                   LinkedIn Posts
                 </h1>
@@ -222,7 +221,7 @@ export default function LinkedInPostsPage() {
                       )}
 
                       {/* Engagement Stats */}
-                      <div className="grid grid-cols-3 gap-3 pt-3 border-t border-[var(--border-main)]">
+                      <div className="grid grid-cols-3 gap-4 pt-3 border-t border-[var(--border-main)]">
                         <div className="flex items-center gap-2 text-sm">
                           <Heart className="w-4 h-4 text-red-500" />
                           <span className="text-[var(--text-secondary)]">
@@ -247,7 +246,7 @@ export default function LinkedInPostsPage() {
                     {/* Footer */}
                     <div className="px-5 py-4 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(post.postedAt)}
@@ -601,7 +600,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
               Engagement Stats
             </label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs text-[var(--text-secondary)] mb-1">
                   Likes
@@ -681,7 +680,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           </div>
 
           {/* Checkbox Options */}
-          <div className="flex items-center gap-2 cursor-pointer p-3 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+          <div className="flex items-center gap-2 cursor-pointer p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
             <Controller
               name="isFromNulogic"
               control={control}
@@ -703,7 +702,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         </form>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-3">
+        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
           <button
             type="button"
             onClick={onClose}

@@ -4,7 +4,7 @@ import { Skeleton } from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
       {/* Header skeleton */}
       <div className="space-y-2">
         <Skeleton height={24} width="40%" />
@@ -30,7 +30,7 @@ export default function Loading() {
         </div>
 
         {/* Action buttons */}
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end gap-4">
           <Skeleton height={40} width={100} />
           <Skeleton height={40} width={120} />
         </div>

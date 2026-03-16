@@ -1,11 +1,9 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { expenseService, ExpenseStatistics } from '@/lib/services/expense.service';
+import { expenseService } from '@/lib/services/expense.service';
 import {
-  ExpenseClaim,
   CreateExpenseClaimRequest,
-  Page,
   ExpenseStatus,
 } from '@/lib/types/expense';
 

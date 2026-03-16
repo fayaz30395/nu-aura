@@ -26,21 +26,16 @@ import {
   UserCheck,
   Calendar,
   DollarSign,
-  Clock,
   Activity,
   AlertCircle,
   RefreshCw,
-  ChevronDown,
-  Download,
-  Filter,
-  LayoutDashboard,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
-import { TrendData } from '@/lib/types/analytics';
+
 import { chartColors } from '@/lib/utils/theme-colors';
 
 // Chart colors - now using CSS variables defined in globals.css
@@ -62,7 +57,7 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[var(--bg-input)] p-3 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
+      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
         <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{label}</p>
         {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
@@ -77,7 +72,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 
 export default function AnalyticsPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
 
   const { data: analytics, isLoading, error, refetch } = useDashboardAnalytics(
@@ -116,7 +111,7 @@ export default function AnalyticsPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-3 text-red-600">
+              <div className="flex items-center gap-4 text-red-600">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Analytics</CardTitle>
               </div>
@@ -135,7 +130,6 @@ export default function AnalyticsPage() {
 
   // Prepare chart data
   const attendanceTrendData = analytics.attendance.trend || [];
-  const leaveTrendData = analytics.leave.trend || [];
   const headcountTrendData = analytics.headcount.trend || [];
   const payrollTrendData = analytics.payroll?.costTrend || [];
   const leaveDistributionData = analytics.leave.distribution || [];
@@ -146,13 +140,6 @@ export default function AnalyticsPage() {
     { name: 'Present', value: analytics.attendance.present, color: chartColors.success() },
     { name: 'On Leave', value: analytics.attendance.onLeave, color: chartColors.warning() },
     { name: 'Absent', value: analytics.attendance.absent, color: chartColors.danger() },
-  ].filter(d => d.value > 0);
-
-  // Leave status pie data
-  const leaveStatusData = [
-    { name: 'Pending', value: analytics.leave.pending, color: chartColors.warning() },
-    { name: 'Approved', value: analytics.leave.approved, color: chartColors.success() },
-    { name: 'Rejected', value: analytics.leave.rejected, color: chartColors.danger() },
   ].filter(d => d.value > 0);
 
   return (
@@ -168,7 +155,7 @@ export default function AnalyticsPage() {
               Comprehensive HR metrics and insights
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="flex items-center bg-[var(--bg-input)] rounded-lg border border-slate-200 dark:border-slate-700 p-1">
               {(['7d', '30d', '90d'] as const).map((range) => (
                 <button

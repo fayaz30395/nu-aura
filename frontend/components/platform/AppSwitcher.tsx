@@ -12,7 +12,7 @@ import {
   Lock,
   Check,
 } from 'lucide-react';
-import { APP_LIST, type AppCode, type NuApp } from '@/lib/config/apps';
+import { APP_LIST, type NuApp } from '@/lib/config/apps';
 import { useActiveApp } from '@/lib/hooks/useActiveApp';
 
 // ─── Icon Mapping ────────────────────────────────────────────────────────────

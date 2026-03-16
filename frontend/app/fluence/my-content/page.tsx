@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -23,7 +23,7 @@ import {
   useFluenceFavorites,
 } from '@/lib/hooks/queries/useFluence';
 import type { WikiPage, BlogPost, FluenceFavorite } from '@/lib/types/fluence';
-import { layout, typography, card, motion as dsMotion, iconSize, status } from '@/lib/design-system';
+import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
 
 type TabType = 'wiki' | 'blog' | 'favorites';
 
@@ -114,7 +114,7 @@ export default function MyContentPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.15 }}
         >
-          {tabs.map((tab, idx) => (
+          {tabs.map((tab, _idx) => (
             <motion.button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}

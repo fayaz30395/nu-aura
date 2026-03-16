@@ -14,7 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -110,6 +113,7 @@ public class AssetManagementService {
         return mapToAssetResponse(updatedAsset);
     }
 
+    @Transactional
     public AssetResponse returnAsset(UUID assetId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Returning asset {} for tenant {}", assetId, tenantId);
@@ -150,16 +154,22 @@ public class AssetManagementService {
     @Transactional(readOnly = true)
     public List<AssetResponse> getAssetsByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return assetRepository.findByTenantIdAndAssignedTo(tenantId, employeeId).stream()
-                .map(this::mapToAssetResponse)
+        List<Asset> assets = assetRepository.findByTenantIdAndAssignedTo(tenantId, employeeId);
+        // Batch-load employee names in a single query to avoid N+1
+        Map<UUID, String> nameCache = buildEmployeeNameCache(assets);
+        return assets.stream()
+                .map(a -> mapToAssetResponse(a, nameCache))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<AssetResponse> getAssetsByStatus(Asset.AssetStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return assetRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToAssetResponse)
+        List<Asset> assets = assetRepository.findByTenantIdAndStatus(tenantId, status);
+        // Batch-load employee names in a single query to avoid N+1
+        Map<UUID, String> nameCache = buildEmployeeNameCache(assets);
+        return assets.stream()
+                .map(a -> mapToAssetResponse(a, nameCache))
                 .collect(Collectors.toList());
     }
 
@@ -171,6 +181,18 @@ public class AssetManagementService {
         assetRepository.delete(asset);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Mapping helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Maps a single {@link Asset} to {@link AssetResponse}, executing one
+     * {@code findById} query per call.
+     *
+     * <p><b>Use only for single-asset operations</b> (e.g., create, update, get-by-id).
+     * For list operations use {@link #mapToAssetResponse(Asset, Map)} with a
+     * pre-built name cache to avoid N+1 queries.
+     */
     private AssetResponse mapToAssetResponse(Asset asset) {
         String assignedToName = null;
         if (asset.getAssignedTo() != null) {
@@ -178,7 +200,53 @@ public class AssetManagementService {
                     .map(Employee::getFullName)
                     .orElse(null);
         }
+        return buildAssetResponse(asset, assignedToName);
+    }
 
+    /**
+     * Maps an {@link Asset} to {@link AssetResponse} using a pre-fetched
+     * {@code employeeNameCache} (UUID → full name) to avoid N+1 queries in list operations.
+     *
+     * @param asset           the asset entity to map
+     * @param employeeNameCache a map of {@code employeeId → fullName} for all assigned employees
+     *                         in the current batch; may be empty but must not be {@code null}
+     */
+    private AssetResponse mapToAssetResponse(Asset asset, Map<UUID, String> employeeNameCache) {
+        String assignedToName = asset.getAssignedTo() != null
+                ? employeeNameCache.get(asset.getAssignedTo())
+                : null;
+        return buildAssetResponse(asset, assignedToName);
+    }
+
+    /**
+     * Builds a pre-fetched employee name cache for a batch of assets.
+     *
+     * <p>Collects all distinct non-null {@code assignedTo} UUIDs from the given asset list,
+     * loads the corresponding {@link Employee} records in a single
+     * {@code findAllById} call, and returns a {@code UUID → fullName} map.
+     * Returns an empty map when no assets are assigned.
+     */
+    private Map<UUID, String> buildEmployeeNameCache(List<Asset> assets) {
+        List<UUID> employeeIds = assets.stream()
+                .map(Asset::getAssignedTo)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (employeeIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        return employeeRepository.findAllById(employeeIds).stream()
+                .collect(Collectors.toMap(
+                        Employee::getId,
+                        Employee::getFullName,
+                        (a, b) -> a  // merge function: keep first on duplicate (should not occur)
+                ));
+    }
+
+    /** Shared builder logic for both mapping overloads. */
+    private AssetResponse buildAssetResponse(Asset asset, String assignedToName) {
         return AssetResponse.builder()
                 .id(asset.getId())
                 .tenantId(asset.getTenantId())

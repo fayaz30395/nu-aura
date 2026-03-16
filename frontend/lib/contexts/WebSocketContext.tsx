@@ -14,8 +14,8 @@ export interface Notification {
     type: string;
     title: string;
     message: string;
-    payload?: any;
-    metadata?: Record<string, any>;
+    payload?: unknown;
+    metadata?: Record<string, unknown>;
     timestamp?: number;
     read: boolean;
     actionUrl?: string;
@@ -63,7 +63,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
             },
         });
 
-        client.onConnect = (frame) => {
+        client.onConnect = (_frame) => {
             setIsConnected(true);
 
             // Subscribe to global broadcasts

@@ -18,7 +18,7 @@ import { APP_SIDEBAR_SECTIONS } from '@/lib/config/apps';
 import { buildMenuSections } from './menuSections';
 import { ErrorBoundary } from '@/components/errors';
 import { FluenceChatWidget } from '@/components/fluence/FluenceChatWidget';
-import { Home, Users, Calendar, CheckSquare, User, Briefcase, UserPlus, ClipboardList, TrendingUp, BookOpen, Target, FileText, Edit, MessageCircle } from 'lucide-react';
+import { Home, Users, Calendar, CheckSquare, User, Briefcase, UserPlus, ClipboardList, BookOpen, Target, FileText, Edit, MessageCircle } from 'lucide-react';
 import type { NavItem } from '@/components/ui/MobileBottomNav';
 
 export interface AppLayoutProps {
@@ -47,7 +47,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   onMenuItemClick,
 }) => {
   const router = useRouter();
-  const { logout, user, hasHydrated } = useAuth();
+  const { logout, user } = useAuth();
   const { permissions, roles, hasPermission, isReady } = usePermissions();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
@@ -71,10 +71,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     return initialCollapsed ?? false;
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    setMounted(true);
     // Sync sidebar collapsed state from localStorage on client hydration
     const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
     if (saved !== null) {

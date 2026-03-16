@@ -10,7 +10,6 @@ import {
   FolderPlus,
   Share2,
   AlertCircle,
-  Loader2,
   CheckCircle2,
   FileText,
   Code,
@@ -27,7 +26,7 @@ type DriveTab = 'team-docs' | 'shared' | 'recent';
 
 function FluenceDriveContent() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<DriveTab>('team-docs');
@@ -139,7 +138,7 @@ function FluenceDriveContent() {
                     Connect Your Google Drive
                   </h3>
                   <p className="text-[var(--text-muted)] max-w-md mx-auto">
-                    Access your team's documents, share files, and embed them directly into wiki
+                    Access your team&apos;s documents, share files, and embed them directly into wiki
                     pages and blogs.
                   </p>
                 </div>
@@ -294,7 +293,7 @@ function FluenceDriveContent() {
                         Upload your document
                       </p>
                       <p className="text-sm text-[var(--text-secondary)]">
-                        Use the "Upload Document" button to add files to your team drive
+                        Use the &ldquo;Upload Document&rdquo; button to add files to your team drive
                       </p>
                     </div>
                   </div>
@@ -307,7 +306,7 @@ function FluenceDriveContent() {
                         Copy the file link
                       </p>
                       <p className="text-sm text-[var(--text-secondary)]">
-                        Right-click on the file and select "Share File" to get a shareable link
+                        Right-click on the file and select &ldquo;Share File&rdquo; to get a shareable link
                       </p>
                     </div>
                   </div>

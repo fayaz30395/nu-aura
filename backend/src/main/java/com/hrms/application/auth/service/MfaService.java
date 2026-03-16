@@ -34,6 +34,16 @@ public class MfaService {
     private static final int TOTP_LENGTH = 6;
     private static final long TIME_WINDOW = 30L;
     private static final String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+    /**
+     * Length of generated backup codes (8 uppercase alphanumeric characters).
+     * Kept in sync with {@link #generateBackupCodes()}.
+     */
+    private static final int BACKUP_CODE_LENGTH = 8;
+
+    /** Pattern that uniquely identifies a backup code: exactly 8 uppercase letters or digits. */
+    private static final java.util.regex.Pattern BACKUP_CODE_PATTERN =
+            java.util.regex.Pattern.compile("[A-Z0-9]{" + BACKUP_CODE_LENGTH + "}");
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final UserRepository userRepository;
@@ -134,13 +144,17 @@ public class MfaService {
             return false;
         }
 
-        // First, try to verify as TOTP code
-        if (validateTotp(user.getMfaSecret(), code)) {
-            return true;
+        // Route by code format to avoid unnecessary crypto operations.
+        // TOTP codes are exactly 6 decimal digits; backup codes are exactly 8
+        // uppercase alphanumeric characters. Trying bcrypt scans against a
+        // 6-digit TOTP input is expensive and always wrong.
+        if (isLikelyBackupCode(code)) {
+            // Skip TOTP — go straight to backup code verification
+            return verifyBackupCode(user, code);
         }
 
-        // Then, try to verify as backup code
-        return verifyBackupCode(user, code);
+        // Standard TOTP path (6-digit numeric code)
+        return validateTotp(user.getMfaSecret(), code);
     }
 
     /**
@@ -352,6 +366,21 @@ public class MfaService {
             "otpauth://totp/NU-AURA:%%s?secret=%%s&issuer=NU-AURA&algorithm=SHA1&digits=6&period=30",
             email, secret
         ).replace("%s", email).replace("%s", secret);
+    }
+
+    /**
+     * Returns {@code true} if {@code code} matches the backup-code format
+     * (exactly {@value #BACKUP_CODE_LENGTH} uppercase letters/digits).
+     *
+     * <p>Using an explicit format check instead of a loose {@code length > 6}
+     * guard prevents false positives (e.g. an 8-digit numeric string that
+     * could be an extended TOTP code) and allows the caller to short-circuit
+     * expensive bcrypt comparisons for clearly non-backup inputs.
+     */
+    private boolean isLikelyBackupCode(String code) {
+        return code != null
+                && code.length() == BACKUP_CODE_LENGTH
+                && BACKUP_CODE_PATTERN.matcher(code).matches();
     }
 
     /**

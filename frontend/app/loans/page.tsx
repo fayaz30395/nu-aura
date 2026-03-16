@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { loanService } from '@/lib/services/loan.service';
-import { EmployeeLoan, LoanStatus } from '@/lib/types/loan';
+import { LoanStatus } from '@/lib/types/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeLoans } from '@/lib/hooks/queries/useLoans';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -153,7 +153,7 @@ export default function LoansPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600">
                 <CreditCard className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -169,7 +169,7 @@ export default function LoansPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function LoansPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -201,7 +201,7 @@ export default function LoansPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
                 <Clock className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -330,7 +330,7 @@ export default function LoansPage() {
             className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
@@ -348,7 +348,7 @@ export default function LoansPage() {
             className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />

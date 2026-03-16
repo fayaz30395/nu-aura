@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { CreateLoanRequest, LoanType, RepaymentFrequency } from '@/lib/types/loan';
-import { useAuth } from '@/lib/hooks/useAuth';
 import { useCreateLoan } from '@/lib/hooks/queries/useLoans';
 import { loanService } from '@/lib/services/loan.service';
 import {
@@ -20,7 +19,6 @@ import {
 
 export default function NewLoanPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const createLoanMutation = useCreateLoan();
@@ -87,7 +85,7 @@ export default function NewLoanPage() {
     try {
       setError(null);
 
-      const loan = await createLoanMutation.mutateAsync(formData);
+      const _loan = await createLoanMutation.mutateAsync(formData);
 
       // If not draft, we should submit it (would need a separate mutation)
       // For now, just redirect
@@ -122,7 +120,7 @@ export default function NewLoanPage() {
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-3">
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-4">
             <AlertCircle className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
           </div>
@@ -279,7 +277,7 @@ export default function NewLoanPage() {
         {/* EMI Calculator */}
         {formData.requestedAmount > 0 && formData.termMonths > 0 && (
           <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-4 mb-4">
               <Wallet className="h-6 w-6" />
               <h3 className="text-lg font-semibold">Estimated Monthly Payment</h3>
             </div>
@@ -293,7 +291,7 @@ export default function NewLoanPage() {
         )}
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => router.back()}
             className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"

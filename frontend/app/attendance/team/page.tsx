@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Users,
-  Calendar,
   CheckCircle,
   XCircle,
   AlertCircle,
@@ -26,21 +25,11 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Skeleton, SkeletonStatCard, SkeletonTable, SkeletonCard } from '@/components/ui/Skeleton';
+import { SkeletonStatCard, SkeletonTable, SkeletonCard } from '@/components/ui/Skeleton';
 import { AttendanceRecord } from '@/lib/types/attendance';
 import { getLocalDateString } from '@/lib/utils/dateUtils';
 import { useAttendanceByDate } from '@/lib/hooks/queries/useAttendance';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-interface EmployeeAttendanceSummary {
-  employeeId: string;
-  employeeName: string;
-  present: number;
-  absent: number;
-  late: number;
-  totalHours: number;
-}
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface StatusStats {
   present: number;
@@ -70,29 +59,8 @@ export default function TeamAttendancePage() {
     100
   );
 
-  const records: AttendanceRecord[] = attendanceResponse?.content || [];
-
-  const getStatusColor = (status?: string): string => {
-    switch (status) {
-      case 'PRESENT': return 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400';
-      case 'ABSENT': return 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400';
-      case 'HALF_DAY': return 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400';
-      case 'LATE': return 'bg-orange-100 dark:bg-orange-950/30 text-orange-800 dark:text-orange-400';
-      case 'LEAVE': return 'bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
-    }
-  };
-
-  const getStatusBorderColor = (status?: string): string => {
-    switch (status) {
-      case 'PRESENT': return 'border-l-4 border-l-green-500';
-      case 'ABSENT': return 'border-l-4 border-l-red-500';
-      case 'HALF_DAY': return 'border-l-4 border-l-yellow-500';
-      case 'LATE': return 'border-l-4 border-l-orange-500';
-      case 'LEAVE': return 'border-l-4 border-l-blue-500';
-      default: return 'border-l-4 border-l-gray-400';
-    }
-  };
+  // Stable reference: prevents dependent useMemo hooks from re-running on every render.
+  const records = useMemo<AttendanceRecord[]>(() => attendanceResponse?.content ?? [], [attendanceResponse]);
 
   const formatTime = (dateString?: string): string => {
     if (!dateString) return '--:--';
@@ -116,7 +84,7 @@ export default function TeamAttendancePage() {
   const stats = calculateStats();
 
   const filteredAndSortedRecords = useMemo(() => {
-    let filtered = records.filter(record => {
+    const filtered = records.filter(record => {
       const matchesSearch = record.employeeId.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || record.status === statusFilter;
       return matchesSearch && matchesStatus;
@@ -155,13 +123,11 @@ export default function TeamAttendancePage() {
   };
 
   const chartData = [
-    { name: 'Present', value: stats.present, fill: '#10b981' },
-    { name: 'Absent', value: stats.absent, fill: '#ef4444' },
-    { name: 'Late', value: stats.late, fill: '#f97316' },
-    { name: 'Leave', value: stats.onLeave, fill: '#3b82f6' },
+    { name: 'Present', value: stats.present, fill: 'var(--chart-success)' },
+    { name: 'Absent', value: stats.absent, fill: 'var(--chart-danger)' },
+    { name: 'Late', value: stats.late, fill: 'var(--chart-accent)' },
+    { name: 'Leave', value: stats.onLeave, fill: 'var(--chart-info)' },
   ].filter(item => item.value > 0);
-
-  const percentagePresent = stats.total > 0 ? Math.round((stats.present / stats.total) * 100) : 0;
 
   const exportToCSV = () => {
     const headers = ['Employee ID', 'Check-In', 'Check-Out', 'Work Hours', 'Status', 'Late (min)', 'Source'];

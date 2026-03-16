@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, MoreVertical } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 // Column definition for the table
 export interface Column<T> {
@@ -131,7 +131,7 @@ function ResponsiveTable<T>({
     );
   }
 
-  const primaryColumns = columns.filter((c) => c.mobilePriority !== 'hidden');
+  const _primaryColumns = columns.filter((c) => c.mobilePriority !== 'hidden');
   const mobileVisibleColumns = columns.filter(
     (c) => c.mobilePriority === 'primary' || c.mobilePriority === 'secondary'
   );

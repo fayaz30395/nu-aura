@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Download, Calendar, DollarSign } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface PayslipCardProps {
   payslip: Payslip;

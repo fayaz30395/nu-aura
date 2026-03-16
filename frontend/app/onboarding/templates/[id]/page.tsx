@@ -5,17 +5,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
-    Layout,
     ArrowLeft,
     Save,
     Plus,
     Trash2,
-    Settings,
-    MoreVertical,
-    ChevronDown,
-    ChevronUp,
-    CheckCircle2,
-    ClipboardList,
     AlertCircle,
     GripVertical,
     Zap,
@@ -180,7 +173,7 @@ export default function TemplateEditorPage() {
                             <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-600 transition-colors" />
                         </Button>
                         <div>
-                            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] flex items-center gap-3">
+                            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] flex items-center gap-4">
                                 Blueprint <span className="text-primary-600">Editor</span>
                                 <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-indigo-500/20 text-indigo-600">
                                     V1.0
@@ -212,7 +205,7 @@ export default function TemplateEditorPage() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-8 space-y-8">
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Template Title</label>
                                     <Input
                                         className="rounded-2xl bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-primary-500"
@@ -220,7 +213,7 @@ export default function TemplateEditorPage() {
                                         onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, name: e.target.value } : null)}
                                     />
                                 </div>
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Mission Description</label>
                                     <textarea
                                         rows={5}
@@ -266,7 +259,7 @@ export default function TemplateEditorPage() {
                             <CardContent className="p-0">
                                 <div className="divide-y divide-white/20">
                                     <AnimatePresence>
-                                        {tasks.map((task, idx) => (
+                                        {tasks.map((task, _idx) => (
                                             <motion.div
                                                 key={task.id}
                                                 initial={{ opacity: 0, x: 20 }}
@@ -279,7 +272,7 @@ export default function TemplateEditorPage() {
                                                             <GripVertical className="h-4 w-4 text-[var(--text-muted)]" />
                                                         </div>
                                                         <div className="space-y-2 flex-1">
-                                                            <div className="flex items-center gap-3">
+                                                            <div className="flex items-center gap-4">
                                                                 <h4 className="font-black text-[var(--text-primary)] text-lg">{task.taskName}</h4>
                                                                 {task.isMandatory && (
                                                                     <Badge variant="danger" className="rounded-lg px-2 py-0.5 font-black text-[8px] tracking-widest uppercase bg-danger-500 text-white">

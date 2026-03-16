@@ -3,7 +3,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { integrationService } from '@/lib/services/integration.service';
 import {
-  IntegrationStatus,
   SmsTestRequest,
   SmsSendRequest,
   PaymentRequest,

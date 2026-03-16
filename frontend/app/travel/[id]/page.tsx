@@ -32,9 +32,6 @@ import {
   AlertCircle,
   Loader2,
   Edit,
-  Trash2,
-  Send,
-  FileText,
   Plus,
   Receipt,
   User,
@@ -47,7 +44,7 @@ export default function TravelRequestDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showCancelReasonModal, setShowCancelReasonModal] = useState(false);
@@ -72,20 +69,6 @@ export default function TravelRequestDetailsPage() {
   const rejectMutation = useRejectTravelRequest();
   const cancelMutation = useCancelTravelRequest();
   const completeMutation = useCompleteTravelRequest();
-
-  const handleApprove = () => {
-    if (!user?.employeeId || !travelRequest) return;
-
-    approveMutation.mutate(
-      { id: travelRequest.id, approverId: user.employeeId },
-      {
-        onError: (error: unknown) => {
-          console.error('Error approving travel request:', error);
-          toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve travel request');
-        },
-      }
-    );
-  };
 
   const handleReject = () => {
     if (!user?.employeeId || !travelRequest) return;
@@ -276,7 +259,7 @@ export default function TravelRequestDetailsPage() {
               <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
             <div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                   {travelRequest.requestNumber}
                 </h1>
@@ -334,7 +317,7 @@ export default function TravelRequestDetailsPage() {
             {/* Travel Information */}
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)]">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                     <Plane className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                   </div>
@@ -510,7 +493,7 @@ export default function TravelRequestDetailsPage() {
                     <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Special Instructions
                     </h3>
-                    <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-secondary)] p-3 rounded-lg">
+                    <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-secondary)] p-4 rounded-lg">
                       {travelRequest.specialInstructions}
                     </p>
                   </div>
@@ -521,7 +504,7 @@ export default function TravelRequestDetailsPage() {
             {/* Travel Expenses */}
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)] flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
                     <Receipt className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
@@ -601,7 +584,7 @@ export default function TravelRequestDetailsPage() {
           <div className="space-y-6">
             {/* Budget Summary */}
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+              <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                   <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 </div>
@@ -610,7 +593,7 @@ export default function TravelRequestDetailsPage() {
                 </h2>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-[var(--text-secondary)]">
                     Estimated Cost
@@ -667,7 +650,7 @@ export default function TravelRequestDetailsPage() {
 
             {/* Status Timeline */}
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+              <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
                   <Clock className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
                 </div>
@@ -676,7 +659,7 @@ export default function TravelRequestDetailsPage() {
                 </h2>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {travelRequest.submittedDate && (
                   <div>
                     <p className="text-sm text-[var(--text-secondary)]">Submitted On</p>
@@ -701,7 +684,7 @@ export default function TravelRequestDetailsPage() {
                 )}
 
                 {travelRequest.rejectionReason && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <p className="text-sm font-medium text-red-900 dark:text-red-100 mb-1">
                       Rejection Reason
                     </p>
@@ -715,7 +698,7 @@ export default function TravelRequestDetailsPage() {
 
             {/* Employee Info */}
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+              <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                   <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 </div>

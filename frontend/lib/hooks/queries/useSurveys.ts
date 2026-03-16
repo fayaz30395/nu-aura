@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { surveyService } from '@/lib/services/survey.service';
-import type { Survey, SurveyRequest, SurveyStatus } from '@/lib/types/survey';
+import type { SurveyStatus, SurveyRequest } from '@/lib/types/survey';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────
@@ -58,7 +58,7 @@ export function useCreateSurvey() {
 
   return useMutation({
     mutationFn: (data: SurveyRequest) => surveyService.createSurvey(data),
-    onSuccess: (newSurvey) => {
+    onSuccess: (_newSurvey) => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: surveyKeys.lists() });
       notifications.show({

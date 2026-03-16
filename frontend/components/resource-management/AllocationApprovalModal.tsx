@@ -3,15 +3,12 @@
 import React, { useState } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
 import {
   EmployeeCapacity,
   AllocationValidationResult,
   formatAllocationPercentage,
-  ALLOCATION_THRESHOLDS,
 } from '@/lib/types/resource-management';
-import { AlertTriangle, ArrowRight, Briefcase, User, Clock, CheckCircle } from 'lucide-react';
-import { EmployeeCapacityDisplay } from './EmployeeCapacityDisplay';
+import { AlertTriangle, ArrowRight, Briefcase, Clock, CheckCircle } from 'lucide-react';
 
 interface AllocationApprovalModalProps {
   isOpen: boolean;
@@ -50,8 +47,6 @@ export function AllocationApprovalModal({
   const [showReasonInput, setShowReasonInput] = useState(false);
 
   const resultingAllocation = validationResult.resultingAllocation;
-  const overAllocationAmount = resultingAllocation - ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
-
   const handleSubmit = async () => {
     await onSubmitForApproval(reason || undefined);
   };

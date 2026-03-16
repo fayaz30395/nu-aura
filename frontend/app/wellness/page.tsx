@@ -13,7 +13,6 @@ import {
   Brain,
   Users,
   Calendar,
-  TrendingUp,
   Droplets,
   Activity,
   Star,
@@ -164,8 +163,8 @@ export default function WellnessPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border-green-200 dark:border-green-800">
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-500 p-3">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-500 p-4">
                   <Trophy className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -177,8 +176,8 @@ export default function WellnessPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-orange-100 p-3 dark:bg-orange-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-orange-100 p-4 dark:bg-orange-900">
                   <Flame className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                 </div>
                 <div>
@@ -190,8 +189,8 @@ export default function WellnessPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <Star className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -203,8 +202,8 @@ export default function WellnessPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -220,7 +219,7 @@ export default function WellnessPage() {
         <Card>
           <CardContent className="p-4">
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Quick Log</h3>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-4">
               {metricOptions.map((metric) => {
                 const Icon = metric.icon;
                 return (
@@ -285,8 +284,8 @@ export default function WellnessPage() {
                   {programs.map((program) => (
                     <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                       <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div className={`rounded-lg p-3 ${getCategoryColor(program.category)}`}>
+                        <div className="flex items-start gap-4">
+                          <div className={`rounded-lg p-4 ${getCategoryColor(program.category)}`}>
                             {getCategoryIcon(program.category)}
                           </div>
                           <div className="flex-1">
@@ -301,7 +300,7 @@ export default function WellnessPage() {
                             <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                               {program.description || 'Join this wellness program'}
                             </p>
-                            <div className="flex items-center gap-3 mt-3 text-xs text-[var(--text-muted)]">
+                            <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-muted)]">
                               {program.pointsReward && (
                                 <span className="flex items-center gap-1">
                                   <Trophy className="h-3 w-3" />
@@ -398,11 +397,11 @@ export default function WellnessPage() {
                 {leaderboard.length === 0 ? (
                   <p className="text-sm text-[var(--text-muted)]">No data yet</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {leaderboard.map((entry, index) => (
                       <div
                         key={entry.employeeId}
-                        className="flex items-center gap-3 p-2 rounded-lg bg-[var(--bg-secondary)]"
+                        className="flex items-center gap-4 p-2 rounded-lg bg-[var(--bg-secondary)]"
                       >
                         <div className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-500 text-white' :
                             index === 1 ? 'bg-gray-400 text-white' :

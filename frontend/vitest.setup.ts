@@ -25,7 +25,7 @@ vi.mock('next/navigation', () => ({
 
 // Mock next/image
 vi.mock('next/image', () => ({
-  default: (props: any) => {
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
     // eslint-disable-next-line @next/next/no-img-element
     return React.createElement('img', { ...props, alt: props.alt || '' });
   },
@@ -33,7 +33,7 @@ vi.mock('next/image', () => ({
 
 // Mock next/link
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: any) =>
+  default: ({ children, href, ...props }: { children?: React.ReactNode; href?: string; [key: string]: unknown }) =>
     React.createElement('a', { href, ...props }, children),
 }));
 
@@ -43,7 +43,7 @@ class ResizeObserverMock {
   unobserve = vi.fn();
   disconnect = vi.fn();
 }
-global.ResizeObserver = ResizeObserverMock as any;
+global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
 
 // Mock IntersectionObserver
 class IntersectionObserverMock {
@@ -51,7 +51,7 @@ class IntersectionObserverMock {
   unobserve = vi.fn();
   disconnect = vi.fn();
 }
-global.IntersectionObserver = IntersectionObserverMock as any;
+global.IntersectionObserver = IntersectionObserverMock as unknown as typeof IntersectionObserver;
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {

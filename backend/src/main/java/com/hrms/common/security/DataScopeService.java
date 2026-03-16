@@ -278,8 +278,12 @@ public class DataScopeService {
     private void tryAddPredicate(List<Predicate> predicates, java.util.function.Supplier<Predicate> predicateSupplier) {
         try {
             predicates.add(predicateSupplier.get());
-        } catch (IllegalArgumentException ignored) {
-            // Field doesn't exist on this entity - skip
+        } catch (IllegalArgumentException e) {
+            // Field doesn't exist on this entity — this is expected when a generic
+            // data-scope predicate is applied to an entity that doesn't have the
+            // targeted field (e.g., trying to scope by locationId on a schema-less entity).
+            // Log at DEBUG so issues in predicate configuration are traceable.
+            log.debug("DataScopeService.tryAddPredicate: skipping predicate — {}", e.getMessage());
         }
     }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, Save, Send, AlertCircle, User } from 'lucide-react';
+import { Star, Save, Send, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { FeedbackResponseDetailed } from '@/lib/types/performance-360';
 
@@ -171,8 +171,8 @@ export default function FeedbackResponseForm({
 
     try {
       await onSubmit({ ...formData, isDraft }, isDraft);
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit feedback');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err) || 'Failed to submit feedback');
       setIsSubmitting(false);
     }
   };

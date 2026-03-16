@@ -147,12 +147,6 @@ function decodeJwt(token: string): {
   }
 }
 
-/** @deprecated Use decodeJwt instead */
-function decodeJwtRoles(token: string): { role?: string; roles: string[] } {
-  const { role, roles } = decodeJwt(token);
-  return { role, roles };
-}
-
 /**
  * Check if the path matches any pattern in the list
  */

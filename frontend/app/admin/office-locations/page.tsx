@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { OfficeLocation, OfficeLocationRequest } from '@/lib/services/office-location.service';
@@ -45,7 +45,6 @@ export default function OfficeLocationsPage() {
   const {
     register,
     handleSubmit,
-    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<OfficeLocationFormData>({

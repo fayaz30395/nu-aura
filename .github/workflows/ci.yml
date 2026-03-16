@@ -103,11 +103,11 @@ jobs:
 
       - name: Run ESLint
         working-directory: ./hrms-frontend
-        run: npm run lint || true  # Don't fail on lint warnings initially
+        run: npm run lint
 
       - name: TypeScript check
         working-directory: ./hrms-frontend
-        run: npx tsc --noEmit || true  # Type check without emitting
+        run: npx tsc --noEmit
 
       - name: Build Frontend
         working-directory: ./hrms-frontend

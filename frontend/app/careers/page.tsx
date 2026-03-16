@@ -9,14 +9,11 @@ import {
   Search,
   MapPin,
   Briefcase,
-  Clock,
-  X,
   ChevronLeft,
   ChevronRight,
   Loader2,
   AlertCircle,
   Upload,
-  FileText,
   Send,
   ArrowRight,
 } from 'lucide-react';
@@ -90,7 +87,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
   return (
     <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer group"
           onClick={() => onViewDetails(job)}>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <div>
           <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {job.title}
@@ -197,7 +194,7 @@ const JobDetailModal: React.FC<{
             </h4>
             <ul className="space-y-2">
               {job.responsibilities.map((resp, idx) => (
-                <li key={idx} className="flex gap-3 text-sm text-slate-700 dark:text-slate-300">
+                <li key={idx} className="flex gap-4 text-sm text-slate-700 dark:text-slate-300">
                   <span className="text-primary-600 dark:text-primary-400 font-bold">•</span>
                   {resp}
                 </li>
@@ -212,7 +209,7 @@ const JobDetailModal: React.FC<{
             </h4>
             <ul className="space-y-2">
               {job.requirements.map((req, idx) => (
-                <li key={idx} className="flex gap-3 text-sm text-slate-700 dark:text-slate-300">
+                <li key={idx} className="flex gap-4 text-sm text-slate-700 dark:text-slate-300">
                   <span className="text-primary-600 dark:text-primary-400 font-bold">•</span>
                   {req}
                 </li>
@@ -325,7 +322,7 @@ const ApplicationModal: React.FC<{
 
       <ModalBody>
         {submitStatus !== 'idle' && (
-          <div className={`p-4 rounded-lg mb-4 flex gap-3 ${
+          <div className={`p-4 rounded-lg mb-4 flex gap-4 ${
             submitStatus === 'success'
               ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
               : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
@@ -390,7 +387,7 @@ const ApplicationModal: React.FC<{
               />
               <label
                 htmlFor="resume-input"
-                className="flex items-center gap-2 p-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="flex items-center gap-2 p-4 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <Upload className="h-5 w-5 text-slate-500" />
                 <div className="text-sm">

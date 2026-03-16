@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useMemo } from 'react';
 import DOMPurify from 'dompurify';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
 import {
@@ -19,7 +19,6 @@ import {
   X,
   Menu,
 } from 'lucide-react';
-import { Course, ModuleContent } from '@/lib/services/lms.service';
 import { useCourseDetail, useMyEnrollments, useUpdateCourseProgress } from '@/lib/hooks/queries/useLearning';
 
 type ContentStatus = 'not_started' | 'in_progress' | 'completed';
@@ -50,13 +49,11 @@ const CONTENT_TYPE_LABEL = {
 
 export default function CoursePlayerPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeContentId, setActiveContentId] = useState<string | null>(null);
   const [contentStatus, setContentStatus] = useState<ContentState>({});
   const [showCompletion, setShowCompletion] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, _setError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoProgressRef = useRef<number>(0);
@@ -228,7 +225,7 @@ export default function CoursePlayerPage() {
           <div className="flex flex-col gap-4">
             {activeContent.documentUrl ? (
               <div className="bg-white rounded-lg border border-[var(--border-main)] overflow-hidden">
-                <div className="flex items-center justify-between p-3 border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
+                <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
                   <span className="text-sm font-medium text-[var(--text-primary)]">{activeContent.title}</span>
                   <a
                     href={activeContent.documentUrl}
@@ -361,7 +358,7 @@ export default function CoursePlayerPage() {
       <div className="flex flex-col h-screen bg-[var(--bg-surface)] overflow-hidden">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-[var(--border-main)] shrink-0 z-10">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Link href="/learning" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
             <X className="h-5 w-5" />
           </Link>
@@ -440,7 +437,7 @@ export default function CoursePlayerPage() {
                       <button
                         key={content.id}
                         onClick={() => navigateTo(content.id)}
-                        className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors border-b border-gray-50 ${
+                        className={`w-full flex items-start gap-4 px-4 py-3 text-left transition-colors border-b border-gray-50 ${
                           isActive
                             ? 'bg-blue-50 border-l-2 border-l-blue-600'
                             : 'hover:bg-[var(--bg-surface)]'
@@ -520,7 +517,7 @@ export default function CoursePlayerPage() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)] gap-3">
+            <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)] gap-4">
               <BookOpen className="h-16 w-16 opacity-20" />
               <p>Select content to begin learning</p>
             </div>

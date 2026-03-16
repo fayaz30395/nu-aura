@@ -16,7 +16,6 @@ import {
   BarChart3,
   FileText,
   Send,
-  AlertTriangle,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -62,7 +61,7 @@ const statusOptions = [
   { value: SurveyStatus.ARCHIVED, label: 'Archived' },
 ];
 
-const getStatusColor = (status: SurveyStatus) => {
+const _getStatusColor = (status: SurveyStatus) => {
   switch (status) {
     case SurveyStatus.DRAFT:
       return 'default';
@@ -248,8 +247,8 @@ export default function SurveysPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <ClipboardList className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -261,8 +260,8 @@ export default function SurveysPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -274,8 +273,8 @@ export default function SurveysPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-[var(--bg-surface)] p-3 dark:bg-[var(--bg-secondary)]">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-[var(--bg-surface)] p-4 dark:bg-[var(--bg-secondary)]">
                   <FileText className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
@@ -287,8 +286,8 @@ export default function SurveysPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <CheckCircle className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -300,8 +299,8 @@ export default function SurveysPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Users className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>

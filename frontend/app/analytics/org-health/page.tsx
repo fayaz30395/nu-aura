@@ -1,15 +1,13 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     Activity,
     Users,
     TrendingUp,
     Award,
     PieChart as PieChartIcon,
-    Search,
-    Filter,
     Download,
     RefreshCw,
     AlertCircle,
@@ -17,13 +15,10 @@ import {
     ShieldCheck,
     Zap,
     Clock,
-    Briefcase
 } from 'lucide-react';
 import {
     BarChart,
     Bar,
-    LineChart,
-    Line,
     PieChart,
     Pie,
     Cell,
@@ -39,7 +34,6 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useOrganizationHealth } from '@/lib/hooks/queries/useAnalytics';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { chartColors } from '@/lib/utils/theme-colors';
 
 const COLORS = chartColors.palette();
@@ -80,7 +74,7 @@ export default function OrganizationHealthPage() {
                         <h1 className="text-3xl font-bold text-[var(--text-primary)]">Organization Health</h1>
                         <p className="text-[var(--text-secondary)] mt-1">Executive summary of workforce vitality and performance</p>
                     </motion.div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4" />}>
                             Refresh Data
                         </Button>

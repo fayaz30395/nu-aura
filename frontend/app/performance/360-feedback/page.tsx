@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Plus,
   Pencil,
@@ -21,7 +21,6 @@ import { AppLayout } from '@/components/layout';
 import {
   Feedback360Cycle,
   Feedback360Request,
-  Feedback360Summary,
   CycleRequest,
   FeedbackResponse,
 } from '@/lib/services/feedback360.service';
@@ -30,12 +29,9 @@ import {
   useMyPending360Reviews,
   useMyFeedback360Summaries,
 } from '@/lib/hooks/queries/usePerformance';
-import { useQueryClient } from '@tanstack/react-query';
 import { feedback360Service } from '@/lib/services/feedback360.service';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
-const CYCLE_STATUSES = ['DRAFT', 'ACTIVE', 'NOMINATION', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'] as const;
-const REVIEWER_TYPES = ['SELF', 'MANAGER', 'PEER', 'DIRECT_REPORT', 'EXTERNAL'] as const;
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -94,7 +90,6 @@ export default function Feedback360Page() {
   const [activeTab, setActiveTab] = useState<'cycles' | 'pending' | 'summaries'>('cycles');
 
   // React Query hooks
-  const queryClient = useQueryClient();
   const { data: cyclesData, isLoading: cyclesLoading, refetch: refetchCycles } = useActiveFeedback360Cycles();
   const { data: pendingData, isLoading: pendingLoading, refetch: refetchPending } = useMyPending360Reviews();
   const { data: summariesData, isLoading: summariesLoading, refetch: refetchSummaries } = useMyFeedback360Summaries();
@@ -113,7 +108,7 @@ export default function Feedback360Page() {
 
   const [showCycleModal, setShowCycleModal] = useState(false);
   const [showResponseModal, setShowResponseModal] = useState(false);
-  const [editingCycle, setEditingCycle] = useState<Feedback360Cycle | null>(null);
+  const [, setEditingCycle] = useState<Feedback360Cycle | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<Feedback360Request | null>(null);
   const [activateConfirm, setActivateConfirm] = useState<string | null>(null);
   const [closeConfirm, setCloseConfirm] = useState<string | null>(null);
@@ -650,7 +645,7 @@ export default function Feedback360Page() {
 
                   {/* Strengths & Improvements */}
                   {(summary.consolidatedStrengths || summary.consolidatedImprovements) && (
-                    <div className="space-y-3 border-t border-[var(--border-subtle)] pt-4">
+                    <div className="space-y-4 border-t border-[var(--border-subtle)] pt-4">
                       {summary.consolidatedStrengths && (
                         <div>
                           <h4 className="text-xs font-medium text-green-600 mb-1">Strengths</h4>
@@ -841,7 +836,7 @@ export default function Feedback360Page() {
                   />
                 </div>
               </div>
-              <div className="space-y-3 border-t border-[var(--border-main)] pt-4">
+              <div className="space-y-4 border-t border-[var(--border-main)] pt-4">
                 <h4 className="text-sm font-medium text-[var(--text-primary)]">Review Types</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex items-center">
@@ -904,7 +899,7 @@ export default function Feedback360Page() {
                 </label>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-4">
               <button
                 onClick={() => {
                   setShowCycleModal(false);

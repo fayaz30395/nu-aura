@@ -17,13 +17,12 @@ import {
     Menu,
     Container,
     Modal,
-    TextInput,
     Select,
     NumberInput,
     Textarea,
     Stack,
 } from '@mantine/core';
-import { IconPlus, IconDotsVertical, IconFileText, IconCheck, IconX, IconEye } from '@tabler/icons-react';
+import { IconPlus, IconDotsVertical, IconCheck, IconEye } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { TaxDeclarationResponse, DeclarationStatus, TaxRegimeType } from '@/lib/types/tax';
 import { useTaxDeclarations, useCreateTaxDeclaration } from '@/lib/hooks/queries/useTax';
@@ -51,7 +50,7 @@ export default function TaxDeclarationsPage() {
     const [modalOpen, setModalOpen] = useState(false);
 
     // Fetch declarations using React Query
-    const { data, isLoading, error } = useTaxDeclarations(0, 20);
+    const { data, isLoading } = useTaxDeclarations(0, 20);
     const createMutation = useCreateTaxDeclaration();
 
     // React Hook Form setup
@@ -60,7 +59,6 @@ export default function TaxDeclarationsPage() {
         handleSubmit,
         reset,
         formState: { errors, isSubmitting },
-        watch,
     } = useForm<TaxDeclarationFormData>({
         resolver: zodResolver(taxDeclarationSchema),
         defaultValues: {

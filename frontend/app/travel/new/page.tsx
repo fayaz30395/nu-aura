@@ -10,17 +10,13 @@ import {
   Plane,
   ArrowLeft,
   MapPin,
-  Calendar,
   DollarSign,
   Briefcase,
   Hotel,
-  Car,
   AlertCircle,
   Loader2,
   Save,
   Send,
-  Train,
-  Bus,
 } from 'lucide-react';
 
 export default function NewTravelRequestPage() {
@@ -190,7 +186,7 @@ export default function NewTravelRequestPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+          <div className="flex items-center gap-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
             <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
@@ -200,7 +196,7 @@ export default function NewTravelRequestPage() {
         <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
           {/* Travel Type & Purpose */}
           <div className="p-6 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+            <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                 <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               </div>
@@ -275,7 +271,7 @@ export default function NewTravelRequestPage() {
 
           {/* Journey Details */}
           <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+            <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
                 <MapPin className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
@@ -401,7 +397,7 @@ export default function NewTravelRequestPage() {
 
           {/* Transport Details */}
           <div className="p-6 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+            <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
                 <Plane className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
               </div>
@@ -469,7 +465,7 @@ export default function NewTravelRequestPage() {
 
           {/* Accommodation */}
           <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+            <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Hotel className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
@@ -555,7 +551,7 @@ export default function NewTravelRequestPage() {
 
           {/* Budget */}
           <div className="p-6 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
+            <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                 <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>

@@ -146,7 +146,7 @@ export default function CalendarPage() {
   const todayEvents = events.filter(
     (e) => new Date(e.startTime).toDateString() === new Date().toDateString()
   );
-  const upcomingEvents = events
+  const _upcomingEvents = events
     .filter((e) => new Date(e.startTime) > new Date())
     .slice(0, 5);
 
@@ -233,19 +233,19 @@ export default function CalendarPage() {
         {/* Today's Events */}
         {todayEvents.length > 0 && (
           <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-4 mb-4">
               <CalendarDays className="h-6 w-6" />
               <h2 className="text-lg font-semibold">Today&apos;s Events</h2>
               <span className="ml-auto px-2.5 py-0.5 bg-white/20 rounded-full text-sm">
                 {todayEvents.length} events
               </span>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {todayEvents.slice(0, 3).map((event) => (
                 <div
                   key={event.id}
                   onClick={() => router.push(`/calendar/${event.id}`)}
-                  className="flex items-center gap-4 p-3 bg-white/10 rounded-xl cursor-pointer hover:bg-white/20 transition-colors"
+                  className="flex items-center gap-4 p-4 bg-white/10 rounded-xl cursor-pointer hover:bg-white/20 transition-colors"
                 >
                   <div className="text-center min-w-[50px]">
                     <p className="text-sm opacity-80">
@@ -334,7 +334,7 @@ export default function CalendarPage() {
                           <p className="font-medium text-[var(--text-primary)]">
                             {event.title}
                           </p>
-                          <div className="flex items-center gap-3 mt-1">
+                          <div className="flex items-center gap-4 mt-1">
                             <span className="text-xs text-[var(--text-muted)]">
                               {calendarService.getEventTypeLabel(event.eventType)}
                             </span>
@@ -381,7 +381,7 @@ export default function CalendarPage() {
             className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
@@ -399,7 +399,7 @@ export default function CalendarPage() {
             className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 group-hover:scale-110 transition-transform">
                 <Video className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />

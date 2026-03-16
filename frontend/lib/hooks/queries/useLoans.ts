@@ -3,11 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { loanService } from '@/lib/services/loan.service';
 import {
-  EmployeeLoan,
   CreateLoanRequest,
   LoanFilters,
-  LoanSummary,
-  Page,
 } from '@/lib/types/loan';
 
 // Query keys for cache management

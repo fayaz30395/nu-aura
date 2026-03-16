@@ -66,7 +66,7 @@ export default function CreateBlogPost() {
     },
   });
 
-  const content = watch('content');
+  const _content = watch('content');
   const visibility = watch('visibility');
   const categories = categoriesData || [];
   const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);

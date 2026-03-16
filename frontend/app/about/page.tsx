@@ -13,7 +13,6 @@ import {
   Award,
   Rocket,
   Shield,
-  Code,
   ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -83,7 +82,7 @@ export default function AboutPage() {
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link href="/careers">
                 <Button variant="ghost" size="sm">
                   Careers
@@ -107,7 +106,7 @@ export default function AboutPage() {
             Building the future of HR technology
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
-            We're on a mission to make HR management effortless, empowering companies to focus on what matters most—their people.
+            We&apos;re on a mission to make HR management effortless, empowering companies to focus on what matters most—their people.
           </p>
         </div>
       </section>
@@ -142,7 +141,7 @@ export default function AboutPage() {
                     Our Vision
                   </h3>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
-                    To become the world's most trusted HR platform, enabling every organization to build thriving workplaces where people and businesses grow together.
+                    To become the world&apos;s most trusted HR platform, enabling every organization to build thriving workplaces where people and businesses grow together.
                   </p>
                 </div>
               </div>
@@ -259,7 +258,7 @@ export default function AboutPage() {
             Join our growing team
           </h2>
           <p className="text-lg text-[var(--text-secondary)] mb-8">
-            We're always looking for talented people who share our passion for building great products
+            We&apos;re always looking for talented people who share our passion for building great products
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/careers">

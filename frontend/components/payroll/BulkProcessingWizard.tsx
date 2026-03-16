@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
 import { employeeService } from '@/lib/services/employee.service';
 import { payrollService } from '@/lib/services/payroll.service';
 import { Employee } from '@/lib/types/employee';
@@ -112,7 +110,7 @@ export const BulkProcessingWizard: React.FC = () => {
       setPreviewData(data);
       setCurrentStep(3);
     } catch (err: unknown) {
-      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
       setError(message || 'Failed to load preview');
     } finally {
       setLoading(false);
@@ -137,7 +135,7 @@ export const BulkProcessingWizard: React.FC = () => {
       setProcessingStatus('completed');
       setCurrentStep(4);
     } catch (err: unknown) {
-      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
       setError(message || 'Failed to process payroll');
       setProcessingStatus('failed');
     } finally {

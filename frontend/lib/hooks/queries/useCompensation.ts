@@ -3,14 +3,10 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { compensationService } from '@/lib/services/compensation.service';
 import type {
-  CompensationReviewCycle,
-  SalaryRevision,
-  CompensationStatistics,
   CompensationCycleRequest,
   SalaryRevisionRequest,
   CycleStatus,
 } from '@/lib/types/compensation';
-import type { PaginatedResponse } from '@/lib/types/common';
 
 // Query keys for cache management
 export const compensationKeys = {

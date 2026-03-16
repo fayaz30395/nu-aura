@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
@@ -17,7 +17,6 @@ import {
   useApprovalInboxCount,
   useApproveExecution,
   useRejectExecution,
-  MODULE_MAP,
   useCreateDelegation,
   useMyDelegations,
 } from '@/lib/hooks/queries/useApprovals';
@@ -342,8 +341,8 @@ export default function ApprovalInboxPage() {
         </div>
 
         {/* Filters Row */}
-        <div className="flex flex-col gap-3 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900/40 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900/40 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap items-center gap-4">
             {/* Status toggle */}
             <div className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
               <button
@@ -425,7 +424,7 @@ export default function ApprovalInboxPage() {
           <>
             <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
               {/* List */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {items.map((item) => (
                   <InboxListItem
                     key={item.id}
@@ -464,7 +463,7 @@ export default function ApprovalInboxPage() {
                     )}
 
                     {selectedItem.status === 'PENDING' && (
-                      <div className="mt-4 flex gap-3">
+                      <div className="mt-4 flex gap-4">
                         <Button
                           variant="outline"
                           className="flex-1 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400"
@@ -554,7 +553,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
             />
           </div>
@@ -598,7 +597,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being rejected…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
             />
           </div>
@@ -699,7 +698,7 @@ export default function ApprovalInboxPage() {
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-white p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
                 rows={3}
               />
             </div>
@@ -773,7 +772,7 @@ function InboxListItem({
       className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary-500' : ''}`}
       onClick={onClick}
     >
-      <CardContent className="flex items-start gap-3 p-4">
+      <CardContent className="flex items-start gap-4 p-4">
         {/* Avatar */}
         <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
           {getInitials(item.requesterName)}

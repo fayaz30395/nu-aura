@@ -244,7 +244,7 @@ class LmsService {
     return response.data;
   }
 
-  async getAdminDashboard(): Promise<any> {
+  async getAdminDashboard(): Promise<unknown> {
     const response = await apiClient.get('/lms/admin/dashboard');
     return response.data;
   }

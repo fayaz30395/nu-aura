@@ -114,7 +114,7 @@ export interface CustomFieldValue {
   entityType: EntityType;
   entityId: string;
   value: string;
-  rawValue: any;
+  rawValue: unknown;
   fileValue?: string;
   fileName?: string;
   fileSize?: number;

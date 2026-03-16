@@ -2,13 +2,13 @@
 
 import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout';
-import { RefreshCw, AlertTriangle, ChevronLeft, ChevronRight, Info } from 'lucide-react';
+import { RefreshCw, AlertTriangle, Info } from 'lucide-react';
 import {
   ResourceManagementApiError,
 } from '@/lib/services/resource-management.service';
 import { EmployeeWorkload } from '@/lib/types/resource-management';
 import { useWorkloadDashboard } from '@/lib/hooks/queries/useResources';
-import { format, addWeeks, subWeeks, startOfWeek, endOfWeek, addDays, isSameMonth } from 'date-fns';
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -59,7 +59,7 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
           {/* Project bands */}
           {bands.length > 0 ? (
             <div className="absolute inset-0 flex">
-              {bands.map((band, idx) => (
+              {bands.map((band, _idx) => (
                 <div
                   key={band.projectId}
                   className="h-full flex items-center justify-center text-white text-xs font-semibold overflow-hidden"
@@ -143,7 +143,8 @@ export default function CapacityTimelinePage() {
   const isApiUnavailable = (error instanceof Error &&
     (error as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
 
-  const employees: EmployeeWorkload[] = data?.employeeWorkloads || [];
+  // Stable reference: prevents departments + filtered useMemo hooks from re-running every render.
+  const employees = useMemo<EmployeeWorkload[]>(() => data?.employeeWorkloads ?? [], [data]);
 
   const departments = useMemo(() => {
     const s = new Set(employees.map(e => e.departmentName).filter(Boolean));
@@ -251,7 +252,7 @@ export default function CapacityTimelinePage() {
 
         {/* Stats */}
         {!isLoading && sorted.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-3">
               <p className="text-2xl font-bold text-[var(--text-primary)]">{sorted.length}</p>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">Employees shown</p>
@@ -272,7 +273,7 @@ export default function CapacityTimelinePage() {
         )}
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-4">
           <input
             type="text"
             placeholder="Search employee..."

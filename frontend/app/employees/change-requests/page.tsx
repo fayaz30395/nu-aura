@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AppLayout } from '@/components/layout';
 import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
 import {
-  EmploymentChangeRequest,
   ChangeRequestStatus,
   ChangeType,
 } from '@/lib/types/employment-change-request';
@@ -247,7 +246,7 @@ export default function EmploymentChangeRequestsPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {getChangeTypeBadge(request.changeType)}
                       {getStatusBadge(request.status)}
                       {expandedId === request.id ? (
@@ -317,7 +316,7 @@ export default function EmploymentChangeRequestsPage() {
                         <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
                           Request Details
                         </h4>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           {request.reason && (
                             <div>
                               <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
@@ -372,7 +371,7 @@ export default function EmploymentChangeRequestsPage() {
 
                     {/* Actions */}
                     {request.status === 'PENDING' && (
-                      <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <div className="flex gap-4 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <button
                           onClick={() => setApproveConfirm(request.id)}
                           disabled={approveMutation.isPending || rejectMutation.isPending}
@@ -414,7 +413,7 @@ export default function EmploymentChangeRequestsPage() {
               rows={4}
               className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 text-slate-900 dark:text-white"
             />
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-4 mt-4">
               <button
                 onClick={() => {
                   setShowRejectModal(null);

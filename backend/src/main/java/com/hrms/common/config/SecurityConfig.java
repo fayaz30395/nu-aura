@@ -77,7 +77,26 @@ public class SecurityConfig {
                         .frameOptions(frame -> frame.deny())
                         .contentSecurityPolicy(
                                 csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"))
-                        .xssProtection(xss -> xss.disable()))
+                        .xssProtection(xss -> xss.disable())
+                        // Enforce HTTPS for 1 year (Strict-Transport-Security)
+                        // Only effective over HTTPS; browsers ignore HSTS over plain HTTP.
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .maxAgeInSeconds(31536000)
+                                .includeSubDomains(true)
+                                .preload(false))
+                        // Prevent MIME-type sniffing (X-Content-Type-Options: nosniff)
+                        .contentTypeOptions(contentTypeOptions -> {
+                        })
+                        // Limit referrer information sent in cross-origin requests.
+                        // 'strict-origin-when-cross-origin' sends the full URL for same-origin
+                        // requests and only the origin for cross-origin HTTPS→HTTPS requests.
+                        // This prevents internal API path details leaking to third-party servers.
+                        .referrerPolicy(referrer -> referrer
+                                .policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        // Restrict browser feature permissions (camera, microphone, geolocation, etc.)
+                        // An HRMS API server has no need to grant these capabilities to callers.
+                        .permissionsPolicy(permissions -> permissions
+                                .policy("camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()")))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -158,7 +177,19 @@ public class SecurityConfig {
         patterns.add("http://localhost:*");
         configuration.setAllowedOriginPatterns(patterns);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // Enumerate required headers explicitly rather than using "*".
+        // Wildcards bypass security review and could allow future abuse if an
+        // attacker finds a way to influence header names.
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "X-Tenant-ID",
+                "X-Requested-With",
+                "X-XSRF-TOKEN",
+                "Cache-Control",
+                "Origin"
+        ));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "X-Tenant-ID"));
         configuration.setAllowCredentials(true);
 

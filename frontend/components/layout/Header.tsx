@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   Bell,
   ChevronDown,
@@ -17,7 +17,6 @@ import {
   Calendar,
   Video,
   ExternalLink,
-  RefreshCw,
   Loader2,
   Clock,
   MapPin,
@@ -42,8 +41,7 @@ import {
   useMarkNotificationAsRead,
   useMarkAllNotificationsAsRead,
 } from '@/lib/hooks/queries/useNotifications';
-import type { Notification as PersistedNotification } from '@/lib/types/notifications';
-import { Check, X, Info, FileText, DollarSign, ClipboardCheck, Megaphone, Gift, Award, Shield } from 'lucide-react';
+import { X, Info, FileText, DollarSign, ClipboardCheck, Megaphone, Gift, Award, Shield } from 'lucide-react';
 import { getGoogleToken } from '@/lib/utils/googleToken';
 import { Button } from '@/components/ui/Button';
 import { getNotificationRoute } from '@/lib/utils/notificationRoutes';
@@ -107,14 +105,13 @@ const Header: React.FC<HeaderProps> = ({
   userName = 'John Doe',
   userAvatar,
   userRole = 'Employee',
-  notificationCount = 0,
+  notificationCount: _notificationCount = 0,
   onLogout,
   onProfile,
   onSettings,
   className,
 }) => {
   const router = useRouter();
-  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { unreadCount: wsUnreadCount, notifications: wsNotifications, markAsRead: wsMarkAsRead, markAllAsRead: wsMarkAllAsRead } = useWebSocket();
@@ -127,7 +124,7 @@ const Header: React.FC<HeaderProps> = ({
   const markAllReadMutation = useMarkAllNotificationsAsRead();
 
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [, setMounted] = useState(false);
 
   // Google Notifications State
   const [googleNotifications, setGoogleNotifications] = useState<GoogleNotification[]>([]);
@@ -1179,10 +1176,14 @@ const Header: React.FC<HeaderProps> = ({
             <div className="bg-surface-100 dark:bg-surface-800">
               {selectedFile.driveFile.mimeType?.startsWith('image/') ? (
                 <div className="flex items-center justify-center p-4 max-h-[60vh] overflow-hidden">
-                  <img
+                  <Image
                     src={`https://drive.google.com/uc?id=${selectedFile.driveFile.id}`}
                     alt={selectedFile.driveFile.name}
+                    width={800}
+                    height={600}
                     className="max-w-full max-h-[55vh] object-contain rounded-lg"
+                    style={{ width: '100%', height: 'auto' }}
+                    unoptimized
                   />
                 </div>
               ) : (

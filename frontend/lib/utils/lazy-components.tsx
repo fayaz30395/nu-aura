@@ -31,7 +31,7 @@ const ChartLoadingFallback = () => (
 /**
  * Table loading skeleton
  */
-const TableLoadingFallback = () => (
+const _TableLoadingFallback = () => (
   <div className="space-y-3 p-4">
     <Skeleton className="h-10 w-full" />
     <Skeleton className="h-8 w-full" />
@@ -44,7 +44,7 @@ const TableLoadingFallback = () => (
 /**
  * Create a lazy-loaded component with custom loading fallback
  */
-export function createLazyComponent<T extends ComponentType<any>>(
+export function createLazyComponent<T extends ComponentType<object>>(
   importFn: () => Promise<{ default: T }>,
   LoadingComponent: ReactNode = <DefaultLoadingFallback />
 ) {

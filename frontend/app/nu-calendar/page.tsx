@@ -18,8 +18,6 @@ import {
   Loader2,
   ExternalLink,
   Trash2,
-  Edit3,
-  Check,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
@@ -73,10 +71,10 @@ type ViewMode = 'month' | 'week' | 'day' | 'agenda';
 
 function CalendarContent() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [calendars, setCalendars] = useState<CalendarList[]>([]);
+  const [, setCalendars] = useState<CalendarList[]>([]);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -146,6 +144,10 @@ function CalendarContent() {
     } else {
       setIsLoading(false);
     }
+    // loadCalendars and loadEvents are intentionally omitted: they take a token
+    // parameter (not React state), and including them without useCallback would
+    // cause an infinite re-render loop on every token/state update.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated, isAuthenticated, router]);
 
   const loadCalendars = async (token: string) => {
@@ -338,7 +340,6 @@ function CalendarContent() {
     const month = currentDate.getMonth();
 
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
 
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
@@ -373,7 +374,6 @@ function CalendarContent() {
 
   const formatEventDate = (event: CalendarEvent) => {
     const startDate = event.start.dateTime || event.start.date;
-    const endDate = event.end.dateTime || event.end.date;
     if (!startDate) return '';
 
     const start = new Date(startDate);
@@ -446,7 +446,7 @@ function CalendarContent() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
               <CalendarIcon className="h-6 w-6 text-white" />
             </div>
@@ -497,7 +497,7 @@ function CalendarContent() {
         {error && (
           <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30">
             <CardContent className="py-4">
-              <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-4 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
                 <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
@@ -590,7 +590,7 @@ function CalendarContent() {
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                       <div
                         key={day}
-                        className="p-3 text-center text-sm font-medium text-[var(--text-muted)]"
+                        className="p-4 text-center text-sm font-medium text-[var(--text-muted)]"
                       >
                         {day}
                       </div>
@@ -739,7 +739,7 @@ function CalendarContent() {
                 <h3 className="font-semibold text-[var(--text-primary)] mb-4">
                   Upcoming Events
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {events.slice(0, 5).map((event) => (
                     <div
                       key={event.id}
@@ -747,7 +747,7 @@ function CalendarContent() {
                         setSelectedEvent(event);
                         setShowEventModal(true);
                       }}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors"
                     >
                       <div className={`w-2 h-10 rounded-full ${getEventColor(event)}`} />
                       <div className="flex-1 min-w-0">

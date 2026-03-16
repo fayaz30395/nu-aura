@@ -9,7 +9,7 @@ import { Send, BarChart3, Award, X, Plus, Image, Smile, Paperclip } from 'lucide
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { CreatePostRequest, PostType, PostVisibility } from '@/lib/services/wall.service';
+import { CreatePostRequest, PostType } from '@/lib/services/wall.service';
 import { cn } from '@/lib/utils';
 
 // ==================== Zod Schemas ====================
@@ -69,7 +69,7 @@ interface PostComposerProps {
 // ==================== Component ====================
 
 export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): React.ReactElement {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [activeTab, setActiveTab] = useState<PostType>('POST');
 
   // Initialize forms for each tab

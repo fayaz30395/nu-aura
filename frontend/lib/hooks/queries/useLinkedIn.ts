@@ -1,9 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { linkedinService, PagedResponse } from '@/lib/services/linkedin.service';
+import { linkedinService } from '@/lib/services/linkedin.service';
 import {
-  LinkedInPost,
   CreateLinkedInPostRequest,
   UpdateLinkedInPostRequest,
 } from '@/lib/types/linkedin';

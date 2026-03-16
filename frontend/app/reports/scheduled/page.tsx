@@ -5,14 +5,11 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { Department } from '@/lib/types/employee';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import {
   ScheduledReport,
   ScheduledReportRequest,
-  Frequency,
   ReportType,
-  ExportFormat,
   REPORT_TYPE_LABELS,
   FREQUENCY_LABELS,
   DAY_OF_WEEK_LABELS,
@@ -23,7 +20,6 @@ import {
   Edit,
   Trash2,
   Clock,
-  Calendar,
   Mail,
   Play,
   Pause,
@@ -317,7 +313,7 @@ export default function ScheduledReportsPage() {
                   }`}
                 >
                   <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-4">
                       <div className={`p-2 rounded-lg ${colorClass}`}>
                         <IconComponent className="h-5 w-5" />
                       </div>
@@ -341,7 +337,7 @@ export default function ScheduledReportsPage() {
                     </button>
                   </div>
 
-                  <div className="space-y-3 mb-4">
+                  <div className="space-y-4 mb-4">
                     <div className="flex items-center gap-2 text-sm">
                       <Clock className="h-4 w-4 text-[var(--text-muted)]" />
                       <span className="text-[var(--text-secondary)]">

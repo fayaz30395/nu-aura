@@ -2,8 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { AlertCircle, RefreshCw } from 'lucide-react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
@@ -34,7 +33,7 @@ export default function ApplyLeavePage() {
   const { data: balances = [] } = useEmployeeBalancesForYear(user?.employeeId || '', year, Boolean(hasHydrated && user?.employeeId));
   const createLeaveRequest = useCreateLeaveRequest();
 
-  const { register, handleSubmit, watch, control, formState: { errors, isSubmitting }, reset } = useForm<LeaveFormData>({
+  const { register, handleSubmit, watch, formState: { errors, isSubmitting }, reset } = useForm<LeaveFormData>({
     resolver: zodResolver(leaveFormSchema),
     defaultValues: {
       leaveTypeId: '',
@@ -47,7 +46,6 @@ export default function ApplyLeavePage() {
     },
   });
 
-  const dataLoading = !hasHydrated;
   const startDate = watch('startDate');
   const endDate = watch('endDate');
   const isHalfDay = watch('isHalfDay');

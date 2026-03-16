@@ -24,7 +24,7 @@ export default function LeaveApprovalsPage() {
   const approveLeaveRequest = useApproveLeaveRequest();
   const rejectLeaveRequest = useRejectLeaveRequest();
   const [error, setError] = useState<string | null>(null);
-  const [processing, setProcessing] = useState<string | null>(null);
+  const [_processing, _setProcessing] = useState<string | null>(null);
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
   const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
@@ -32,8 +32,9 @@ export default function LeaveApprovalsPage() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const requests = pendingData?.content ?? [];
-  const employees = employeeData?.content ?? [];
+  const requests = useMemo(() => pendingData?.content ?? [], [pendingData]);
+  // Stable reference: prevents employeeMap useMemo from re-running on every render.
+  const employees = useMemo(() => employeeData?.content ?? [], [employeeData]);
 
   // Build employee name map
   const employeeMap = useMemo(() => {
@@ -116,7 +117,7 @@ export default function LeaveApprovalsPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
+          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-4">
             <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
@@ -152,7 +153,7 @@ export default function LeaveApprovalsPage() {
         <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
           {!pendingData ? (
             <div className="px-6 py-12 text-center">
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-4">
                 <div className="w-8 h-8 border-4 border-primary-200 dark:border-primary-900/30 border-t-primary-500 rounded-full animate-spin" aria-label="Loading leave requests" />
                 <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>

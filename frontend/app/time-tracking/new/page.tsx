@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { timeTrackingService } from '@/lib/services/time-tracking.service';
 import { CreateTimeEntryRequest, EntryType } from '@/lib/types/time-tracking';
-import { useAuth } from '@/lib/hooks/useAuth';
 import { useCreateTimeEntry, useSubmitTimeEntry } from '@/lib/hooks/queries/useTimeTracking';
 import {
   ArrowLeft,
@@ -19,7 +17,6 @@ import {
 
 export default function NewTimeEntryPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const createMutation = useCreateTimeEntry();
@@ -103,7 +100,7 @@ export default function NewTimeEntryPage() {
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-3">
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-4">
             <AlertCircle className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
           </div>
@@ -215,7 +212,7 @@ export default function NewTimeEntryPage() {
 
           {/* Billable */}
           <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label className="flex items-center gap-4 cursor-pointer">
               <input
                 type="checkbox"
                 checked={formData.isBillable}
@@ -319,7 +316,7 @@ export default function NewTimeEntryPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => router.back()}
             className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"

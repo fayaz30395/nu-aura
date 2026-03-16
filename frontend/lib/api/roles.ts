@@ -7,7 +7,6 @@ import {
   AssignPermissionsRequest,
   AssignPermissionsWithScopeRequest,
   UpdatePermissionScopeRequest,
-  RoleScope
 } from '../types/roles';
 
 export const rolesApi = {

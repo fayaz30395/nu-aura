@@ -3,7 +3,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { spotlightService } from '@/lib/services/spotlight.service';
 import {
-  Spotlight,
   CreateSpotlightRequest,
   UpdateSpotlightRequest,
 } from '@/lib/types/spotlight';

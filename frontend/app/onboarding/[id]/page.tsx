@@ -7,18 +7,12 @@ import {
     ArrowLeft,
     Calendar,
     User,
-    CheckCircle,
-    Clock,
-    FileText,
     HardDrive,
-    ExternalLink,
     UploadCloud,
     Loader2,
     CheckCircle2,
     Circle,
     ShieldCheck,
-    AlertCircle,
-    MoreVertical,
     ChevronDown,
     ChevronUp,
     Zap,
@@ -38,12 +32,10 @@ export default function OnboardingDetailPage() {
   const toast = useToast();
     const router = useRouter();
     const params = useParams();
-    const { user } = useAuth();
+    useAuth();
     const processId = params.id as string;
 
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-    const [error, setError] = useState<string | null>(null);
-
     // Google Drive State
     const [driveToken, setDriveToken] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
@@ -64,6 +56,10 @@ export default function OnboardingDetailPage() {
                 setExpandedCategories([categories[0]]);
             }
         }
+        // expandedCategories.length is intentionally omitted: it is only used as
+        // a guard to prevent re-expanding once categories are already open. Including
+        // it would cause this effect to re-run every time a category is toggled.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tasks]);
 
     const handleTaskStatusUpdate = (taskId: string, newStatus: string) => {
@@ -184,7 +180,7 @@ export default function OnboardingDetailPage() {
                     <div className="flex items-center gap-4">
                         <div className="text-right sr-only md:not-sr-only">
                             <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1">Overall Progress</p>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                                 <div className="w-48 h-3 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden shadow-inner">
                                     <motion.div
                                         initial={{ width: 0 }}
@@ -266,7 +262,7 @@ export default function OnboardingDetailPage() {
                                                                 </div>
                                                             </div>
 
-                                                            <div className="flex items-center gap-3">
+                                                            <div className="flex items-center gap-4">
                                                                 <select
                                                                     value={task.status}
                                                                     onChange={(e) => handleTaskStatusUpdate(task.id, e.target.value)}
@@ -333,7 +329,7 @@ export default function OnboardingDetailPage() {
                                     </Button>
                                 ) : (
                                     <div className="space-y-4">
-                                        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
+                                        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-4">
                                             <ShieldCheck className="h-5 w-5 text-emerald-500" />
                                             <span className="text-xs font-bold text-emerald-600">Drive Connected</span>
                                         </div>

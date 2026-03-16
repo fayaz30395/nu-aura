@@ -7,7 +7,6 @@ import {
   Info,
   RefreshCw,
   AlertTriangle,
-  Filter,
   Search,
   TrendingUp,
   Users,
@@ -15,7 +14,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { usePerformanceAllCycles, useAllReviews, useUpdateReview } from '@/lib/hooks/queries/usePerformance';
-import type { ReviewCycle, PerformanceReview, ReviewRequest } from '@/lib/types/performance';
+import type { ReviewRequest } from '@/lib/types/performance';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
@@ -39,14 +38,6 @@ const RATING_LABELS: Record<number, { label: string; color: string; bg: string }
   3: { label: 'Meets Expectations', color: 'text-yellow-700', bg: 'bg-yellow-100' },
   4: { label: 'Exceeds Expectations', color: 'text-blue-700', bg: 'bg-blue-100' },
   5: { label: 'Outstanding', color: 'text-green-700', bg: 'bg-green-100' },
-};
-
-const TARGET_DISTRIBUTION = {
-  1: 10,  // 10% Needs Improvement
-  2: 15,  // 15% Below Expectations
-  3: 40,  // 40% Meets Expectations
-  4: 25,  // 25% Exceeds Expectations
-  5: 10,  // 10% Outstanding
 };
 
 // ─── Components ────────────────────────────────────────────────────────────────
@@ -74,7 +65,6 @@ function DistributionChart({
 }) {
   const ratings = [1, 2, 3, 4, 5];
   const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-blue-400', 'bg-green-400'];
-  const textColors = ['text-red-600', 'text-orange-600', 'text-yellow-600', 'text-blue-600', 'text-green-600'];
 
   return (
     <div className="space-y-2">
@@ -393,7 +383,7 @@ export default function CalibrationPage() {
               )}
             </div>
             {selectedCycle && (
-              <div className="flex items-center gap-3 md:mt-6">
+              <div className="flex items-center gap-4 md:mt-6">
                 <span
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
                     selectedCycle.status === 'ACTIVE'
@@ -431,9 +421,9 @@ export default function CalibrationPage() {
               </div>
 
               {/* Stats */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                       <Users className="text-blue-600 dark:text-blue-400" size={20} />
                     </div>
@@ -447,7 +437,7 @@ export default function CalibrationPage() {
                 </div>
 
                 <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                       <Target className="text-green-600 dark:text-green-400" size={20} />
                     </div>
@@ -461,7 +451,7 @@ export default function CalibrationPage() {
                 </div>
 
                 <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                       <BarChart3 className="text-purple-600 dark:text-purple-400" size={20} />
                     </div>
@@ -485,7 +475,7 @@ export default function CalibrationPage() {
 
             {/* Bell Curve Warning */}
             {curveWarning && (
-              <div className="flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3">
+              <div className="flex items-start gap-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3">
                 <AlertTriangle
                   size={16}
                   className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5"

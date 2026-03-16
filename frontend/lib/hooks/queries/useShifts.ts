@@ -4,12 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { shiftsApi } from '@/lib/api/shifts';
 import {
-  Shift,
   CreateShiftRequest,
   UpdateShiftRequest,
-  ShiftAssignment,
   CreateShiftAssignmentRequest,
-  PagedResponse,
 } from '@/lib/types/shifts';
 
 // Query key factory

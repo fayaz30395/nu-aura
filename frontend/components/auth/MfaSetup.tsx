@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { logger } from '@/lib/utils/logger';
-import { X, Copy, Check, AlertCircle, Loader2, Shield, Key } from 'lucide-react';
+import { Copy, Check, AlertCircle, Loader2, Shield, Key } from 'lucide-react';
 import { mfaApi } from '@/lib/api/mfa';
 import { Button } from '@/components/ui/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
@@ -41,7 +41,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         setStep('scan');
       } catch (err: unknown) {
         logger.error('Failed to load MFA setup:', err);
-        const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+        const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
         setError(message || 'Failed to load MFA setup. Please try again.');
         setStep('scan');
       }
@@ -71,7 +71,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
       setStep('backup');
     } catch (err: unknown) {
       logger.error('Failed to verify MFA code:', err);
-      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
       setError(message || 'Invalid code. Please try again.');
       setVerificationCode('');
     } finally {

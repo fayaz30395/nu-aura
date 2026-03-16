@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -160,7 +161,7 @@ export default function CourseCatalogPage() {
     <AppLayout>
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Course Catalog</h1>
             <p className="text-[var(--text-muted)] mt-1 text-sm">
@@ -205,7 +206,7 @@ export default function CourseCatalogPage() {
         )}
 
         {/* Filters */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap">
           <div className="relative flex-1 min-w-[220px] max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
             <Input
@@ -238,7 +239,7 @@ export default function CourseCatalogPage() {
             <span>Loading catalog…</span>
           </div>
         ) : visibleCourses.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-3">
+          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-4">
             <GraduationCap className="h-12 w-12 text-gray-300" />
             <p className="text-lg font-medium text-[var(--text-muted)]">No courses found</p>
             {searchQuery && (
@@ -268,10 +269,12 @@ export default function CourseCatalogPage() {
                   {/* Thumbnail placeholder */}
                   <div className="h-36 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
                     {course.thumbnailUrl ? (
-                      <img
+                      <Image
                         src={course.thumbnailUrl}
                         alt={course.title}
-                        className="w-full h-full object-cover rounded-t-lg"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover rounded-t-lg"
                       />
                     ) : (
                       <GraduationCap className="h-12 w-12 text-indigo-300" />
@@ -319,7 +322,7 @@ export default function CourseCatalogPage() {
                     )}
 
                     {/* Meta row */}
-                    <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] mb-4 mt-auto">
+                    <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] mb-4 mt-auto">
                       {course.durationHours && (
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />

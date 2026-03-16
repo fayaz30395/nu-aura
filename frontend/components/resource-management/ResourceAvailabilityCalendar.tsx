@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import {
   EmployeeAvailability,
@@ -11,7 +12,7 @@ import {
   AVAILABILITY_COLORS,
 } from '@/lib/types/resource-management';
 import { format, parseISO, isWeekend, isSameDay } from 'date-fns';
-import { User, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { User } from 'lucide-react';
 
 interface ResourceAvailabilityCalendarProps {
   employees: EmployeeAvailability[];
@@ -167,10 +168,13 @@ function EmployeeRow({
       >
         <div className="flex items-center gap-3">
           {employee.avatarUrl ? (
-            <img
+            <Image
               src={employee.avatarUrl}
               alt={employee.employeeName}
+              width={32}
+              height={32}
               className="h-8 w-8 rounded-full object-cover"
+              unoptimized
             />
           ) : (
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400">
@@ -212,7 +216,7 @@ function EmployeeRow({
  * Single day cell showing availability status
  */
 function AvailabilityCell({
-  date,
+  date: _date,
   availability,
   isWeekend,
   onClick,

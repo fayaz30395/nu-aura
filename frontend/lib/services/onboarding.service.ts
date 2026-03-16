@@ -4,8 +4,6 @@ import {
     OnboardingProcess,
     OnboardingProcessRequest,
     OnboardingStatus,
-    OnboardingUpdateStatusRequest,
-    OnboardingUpdateProgressRequest,
     OnboardingChecklistTemplate,
     OnboardingTemplateTask,
     OnboardingTask

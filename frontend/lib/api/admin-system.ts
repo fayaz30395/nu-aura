@@ -1,7 +1,6 @@
 import { apiClient } from './client';
 import {
   SystemOverview,
-  TenantListItem,
   TenantMetrics,
   ImpersonationToken,
   PaginatedTenantList,

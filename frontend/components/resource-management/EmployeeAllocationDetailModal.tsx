@@ -12,11 +12,9 @@ import {
   Calendar,
   Clock,
   AlertTriangle,
-  CheckCircle,
   TrendingUp,
   History,
   ChevronRight,
-  Building2,
   Percent,
   Pencil,
   X,
@@ -116,7 +114,7 @@ export function EmployeeAllocationDetailModal({
     activeAllocation > 0 ? 'UNDER_UTILIZED' : 'UNASSIGNED';
 
   const statusColor = getAllocationStatusColor(dynamicStatus);
-  const statusLabel = getAllocationStatusLabel(dynamicStatus);
+  const _statusLabel = getAllocationStatusLabel(dynamicStatus);
   const isOverAllocated = activeAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
   const availableCapacity = 100 - activeAllocation; // Can be negative when over-allocated
 

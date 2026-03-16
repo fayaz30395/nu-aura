@@ -1,15 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus, ScopeType, ActivateCycleRequest, ActivateCycleResponse } from '@/lib/types/performance';
-import { OfficeLocation } from '@/lib/services/office-location.service';
-import { Department } from '@/lib/types/employee';
+import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus, ActivateCycleRequest, ActivateCycleResponse } from '@/lib/types/performance';
 import { Play, Users, CheckCircle, Building2, MapPin } from 'lucide-react';
-import { useToast } from '@/components/notifications/ToastProvider';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -39,8 +36,6 @@ import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { useActiveOfficeLocations } from '@/lib/hooks/queries/useOfficeLocations';
 
 export default function ReviewCyclesPage() {
-  const toast = useToast();
-
   // React Query hooks
   const { data: cyclesResponse, isLoading: cyclesLoading } = usePerformanceAllCycles();
   const { data: departmentsData = [] } = useActiveDepartments();
@@ -587,7 +582,7 @@ export default function ReviewCyclesPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-4 mb-6">
                   <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                     <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
@@ -603,7 +598,7 @@ export default function ReviewCyclesPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                       Activation Scope
                     </label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-3 gap-4">
                       <button
                         type="button"
                         onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'ALL', departmentIds: [], locationIds: [] })}
@@ -662,7 +657,7 @@ export default function ReviewCyclesPage() {
                           departments.map((dept) => (
                             <label
                               key={dept.id}
-                              className="flex items-center gap-3 p-3 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
+                              className="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
                             >
                               <input
                                 type="checkbox"
@@ -696,7 +691,7 @@ export default function ReviewCyclesPage() {
                           locations.map((loc) => (
                             <label
                               key={loc.id}
-                              className="flex items-center gap-3 p-3 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
+                              className="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
                             >
                               <input
                                 type="checkbox"
@@ -725,8 +720,8 @@ export default function ReviewCyclesPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                       Review Types to Create
                     </label>
-                    <div className="space-y-3">
-                      <label className="flex items-center gap-3 cursor-pointer">
+                    <div className="space-y-4">
+                      <label className="flex items-center gap-4 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={activateFormData.createSelfReviews}
@@ -738,7 +733,7 @@ export default function ReviewCyclesPage() {
                           <p className="text-xs text-[var(--text-muted)]">Each employee will receive a self-assessment form</p>
                         </div>
                       </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
+                      <label className="flex items-center gap-4 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={activateFormData.createManagerReviews}

@@ -7,8 +7,6 @@ import {
   CheckInRequest,
   CheckOutRequest,
   RegularizationRequest,
-  Shift,
-  Holiday,
   ShiftRequest,
   HolidayRequest,
   Page,

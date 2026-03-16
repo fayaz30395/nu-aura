@@ -6,7 +6,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useContract, useSignatures, useTerminateContract, useMarkAsActive } from '@/lib/hooks/queries/useContracts';
 import { contractService } from '@/lib/services/contract.service';
 import { Button, Badge, Card, Tabs, Table } from '@mantine/core';
-import { ArrowLeft, Download, Send, FileText } from 'lucide-react';
+import { ArrowLeft, Download } from 'lucide-react';
 
 export default function ContractDetailPage() {
   const router = useRouter();

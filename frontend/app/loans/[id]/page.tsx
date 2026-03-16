@@ -2,8 +2,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { EmployeeLoan, LoanStatus } from '@/lib/types/loan';
-import { useAuth } from '@/lib/hooks/useAuth';
+import { LoanStatus } from '@/lib/types/loan';
 import { useLoan } from '@/lib/hooks/queries/useLoans';
 import { loanService } from '@/lib/services/loan.service';
 import {
@@ -14,7 +13,6 @@ import {
   CheckCircle,
   XCircle,
   Wallet,
-  Calendar,
   DollarSign,
   TrendingUp,
   FileText,
@@ -24,7 +22,6 @@ import {
 export default function LoanDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const { isAuthenticated, hasHydrated } = useAuth();
   const loanId = params.id as string;
 
   const { data: loan, isLoading, error } = useLoan(loanId);
@@ -127,7 +124,7 @@ export default function LoanDetailPage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div className="flex-1">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                 Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
               </h1>
@@ -147,7 +144,7 @@ export default function LoanDetailPage() {
         {/* Amount Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
                 <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
@@ -161,7 +158,7 @@ export default function LoanDetailPage() {
           </div>
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
                 <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
@@ -173,7 +170,7 @@ export default function LoanDetailPage() {
           </div>
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
                 <Wallet className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
@@ -324,7 +321,7 @@ export default function LoanDetailPage() {
         {/* Rejection Reason */}
         {loan.status === 'REJECTED' && loan.rejectionReason && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <XCircle className="h-5 w-5 text-red-500" />
               <h3 className="text-lg font-semibold text-red-700 dark:text-red-400">
                 Rejection Reason
@@ -335,7 +332,7 @@ export default function LoanDetailPage() {
         )}
 
         {/* Actions */}
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end gap-4">
           <button
             onClick={() => router.push('/loans')}
             className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"

@@ -12,13 +12,12 @@ import {
   Check,
   Clock,
   Laptop,
-  LogOut,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useMfaStatus, useEnableMfa, useDisableMfa } from '@/lib/hooks/queries/useMfa';
+import { useMfaStatus, useDisableMfa } from '@/lib/hooks/queries/useMfa';
 import { MfaSetup } from '@/components/auth/MfaSetup';
 
 // Zod schema for disable MFA form
@@ -149,7 +148,7 @@ export default function SecuritySettingsPage() {
                     ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800'
                     : 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800'
                 }`}>
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-4">
                     <div className={`p-2 rounded-full ${
                       mfaStatusData.enabled
                         ? 'bg-green-100 dark:bg-green-900/30'
@@ -221,7 +220,7 @@ export default function SecuritySettingsPage() {
               )}
 
               {!isMfaLoading && !isMfaError && mfaStatusData && mfaStatusData.enabled && (
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4">
                   {!showDisableForm ? (
                     <Button
                       onClick={() => setShowDisableForm(true)}
@@ -231,7 +230,7 @@ export default function SecuritySettingsPage() {
                       Disable Two-Factor Authentication
                     </Button>
                   ) : (
-                    <form onSubmit={handleSubmit(handleDisableMfa)} className="space-y-3">
+                    <form onSubmit={handleSubmit(handleDisableMfa)} className="space-y-4">
                       <p className="text-sm text-slate-600 dark:text-slate-400">
                         Enter your current 6-digit authenticator code to disable two-factor authentication:
                       </p>
@@ -250,7 +249,7 @@ export default function SecuritySettingsPage() {
                         })}
                       />
                       {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>}
-                      <div className="flex gap-3">
+                      <div className="flex gap-4">
                         <Button
                           type="button"
                           variant="outline"
@@ -289,7 +288,7 @@ export default function SecuritySettingsPage() {
                 Security Tips
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <div className="text-sm space-y-2 text-slate-600 dark:text-slate-400">
                 <p className="font-medium text-slate-900 dark:text-slate-50">Protect Your Account:</p>
                 <ul className="space-y-2 ml-4">
@@ -317,7 +316,7 @@ export default function SecuritySettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
                   <Laptop className="h-5 w-5 text-blue-600 dark:text-blue-400" />

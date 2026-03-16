@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Globe, Plus, Pause, RefreshCw, ExternalLink, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
+import { Globe, Plus, Pause, ExternalLink, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -171,7 +171,7 @@ export default function JobBoardsPage() {
                 <Card key={posting.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="pt-4">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-4">
                         <div className={`px-2.5 py-1 rounded text-xs font-bold text-white ${bc.color}`}>
                           {bc.logo}
                         </div>
@@ -275,11 +275,11 @@ export default function JobBoardsPage() {
                   <p className="text-xs text-red-500 mt-1">Select at least one board</p>
                 )}
               </div>
-              <p className="text-xs text-[var(--text-muted)] bg-[var(--bg-surface)] p-3 rounded-md">
+              <p className="text-xs text-[var(--text-muted)] bg-[var(--bg-surface)] p-4 rounded-md">
                 <strong>Note:</strong> Naukri requires API credentials configured in settings.
                 Jobs will be posted immediately and expire after 30 days.
               </p>
-              <div className="flex gap-3 justify-end pt-2">
+              <div className="flex gap-4 justify-end pt-2">
                 <Button variant="outline" onClick={() => setShowPostModal(false)}>Cancel</Button>
                 <Button
                   onClick={() => postMutation.mutate()}

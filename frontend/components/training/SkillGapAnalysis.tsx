@@ -3,12 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import {
     Target,
-    ChevronRight,
-    AlertTriangle,
-    CheckCircle,
     ArrowUpRight,
     BookOpen,
-    User,
     Loader2
 } from 'lucide-react';
 import {
@@ -17,7 +13,7 @@ import {
     Button,
     Badge
 } from '@/components/ui';
-import { lmsService, SkillGapReport, GapDetail } from '@/lib/services/lms.service';
+import { lmsService, SkillGapReport } from '@/lib/services/lms.service';
 
 interface SkillGapAnalysisProps {
     employeeId: string;

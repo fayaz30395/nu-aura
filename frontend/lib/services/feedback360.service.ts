@@ -145,7 +145,7 @@ class Feedback360Service {
     await apiClient.post(`/feedback360/summaries/${summaryId}/share`);
   }
 
-  async getDashboard(): Promise<any> {
+  async getDashboard(): Promise<unknown> {
     const response = await apiClient.get('/feedback360/dashboard');
     return response.data;
   }

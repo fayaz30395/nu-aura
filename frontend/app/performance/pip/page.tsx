@@ -2,17 +2,14 @@
 import { AppLayout } from '@/components/layout';
 import { Button } from '@/components/ui/Button';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  ChevronDown,
   Plus,
   Eye,
-  Edit2,
-  Trash2,
   Clock,
   CheckCircle2,
   AlertCircle,
@@ -22,14 +19,12 @@ import {
   FileText,
   TrendingUp,
   Users,
-  BookOpen,
 } from 'lucide-react';
 import type {
   PIPResponse,
   CreatePIPRequest,
   PIPStatus,
   PIPCheckInRequest,
-  PIPCheckInFrequency,
 } from '@/lib/types/performance';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
@@ -124,12 +119,6 @@ async function createPIP(data: CreatePIPRequest): Promise<PIPResponse> {
   return res.json();
 }
 
-async function fetchPIPById(id: string): Promise<PIPResponse> {
-  const res = await fetch(`/api/v1/performance/pip/${id}`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to load PIP');
-  return res.json();
-}
-
 async function addCheckIn(pipId: string, data: PIPCheckInRequest): Promise<PIPResponse> {
   const res = await fetch(`/api/v1/performance/pip/${pipId}/check-in`, {
     method: 'POST',
@@ -208,7 +197,6 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
     },
   });
 
-  const startDate = watch('startDate');
   const endDate = watch('endDate');
 
   const createMutation = useMutation({
@@ -377,7 +365,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-main)]">
+          <div className="flex justify-end gap-4 pt-4 border-t border-[var(--border-main)]">
             <Button
               type="button"
               onClick={onClose}
@@ -429,7 +417,6 @@ function PIPDetailModal({
   const {
     register: registerClose,
     handleSubmit: handleCloseSubmit,
-    watch,
     formState: { errors: closeErrors, isSubmitting: closeSubmitting },
   } = useForm<ClosePIPFormData>({
     resolver: zodResolver(closePIPSchema),
@@ -438,8 +425,6 @@ function PIPDetailModal({
       notes: '',
     },
   });
-
-  const closingStatus = watch('status');
 
   const addCheckInMutation = useMutation({
     mutationFn: (data: CheckInFormData) => addCheckIn(pip!.id, {
@@ -539,7 +524,7 @@ function PIPDetailModal({
           {pip.goals && (
             <div>
               <p className="text-sm font-medium text-[var(--text-secondary)] mb-1.5">Goals & Objectives</p>
-              <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg p-3 text-sm text-[var(--text-secondary)]">
+              <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg p-4 text-sm text-[var(--text-secondary)]">
                 {pip.goals}
               </div>
             </div>
@@ -549,11 +534,11 @@ function PIPDetailModal({
           <div>
             <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Check-ins</h3>
             {pip.checkIns && pip.checkIns.length > 0 ? (
-              <div className="space-y-3 mb-4">
+              <div className="space-y-4 mb-4">
                 {pip.checkIns.map((checkIn, idx) => (
                   <div
                     key={checkIn.id || idx}
-                    className="border border-[var(--border-main)] rounded-lg p-3 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50"
+                    className="border border-[var(--border-main)] rounded-lg p-4 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -578,7 +563,7 @@ function PIPDetailModal({
             )}
 
             {pip.status === 'ACTIVE' && (
-              <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))} className="space-y-3 border-t border-[var(--border-main)] pt-4">
+              <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))} className="space-y-4 border-t border-[var(--border-main)] pt-4">
                 <textarea
                   placeholder="Employee progress notes..."
                   rows={2}
@@ -612,7 +597,7 @@ function PIPDetailModal({
 
           {/* Status Actions */}
           {pip.status === 'ACTIVE' && (
-            <form onSubmit={handleCloseSubmit(data => closeMutation.mutate(data))} className="border-t border-[var(--border-main)] pt-4 space-y-3">
+            <form onSubmit={handleCloseSubmit(data => closeMutation.mutate(data))} className="border-t border-[var(--border-main)] pt-4 space-y-4">
               <p className="text-sm font-medium text-[var(--text-secondary)]">Update Status</p>
               <select
                 {...registerClose('status')}
@@ -714,7 +699,7 @@ export default function PIPPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedPIP, setSelectedPIP] = useState<PIPResponse | null>(null);
   const [search, setSearch] = useState('');
-  const [filterDepartment, setFilterDepartment] = useState('');
+  const [filterDepartment] = useState('');
 
   const filters: PIPFilter = useMemo(() => {
     const statusMap: Record<PIPTab, PIPStatus | undefined> = {
@@ -763,7 +748,7 @@ export default function PIPPage() {
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 flex items-center gap-3">
+      <div className="p-6 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 flex items-center gap-4">
         <AlertCircle size={20} className="text-red-600 dark:text-red-400" />
         <div>
           <p className="font-medium text-red-900 dark:text-red-200">Failed to load PIPs</p>
@@ -795,7 +780,7 @@ export default function PIPPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <TrendingUp className="text-blue-600 dark:text-blue-400" size={20} />
               </div>
@@ -806,7 +791,7 @@ export default function PIPPage() {
             </div>
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                 <CheckCircle2 className="text-green-600 dark:text-green-400" size={20} />
               </div>
@@ -817,7 +802,7 @@ export default function PIPPage() {
             </div>
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                 <Calendar className="text-purple-600 dark:text-purple-400" size={20} />
               </div>
@@ -850,7 +835,7 @@ export default function PIPPage() {
           </div>
 
           {/* Search & Filters */}
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16} />
               <input

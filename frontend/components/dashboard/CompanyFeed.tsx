@@ -2,14 +2,14 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import {
-  format, formatDistanceToNow, isToday, isYesterday, parseISO,
+  formatDistanceToNow, isToday, isYesterday, parseISO,
   startOfWeek, endOfWeek, subWeeks, isWithinInterval, startOfDay,
 } from 'date-fns';
 import {
   Megaphone, Cake, Trophy, UserPlus, TrendingUp, Award,
   MessageCircle, ThumbsUp, Heart, Star, Pin, ChevronDown, ChevronRight,
   RefreshCw, Linkedin, Lightbulb, ExternalLink, Send, MessageSquare,
-  MoreHorizontal, Trash2, Pencil, Calendar, BarChart3, Check,
+  MoreHorizontal, Trash2, Pencil, Calendar, Check,
 } from 'lucide-react';
 import { feedService } from '@/lib/services/feed.service';
 import { wallService } from '@/lib/services/wall.service';
@@ -307,7 +307,11 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
     }
   }, [employeeId, olderLoaded]);
 
-  useEffect(() => { loadFeed(); }, [employeeId, refreshKey]);
+  useEffect(() => {
+    loadFeed();
+    // loadFeed closes over token-scoped state; adding it causes infinite re-fetches.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employeeId, refreshKey]);
 
   const filteredItems = activeFilter === 'ALL' ? items : items.filter(item => item.type === activeFilter);
 
@@ -649,7 +653,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
 
   // ─── WALL_POST: social-style card (like reference image) ───
   if (item.type === 'WALL_POST') {
-    const authorInitials = (item.wallPostAuthor ?? '')
+    const _authorInitials = (item.wallPostAuthor ?? '')
       .split(' ')
       .map((n) => n[0])
       .join('')
@@ -880,12 +884,15 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
                     {localReactors.length > 0 && (
                       <div className="flex -space-x-1.5">
                         {localReactors.slice(0, 3).map((reactor) => (
-                          <img
+                          <Image
                             key={reactor.employeeId}
-                            src={reactor.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(reactor.fullName)}&background=6366f1&color=fff&size=20&bold=true&format=svg`}
+                            src={reactor.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(reactor.fullName)}&background=6366f1&color=fff&size=20&bold=true`}
                             alt={reactor.fullName}
+                            width={20}
+                            height={20}
                             className="h-5 w-5 rounded-full border border-white dark:border-gray-800 object-cover"
                             title={reactor.fullName}
+                            unoptimized
                           />
                         ))}
                       </div>
@@ -918,10 +925,13 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
                           ) : (
                             (allReactors.length > 0 ? allReactors : localReactors).map((reactor) => (
                               <div key={reactor.employeeId} className="flex items-center gap-2 px-4 py-2 hover:bg-[var(--bg-surface)] transition-colors">
-                                <img
-                                  src={reactor.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(reactor.fullName)}&background=6366f1&color=fff&size=28&bold=true&format=svg`}
+                                <Image
+                                  src={reactor.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(reactor.fullName)}&background=6366f1&color=fff&size=28&bold=true`}
                                   alt={reactor.fullName}
+                                  width={28}
+                                  height={28}
                                   className="h-7 w-7 rounded-full object-cover flex-shrink-0"
+                                  unoptimized
                                 />
                                 <div className="flex-1 min-w-0">
                                   <p className="text-xs font-medium text-[var(--text-primary)] truncate">{reactor.fullName}</p>

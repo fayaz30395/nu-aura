@@ -12,13 +12,10 @@ import {
   MobileQuickLeaveRequest,
   MobileCancelLeaveRequest,
   PendingApprovalsResponse,
-  MobileApprovalActionRequest,
   MobileBulkApprovalRequest,
-  ApprovalActionResponse,
   UnreadNotificationsResponse,
   MobileDeviceRegistrationRequest,
   MobileMarkReadRequest,
-  MarkReadResponse,
   SyncResponse,
 } from '../../types/mobile-api';
 

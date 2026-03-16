@@ -150,6 +150,10 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     });
 
     return () => unsubscribe();
+    // showReconnectNotification intentionally omitted: adding it would re-subscribe the
+    // WebSocket status listener on every reconnect state change, causing callback churn.
+    // The stale-closure risk is acceptable here (only affects the reconnect success banner).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showToasts, toast]);
 
   return (

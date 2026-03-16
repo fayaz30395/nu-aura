@@ -5,6 +5,34 @@
   ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
-  }
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }],
+
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/\\bp-3\\b/]",
+        "message": "⚠ Design system: p-3 (12px) is off the 8px grid. Use p-4 (16px) or p-2 (8px)."
+      },
+      {
+        "selector": "Literal[value=/\\bgap-3\\b/]",
+        "message": "⚠ Design system: gap-3 (12px) is off the 8px grid. Use gap-4 (16px) or gap-2 (8px)."
+      },
+      {
+        "selector": "Literal[value=/\\bspace-y-3\\b/]",
+        "message": "⚠ Design system: space-y-3 (12px) is off the 8px grid. Use space-y-4 (16px) or space-y-2 (8px)."
+      },
+      {
+        "selector": "Literal[value=/\\bm-3\\b/]",
+        "message": "⚠ Design system: m-3 (12px) is off the 8px grid. Use m-4 (16px) or m-2 (8px)."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.config.js", "*.config.cjs", "*.config.mjs"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off"
+      }
+    }
+  ]
 }

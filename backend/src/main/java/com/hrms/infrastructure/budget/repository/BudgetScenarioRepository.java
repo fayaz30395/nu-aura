@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,16 @@ import java.util.UUID;
 public interface BudgetScenarioRepository extends JpaRepository<BudgetScenario, UUID> {
 
     Optional<BudgetScenario> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    /**
+     * Batch-fetch multiple scenarios by ID list, scoped to a single tenant.
+     * Use this instead of calling {@link #findByIdAndTenantId} inside a loop
+     * to avoid N+1 queries.
+     */
+    @Query("SELECT s FROM BudgetScenario s WHERE s.id IN :ids AND s.tenantId = :tenantId")
+    List<BudgetScenario> findAllByIdsAndTenantId(
+            @Param("ids") Collection<UUID> ids,
+            @Param("tenantId") UUID tenantId);
 
     @Query("SELECT s FROM BudgetScenario s WHERE s.baseBudget.id = :budgetId")
     List<BudgetScenario> findByBudget(@Param("budgetId") UUID budgetId);

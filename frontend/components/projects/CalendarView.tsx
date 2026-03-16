@@ -4,15 +4,10 @@ import { useState, useMemo } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
-  Calendar as CalendarIcon,
-  Clock,
-  MoreHorizontal,
 } from 'lucide-react';
 import {
   CalendarEvent,
   CalendarViewType,
-  getStatusColor,
-  getPriorityColor,
   CALENDAR_EVENT_COLORS,
 } from '@/lib/types/project-calendar';
 import {
@@ -23,7 +18,6 @@ import {
   endOfWeek,
   eachDayOfInterval,
   isSameMonth,
-  isSameDay,
   isToday,
   addMonths,
   subMonths,

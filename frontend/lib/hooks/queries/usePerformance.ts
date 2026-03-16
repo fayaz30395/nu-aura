@@ -16,19 +16,13 @@ import {
   GoalRequest,
   PerformanceReview,
   ReviewRequest,
-  Feedback,
   FeedbackRequest,
   ReviewCycle,
   ReviewCycleRequest,
   ActivateCycleRequest,
   ActivateCycleResponse,
-  GoalAnalytics,
-  OKRGraphResponse,
-  PerformanceSpiderResponse,
   Objective,
   KeyResult,
-  Feedback360Cycle,
-  OkrSummary,
 } from '@/lib/types/performance';
 import type { ObjectiveRequest, KeyResultRequest } from '@/lib/services/okr.service';
 import type { CreatePIPRequest as CreatePIPRequestService, PIPCheckInRequest as PIPCheckInRequestService, ClosePIPRequest as ClosePIPRequestService } from '@/lib/services/performance.service';
@@ -124,7 +118,7 @@ export function useCreateGoal() {
 
   return useMutation({
     mutationFn: (data: GoalRequest) => goalService.createGoal(data),
-    onSuccess: (data: Goal) => {
+    onSuccess: (_data: Goal) => {
       queryClient.invalidateQueries({ queryKey: performanceKeys.goals() });
       notifications.show({
         title: 'Success',
@@ -271,7 +265,7 @@ export function useCreatePerformanceCycle() {
 
   return useMutation({
     mutationFn: (data: ReviewCycleRequest) => reviewCycleService.createCycle(data),
-    onSuccess: (data: ReviewCycle) => {
+    onSuccess: (_data: ReviewCycle) => {
       queryClient.invalidateQueries({ queryKey: performanceKeys.cycles() });
       notifications.show({
         title: 'Success',
@@ -428,7 +422,7 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: (data: ReviewRequest) => reviewService.createReview(data),
-    onSuccess: (data: PerformanceReview) => {
+    onSuccess: (_data: PerformanceReview) => {
       queryClient.invalidateQueries({ queryKey: performanceKeys.reviews() });
       notifications.show({
         title: 'Success',
@@ -690,7 +684,7 @@ export function useOkrDashboardSummary() {
 export function useMyObjectives() {
   return useQuery({
     queryKey: [...performanceKeys.okr(), 'my'],
-    queryFn: () => okrService.getMyObjectives() as any,
+    queryFn: () => okrService.getMyObjectives(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -698,7 +692,7 @@ export function useMyObjectives() {
 export function useCompanyObjectives() {
   return useQuery({
     queryKey: [...performanceKeys.okr(), 'company'],
-    queryFn: () => okrService.getCompanyObjectives() as any,
+    queryFn: () => okrService.getCompanyObjectives(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -706,7 +700,7 @@ export function useCompanyObjectives() {
 export function useObjective(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: [...performanceKeys.okr(), 'detail', id],
-    queryFn: () => okrService.getObjective(id) as any,
+    queryFn: () => okrService.getObjective(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

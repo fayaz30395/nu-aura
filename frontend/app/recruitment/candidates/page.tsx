@@ -7,15 +7,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { notifications } from '@mantine/notifications';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Candidate, CandidateStatus, CandidateSource, RecruitmentStage, CandidateStage, JobOpening, CreateCandidateRequest } from '@/lib/types/recruitment';
+import { Candidate, CandidateStatus, CandidateSource, RecruitmentStage, CandidateStage, CreateCandidateRequest } from '@/lib/types/recruitment';
 import {
   Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X,
-  Eye, ChevronRight, DollarSign, Send, CheckCircle, XCircle, Loader2, Sparkles, Brain, MessageSquare,
+  Eye, Send, CheckCircle, XCircle, Loader2, Sparkles, Brain, MessageSquare,
   AlertTriangle, ShieldAlert
 } from 'lucide-react';
-import { GenerateOfferLetterRequest, LetterTemplate, LetterCategory } from '@/lib/types/letter';
+
 import { CreateOfferRequest } from '@/lib/types/recruitment';
 import { recruitmentService } from '@/lib/services/recruitment.service';
 import {
@@ -120,13 +120,11 @@ function CandidatesPage() {
 
   // Load initial data
   const { data: employeesData } = useEmployees(0, 100);
-  const { data: letterTemplatesData } = useActiveLetterTemplates(true);
+  useActiveLetterTemplates(true);
 
   const candidates = candidatesData?.content || [];
   const jobOpenings = jobOpeningsData?.content || [];
   const recruiters = employeesData?.content || [];
-  const templates = (letterTemplatesData || []).filter(t => t.category === LetterCategory.OFFER);
-
   // React Hook Form setup
   const candidateForm = useForm<CreateCandidateFormData>({
     resolver: zodResolver(createCandidateSchema),
@@ -923,7 +921,7 @@ function CandidatesPage() {
                       )}
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                    <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                       <Button type="button" variant="outline" onClick={() => { setShowParseResumeModal(false); resumeParseForm.reset(); setParsedResume(null); }} className="flex-1">
                         Cancel
                       </Button>
@@ -934,7 +932,7 @@ function CandidatesPage() {
                   </form>
                 ) : (
                   <div className="space-y-6">
-                    <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl space-y-3">
+                    <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl space-y-4">
                       {parsedResume.fullName && (
                         <div>
                           <p className="text-xs text-[var(--text-muted)]">Full Name</p>
@@ -985,7 +983,7 @@ function CandidatesPage() {
                       )}
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                    <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                       <Button type="button" variant="outline" onClick={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }} className="flex-1">
                         Cancel
                       </Button>
@@ -1252,7 +1250,7 @@ function CandidatesPage() {
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); setEditingCandidate(null); candidateForm.reset(); }} className="flex-1">
                       Cancel
                     </Button>
@@ -1302,7 +1300,7 @@ function CandidatesPage() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                    <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                       <Mail className="h-5 w-5 text-[var(--text-muted)]" />
                       <div>
                         <p className="text-xs text-[var(--text-muted)]">Email</p>
@@ -1310,7 +1308,7 @@ function CandidatesPage() {
                       </div>
                     </div>
                     {selectedCandidate.phone && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Phone className="h-5 w-5 text-[var(--text-muted)]" />
                         <div>
                           <p className="text-xs text-[var(--text-muted)]">Phone</p>
@@ -1319,7 +1317,7 @@ function CandidatesPage() {
                       </div>
                     )}
                     {selectedCandidate.currentLocation && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <MapPin className="h-5 w-5 text-[var(--text-muted)]" />
                         <div>
                           <p className="text-xs text-[var(--text-muted)]">Location</p>
@@ -1328,7 +1326,7 @@ function CandidatesPage() {
                       </div>
                     )}
                     {selectedCandidate.currentCompany && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Building className="h-5 w-5 text-[var(--text-muted)]" />
                         <div>
                           <p className="text-xs text-[var(--text-muted)]">Current Company</p>
@@ -1339,25 +1337,25 @@ function CandidatesPage() {
                   </div>
 
                   <div className="grid grid-cols-4 gap-4">
-                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                       <p className="text-xs text-[var(--text-muted)]">Experience</p>
                       <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.totalExperience ? `${selectedCandidate.totalExperience}y` : '-'}
                       </p>
                     </div>
-                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                       <p className="text-xs text-[var(--text-muted)]">Current CTC</p>
                       <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.currentCtc?.toLocaleString() || '-'}
                       </p>
                     </div>
-                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                       <p className="text-xs text-[var(--text-muted)]">Expected CTC</p>
                       <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.expectedCtc?.toLocaleString() || '-'}
                       </p>
                     </div>
-                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                       <p className="text-xs text-[var(--text-muted)]">Notice Period</p>
                       <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.noticePeriodDays ? `${selectedCandidate.noticePeriodDays}d` : '-'}
@@ -1372,7 +1370,7 @@ function CandidatesPage() {
                     </div>
                   )}
 
-                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button variant="outline" onClick={() => setShowViewModal(false)} className="flex-1">
                       Close
                     </Button>
@@ -1402,7 +1400,7 @@ function CandidatesPage() {
               <p className="text-sm text-[var(--text-muted)] mb-6">
                 Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{candidateToDelete.fullName}</strong>? This action cannot be undone.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button variant="outline" onClick={() => { setShowDeleteModal(false); setCandidateToDelete(null); }} className="flex-1">
                   Cancel
                 </Button>
@@ -1421,7 +1419,7 @@ function CandidatesPage() {
               <div className="p-6">
                 {/* Demo Mode Banner */}
                 {screeningSummary.aiModelVersion === 'mock-v1' && (
-                  <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700 flex items-start gap-3">
+                  <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700 flex items-start gap-4">
                     <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Demo Mode</p>
@@ -1442,7 +1440,7 @@ function CandidatesPage() {
                 </div>
 
                 {/* Info Bar */}
-                <div className="mb-6 space-y-3">
+                <div className="mb-6 space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                       <p className="text-xs text-[var(--text-muted)] mb-1">Candidate</p>
@@ -1454,7 +1452,7 @@ function CandidatesPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-3 items-center">
+                  <div className="flex gap-4 items-center">
                     <span className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
                       screeningSummary.fitLevel === 'HIGH' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
                       screeningSummary.fitLevel === 'MEDIUM' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
@@ -1664,7 +1662,7 @@ function CandidatesPage() {
                     <p className="text-sm font-medium text-[var(--text-primary)]">{feedbackSynthesis.recommendedNextStep}</p>
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button variant="outline" onClick={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }} className="flex-1">
                       Close
                     </Button>
@@ -1689,7 +1687,7 @@ function CandidatesPage() {
                   </button>
                 </div>
 
-                <div className="mb-4 p-3 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
+                <div className="mb-4 p-4 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
                   <p className="text-sm text-teal-700 dark:text-teal-300">
                     Creating offer letter for <strong>{candidateForOffer.fullName}</strong>
                   </p>
@@ -1747,7 +1745,7 @@ function CandidatesPage() {
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => setShowOfferModal(false)} className="flex-1">
                       Cancel
                     </Button>
@@ -1783,7 +1781,7 @@ function CandidatesPage() {
                   className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button variant="outline" onClick={() => { setShowAcceptModal(false); setCandidateForOffer(null); }} className="flex-1">
                   Cancel
                 </Button>
@@ -1818,7 +1816,7 @@ function CandidatesPage() {
                   className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button variant="outline" onClick={() => { setShowDeclineModal(false); setCandidateForOffer(null); }} className="flex-1">
                   Cancel
                 </Button>

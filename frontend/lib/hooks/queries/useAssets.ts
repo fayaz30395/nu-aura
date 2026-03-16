@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { assetService } from '@/lib/services/asset.service';
-import { Asset, CreateAssetRequest, UpdateAssetRequest, AssetStatus } from '@/lib/types/asset';
+import { CreateAssetRequest, AssetStatus, UpdateAssetRequest } from '@/lib/types/asset';
 
 // Query keys for cache management
 export const assetKeys = {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
 import {
@@ -14,7 +14,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Award,
-  Download,
   RefreshCw,
   Home,
 } from 'lucide-react';
@@ -78,9 +77,6 @@ interface QuizResult {
 
 export default function QuizPage() {
   const { id: courseId, quizId } = useParams<{ id: string; quizId: string }>();
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
   // Quiz data
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
   const [answers, setAnswers] = useState<Map<string, string | string[]>>(new Map());
@@ -330,7 +326,7 @@ export default function QuizPage() {
   // ─── TAKING QUIZ STATE ────────────────────────────────────────────────────
   if (state === 'taking' && currentQuestion) {
     const answerValue = answers.get(currentQuestion.id) || '';
-    const isAnswered = answerValue !== '';
+    const _isAnswered = answerValue !== '';
     const isLastQuestion = currentQuestionIdx === quiz.questions.length - 1;
 
     return (
@@ -382,9 +378,9 @@ export default function QuizPage() {
               {/* Question options based on type */}
               <div className="space-y-4">
                 {currentQuestion.questionType === 'SINGLE_CHOICE' && currentQuestion.options && (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {currentQuestion.options.map(option => (
-                      <label key={option.id} className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition-colors" style={{
+                      <label key={option.id} className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-blue-50 transition-colors" style={{
                         borderColor: answerValue === option.id ? '#3b82f6' : '#e5e7eb',
                         backgroundColor: answerValue === option.id ? '#eff6ff' : '',
                       }}>
@@ -403,11 +399,11 @@ export default function QuizPage() {
                 )}
 
                 {currentQuestion.questionType === 'MULTIPLE_CHOICE' && currentQuestion.options && (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {currentQuestion.options.map(option => {
                       const selectedAnswers = Array.isArray(answerValue) ? answerValue : (answerValue ? [answerValue] : []);
                       return (
-                        <label key={option.id} className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition-colors" style={{
+                        <label key={option.id} className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-blue-50 transition-colors" style={{
                           borderColor: selectedAnswers.includes(option.id) ? '#3b82f6' : '#e5e7eb',
                           backgroundColor: selectedAnswers.includes(option.id) ? '#eff6ff' : '',
                         }}>
@@ -433,9 +429,9 @@ export default function QuizPage() {
                 )}
 
                 {currentQuestion.questionType === 'TRUE_FALSE' && (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {['True', 'False'].map(option => (
-                      <label key={option} className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition-colors" style={{
+                      <label key={option} className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-blue-50 transition-colors" style={{
                         borderColor: answerValue === option ? '#3b82f6' : '#e5e7eb',
                         backgroundColor: answerValue === option ? '#eff6ff' : '',
                       }}>
@@ -591,7 +587,7 @@ export default function QuizPage() {
                   <div className="space-y-4">
                     {result.details.map((detail: QuizResultDetail, idx: number) => (
                       <div key={idx} className={`border rounded-lg p-4 ${detail.isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-4">
                           {detail.isCorrect ? (
                             <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                           ) : (

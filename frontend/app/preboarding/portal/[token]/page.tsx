@@ -10,7 +10,7 @@ import {
   Upload, ChevronRight, AlertCircle
 } from 'lucide-react';
 import { apiConfig } from '@/lib/config';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
@@ -81,6 +81,9 @@ export default function PreboardingPortalPage() {
 
   useEffect(() => {
     loadData();
+    // loadData is defined below and only depends on `token` (already listed).
+    // Including it without useCallback would cause an infinite re-render loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const loadData = async () => {
@@ -389,7 +392,7 @@ export default function PreboardingPortalPage() {
                 <h2 className="text-lg font-semibold mb-4">Document Upload</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card className={`p-4 border-2 ${data.photoUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Passport Photo</p>
@@ -398,7 +401,7 @@ export default function PreboardingPortalPage() {
                     </div>
                   </Card>
                   <Card className={`p-4 border-2 ${data.idProofUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">ID Proof</p>
@@ -407,7 +410,7 @@ export default function PreboardingPortalPage() {
                     </div>
                   </Card>
                   <Card className={`p-4 border-2 ${data.addressProofUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Address Proof</p>
@@ -416,7 +419,7 @@ export default function PreboardingPortalPage() {
                     </div>
                   </Card>
                   <Card className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Education Docs</p>
@@ -448,7 +451,7 @@ export default function PreboardingPortalPage() {
                 ) : (
                   <>
                     <Card className="p-4 bg-[var(--bg-secondary)]/50">
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-4">
                         <FileText className="h-6 w-6 text-primary-500 mt-1" />
                         <div>
                           <p className="font-medium">Employment Offer Letter</p>

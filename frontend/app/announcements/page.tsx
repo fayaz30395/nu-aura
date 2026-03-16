@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
   Megaphone,
   Pin,
   Calendar,
-  User,
   ChevronRight,
   X,
   Bell,
@@ -18,7 +17,6 @@ import {
   Wrench,
   Gift,
   Users,
-  Filter,
   Search,
   Eye,
   CheckCircle,
@@ -27,7 +25,6 @@ import {
   Loader2,
   Edit2,
   Trash2,
-  MoreVertical,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { isAdmin } from '@/lib/utils';
@@ -41,7 +38,6 @@ import {
   getCategoryLabel,
   CreateAnnouncementRequest,
 } from '@/lib/services/announcement.service';
-import { Department } from '@/lib/types/employee';
 import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -193,7 +189,7 @@ export default function AnnouncementsPage() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4">
                 <Megaphone className="w-8 h-8 text-purple-600" />
                 Announcements
               </h1>
@@ -238,7 +234,7 @@ export default function AnnouncementsPage() {
                     className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-5 cursor-pointer hover:shadow-lg transition-all group"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                      <div className="p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                         <Icon className="w-6 h-6 text-yellow-600" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -362,7 +358,7 @@ export default function AnnouncementsPage() {
                     }`}
                   >
                     <div className="flex items-start gap-4">
-                      <div className={`p-3 rounded-lg ${getCategoryColor(announcement.category).replace('text-', 'bg-').replace('-800', '-100').replace('-100', '-100')}`}>
+                      <div className={`p-4 rounded-lg ${getCategoryColor(announcement.category).replace('text-', 'bg-').replace('-800', '-100').replace('-100', '-100')}`}>
                         <Icon className={`w-6 h-6 ${getCategoryColor(announcement.category).split(' ')[1]}`} />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -485,11 +481,11 @@ export default function AnnouncementsPage() {
                   >
                     <X className="w-5 h-5 text-white" />
                   </button>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     {(() => {
                       const Icon = getCategoryIcon(selectedAnnouncement.category);
                       return (
-                        <div className="p-3 bg-white/20 rounded-lg">
+                        <div className="p-4 bg-white/20 rounded-lg">
                           <Icon className="w-6 h-6 text-white" />
                         </div>
                       );
@@ -829,7 +825,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
               ) : departments.length === 0 ? (
                 <p className="text-sm text-[var(--text-muted)]">No departments found</p>
               ) : (
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-3 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
                   {departments.map((dept) => (
                     <label
                       key={dept.id}
@@ -884,14 +880,14 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
 
           {/* Error */}
           {error && (
-            <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+            <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
               {error}
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex gap-3">
+        <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex gap-4">
           <button
             onClick={onClose}
             className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"

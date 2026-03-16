@@ -78,6 +78,9 @@ export function useSessionTimeout(enabled: boolean = true) {
 
     // Restart warning timer
     scheduleWarning();
+    // scheduleWarning omitted: circular dep (resetTimers ↔ scheduleWarning). Both use
+    // stateRef for mutable state so the call always uses the latest implementation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
@@ -171,10 +174,14 @@ export function useSessionTimeout(enabled: boolean = true) {
    * Set up activity listeners and initial timers.
    */
   useEffect(() => {
+    // Capture the mutable state object so the cleanup closure always references
+    // the correct object (satisfies react-hooks/exhaustive-deps ref-in-cleanup rule).
+    const state = stateRef.current;
+
     if (!isAuthenticated || !enabled) {
       // Clean up if not authenticated or disabled
-      if (stateRef.current.timeoutId) clearTimeout(stateRef.current.timeoutId);
-      if (stateRef.current.warningId) clearTimeout(stateRef.current.warningId);
+      if (state.timeoutId) clearTimeout(state.timeoutId);
+      if (state.warningId) clearTimeout(state.warningId);
       return;
     }
 
@@ -196,8 +203,8 @@ export function useSessionTimeout(enabled: boolean = true) {
         window.removeEventListener(event, handleActivity, true);
       });
 
-      if (stateRef.current.timeoutId) clearTimeout(stateRef.current.timeoutId);
-      if (stateRef.current.warningId) clearTimeout(stateRef.current.warningId);
+      if (state.timeoutId) clearTimeout(state.timeoutId);
+      if (state.warningId) clearTimeout(state.warningId);
     };
   }, [isAuthenticated, enabled, isAuthPage, resetTimers, handleActivity]);
 

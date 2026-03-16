@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import NextImage from 'next/image';
 import {
   Edit3, BarChart3, Trophy, Image, Smile, Paperclip, Send, Loader2,
   Plus, X, Search, Check,
@@ -335,7 +336,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               <div className="flex items-center gap-2 p-2 rounded-lg border border-primary-200 bg-primary-50 dark:bg-primary-950 dark:border-primary-800">
                 <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-700 dark:text-primary-300 overflow-hidden shrink-0">
                   {selectedRecipient.avatarUrl ? (
-                    <img src={selectedRecipient.avatarUrl} alt="" className="w-full h-full object-cover" />
+                    <NextImage src={selectedRecipient.avatarUrl} alt="" width={32} height={32} className="w-full h-full object-cover" unoptimized />
                   ) : (
                     selectedRecipient.fullName.charAt(0)
                   )}
@@ -391,7 +392,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                         >
                           <div className="w-7 h-7 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-xs font-semibold text-[var(--text-secondary)] overflow-hidden shrink-0">
                             {emp.profilePhotoUrl ? (
-                              <img src={emp.profilePhotoUrl} alt="" className="w-full h-full object-cover" />
+                              <NextImage src={emp.profilePhotoUrl} alt="" width={28} height={28} className="w-full h-full object-cover" unoptimized />
                             ) : (
                               emp.firstName?.charAt(0)
                             )}

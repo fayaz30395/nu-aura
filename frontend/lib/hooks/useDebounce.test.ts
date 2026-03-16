@@ -3,7 +3,7 @@
  * Run with: npx vitest run lib/hooks/useDebounce.test.ts
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   useDebounce,

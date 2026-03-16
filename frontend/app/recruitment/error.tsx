@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, RefreshCw, Home, Briefcase } from 'lucide-react';
+import { RefreshCw, Home, Briefcase, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { AppLayout } from '@/components/layout';
@@ -45,7 +45,7 @@ export default function RecruitmentError({ error, reset }: ErrorProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {isDevelopment && (
-              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-3">
+              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-4">
                 <p className="text-sm font-mono text-surface-700 dark:text-surface-300 break-all">
                   {error.message}
                 </p>

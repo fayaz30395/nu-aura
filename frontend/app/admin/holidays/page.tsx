@@ -249,7 +249,7 @@ export default function HolidayCalendarManagementPage() {
         {/* Error Message */}
         {(uiError || queryError) && (
           <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{uiError || (queryError as any)?.message || 'An error occurred'}</span>
+            <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
@@ -306,14 +306,14 @@ export default function HolidayCalendarManagementPage() {
               {months.map((month) => (
                 <div key={month} className="p-6">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{month}</h3>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div
                         key={holiday.id}
                         className="flex items-center justify-between p-4 bg-[var(--bg-secondary)]/50 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                       >
                         <div className="flex-1">
-                          <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-4">
                             <div className="text-center min-w-16">
                               <div className="text-2xl font-bold text-[var(--text-primary)]">
                                 {new Date(holiday.holidayDate).getDate()}
@@ -477,7 +477,7 @@ export default function HolidayCalendarManagementPage() {
                   {/* Settings */}
                   <div>
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Settings</h3>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
@@ -533,7 +533,7 @@ export default function HolidayCalendarManagementPage() {
                   </div>
 
                   {/* Form Actions */}
-                  <div className="flex justify-end space-x-3">
+                  <div className="flex justify-end space-x-4">
                     <button
                       type="button"
                       onClick={() => {

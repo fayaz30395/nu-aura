@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -150,7 +150,7 @@ const formatCurrency = (amount: number | undefined) => {
 
 export default function OffboardingPage() {
   const router = useRouter();
-  const { isAuthenticated, user, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const { data: exitResponse } = useExitProcesses(0, 20);
   const createMutation = useCreateExitProcess();
   const updateMutation = useUpdateExitProcess();
@@ -388,8 +388,8 @@ export default function OffboardingPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary-100 p-3 dark:bg-primary-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
                   <UserMinus className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
@@ -401,8 +401,8 @@ export default function OffboardingPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -414,8 +414,8 @@ export default function OffboardingPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
@@ -427,8 +427,8 @@ export default function OffboardingPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -440,8 +440,8 @@ export default function OffboardingPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -526,7 +526,7 @@ export default function OffboardingPage() {
                     {filteredProcesses.map((process: ExitProcess) => (
                       <tr key={process.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-4">
                             <div className="rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-2">
                               <User className="h-5 w-5 text-[var(--text-secondary)]" />
                             </div>
@@ -836,7 +836,7 @@ export default function OffboardingPage() {
         {/* Exit Process Detail Modal */}
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-2">
                 <User className="h-6 w-6 text-[var(--text-secondary)]" />
               </div>

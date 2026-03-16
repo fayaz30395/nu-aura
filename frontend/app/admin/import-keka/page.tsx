@@ -50,7 +50,7 @@ export default function KekaImportPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [detectedColumns, setDetectedColumns] = useState<string[]>([]);
+  const [_detectedColumns, setDetectedColumns] = useState<string[]>([]);
   const [columnMappings, setColumnMappings] = useState<ColumnMapping[]>([]);
   const [preview, setPreview] = useState<KekaImportPreview | null>(null);
   const [result, setResult] = useState<KekaImportResult | null>(null);
@@ -87,6 +87,9 @@ export default function KekaImportPage() {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileSelect(e.dataTransfer.files[0]);
     }
+    // handleFileSelect is defined below; it only processes its File argument
+    // (no external state closures that change), so this stale ref is safe.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // File selection
@@ -369,7 +372,7 @@ export default function KekaImportPage() {
                 <p className="text-sm text-[var(--text-secondary)] mb-4">
                   Download a template file to see the required format for KEKA data export.
                 </p>
-                <div className="flex gap-3 flex-wrap">
+                <div className="flex gap-4 flex-wrap">
                   <Button
                     onClick={() => downloadTemplate('csv')}
                     variant="light"
@@ -719,7 +722,7 @@ export default function KekaImportPage() {
 
               {/* Options */}
               <div className="space-y-4">
-                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={skipInvalidRows}
@@ -736,7 +739,7 @@ export default function KekaImportPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={updateExistingEmployees}
@@ -753,7 +756,7 @@ export default function KekaImportPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={sendWelcomeEmail}
@@ -770,7 +773,7 @@ export default function KekaImportPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={autoApproveEmployees}

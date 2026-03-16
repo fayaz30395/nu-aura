@@ -191,6 +191,10 @@ export function useThrottledCallback<T extends (...args: unknown[]) => void>(
     };
   }, []);
 
+  // The inner arrow function uses refs (callbackRef, timeoutRef, lastRunRef) which
+  // the exhaustive-deps rule cannot analyse. All external state is captured via refs,
+  // so [limit] is the only meaningful dependency here.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(
     ((...args: Parameters<T>) => {
       const now = Date.now();

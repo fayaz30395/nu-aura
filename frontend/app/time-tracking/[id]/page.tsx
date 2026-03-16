@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
-import { TimeEntry, TimeEntryStatus } from '@/lib/types/time-tracking';
-import { useAuth } from '@/lib/hooks/useAuth';
+import { TimeEntryStatus } from '@/lib/types/time-tracking';
 import {
   useTimeEntry,
   useSubmitTimeEntry,
@@ -20,7 +19,6 @@ import {
   XCircle,
   Timer,
   FileText,
-  Calendar,
   DollarSign,
   Send,
 } from 'lucide-react';
@@ -29,7 +27,6 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 export default function TimeEntryDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const { isAuthenticated, hasHydrated } = useAuth();
   const entryId = params.id as string;
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
@@ -133,7 +130,7 @@ export default function TimeEntryDetailPage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div className="flex-1">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                 Time Entry
               </h1>
@@ -158,7 +155,7 @@ export default function TimeEntryDetailPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30">
                 <Timer className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               </div>
@@ -170,7 +167,7 @@ export default function TimeEntryDetailPage() {
           </div>
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
                 <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
@@ -185,7 +182,7 @@ export default function TimeEntryDetailPage() {
 
           {entry.billingAmount && (
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-4 mb-3">
                 <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
                   <DollarSign className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
@@ -296,7 +293,7 @@ export default function TimeEntryDetailPage() {
         {/* Rejection Reason */}
         {entry.status === 'REJECTED' && entry.rejectionReason && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <XCircle className="h-5 w-5 text-red-500" />
               <h3 className="text-lg font-semibold text-red-700 dark:text-red-400">
                 Rejection Reason
@@ -307,7 +304,7 @@ export default function TimeEntryDetailPage() {
         )}
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => router.push('/time-tracking')}
             className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"

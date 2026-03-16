@@ -2,12 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  ExitProcess,
   CreateExitProcessRequest,
   UpdateExitProcessRequest,
   ExitStatus,
-  ExitProcessesResponse,
-  ExitDashboard,
 } from '@/lib/types/exit';
 import { exitService } from '@/lib/services/exit.service';
 

@@ -9,7 +9,6 @@ import {
   BarChart2,
   Calendar,
   Users,
-  ArrowRight,
 } from 'lucide-react';
 import { ExpenseClaim, ExpenseCategory } from '@/lib/types/expense';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
@@ -338,7 +337,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
               <div className="relative w-24 h-24">
                 <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                   {categoryData.reduce(
-                    (acc, data, index) => {
+                    (acc, data, _index) => {
                       const startAngle = acc.angle;
                       const endAngle = startAngle + (data.percentage / 100) * 360;
                       const largeArc = data.percentage > 50 ? 1 : 0;
