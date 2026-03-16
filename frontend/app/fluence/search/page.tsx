@@ -180,6 +180,17 @@ export default function SearchPage() {
                     onClick={() => {
                       if (result.url) {
                         router.push(result.url);
+                      } else {
+                        // Construct URL from type and ID when url is not provided
+                        const typeRoutes: Record<string, string> = {
+                          wiki: '/fluence/wiki/',
+                          blog: '/fluence/blogs/',
+                          template: '/fluence/templates/',
+                        };
+                        const basePath = typeRoutes[result.type];
+                        if (basePath) {
+                          router.push(`${basePath}${result.id}`);
+                        }
                       }
                     }}
                   >

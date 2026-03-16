@@ -21,6 +21,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
+import { cn } from '@/lib/utils';
 
 type DriveTab = 'team-docs' | 'shared' | 'recent';
 
@@ -380,7 +381,3 @@ export default function FluenceDrivePage() {
   return <FluenceDriveContent />;
 }
 
-// Utility function (can be moved to driveHelpers.ts if needed elsewhere)
-function cn(...classes: (string | boolean | undefined)[]): string {
-  return classes.filter(Boolean).join(' ');
-}

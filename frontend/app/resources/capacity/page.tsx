@@ -167,8 +167,8 @@ export default function CapacityTimelinePage() {
     return (
       <AppLayout activeMenuItem="resources" breadcrumbs={[{ label: 'Resources', href: '/resources' }, { label: 'Capacity' }]}>
         <div className="p-6 flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mb-4">
-            <Info size={24} className="text-amber-600" />
+          <div className="w-14 h-14 rounded-full bg-warning-50 flex items-center justify-center mb-4">
+            <Info size={24} className="text-warning-600" />
           </div>
           <h2 className="text-lg font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not Available</h2>
           <p className="text-[var(--text-muted)] text-sm max-w-md">

@@ -437,9 +437,9 @@ export default function ProjectCalendarPage() {
 
         {/* Error Alert */}
         {queryError && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{queryError instanceof Error ? queryError.message : 'Failed to load data'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetch()} className="ml-auto">

@@ -15,10 +15,10 @@ import { useWorkloadDashboard } from '@/lib/hooks/queries/useResources';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function allocationColor(pct: number): { bar: string; badge: string; text: string } {
-  if (pct >= 100) return { bar: 'bg-red-500',   badge: 'bg-red-100 text-red-700',   text: 'text-red-700' };
+  if (pct >= 100) return { bar: 'bg-danger-500',   badge: 'bg-danger-50 text-danger-700',   text: 'text-danger-700' };
   if (pct >= 81)  return { bar: 'bg-orange-400', badge: 'bg-orange-100 text-orange-700', text: 'text-orange-700' };
-  if (pct >= 51)  return { bar: 'bg-green-500',  badge: 'bg-green-100 text-green-700',  text: 'text-green-700' };
-  if (pct > 0)    return { bar: 'bg-blue-400',   badge: 'bg-blue-100 text-blue-700',    text: 'text-blue-700' };
+  if (pct >= 51)  return { bar: 'bg-success-500',  badge: 'bg-success-50 text-success-700',  text: 'text-success-700' };
+  if (pct > 0)    return { bar: 'bg-info-400',   badge: 'bg-info-50 text-info-700',    text: 'text-info-700' };
   return { bar: 'bg-[var(--bg-secondary)]', badge: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]', text: 'text-[var(--text-muted)]' };
 }
 
@@ -162,7 +162,7 @@ export default function ResourcePoolPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
             <AlertTriangle size={15} />
             {error instanceof Error ? error.message : String(error)}
           </div>
@@ -173,8 +173,8 @@ export default function ResourcePoolPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: 'Total Employees', value: summary.total, color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]', filter: 'ALL' as StatusFilter },
-              { label: 'Over-Allocated', value: summary.overAllocated, color: 'bg-red-100 text-red-700', filter: 'OVER_ALLOCATED' as StatusFilter },
-              { label: 'Optimal', value: summary.optimal, color: 'bg-green-100 text-green-700', filter: 'OPTIMAL' as StatusFilter },
+              { label: 'Over-Allocated', value: summary.overAllocated, color: 'bg-danger-50 text-danger-700', filter: 'OVER_ALLOCATED' as StatusFilter },
+              { label: 'Optimal', value: summary.optimal, color: 'bg-success-50 text-success-700', filter: 'OPTIMAL' as StatusFilter },
               { label: 'Unassigned', value: summary.unassigned, color: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]', filter: 'UNASSIGNED' as StatusFilter },
             ].map(stat => (
               <button
@@ -327,9 +327,9 @@ export default function ResourcePoolPage() {
               <span>Showing {filtered.length} of {employees.length} employees</span>
               <div className="flex items-center gap-4">
                 {[
-                  { label: '≤80%', color: 'bg-green-500' },
+                  { label: '≤80%', color: 'bg-success-500' },
                   { label: '81–99%', color: 'bg-orange-400' },
-                  { label: '≥100%', color: 'bg-red-500' },
+                  { label: '≥100%', color: 'bg-danger-500' },
                   { label: 'Unassigned', color: 'bg-[var(--bg-secondary)]' },
                 ].map(l => (
                   <span key={l.label} className="flex items-center gap-1">
