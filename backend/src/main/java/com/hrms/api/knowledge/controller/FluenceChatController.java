@@ -6,6 +6,7 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +35,18 @@ public class FluenceChatController {
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "Send a chat message and receive a streaming AI response")
     @RequiresPermission(Permission.KNOWLEDGE_SEARCH)
-    public SseEmitter chat(@Valid @RequestBody FluenceChatRequest request) {
+    public SseEmitter chat(
+            @Valid @RequestBody FluenceChatRequest request,
+            HttpServletResponse response
+    ) {
         log.info("Fluence chat request: {} chars, conversationId={}",
                 request.getMessage().length(),
                 request.getConversationId());
+
+        // SSE headers — prevent proxy/browser buffering so tokens stream in real-time
+        response.setHeader("Cache-Control", "no-cache, no-transform");
+        response.setHeader("X-Accel-Buffering", "no"); // Nginx
+        response.setHeader("Connection", "keep-alive");
 
         return fluenceChatService.handleChatMessage(request);
     }

@@ -297,12 +297,13 @@ app:
     # Maximum page size for wall posts
     wall-posts-max-size: ${PAGINATION_WALL_POSTS_MAX:50}
 
-# AI Configuration for recruitment features and Fluence chat
+# AI Configuration — supports any OpenAI-compatible provider (OpenAI, Groq, Together, etc.)
+# Default: Groq free tier (fast, no cost, OpenAI-compatible API)
 ai:
   openai:
     api-key: ${OPENAI_API_KEY:}
-    base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
-    model: ${OPENAI_MODEL:gpt-4o-mini}
+    base-url: ${OPENAI_BASE_URL:https://api.groq.com/openai/v1}
+    model: ${OPENAI_MODEL:llama-3.1-8b-instant}
   fluence-chat:
     max-tokens: ${AI_FLUENCE_CHAT_MAX_TOKENS:2000}
     temperature: ${AI_FLUENCE_CHAT_TEMPERATURE:0.4}

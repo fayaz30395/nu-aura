@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -38,15 +39,33 @@ public class FluenceChatService {
     private static final long SSE_TIMEOUT = 120_000L; // 2 minutes
 
     private static final String SYSTEM_PROMPT = """
-            You are NU-Fluence AI, an intelligent assistant for the NU-AURA knowledge management platform.
-            Your role is to answer questions based ONLY on the provided knowledge base content.
+            You are NU-Fluence AI — think of yourself as a helpful coworker who knows the company knowledge base really well.
 
-            Rules:
-            - Answer based on the context provided below. If the context doesn't contain enough information, say so honestly.
-            - Be concise and helpful. Use clear language.
-            - When referencing specific documents, mention them by title.
-            - Do not make up information. If you're unsure, say "I couldn't find specific information about that in your knowledge base."
-            - Format your response in plain text with clear paragraphs. Use bullet points sparingly.
+            Personality:
+            - Talk like a real person, not a robot. Be warm, casual, and natural.
+            - Use short sentences. No corporate jargon. No bullet points unless truly needed.
+            - Match the user's energy — if they're casual, be casual. If they ask a detailed question, give a thoughtful answer.
+            - It's okay to use phrases like "hmm", "sure thing", "good question", "let me check" etc.
+            - Use emojis sparingly (one per message max, only if it feels natural).
+
+            How to respond:
+            - Greetings → Chat back naturally. "Hey! What's up?" or "Hi there, how can I help?" Keep it short.
+            - Small talk → Engage briefly, then gently steer toward how you can help.
+            - Knowledge questions → Answer using the context provided below. Mention document titles when referencing them.
+            - No relevant context → Be honest. "I don't have anything on that in the knowledge base yet. You might want to check with HR directly."
+            - Follow-up questions → Remember the conversation. Build on previous answers naturally.
+
+            LINKING TO DOCUMENTS — THIS IS CRITICAL:
+            - Each document in the context below has a URL. ALWAYS include the link when you mention or reference a document.
+            - Format links as markdown: [Document Title](url)
+            - When the user asks for a link, provide it immediately from the context. You DO have the links.
+            - Example: "Check out [Leave Policy](/fluence/wiki/abc123) for the details."
+            - If a user asks "link?" or "link for the doc" — just give them the markdown link, no extra explanation needed.
+
+            Important:
+            - Never make up facts. If you don't know, say so simply.
+            - Keep most responses to 1-4 sentences. Only go longer if the question genuinely needs it.
+            - You're not a search engine — you're a colleague who happens to have read all the docs.
             """;
 
     /**
@@ -59,7 +78,7 @@ public class FluenceChatService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         // Run the pipeline in a background thread (SseEmitter is async)
-        Thread.startVirtualThread(() -> {
+        CompletableFuture.runAsync(() -> {
             try {
                 executePipeline(emitter, request, tenantId, userId);
             } catch (Exception e) {
@@ -82,50 +101,71 @@ public class FluenceChatService {
             UUID tenantId,
             UUID userId
     ) {
-        // 1. Retrieve relevant content chunks
-        // Set tenant context on this thread (virtual threads don't inherit ThreadLocal)
-        TenantContext.setCurrentTenant(tenantId);
-
-        List<FluenceContentRetriever.ContentChunk> chunks;
         try {
-            chunks = contentRetriever.retrieveRelevantContent(request.getMessage());
+            // Set tenant context on this async thread (ThreadLocal doesn't propagate)
+            TenantContext.setCurrentTenant(tenantId);
+
+            // 1. Retrieve relevant content chunks (broad ILIKE search for high recall)
+            List<FluenceContentRetriever.ContentChunk> chunks;
+            try {
+                chunks = contentRetriever.retrieveRelevantContent(request.getMessage());
+            } catch (Exception e) {
+                log.error("Content retrieval failed: {}", e.getMessage());
+                chunks = Collections.emptyList();
+            }
+
+            // 2. Build LLM messages with RAG context
+            List<Map<String, String>> llmMessages = buildLlmMessages(request, chunks);
+
+            // 3. Stream LLM response
+            final List<FluenceContentRetriever.ContentChunk> finalChunks = chunks;
+            StringBuilder fullResponse = new StringBuilder();
+
+            llmStreamingService.streamChatCompletion(
+                    llmMessages,
+                    // onToken
+                    token -> {
+                        fullResponse.append(token);
+                        sendTokenEvent(emitter, token);
+                    },
+                    // onError
+                    error -> sendErrorEvent(emitter, error),
+                    // onDone
+                    () -> {
+                        try {
+                            // 4. Send source citations
+                            sendSourcesEvent(emitter, finalChunks);
+
+                            // 5. Persist conversation
+                            UUID conversationId = persistConversation(
+                                    request, fullResponse.toString(), tenantId, userId
+                            );
+
+                            // 6. Send done event
+                            sendDoneEvent(emitter, conversationId);
+                        } catch (Exception e) {
+                            log.error("Error in post-stream processing: {}", e.getMessage());
+                        } finally {
+                            safeComplete(emitter);
+                        }
+                    }
+            );
         } catch (Exception e) {
-            log.error("Content retrieval failed: {}", e.getMessage());
-            chunks = Collections.emptyList();
+            log.error("Pipeline execution failed for tenant {}: {}", tenantId, e.getMessage(), e);
+            sendErrorEvent(emitter, "An unexpected error occurred. Please try again.");
+            safeComplete(emitter);
+        } finally {
+            TenantContext.clear();
         }
+    }
 
-        // 2. Build LLM messages with RAG context
-        List<Map<String, String>> llmMessages = buildLlmMessages(request, chunks);
-
-        // 3. Stream LLM response
-        final List<FluenceContentRetriever.ContentChunk> finalChunks = chunks;
-        StringBuilder fullResponse = new StringBuilder();
-
-        llmStreamingService.streamChatCompletion(
-                llmMessages,
-                // onToken
-                token -> {
-                    fullResponse.append(token);
-                    sendTokenEvent(emitter, token);
-                },
-                // onError
-                error -> sendErrorEvent(emitter, error),
-                // onDone
-                () -> {
-                    // 4. Send source citations
-                    sendSourcesEvent(emitter, finalChunks);
-
-                    // 5. Persist conversation
-                    UUID conversationId = persistConversation(
-                            request, fullResponse.toString(), tenantId, userId
-                    );
-
-                    // 6. Send done event
-                    sendDoneEvent(emitter, conversationId);
-
-                    emitter.complete();
-                }
-        );
+    /** Safely complete the SSE emitter, ignoring errors if already completed/timed out */
+    private void safeComplete(SseEmitter emitter) {
+        try {
+            emitter.complete();
+        } catch (Exception ignored) {
+            // Emitter may already be completed or timed out
+        }
     }
 
     /**

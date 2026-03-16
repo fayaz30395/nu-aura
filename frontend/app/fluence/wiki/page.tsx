@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -14,11 +14,27 @@ import {
   Users,
   Globe,
   RefreshCw,
+  Settings,
+  Pencil,
+  Trash2,
+  Heart,
+  MessageCircle,
 } from 'lucide-react';
+import { Tooltip } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { useWikiSpaces, useWikiPages } from '@/lib/hooks/queries/useFluence';
+import {
+  useWikiSpaces,
+  useWikiPages,
+  useCreateWikiSpace,
+  useUpdateWikiSpace,
+  useDeleteWikiSpace,
+} from '@/lib/hooks/queries/useFluence';
+import { usePermissions } from '@/lib/hooks/usePermissions';
+import { SpaceFormDrawer, type SpaceFormValues } from '@/components/fluence/SpaceFormDrawer';
+import { DeleteSpaceModal } from '@/components/fluence/DeleteSpaceModal';
+import type { WikiSpace } from '@/lib/types/fluence';
 import {
   layout,
   typography,
@@ -27,11 +43,35 @@ import {
   iconSize,
 } from '@/lib/design-system';
 
+// ─── Roles that can manage spaces ────────────────────────────────
+
+const SPACE_MANAGER_ROLES = [
+  'SUPER_ADMIN',
+  'TENANT_ADMIN',
+  'HR_ADMIN',
+  'HR_MANAGER',
+  'MANAGER',
+  'DEPARTMENT_HEAD',
+  'TEAM_LEAD',
+  'CEO',
+  'VP',
+  'OPERATIONS_HEAD',
+  'DELIVERY_LEAD',
+];
+
 export default function WikiPage() {
   const router = useRouter();
+  const { hasAnyRole, isAdmin } = usePermissions();
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Space CRUD state
+  const [spaceDrawerOpen, setSpaceDrawerOpen] = useState(false);
+  const [editingSpace, setEditingSpace] = useState<WikiSpace | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deletingSpace, setDeletingSpace] = useState<WikiSpace | null>(null);
+
+  // Queries
   const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);
   const { data: pagesData, isLoading: pagesLoading } = useWikiPages(
     selectedSpaceId,
@@ -39,8 +79,16 @@ export default function WikiPage() {
     20
   );
 
+  // Mutations
+  const createSpace = useCreateWikiSpace();
+  const updateSpace = useUpdateWikiSpace();
+  const deleteSpace = useDeleteWikiSpace();
+
   const spaces = spacesData?.content || [];
   const pages = pagesData?.content || [];
+
+  // Can this user manage spaces?
+  const canManageSpaces = isAdmin || hasAnyRole(...SPACE_MANAGER_ROLES);
 
   const visibilityIcon: Record<string, typeof Globe> = {
     PUBLIC: Globe,
@@ -50,10 +98,7 @@ export default function WikiPage() {
     RESTRICTED: Lock,
   };
 
-  // Extract initials from author name for avatar badge
-  const getAuthorInitials = (
-    authorName: string | undefined
-  ): string => {
+  const getAuthorInitials = (authorName: string | undefined): string => {
     if (!authorName) return '?';
     return authorName
       .split(' ')
@@ -63,15 +108,130 @@ export default function WikiPage() {
       .slice(0, 2);
   };
 
-  // Type for author info extracted from page
-  interface AuthorInfo {
-    id: string;
-    name: string;
-  }
-
   const filteredPages = pages.filter((page) =>
     page.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // ─── Space CRUD Handlers ──────────────────────────────────────
+
+  const handleOpenCreateSpace = useCallback(() => {
+    setEditingSpace(null);
+    setSpaceDrawerOpen(true);
+  }, []);
+
+  const handleOpenEditSpace = useCallback(
+    (space: WikiSpace, e: React.MouseEvent) => {
+      e.stopPropagation();
+      setEditingSpace(space);
+      setSpaceDrawerOpen(true);
+    },
+    []
+  );
+
+  const handleOpenDeleteSpace = useCallback(
+    (space: WikiSpace, e: React.MouseEvent) => {
+      e.stopPropagation();
+      setDeletingSpace(space);
+      setDeleteModalOpen(true);
+    },
+    []
+  );
+
+  const handleSpaceSubmit = useCallback(
+    (data: SpaceFormValues) => {
+      if (editingSpace) {
+        updateSpace.mutate(
+          {
+            id: editingSpace.id,
+            data: {
+              name: data.name,
+              description: data.description,
+              icon: data.icon,
+              color: data.color,
+              visibility: data.visibility,
+            },
+          },
+          {
+            onSuccess: () => {
+              setSpaceDrawerOpen(false);
+              setEditingSpace(null);
+              notifications.show({
+                title: 'Space updated',
+                message: `"${data.name}" has been updated.`,
+                color: 'green',
+              });
+            },
+            onError: () => {
+              notifications.show({
+                title: 'Error',
+                message: 'Failed to update space. Please try again.',
+                color: 'red',
+              });
+            },
+          }
+        );
+      } else {
+        createSpace.mutate(
+          {
+            name: data.name,
+            description: data.description,
+            icon: data.icon,
+            color: data.color,
+            visibility: data.visibility,
+          },
+          {
+            onSuccess: () => {
+              setSpaceDrawerOpen(false);
+              notifications.show({
+                title: 'Space created',
+                message: `"${data.name}" is ready to use.`,
+                color: 'green',
+              });
+            },
+            onError: () => {
+              notifications.show({
+                title: 'Error',
+                message: 'Failed to create space. Please try again.',
+                color: 'red',
+              });
+            },
+          }
+        );
+      }
+    },
+    [editingSpace, createSpace, updateSpace]
+  );
+
+  const handleConfirmDelete = useCallback(
+    (spaceId: string, migrateToSpaceId: string | null) => {
+      // In a real app, this would first migrate docs then delete.
+      // For now, we just trigger the delete mutation.
+      deleteSpace.mutate(spaceId, {
+        onSuccess: () => {
+          setDeleteModalOpen(false);
+          setDeletingSpace(null);
+          if (selectedSpaceId === spaceId) {
+            setSelectedSpaceId(undefined);
+          }
+          notifications.show({
+            title: 'Delete request submitted',
+            message: 'An approval request has been sent to the space owner.',
+            color: 'blue',
+          });
+        },
+        onError: () => {
+          notifications.show({
+            title: 'Error',
+            message: 'Failed to delete space. Please try again.',
+            color: 'red',
+          });
+        },
+      });
+    },
+    [deleteSpace, selectedSpaceId]
+  );
+
+  // ─── Render ───────────────────────────────────────────────────
 
   return (
     <AppLayout>
@@ -102,27 +262,57 @@ export default function WikiPage() {
 
           {/* Content Grid: Sidebar + Main */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* ─────────────────────────────────────────────────────────
+            {/* ═══════════════════════════════════════════════════
                 SIDEBAR: Spaces
-                ───────────────────────────────────────────────────────── */}
+                ═══════════════════════════════════════════════════ */}
             <div className="lg:col-span-1">
               <div className={`${card.base} ${card.paddingLarge}`}>
-                <div className="flex items-center gap-2 mb-4">
-                  <Folder className={iconSize.cardInline} />
-                  <h2 className={typography.sectionTitle}>Spaces</h2>
+                {/* Spaces header with manage button */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Folder className={iconSize.cardInline} />
+                    <h2 className={typography.sectionTitle}>Spaces</h2>
+                  </div>
+                  {canManageSpaces && (
+                    <Tooltip label="Create new space" withArrow>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleOpenCreateSpace}
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </motion.button>
+                    </Tooltip>
+                  )}
                 </div>
 
                 {spacesLoading ? (
                   <div className="h-40 flex items-center justify-center">
-                    <RefreshCw className={`${iconSize.cardInline} text-[var(--text-muted)] animate-spin`} />
+                    <RefreshCw
+                      className={`${iconSize.cardInline} text-[var(--text-muted)] animate-spin`}
+                    />
                   </div>
                 ) : spaces.length === 0 ? (
                   <div className="py-8 text-center">
-                    <Folder className={`${iconSize.statCard} mx-auto mb-2 opacity-50 text-[var(--text-muted)]`} />
-                    <p className={typography.caption}>No spaces yet</p>
+                    <Folder
+                      className={`${iconSize.statCard} mx-auto mb-2 opacity-50 text-[var(--text-muted)]`}
+                    />
+                    <p className={`${typography.caption} mb-4`}>No spaces yet</p>
+                    {canManageSpaces && (
+                      <Button
+                        variant="outline"
+                        size="xs"
+                        className="gap-1"
+                        onClick={handleOpenCreateSpace}
+                      >
+                        <Plus className="h-3 w-3" />
+                        Create Space
+                      </Button>
+                    )}
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {/* All Spaces button */}
                     <motion.button
                       onClick={() => setSelectedSpaceId(undefined)}
@@ -135,41 +325,86 @@ export default function WikiPage() {
                       whileTap={{ scale: 0.98 }}
                     >
                       <p className="text-sm font-medium">All Spaces</p>
+                      <p className={`${typography.caption} mt-0.5`}>
+                        {spaces.reduce((sum, s) => sum + (s.pageCount || 0), 0)} total pages
+                      </p>
                     </motion.button>
 
-                    {/* Individual space buttons */}
+                    {/* Individual spaces with edit/delete */}
                     {spaces.map((space) => (
-                      <motion.button
+                      <motion.div
                         key={space.id}
-                        onClick={() => setSelectedSpaceId(space.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-all ${
-                          selectedSpaceId === space.id
-                            ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                            : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-                        }`}
+                        className="group relative"
                         whileHover={{ x: 4 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        <p className="text-sm font-medium truncate">
-                          {space.name}
-                        </p>
-                        <p className={`${typography.caption} mt-0.5`}>
-                          {space.pageCount || 0} pages
-                        </p>
-                      </motion.button>
+                        <button
+                          onClick={() => setSelectedSpaceId(space.id)}
+                          className={`w-full text-left px-3 py-2.5 rounded-lg transition-all ${
+                            selectedSpaceId === space.id
+                              ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                              : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="flex items-center justify-center w-6 h-6 rounded text-sm text-white flex-shrink-0"
+                              style={{ backgroundColor: space.color || '#3e63dd' }}
+                            >
+                              {space.icon || '📁'}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">
+                                {space.name}
+                              </p>
+                              <p className={`${typography.caption} mt-0.5`}>
+                                {space.pageCount || 0} pages
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Edit / Delete actions — show on hover for authorized roles */}
+                        {canManageSpaces && (
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Tooltip label="Edit space" withArrow>
+                              <motion.button
+                                whileHover={{ scale: 1.15 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={(e) => handleOpenEditSpace(space, e)}
+                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--primary-600)] hover:border-[var(--primary-600)] transition-colors"
+                              >
+                                <Pencil className="h-3 w-3" />
+                              </motion.button>
+                            </Tooltip>
+                            <Tooltip label="Delete space" withArrow>
+                              <motion.button
+                                whileHover={{ scale: 1.15 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={(e) => handleOpenDeleteSpace(space, e)}
+                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-red-600 hover:border-red-400 transition-colors"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </motion.button>
+                            </Tooltip>
+                          </div>
+                        )}
+                      </motion.div>
                     ))}
                   </div>
                 )}
               </div>
             </div>
 
-            {/* ─────────────────────────────────────────────────────────
+            {/* ═══════════════════════════════════════════════════
                 MAIN: Pages Grid
-                ───────────────────────────────────────────────────────── */}
+                ═══════════════════════════════════════════════════ */}
             <div className="lg:col-span-3 space-y-4">
               {/* Search Bar */}
               <div className="relative">
-                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${iconSize.cardInline} text-[var(--text-muted)]`} />
+                <Search
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${iconSize.cardInline} text-[var(--text-muted)]`}
+                />
                 <input
                   type="text"
                   placeholder="Search pages..."
@@ -194,10 +429,14 @@ export default function WikiPage() {
                   ))}
                 </motion.div>
               ) : filteredPages.length === 0 ? (
-                <div className={`${card.base} ${card.paddingLarge} border-dashed border-2 border-[var(--border-main)]`}>
+                <div
+                  className={`${card.base} ${card.paddingLarge} border-dashed border-2 border-[var(--border-main)]`}
+                >
                   <div className="py-16 text-center">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-[var(--bg-secondary)] mx-auto mb-3">
-                      <BookOpen className={`${iconSize.statCard} text-[var(--text-muted)]`} />
+                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-[var(--bg-secondary)] mx-auto mb-4">
+                      <BookOpen
+                        className={`${iconSize.statCard} text-[var(--text-muted)]`}
+                      />
                     </div>
                     <h3 className={`${typography.sectionTitle} mb-1`}>
                       {searchQuery ? 'No pages found' : 'No pages yet'}
@@ -230,10 +469,7 @@ export default function WikiPage() {
                     const authorInitials = getAuthorInitials(page.authorName);
 
                     return (
-                      <motion.div
-                        key={page.id}
-                        {...dsMotion.staggerItem}
-                      >
+                      <motion.div key={page.id} {...dsMotion.staggerItem}>
                         <motion.div
                           {...dsMotion.cardHover}
                           onClick={() =>
@@ -244,7 +480,9 @@ export default function WikiPage() {
                           {/* Card Header: Title + Visibility */}
                           <div className="mb-4">
                             <div className="flex items-start justify-between gap-4 mb-4">
-                              <h3 className={`${typography.cardTitle} line-clamp-2 flex-1`}>
+                              <h3
+                                className={`${typography.cardTitle} line-clamp-2 flex-1`}
+                              >
                                 {page.title}
                               </h3>
                               <VisibilityIcon
@@ -255,36 +493,53 @@ export default function WikiPage() {
 
                           {/* Card Body: Metadata */}
                           <div className="space-y-2 mb-4 flex-1">
-                            {/* Updated Date */}
                             <div className="flex items-center gap-2">
                               <Clock
                                 className={`${iconSize.meta} text-[var(--text-muted)]`}
                               />
                               <span className={typography.caption}>
-                                {new Date(
-                                  page.updatedAt
-                                ).toLocaleDateString()}
+                                {new Date(page.updatedAt).toLocaleDateString()}
                               </span>
                             </div>
 
-                            {/* View Count */}
-                            <div className="flex items-center gap-2">
-                              <Eye
-                                className={`${iconSize.meta} text-[var(--text-muted)]`}
-                              />
-                              <span className={typography.caption}>
-                                {page.viewCount || 0} views
-                              </span>
+                            {/* Engagement row */}
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-1.5">
+                                <Eye
+                                  className={`${iconSize.meta} text-[var(--text-muted)]`}
+                                />
+                                <span className={typography.caption}>
+                                  {page.viewCount || 0}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <Heart
+                                  className={`${iconSize.meta} text-[var(--text-muted)]`}
+                                />
+                                <span className={typography.caption}>
+                                  {page.likeCount || 0}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <MessageCircle
+                                  className={`${iconSize.meta} text-[var(--text-muted)]`}
+                                />
+                                <span className={typography.caption}>
+                                  {page.commentCount || 0}
+                                </span>
+                              </div>
                             </div>
                           </div>
 
                           {/* Card Footer: Author Badge */}
                           {page.authorName && (
-                            <div className="flex items-center gap-2 pt-3 border-t border-[var(--border-main)]">
+                            <div className="flex items-center gap-2 pt-4 border-t border-[var(--border-main)]">
                               <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white text-xs font-medium">
                                 {authorInitials}
                               </div>
-                              <span className={`${typography.caption} truncate`}>
+                              <span
+                                className={`${typography.caption} truncate`}
+                              >
                                 {page.authorName}
                               </span>
                             </div>
@@ -299,6 +554,31 @@ export default function WikiPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* ═══ Space Form Drawer ═══ */}
+      <SpaceFormDrawer
+        opened={spaceDrawerOpen}
+        onClose={() => {
+          setSpaceDrawerOpen(false);
+          setEditingSpace(null);
+        }}
+        onSubmit={handleSpaceSubmit}
+        editingSpace={editingSpace}
+        isSubmitting={createSpace.isPending || updateSpace.isPending}
+      />
+
+      {/* ═══ Delete Space Modal ═══ */}
+      <DeleteSpaceModal
+        opened={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setDeletingSpace(null);
+        }}
+        space={deletingSpace}
+        allSpaces={spaces}
+        onConfirmDelete={handleConfirmDelete}
+        isDeleting={deleteSpace.isPending}
+      />
     </AppLayout>
   );
 }

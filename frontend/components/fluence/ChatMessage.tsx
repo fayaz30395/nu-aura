@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
+import Link from 'next/link';
 import { Bot, User, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatSourceCard } from './ChatSourceCard';
@@ -10,8 +11,54 @@ interface ChatMessageProps {
   message: ChatMessageType;
 }
 
+/**
+ * Parse markdown-style links [text](url) into React elements.
+ * Everything else is rendered as plain text with line breaks preserved.
+ */
+function renderMessageContent(content: string): React.ReactNode[] {
+  // Split on markdown links: [text](url)
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = linkRegex.exec(content)) !== null) {
+    // Text before the link
+    if (match.index > lastIndex) {
+      parts.push(content.slice(lastIndex, match.index));
+    }
+
+    const linkText = match[1];
+    const linkUrl = match[2];
+
+    parts.push(
+      <Link
+        key={`link-${match.index}`}
+        href={linkUrl}
+        className="text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 underline underline-offset-2 transition-colors"
+      >
+        {linkText}
+      </Link>
+    );
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Remaining text after the last link
+  if (lastIndex < content.length) {
+    parts.push(content.slice(lastIndex));
+  }
+
+  return parts;
+}
+
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isUser = message.role === 'user';
+
+  const renderedContent = useMemo(() => {
+    if (!message.content) return null;
+    return renderMessageContent(message.content);
+  }, [message.content]);
 
   return (
     <div className={cn('flex gap-2', isUser ? 'flex-row-reverse' : 'flex-row')}>
@@ -37,10 +84,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               : 'bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-primary)] rounded-bl-md'
           )}
         >
-          {/* Render content with basic line breaks */}
+          {/* Render content with markdown links and line breaks */}
           {message.content ? (
             <div className="whitespace-pre-wrap break-words">
-              {message.content}
+              {renderedContent}
             </div>
           ) : message.isStreaming ? (
             <div className="flex items-center gap-1.5 py-0.5">

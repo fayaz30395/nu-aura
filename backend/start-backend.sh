@@ -16,6 +16,10 @@ export CSRF_ENABLED=false
 export APP_CORS_ALLOWED_ORIGINS="http://localhost:3000,http://localhost:3001,http://localhost:8080"
 # Encryption key for sensitive data (32 bytes)
 export APP_SECURITY_ENCRYPTION_KEY="0123456789ABCDEF0123456789ABCDEF"
+# AI / LLM Configuration (Groq free tier)
+export OPENAI_API_KEY="${OPENAI_API_KEY:-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}"
+export OPENAI_BASE_URL="${OPENAI_BASE_URL:-https://api.groq.com/openai/v1}"
+export OPENAI_MODEL="${OPENAI_MODEL:-llama-3.1-8b-instant}"
 
 echo "Checking for existing processes on port 8080..."
 # Kill any process running on port 8080

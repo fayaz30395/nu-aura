@@ -25,7 +25,8 @@ public class FluenceChatSseEvent {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Token {
-        private final String type = "token";
+        @Builder.Default
+        private String type = "token";
         private String content;
     }
 
@@ -36,7 +37,8 @@ public class FluenceChatSseEvent {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Sources {
-        private final String type = "sources";
+        @Builder.Default
+        private String type = "sources";
         private List<SourceItem> sources;
     }
 
@@ -59,7 +61,8 @@ public class FluenceChatSseEvent {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Done {
-        private final String type = "done";
+        @Builder.Default
+        private String type = "done";
         private UUID conversationId;
     }
 
@@ -70,7 +73,8 @@ public class FluenceChatSseEvent {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Error {
-        private final String type = "error";
+        @Builder.Default
+        private String type = "error";
         private String message;
     }
 }

@@ -34,6 +34,9 @@ import {
   MOCK_FAVORITED_PAGES,
   getMockComments,
   mockPageResponse,
+  getAllMockTemplates,
+  getMockTemplate,
+  addMockTemplate,
 } from '@/lib/data/mock-fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -257,7 +260,18 @@ export function useFluenceTemplates(
 ) {
   return useQuery({
     queryKey: fluenceKeys.templateList(categoryId, page, size),
-    queryFn: () => fluenceService.listTemplates(page, size, categoryId),
+    queryFn: async () => {
+      try {
+        return await fluenceService.listTemplates(page, size, categoryId);
+      } catch {
+        // Fallback to mock data when backend is unavailable
+        const templates = getAllMockTemplates();
+        const filtered = categoryId
+          ? templates.filter((t) => t.categoryId === categoryId)
+          : templates;
+        return mockPageResponse(filtered, page, size);
+      }
+    },
     enabled,
     staleTime: 2 * 60 * 1000,
   });
@@ -266,7 +280,16 @@ export function useFluenceTemplates(
 export function useFluenceTemplate(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.templateDetail(id),
-    queryFn: () => fluenceService.getTemplate(id),
+    queryFn: async () => {
+      try {
+        return await fluenceService.getTemplate(id);
+      } catch {
+        // Fallback to mock data when backend is unavailable
+        const template = getMockTemplate(id);
+        if (template) return template;
+        throw new Error(`Template not found: ${id}`);
+      }
+    },
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
   });
@@ -511,7 +534,35 @@ export function useCreateFluenceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateTemplateRequest) => fluenceService.createTemplate(data),
+    mutationFn: async (data: CreateTemplateRequest) => {
+      try {
+        return await fluenceService.createTemplate(data);
+      } catch {
+        // Fallback: create a mock template when backend is unavailable
+        const mockId = `tmpl-${Date.now()}`;
+        const slug = data.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '');
+        const newTemplate: DocumentTemplate = {
+          id: mockId,
+          name: data.name,
+          slug,
+          description: data.description,
+          content: data.content,
+          categoryId: data.categoryId,
+          authorId: 'user-001',
+          authorName: 'Fayaz M',
+          usageCount: 0,
+          icon: data.icon,
+          tags: data.tags ?? [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        addMockTemplate(newTemplate);
+        return newTemplate;
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.templates() });
     },

@@ -45,6 +45,25 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
                    "to_tsquery('english', :query)")
     Page<WikiPage> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
+    /**
+     * Broad ILIKE-based search for RAG retrieval — high recall, LLM handles precision.
+     * Searches title, excerpt, AND content body for any keyword match.
+     */
+    @Query(value = "SELECT wp.* FROM wiki_pages wp " +
+           "WHERE wp.tenant_id = :tenantId AND (" +
+           "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
+           "OR LOWER(wp.excerpt) LIKE LOWER(CONCAT('%', :query, '%')) " +
+           "OR LOWER(wp.content) LIKE LOWER(CONCAT('%', :query, '%'))" +
+           ") ORDER BY CASE WHEN LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 0 ELSE 1 END, " +
+           "wp.updated_at DESC",
+           nativeQuery = true,
+           countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
+                   "WHERE wp.tenant_id = :tenantId AND (" +
+                   "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                   "OR LOWER(wp.excerpt) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                   "OR LOWER(wp.content) LIKE LOWER(CONCAT('%', :query, '%')))")
+    Page<WikiPage> searchByTenantBroad(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
+
     long countByTenantIdAndSpaceId(UUID tenantId, UUID spaceId);
 
     boolean existsByTenantIdAndSlug(UUID tenantId, String slug);
