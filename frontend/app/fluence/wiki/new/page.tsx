@@ -124,7 +124,7 @@ export default function CreateWikiPage() {
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-4 mb-2">
               <button
                 onClick={() => router.back()}
                 className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 rounded-lg transition-colors"
@@ -251,7 +251,7 @@ export default function CreateWikiPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 justify-end pt-6 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
+          <div className="flex gap-4 justify-end pt-6 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
             <Button
               onClick={() => router.back()}
               variant="secondary"

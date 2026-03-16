@@ -475,7 +475,7 @@ export default function BlogPostDetailPage() {
               whileHover={dsMotion.cardHover}
             >
               <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Stats</h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                     <Eye className="w-4 h-4 flex-shrink-0" />
@@ -577,7 +577,7 @@ export default function BlogPostDetailPage() {
 
           <div className="space-y-6">
             {/* Comment Input */}
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-semibold ${getAvatarColor(getInitial(user?.fullName))}`}>
                 {getInitial(user?.fullName)}
               </div>
@@ -631,7 +631,7 @@ export default function BlogPostDetailPage() {
                   <motion.div
                     key={comment.id}
                     variants={dsMotion.staggerItem}
-                    className="flex gap-3 pb-4 border-b border-[var(--border-main)] last:border-b-0 hover:bg-[var(--bg-secondary)]/50 p-3 rounded-lg transition-colors"
+                    className="flex gap-4 pb-4 border-b border-[var(--border-main)] last:border-b-0 hover:bg-[var(--bg-secondary)]/50 p-4 rounded-lg transition-colors"
                   >
                     <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-semibold ${getAvatarColor(getInitial(comment.authorName))}`}>
                       {getInitial(comment.authorName)}
@@ -706,9 +706,9 @@ export default function BlogPostDetailPage() {
                 <motion.div
                   key={v.id}
                   variants={dsMotion.staggerItem}
-                  className="flex items-center justify-between py-3 px-3 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                  className="flex items-center justify-between py-4 px-4 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-4 min-w-0">
                     <div className={`w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold ${getAvatarColor(getInitial(v.viewerName))}`}>
                       {getInitial(v.viewerName)}
                     </div>

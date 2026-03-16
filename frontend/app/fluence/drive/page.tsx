@@ -119,9 +119,9 @@ function FluenceDriveContent() {
           </div>
 
           {error && (
-            <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+            <div className="flex items-center gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+              <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0" />
+              <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
             </div>
           )}
         </div>
@@ -215,7 +215,7 @@ function FluenceDriveContent() {
               {activeTab === 'team-docs' && (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-12 text-center">
-                    <div className="flex flex-col items-center gap-3">
+                    <div className="flex flex-col items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
                         <FileText className="h-6 w-6 text-[var(--text-muted)]" />
                       </div>
@@ -239,7 +239,7 @@ function FluenceDriveContent() {
               {activeTab === 'shared' && (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-12 text-center">
-                    <div className="flex flex-col items-center gap-3">
+                    <div className="flex flex-col items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
                         <Users className="h-6 w-6 text-[var(--text-muted)]" />
                       </div>
@@ -259,7 +259,7 @@ function FluenceDriveContent() {
               {activeTab === 'recent' && (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-12 text-center">
-                    <div className="flex flex-col items-center gap-3">
+                    <div className="flex flex-col items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
                         <Clock className="h-6 w-6 text-[var(--text-muted)]" />
                       </div>
@@ -284,8 +284,8 @@ function FluenceDriveContent() {
                   <CheckCircle2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                   How to Embed Files in Wiki Pages
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex gap-3">
+                <div className="space-y-4">
+                  <div className="flex gap-4">
                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">
                       1
                     </div>
@@ -298,7 +298,7 @@ function FluenceDriveContent() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-4">
                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">
                       2
                     </div>
@@ -311,7 +311,7 @@ function FluenceDriveContent() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-4">
                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">
                       3
                     </div>
@@ -340,7 +340,7 @@ function FluenceDriveContent() {
                     <p className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       For Google Docs:
                     </p>
-                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 p-3 rounded-lg text-xs overflow-x-auto">
+                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4 rounded-lg text-xs overflow-x-auto">
                       {`[embed]https://docs.google.com/document/d/FILE_ID/preview[/embed]`}
                     </pre>
                   </div>
@@ -348,7 +348,7 @@ function FluenceDriveContent() {
                     <p className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       For PDFs:
                     </p>
-                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 p-3 rounded-lg text-xs overflow-x-auto">
+                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4 rounded-lg text-xs overflow-x-auto">
                       {`[embed]https://drive.google.com/file/d/FILE_ID/preview[/embed]`}
                     </pre>
                   </div>
@@ -356,7 +356,7 @@ function FluenceDriveContent() {
                     <p className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       For Spreadsheets:
                     </p>
-                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 p-3 rounded-lg text-xs overflow-x-auto">
+                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4 rounded-lg text-xs overflow-x-auto">
                       {`[embed]https://docs.google.com/spreadsheets/d/FILE_ID/preview[/embed]`}
                     </pre>
                   </div>

@@ -228,7 +228,7 @@ function StatCard({ icon: Icon, label, value, iconColor }: StatCardProps) {
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
     >
-      <div className={`${colorMap[iconColor]} rounded-lg p-3 flex-shrink-0`}>
+      <div className={`${colorMap[iconColor]} rounded-lg p-4 flex-shrink-0`}>
         <Icon className={iconSize.statCard} />
       </div>
       <div className="flex-1 min-w-0">
