@@ -19,11 +19,12 @@ const RichTextEditor = dynamic(
 );
 import { ArrowLeft } from 'lucide-react';
 import { isAxiosError } from '@/lib/utils/type-guards';
+import AccessControlSection from '@/components/fluence/AccessControlSection';
 
 const createWikiPageSchema = z.object({
   title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
   spaceId: z.string().min(1, 'Space is required'),
-  visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'TEAM', 'PRIVATE', 'RESTRICTED'], {
+  visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'], {
     errorMap: () => ({ message: 'Invalid visibility option' }),
   }),
   parentId: z.string().optional(),
@@ -63,7 +64,10 @@ export default function CreateWikiPage() {
 
   const selectedSpaceId = watch('spaceId');
   const content = watch('content');
+  const visibility = watch('visibility');
   const spaces = spacesData?.content || [];
+  const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);
+  const [sharedEmployeeIds, setSharedEmployeeIds] = useState<string[]>([]);
 
   const onSubmit = async (data: CreateWikiPageInput) => {
     if (!data.content || Object.keys(data.content).length === 0) {
@@ -85,6 +89,8 @@ export default function CreateWikiPage() {
           parentId: data.parentId,
           content: data.content,
           status: 'DRAFT',
+          sharedWithDepartmentIds: sharedDepartmentIds.length > 0 ? sharedDepartmentIds : undefined,
+          sharedWithEmployeeIds: sharedEmployeeIds.length > 0 ? sharedEmployeeIds : undefined,
         },
         {
           onSuccess: (page) => {
@@ -190,7 +196,7 @@ export default function CreateWikiPage() {
                   data={[
                     { value: 'PUBLIC', label: 'Public' },
                     { value: 'ORGANIZATION', label: 'Organization' },
-                    { value: 'TEAM', label: 'Team' },
+                    { value: 'DEPARTMENT', label: 'My Department Only' },
                     { value: 'PRIVATE', label: 'Private' },
                     { value: 'RESTRICTED', label: 'Restricted' },
                   ]}
@@ -198,6 +204,16 @@ export default function CreateWikiPage() {
               )}
             />
           </div>
+
+          {/* Access Control (shown for DEPARTMENT and RESTRICTED visibility) */}
+          <AccessControlSection
+            visibility={visibility}
+            sharedWithDepartmentIds={sharedDepartmentIds}
+            sharedWithEmployeeIds={sharedEmployeeIds}
+            onDepartmentIdsChange={setSharedDepartmentIds}
+            onEmployeeIdsChange={setSharedEmployeeIds}
+            disabled={isSubmitting}
+          />
 
           {/* Parent Page (Optional) */}
           <div>

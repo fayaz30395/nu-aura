@@ -174,7 +174,9 @@ export default function WorkloadDashboardPage() {
         const matchesRange = selectedRanges.some((rangeKey) => {
           const range = allocationRangeOptions.find((r) => r.key === rangeKey);
           if (!range) return false;
-          return activeAllocation >= range.min && activeAllocation < range.max;
+          return range.max === Infinity
+            ? activeAllocation >= range.min
+            : activeAllocation >= range.min && activeAllocation < range.max;
         });
         if (!matchesRange) return false;
       }

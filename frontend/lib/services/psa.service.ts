@@ -8,6 +8,16 @@ import {
     TimesheetStatus
 } from '@/lib/types/psa';
 
+export interface PSAResourceAllocationRequest {
+  employeeId: string;
+  role?: string;
+  allocationPercentage: number;
+  startDate: string;
+  endDate?: string;
+  billingRate?: number;
+  costRate?: number;
+}
+
 const PROJECTS_URL = '/psa/projects';
 const TIMESHEETS_URL = '/psa/timesheets';
 const INVOICES_URL = '/psa/invoices';
@@ -44,7 +54,7 @@ export const psaService = {
         return response.data;
     },
 
-    allocateResources: async (projectId: string, allocation: any): Promise<PSAProject> => {
+    allocateResources: async (projectId: string, allocation: PSAResourceAllocationRequest): Promise<PSAProject> => {
         const response = await apiClient.post<PSAProject>(`${PROJECTS_URL}/${projectId}/allocate`, allocation);
         return response.data;
     },
@@ -72,12 +82,12 @@ export const psaService = {
     },
 
     approveTimesheet: async (id: string, approverId: string): Promise<PSATimesheet> => {
-        const response = await apiClient.post<PSATimesheet>(`${TIMESHEETS_URL}/${id}/approve`, approverId); // Note: Backend expects generic RequestBody, check if JSON or raw string
+        const response = await apiClient.post<PSATimesheet>(`${TIMESHEETS_URL}/${id}/approve`, { approverId });
         return response.data;
     },
 
     rejectTimesheet: async (id: string, reason: string): Promise<PSATimesheet> => {
-        const response = await apiClient.post<PSATimesheet>(`${TIMESHEETS_URL}/${id}/reject`, reason);
+        const response = await apiClient.post<PSATimesheet>(`${TIMESHEETS_URL}/${id}/reject`, { reason });
         return response.data;
     },
 

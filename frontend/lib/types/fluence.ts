@@ -4,11 +4,11 @@
 
 export type WikiPageStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 
-export type WikiVisibility = 'PUBLIC' | 'ORGANIZATION' | 'TEAM' | 'PRIVATE' | 'RESTRICTED';
+export type WikiVisibility = 'PUBLIC' | 'ORGANIZATION' | 'DEPARTMENT' | 'PRIVATE' | 'RESTRICTED';
 
 export type BlogPostStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 
-export type BlogVisibility = 'PUBLIC' | 'ORGANIZATION' | 'TEAM' | 'PRIVATE';
+export type BlogVisibility = 'PUBLIC' | 'ORGANIZATION' | 'DEPARTMENT' | 'PRIVATE' | 'RESTRICTED';
 
 export type CommentContentType = 'WIKI' | 'BLOG';
 
@@ -22,6 +22,7 @@ export interface WikiPage {
   slug: string;
   content: Record<string, unknown>; // JSON content (e.g., TipTap editor output)
   spaceId: string;
+  spaceName?: string;
   parentId?: string; // For hierarchical pages
   authorId: string;
   authorName?: string;
@@ -30,6 +31,20 @@ export interface WikiPage {
   version: number;
   viewCount?: number;
   likeCount?: number;
+  commentCount?: number;
+  /** Department the page belongs to — when visibility is DEPARTMENT, only members of this dept see it */
+  departmentId?: string;
+  departmentName?: string;
+  /** Additional departments granted read access (beyond the owning department) */
+  sharedWithDepartmentIds?: string[];
+  /** Individual employees granted explicit access regardless of department */
+  sharedWithEmployeeIds?: string[];
+  /** Users who have been granted edit permission on this page */
+  editorIds?: string[];
+  isLikedByCurrentUser?: boolean;
+  isFavoritedByCurrentUser?: boolean;
+  /** Whether the current user can edit this page */
+  canEdit?: boolean;
   createdAt: string;
   updatedAt: string;
   archivedAt?: string;
@@ -57,6 +72,14 @@ export interface CreateWikiPageRequest {
   parentId?: string;
   visibility: WikiVisibility;
   status?: WikiPageStatus;
+  /** Department this page belongs to (for DEPARTMENT visibility) */
+  departmentId?: string;
+  /** Additional departments to share with */
+  sharedWithDepartmentIds?: string[];
+  /** Individual employees to share with */
+  sharedWithEmployeeIds?: string[];
+  /** User IDs who can edit this page */
+  editorIds?: string[];
 }
 
 export interface UpdateWikiPageRequest {
@@ -65,6 +88,10 @@ export interface UpdateWikiPageRequest {
   visibility?: WikiVisibility;
   status?: WikiPageStatus;
   parentId?: string;
+  departmentId?: string;
+  sharedWithDepartmentIds?: string[];
+  sharedWithEmployeeIds?: string[];
+  editorIds?: string[];
 }
 
 export interface CreateWikiSpaceRequest {
@@ -102,6 +129,19 @@ export interface BlogPost {
   viewCount?: number;
   likeCount?: number;
   commentCount?: number;
+  /** Department the post belongs to — when visibility is DEPARTMENT, only members see it */
+  departmentId?: string;
+  departmentName?: string;
+  /** Additional departments granted read access */
+  sharedWithDepartmentIds?: string[];
+  /** Individual employees granted explicit access regardless of department */
+  sharedWithEmployeeIds?: string[];
+  /** Users who have been granted edit permission on this post */
+  editorIds?: string[];
+  isLikedByCurrentUser?: boolean;
+  isFavoritedByCurrentUser?: boolean;
+  /** Whether the current user can edit this post */
+  canEdit?: boolean;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -128,6 +168,14 @@ export interface CreateBlogPostRequest {
   visibility: BlogVisibility;
   coverImageUrl?: string;
   status?: BlogPostStatus;
+  /** Department this post belongs to (for DEPARTMENT visibility) */
+  departmentId?: string;
+  /** Additional departments to share with */
+  sharedWithDepartmentIds?: string[];
+  /** Individual employees to share with */
+  sharedWithEmployeeIds?: string[];
+  /** User IDs who can edit this post */
+  editorIds?: string[];
 }
 
 export interface UpdateBlogPostRequest {
@@ -139,6 +187,10 @@ export interface UpdateBlogPostRequest {
   visibility?: BlogVisibility;
   coverImageUrl?: string;
   status?: BlogPostStatus;
+  departmentId?: string;
+  sharedWithDepartmentIds?: string[];
+  sharedWithEmployeeIds?: string[];
+  editorIds?: string[];
 }
 
 export interface CreateBlogCategoryRequest {
@@ -269,4 +321,38 @@ export interface ContentActivity {
   actorName?: string;
   metadata?: Record<string, unknown>;
   createdAt: string;
+}
+
+// ─── Favorites Types ───────────────────────────────────────────────────────
+
+export type FavoriteContentType = 'WIKI_PAGE' | 'BLOG_POST' | 'WIKI_SPACE';
+
+export interface FluenceFavorite {
+  id: string;
+  contentId: string;
+  contentType: FavoriteContentType;
+  /** Denormalized title for quick display */
+  contentTitle: string;
+  userId: string;
+  createdAt: string;
+}
+
+// ─── View Tracking Types ───────────────────────────────────────────────────
+
+export interface ContentViewRecord {
+  id: string;
+  contentId: string;
+  contentType: CommentContentType;
+  viewerId: string;
+  viewerName?: string;
+  viewedAt: string;
+}
+
+// ─── My Content Filters ────────────────────────────────────────────────────
+
+export interface MyContentFilters {
+  type?: 'WIKI' | 'BLOG';
+  status?: WikiPageStatus | BlogPostStatus;
+  page?: number;
+  size?: number;
 }

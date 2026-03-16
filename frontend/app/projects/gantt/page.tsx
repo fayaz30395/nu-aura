@@ -16,6 +16,7 @@ import {
   Users,
   Target,
   Clock,
+  BarChart3,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -50,28 +51,20 @@ export default function GanttChartPage() {
   const [filters, setFilters] = useState<GanttFilterOptions>({});
   const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch projects and tasks with React Query
+  // Fetch projects with React Query
   const projectsQuery = useQuery({
     queryKey: ['projects', 'gantt'],
     queryFn: () => projectService.getAllProjects(0, 100),
     staleTime: 5 * 60 * 1000,
   });
 
-  const tasksQuery = useQuery({
-    queryKey: ['tasks', 'gantt'],
-    queryFn: () => {
-      // Fallback: getAllTasks may not exist, return empty array
-      return Promise.resolve({ content: [] as unknown[] });
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-
   const ganttTasks = useMemo(() => {
-    if (!projectsQuery.data || !tasksQuery.data) return [];
+    if (!projectsQuery.data) return [];
 
+    // Convert projects to Gantt tasks (task management coming soon)
     const tasks = projectCalendarService.convertToGanttTasks(
       projectsQuery.data.content,
-      (tasksQuery.data.content as (Task | TaskListItem)[]) || []
+      [] // No individual tasks yet - task management in development
     );
 
     // Apply filters
@@ -92,14 +85,13 @@ export default function GanttChartPage() {
     }
 
     return filteredTasks;
-  }, [projectsQuery.data, tasksQuery.data, filters]);
+  }, [projectsQuery.data, filters]);
 
-  const loading = projectsQuery.isLoading || tasksQuery.isLoading;
-  const error = projectsQuery.error || tasksQuery.error;
+  const loading = projectsQuery.isLoading;
+  const error = projectsQuery.error;
 
   const refetch = () => {
     projectsQuery.refetch();
-    tasksQuery.refetch();
   };
 
   // Calculate timeline range
@@ -430,8 +422,14 @@ export default function GanttChartPage() {
             ))}
 
             {ganttTasks.length === 0 && (
-              <div className="p-12 text-center text-[var(--text-muted)]">
-                No tasks found. Create projects and tasks to see the Gantt chart.
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mb-4">
+                  <BarChart3 className="h-8 w-8 text-primary-500" />
+                </div>
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Gantt View Coming Soon</h2>
+                <p className="text-sm text-[var(--text-muted)] max-w-md">
+                  The Gantt chart view is under development. Project timelines will be visualized here once task management is enabled.
+                </p>
               </div>
             )}
           </div>

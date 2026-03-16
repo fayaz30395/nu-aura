@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import {
   Calendar,
@@ -36,6 +37,7 @@ import {
 type ViewMode = 'month' | 'week';
 
 export default function AvailabilityCalendarPage() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDepartment, setSelectedDepartment] = useState<string | undefined>();
@@ -92,7 +94,7 @@ export default function AvailabilityCalendarPage() {
 
   const handleEmployeeClick = (employeeId: string) => {
     // Navigate to employee detail page
-    window.location.href = `/employees/${employeeId}`;
+    router.push(`/employees/${employeeId}`);
   };
 
   // Calculate summary stats

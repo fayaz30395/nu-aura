@@ -30,6 +30,7 @@ import {
 } from '@/lib/types/hrms-project';
 import { apiClient } from '@/lib/api/client';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useToast } from '@/components/notifications/ToastProvider';
 import {
   useHrmsProjects,
   useCreateHrmsProject,
@@ -240,6 +241,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
                 <li key={owner.id}>
                   <button
                     type="button"
+                    aria-label={`Select ${buildEmployeeName(owner)}`}
                     className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(owner)}
                   >
@@ -262,6 +264,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
 
 export default function ProjectsPage() {
   const { user } = useAuth();
+  const toast = useToast();
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [activeTab, setActiveTab] = useState<'active' | 'all' | 'on_hold' | 'completed' | 'archived'>('active');
@@ -270,7 +273,6 @@ export default function ProjectsPage() {
   const [typeFilter, setTypeFilter] = useState<ProjectType | ''>('');
   const [ownerFilter, setOwnerFilter] = useState<EmployeeSummary | null>(null);
   const [searchInput, setSearchInput] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formErrorDetails, setFormErrorDetails] = useState<string[]>([]);
@@ -382,9 +384,10 @@ export default function ProjectsPage() {
       link.download = 'projects.csv';
       link.click();
       URL.revokeObjectURL(url);
+      toast.success('Export Complete', 'Projects exported as CSV');
     } catch (err) {
       const apiError = parseApiError(err);
-      // Error already shown by mutation
+      toast.error('Export Failed', apiError.message || 'Could not export projects');
     }
   };
 
@@ -555,11 +558,12 @@ export default function ProjectsPage() {
               onClick={handleExport}
               leftIcon={<Download className="h-4 w-4" />}
               isLoading={exporting}
+              aria-label="Export projects as CSV"
             >
               Export
             </Button>
             {canCreateProject && (
-              <Button onClick={handleOpenCreate} leftIcon={<Plus className="h-4 w-4" />}>
+              <Button onClick={handleOpenCreate} leftIcon={<Plus className="h-4 w-4" />} aria-label="Create new project">
                 New Project
               </Button>
             )}
@@ -591,7 +595,7 @@ export default function ProjectsPage() {
 
         {error && (
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
-            <CardContent className="flex items-center justify-between gap-3">
+            <CardContent className="flex items-center justify-between gap-4">
               <p className="text-sm text-danger-700 dark:text-danger-300">{error?.message ?? String(error)}</p>
               <Button variant="outline" size="sm" onClick={() => { void refetch(); }}>
                 Retry
@@ -718,8 +722,8 @@ export default function ProjectsPage() {
             {formErrorDetails.length > 0 && (
               <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
                 <ul className="space-y-1">
-                  {formErrorDetails.map((detail) => (
-                    <li key={detail}>{detail}</li>
+                  {formErrorDetails.map((detail, index) => (
+                    <li key={`${index}-${detail}`}>{detail}</li>
                   ))}
                 </ul>
               </div>

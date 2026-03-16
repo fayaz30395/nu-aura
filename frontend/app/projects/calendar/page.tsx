@@ -77,11 +77,12 @@ export default function ProjectCalendarPage() {
 
   const projects = projectsData?.content ?? [];
 
-  // Fetch tasks for all projects (simplified - using dummy data for now)
+  // Fetch tasks for all projects (task management coming soon)
   const tasksQuery = useQuery({
     queryKey: ['tasks', showTasks, projects.length],
     queryFn: async () => {
-      if (!showTasks || projects.length === 0) return [] as TaskWithProject[];
+      // Task API endpoints not yet implemented - return empty array
+      // Once task endpoints are ready, fetch individual project tasks here
       return [] as TaskWithProject[];
     },
     staleTime: 5 * 60 * 1000,
@@ -579,7 +580,7 @@ export default function ProjectCalendarPage() {
                       return (
                         <div
                           key={item.id}
-                          className={`flex border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 ${isProject ? 'bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]900/30' : ''
+                          className={`flex border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 ${isProject ? 'bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]' : ''
                             }`}
                         >
                           {/* Name Column */}

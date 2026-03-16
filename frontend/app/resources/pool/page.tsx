@@ -183,7 +183,7 @@ export default function ResourcePoolPage() {
                 className={`rounded-xl border p-4 text-left transition-all hover:shadow-sm ${
                   statusFilter === stat.filter
                     ? 'border-primary-400 ring-2 ring-primary-200 bg-primary-50'
-                    : 'border-[var(--border-main)] bg-white'
+                    : 'border-[var(--border-main)] bg-[var(--bg-card)]'
                 }`}
               >
                 <p className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</p>
@@ -205,14 +205,14 @@ export default function ResourcePoolPage() {
               placeholder="Search by name, code, role..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 w-64"
+              className="pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 w-64"
             />
           </div>
 
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => (
@@ -246,7 +246,7 @@ export default function ResourcePoolPage() {
             <p className="text-[var(--text-muted)] text-sm mt-1">Try adjusting your filters.</p>
           </div>
         ) : (
-          <div className="bg-white border border-[var(--border-main)] rounded-xl overflow-hidden">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -259,7 +259,7 @@ export default function ResourcePoolPage() {
                     <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-100">
+                <tbody className="divide-y divide-[var(--border-subtle)]">
                   {filtered.map(emp => {
                     const alloc = emp.totalAllocation ?? 0;
                     const { badge } = allocationColor(alloc);

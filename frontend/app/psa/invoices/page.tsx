@@ -1,7 +1,7 @@
 'use client';
 
 import { AppLayout } from '@/components/layout';
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -80,8 +80,8 @@ export default function PsaInvoicesPage() {
       header: 'Invoice #',
       accessor: (row) => (
         <div>
-          <div className="font-medium text-surface-900 dark:text-surface-50">{row.invoiceNumber}</div>
-          <div className="text-xs text-surface-500 dark:text-surface-400">Due: {row.dueDate}</div>
+          <div className="font-medium text-[var(--text-primary)]">{row.invoiceNumber}</div>
+          <div className="text-xs text-[var(--text-muted)]">Due: {row.dueDate}</div>
         </div>
       ),
       mobilePriority: 'primary',
@@ -91,7 +91,7 @@ export default function PsaInvoicesPage() {
       key: 'clientId',
       header: 'Client ID',
       accessor: (row) => (
-        <div className="text-sm text-surface-700 dark:text-surface-300">
+        <div className="text-sm text-[var(--text-secondary)]">
           {formatClientId(row.clientId)}
         </div>
       ),
@@ -102,7 +102,7 @@ export default function PsaInvoicesPage() {
       key: 'totalAmount',
       header: 'Amount',
       accessor: (row) => (
-        <div className="font-medium text-surface-900 dark:text-surface-50">
+        <div className="font-medium text-[var(--text-primary)]">
           {formatCurrency(row.totalAmount)}
         </div>
       ),
@@ -128,20 +128,20 @@ export default function PsaInvoicesPage() {
       <div className="relative">
         <button
           onClick={() => setShowActions(isOpen ? null : invoice.id)}
-          className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors text-surface-600 dark:text-surface-400"
+          className="p-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors text-[var(--text-secondary)]"
           aria-label="Row actions"
         >
           <MoreVertical className="h-4 w-4" />
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 mt-1 w-48 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg z-10">
+          <div className="absolute right-0 mt-1 w-48 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg z-10" data-dropdown-menu>
             <button
               onClick={() => {
                 router.push(`/psa/invoices/${invoice.id}`);
                 setShowActions(null);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-surface-50 dark:hover:bg-surface-800 flex items-center gap-2 first:rounded-t-lg transition-colors text-surface-700 dark:text-surface-300"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface)] flex items-center gap-2 first:rounded-t-lg transition-colors text-[var(--text-secondary)]"
             >
               <FileText className="h-4 w-4" />
               View Details
@@ -151,7 +151,7 @@ export default function PsaInvoicesPage() {
                 // TODO: Implement PDF download
                 setShowActions(null);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-surface-50 dark:hover:bg-surface-800 flex items-center gap-2 transition-colors text-surface-700 dark:text-surface-300"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface)] flex items-center gap-2 transition-colors text-[var(--text-secondary)]"
             >
               <Download className="h-4 w-4" />
               Download PDF
@@ -162,7 +162,7 @@ export default function PsaInvoicesPage() {
                   // TODO: Implement send to client
                   setShowActions(null);
                 }}
-                className="w-full text-left px-4 py-2 text-sm hover:bg-surface-50 dark:hover:bg-surface-800 flex items-center gap-2 last:rounded-b-lg transition-colors text-surface-700 dark:text-surface-300"
+                className="w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface)] flex items-center gap-2 last:rounded-b-lg transition-colors text-[var(--text-secondary)]"
               >
                 <Send className="h-4 w-4" />
                 Send to Client
@@ -175,18 +175,26 @@ export default function PsaInvoicesPage() {
   };
 
   // Close dropdown when clicking outside
-  const handleContainerClick = () => {
-    setShowActions(null);
-  };
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Close dropdown if click is outside any dropdown menu
+      if (!target.closest('[data-dropdown-menu]')) {
+        setShowActions(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <AppLayout>
-      <div className="w-full max-w-7xl mx-auto px-4 py-8 space-y-8" onClick={handleContainerClick}>
+      <div className="w-full max-w-7xl mx-auto px-4 py-8 space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">Invoices</h1>
-            <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Invoices</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               Manage client billing and payments
             </p>
           </div>

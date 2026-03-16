@@ -19,6 +19,7 @@ const RichTextEditor = dynamic(
 );
 import { ArrowLeft } from 'lucide-react';
 import { isAxiosError } from '@/lib/utils/type-guards';
+import AccessControlSection from '@/components/fluence/AccessControlSection';
 
 const createBlogPostSchema = z.object({
   title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
@@ -26,7 +27,7 @@ const createBlogPostSchema = z.object({
   categoryId: z.string().optional(),
   tags: z.array(z.string()).default([]),
   coverImageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
-  visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'TEAM', 'PRIVATE'], {
+  visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'], {
     errorMap: () => ({ message: 'Invalid visibility option' }),
   }),
   content: z.record(z.unknown()).default({
@@ -66,7 +67,10 @@ export default function CreateBlogPost() {
   });
 
   const content = watch('content');
+  const visibility = watch('visibility');
   const categories = categoriesData || [];
+  const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);
+  const [sharedEmployeeIds, setSharedEmployeeIds] = useState<string[]>([]);
 
   const onSubmit = async (data: CreateBlogPostInput) => {
     if (!data.content || Object.keys(data.content).length === 0) {
@@ -90,6 +94,8 @@ export default function CreateBlogPost() {
           coverImageUrl: data.coverImageUrl,
           visibility: data.visibility,
           status: 'DRAFT',
+          sharedWithDepartmentIds: sharedDepartmentIds.length > 0 ? sharedDepartmentIds : undefined,
+          sharedWithEmployeeIds: sharedEmployeeIds.length > 0 ? sharedEmployeeIds : undefined,
         },
         {
           onSuccess: (post) => {
@@ -244,13 +250,24 @@ export default function CreateBlogPost() {
                   data={[
                     { value: 'PUBLIC', label: 'Public' },
                     { value: 'ORGANIZATION', label: 'Organization' },
-                    { value: 'TEAM', label: 'Team' },
+                    { value: 'DEPARTMENT', label: 'My Department Only' },
+                    { value: 'RESTRICTED', label: 'Specific People' },
                     { value: 'PRIVATE', label: 'Private' },
                   ]}
                 />
               )}
             />
           </div>
+
+          {/* Access Control (shown for DEPARTMENT and RESTRICTED visibility) */}
+          <AccessControlSection
+            visibility={visibility}
+            sharedWithDepartmentIds={sharedDepartmentIds}
+            sharedWithEmployeeIds={sharedEmployeeIds}
+            onDepartmentIdsChange={setSharedDepartmentIds}
+            onEmployeeIdsChange={setSharedEmployeeIds}
+            disabled={isSubmitting}
+          />
 
           {/* Content Editor */}
           <div>
