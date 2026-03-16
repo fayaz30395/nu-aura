@@ -9,7 +9,6 @@ import {
   Search,
   Download,
   Copy,
-  Copy as Copy2,
   RefreshCw,
   Zap,
 } from 'lucide-react';
@@ -151,7 +150,7 @@ export default function TemplatesPage() {
                         router.push(`/fluence/templates/${template.id}?use=true`)
                       }
                     >
-                      <Copy2 className="w-4 h-4" />
+                      <Copy className="w-4 h-4" />
                       Use
                     </Button>
                     <Button
