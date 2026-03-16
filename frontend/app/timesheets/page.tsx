@@ -532,7 +532,7 @@ export default function TimesheetsPage() {
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
             Timesheet History
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {timesheets.length > 0 ? (
               timesheets.map((timesheet) => (
                 <Card key={timesheet.id} className="hover:shadow-md transition-shadow">
