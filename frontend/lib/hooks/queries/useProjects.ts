@@ -5,7 +5,7 @@ import { projectService } from '@/lib/services/project.service';
 import { CreateProjectRequest, UpdateProjectRequest, AssignEmployeeRequest } from '@/lib/types/project';
 import { hrmsProjectService } from '@/lib/services/hrms-project.service';
 import { hrmsProjectAllocationService } from '@/lib/services/hrms-project-allocation.service';
-import { ProjectCreateRequest, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
+import { ProjectCreateRequest, ProjectUpdateRequest, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
 import { useToast } from '@/components/notifications/ToastProvider';
 
 // Query keys for cache management
@@ -235,6 +235,25 @@ export function useCreateHrmsProject() {
     },
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
+    },
+  });
+}
+
+// Update HRMS project
+export function useUpdateHrmsProject() {
+  const queryClient = useQueryClient();
+  const toast = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: ProjectUpdateRequest }) =>
+      hrmsProjectService.updateProject(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+      toast.success('Project Updated', 'Project has been updated successfully');
+    },
+    onError: (error: Error) => {
+      toast.error('Update Failed', error.message || 'Failed to update project');
     },
   });
 }

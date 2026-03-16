@@ -427,19 +427,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
   },
 
-  // PSA (Professional Services Automation)
-  {
-    path: '/psa/invoices',
-    anyPermission: [Permissions.PROJECT_MANAGE, Permissions.SYSTEM_ADMIN],
-  },
-  {
-    path: '/psa/timesheets',
-    anyPermission: [Permissions.TIMESHEET_SUBMIT, Permissions.TIMESHEET_APPROVE],
-  },
-  {
-    path: '/psa',
-    anyPermission: [Permissions.PROJECT_VIEW, Permissions.TIMESHEET_APPROVE],
-  },
+  // PSA routes removed — timesheets & invoices now accessed via /projects/[id] tabs
 
   // Allocations
   {

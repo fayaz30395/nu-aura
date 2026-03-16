@@ -1,10 +1,11 @@
 import { apiClient } from '../api/client';
 import { Employee, Page, Department } from '../types/employee';
 import { Project } from '../types/project';
+import { FluenceSearchResponse, FluenceSearchResult } from '../types/fluence';
 
 export interface SearchResult {
   id: string;
-  type: 'employee' | 'project' | 'department';
+  type: 'employee' | 'project' | 'department' | 'wiki' | 'blog' | 'template';
   title: string;
   subtitle: string;
   href: string;
@@ -15,6 +16,13 @@ export interface UnifiedSearchResponse {
   employees: SearchResult[];
   projects: SearchResult[];
   departments: SearchResult[];
+  total: number;
+}
+
+export interface FluenceUnifiedSearchResponse {
+  wikiPages: SearchResult[];
+  blogPosts: SearchResult[];
+  templates: SearchResult[];
   total: number;
 }
 
@@ -122,6 +130,57 @@ class SearchService {
     } catch (error) {
       console.error('Department search failed:', error);
       return [];
+    }
+  }
+  /**
+   * Search NU-Fluence content (wiki pages, blog posts, templates)
+   * Used by GlobalSearch when the active app is FLUENCE
+   */
+  async searchFluenceContent(query: string, limit: number = 5): Promise<FluenceUnifiedSearchResponse> {
+    if (!query || query.trim().length < 2) {
+      return { wikiPages: [], blogPosts: [], templates: [], total: 0 };
+    }
+
+    try {
+      const response = await apiClient.get<FluenceSearchResponse>('/fluence/search', {
+        params: { query, page: 0, size: limit },
+      });
+
+      const results = response.data.results || [];
+
+      const mapResult = (item: FluenceSearchResult): SearchResult => {
+        const hrefMap: Record<string, string> = {
+          wiki: `/fluence/wiki/${item.id}`,
+          blog: `/fluence/blogs/${item.id}`,
+          template: `/fluence/templates/${item.id}`,
+        };
+
+        return {
+          id: item.id,
+          type: item.type,
+          title: item.title,
+          subtitle: item.excerpt || item.type.charAt(0).toUpperCase() + item.type.slice(1),
+          href: item.url || hrefMap[item.type] || `/fluence/search?q=${encodeURIComponent(query)}`,
+          metadata: {
+            author: item.author || '',
+            updatedAt: item.updatedAt || '',
+          },
+        };
+      };
+
+      const wikiPages = results.filter((r) => r.type === 'wiki').map(mapResult);
+      const blogPosts = results.filter((r) => r.type === 'blog').map(mapResult);
+      const templates = results.filter((r) => r.type === 'template').map(mapResult);
+
+      return {
+        wikiPages,
+        blogPosts,
+        templates,
+        total: wikiPages.length + blogPosts.length + templates.length,
+      };
+    } catch (error) {
+      console.error('Fluence search failed:', error);
+      return { wikiPages: [], blogPosts: [], templates: [], total: 0 };
     }
   }
 }

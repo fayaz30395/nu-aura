@@ -53,7 +53,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       'dashboard', 'self_service', 'document', 'calendar',
       'announcement', 'workflow', 'org_structure', 'report',
       'analytics', 'settings', 'role', 'permission', 'integration',
-      'timesheet', 'project', 'psa', 'resource', 'email',
+      'timesheet', 'project', 'resource', 'email',
     ],
     routePrefixes: [
       '/me', '/dashboard', '/dashboards',
@@ -64,7 +64,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       '/statutory', '/tax', '/helpdesk',
       '/approvals', '/announcements', '/org-chart',
       '/organization-chart', '/timesheets', '/time-tracking',
-      '/projects', '/psa', '/resources', '/allocations',
+      '/projects', '/resources', '/allocations',
       '/calendar', '/nu-calendar', '/nu-drive', '/nu-mail',
       '/reports', '/analytics', '/settings', '/admin',
     ],
@@ -176,6 +176,6 @@ export const APP_SIDEBAR_SECTIONS: Record<AppCode, string[]> = {
     'home', 'grow-hub',
   ],
   FLUENCE: [
-    'home', 'fluence-hub',
+    'fluence-hub',
   ],
 };

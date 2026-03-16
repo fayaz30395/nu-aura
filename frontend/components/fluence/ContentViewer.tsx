@@ -18,6 +18,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Color from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { createLowlight, common } from 'lowlight';
+import { CalloutNode } from './editor/extensions/CalloutNode';
 
 const lowlight = createLowlight(common);
 
@@ -65,9 +66,11 @@ export default function ContentViewer({
       }),
       Color,
       TextStyle,
+      CalloutNode,
     ],
-    content: content as any,
+    content: content as Record<string, unknown>,
     editable: false,
+    immediatelyRender: false,
   });
 
   if (!editor) {
@@ -87,7 +90,7 @@ export default function ContentViewer({
   }
 
   return (
-    <div className={`tiptap-content prose prose-invert dark:prose-invert rounded-lg border border-[var(--border-main)] bg-white p-6 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
+    <div className={`fluence-editor-content ${className}`}>
       <EditorContent editor={editor} />
     </div>
   );

@@ -522,7 +522,7 @@ export default function WikiPageDetailPage() {
               >
                 <div className={card.paddingLarge}>
                   <h3 className={`${typography.cardTitle} mb-4`}>Visibility</h3>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       {visibilityIcon === Globe && (
                         <Globe className={`${iconSize.cardInline} text-[var(--status-success-text)] flex-shrink-0`} />
@@ -571,7 +571,7 @@ export default function WikiPageDetailPage() {
             </div>
 
             {/* Comment Input */}
-            <div className="flex gap-3 mb-6 pb-6 border-b border-[var(--border-main)]">
+            <div className="flex gap-4 mb-6 pb-6 border-b border-[var(--border-main)]">
               <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[var(--primary-400)] to-[var(--primary-600)] flex items-center justify-center text-sm font-semibold text-white">
                 {(user?.fullName || 'U').charAt(0).toUpperCase()}
               </div>
@@ -693,7 +693,7 @@ export default function WikiPageDetailPage() {
                   }}
                   className="flex items-center justify-between py-3 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors duration-200"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-[var(--primary-400)] to-[var(--primary-600)] flex items-center justify-center text-xs font-semibold text-white">
                       {(v.viewerName || 'U').charAt(0).toUpperCase()}
                     </div>
@@ -717,7 +717,7 @@ export default function WikiPageDetailPage() {
           title: { fontSize: '1.125rem', fontWeight: 600 },
         }}
       >
-        <div className="space-y-3 max-h-96 overflow-y-auto">
+        <div className="space-y-4 max-h-96 overflow-y-auto">
           {!revisions || revisions.length === 0 ? (
             <p className={`${typography.caption} text-center py-8`}>No version history available.</p>
           ) : (
@@ -731,7 +731,7 @@ export default function WikiPageDetailPage() {
                   transition: { staggerChildren: 0.05 },
                 },
               }}
-              className="space-y-3"
+              className="space-y-4"
             >
               {(revisions as Revision[]).map((rev) => (
                 <motion.div

@@ -3,6 +3,7 @@ import { logger } from '@/lib/utils/logger';
 import {
   HrmsProject,
   ProjectCreateRequest,
+  ProjectUpdateRequest,
   ProjectPage,
   ProjectStatus,
   ProjectType,
@@ -39,6 +40,16 @@ export const hrmsProjectService = {
       return response.data;
     } catch (error) {
       logger.error('Failed to create project:', error);
+      throw error;
+    }
+  },
+
+  async updateProject(id: string, request: ProjectUpdateRequest): Promise<HrmsProject> {
+    try {
+      const response = await apiClient.put<HrmsProject>(`/projects/${id}`, request);
+      return response.data;
+    } catch (error) {
+      logger.error('Failed to update project:', error);
       throw error;
     }
   },

@@ -363,24 +363,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
       id: 'projects-workspace',
       label: 'Projects & Work',
       items: [
-        { id: 'timesheets', label: 'Timesheets', icon: icon.clock, href: '/timesheets', requiredPermission: Permissions.TIMESHEET_VIEW },
-        {
-          id: 'projects', label: 'Projects', icon: icon.folderKanban, href: '/projects', requiredPermission: Permissions.PROJECT_VIEW,
-          children: [
-            { id: 'projects-overview', label: 'Overview', href: '/projects', icon: sm.dashboard, requiredPermission: Permissions.PROJECT_VIEW },
-            { id: 'projects-calendar', label: 'Calendar', href: '/projects/calendar', icon: sm.calendar, requiredPermission: Permissions.PROJECT_VIEW },
-            { id: 'resource-conflicts', label: 'Resource Conflicts', href: '/projects/resource-conflicts', icon: sm.alertTriangle },
-          ],
-        },
-        {
-          id: 'psa', label: 'PSA', icon: icon.briefcase, href: '/psa', requiredPermission: Permissions.PSA_VIEW,
-          children: [
-            { id: 'psa-overview', label: 'Overview', href: '/psa', icon: sm.dashboard, requiredPermission: Permissions.PSA_VIEW },
-            { id: 'psa-projects', label: 'Projects', href: '/psa/projects', icon: sm.folderKanban, requiredPermission: Permissions.PSA_VIEW },
-            { id: 'psa-timesheets', label: 'Timesheets', href: '/psa/timesheets', icon: sm.clock, requiredPermission: Permissions.PSA_VIEW },
-            { id: 'psa-invoices', label: 'Invoices', href: '/psa/invoices', icon: sm.receipt, requiredPermission: Permissions.PSA_VIEW },
-          ],
-        },
+        { id: 'projects', label: 'Projects', icon: icon.folderKanban, href: '/projects', requiredPermission: Permissions.PROJECT_VIEW },
         {
           id: 'resources', label: 'Resources', icon: icon.users, href: '/resources', requiredPermission: Permissions.RESOURCE_VIEW,
           children: [

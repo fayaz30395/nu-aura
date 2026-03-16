@@ -35,4 +35,9 @@ public interface DocumentTemplateRepository extends JpaRepository<DocumentTempla
     boolean existsByTenantIdAndSlug(UUID tenantId, String slug);
 
     long countByTenantIdAndIsActiveTrue(UUID tenantId);
+
+    @Query("SELECT dt FROM KnowledgeDocumentTemplate dt WHERE dt.tenantId = :tenantId AND dt.isActive = true " +
+           "AND (LOWER(dt.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+           "OR LOWER(dt.description) LIKE LOWER(CONCAT('%', :query, '%')))")
+    Page<DocumentTemplate> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 }
