@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import {
@@ -130,6 +130,18 @@ export default function TimesheetsPage() {
   const { data: entriesData = [] } = useTimesheetEntries(
     selectedTimesheet?.id || '',
     showDetailModal && !!selectedTimesheet?.id
+  );
+
+  // Compute current week timesheet ID and fetch its entries
+  const currentWeekTimesheetId = useMemo(() => {
+    const weekStart = currentWeekStart.toISOString().split('T')[0];
+    const ts = timesheets.find(ts => ts.weekStartDate === weekStart);
+    return ts?.id || '';
+  }, [timesheets, currentWeekStart]);
+
+  const { data: entriesForCurrentWeek = [] } = useTimesheetEntries(
+    currentWeekTimesheetId,
+    !!currentWeekTimesheetId
   );
 
   // R2-014 FIX: useEffect removed — entriesData is used directly below.
@@ -297,9 +309,9 @@ export default function TimesheetsPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
               </div>
@@ -389,29 +401,107 @@ export default function TimesheetsPage() {
               )}
             </div>
 
-            {/* Week Grid */}
-            <div className="grid grid-cols-7 gap-2">
-              {weekDates.map((date, index) => (
-                <div
-                  key={index}
-                  className="text-center p-3 rounded-lg bg-[var(--bg-secondary)]"
-                >
-                  <p className="text-xs text-[var(--text-muted)] uppercase">
-                    {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                  </p>
-                  <p className="text-lg font-semibold text-[var(--text-primary)]">
-                    {date.getDate()}
-                  </p>
-                  {currentWeekTimesheet && (
-                    <p className="text-xs text-primary-600 dark:text-primary-400 mt-1">
-                      {/* Placeholder for hours per day */}
-                      --
-                    </p>
-                  )}
-                </div>
-              ))}
+            {/* Keka-style Weekly Timesheet Grid */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border-main)]">
+                    <th className="px-4 py-3 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project</th>
+                    {weekDates.map((date, i) => (
+                      <th key={i} className={`px-2 py-3 text-center font-medium min-w-[80px] ${
+                        date.getDay() === 0 || date.getDay() === 6
+                          ? 'text-[var(--text-muted)] bg-[var(--bg-secondary)]'
+                          : 'text-[var(--text-secondary)]'
+                      }`}>
+                        <div className="text-xs uppercase">{date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                        <div className="text-sm">{date.getDate()}</div>
+                      </th>
+                    ))}
+                    <th className="px-3 py-3 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Group entries by project */}
+                  {(() => {
+                    // Build a map of projectId → entries per day
+                    const projectMap = new Map<string, { name: string; entries: Map<string, typeof entriesForCurrentWeek[0]> }>();
+
+                    entriesForCurrentWeek.forEach(entry => {
+                      const projectName = projects.find(p => p.id === entry.projectId)?.name || 'Unknown Project';
+                      if (!projectMap.has(entry.projectId)) {
+                        projectMap.set(entry.projectId, { name: projectName, entries: new Map() });
+                      }
+                      projectMap.get(entry.projectId)!.entries.set(entry.entryDate, entry);
+                    });
+
+                    const projectRows = Array.from(projectMap.entries());
+
+                    if (projectRows.length === 0) {
+                      return (
+                        <tr>
+                          <td colSpan={9} className="py-8 text-center text-[var(--text-muted)]">
+                            No time entries for this week. Click &quot;+ Add Entry&quot; to get started.
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return projectRows.map(([projectId, { name, entries }]) => {
+                      const rowTotal = weekDates.reduce((sum, date) => {
+                        const key = date.toISOString().split('T')[0];
+                        return sum + (entries.get(key)?.hours || 0);
+                      }, 0);
+
+                      return (
+                        <tr key={projectId} className="border-b border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] transition-colors">
+                          <td className="px-4 py-2">
+                            <span className="font-medium text-[var(--text-primary)]">{name}</span>
+                          </td>
+                          {weekDates.map((date, i) => {
+                            const key = date.toISOString().split('T')[0];
+                            const entry = entries.get(key);
+                            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                            return (
+                              <td key={i} className={`px-2 py-2 text-center ${isWeekend ? 'bg-[var(--bg-secondary)]' : ''}`}>
+                                <span className={`text-sm ${entry?.hours ? 'font-semibold text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
+                                  {entry?.hours ? `${entry.hours}h` : '—'}
+                                </span>
+                              </td>
+                            );
+                          })}
+                          <td className="px-3 py-2 text-center font-bold text-primary-600 dark:text-primary-400">
+                            {rowTotal > 0 ? `${rowTotal}h` : '—'}
+                          </td>
+                        </tr>
+                      );
+                    });
+                  })()}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t-2 border-[var(--border-main)] bg-[var(--bg-secondary)]">
+                    <td className="px-4 py-3 font-semibold text-[var(--text-primary)]">Daily Total</td>
+                    {weekDates.map((date, i) => {
+                      const key = date.toISOString().split('T')[0];
+                      const dayTotal = entriesForCurrentWeek
+                        .filter(e => e.entryDate === key)
+                        .reduce((sum, e) => sum + (e.hours || 0), 0);
+                      return (
+                        <td key={i} className={`px-2 py-3 text-center font-semibold ${
+                          date.getDay() === 0 || date.getDay() === 6 ? 'bg-[var(--bg-secondary)]' : ''
+                        } ${dayTotal > 0 ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
+                          {dayTotal > 0 ? `${dayTotal}h` : '—'}
+                        </td>
+                      );
+                    })}
+                    <td className="px-3 py-3 text-center font-bold text-primary-600 dark:text-primary-400">
+                      {currentWeekTimesheet?.totalHours || 0}h
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
 
+            {/* Footer actions */}
             {currentWeekTimesheet && (
               <div className="mt-4 pt-4 border-t border-[var(--border-main)] flex items-center justify-between">
                 <div className="flex gap-6 text-sm">
@@ -419,9 +509,17 @@ export default function TimesheetsPage() {
                     Total: <strong className="text-[var(--text-primary)]">{currentWeekTimesheet.totalHours}h</strong>
                   </span>
                   {currentWeekTimesheet.billableHours !== undefined && (
-                    <span className="text-green-600 dark:text-green-400">
+                    <span className="text-success-600 dark:text-success-400">
                       Billable: <strong>{currentWeekTimesheet.billableHours}h</strong>
                     </span>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  {currentWeekTimesheet.status === 'DRAFT' && (
+                    <Button size="sm" onClick={handleAddEntry}>
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Entry
+                    </Button>
                   )}
                 </div>
               </div>
@@ -459,7 +557,7 @@ export default function TimesheetsPage() {
                             {timesheet.totalHours}h
                           </p>
                           {timesheet.billableHours !== undefined && (
-                            <p className="text-xs text-green-600 dark:text-green-400">
+                            <p className="text-xs text-success-600 dark:text-success-400">
                               {timesheet.billableHours}h billable
                             </p>
                           )}
@@ -552,7 +650,7 @@ export default function TimesheetsPage() {
                 </div>
 
                 {selectedTimesheet.rejectionReason && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-700 dark:text-red-300">
+                  <div className="p-3 bg-danger-50 dark:bg-danger-900/20 rounded-lg text-danger-700 dark:text-danger-300">
                     <strong>Rejection Reason:</strong> {selectedTimesheet.rejectionReason}
                   </div>
                 )}

@@ -3,6 +3,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { projectService } from '@/lib/services/project.service';
 import { CreateProjectRequest, UpdateProjectRequest, AssignEmployeeRequest } from '@/lib/types/project';
+import { hrmsProjectService } from '@/lib/services/hrms-project.service';
+import { hrmsProjectAllocationService } from '@/lib/services/hrms-project-allocation.service';
+import { ProjectCreateRequest, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 // Query keys for cache management
 export const projectKeys = {
@@ -81,11 +85,16 @@ export function useEmployeeProjects(employeeId: string, enabled: boolean = true)
 // Create project mutation
 export function useCreateProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (data: CreateProjectRequest) => projectService.createProject(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+      toast.success('Project Created', 'New project has been created successfully');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -93,6 +102,7 @@ export function useCreateProject() {
 // Update project mutation
 export function useUpdateProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateProjectRequest }) =>
@@ -100,6 +110,10 @@ export function useUpdateProject() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+      toast.success('Project Updated', 'Project details have been updated');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -107,11 +121,16 @@ export function useUpdateProject() {
 // Delete project mutation
 export function useDeleteProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (id: string) => projectService.deleteProject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+      toast.success('Project Deleted', 'Project has been removed');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -119,6 +138,7 @@ export function useDeleteProject() {
 // Assign employee to project
 export function useAssignEmployee() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({ projectId, data }: { projectId: string; data: AssignEmployeeRequest }) =>
@@ -126,6 +146,10 @@ export function useAssignEmployee() {
     onSuccess: (_, { projectId }) => {
       queryClient.invalidateQueries({ queryKey: projectKeys.team(projectId) });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
+      toast.success('Employee Assigned', 'Employee has been assigned to the project');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -133,6 +157,7 @@ export function useAssignEmployee() {
 // Remove employee from project
 export function useRemoveEmployee() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({ projectId, employeeId }: { projectId: string; employeeId: string }) =>
@@ -140,6 +165,10 @@ export function useRemoveEmployee() {
     onSuccess: (_, { projectId }) => {
       queryClient.invalidateQueries({ queryKey: projectKeys.team(projectId) });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
+      toast.success('Employee Removed', 'Employee has been removed from the project');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -173,14 +202,11 @@ export const hrmsProjectKeys = {
 export function useHrmsProjects(
   page: number = 0,
   size: number = 20,
-  filters?: { status?: string; priority?: string; type?: string; ownerId?: string; search?: string }
+  filters?: { status?: ProjectStatus; priority?: string; type?: ProjectType; ownerId?: string; search?: string }
 ) {
   return useQuery({
     queryKey: hrmsProjectKeys.list(page, size, filters),
-    queryFn: () => {
-      const hrmsProjectService = require('@/lib/services/hrms-project.service').hrmsProjectService;
-      return hrmsProjectService.listProjects(page, size, filters);
-    },
+    queryFn: () => hrmsProjectService.listProjects(page, size, filters),
     staleTime: 2 * 60 * 1000,
   });
 }
@@ -189,10 +215,7 @@ export function useHrmsProjects(
 export function useHrmsProject(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: hrmsProjectKeys.detail(id),
-    queryFn: () => {
-      const hrmsProjectService = require('@/lib/services/hrms-project.service').hrmsProjectService;
-      return hrmsProjectService.getProject(id);
-    },
+    queryFn: () => hrmsProjectService.getProject(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
   });
@@ -201,14 +224,17 @@ export function useHrmsProject(id: string, enabled: boolean = true) {
 // Create HRMS project
 export function useCreateHrmsProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
-    mutationFn: (data: unknown) => {
-      const hrmsProjectService = require('@/lib/services/hrms-project.service').hrmsProjectService;
-      return hrmsProjectService.createProject(data);
-    },
+    mutationFn: (data: ProjectCreateRequest) =>
+      hrmsProjectService.createProject(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+      toast.success('Project Created', 'New project has been created successfully');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -216,15 +242,17 @@ export function useCreateHrmsProject() {
 // Activate HRMS project
 export function useActivateHrmsProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
-    mutationFn: (id: string) => {
-      const hrmsProjectService = require('@/lib/services/hrms-project.service').hrmsProjectService;
-      return hrmsProjectService.activateProject(id);
-    },
+    mutationFn: (id: string) => hrmsProjectService.activateProject(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+      toast.success('Project Activated', 'Project status has been set to active');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -232,15 +260,18 @@ export function useActivateHrmsProject() {
 // Close HRMS project
 export function useCloseHrmsProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, closeDate }: { id: string; closeDate?: string }) => {
-      const hrmsProjectService = require('@/lib/services/hrms-project.service').hrmsProjectService;
-      return hrmsProjectService.closeProject(id, closeDate);
-    },
+    mutationFn: ({ id, closeDate }: { id: string; closeDate?: string }) =>
+      hrmsProjectService.closeProject(id, closeDate),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+      toast.success('Project Closed', 'Project has been closed');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -248,10 +279,8 @@ export function useCloseHrmsProject() {
 // Export HRMS projects
 export function useExportHrmsProjects() {
   return useMutation({
-    mutationFn: (filters?: Record<string, string | undefined>) => {
-      const hrmsProjectService = require('@/lib/services/hrms-project.service').hrmsProjectService;
-      return hrmsProjectService.exportProjects(filters);
-    },
+    mutationFn: (filters?: Record<string, string | undefined>) =>
+      hrmsProjectService.exportProjects(filters),
   });
 }
 
@@ -285,11 +314,8 @@ export function useProjectAllocations(
 ) {
   return useQuery({
     queryKey: allocationKeys.allocationList(projectId, page, size),
-    queryFn: () => {
-      const service = require('@/lib/services/hrms-project-allocation.service')
-        .hrmsProjectAllocationService;
-      return service.listProjectAllocations(projectId, page, size);
-    },
+    queryFn: () =>
+      hrmsProjectAllocationService.listProjectAllocations(projectId, page, size),
     enabled: enabled && !!projectId,
     staleTime: 2 * 60 * 1000,
   });
@@ -298,6 +324,7 @@ export function useProjectAllocations(
 // Assign employee to project
 export function useAssignToProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({
@@ -312,15 +339,15 @@ export function useAssignToProject() {
         startDate: string;
         endDate?: string;
       };
-    }) => {
-      const service = require('@/lib/services/hrms-project-allocation.service')
-        .hrmsProjectAllocationService;
-      return service.assignEmployee(projectId, data);
-    },
+    }) => hrmsProjectAllocationService.assignEmployee(projectId, data),
     onSuccess: (_, { projectId }) => {
       queryClient.invalidateQueries({
         queryKey: allocationKeys.projectAllocations(projectId),
       });
+      toast.success('Resource Allocated', 'Employee has been allocated to the project');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -328,6 +355,7 @@ export function useAssignToProject() {
 // End allocation
 export function useEndAllocation() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({
@@ -338,15 +366,15 @@ export function useEndAllocation() {
       projectId: string;
       allocationId: string;
       endDate?: string;
-    }) => {
-      const service = require('@/lib/services/hrms-project-allocation.service')
-        .hrmsProjectAllocationService;
-      return service.endAllocation(projectId, allocationId, endDate);
-    },
+    }) => hrmsProjectAllocationService.endAllocation(projectId, allocationId, endDate),
     onSuccess: (_, { projectId }) => {
       queryClient.invalidateQueries({
         queryKey: allocationKeys.projectAllocations(projectId),
       });
+      toast.success('Allocation Ended', 'Employee allocation has been ended');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Something went wrong');
     },
   });
 }
@@ -354,11 +382,8 @@ export function useEndAllocation() {
 // Export allocations
 export function useExportAllocations() {
   return useMutation({
-    mutationFn: (projectId: string) => {
-      const service = require('@/lib/services/hrms-project-allocation.service')
-        .hrmsProjectAllocationService;
-      return service.exportProjectAllocations(projectId);
-    },
+    mutationFn: (projectId: string) =>
+      hrmsProjectAllocationService.exportProjectAllocations(projectId),
   });
 }
 
@@ -375,10 +400,8 @@ export function useAllocationSummary(
 ) {
   return useQuery({
     queryKey: allocationKeys.summaryList(scope, startDate, endDate, page, size),
-    queryFn: () => {
-      const service = require('@/lib/services/hrms-project-allocation.service')
-        .hrmsProjectAllocationService;
-      return service.listAllocationSummary(
+    queryFn: () =>
+      hrmsProjectAllocationService.listAllocationSummary(
         scope,
         startDate,
         endDate,
@@ -386,8 +409,7 @@ export function useAllocationSummary(
         size,
         employeeSearch,
         employeeId
-      );
-    },
+      ),
     enabled,
     staleTime: 3 * 60 * 1000,
   });
@@ -408,16 +430,13 @@ export function useExportAllocationSummary() {
       endDate: string;
       employeeSearch?: string;
       employeeId?: string;
-    }) => {
-      const service = require('@/lib/services/hrms-project-allocation.service')
-        .hrmsProjectAllocationService;
-      return service.exportAllocationSummary(
+    }) =>
+      hrmsProjectAllocationService.exportAllocationSummary(
         scope,
         startDate,
         endDate,
         employeeSearch,
         employeeId
-      );
-    },
+      ),
   });
 }

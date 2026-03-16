@@ -136,6 +136,7 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
 export default function CapacityTimelinePage() {
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState('ALL');
+  const [viewMode, setViewMode] = useState<'week' | 'month'>('month');
 
   const { data, isLoading, error, refetch } = useWorkloadDashboard({});
 
@@ -203,19 +204,46 @@ export default function CapacityTimelinePage() {
             <p className="text-sm text-[var(--text-muted)] mt-0.5">
               Current allocation per employee across active projects
             </p>
+            <p className="text-xs text-[var(--text-muted)] mt-1">
+              Showing: {viewMode === 'week' ? 'Current week' : 'Current month'} allocations
+            </p>
           </div>
-          <button
-            onClick={() => refetch()}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
-          >
-            <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-lg border border-[var(--border-main)] overflow-hidden">
+              <button
+                onClick={() => setViewMode('week')}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  viewMode === 'week'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
+                }`}
+              >
+                Week
+              </button>
+              <button
+                onClick={() => setViewMode('month')}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  viewMode === 'month'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
+                }`}
+              >
+                Month
+              </button>
+            </div>
+            <button
+              onClick={() => refetch()}
+              disabled={isLoading}
+              className="flex items-center gap-2 px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
+            >
+              <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 dark:bg-danger-900/20 dark:border-danger-800 dark:text-danger-300 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
             <AlertTriangle size={15} />
             {error instanceof Error ? error.message : String(error)}
           </div>
@@ -224,19 +252,19 @@ export default function CapacityTimelinePage() {
         {/* Stats */}
         {!isLoading && sorted.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white border border-[var(--border-main)] rounded-xl px-4 py-3">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-3">
               <p className="text-2xl font-bold text-[var(--text-primary)]">{sorted.length}</p>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">Employees shown</p>
             </div>
-            <div className="bg-white border border-[var(--border-main)] rounded-xl px-4 py-3">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-3">
               <p className="text-2xl font-bold text-[var(--text-primary)]">{avgAlloc}%</p>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">Avg allocation</p>
             </div>
-            <div className={`border rounded-xl px-4 py-3 ${overAllocated > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
-              <p className={`text-2xl font-bold ${overAllocated > 0 ? 'text-red-700' : 'text-green-700'}`}>
+            <div className={`border rounded-xl px-4 py-3 ${overAllocated > 0 ? 'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800' : 'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800'}`}>
+              <p className={`text-2xl font-bold ${overAllocated > 0 ? 'text-danger-700 dark:text-danger-300' : 'text-success-700 dark:text-success-300'}`}>
                 {overAllocated}
               </p>
-              <p className={`text-xs mt-0.5 ${overAllocated > 0 ? 'text-red-600' : 'text-green-600'}`}>
+              <p className={`text-xs mt-0.5 ${overAllocated > 0 ? 'text-danger-600 dark:text-danger-300' : 'text-success-600 dark:text-success-300'}`}>
                 Over-allocated
               </p>
             </div>
@@ -250,12 +278,12 @@ export default function CapacityTimelinePage() {
             placeholder="Search employee..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 w-52"
+            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 w-52"
           />
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => <option key={d} value={d}>{d}</option>)}
@@ -274,18 +302,18 @@ export default function CapacityTimelinePage() {
             <p className="text-[var(--text-secondary)] font-medium">No employees found</p>
           </div>
         ) : (
-          <div className="bg-white border border-[var(--border-main)] rounded-xl p-5">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-5">
             {/* Legend */}
             <div className="flex items-center gap-4 mb-4 pb-3 border-b border-[var(--border-main)] text-xs text-[var(--text-muted)]">
               <span className="font-medium text-[var(--text-secondary)]">Legend:</span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-sm bg-green-500" /> ≤80% optimal
+                <span className="inline-block w-3 h-3 rounded-sm bg-success-500" /> ≤80% optimal
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-sm bg-orange-400" /> 81–99% high
+                <span className="inline-block w-3 h-3 rounded-sm bg-warning-400" /> 81–99% high
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-sm bg-red-500" /> ≥100% over-allocated
+                <span className="inline-block w-3 h-3 rounded-sm bg-danger-500" /> ≥100% over-allocated
               </span>
               <span className="ml-auto text-[var(--text-muted)] italic">
                 Hover a row to see project names
