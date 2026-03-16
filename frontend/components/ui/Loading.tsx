@@ -4,7 +4,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { PremiumSpinner } from './PremiumSpinner';
 
-interface LoadingProps {
+export interface LoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   text?: string;
   fullScreen?: boolean;
