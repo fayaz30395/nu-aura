@@ -314,7 +314,7 @@ test.describe('Navigation and Routing', () => {
     });
 
     test('should handle 404 for invalid routes', async ({ page }) => {
-      const response = await page.goto('/this-page-does-not-exist-12345');
+      const _response = await page.goto('/this-page-does-not-exist-12345');
       await page.waitForTimeout(1000);
 
       // Should show 404 page or redirect to dashboard

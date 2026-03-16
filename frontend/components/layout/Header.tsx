@@ -482,7 +482,7 @@ const Header: React.FC<HeaderProps> = ({
     >
       <div className="flex items-center justify-between h-full px-4 sm:px-6">
         {/* Left Side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* Mobile hamburger */}
           {showMenuButton && (
             <button
@@ -495,7 +495,7 @@ const Header: React.FC<HeaderProps> = ({
           )}
 
           {/* Logo — only visible on mobile (sidebar has logo on desktop) */}
-          <div className="flex items-center gap-3 md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
              <Image
                src="/images/logo.png"
                alt="NuLogic"
@@ -634,7 +634,7 @@ const Header: React.FC<HeaderProps> = ({
                               key={notification.id}
                               onClick={() => handleGoogleNotificationClick(notification)}
                               className={cn(
-                                "flex gap-3 p-3 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
+                                "flex gap-4 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
                                 getNotificationBg(notification.type)
                               )}
                             >
@@ -660,7 +660,7 @@ const Header: React.FC<HeaderProps> = ({
                             </div>
                           ))}
                           {/* Quick Links */}
-                          <div className="flex gap-2 p-3 bg-surface-50 dark:bg-surface-800/50">
+                          <div className="flex gap-2 p-4 bg-surface-50 dark:bg-surface-800/50">
                             <button
                               onClick={() => {
                                 setIsNotificationsOpen(false);
@@ -695,7 +695,7 @@ const Header: React.FC<HeaderProps> = ({
                   ) : (
                     // System Notifications — hybrid: REST API (persisted) + WebSocket (real-time)
                     <>
-                      <div className="flex items-center justify-between p-3 border-b border-surface-100 dark:border-surface-800">
+                      <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
                         <span className="text-xs text-surface-500">System Alerts</span>
                         {systemUnreadCount > 0 && (
                           <button
@@ -730,7 +730,7 @@ const Header: React.FC<HeaderProps> = ({
                                 const route = getNotificationRoute(notification);
                                 router.push(route);
                               }}
-                              className="flex gap-3 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-primary-50/50 dark:bg-primary-900/10"
+                              className="flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-primary-50/50 dark:bg-primary-900/10"
                             >
                               <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                                 {getSystemNotificationIcon(notification.type)}
@@ -762,7 +762,7 @@ const Header: React.FC<HeaderProps> = ({
                                 }
                               }}
                               className={cn(
-                                "flex gap-3 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
+                                "flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
                                 !notification.isRead && "bg-primary-50/50 dark:bg-primary-900/10"
                               )}
                             >
@@ -807,7 +807,7 @@ const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className={cn(
-                'flex items-center gap-3 rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 transition-all',
+                'flex items-center gap-2 rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 transition-all',
                 'hover:bg-surface-100 dark:hover:bg-surface-800',
                 isDropdownOpen && 'bg-surface-100 dark:bg-surface-800'
               )}
@@ -861,7 +861,7 @@ const Header: React.FC<HeaderProps> = ({
                       setIsDropdownOpen(false);
                       onProfile?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
                   >
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
                       <User className="h-4 w-4 text-[var(--text-muted)]" />
@@ -874,7 +874,7 @@ const Header: React.FC<HeaderProps> = ({
                       setIsDropdownOpen(false);
                       onSettings?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
                   >
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
                       <Settings className="h-4 w-4 text-[var(--text-muted)]" />
@@ -889,7 +889,7 @@ const Header: React.FC<HeaderProps> = ({
                       setIsDropdownOpen(false);
                       onLogout?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-all duration-150"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-all duration-150"
                   >
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-danger-50 dark:bg-danger-950/30">
                       <LogOut className="h-4 w-4" />
@@ -930,7 +930,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <Calendar className="h-6 w-6 text-white" />
                   <h3 className="text-lg font-semibold text-white">
                     {selectedEvent.calendarEvent.summary}
@@ -948,7 +948,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Content */}
             <div className="p-6 space-y-4 overflow-y-auto max-h-[60vh]">
               {/* Time */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-2">
                 <Clock className="h-5 w-5 text-surface-400 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
@@ -979,7 +979,7 @@ const Header: React.FC<HeaderProps> = ({
 
               {/* Location */}
               {selectedEvent.calendarEvent.location && (
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2">
                   <MapPin className="h-5 w-5 text-surface-400 mt-0.5" />
                   <p className="text-sm text-surface-600 dark:text-surface-300">
                     {selectedEvent.calendarEvent.location}
@@ -989,7 +989,7 @@ const Header: React.FC<HeaderProps> = ({
 
               {/* Video Link */}
               {selectedEvent.calendarEvent.hangoutLink && (
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2">
                   <Video className="h-5 w-5 text-blue-500 mt-0.5" />
                   <a
                     href={selectedEvent.calendarEvent.hangoutLink}
@@ -1048,7 +1048,7 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+            <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
               {selectedEvent.calendarEvent.hangoutLink && (
                 <Button
                   onClick={() => window.open(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
@@ -1085,7 +1085,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Header */}
             <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <Mail className="h-6 w-6 text-white" />
                   <div>
                     <h3 className="text-lg font-semibold text-white line-clamp-1">
@@ -1127,7 +1127,7 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+            <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
               <Button
                 onClick={() => window.open(`https://mail.google.com/mail/u/0/#inbox/${selectedEmail.emailData!.threadId}`, '_blank')}
                 className="flex-1"
@@ -1157,7 +1157,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Header */}
             <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4">
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <HardDrive className="h-6 w-6 text-white" />
                   <h3 className="text-lg font-semibold text-white line-clamp-1">
                     {selectedFile.driveFile.name}
@@ -1196,7 +1196,7 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+            <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
               <Button
                 onClick={() => window.open(selectedFile.driveFile!.webViewLink, '_blank')}
                 className="flex-1"

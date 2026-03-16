@@ -160,7 +160,7 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ children, className }) => {
   return (
     <div
       className={cn(
-        'flex items-center justify-end gap-3 px-6 py-4',
+        'flex items-center justify-end gap-2 px-6 py-4',
         className
       )}
       style={{

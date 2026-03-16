@@ -281,7 +281,7 @@ function SkeletonDashboard({
                     }}
                 >
                     <Skeleton height={20} width={128} className="mb-4" />
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         {Array.from({ length: 5 }).map((_, i) => (
                             <SkeletonListItem key={i} />
                         ))}

@@ -20,22 +20,22 @@ export const saveGoogleToken = (token: string, expiresIn: number = 3600): void =
   if (typeof window === 'undefined') return;
 
   const expiryTime = Date.now() + expiresIn * 1000;
-  localStorage.setItem(GOOGLE_TOKEN_KEY, token);
-  localStorage.setItem(GOOGLE_TOKEN_EXPIRY_KEY, expiryTime.toString());
+  sessionStorage.setItem(GOOGLE_TOKEN_KEY, token);
+  sessionStorage.setItem(GOOGLE_TOKEN_EXPIRY_KEY, expiryTime.toString());
 
   // Also save to Drive and Mail keys for compatibility
-  localStorage.setItem(DRIVE_TOKEN_KEY, token);
-  localStorage.setItem(DRIVE_TOKEN_EXPIRY_KEY, expiryTime.toString());
-  localStorage.setItem(MAIL_TOKEN_KEY, token);
-  localStorage.setItem(MAIL_TOKEN_EXPIRY_KEY, expiryTime.toString());
+  sessionStorage.setItem(DRIVE_TOKEN_KEY, token);
+  sessionStorage.setItem(DRIVE_TOKEN_EXPIRY_KEY, expiryTime.toString());
+  sessionStorage.setItem(MAIL_TOKEN_KEY, token);
+  sessionStorage.setItem(MAIL_TOKEN_EXPIRY_KEY, expiryTime.toString());
 };
 
 // Get stored Google token (checks validity with 5 min buffer)
 export const getGoogleToken = (): string | null => {
   if (typeof window === 'undefined') return null;
 
-  const token = localStorage.getItem(GOOGLE_TOKEN_KEY);
-  const expiry = localStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
+  const token = sessionStorage.getItem(GOOGLE_TOKEN_KEY);
+  const expiry = sessionStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
 
   if (!token || !expiry) return null;
 
@@ -53,14 +53,14 @@ export const clearGoogleToken = (): void => {
   if (typeof window === 'undefined') return;
 
   // Clear unified token
-  localStorage.removeItem(GOOGLE_TOKEN_KEY);
-  localStorage.removeItem(GOOGLE_TOKEN_EXPIRY_KEY);
+  sessionStorage.removeItem(GOOGLE_TOKEN_KEY);
+  sessionStorage.removeItem(GOOGLE_TOKEN_EXPIRY_KEY);
 
   // Clear Drive and Mail tokens
-  localStorage.removeItem(DRIVE_TOKEN_KEY);
-  localStorage.removeItem(DRIVE_TOKEN_EXPIRY_KEY);
-  localStorage.removeItem(MAIL_TOKEN_KEY);
-  localStorage.removeItem(MAIL_TOKEN_EXPIRY_KEY);
+  sessionStorage.removeItem(DRIVE_TOKEN_KEY);
+  sessionStorage.removeItem(DRIVE_TOKEN_EXPIRY_KEY);
+  sessionStorage.removeItem(MAIL_TOKEN_KEY);
+  sessionStorage.removeItem(MAIL_TOKEN_EXPIRY_KEY);
 };
 
 // Check if Google token exists and is valid
@@ -72,7 +72,7 @@ export const hasValidGoogleToken = (): boolean => {
 export const getGoogleTokenExpiry = (): number | null => {
   if (typeof window === 'undefined') return null;
 
-  const expiry = localStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
+  const expiry = sessionStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
   if (!expiry) return null;
 
   return parseInt(expiry);

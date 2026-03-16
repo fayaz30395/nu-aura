@@ -242,12 +242,8 @@ export default function AdminLayout({
   };
 
   const handleLogout = () => {
-    // Clear any auth tokens
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('refreshToken');
-    }
-    router.push('/login');
+    // Auth tokens are in httpOnly cookies — Zustand auth store handles logout
+    router.push('/auth/login');
   };
 
   const [isCollapsed, setIsCollapsed] = useState(() => {

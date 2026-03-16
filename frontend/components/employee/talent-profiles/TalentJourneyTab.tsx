@@ -56,7 +56,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                     <Zap className="h-5 w-5 text-yellow-500" />
                     <h3 className="text-lg font-bold">Verified Skills</h3>
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2">
                     {profile.skills.map((skill, idx) => (
                         <motion.div
                             key={skill.name}

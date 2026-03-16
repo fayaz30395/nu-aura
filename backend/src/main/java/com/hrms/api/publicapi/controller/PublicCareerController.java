@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
  * into {@link TenantContext} by {@code TenantFilter} before this controller executes.
  * Callers must always include a valid {@code X-Tenant-ID} header.
  */
+@Validated  // Required: enables constraint validation on @RequestParam parameters (SEC-B09)
 @RestController
 @RequestMapping("/api/public/careers")
 @Tag(name = "Public Career Portal", description = "Public job board and application APIs — no authentication required")

@@ -67,7 +67,7 @@ export function HolidayCarousel({
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
         </div>
         <div className="rounded-lg bg-[var(--bg-surface)] p-4 animate-pulse">
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-2">
             <div className="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-700" />
             <div className="flex-1 space-y-2">
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
@@ -116,7 +116,7 @@ export function HolidayCarousel({
 
       {/* Holiday Card — clean flat style */}
       <div className="rounded-lg bg-[var(--bg-surface)] p-4">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2">
           <div className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-white border border-[var(--border-main)] dark:bg-gray-800 dark:border-gray-700">
             <CalendarDays className="h-4 w-4 text-[var(--text-muted)]" />
           </div>

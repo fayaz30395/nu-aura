@@ -5,7 +5,7 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, BarChart3, Award, X, Plus, Image, Smile, Paperclip } from 'lucide-react';
+import { Send, BarChart3, Award, X, Plus, Image as ImageIcon, Smile, Paperclip } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -207,7 +207,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
                       title="Add image"
                     >
-                      <Image className="w-4 h-4" />
+                      <ImageIcon className="w-4 h-4" />
                     </button>
                     <button
                       type="button"

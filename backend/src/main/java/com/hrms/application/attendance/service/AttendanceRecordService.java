@@ -126,7 +126,7 @@ public class AttendanceRecordService {
      * @throws IllegalStateException    if tenant context is not set
      * @throws IllegalArgumentException if employeeId is null or no check-in found
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location,
             String ip) {
         return checkOut(employeeId, checkOutTime, source, location, ip, null);
@@ -148,7 +148,7 @@ public class AttendanceRecordService {
      * @throws IllegalStateException    if tenant context is not set
      * @throws IllegalArgumentException if employeeId is null or no check-in found
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location,
             String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);

@@ -69,7 +69,7 @@ export function QuickAccessWidget({
 
       <div className="space-y-1.5">
         {hasNoPending ? (
-          <div className="flex items-center gap-2.5 rounded-lg bg-[var(--bg-surface)] p-3">
+          <div className="flex items-center gap-2.5 rounded-lg bg-[var(--bg-surface)] p-4">
             <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-500" />
             <p className="text-sm text-[var(--text-muted)]">
               No pending actions

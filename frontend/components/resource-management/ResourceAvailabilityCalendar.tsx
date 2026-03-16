@@ -166,7 +166,7 @@ function EmployeeRow({
         )}
         onClick={() => onEmployeeClick?.(employee.employeeId)}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {employee.avatarUrl ? (
             <Image
               src={employee.avatarUrl}

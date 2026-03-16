@@ -331,7 +331,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         onClick={() => handleSelectHref(item.href)}
         onMouseEnter={() => setSelectedIndex(globalIndex)}
         className={cn(
-          'w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors',
+          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
           globalIndex === selectedIndex
             ? 'bg-primary-50 dark:bg-primary-950/30'
             : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'
@@ -373,7 +373,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         onClick={() => handleSelectHref(result.href)}
         onMouseEnter={() => setSelectedIndex(globalIndex)}
         className={cn(
-          'w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors',
+          'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
           globalIndex === selectedIndex
             ? 'bg-primary-50 dark:bg-primary-950/30'
             : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'

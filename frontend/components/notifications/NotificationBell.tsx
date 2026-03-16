@@ -229,7 +229,7 @@ export const NotificationBell: React.FC = () => {
                     } ${hasRoute ? 'cursor-pointer' : ''}`}
                     onClick={() => hasRoute && handleNotificationClick(notification)}
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium text-[var(--text-primary)] truncate">

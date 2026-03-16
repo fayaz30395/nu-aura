@@ -129,7 +129,7 @@ export default function AppSwitcher() {
 
             {/* 2×2 Waffle Grid */}
             <div className="p-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {APP_LIST.map((targetApp, index) => {
                   const Icon = getAppIcon(targetApp.iconName);
                   const isActive = targetApp.code === appCode;

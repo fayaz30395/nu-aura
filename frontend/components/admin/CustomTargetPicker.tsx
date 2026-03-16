@@ -245,7 +245,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
   };
 
   return (
-    <div className="space-y-3 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
+    <div className="space-y-4 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Scope Targets</p>
         <span className="text-xs text-[var(--text-muted)]">

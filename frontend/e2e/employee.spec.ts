@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from './pages/LoginPage';
 import { EmployeePage } from './pages/EmployeePage';
 import { testUsers, testEmployee } from './fixtures/testData';
-import { AuthHelper, ApiMockHelper, TableHelper } from './utils/helpers';
+import { ApiMockHelper } from './utils/helpers';
 
 /**
  * Employee Management E2E Tests

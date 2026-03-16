@@ -13,7 +13,7 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function ModuleError({ error, reset }: ErrorProps) {
+export default function PaymentsError({ error, reset }: ErrorProps) {
   useEffect(() => {
     handleError(error, { source: 'payments-error-boundary', digest: error.digest });
   }, [error]);
@@ -60,7 +60,7 @@ export default function ModuleError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/me/dashboard')}
+                onClick={() => (window.location.href = '/payments')}
                 className="w-full"
               >
                 <CreditCard className="mr-2 h-4 w-4" />

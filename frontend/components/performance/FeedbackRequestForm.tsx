@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Users, Plus, X, Search, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { FeedbackReviewer, NominatePeersRequest } from '@/lib/types/performance-360';
+import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 import { Employee } from '@/lib/types/employee';
 
 interface FeedbackRequestFormProps {
@@ -35,38 +36,25 @@ export default function FeedbackRequestForm({
 }: FeedbackRequestFormProps) {
   const [selectedPeers, setSelectedPeers] = useState<FeedbackReviewer[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Employee[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock search function - replace with actual API call
-  const searchEmployees = async (query: string) => {
-    if (query.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      // Mock data - replace with actual API call
-      setSearchResults([]);
-    } catch (err) {
-      console.error('Error searching employees:', err);
-    } finally {
-      setIsSearching(false);
-    }
+  // Debounce search query
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    const timer = setTimeout(() => setDebouncedQuery(value), 300);
+    return () => clearTimeout(timer);
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      searchEmployees(searchQuery);
-    }, 300);
+  const { data: searchData, isFetching: isSearching } = useEmployeeSearch(
+    debouncedQuery,
+    0,
+    10,
+    debouncedQuery.length >= 2
+  );
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  const searchResults = searchData?.content ?? [];
 
   const addPeer = (employee: Employee) => {
     if (selectedPeers.length >= maxPeers) {
@@ -91,7 +79,7 @@ export default function FeedbackRequestForm({
 
     setSelectedPeers([...selectedPeers, reviewer]);
     setSearchQuery('');
-    setSearchResults([]);
+    setDebouncedQuery('');
     setError(null);
   };
 
@@ -136,7 +124,7 @@ export default function FeedbackRequestForm({
       <div className="px-6 py-4">
         {/* Subject Employee */}
         <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Users className="h-5 w-5 text-blue-600" />
             </div>
@@ -187,7 +175,7 @@ export default function FeedbackRequestForm({
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search employees by name or email..."
                 className="w-full pl-10 pr-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={selectedPeers.length >= maxPeers}
@@ -235,9 +223,9 @@ export default function FeedbackRequestForm({
               {selectedPeers.map((peer) => (
                 <div
                   key={peer.employeeId}
-                  className="flex items-center justify-between p-3 bg-[var(--bg-surface)] rounded-lg"
+                  className="flex items-center justify-between p-4 bg-[var(--bg-surface)] rounded-lg"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                       <span className="text-sm font-medium text-blue-700">
                         {peer.employeeName.charAt(0)}
@@ -265,7 +253,7 @@ export default function FeedbackRequestForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-red-700">{error}</p>
           </div>
@@ -296,7 +284,7 @@ export default function FeedbackRequestForm({
       </div>
 
       {/* Actions */}
-      <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-3">
+      <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-2">
         <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>

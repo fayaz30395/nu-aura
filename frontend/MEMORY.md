@@ -1,6 +1,101 @@
 
 ---
 
+## Section 29 — Route Boundary Coverage: loading.tsx + error.tsx (2026-03-17)
+
+### Objective
+Complete Next.js route boundary coverage for all pages that perform API calls, enabling streaming and proper error recovery.
+
+### Files Created
+
+**5 loading.tsx + 5 error.tsx for pages identified in previous session:**
+- `app/holidays/loading.tsx` + `error.tsx` (Calendar icon)
+- `app/contracts/loading.tsx` + `error.tsx` (FileText icon)
+- `app/payments/loading.tsx` + `error.tsx` (CreditCard icon)
+- `app/company-spotlight/loading.tsx` + `error.tsx` (Newspaper icon)
+- `app/linkedin-posts/loading.tsx` + `error.tsx` (Share2 icon)
+
+**19 error.tsx files for all React Query-using routes without boundaries:**
+- `app/recruitment/pipeline/error.tsx` (Users)
+- `app/recruitment/job-boards/error.tsx` (Briefcase)
+- `app/recruitment/[jobId]/kanban/error.tsx` (Layout)
+- `app/projects/resource-conflicts/error.tsx` (AlertTriangle)
+- `app/projects/gantt/error.tsx` (BarChart2)
+- `app/projects/calendar/error.tsx` (Calendar)
+- `app/performance/cycles/[id]/nine-box/error.tsx` (Grid)
+- `app/performance/cycles/[id]/calibration/error.tsx` (Sliders)
+- `app/offboarding/exit/fnf/error.tsx` (DollarSign)
+- `app/learning/paths/error.tsx` (BookOpen)
+- `app/learning/courses/[id]/quiz/[quizId]/error.tsx` (HelpCircle)
+- `app/fluence/wiki/[slug]/edit/error.tsx` (FileEdit)
+- `app/fluence/blogs/[slug]/edit/error.tsx` (Edit)
+- `app/exit-interview/[token]/error.tsx` (MessageSquare)
+- `app/employees/directory/error.tsx` (Users)
+- `app/employees/change-requests/error.tsx` (ClipboardList)
+- `app/approvals/inbox/error.tsx` (CheckSquare)
+- `app/admin/roles/error.tsx` (Shield)
+- `app/admin/permissions/error.tsx` (Key)
+
+**2 loading.tsx for fluence edit routes that had no boundary at all:**
+- `app/fluence/wiki/[slug]/edit/loading.tsx`
+- `app/fluence/blogs/[slug]/edit/loading.tsx`
+
+### Error Boundary Pattern (Locked In)
+All `error.tsx` files follow the same pattern:
+- `'use client'` directive
+- `useEffect` → `handleError()` on mount for observability
+- `categorizeError()` + `getUserMessage()` for user-friendly messaging
+- `isDevelopment` guard for raw error.message display
+- 3 action buttons: Try Again (reset), Back to Module, Go to Home
+- Framer Motion fade-in animation
+
+### Final State
+- **TypeScript**: 0 errors
+- **ESLint**: 0 errors, 0 warnings
+- **Routes with API calls missing error.tsx**: 0
+- **Remaining pages without any boundary**: Only static marketing pages (about, contact, features, pricing, security, integrations) — no API calls, boundaries not needed
+
+*Last updated: 2026-03-17 (Route boundary coverage complete)*
+
+---
+
+## Section 28 — ESLint + TypeScript Zero-Defect Pass (2026-03-17)
+
+### Objective
+Full elimination of all ESLint errors and warnings, and all TypeScript strict-mode errors.
+
+### Results
+- **TypeScript**: 0 errors (`npx tsc --noEmit` clean)
+- **ESLint**: 0 errors, 0 warnings (previously: 26 `no-explicit-any` errors, 7 `no-img-element` warnings, multiple other violations)
+
+### Key Changes Made
+
+**ESLint rule fixes:**
+- `@typescript-eslint/no-explicit-any` (26 → 0): Replaced `any` with `unknown`, proper interfaces, `ComponentType<object>`, `vi.mocked()` in test files, `Record<string, unknown>[]`, `TestInfo` from Playwright
+- `@next/next/no-img-element` (7 → 0): Replaced `<img>` with Next.js `<Image>` in PostComposer, CompanyFeed, WallCards, ResourceAvailabilityCalendar, Header — all with `unoptimized` for external URLs
+- `jsx-a11y/alt-text` (3 → 0): Renamed lucide `Image` icon to `ImageIcon` in PostComposer, wall/PostComposer, nu-drive page to avoid false positives with Next.js Image
+- `@typescript-eslint/no-empty-object-type` (2 → 0): Changed empty `interface X extends Y {}` to `type X = Y` in WallCards
+- `@typescript-eslint/no-require-imports` (3 → 0): Added `.eslintrc.json` overrides for `*.config.js`, inline disable for dynamic require in error-handler.ts
+- `import/no-anonymous-default-export` (2 → 0): Named the export objects in error-handler.ts and service-error.ts
+- `prefer-const` (1 → 0): Fixed `let` → `const` in notification-flow test
+- `@typescript-eslint/no-unused-expressions` (1 → 0): Fixed `expect() || expect()` pattern in attendance.spec.ts
+
+**Infrastructure improvements:**
+- Created `.eslintignore` to exclude `playwright-report/`, `playwright/`, `test-results/`, `.next/`, `node_modules/`
+- Added `.eslintrc.json` overrides: `*.config.js` files exempt from `no-require-imports` + `no-unused-vars`; e2e test files allow Playwright fixture arg names (`page`, `request`, `context`, `browser`)
+
+**Design system spacing (no-restricted-syntax):**
+- Eliminated all 122 off-grid spacing warnings across 38 component files
+- `gap-3` (12px) → `gap-2` (8px) for icon+text flex rows
+- `gap-3` in modal action rows → `gap-4` (16px)
+- `space-y-3` → `space-y-4`
+- `p-3` → `p-4` for section/card containers
+- `m-3` → `m-4`
+
+*Last updated: 2026-03-17 (ESLint + TypeScript zero-defect pass)*
+
+---
+
 ## Section 27 — Wave 9: React Query Expansion Final Pass (2026-03-14)
 
 ### Objective

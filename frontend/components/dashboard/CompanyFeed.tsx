@@ -322,9 +322,9 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
     return (
       <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Company Feed</h3>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="flex items-start gap-2.5 p-3 rounded-lg bg-[var(--bg-surface)] relative overflow-hidden">
+            <div key={i} className="flex items-start gap-2.5 p-4 rounded-lg bg-[var(--bg-surface)] relative overflow-hidden">
               {/* Shimmer effect */}
               <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
@@ -669,7 +669,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
     return (
       <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] overflow-hidden transition-colors">
         {/* Header: avatar + "Author created a post" + timestamp + action menu */}
-        <div className="flex items-start gap-3 px-4 pt-4 pb-2">
+        <div className="flex items-start gap-2 px-4 pt-4 pb-2">
           <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
@@ -1005,7 +1005,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
 
   // ─── Default card layout (non-WALL_POST types) ───
   return (
-    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-3 transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800`}>
+    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800`}>
       <div className="flex items-start gap-2.5">
         {/* Icon */}
         <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-[var(--border-main)] dark:bg-gray-800 dark:border-gray-700 ${colors.icon}`}>
@@ -1141,7 +1141,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
 
           {/* Reaction Bar - Only show if item supports social features */}
           {item.wallPostId && (
-            <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-[var(--border-subtle)]">
+            <div className="flex items-center gap-2 mt-2 pt-1.5 border-t border-[var(--border-subtle)]">
               <button
                 onClick={handleLike}
                 className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${

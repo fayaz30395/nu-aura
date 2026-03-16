@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 /**
  * Gantt Chart E2E Tests
@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  */
 
 // Helper to wait for Gantt page to load completely
-async function waitForGanttPageLoad(page: any) {
+async function waitForGanttPageLoad(page: Page) {
   await page.goto('/projects/gantt');
   await page.waitForLoadState('networkidle');
 

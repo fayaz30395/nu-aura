@@ -78,7 +78,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
           </div>
 
           {/* Salary Breakdown */}
-          <div className="space-y-3 mb-4">
+          <div className="space-y-4 mb-4">
             <div className="flex justify-between items-center text-sm">
               <span className="text-surface-600 dark:text-surface-400">Base Salary</span>
               <span className="font-medium text-surface-900 dark:text-surface-50">
@@ -127,7 +127,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
           </div>
 
           {/* Payment Date */}
-          <div className="mb-4 p-3 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
+          <div className="mb-4 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
             <div className="flex justify-between items-center text-sm">
               <span className="text-surface-600 dark:text-surface-400">Payment Date</span>
               <span className="font-medium text-surface-900 dark:text-surface-50">

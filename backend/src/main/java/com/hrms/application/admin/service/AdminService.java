@@ -53,21 +53,13 @@ public class AdminService {
         // Count all employees across all tenants
         long totalEmployees = employeeRepository.count();
 
-        // Count active users (those with ACTIVE status)
-        long activeUsers = userRepository.findAll().stream()
-                .filter(user -> user.getStatus().equals(User.UserStatus.ACTIVE))
-                .count();
+        // Single aggregate query — no longer loads all users into memory
+        long activeUsers = userRepository.countByStatus(User.UserStatus.ACTIVE);
 
-        // Count all pending workflow executions across all tenants (SuperAdmin view)
+        // Single cross-tenant count query — replaces N+1 loop over all tenants
         long pendingApprovals = 0;
         try {
-            List<Tenant> allTenants = tenantRepository.findAll();
-            for (Tenant t : allTenants) {
-                pendingApprovals += workflowExecutionRepository.countByStatus(
-                        t.getId(), WorkflowExecution.ExecutionStatus.PENDING);
-                pendingApprovals += workflowExecutionRepository.countByStatus(
-                        t.getId(), WorkflowExecution.ExecutionStatus.IN_PROGRESS);
-            }
+            pendingApprovals = workflowExecutionRepository.countAllPendingCrossTenant();
         } catch (Exception e) {
             log.warn("Could not count pending approvals: {}", e.getMessage());
         }

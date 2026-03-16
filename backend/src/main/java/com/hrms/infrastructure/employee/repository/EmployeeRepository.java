@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -262,4 +263,22 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     List<Employee> findManagersByTenantId(
             @Param("tenantId") UUID tenantId,
             @Param("levels") Collection<Employee.EmployeeLevel> levels);
+
+    /**
+     * Batch count of employees grouped by tenantId.
+     * Returns Object[]{UUID tenantId, Long count} for each tenant in the provided set.
+     * Replaces N per-tenant countByTenantId() calls in paginated list views (N+1 fix).
+     */
+    @Query("SELECT e.tenantId, COUNT(e) FROM Employee e WHERE e.tenantId IN :tenantIds GROUP BY e.tenantId")
+    List<Object[]> countByTenantIdIn(@Param("tenantIds") Collection<UUID> tenantIds);
+
+    /**
+     * Count employees who joined on or before the given date, falling back to createdAt when
+     * joiningDate is null. Used by getGrowthMetrics() to avoid loading all employees into memory.
+     */
+    @Query("SELECT COUNT(e) FROM Employee e WHERE " +
+           "(e.joiningDate IS NOT NULL AND e.joiningDate <= :cutoffDate) OR " +
+           "(e.joiningDate IS NULL AND e.createdAt IS NOT NULL AND e.createdAt <= :cutoffDateTime)")
+    long countJoinedOnOrBefore(@Param("cutoffDate") LocalDate cutoffDate,
+                               @Param("cutoffDateTime") LocalDateTime cutoffDateTime);
 }

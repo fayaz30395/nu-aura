@@ -369,7 +369,7 @@ test.describe('Rate Limiting', () => {
 
     // Should show rate limit message or continue gracefully
     const rateLimitMessage = page.getByText(/too many|rate limit|slow down|try again later/i);
-    const hasRateLimitMessage = await rateLimitMessage.first().isVisible().catch(() => false);
+    const _hasRateLimitMessage = await rateLimitMessage.first().isVisible().catch(() => false);
 
     // Application should still be functional
     const pageLoaded = await page.locator('body').isVisible();

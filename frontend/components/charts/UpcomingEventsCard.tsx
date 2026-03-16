@@ -29,7 +29,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
               {data.birthdays.slice(0, 5).map((birthday, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-pink-50 dark:bg-pink-950/20 rounded-lg"
+                  className="flex items-center justify-between p-4 bg-pink-50 dark:bg-pink-950/20 rounded-lg"
                 >
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-50">
@@ -55,7 +55,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
               {data.anniversaries.slice(0, 5).map((anniversary, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg"
+                  className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg"
                 >
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-50">
@@ -85,7 +85,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
               {data.holidays.slice(0, 5).map((holiday, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg"
+                  className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg"
                 >
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-50">{holiday.name}</p>

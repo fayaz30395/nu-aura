@@ -102,7 +102,7 @@ function ResponsiveTable<T>({
       <div className={cn('w-full', className)}>
         {/* Desktop skeleton */}
         <div className="hidden md:block">
-          <div className="animate-pulse space-y-3">
+          <div className="animate-pulse space-y-4">
             <div className="h-12 bg-surface-200 dark:bg-surface-700 rounded" />
             {[...Array(5)].map((_, i) => (
               <div key={i} className="h-16 bg-surface-100 dark:bg-surface-800 rounded" />
@@ -110,7 +110,7 @@ function ResponsiveTable<T>({
           </div>
         </div>
         {/* Mobile skeleton */}
-        <div className="md:hidden space-y-3">
+        <div className="md:hidden space-y-4">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="h-32 bg-surface-100 dark:bg-surface-800 rounded-lg animate-pulse" />
           ))}
@@ -224,7 +224,7 @@ function ResponsiveTable<T>({
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden space-y-4">
         {data.map((row) => {
           const key = keyExtractor(row);
           const isSelected = selectedKeys.has(key);
@@ -338,7 +338,7 @@ export function TablePagination({
   const endItem = Math.min((currentPage + 1) * pageSize, totalItems);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-4 border-t border-surface-200 dark:border-surface-700">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-4 border-t border-surface-200 dark:border-surface-700">
       {/* Info */}
       <div className="text-sm text-surface-500 dark:text-surface-400 order-2 sm:order-1">
         Showing {startItem} to {endItem} of {totalItems} results

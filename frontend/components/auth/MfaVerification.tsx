@@ -95,7 +95,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Error Alert */}
           {error && (
-            <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl animate-in slide-in-from-top-2 duration-300">
+            <div className="flex items-start gap-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl animate-in slide-in-from-top-2 duration-300">
               <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-red-800 dark:text-red-400">
@@ -190,7 +190,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
         </form>
 
         {/* Help Text */}
-        <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
           <p className="text-xs text-blue-900 dark:text-blue-100 leading-relaxed">
             Enter the code from your authenticator app. If you can&apos;t access your app, use one of your backup codes instead.
           </p>

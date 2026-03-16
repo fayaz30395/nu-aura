@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
 import { AttendancePage } from './pages/AttendancePage';
-import { testUsers, testAttendance } from './fixtures/testData';
+import { testAttendance } from './fixtures/testData';
 
 /**
  * Attendance E2E Tests
@@ -34,7 +33,8 @@ test.describe('Attendance Management', () => {
       await attendancePage.navigateToMyAttendance();
 
       // Verify URL
-      expect(page.url()).toContain('/attendance') || expect(page.url()).toContain('/me/attendance');
+      const url = page.url();
+      expect(url.includes('/attendance') || url.includes('/me/attendance')).toBe(true);
     });
 
     test('should navigate to team attendance', async ({ page }) => {

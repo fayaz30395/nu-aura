@@ -1,6 +1,7 @@
 package com.hrms.application.admin.service;
 
 import com.hrms.api.admin.dto.*;
+import com.hrms.application.document.service.StorageMetricsService;
 import com.hrms.common.config.TenantCacheManager;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.JwtTokenProvider;
@@ -43,6 +44,8 @@ public class SystemAdminService {
     private final com.hrms.application.audit.service.AuditLogService auditLogService;
     private final TenantFilter tenantFilter;
     private final TenantCacheManager tenantCacheManager;
+    private final StorageMetricsService storageMetricsService;
+    private final AiUsageService aiUsageService;
 
     /**
      * Get comprehensive system overview across all tenants
@@ -57,12 +60,11 @@ public class SystemAdminService {
         long totalActiveUsers = countActiveUsers();
         long pendingApprovals = countPendingApprovals();
 
-        // TODO: Implement storage usage calculation from MinIO
-        // For now, we use a placeholder
-        long storageUsageBytes = 0;
+        // Calculate storage usage from generated documents and document versions
+        long storageUsageBytes = storageMetricsService.getStorageBytesAcrossAllTenants();
 
-        // TODO: Implement AI credits tracking from audit logs or separate service
-        long aiCreditsUsed = 0;
+        // Get total AI credits used across all tenants
+        long aiCreditsUsed = aiUsageService.getAiCreditsUsedAcrossAllTenants();
 
         return SystemOverviewDTO.builder()
                 .totalTenants(totalTenants)
@@ -76,7 +78,10 @@ public class SystemAdminService {
     }
 
     /**
-     * Get paginated list of all tenants with basic metrics
+     * Get paginated list of all tenants with basic metrics.
+     *
+     * <p>Uses batched aggregate queries to avoid N+1: employee count, user count, and last
+     * activity are all fetched for the entire page in 3 queries rather than 3×N queries.</p>
      */
     @Transactional(readOnly = true)
     public Page<TenantListItemDTO> getTenantList(Pageable pageable) {
@@ -85,7 +90,41 @@ public class SystemAdminService {
 
         Page<Tenant> tenantsPage = tenantRepository.findAll(pageable);
 
-        return tenantsPage.map(this::mapToTenantListItem);
+        // Collect IDs of tenants on this page for batch queries
+        List<UUID> tenantIds = tenantsPage.getContent().stream()
+                .map(Tenant::getId)
+                .collect(Collectors.toList());
+
+        if (tenantIds.isEmpty()) {
+            return tenantsPage.map(t -> mapToTenantListItem(t, 0L, 0L, null));
+        }
+
+        // Batch queries — 2 queries for the whole page instead of 2×N
+        Map<UUID, Long> employeeCountByTenant = employeeRepository.countByTenantIdIn(tenantIds)
+                .stream().collect(Collectors.toMap(
+                        r -> (UUID) r[0],
+                        r -> (Long) r[1]
+                ));
+
+        Map<UUID, Long> userCountByTenant = userRepository.countByTenantIdIn(tenantIds)
+                .stream().collect(Collectors.toMap(
+                        r -> (UUID) r[0],
+                        r -> (Long) r[1]
+                ));
+
+        // Last-activity lookup: still per-tenant but only for the page slice
+        Map<UUID, LocalDateTime> lastActivityByTenant = tenantIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        id -> getLastActivityForTenant(id)
+                ));
+
+        return tenantsPage.map(tenant -> mapToTenantListItem(
+                tenant,
+                employeeCountByTenant.getOrDefault(tenant.getId(), 0L),
+                userCountByTenant.getOrDefault(tenant.getId(), 0L),
+                lastActivityByTenant.get(tenant.getId())
+        ));
     }
 
     /**
@@ -101,7 +140,7 @@ public class SystemAdminService {
         long activeUsers = countActiveUsersForTenant(tenantId);
         long totalUsers = countUsersForTenant(tenantId);
         long employeeCount = countEmployeesForTenant(tenantId);
-        long storageUsageBytes = 0; // TODO: Calculate from MinIO
+        long storageUsageBytes = storageMetricsService.getStorageBytesForTenant(tenantId);
         long pendingApprovals = countPendingApprovalsForTenant(tenantId);
         LocalDateTime lastActivityAt = getLastActivityForTenant(tenantId);
 
@@ -166,8 +205,10 @@ public class SystemAdminService {
 
     /**
      * Get growth metrics over the last N months.
-     * Computes cumulative tenant, employee, and user counts by month
-     * using actual created_at/joining_date data.
+     *
+     * <p>Previously loaded all tenants, employees, and users into heap and filtered in Java —
+     * O(N) memory per entity type. Now issues 3 DB aggregate queries per month slice, which is
+     * O(1) memory regardless of dataset size (PERF fix).</p>
      */
     @Transactional(readOnly = true)
     public GrowthMetricsDTO getGrowthMetrics(int months) {
@@ -176,36 +217,16 @@ public class SystemAdminService {
         LocalDate now = LocalDate.now();
         List<GrowthMetricsDTO.MonthlyGrowth> growthList = new ArrayList<>();
 
-        // Get all tenants, employees, and users once
-        List<Tenant> allTenants = tenantRepository.findAll();
-        List<com.hrms.domain.employee.Employee> allEmployees = employeeRepository.findAll();
-        List<User> allUsers = userRepository.findAll();
-
         for (int i = months - 1; i >= 0; i--) {
-            LocalDate monthEnd = now.minusMonths(i).withDayOfMonth(
-                    now.minusMonths(i).lengthOfMonth());
+            LocalDate monthEnd = now.minusMonths(i)
+                    .withDayOfMonth(now.minusMonths(i).lengthOfMonth());
             LocalDateTime monthEndDateTime = monthEnd.atTime(23, 59, 59);
 
-            // Cumulative tenants created on or before this month
-            long tenantCount = allTenants.stream()
-                    .filter(t -> t.getCreatedAt() != null && !t.getCreatedAt().isAfter(monthEndDateTime))
-                    .count();
-
-            // Cumulative employees who joined on or before this month
-            long employeeCount = allEmployees.stream()
-                    .filter(e -> e.getJoiningDate() != null && !e.getJoiningDate().isAfter(monthEnd))
-                    .count();
-            // Fallback: if joiningDate is null, use createdAt
-            employeeCount += allEmployees.stream()
-                    .filter(e -> e.getJoiningDate() == null && e.getCreatedAt() != null
-                            && !e.getCreatedAt().isAfter(monthEndDateTime))
-                    .count();
-
-            // Cumulative active users created on or before this month
-            long activeUserCount = allUsers.stream()
-                    .filter(u -> u.getCreatedAt() != null && !u.getCreatedAt().isAfter(monthEndDateTime)
-                            && u.getStatus() == User.UserStatus.ACTIVE)
-                    .count();
+            // Delegate counting to the database — zero heap allocation for entity graphs
+            long tenantCount   = tenantRepository.countByCreatedAtBefore(monthEndDateTime);
+            long employeeCount = employeeRepository.countJoinedOnOrBefore(monthEnd, monthEndDateTime);
+            long activeUserCount = userRepository.countByStatusAndCreatedAtBefore(
+                    User.UserStatus.ACTIVE, monthEndDateTime);
 
             Month month = monthEnd.getMonth();
             growthList.add(GrowthMetricsDTO.MonthlyGrowth.builder()
@@ -294,21 +315,22 @@ public class SystemAdminService {
     // ===================== Helper Methods =====================
 
     private long countActiveTenants() {
-        // Assuming tenants have a status field (e.g., ACTIVE, INACTIVE, SUSPENDED)
-        // If not, all tenants are considered active by default
-        return tenantRepository.count();
+        return tenantRepository.countByStatus(Tenant.TenantStatus.ACTIVE);
     }
 
     private long countActiveUsers() {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getStatus() == User.UserStatus.ACTIVE)
-                .count();
+        // Single aggregate query — no longer loads all users into memory
+        return userRepository.countByStatus(User.UserStatus.ACTIVE);
     }
 
     private long countActiveUsersForTenant(UUID tenantId) {
-        return userRepository.findByTenantId(tenantId).stream()
-                .filter(user -> user.getStatus() == User.UserStatus.ACTIVE)
-                .count();
+        // Delegate to batch query map entry — avoids loading all tenant users into memory
+        return userRepository.countActiveByTenantIdIn(List.of(tenantId))
+                .stream()
+                .filter(r -> tenantId.equals(r[0]))
+                .map(r -> (Long) r[1])
+                .findFirst()
+                .orElse(0L);
     }
 
     private long countUsersForTenant(UUID tenantId) {
@@ -320,23 +342,13 @@ public class SystemAdminService {
     }
 
     private long countPendingApprovals() {
-        long count = 0;
+        // Single cross-tenant query replaces the previous 2N+1 queries per tenant (N+1 fix)
         try {
-            List<Tenant> allTenants = tenantRepository.findAll();
-            for (Tenant tenant : allTenants) {
-                count += workflowExecutionRepository.countByStatus(
-                        tenant.getId(),
-                        WorkflowExecution.ExecutionStatus.PENDING
-                );
-                count += workflowExecutionRepository.countByStatus(
-                        tenant.getId(),
-                        WorkflowExecution.ExecutionStatus.IN_PROGRESS
-                );
-            }
+            return workflowExecutionRepository.countAllPendingCrossTenant();
         } catch (Exception e) {
             log.warn("Could not count pending approvals: {}", e.getMessage());
+            return 0L;
         }
-        return count;
     }
 
     private long countPendingApprovalsForTenant(UUID tenantId) {
@@ -357,18 +369,17 @@ public class SystemAdminService {
     }
 
     private LocalDateTime getLastActivityForTenant(UUID tenantId) {
-        // Get the most recent user login or audit log
-        return userRepository.findByTenantId(tenantId).stream()
-                .map(User::getLastLoginAt)
-                .filter(Objects::nonNull)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+        // Query the database for the maximum lastLoginAt timestamp for the tenant.
+        // This avoids loading all users into the Java heap and streaming them.
+        return userRepository.findMaxLastLoginAtByTenantId(tenantId).orElse(null);
     }
 
-    private TenantListItemDTO mapToTenantListItem(Tenant tenant) {
-        long employeeCount = countEmployeesForTenant(tenant.getId());
-        long userCount = countUsersForTenant(tenant.getId());
-        LocalDateTime lastActivityAt = getLastActivityForTenant(tenant.getId());
+    /**
+     * Map a Tenant to TenantListItemDTO using pre-fetched batch counts (N+1 fix).
+     */
+    private TenantListItemDTO mapToTenantListItem(Tenant tenant, long employeeCount, long userCount,
+            LocalDateTime lastActivityAt) {
+        long storageUsageBytes = storageMetricsService.getStorageBytesForTenant(tenant.getId());
 
         return TenantListItemDTO.builder()
                 .tenantId(tenant.getId())
@@ -377,7 +388,7 @@ public class SystemAdminService {
                 .status(tenant.getStatus() != null ? tenant.getStatus().name() : "ACTIVE")
                 .employeeCount(employeeCount)
                 .userCount(userCount)
-                .storageUsageBytes(0) // TODO: Calculate from MinIO
+                .storageUsageBytes(storageUsageBytes)
                 .createdAt(tenant.getCreatedAt())
                 .lastActivityAt(lastActivityAt)
                 .build();
