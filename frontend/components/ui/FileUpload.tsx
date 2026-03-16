@@ -117,9 +117,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
       onUpload(response.data);
       setSelectedFile(null);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to upload file';
-      onError?.(errorMessage);
+    } catch (err: unknown) {
+      const errorMessage = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      onError?.(errorMessage || 'Failed to upload file');
     } finally {
       setUploading(false);
       setProgress(0);

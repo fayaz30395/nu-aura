@@ -34,8 +34,8 @@ export const taxService = {
     },
 
     // Get all declarations (admin/HR view)
-    getAll: async (params?: any): Promise<any> => {
-        const response = await apiClient.get<any>(BASE_URL, { params });
+    getAll: async (params?: Record<string, string | number | boolean | undefined>): Promise<TaxDeclarationResponse[]> => {
+        const response = await apiClient.get<TaxDeclarationResponse[]>(BASE_URL, { params });
         return response.data;
     },
 

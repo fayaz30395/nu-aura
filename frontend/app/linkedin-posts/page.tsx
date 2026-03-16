@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import {
   Linkedin,
@@ -334,21 +337,21 @@ interface CreateLinkedInPostModalProps {
   onSuccess: () => void;
 }
 
-interface LinkedInFormData {
-  postUrl: string;
-  authorName: string;
-  authorTitle: string;
-  contentSnippet: string;
-  imageUrl: string;
-  postedAt: string;
-  engagement: {
-    likes: number;
-    comments: number;
-    shares: number;
-  };
-  tags: string; // Store as comma-separated string in form
-  isFromNulogic: boolean;
-}
+const linkedInFormSchema = z.object({
+  postUrl: z.string().url('Must be a valid URL').nonempty('Post URL is required'),
+  authorName: z.string().min(2, 'Author name must be at least 2 characters').nonempty('Author name is required'),
+  authorTitle: z.string().optional(),
+  contentSnippet: z.string().min(10, 'Content must be at least 10 characters').nonempty('Content is required'),
+  imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  postedAt: z.string().nonempty('Posted date is required'),
+  likes: z.number().int().min(0, 'Likes cannot be negative'),
+  comments: z.number().int().min(0, 'Comments cannot be negative'),
+  shares: z.number().int().min(0, 'Shares cannot be negative'),
+  tags: z.string().optional(),
+  isFromNulogic: z.boolean().optional().default(false),
+});
+
+type LinkedInFormData = z.infer<typeof linkedInFormSchema>;
 
 function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPostModalProps) {
   const toast = useToast();
@@ -356,33 +359,32 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
   const createPostMutation = useCreateLinkedInPost();
   const updatePostMutation = useUpdateLinkedInPost();
 
-  const [error, setError] = useState('');
-  const [formData, setFormData] = useState<LinkedInFormData>({
-    postUrl: post?.postUrl || '',
-    authorName: post?.authorName || '',
-    authorTitle: post?.authorTitle || '',
-    contentSnippet: post?.contentSnippet || '',
-    imageUrl: post?.imageUrl || '',
-    postedAt: post?.postedAt || new Date().toISOString().split('T')[0],
-    engagement: {
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<LinkedInFormData>({
+    resolver: zodResolver(linkedInFormSchema),
+    defaultValues: {
+      postUrl: post?.postUrl || '',
+      authorName: post?.authorName || '',
+      authorTitle: post?.authorTitle || '',
+      contentSnippet: post?.contentSnippet || '',
+      imageUrl: post?.imageUrl || '',
+      postedAt: post?.postedAt ? post.postedAt.split('T')[0] : new Date().toISOString().split('T')[0],
       likes: post?.engagement.likes || 0,
       comments: post?.engagement.comments || 0,
       shares: post?.engagement.shares || 0,
+      tags: post?.tags ? post.tags.join(', ') : '',
+      isFromNulogic: post?.isFromNulogic || false,
     },
-    tags: post?.tags ? post.tags.join(', ') : '',
-    isFromNulogic: post?.isFromNulogic || false,
   });
 
-  const handleSubmit = async () => {
-    if (!formData.postUrl || !formData.authorName || !formData.contentSnippet) {
-      setError('Post URL, Author Name, and Content are required');
-      return;
-    }
-
-    setError('');
-
+  const onSubmit = async (formData: LinkedInFormData) => {
     try {
-      const tags: string[] = formData.tags
+      const tags: string[] = (formData.tags || '')
         .split(',')
         .map((t: string) => t.trim())
         .filter((t: string) => t);
@@ -391,7 +393,11 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         const updatePayload: UpdateLinkedInPostRequest = {
           contentSnippet: formData.contentSnippet,
           imageUrl: formData.imageUrl || undefined,
-          engagement: formData.engagement,
+          engagement: {
+            likes: formData.likes,
+            comments: formData.comments,
+            shares: formData.shares,
+          },
           tags,
         };
         await updatePostMutation.mutateAsync({ id: post.id, data: updatePayload });
@@ -400,25 +406,47 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         const createPayload: CreateLinkedInPostRequest = {
           postUrl: formData.postUrl,
           authorName: formData.authorName,
-          authorTitle: formData.authorTitle,
+          authorTitle: formData.authorTitle || '',
           contentSnippet: formData.contentSnippet,
-          imageUrl: formData.imageUrl,
+          imageUrl: formData.imageUrl || '',
           postedAt: formData.postedAt,
-          engagement: formData.engagement,
+          engagement: {
+            likes: formData.likes,
+            comments: formData.comments,
+            shares: formData.shares,
+          },
           tags,
-          isFromNulogic: formData.isFromNulogic,
+          isFromNulogic: formData.isFromNulogic || false,
         };
         await createPostMutation.mutateAsync(createPayload);
         toast.success('Post Created', 'The LinkedIn post has been added.');
       }
+      reset();
       onSuccess();
     } catch (err: unknown) {
       logger.error(`Failed to ${isEditing ? 'update' : 'create'} post:`, err);
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} post`;
-      setError(errorMessage);
       toast.error(isEditing ? 'Update Failed' : 'Create Failed', errorMessage);
     }
   };
+
+  useEffect(() => {
+    if (!post) {
+      reset({
+        postUrl: '',
+        authorName: '',
+        authorTitle: '',
+        contentSnippet: '',
+        imageUrl: '',
+        postedAt: new Date().toISOString().split('T')[0],
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        tags: '',
+        isFromNulogic: false,
+      });
+    }
+  }, [post, reset]);
 
   return (
     <motion.div
@@ -449,7 +477,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
+        <form id="linkedin-form" onSubmit={handleSubmit(onSubmit)} className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
           {/* Post URL */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -457,11 +485,15 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             </label>
             <input
               type="url"
-              value={formData.postUrl}
-              onChange={(e) => setFormData({ ...formData, postUrl: e.target.value })}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              {...register('postUrl')}
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                errors.postUrl ? 'border-red-500' : 'border-[var(--border-main)]'
+              }`}
               placeholder="https://www.linkedin.com/feed/update/..."
             />
+            {errors.postUrl && (
+              <p className="mt-1 text-xs text-red-500">{errors.postUrl.message}</p>
+            )}
           </div>
 
           {/* Author Name and Title */}
@@ -472,11 +504,15 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
               </label>
               <input
                 type="text"
-                value={formData.authorName}
-                onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                {...register('authorName')}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                  errors.authorName ? 'border-red-500' : 'border-[var(--border-main)]'
+                }`}
                 placeholder="John Doe"
               />
+              {errors.authorName && (
+                <p className="mt-1 text-xs text-red-500">{errors.authorName.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -484,8 +520,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
               </label>
               <input
                 type="text"
-                value={formData.authorTitle || ''}
-                onChange={(e) => setFormData({ ...formData, authorTitle: e.target.value })}
+                {...register('authorTitle')}
                 className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 placeholder="CEO at Company"
               />
@@ -498,12 +533,16 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
               Content Snippet <span className="text-red-500">*</span>
             </label>
             <textarea
-              value={formData.contentSnippet}
-              onChange={(e) => setFormData({ ...formData, contentSnippet: e.target.value })}
+              {...register('contentSnippet')}
               rows={4}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none ${
+                errors.contentSnippet ? 'border-red-500' : 'border-[var(--border-main)]'
+              }`}
               placeholder="Paste the post content or a snippet..."
             />
+            {errors.contentSnippet && (
+              <p className="mt-1 text-xs text-red-500">{errors.contentSnippet.message}</p>
+            )}
           </div>
 
           {/* Image URL */}
@@ -513,24 +552,32 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             </label>
             <input
               type="url"
-              value={formData.imageUrl || ''}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              {...register('imageUrl')}
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                errors.imageUrl ? 'border-red-500' : 'border-[var(--border-main)]'
+              }`}
               placeholder="https://..."
             />
+            {errors.imageUrl && (
+              <p className="mt-1 text-xs text-red-500">{errors.imageUrl.message}</p>
+            )}
           </div>
 
           {/* Posted Date */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Posted Date
+              Posted Date <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
-              value={formData.postedAt?.split('T')[0] || ''}
-              onChange={(e) => setFormData({ ...formData, postedAt: e.target.value })}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              {...register('postedAt')}
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                errors.postedAt ? 'border-red-500' : 'border-[var(--border-main)]'
+              }`}
             />
+            {errors.postedAt && (
+              <p className="mt-1 text-xs text-red-500">{errors.postedAt.message}</p>
+            )}
           </div>
 
           {/* Tags */}
@@ -540,8 +587,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             </label>
             <input
               type="text"
-              value={formData.tags}
-              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+              {...register('tags')}
               className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
               placeholder="tag1, tag2, tag3"
             />
@@ -560,81 +606,114 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                 <label className="block text-xs text-[var(--text-secondary)] mb-1">
                   Likes
                 </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.engagement?.likes || 0}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    engagement: { ...formData.engagement, likes: parseInt(e.target.value) || 0 }
-                  })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                <Controller
+                  name="likes"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <input
+                        type="number"
+                        min="0"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                          errors.likes ? 'border-red-500' : 'border-[var(--border-main)]'
+                        }`}
+                      />
+                      {errors.likes && (
+                        <p className="mt-1 text-xs text-red-500">{errors.likes.message}</p>
+                      )}
+                    </>
+                  )}
                 />
               </div>
               <div>
                 <label className="block text-xs text-[var(--text-secondary)] mb-1">
                   Comments
                 </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.engagement?.comments || 0}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    engagement: { ...formData.engagement, comments: parseInt(e.target.value) || 0 }
-                  })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                <Controller
+                  name="comments"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <input
+                        type="number"
+                        min="0"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                          errors.comments ? 'border-red-500' : 'border-[var(--border-main)]'
+                        }`}
+                      />
+                      {errors.comments && (
+                        <p className="mt-1 text-xs text-red-500">{errors.comments.message}</p>
+                      )}
+                    </>
+                  )}
                 />
               </div>
               <div>
                 <label className="block text-xs text-[var(--text-secondary)] mb-1">
                   Shares
                 </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.engagement?.shares || 0}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    engagement: { ...formData.engagement, shares: parseInt(e.target.value) || 0 }
-                  })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                <Controller
+                  name="shares"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <input
+                        type="number"
+                        min="0"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                          errors.shares ? 'border-red-500' : 'border-[var(--border-main)]'
+                        }`}
+                      />
+                      {errors.shares && (
+                        <p className="mt-1 text-xs text-red-500">{errors.shares.message}</p>
+                      )}
+                    </>
+                  )}
                 />
               </div>
             </div>
           </div>
 
           {/* Checkbox Options */}
-          <label className="flex items-center gap-2 cursor-pointer p-3 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
-            <input
-              type="checkbox"
-              checked={formData.isFromNulogic}
-              onChange={(e) => setFormData({ ...formData, isFromNulogic: e.target.checked })}
-              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+          <div className="flex items-center gap-2 cursor-pointer p-3 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+            <Controller
+              name="isFromNulogic"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="checkbox"
+                  checked={field.value || false}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                />
+              )}
             />
             <span className="text-sm text-[var(--text-secondary)]">
               This post is from Nulogic
             </span>
-          </label>
-
-          {/* Error */}
-          {error && (
-            <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          )}
-        </div>
+          </div>
+        </form>
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-3">
           <button
+            type="button"
             onClick={onClose}
             className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
           >
             Cancel
           </button>
           <button
-            onClick={handleSubmit}
+            type="submit"
+            form="linkedin-form"
             disabled={createPostMutation.isPending || updatePostMutation.isPending}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >

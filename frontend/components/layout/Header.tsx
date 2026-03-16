@@ -170,8 +170,12 @@ const Header: React.FC<HeaderProps> = ({
             );
             if (detailResponse.ok) {
               const detail = await detailResponse.json();
-              const fromHeader = detail.payload?.headers?.find((h: any) => h.name === 'From');
-              const subjectHeader = detail.payload?.headers?.find((h: any) => h.name === 'Subject');
+              interface EmailHeader {
+                name: string;
+                value: string;
+              }
+              const fromHeader = detail.payload?.headers?.find((h: EmailHeader) => h.name === 'From');
+              const subjectHeader = detail.payload?.headers?.find((h: EmailHeader) => h.name === 'Subject');
               allNotifications.push({
                 id: `email-${msg.id}`,
                 type: 'email',

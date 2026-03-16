@@ -392,6 +392,7 @@ export default function ProjectCalendarPage() {
             <button
               onClick={() => router.push('/projects')}
               className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+              aria-label="Back to projects"
             >
               <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
@@ -524,6 +525,7 @@ export default function ProjectCalendarPage() {
                   <button
                     onClick={handlePrevious}
                     className="p-2 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    aria-label="Previous period"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -536,6 +538,7 @@ export default function ProjectCalendarPage() {
                   <button
                     onClick={handleNext}
                     className="p-2 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    aria-label="Next period"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
@@ -631,6 +634,10 @@ export default function ProjectCalendarPage() {
                                 }}
                                 title={`${item.name} - ${item.startDate.toLocaleDateString()}`}
                                 onClick={() => handleEventClick(item)}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleEventClick(item); } }}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`Milestone: ${item.name}`}
                               />
                             ) : (
                               <div
@@ -641,7 +648,11 @@ export default function ProjectCalendarPage() {
                                   backgroundColor: item.color + 'E6',
                                 }}
                                 onClick={() => isProject ? router.push(`/projects/${item.id}`) : handleEventClick(item)}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isProject ? router.push(`/projects/${item.id}`) : handleEventClick(item); } }}
+                                role="button"
+                                tabIndex={0}
                                 title={`${item.name} - ${item.progress}%`}
+                                aria-label={`${item.name}: ${item.progress}% complete`}
                               >
                                 {/* Progress bar */}
                                 <div

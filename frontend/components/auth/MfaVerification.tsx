@@ -62,9 +62,10 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
       setError(null);
       const result = await mfaApi.mfaLogin(userId, verificationCode);
       onSuccess(result.accessToken);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to verify MFA code:', err);
-      setError(err.response?.data?.message || 'Invalid code. Please try again.');
+      const message = err instanceof Error ? err.message : (typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null) || 'Invalid code. Please try again.';
+      setError(message);
       setCode('');
       inputRef.current?.focus();
     } finally {

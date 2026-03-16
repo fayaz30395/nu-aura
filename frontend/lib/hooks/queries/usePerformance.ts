@@ -31,6 +31,7 @@ import {
   OkrSummary,
 } from '@/lib/types/performance';
 import type { ObjectiveRequest, KeyResultRequest } from '@/lib/services/okr.service';
+import type { CreatePIPRequest as CreatePIPRequestService, PIPCheckInRequest as PIPCheckInRequestService, ClosePIPRequest as ClosePIPRequestService } from '@/lib/services/performance.service';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────
@@ -906,7 +907,7 @@ export function useCreateCheckIn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: any) => okrService.createCheckIn(data),
+    mutationFn: (data: Record<string, unknown>) => okrService.createCheckIn(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...performanceKeys.okr()] });
       notifications.show({
@@ -948,7 +949,7 @@ export function useCreatePip() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: any) => pipService.create(data),
+    mutationFn: (data: CreatePIPRequestService) => pipService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...performanceKeys.all, 'pip'] });
       notifications.show({
@@ -971,7 +972,7 @@ export function useRecordPipCheckIn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: PIPCheckInRequestService }) =>
       pipService.recordCheckIn(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...performanceKeys.all, 'pip'] });
@@ -995,7 +996,7 @@ export function useClosePip() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: ClosePIPRequestService }) =>
       pipService.close(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...performanceKeys.all, 'pip'] });

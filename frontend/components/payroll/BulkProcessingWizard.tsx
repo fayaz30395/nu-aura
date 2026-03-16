@@ -74,7 +74,7 @@ export const BulkProcessingWizard: React.FC = () => {
       setLoading(true);
       const response = await employeeService.getAllEmployees(0, 100);
       setEmployees(response.content.filter(emp => emp.status === 'ACTIVE'));
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to load employees');
       console.error('Error loading employees:', err);
     } finally {
@@ -111,8 +111,9 @@ export const BulkProcessingWizard: React.FC = () => {
       });
       setPreviewData(data);
       setCurrentStep(3);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load preview');
+    } catch (err: unknown) {
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      setError(message || 'Failed to load preview');
     } finally {
       setLoading(false);
     }
@@ -135,8 +136,9 @@ export const BulkProcessingWizard: React.FC = () => {
       setProcessingResult(result);
       setProcessingStatus('completed');
       setCurrentStep(4);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to process payroll');
+    } catch (err: unknown) {
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      setError(message || 'Failed to process payroll');
       setProcessingStatus('failed');
     } finally {
       setLoading(false);

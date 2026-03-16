@@ -19,6 +19,13 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useWikiSpaces, useWikiPages } from '@/lib/hooks/queries/useFluence';
+import {
+  layout,
+  typography,
+  card,
+  motion as dsMotion,
+  iconSize,
+} from '@/lib/design-system';
 
 export default function WikiPage() {
   const router = useRouter();
@@ -26,7 +33,11 @@ export default function WikiPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);
-  const { data: pagesData, isLoading: pagesLoading } = useWikiPages(selectedSpaceId, 0, 20);
+  const { data: pagesData, isLoading: pagesLoading } = useWikiPages(
+    selectedSpaceId,
+    0,
+    20
+  );
 
   const spaces = spacesData?.content || [];
   const pages = pagesData?.content || [];
@@ -39,172 +50,255 @@ export default function WikiPage() {
     RESTRICTED: Lock,
   };
 
+  // Extract initials from author name for avatar badge
+  const getAuthorInitials = (
+    authorName: string | undefined
+  ): string => {
+    if (!authorName) return '?';
+    return authorName
+      .split(' ')
+      .map((n) => n.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Type for author info extracted from page
+  interface AuthorInfo {
+    id: string;
+    name: string;
+  }
+
+  const filteredPages = pages.filter((page) =>
+    page.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <AppLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
+      <motion.div {...dsMotion.pageEnter}>
+        <div className={layout.sectionGap}>
+          {/* Page Header */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 p-2">
+                  <BookOpen className={`${iconSize.pageHeader} text-white`} />
+                </div>
+                <h1 className={typography.pageTitle}>Wiki Pages</h1>
               </div>
-              Wiki Pages
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Create and manage knowledge base documentation
-            </p>
+              <p className={typography.bodySecondary}>
+                Create and manage knowledge base documentation
+              </p>
+            </div>
+            <Button
+              onClick={() => router.push('/fluence/wiki/new')}
+              variant="primary"
+              className="gap-2"
+            >
+              <Plus className={iconSize.button} />
+              New Page
+            </Button>
           </div>
-          <Button
-            onClick={() => router.push('/fluence/wiki/new')}
-            className="gap-2 bg-violet-600 hover:bg-violet-700"
-          >
-            <Plus className="w-4 h-4" />
-            New Page
-          </Button>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar: Spaces */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Folder className="w-5 h-5" />
-                  Spaces
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
+          {/* Content Grid: Sidebar + Main */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* ─────────────────────────────────────────────────────────
+                SIDEBAR: Spaces
+                ───────────────────────────────────────────────────────── */}
+            <div className="lg:col-span-1">
+              <div className={`${card.base} ${card.paddingLarge}`}>
+                <div className="flex items-center gap-2 mb-4">
+                  <Folder className={iconSize.cardInline} />
+                  <h2 className={typography.sectionTitle}>Spaces</h2>
+                </div>
+
                 {spacesLoading ? (
                   <div className="h-40 flex items-center justify-center">
-                    <RefreshCw className="w-5 h-5 text-[var(--text-muted)] animate-spin" />
+                    <RefreshCw className={`${iconSize.cardInline} text-[var(--text-muted)] animate-spin`} />
                   </div>
                 ) : spaces.length === 0 ? (
-                  <div className="py-8 text-center text-[var(--text-muted)]">
-                    <Folder className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">No spaces yet</p>
+                  <div className="py-8 text-center">
+                    <Folder className={`${iconSize.statCard} mx-auto mb-2 opacity-50 text-[var(--text-muted)]`} />
+                    <p className={typography.caption}>No spaces yet</p>
                   </div>
                 ) : (
-                  <>
-                    <button
+                  <div className="space-y-2">
+                    {/* All Spaces button */}
+                    <motion.button
                       onClick={() => setSelectedSpaceId(undefined)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-all ${
                         selectedSpaceId === undefined
-                          ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300'
-                          : 'hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                          ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
+                          : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                       }`}
+                      whileHover={{ x: 4 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      <p className="font-medium text-sm">All Spaces</p>
-                    </button>
+                      <p className="text-sm font-medium">All Spaces</p>
+                    </motion.button>
+
+                    {/* Individual space buttons */}
                     {spaces.map((space) => (
-                      <button
+                      <motion.button
                         key={space.id}
                         onClick={() => setSelectedSpaceId(space.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-all ${
                           selectedSpaceId === space.id
-                            ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300'
-                            : 'hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                            ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                            : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                         }`}
+                        whileHover={{ x: 4 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <p className="font-medium text-sm truncate">{space.name}</p>
-                        <p className="text-xs text-[var(--text-muted)]">
+                        <p className="text-sm font-medium truncate">
+                          {space.name}
+                        </p>
+                        <p className={`${typography.caption} mt-0.5`}>
                           {space.pageCount || 0} pages
                         </p>
-                      </button>
+                      </motion.button>
                     ))}
-                  </>
+                  </div>
                 )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Content: Pages */}
-          <div className="lg:col-span-3 space-y-4">
-            {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]" />
-              <input
-                type="text"
-                placeholder="Search pages..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500"
-              />
+              </div>
             </div>
 
-            {/* Pages Grid */}
-            {pagesLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <Card key={i} className="animate-pulse">
-                    <CardContent className="h-32" />
-                  </Card>
-                ))}
+            {/* ─────────────────────────────────────────────────────────
+                MAIN: Pages Grid
+                ───────────────────────────────────────────────────────── */}
+            <div className="lg:col-span-3 space-y-4">
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${iconSize.cardInline} text-[var(--text-muted)]`} />
+                <input
+                  type="text"
+                  placeholder="Search pages..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="input-aura w-full pl-10 pr-4 py-2.5"
+                />
               </div>
-            ) : pages.length === 0 ? (
-              <Card className="border-dashed border-2">
-                <CardContent className="py-16 text-center">
-                  <BookOpen className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
-                  <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
-                    No pages yet
-                  </h3>
-                  <p className="text-[var(--text-muted)] mb-4">
-                    Start by creating your first wiki page
-                  </p>
-                  <Button
-                    onClick={() => router.push('/fluence/wiki/new')}
-                    className="gap-2 bg-violet-600 hover:bg-violet-700"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Create Page
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pages.map((page, index) => {
-                  const VisibilityIcon =
-                    visibilityIcon[page.visibility] || Globe;
-                  return (
-                    <motion.div
-                      key={page.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <Card
-                        className="cursor-pointer hover:shadow-lg transition-shadow"
-                        onClick={() =>
-                          router.push(`/fluence/wiki/${page.id}`)
-                        }
-                      >
-                        <CardHeader>
-                          <div className="flex items-start justify-between gap-2">
-                            <CardTitle className="text-base line-clamp-2">
-                              {page.title}
-                            </CardTitle>
-                            <VisibilityIcon className="w-4 h-4 flex-shrink-0 text-[var(--text-muted)]" />
-                          </div>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                            <Clock className="w-4 h-4" />
-                            {new Date(page.updatedAt).toLocaleDateString()}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                            <Eye className="w-4 h-4" />
-                            {page.viewCount || 0} views
-                          </div>
-                        </CardContent>
-                      </Card>
+
+              {/* Pages Grid or Loading/Empty States */}
+              {pagesLoading ? (
+                <motion.div
+                  className={layout.grid2}
+                  {...dsMotion.staggerContainer}
+                >
+                  {[1, 2, 3, 4].map((i) => (
+                    <motion.div key={i} {...dsMotion.staggerItem}>
+                      <div
+                        className={`${card.base} ${card.paddingLarge} h-48 animate-pulse`}
+                      />
                     </motion.div>
-                  );
-                })}
-              </div>
-            )}
+                  ))}
+                </motion.div>
+              ) : filteredPages.length === 0 ? (
+                <div className={`${card.base} ${card.paddingLarge} border-dashed border-2 border-[var(--border-main)]`}>
+                  <div className="py-16 text-center">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-[var(--bg-secondary)] mx-auto mb-3">
+                      <BookOpen className={`${iconSize.statCard} text-[var(--text-muted)]`} />
+                    </div>
+                    <h3 className={`${typography.sectionTitle} mb-1`}>
+                      {searchQuery ? 'No pages found' : 'No pages yet'}
+                    </h3>
+                    <p className={`${typography.bodySecondary} mb-6`}>
+                      {searchQuery
+                        ? 'Try adjusting your search terms'
+                        : 'Start by creating your first wiki page'}
+                    </p>
+                    {!searchQuery && (
+                      <Button
+                        onClick={() => router.push('/fluence/wiki/new')}
+                        variant="primary"
+                        className="gap-2"
+                      >
+                        <Plus className={iconSize.button} />
+                        Create Page
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <motion.div
+                  className={layout.grid2}
+                  {...dsMotion.staggerContainer}
+                >
+                  {filteredPages.map((page) => {
+                    const VisibilityIcon =
+                      visibilityIcon[page.visibility] || Globe;
+                    const authorInitials = getAuthorInitials(page.authorName);
+
+                    return (
+                      <motion.div
+                        key={page.id}
+                        {...dsMotion.staggerItem}
+                      >
+                        <motion.div
+                          {...dsMotion.cardHover}
+                          onClick={() =>
+                            router.push(`/fluence/wiki/${page.id}`)
+                          }
+                          className={`${card.base} ${card.paddingLarge} ${card.interactive} cursor-pointer h-full`}
+                        >
+                          {/* Card Header: Title + Visibility */}
+                          <div className="mb-4">
+                            <div className="flex items-start justify-between gap-3 mb-3">
+                              <h3 className={`${typography.cardTitle} line-clamp-2 flex-1`}>
+                                {page.title}
+                              </h3>
+                              <VisibilityIcon
+                                className={`${iconSize.cardInline} flex-shrink-0 text-[var(--text-muted)]`}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Card Body: Metadata */}
+                          <div className="space-y-3 mb-4 flex-1">
+                            {/* Updated Date */}
+                            <div className="flex items-center gap-2">
+                              <Clock
+                                className={`${iconSize.meta} text-[var(--text-muted)]`}
+                              />
+                              <span className={typography.caption}>
+                                {new Date(
+                                  page.updatedAt
+                                ).toLocaleDateString()}
+                              </span>
+                            </div>
+
+                            {/* View Count */}
+                            <div className="flex items-center gap-2">
+                              <Eye
+                                className={`${iconSize.meta} text-[var(--text-muted)]`}
+                              />
+                              <span className={typography.caption}>
+                                {page.viewCount || 0} views
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Card Footer: Author Badge */}
+                          {page.authorName && (
+                            <div className="flex items-center gap-2 pt-3 border-t border-[var(--border-main)]">
+                              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white text-xs font-medium">
+                                {authorInitials}
+                              </div>
+                              <span className={`${typography.caption} truncate`}>
+                                {page.authorName}
+                              </span>
+                            </div>
+                          )}
+                        </motion.div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }
