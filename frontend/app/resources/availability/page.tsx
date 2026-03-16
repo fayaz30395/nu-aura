@@ -162,7 +162,7 @@ export default function AvailabilityCalendarPage() {
                 <select
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}
-                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-primary-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-primary-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
                 >
                   <option value="">All Departments</option>
                   {/* Department options would be loaded from API */}

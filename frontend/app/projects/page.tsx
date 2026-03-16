@@ -228,7 +228,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
             <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching owners...</div>
           )}
@@ -594,9 +594,9 @@ export default function ProjectsPage() {
         </div>
 
         {error && (
-          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+          <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
             <CardContent className="flex items-center justify-between gap-4">
-              <p className="text-sm text-danger-700 dark:text-danger-300">{error?.message ?? String(error)}</p>
+              <p className="text-sm text-danger-700 dark:text-danger-400">{error?.message ?? String(error)}</p>
               <Button variant="outline" size="sm" onClick={() => { void refetch(); }}>
                 Retry
               </Button>
@@ -720,7 +720,7 @@ export default function ProjectsPage() {
         <form onSubmit={handleSubmit(handleCreateProject)}>
           <ModalBody className="space-y-4">
             {formErrorDetails.length > 0 && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 <ul className="space-y-1">
                   {formErrorDetails.map((detail, index) => (
                     <li key={`${index}-${detail}`}>{detail}</li>
@@ -736,7 +736,7 @@ export default function ProjectsPage() {
                   placeholder="e.g. PRJ-2024-001"
                   {...register('projectCode')}
                 />
-                {errors.projectCode && <p className="text-danger-500 text-sm mt-1">{errors.projectCode.message}</p>}
+                {errors.projectCode && <p className="text-sm text-danger-500 mt-1">{errors.projectCode.message}</p>}
               </div>
               <div>
                 <Input
@@ -744,7 +744,7 @@ export default function ProjectsPage() {
                   placeholder="e.g. Mobile app revamp"
                   {...register('name')}
                 />
-                {errors.name && <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>}
+                {errors.name && <p className="text-sm text-danger-500 mt-1">{errors.name.message}</p>}
               </div>
             </div>
 
@@ -754,7 +754,7 @@ export default function ProjectsPage() {
                   <option value="CLIENT">Client</option>
                   <option value="INTERNAL">Internal</option>
                 </Select>
-                {errors.type && <p className="text-danger-500 text-sm mt-1">{errors.type.message}</p>}
+                {errors.type && <p className="text-sm text-danger-500 mt-1">{errors.type.message}</p>}
               </div>
               <OwnerTypeahead
                 label="Owner"
@@ -768,11 +768,11 @@ export default function ProjectsPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start date" type="date" {...register('startDate')} />
-                {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
+                {errors.startDate && <p className="text-sm text-danger-500 mt-1">{errors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="Expected end date" type="date" {...register('expectedEndDate')} />
-                {errors.expectedEndDate && <p className="text-danger-500 text-sm mt-1">{errors.expectedEndDate.message}</p>}
+                {errors.expectedEndDate && <p className="text-sm text-danger-500 mt-1">{errors.expectedEndDate.message}</p>}
               </div>
             </div>
 
@@ -783,7 +783,7 @@ export default function ProjectsPage() {
                   <option value="IN_PROGRESS">In Progress</option>
                   <option value="ON_HOLD">On Hold</option>
                 </Select>
-                {errors.status && <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>}
+                {errors.status && <p className="text-sm text-danger-500 mt-1">{errors.status.message}</p>}
               </div>
               <div>
                 <Select label="Priority" {...register('priority')}>
@@ -792,13 +792,13 @@ export default function ProjectsPage() {
                   <option value="HIGH">High</option>
                   <option value="CRITICAL">Critical</option>
                 </Select>
-                {errors.priority && <p className="text-danger-500 text-sm mt-1">{errors.priority.message}</p>}
+                {errors.priority && <p className="text-sm text-danger-500 mt-1">{errors.priority.message}</p>}
               </div>
             </div>
 
             <div>
               <Input label="Client name" placeholder="e.g. Acme Corp" {...register('clientName')} />
-              {errors.clientName && <p className="text-danger-500 text-sm mt-1">{errors.clientName.message}</p>}
+              {errors.clientName && <p className="text-sm text-danger-500 mt-1">{errors.clientName.message}</p>}
             </div>
 
             <div>
@@ -806,7 +806,7 @@ export default function ProjectsPage() {
                 Description (optional)
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...register('description')} />
-              {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
+              {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
             </div>
           </ModalBody>
           <ModalFooter>

@@ -18,7 +18,7 @@ export default function GanttLoading() {
       {/* Gantt chart container */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
         {/* Timeline header */}
-        <div className="flex border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
+        <div className="flex border-b border-[var(--border-main)] bg-[var(--bg-card)]">
           <div className="w-64 flex-shrink-0 p-3 border-r border-[var(--border-main)]">
             <div className="h-4 w-24 bg-gray-200 rounded" />
           </div>
@@ -44,7 +44,7 @@ export default function GanttLoading() {
             {/* Timeline bar column */}
             <div className="flex-1 relative p-2 flex items-center">
               <div
-                className="h-6 bg-info-50 rounded absolute"
+                className="h-6 bg-info-100 rounded absolute"
                 style={{
                   left: `${10 + (i * 7) % 40}%`,
                   width: `${15 + (i * 11) % 35}%`,

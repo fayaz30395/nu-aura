@@ -122,7 +122,6 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       'knowledge',
     ],
     routePrefixes: [
-      '/fluence/wall',
       '/fluence/wiki',
       '/fluence/blogs',
       '/fluence/templates',
