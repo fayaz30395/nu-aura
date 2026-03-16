@@ -424,7 +424,7 @@ export default function WorkloadDashboardPage() {
                         Over-Allocated ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const overAllocated = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED')
@@ -452,7 +452,7 @@ export default function WorkloadDashboardPage() {
                         Under-Utilized ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const underUtilized = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED')
@@ -480,7 +480,7 @@ export default function WorkloadDashboardPage() {
                         Unassigned ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const unassigned = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED')
@@ -508,7 +508,7 @@ export default function WorkloadDashboardPage() {
                         Optimal ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const optimal = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL')
@@ -544,7 +544,7 @@ export default function WorkloadDashboardPage() {
               )}
 
               {activeTab === 'employees' && (
-                <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
+                <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.map((emp) => (
                       <EmployeeWorkloadCard
@@ -574,7 +574,7 @@ export default function WorkloadDashboardPage() {
               )}
 
               {activeTab === 'heatmap' && (
-                <div className="rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
+                <div className="rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                   <WorkloadHeatmap
                     data={dashboardData.heatmapData || []}
                     onEmployeeClick={(id) => {
@@ -616,7 +616,7 @@ function DepartmentCard({
   const allocationColor = avgAllocation > 100 ? 'text-red-600' : avgAllocation >= 70 ? 'text-green-600' : 'text-amber-600';
 
   return (
-    <div className="rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
+    <div className="rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-sm font-medium text-[var(--text-primary)]">

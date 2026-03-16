@@ -240,7 +240,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
                 <li key={owner.id}>
                   <button
                     type="button"
-                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200 dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(owner)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
@@ -264,6 +264,7 @@ export default function ProjectsPage() {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
+  const [activeTab, setActiveTab] = useState<'active' | 'all' | 'on_hold' | 'completed' | 'archived'>('active');
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | ''>('IN_PROGRESS');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<ProjectType | ''>('');
@@ -274,6 +275,30 @@ export default function ProjectsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formErrorDetails, setFormErrorDetails] = useState<string[]>([]);
   const [ownerSelection, setOwnerSelection] = useState<EmployeeSummary | null>(null);
+
+  const handleTabChange = (tab: 'active' | 'all' | 'on_hold' | 'completed' | 'archived') => {
+    setActiveTab(tab);
+    setCurrentPage(0);
+
+    // Map tab to status filter
+    switch (tab) {
+      case 'active':
+        setStatusFilter('IN_PROGRESS');
+        break;
+      case 'all':
+        setStatusFilter('');
+        break;
+      case 'on_hold':
+        setStatusFilter('ON_HOLD');
+        break;
+      case 'completed':
+        setStatusFilter('COMPLETED');
+        break;
+      case 'archived':
+        setStatusFilter('CANCELLED');
+        break;
+    }
+  };
 
   // React Hook Form setup
   const {
@@ -452,6 +477,28 @@ export default function ProjectsPage() {
       mobilePriority: 'secondary' as const,
     },
     {
+      key: 'client',
+      header: 'Client',
+      accessor: (project: HrmsProject) => (
+        <span className="text-sm text-[var(--text-secondary)]">
+          {project.clientName || '—'}
+        </span>
+      ),
+      mobilePriority: 'hidden' as const,
+    },
+    {
+      key: 'budget',
+      header: 'Budget',
+      accessor: (project: HrmsProject) => (
+        <span className="text-sm text-[var(--text-secondary)]">
+          {project.budget != null
+            ? `${project.currency || '₹'}${project.budget.toLocaleString('en-IN')}`
+            : '—'}
+        </span>
+      ),
+      mobilePriority: 'hidden' as const,
+    },
+    {
       key: 'priority',
       header: 'Priority',
       accessor: (project: HrmsProject) => {
@@ -519,6 +566,29 @@ export default function ProjectsPage() {
           </div>
         </div>
 
+        {/* Tab-based filtering */}
+        <div className="flex border-b border-[var(--border-main)]">
+          {[
+            { key: 'active' as const, label: 'Active' },
+            { key: 'all' as const, label: 'All' },
+            { key: 'on_hold' as const, label: 'On Hold' },
+            { key: 'completed' as const, label: 'Completed' },
+            { key: 'archived' as const, label: 'Archived' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => handleTabChange(tab.key)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === tab.key
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         {error && (
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
             <CardContent className="flex items-center justify-between gap-3">
@@ -544,8 +614,27 @@ export default function ProjectsPage() {
                 label="Status"
                 value={statusFilter}
                 onChange={(event) => {
-                  setStatusFilter(event.target.value as ProjectStatus | '');
+                  const newStatus = event.target.value as ProjectStatus | '';
+                  setStatusFilter(newStatus);
                   setCurrentPage(0);
+
+                  // Sync activeTab with status selection
+                  switch (newStatus) {
+                    case 'IN_PROGRESS':
+                      setActiveTab('active');
+                      break;
+                    case 'ON_HOLD':
+                      setActiveTab('on_hold');
+                      break;
+                    case 'COMPLETED':
+                      setActiveTab('completed');
+                      break;
+                    case 'CANCELLED':
+                      setActiveTab('archived');
+                      break;
+                    default:
+                      setActiveTab('all');
+                  }
                 }}
               >
                 <option value="">All statuses</option>
@@ -643,7 +732,7 @@ export default function ProjectsPage() {
                   placeholder="e.g. PRJ-2024-001"
                   {...register('projectCode')}
                 />
-                {errors.projectCode && <p className="text-red-500 text-sm mt-1">{errors.projectCode.message}</p>}
+                {errors.projectCode && <p className="text-danger-500 text-sm mt-1">{errors.projectCode.message}</p>}
               </div>
               <div>
                 <Input
@@ -651,7 +740,7 @@ export default function ProjectsPage() {
                   placeholder="e.g. Mobile app revamp"
                   {...register('name')}
                 />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                {errors.name && <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>}
               </div>
             </div>
 
@@ -661,7 +750,7 @@ export default function ProjectsPage() {
                   <option value="CLIENT">Client</option>
                   <option value="INTERNAL">Internal</option>
                 </Select>
-                {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
+                {errors.type && <p className="text-danger-500 text-sm mt-1">{errors.type.message}</p>}
               </div>
               <OwnerTypeahead
                 label="Owner"
@@ -675,11 +764,11 @@ export default function ProjectsPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start date" type="date" {...register('startDate')} />
-                {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
+                {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="Expected end date" type="date" {...register('expectedEndDate')} />
-                {errors.expectedEndDate && <p className="text-red-500 text-sm mt-1">{errors.expectedEndDate.message}</p>}
+                {errors.expectedEndDate && <p className="text-danger-500 text-sm mt-1">{errors.expectedEndDate.message}</p>}
               </div>
             </div>
 
@@ -690,7 +779,7 @@ export default function ProjectsPage() {
                   <option value="IN_PROGRESS">In Progress</option>
                   <option value="ON_HOLD">On Hold</option>
                 </Select>
-                {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>}
+                {errors.status && <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>}
               </div>
               <div>
                 <Select label="Priority" {...register('priority')}>
@@ -699,21 +788,21 @@ export default function ProjectsPage() {
                   <option value="HIGH">High</option>
                   <option value="CRITICAL">Critical</option>
                 </Select>
-                {errors.priority && <p className="text-red-500 text-sm mt-1">{errors.priority.message}</p>}
+                {errors.priority && <p className="text-danger-500 text-sm mt-1">{errors.priority.message}</p>}
               </div>
             </div>
 
             <div>
               <Input label="Client name" placeholder="e.g. Acme Corp" {...register('clientName')} />
-              {errors.clientName && <p className="text-red-500 text-sm mt-1">{errors.clientName.message}</p>}
+              {errors.clientName && <p className="text-danger-500 text-sm mt-1">{errors.clientName.message}</p>}
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
+              <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                 Description (optional)
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...register('description')} />
-              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+              {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
             </div>
           </ModalBody>
           <ModalFooter>

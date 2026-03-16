@@ -69,20 +69,20 @@ export default function ResourceConflictsPage() {
 
         {/* Scan results */}
         {scanResults !== null && (
-          <Card className={scanResults.length === 0 ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}>
+          <Card className={scanResults.length === 0 ? 'border-success-200 bg-success-50 dark:border-success-800 dark:bg-success-950' : 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-950'}>
             <CardContent className="pt-4">
               <div className="flex gap-3">
                 {scanResults.length === 0 ? (
                   <>
-                    <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                    <p className="text-sm text-green-800 font-medium">
+                    <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400 shrink-0 mt-0.5" />
+                    <p className="text-sm text-success-700 dark:text-success-300 font-medium">
                       No allocation conflicts found. All resources are within 100% capacity.
                     </p>
                   </>
                 ) : (
                   <>
-                    <AlertTriangle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
-                    <p className="text-sm text-orange-800">
+                    <AlertTriangle className="w-5 h-5 text-warning-600 dark:text-warning-400 shrink-0 mt-0.5" />
+                    <p className="text-sm text-warning-700 dark:text-warning-300">
                       <strong>{scanResults.length} conflict(s) detected</strong> and logged below.
                     </p>
                   </>
@@ -96,7 +96,7 @@ export default function ResourceConflictsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-orange-500" />
+              <AlertTriangle className="w-5 h-5 text-warning-500" />
               Open Conflicts ({openConflicts?.length ?? 0})
             </CardTitle>
           </CardHeader>
@@ -105,7 +105,7 @@ export default function ResourceConflictsPage() {
               <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
             ) : (openConflicts?.length ?? 0) === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
-                <CheckCircle className="w-10 h-10 mx-auto mb-2 text-green-400" />
+                <CheckCircle className="w-10 h-10 mx-auto mb-2 text-success-400" />
                 <p>No open conflicts. All allocations are within bounds.</p>
               </div>
             ) : (
@@ -137,7 +137,7 @@ export default function ResourceConflictsPage() {
                         {c.overlap_end_date && ` → ${c.overlap_end_date}`}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="flex items-center gap-1 text-red-600 font-bold">
+                        <span className="flex items-center gap-1 text-danger-600 dark:text-danger-400 font-bold">
                           <Percent className="w-3.5 h-3.5" />
                           {c.total_allocation_pct}
                         </span>
@@ -146,7 +146,7 @@ export default function ResourceConflictsPage() {
                         {new Date(c.detected_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3">
-                        <Button size="sm" variant="outline" className="text-green-700 border-green-200 text-xs"
+                        <Button size="sm" variant="outline" className="text-success-700 border-success-200 dark:text-success-400 dark:border-success-700 text-xs"
                           onClick={() => resolveMutation.mutate(c.id)}>
                           Resolve
                         </Button>
