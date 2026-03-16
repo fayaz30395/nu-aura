@@ -147,9 +147,9 @@ export default function TemplatesPage() {
                     <Button
                       variant="secondary"
                       className="flex-1 gap-2 h-9"
-                      onClick={() => {
-                        // Copy template
-                      }}
+                      onClick={() =>
+                        router.push(`/fluence/templates/${template.id}?use=true`)
+                      }
                     >
                       <Copy2 className="w-4 h-4" />
                       Use

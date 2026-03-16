@@ -10,6 +10,8 @@ import {
   ProjectStatus,
   TimesheetStatus,
 } from '@/lib/types/psa';
+import type { PSAResourceAllocationRequest } from '@/lib/services/psa.service';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 // Query key factory
 export const psaKeys = {
@@ -60,17 +62,23 @@ export function usePsaProjectsByStatus(status: ProjectStatus, enabled: boolean =
 
 export function useCreatePsaProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (data: Partial<PSAProject>) => psaService.createProject(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: psaKeys.projects() });
+      toast.success('Project Created', 'PSA project has been created successfully');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Failed to create project');
     },
   });
 }
 
 export function useUpdatePsaProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<PSAProject> }) =>
@@ -78,30 +86,44 @@ export function useUpdatePsaProject() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.project(id) });
       queryClient.invalidateQueries({ queryKey: psaKeys.projects() });
+      toast.success('Project Updated', 'Project details have been updated');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Failed to update project');
     },
   });
 }
 
 export function useDeletePsaProject() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (id: string) => psaService.deleteProject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: psaKeys.projects() });
+      toast.success('Project Deleted', 'Project has been removed');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Failed to delete project');
     },
   });
 }
 
 export function useAllocateResources() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ projectId, allocation }: { projectId: string; allocation: unknown }) =>
+    mutationFn: ({ projectId, allocation }: { projectId: string; allocation: PSAResourceAllocationRequest }) =>
       psaService.allocateResources(projectId, allocation),
     onSuccess: (_, { projectId }) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.project(projectId) });
       queryClient.invalidateQueries({ queryKey: psaKeys.projects() });
+      toast.success('Resource Allocated', 'Resource has been allocated to the project');
+    },
+    onError: (error: Error) => {
+      toast.error('Allocation Failed', error.message || 'Failed to allocate resource');
     },
   });
 }
@@ -148,29 +170,40 @@ export function usePsaTimesheetEntries(timesheetId: string, enabled: boolean = t
 
 export function useCreatePsaTimesheet() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (data: Partial<PSATimesheet>) => psaService.createTimesheet(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+      toast.success('Timesheet Created', 'PSA timesheet has been created');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Failed to create timesheet');
     },
   });
 }
 
 export function useSubmitPsaTimesheet() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (id: string) => psaService.submitTimesheet(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(id) });
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+      toast.success('Timesheet Submitted', 'Timesheet has been submitted for approval');
+    },
+    onError: (error: Error) => {
+      toast.error('Submission Failed', error.message || 'Failed to submit timesheet');
     },
   });
 }
 
 export function useApprovePsaTimesheet() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({ id, approverId }: { id: string; approverId: string }) =>
@@ -178,12 +211,17 @@ export function useApprovePsaTimesheet() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(id) });
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+      toast.success('Timesheet Approved', 'Timesheet has been approved');
+    },
+    onError: (error: Error) => {
+      toast.error('Approval Failed', error.message || 'Failed to approve timesheet');
     },
   });
 }
 
 export function useRejectPsaTimesheet() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
@@ -191,12 +229,17 @@ export function useRejectPsaTimesheet() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(id) });
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+      toast.info('Timesheet Rejected', 'Timesheet has been rejected');
+    },
+    onError: (error: Error) => {
+      toast.error('Rejection Failed', error.message || 'Failed to reject timesheet');
     },
   });
 }
 
 export function useAddPsaTimeEntry() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({
@@ -209,6 +252,10 @@ export function useAddPsaTimeEntry() {
     onSuccess: (_, { timesheetId }) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(timesheetId) });
       queryClient.invalidateQueries({ queryKey: psaKeys.timesheetEntries(timesheetId) });
+      toast.success('Time Entry Added', 'Time entry has been recorded');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Failed to add time entry');
     },
   });
 }
@@ -255,17 +302,23 @@ export function usePsaInvoice(id: string, enabled: boolean = true) {
 
 export function useCreateInvoice() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (data: Partial<PSAInvoice>) => psaService.createInvoice(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: psaKeys.invoices() });
+      toast.success('Invoice Created', 'New invoice has been created');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Failed to create invoice');
     },
   });
 }
 
 export function useUpdateInvoice() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<PSAInvoice> }) =>
@@ -273,18 +326,27 @@ export function useUpdateInvoice() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.invoice(id) });
       queryClient.invalidateQueries({ queryKey: psaKeys.invoices() });
+      toast.success('Invoice Updated', 'Invoice details have been updated');
+    },
+    onError: (error: Error) => {
+      toast.error('Operation Failed', error.message || 'Failed to update invoice');
     },
   });
 }
 
 export function useApproveInvoice() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   return useMutation({
     mutationFn: (id: string) => psaService.approveInvoice(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: psaKeys.invoice(id) });
       queryClient.invalidateQueries({ queryKey: psaKeys.invoices() });
+      toast.success('Invoice Approved', 'Invoice has been approved');
+    },
+    onError: (error: Error) => {
+      toast.error('Approval Failed', error.message || 'Failed to approve invoice');
     },
   });
 }

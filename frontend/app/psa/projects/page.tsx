@@ -275,7 +275,7 @@ export default function PsaProjectsPage() {
                             </div>
 
                             {/* Mobile cards */}
-                            <div className="md:hidden space-y-3 p-4">
+                            <div className="md:hidden space-y-4 p-4">
                                 {paginatedProjects.map((project) => (
                                     <div
                                         key={project.id}

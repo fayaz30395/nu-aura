@@ -10,6 +10,8 @@ import {
   DocumentTemplate,
   FluenceComment,
   FluenceSearchResponse,
+  FluenceFavorite,
+  ContentViewRecord,
   Page,
   CreateWikiPageRequest,
   UpdateWikiPageRequest,
@@ -23,6 +25,7 @@ import {
   InstantiateTemplateRequest,
   CreateCommentRequest,
   UpdateCommentRequest,
+  FavoriteContentType,
 } from '@/lib/types/fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -71,6 +74,16 @@ export const fluenceKeys = {
   search: () => [...fluenceKeys.all, 'search'] as const,
   searchResults: (query: string, type?: string) =>
     [...fluenceKeys.search(), { query, type }] as const,
+  // Favorites
+  favorites: () => [...fluenceKeys.all, 'favorites'] as const,
+  // View tracking
+  viewers: (contentId: string, contentType: string) =>
+    [...fluenceKeys.all, 'viewers', contentType, contentId] as const,
+  // My content
+  myWikiPages: (page?: number, size?: number, status?: string) =>
+    [...fluenceKeys.all, 'my-wiki-pages', { page, size, status }] as const,
+  myBlogPosts: (page?: number, size?: number, status?: string) =>
+    [...fluenceKeys.all, 'my-blog-posts', { page, size, status }] as const,
 };
 
 // ─── Wiki Page Queries ──────────────────────────────────────────────────────
@@ -389,6 +402,43 @@ export function useLikeBlogPost() {
     mutationFn: (id: string) => fluenceService.likeBlogPost(id),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPostDetail(id) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+    },
+  });
+}
+
+export function useUnlikeBlogPost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.unlikeBlogPost(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPostDetail(id) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+    },
+  });
+}
+
+export function useLikeWikiPage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.likeWikiPage(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(id) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+    },
+  });
+}
+
+export function useUnlikeWikiPage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.unlikeWikiPage(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(id) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
     },
   });
 }
@@ -518,6 +568,155 @@ export function useDeleteComment() {
       queryClient.invalidateQueries({
         queryKey: fluenceKeys.commentList(contentId, contentType),
       });
+    },
+  });
+}
+
+// ─── View Tracking ─────────────────────────────────────────────────────────
+
+export function useRecordView() {
+  return useMutation({
+    mutationFn: ({
+      contentId,
+      contentType,
+    }: {
+      contentId: string;
+      contentType: 'WIKI' | 'BLOG';
+    }) => fluenceService.recordView(contentId, contentType),
+  });
+}
+
+export function useContentViewers(
+  contentId: string,
+  contentType: 'WIKI' | 'BLOG',
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: fluenceKeys.viewers(contentId, contentType),
+    queryFn: () => fluenceService.getViewers(contentId, contentType),
+    enabled: enabled && !!contentId,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+// ─── Favorites ─────────────────────────────────────────────────────────────
+
+export function useFluenceFavorites(enabled: boolean = true) {
+  return useQuery({
+    queryKey: fluenceKeys.favorites(),
+    queryFn: () => fluenceService.listFavorites(),
+    enabled,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useAddFavorite() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      contentId,
+      contentType,
+    }: {
+      contentId: string;
+      contentType: FavoriteContentType;
+    }) => fluenceService.addFavorite(contentId, contentType),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.favorites() });
+      // Also refresh the detail pages so isFavoritedByCurrentUser updates
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+    },
+  });
+}
+
+export function useRemoveFavorite() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      contentId,
+      contentType,
+    }: {
+      contentId: string;
+      contentType: FavoriteContentType;
+    }) => fluenceService.removeFavoriteByContent(contentId, contentType),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.favorites() });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+    },
+  });
+}
+
+// ─── My Content ────────────────────────────────────────────────────────────
+
+export function useMyWikiPages(
+  page: number = 0,
+  size: number = 20,
+  status?: string,
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: fluenceKeys.myWikiPages(page, size, status),
+    queryFn: () => fluenceService.listMyWikiPages(page, size, status),
+    enabled,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useMyBlogPosts(
+  page: number = 0,
+  size: number = 20,
+  status?: string,
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: fluenceKeys.myBlogPosts(page, size, status),
+    queryFn: () => fluenceService.listMyBlogPosts(page, size, status),
+    enabled,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+// ─── Post Editor Mutations ─────────────────────────────────────────────────
+
+export function useUpdateWikiPageEditors() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ pageId, editorIds }: { pageId: string; editorIds: string[] }) =>
+      fluenceService.updateWikiPageEditors(pageId, editorIds),
+    onSuccess: (_data, { pageId }) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(pageId) });
+    },
+  });
+}
+
+export function useUpdateBlogPostEditors() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, editorIds }: { postId: string; editorIds: string[] }) =>
+      fluenceService.updateBlogPostEditors(postId, editorIds),
+    onSuccess: (_data, { postId }) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPostDetail(postId) });
+    },
+  });
+}
+
+// ─── Restore Wiki Page Revision ────────────────────────────────────────────
+
+export function useRestoreWikiPageRevision() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ pageId, revisionId }: { pageId: string; revisionId: string }) =>
+      fluenceService.restoreWikiPageRevision(pageId, revisionId),
+    onSuccess: (_data, { pageId }) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(pageId) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageRevisions(pageId) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
     },
   });
 }

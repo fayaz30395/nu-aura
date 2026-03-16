@@ -7,6 +7,8 @@ import {
   DocumentTemplate,
   FluenceComment,
   FluenceSearchResponse,
+  FluenceFavorite,
+  ContentViewRecord,
   Page,
   CreateWikiPageRequest,
   UpdateWikiPageRequest,
@@ -21,6 +23,7 @@ import {
   CreateCommentRequest,
   UpdateCommentRequest,
   WikiPageRevision,
+  FavoriteContentType,
 } from '../types/fluence';
 
 class FluenceService {
@@ -163,6 +166,18 @@ class FluenceService {
 
   async unlikeBlogPost(id: string): Promise<BlogPost> {
     const response = await apiClient.post<BlogPost>(`/fluence/blog/posts/${id}/unlike`, {});
+    return response.data;
+  }
+
+  // ─── Wiki Page Like ──────────────────────────────────────────────────────────
+
+  async likeWikiPage(id: string): Promise<WikiPage> {
+    const response = await apiClient.post<WikiPage>(`/fluence/wiki/pages/${id}/like`, {});
+    return response.data;
+  }
+
+  async unlikeWikiPage(id: string): Promise<WikiPage> {
+    const response = await apiClient.post<WikiPage>(`/fluence/wiki/pages/${id}/unlike`, {});
     return response.data;
   }
 
@@ -314,6 +329,108 @@ class FluenceService {
     const response = await apiClient.get<FluenceSearchResponse>('/fluence/search', {
       params,
     });
+    return response.data;
+  }
+
+  // ─── View Tracking ────────────────────────────────────────────────────────
+
+  async recordView(
+    contentId: string,
+    contentType: 'WIKI' | 'BLOG'
+  ): Promise<void> {
+    await apiClient.post(`/fluence/views/${contentType}/${contentId}`, {});
+  }
+
+  async getViewers(
+    contentId: string,
+    contentType: 'WIKI' | 'BLOG'
+  ): Promise<ContentViewRecord[]> {
+    const response = await apiClient.get<ContentViewRecord[]>(
+      `/fluence/views/${contentType}/${contentId}`
+    );
+    return response.data;
+  }
+
+  // ─── Favorites ────────────────────────────────────────────────────────────
+
+  async listFavorites(): Promise<FluenceFavorite[]> {
+    const response = await apiClient.get<FluenceFavorite[]>('/fluence/favorites');
+    return response.data;
+  }
+
+  async addFavorite(
+    contentId: string,
+    contentType: FavoriteContentType
+  ): Promise<FluenceFavorite> {
+    const response = await apiClient.post<FluenceFavorite>('/fluence/favorites', {
+      contentId,
+      contentType,
+    });
+    return response.data;
+  }
+
+  async removeFavorite(favoriteId: string): Promise<void> {
+    await apiClient.delete(`/fluence/favorites/${favoriteId}`);
+  }
+
+  async removeFavoriteByContent(
+    contentId: string,
+    contentType: FavoriteContentType
+  ): Promise<void> {
+    await apiClient.delete(`/fluence/favorites/content/${contentType}/${contentId}`);
+  }
+
+  // ─── My Content ───────────────────────────────────────────────────────────
+
+  async listMyWikiPages(
+    page: number = 0,
+    size: number = 20,
+    status?: string
+  ): Promise<Page<WikiPage>> {
+    const params: Record<string, unknown> = { page, size };
+    if (status) params.status = status;
+    const response = await apiClient.get<Page<WikiPage>>(
+      '/fluence/wiki/pages/my',
+      { params }
+    );
+    return response.data;
+  }
+
+  async listMyBlogPosts(
+    page: number = 0,
+    size: number = 20,
+    status?: string
+  ): Promise<Page<BlogPost>> {
+    const params: Record<string, unknown> = { page, size };
+    if (status) params.status = status;
+    const response = await apiClient.get<Page<BlogPost>>(
+      '/fluence/blog/posts/my',
+      { params }
+    );
+    return response.data;
+  }
+
+  // ─── Post Editors ─────────────────────────────────────────────────────────
+
+  async updateWikiPageEditors(
+    pageId: string,
+    editorIds: string[]
+  ): Promise<WikiPage> {
+    const response = await apiClient.put<WikiPage>(
+      `/fluence/wiki/pages/${pageId}/editors`,
+      { editorIds }
+    );
+    return response.data;
+  }
+
+  async updateBlogPostEditors(
+    postId: string,
+    editorIds: string[]
+  ): Promise<BlogPost> {
+    const response = await apiClient.put<BlogPost>(
+      `/fluence/blog/posts/${postId}/editors`,
+      { editorIds }
+    );
     return response.data;
   }
 }

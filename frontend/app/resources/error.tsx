@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw, Home, Users2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -14,6 +15,8 @@ interface ErrorProps {
 }
 
 export default function ResourcesError({ error, reset }: ErrorProps) {
+  const router = useRouter();
+
   useEffect(() => {
     handleError(error, { source: 'resources-error-boundary', digest: error.digest });
   }, [error]);
@@ -30,8 +33,8 @@ export default function ResourcesError({ error, reset }: ErrorProps) {
       >
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <Users2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-50 dark:bg-danger-900/30 flex items-center justify-center">
+              <Users2 className="h-6 w-6 text-danger-600 dark:text-danger-400" />
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
               Resources Error
@@ -60,7 +63,7 @@ export default function ResourcesError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/resources')}
+                onClick={() => router.push('/resources')}
                 className="w-full"
               >
                 <Users2 className="mr-2 h-4 w-4" />
@@ -68,7 +71,7 @@ export default function ResourcesError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/me/dashboard')}
+                onClick={() => router.push('/me/dashboard')}
                 className="w-full"
               >
                 <Home className="mr-2 h-4 w-4" />

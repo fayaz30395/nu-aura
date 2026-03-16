@@ -36,7 +36,7 @@ export default function WikiPage() {
   const visibilityIcon: Record<string, typeof Globe> = {
     PUBLIC: Globe,
     ORGANIZATION: Users,
-    TEAM: Users,
+    DEPARTMENT: Users,
     PRIVATE: Lock,
     RESTRICTED: Lock,
   };

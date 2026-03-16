@@ -37,11 +37,11 @@ import { Project } from '@/lib/types/project';
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    DRAFT: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-secondary)] dark:text-gray-300',
-    SUBMITTED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-    UNDER_REVIEW: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-    APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-    REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+    DRAFT: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]',
+    SUBMITTED: 'bg-info-100 text-info-700 dark:bg-info-900 dark:text-info-300',
+    UNDER_REVIEW: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
+    APPROVED: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
+    REJECTED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
   };
   return colors[status] || colors.DRAFT;
 };
@@ -337,8 +337,8 @@ export default function TimesheetsPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
-                  <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <div className="rounded-lg bg-warning-100 p-3 dark:bg-warning-900">
+                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Pending Approval</p>
@@ -350,8 +350,8 @@ export default function TimesheetsPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
-                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="rounded-lg bg-success-100 p-3 dark:bg-success-900">
+                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Approved</p>
@@ -782,7 +782,10 @@ export default function TimesheetsPage() {
                     max="24"
                     step="0.5"
                     value={entryForm.hours}
-                    onChange={(e) => setEntryForm({ ...entryForm, hours: parseFloat(e.target.value) })}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setEntryForm({ ...entryForm, hours: Number.isNaN(val) ? 0 : val });
+                    }}
                     className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>

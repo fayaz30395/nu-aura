@@ -313,6 +313,8 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         { id: 'fluence-wiki', label: 'Wiki Pages', icon: icon.bookOpen, href: '/fluence/wiki', requiredPermission: Permissions.WIKI_VIEW },
         { id: 'fluence-blogs', label: 'Blogs', icon: icon.newspaper, href: '/fluence/blogs', requiredPermission: Permissions.BLOG_VIEW },
         { id: 'fluence-templates', label: 'Templates', icon: icon.fileStack, href: '/fluence/templates', requiredPermission: Permissions.KNOWLEDGE_VIEW },
+        { id: 'fluence-my-content', label: 'My Content', icon: icon.user, href: '/fluence/my-content', requiredPermission: Permissions.KNOWLEDGE_VIEW },
+        { id: 'fluence-search', label: 'Search', icon: icon.target, href: '/fluence/search', requiredPermission: Permissions.KNOWLEDGE_VIEW },
         { id: 'fluence-drive', label: 'Drive', icon: icon.hardDrive, href: '/fluence/drive', requiredPermission: Permissions.KNOWLEDGE_VIEW },
       ],
     },

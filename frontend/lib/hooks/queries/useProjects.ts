@@ -297,11 +297,13 @@ export const allocationKeys = {
     startDate: string,
     endDate: string,
     page: number,
-    size: number
+    size: number,
+    employeeSearch?: string,
+    employeeId?: string
   ) =>
     [
       ...allocationKeys.allocationSummary(),
-      { scope, startDate, endDate, page, size },
+      { scope, startDate, endDate, page, size, employeeSearch, employeeId },
     ] as const,
 };
 
@@ -399,7 +401,7 @@ export function useAllocationSummary(
   enabled: boolean = true
 ) {
   return useQuery({
-    queryKey: allocationKeys.summaryList(scope, startDate, endDate, page, size),
+    queryKey: allocationKeys.summaryList(scope, startDate, endDate, page, size, employeeSearch, employeeId),
     queryFn: () =>
       hrmsProjectAllocationService.listAllocationSummary(
         scope,

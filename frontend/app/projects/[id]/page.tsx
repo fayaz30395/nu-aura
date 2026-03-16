@@ -230,7 +230,7 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
                 <li key={employee.id}>
                   <button
                     type="button"
-                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200 dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(employee)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
@@ -265,6 +265,7 @@ export default function ProjectDetailPage() {
   // Add Member modal state
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeSummary | null>(null);
+  const [addMemberError, setAddMemberError] = useState<string | null>(null);
 
   // React Hook Form setup for add member
   const {
@@ -349,13 +350,14 @@ export default function ProjectDetailPage() {
 
   const handleOpenAddMember = () => {
     setSelectedEmployee(null);
+    setAddMemberError(null);
     resetAddMember();
     setShowAddMemberModal(true);
   };
 
   const handleAddMemberSubmit = async (data: AddMemberFormData) => {
     if (!selectedEmployee) {
-      // Show error via toast or error state
+      setAddMemberError('Please select an employee before allocating');
       return;
     }
 
@@ -396,7 +398,7 @@ export default function ProjectDetailPage() {
 
   const isActiveAllocation = (allocation: ProjectAllocation) => {
     if (!allocation.endDate) return true;
-    return allocation.endDate >= today;
+    return new Date(allocation.endDate) >= new Date(today);
   };
 
   const rosterColumns = useMemo(() => [
@@ -628,6 +630,12 @@ export default function ProjectDetailPage() {
         </ModalHeader>
         <form onSubmit={handleSubmitAddMember(handleAddMemberSubmit)}>
           <ModalBody className="space-y-4">
+            {addMemberError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+                {addMemberError}
+              </div>
+            )}
+
             {!selectedEmployee && (
               <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
                 Please select an employee

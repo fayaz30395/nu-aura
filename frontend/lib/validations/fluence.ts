@@ -45,7 +45,7 @@ export const wikiPageStatusSchema = z.enum(
 );
 
 export const wikiVisibilitySchema = z.enum(
-  ['PUBLIC', 'ORGANIZATION', 'TEAM', 'PRIVATE', 'RESTRICTED'],
+  ['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'],
   { errorMap: () => ({ message: 'Please select a visibility level' }) }
 );
 
@@ -55,7 +55,7 @@ export const blogPostStatusSchema = z.enum(
 );
 
 export const blogVisibilitySchema = z.enum(
-  ['PUBLIC', 'ORGANIZATION', 'TEAM', 'PRIVATE'],
+  ['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'],
   { errorMap: () => ({ message: 'Please select a visibility level' }) }
 );
 
@@ -77,6 +77,9 @@ export const createWikiPageSchema = z.object({
   parentId: optionalUuidSchema,
   visibility: wikiVisibilitySchema,
   status: wikiPageStatusSchema.optional().default('DRAFT'),
+  departmentId: optionalUuidSchema,
+  sharedWithDepartmentIds: z.array(z.string().uuid()).optional().default([]),
+  sharedWithEmployeeIds: z.array(z.string().uuid()).optional().default([]),
 });
 
 export const updateWikiPageSchema = z.object({
@@ -146,6 +149,9 @@ export const createBlogPostSchema = z.object({
     .url('Invalid cover image URL')
     .optional(),
   status: blogPostStatusSchema.optional().default('DRAFT'),
+  departmentId: optionalUuidSchema,
+  sharedWithDepartmentIds: z.array(z.string().uuid()).optional().default([]),
+  sharedWithEmployeeIds: z.array(z.string().uuid()).optional().default([]),
 });
 
 export const updateBlogPostSchema = z.object({
