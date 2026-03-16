@@ -434,7 +434,7 @@ test.describe('Project Management', () => {
 
     test('should delete project successfully', async ({ page }) => {
       // Get initial count
-      const initialCount = await projectsPage.getProjectCount();
+      const _initialCount = await projectsPage.getProjectCount();
 
       // Create a project to delete
       await projectsPage.createProject({

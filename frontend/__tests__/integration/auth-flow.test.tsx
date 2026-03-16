@@ -36,7 +36,7 @@ vi.mock('next/navigation', () => ({
 
 import { authApi } from '@/lib/api/auth';
 
-const mockedAuthApi = authApi as any;
+const mockedAuthApi = vi.mocked(authApi);
 
 // Mock Login Component
 const MockLoginForm = () => {

@@ -19,7 +19,7 @@ vi.mock('@/lib/services/compensation.service', () => ({
 
 import { compensationService } from '@/lib/services/compensation.service';
 
-const mockedCompensationService = compensationService as any;
+const mockedCompensationService = vi.mocked(compensationService);
 
 // Mock Compensation Approval Component
 interface CompensationApprovalProps {

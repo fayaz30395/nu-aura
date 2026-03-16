@@ -34,7 +34,7 @@ vi.mock('@/lib/services/workflow.service', () => ({
 
 import { workflowService } from '@/lib/services/workflow.service';
 
-const mockedWorkflowService = workflowService as any;
+const mockedWorkflowService = vi.mocked(workflowService);
 
 // Mock Approval Inbox Component
 interface ApprovalInboxProps {

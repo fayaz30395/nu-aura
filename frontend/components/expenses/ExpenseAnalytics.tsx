@@ -282,9 +282,9 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
             <TrendingUp className="w-4 h-4" />
             Monthly Trend
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {monthlyData.map((data) => (
-              <div key={data.month} className="flex items-center gap-3">
+              <div key={data.month} className="flex items-center gap-2">
                 <span className="text-sm text-surface-600 dark:text-surface-400 w-20 flex-shrink-0">
                   {data.month}
                 </span>
@@ -311,9 +311,9 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
           {categoryData.length === 0 ? (
             <p className="text-surface-500 text-center py-8">No expense data available</p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {categoryData.slice(0, 6).map((data) => (
-                <div key={data.category} className="flex items-center gap-3">
+                <div key={data.category} className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: data.color }}

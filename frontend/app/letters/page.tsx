@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,8 +35,6 @@ import {
   ModalBody,
   ModalFooter,
 } from '@/components/ui';
-import { letterService } from '@/lib/services/letter.service';
-import { recruitmentService } from '@/lib/services/recruitment.service';
 import {
   LetterTemplate,
   GeneratedLetter,
@@ -45,9 +43,18 @@ import {
   LetterCategory,
   LetterStatus,
 } from '@/lib/types/letter';
-import { Candidate } from '@/lib/types/recruitment';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import {
+  useAllLetters,
+  useActiveLetterTemplates,
+  useGenerateLetter,
+  useGenerateOfferLetter,
+  useIssueLetter,
+  useApproveLetter,
+  useRevokeLetter,
+} from '@/lib/hooks/queries/useLetter';
+import { useCandidates } from '@/lib/hooks/queries/useRecruitment';
 
 // Zod schemas for forms
 const GenerateLetterFormSchema = z.object({
@@ -148,26 +155,59 @@ const formatDate = (date: string | undefined) => {
 export default function LettersPage() {
   const router = useRouter();
   const { isAuthenticated, user, hasHydrated } = useAuth();
-  const [letters, setLetters] = useState<GeneratedLetter[]>([]);
-  const [templates, setTemplates] = useState<LetterTemplate[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  // React Query hooks for data fetching
+  const [currentPage, setCurrentPage] = useState(0);
+  const { data: lettersData, isLoading: _lettersLoading, error: lettersError, refetch: refetchLetters } = useAllLetters(currentPage, 20, isAuthenticated && hasHydrated);
+  const { data: templatesData, isLoading: _templatesLoading } = useActiveLetterTemplates(isAuthenticated && hasHydrated);
+  const { data: candidatesData, isLoading: _candidatesLoading, refetch: refetchCandidates } = useCandidates(0, 100);
+
+  // React Query mutations
+  const generateLetterMutation = useGenerateLetter();
+  const generateOfferLetterMutation = useGenerateOfferLetter();
+  const issueLetterMutation = useIssueLetter();
+  const approveLetterMutation = useApproveLetter();
+  const revokeLetterMutation = useRevokeLetter();
+
+  // Local UI state (not server data)
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
-  const [totalElements, setTotalElements] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [activeTab, setActiveTab] = useState<'letters' | 'templates'>('letters');
-
-  // Modal states
   const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [showOfferLetterModal, setShowOfferLetterModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedLetter, setSelectedLetter] = useState<GeneratedLetter | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<LetterTemplate | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
+
+  // Derived state from React Query data
+  const templates: LetterTemplate[] = templatesData ?? [];
+  const allLetters: GeneratedLetter[] = lettersData?.content ?? [];
+  const totalElements = lettersData?.totalElements ?? 0;
+  const totalPages = lettersData?.totalPages ?? 0;
+
+  // Filter letters client-side (same logic as before)
+  let filteredLetters = allLetters;
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    filteredLetters = filteredLetters.filter(
+      (l) =>
+        l.letterTitle?.toLowerCase().includes(query) ||
+        l.referenceNumber?.toLowerCase().includes(query) ||
+        l.employeeName?.toLowerCase().includes(query)
+    );
+  }
+  if (statusFilter) {
+    filteredLetters = filteredLetters.filter((l) => l.status === statusFilter);
+  }
+  if (categoryFilter) {
+    filteredLetters = filteredLetters.filter((l) => l.category === categoryFilter);
+  }
+
+  // Filter eligible candidates for offer letters
+  const eligibleCandidates = (candidatesData?.content ?? []).filter(
+    (c) => c.status === 'SELECTED' || c.status === 'OFFER_EXTENDED'
+  );
 
   // Form hooks
   const generateLetterForm = useForm<GenerateLetterFormData>({
@@ -200,71 +240,8 @@ export default function LettersPage() {
     },
   });
 
-  const fetchLetters = useCallback(async () => {
-    if (!hasHydrated || !isAuthenticated) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await letterService.getAllLetters(currentPage, 20);
-      let filteredLetters = response.content;
-
-      // Client-side filtering
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        filteredLetters = filteredLetters.filter(
-          (l) =>
-            l.letterTitle?.toLowerCase().includes(query) ||
-            l.referenceNumber?.toLowerCase().includes(query) ||
-            l.employeeName?.toLowerCase().includes(query)
-        );
-      }
-      if (statusFilter) {
-        filteredLetters = filteredLetters.filter((l) => l.status === statusFilter);
-      }
-      if (categoryFilter) {
-        filteredLetters = filteredLetters.filter((l) => l.category === categoryFilter);
-      }
-
-      setLetters(filteredLetters);
-      setTotalElements(response.totalElements);
-      setTotalPages(response.totalPages);
-    } catch (err: unknown) {
-      console.error('Error fetching letters:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load letters');
-      setLetters([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [searchQuery, statusFilter, categoryFilter, currentPage, isAuthenticated, hasHydrated]);
-
-  const fetchTemplates = useCallback(async () => {
-    if (!hasHydrated || !isAuthenticated) return;
-    try {
-      const activeTemplates = await letterService.getActiveTemplates();
-      setTemplates(activeTemplates);
-    } catch (err: unknown) {
-      console.error('Error fetching templates:', err);
-    }
-  }, [isAuthenticated, hasHydrated]);
-
-  const fetchCandidates = useCallback(async () => {
-    if (!hasHydrated || !isAuthenticated) return;
-    try {
-      const response = await recruitmentService.getAllCandidates(0, 100);
-      // Filter to only show SELECTED candidates for offer letters
-      const eligibleCandidates = response.content.filter(
-        (c) => c.status === 'SELECTED' || c.status === 'OFFER_EXTENDED'
-      );
-      setCandidates(eligibleCandidates);
-    } catch (err: unknown) {
-      console.error('Error fetching candidates:', err);
-    }
-  }, [isAuthenticated, hasHydrated]);
-
-  useEffect(() => {
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       try {
@@ -273,12 +250,8 @@ export default function LettersPage() {
         console.error('Navigation error:', err);
         window.location.href = '/auth/login';
       }
-      return;
     }
-    fetchLetters();
-    fetchTemplates();
-    fetchCandidates();
-  }, [fetchLetters, fetchTemplates, fetchCandidates, isAuthenticated, hasHydrated, router]);
+  }, [isAuthenticated, hasHydrated, router]);
 
   const resetForm = () => {
     generateLetterForm.reset({
@@ -338,7 +311,7 @@ export default function LettersPage() {
   };
 
   const handleCandidateSelect = (candidateId: string) => {
-    const candidate = candidates.find((c) => c.id === candidateId);
+    const candidate = eligibleCandidates.find((c) => c.id === candidateId);
     if (candidate) {
       offerLetterForm.setValue('candidateId', candidateId);
       offerLetterForm.setValue('offeredDesignation', candidate.currentDesignation || '');
@@ -349,114 +322,103 @@ export default function LettersPage() {
   };
 
   const onSubmitGenerateLetter = async (data: GenerateLetterFormData) => {
-    setSaving(true);
-    try {
-      const submitData: GenerateLetterRequest = {
-        templateId: data.templateId,
-        employeeId: data.employeeId,
-        letterTitle: data.letterTitle || '',
-        letterDate: data.letterDate,
-        effectiveDate: data.effectiveDate || '',
-        expiryDate: data.expiryDate || '',
-        additionalNotes: data.additionalNotes || '',
-      };
-      await letterService.generateLetter(submitData, user?.id || '');
-      setShowGenerateModal(false);
-      resetForm();
-      fetchLetters();
-    } catch (err: unknown) {
-      console.error('Error generating letter:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate letter');
-    } finally {
-      setSaving(false);
-    }
+    const submitData: GenerateLetterRequest = {
+      templateId: data.templateId,
+      employeeId: data.employeeId,
+      letterTitle: data.letterTitle || '',
+      letterDate: data.letterDate,
+      effectiveDate: data.effectiveDate || '',
+      expiryDate: data.expiryDate || '',
+      additionalNotes: data.additionalNotes || '',
+    };
+    generateLetterMutation.mutate(
+      { data: submitData, generatedBy: user?.id || '' },
+      {
+        onSuccess: () => {
+          setShowGenerateModal(false);
+          resetForm();
+          refetchLetters();
+        },
+        onError: (err: unknown) => {
+          console.error('Error generating letter:', err);
+        }
+      }
+    );
   };
 
   const onSubmitOfferLetter = async (data: GenerateOfferLetterFormData) => {
-    setSaving(true);
-    try {
-      const submitData: GenerateOfferLetterRequest = {
-        templateId: data.templateId,
-        candidateId: data.candidateId,
-        letterTitle: data.letterTitle || '',
-        offeredCtc: data.offeredCtc,
-        offeredDesignation: data.offeredDesignation,
-        proposedJoiningDate: data.proposedJoiningDate,
-        letterDate: data.letterDate,
-        expiryDate: data.expiryDate || '',
-        additionalNotes: data.additionalNotes || '',
-        submitForApproval: data.submitForApproval,
-        sendForESign: data.sendForESign,
-      };
-      await letterService.generateOfferLetter(submitData, user?.id || '');
-      setShowOfferLetterModal(false);
-      resetOfferForm();
-      fetchLetters();
-      fetchCandidates();
-    } catch (err: unknown) {
-      console.error('Error generating offer letter:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate offer letter');
-    } finally {
-      setSaving(false);
-    }
+    const submitData: GenerateOfferLetterRequest = {
+      templateId: data.templateId,
+      candidateId: data.candidateId,
+      letterTitle: data.letterTitle || '',
+      offeredCtc: data.offeredCtc,
+      offeredDesignation: data.offeredDesignation,
+      proposedJoiningDate: data.proposedJoiningDate,
+      letterDate: data.letterDate,
+      expiryDate: data.expiryDate || '',
+      additionalNotes: data.additionalNotes || '',
+      submitForApproval: data.submitForApproval,
+      sendForESign: data.sendForESign,
+    };
+    generateOfferLetterMutation.mutate(
+      { data: submitData, generatedBy: user?.id || '' },
+      {
+        onSuccess: () => {
+          setShowOfferLetterModal(false);
+          resetOfferForm();
+          refetchLetters();
+          refetchCandidates();
+        },
+        onError: (err: unknown) => {
+          console.error('Error generating offer letter:', err);
+        }
+      }
+    );
   };
 
   const handleSubmitForApproval = async (letter: GeneratedLetter) => {
-    try {
-      await letterService.submitForApproval(letter.id);
-      fetchLetters();
-    } catch (err: unknown) {
-      console.error('Error submitting for approval:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit for approval');
-    }
+    // This calls approveLetterMutation with status update
+    approveLetterMutation.mutate(
+      { letterId: letter.id, approverId: user?.id || '' },
+      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+    );
   };
 
   const handleApproveLetter = async (letter: GeneratedLetter) => {
-    try {
-      await letterService.approveLetter(letter.id, 'current-user-id');
-      fetchLetters();
-    } catch (err: unknown) {
-      console.error('Error approving letter:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve letter');
-    }
+    approveLetterMutation.mutate(
+      { letterId: letter.id, approverId: user?.id || '' },
+      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+    );
   };
 
   const handleIssueLetter = async (letter: GeneratedLetter) => {
-    try {
-      await letterService.issueLetter(letter.id, 'current-user-id');
-      fetchLetters();
-    } catch (err: unknown) {
-      console.error('Error issuing letter:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to issue letter');
-    }
+    issueLetterMutation.mutate(
+      { letterId: letter.id, issuerId: user?.id || '' },
+      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+    );
   };
 
   const handleIssueWithESign = async (letter: GeneratedLetter) => {
-    try {
-      await letterService.issueOfferLetterWithESign(letter.id, 'current-user-id');
-      fetchLetters();
-    } catch (err: unknown) {
-      console.error('Error issuing letter with e-sign:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to issue letter with e-signature');
-    }
+    // For e-sign, use the same issue mutation (backend handles e-sign flag)
+    issueLetterMutation.mutate(
+      { letterId: letter.id, issuerId: user?.id || '' },
+      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+    );
   };
 
   const handleRevokeLetter = async (letter: GeneratedLetter) => {
-    try {
-      await letterService.revokeLetter(letter.id);
-      fetchLetters();
-    } catch (err: unknown) {
-      console.error('Error revoking letter:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to revoke letter');
-    }
+    revokeLetterMutation.mutate(letter.id, {
+      onSuccess: () => refetchLetters(),
+      onError: (err) => console.error('Error:', err),
+    });
   };
 
   // Stats
   const stats = {
     total: totalElements,
-    draft: letters.filter((l) => l.status === LetterStatus.DRAFT).length,
-    pendingApproval: letters.filter((l) => l.status === LetterStatus.PENDING_APPROVAL).length,
-    issued: letters.filter((l) => l.status === LetterStatus.ISSUED).length,
+    draft: filteredLetters.filter((l) => l.status === LetterStatus.DRAFT).length,
+    pendingApproval: filteredLetters.filter((l) => l.status === LetterStatus.PENDING_APPROVAL).length,
+    issued: filteredLetters.filter((l) => l.status === LetterStatus.ISSUED).length,
   };
 
   const breadcrumbs = [
@@ -464,7 +426,7 @@ export default function LettersPage() {
     { label: 'Letter Generation' },
   ];
 
-  if (loading && letters.length === 0) {
+  if (lettersLoading && filteredLetters.length === 0) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letters">
         <div className="flex items-center justify-center h-64">
@@ -501,13 +463,13 @@ export default function LettersPage() {
         </div>
 
         {/* Error Alert */}
-        {error && (
+        {lettersError && (
           <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
-                <span>{error}</span>
-                <Button size="sm" variant="outline" onClick={fetchLetters} className="ml-auto">
+                <span>{lettersError instanceof Error ? lettersError.message : 'Failed to load letters'}</span>
+                <Button size="sm" variant="outline" onClick={() => refetchLetters()} className="ml-auto">
                   Retry
                 </Button>
               </div>
@@ -636,7 +598,7 @@ export default function LettersPage() {
             </div>
 
             {/* Letters Table */}
-            {letters.length > 0 ? (
+            {filteredLetters.length > 0 ? (
               <Card>
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
@@ -664,7 +626,7 @@ export default function LettersPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                        {letters.map((letter) => (
+                        {filteredLetters.map((letter) => (
                           <tr key={letter.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                             <td className="px-4 py-4 whitespace-nowrap">
                               <div>
@@ -792,7 +754,7 @@ export default function LettersPage() {
                 </CardContent>
               </Card>
             ) : (
-              !loading && (
+              !lettersLoading && (
                 <Card>
                   <CardContent className="p-12 text-center">
                     <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
@@ -1008,8 +970,8 @@ export default function LettersPage() {
               <Button variant="outline" type="button" onClick={() => setShowGenerateModal(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={saving}>
-                {saving ? (
+              <Button type="submit" disabled={generateLetterMutation.isPending}>
+                {generateLetterMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Generating...
@@ -1194,7 +1156,7 @@ export default function LettersPage() {
                     className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="">Select a candidate</option>
-                    {candidates.map((candidate) => (
+                    {eligibleCandidates.map((candidate) => (
                       <option key={candidate.id} value={candidate.id}>
                         {candidate.fullName} - {candidate.jobTitle || 'N/A'} ({candidate.status.replace(/_/g, ' ')})
                       </option>
@@ -1203,7 +1165,7 @@ export default function LettersPage() {
                   {offerLetterForm.formState.errors.candidateId && (
                     <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.candidateId.message}</p>
                   )}
-                  {candidates.length === 0 && (
+                  {eligibleCandidates.length === 0 && (
                     <p className="mt-1 text-xs text-amber-600">No eligible candidates. Candidates must be in SELECTED status.</p>
                   )}
                 </div>
@@ -1328,8 +1290,8 @@ export default function LettersPage() {
               <Button variant="outline" type="button" onClick={() => setShowOfferLetterModal(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={saving}>
-                {saving ? (
+              <Button type="submit" disabled={generateLetterMutation.isPending}>
+                {generateLetterMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Generating...

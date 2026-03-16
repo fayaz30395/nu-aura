@@ -8,7 +8,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import { createMockLeaveRequest, createMockLeaveBalance, mockLeaveTypes } from '@/lib/test-utils/fixtures';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Mock the leave service
 vi.mock('@/lib/services/leave.service', () => ({
@@ -23,7 +22,7 @@ vi.mock('@/lib/services/leave.service', () => ({
 
 import { leaveService } from '@/lib/services/leave.service';
 
-const mockedLeaveService = leaveService as any;
+const mockedLeaveService = vi.mocked(leaveService);
 
 // Mock Leave Application Form Component
 interface LeaveFormProps {
@@ -174,7 +173,6 @@ describe('Leave Application Flow Integration Tests', () => {
 
   describe('Leave Form Validation', () => {
     it('should show error when required fields are empty', async () => {
-      const user = userEvent.setup();
       render(<MockLeaveForm />);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select') as HTMLSelectElement;
@@ -199,7 +197,6 @@ describe('Leave Application Flow Integration Tests', () => {
         throw new Error('Start date must be before end date');
       });
 
-      const user = userEvent.setup();
       render(<MockLeaveForm />);
 
       const startDateInput = screen.getByTestId('start-date-input');
@@ -254,7 +251,6 @@ describe('Leave Application Flow Integration Tests', () => {
         createMockLeaveRequest()
       );
 
-      const user = userEvent.setup();
       render(<MockLeaveForm />);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select');
@@ -310,7 +306,6 @@ describe('Leave Application Flow Integration Tests', () => {
         createMockLeaveRequest()
       );
 
-      const user = userEvent.setup();
       render(<MockLeaveForm />);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select') as HTMLSelectElement;
@@ -339,7 +334,6 @@ describe('Leave Application Flow Integration Tests', () => {
         new Error(errorMessage)
       );
 
-      const user = userEvent.setup();
       render(<MockLeaveForm />);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select');
@@ -407,7 +401,6 @@ describe('Leave Application Flow Integration Tests', () => {
           )
       );
 
-      const user = userEvent.setup();
       render(<MockLeaveForm />);
 
       const submitButton = screen.getByTestId('submit-button') as HTMLButtonElement;

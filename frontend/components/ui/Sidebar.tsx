@@ -149,7 +149,7 @@ const ChildrenFlyover: React.FC<{
         <div className="py-2 max-h-[400px] overflow-y-auto scrollbar-hide">
           {item.children?.map((child) => {
             const childClasses = cn(
-              'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
+              'w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
               activeId === child.id
                 ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300 font-medium'
                 : 'text-secondary hover:bg-primary-500/10 hover:text-primary'
@@ -250,7 +250,7 @@ const SidebarMenuItem: React.FC<{
   };
 
   const commonClasses = cn(
-    'sidebar-menu-item group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
+    'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium',
     'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
     isActive || isFlyoverOpen
       ? 'font-semibold shadow-sm border-l-[3px]'
@@ -678,13 +678,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           {/* Footer */}
           <div
             className={cn(
-              'p-3 transition-all duration-300',
+              'p-4 transition-all duration-300',
               isCollapsed && 'flex justify-center'
             )}
             style={{ borderTop: '1px solid var(--sidebar-border)' }}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg shadow-sm transition-all duration-200" style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)' }}>
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg shadow-sm transition-all duration-200" style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)' }}>
                 <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/20 transition-colors duration-200">
                   <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
                 </div>

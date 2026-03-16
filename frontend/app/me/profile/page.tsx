@@ -65,12 +65,8 @@ export default function MyProfilePage() {
       return;
     }
 
-    // Check if tokens exist in localStorage
-    const hasTokens = typeof window !== 'undefined' &&
-      localStorage.getItem('accessToken') &&
-      localStorage.getItem('refreshToken');
-
-    if (!isAuthenticated || !hasTokens) {
+    // Auth is managed via httpOnly cookies + Zustand state
+    if (!isAuthenticated) {
       router.push('/auth/login');
       return;
     }

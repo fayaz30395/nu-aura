@@ -96,7 +96,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {/* Production: Show only error ID for support reference */}
             {!isDevelopment && this.state.errorId && (
-              <div className="bg-[var(--bg-surface)] dark:bg-surface-700 rounded p-3 mb-6 text-center">
+              <div className="bg-[var(--bg-surface)] dark:bg-surface-700 rounded p-4 mb-6 text-center">
                 <p className="text-xs text-[var(--text-muted)] mb-1">
                   Error Reference
                 </p>
@@ -106,7 +106,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={() => window.location.reload()}
                 className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 font-medium transition-colors"

@@ -213,7 +213,7 @@ export default function FeedbackResponseForm({
 
         {/* Anonymous Notice */}
         {isAnonymous && reviewerType !== 'SELF' && (
-          <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+          <div className="mt-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
             <p className="text-xs text-purple-700 flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
               Your feedback will be anonymous and combined with other responses
@@ -390,7 +390,7 @@ export default function FeedbackResponseForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-red-700">{error}</p>
           </div>
@@ -402,7 +402,7 @@ export default function FeedbackResponseForm({
         <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <Button
             variant="secondary"
             onClick={() => handleSubmit(true)}

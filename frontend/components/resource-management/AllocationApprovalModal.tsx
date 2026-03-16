@@ -69,7 +69,7 @@ export function AllocationApprovalModal({
       <ModalBody className="space-y-6">
         {/* Warning message */}
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <AlertTriangle className="h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
             <div className="space-y-1">
               <p className="font-medium text-amber-800 dark:text-amber-200">
@@ -131,7 +131,7 @@ export function AllocationApprovalModal({
 
         {/* Project details */}
         <div className="rounded-lg border border-surface-200 p-4 dark:border-surface-700">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900">
               <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             </div>
@@ -147,7 +147,7 @@ export function AllocationApprovalModal({
         </div>
 
         {/* Employee's current allocations */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           <h3 className="font-medium text-surface-900 dark:text-surface-50">
             Current Project Allocations
           </h3>
@@ -156,9 +156,9 @@ export function AllocationApprovalModal({
               {validationResult.existingAllocations.map((allocation) => (
                 <div
                   key={allocation.projectId}
-                  className="flex items-center justify-between rounded-lg border border-surface-200 p-3 dark:border-surface-700"
+                  className="flex items-center justify-between rounded-lg border border-surface-200 p-4 dark:border-surface-700"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <Briefcase className="h-4 w-4 text-surface-400" />
                     <div>
                       <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
@@ -192,7 +192,7 @@ export function AllocationApprovalModal({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explain why this over-allocation is necessary..."
-              className="w-full rounded-lg border border-surface-200 bg-white p-3 text-sm placeholder:text-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800 dark:placeholder:text-surface-500"
+              className="w-full rounded-lg border border-surface-200 bg-white p-4 text-sm placeholder:text-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800 dark:placeholder:text-surface-500"
               rows={3}
             />
           </div>
@@ -206,7 +206,7 @@ export function AllocationApprovalModal({
         )}
 
         {/* Approval flow info */}
-        <div className="flex items-start gap-3 rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
+        <div className="flex items-start gap-2 rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
           <Clock className="h-5 w-5 flex-shrink-0 text-surface-400" />
           <div className="text-sm text-surface-600 dark:text-surface-400">
             <p className="font-medium text-surface-900 dark:text-surface-50">

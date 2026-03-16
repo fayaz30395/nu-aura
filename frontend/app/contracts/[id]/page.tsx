@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useContract, useSignatures, useTerminateContract, useMarkAsActive } from '@/lib/hooks/queries/useContracts';
 import { contractService } from '@/lib/services/contract.service';
@@ -26,12 +27,8 @@ export default function ContractDetailPage() {
     );
   }
 
-  if (!contract) {
-    return (
-      <AppLayout>
-        <div className="p-8 text-center text-[var(--text-muted)]">Contract not found</div>
-      </AppLayout>
-    );
+  if (!isLoading && !contract) {
+    notFound();
   }
 
   const breadcrumbs = [

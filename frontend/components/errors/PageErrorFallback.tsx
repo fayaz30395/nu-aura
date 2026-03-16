@@ -27,7 +27,7 @@ export function PageErrorFallback({
       <p className="text-sm text-[var(--text-muted)] mb-6 max-w-md">
         {error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
       </p>
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         {onReset && (
           <button
             onClick={onReset}

@@ -18,7 +18,7 @@ vi.mock('@/lib/services/payroll.service', () => ({
 
 import { payrollService } from '@/lib/services/payroll.service';
 
-const mockedPayrollService = payrollService as any;
+const mockedPayrollService = vi.mocked(payrollService);
 
 // Mock Payroll Run Form Component
 interface PayrollRunFormProps {

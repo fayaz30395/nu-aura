@@ -35,7 +35,7 @@ vi.mock('@/lib/api/notifications', () => ({
 
 import { notificationsApi } from '@/lib/api/notifications';
 
-const mockedNotificationsApi = notificationsApi as any;
+const mockedNotificationsApi = vi.mocked(notificationsApi);
 
 // Mock Notification Bell Component
 interface NotificationBellProps {
@@ -53,7 +53,7 @@ const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) 
       try {
         const count = await notificationsApi.getUnreadCount();
         setUnreadCount(count);
-      } catch (err) {
+      } catch (_err) {
         console.error('Failed to fetch unread count');
       }
     };
@@ -70,7 +70,7 @@ const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) 
       try {
         const result = await notificationsApi.getMyNotifications();
         setNotifications(result.content || result);
-      } catch (err) {
+      } catch (_err) {
         console.error('Failed to fetch notifications');
       } finally {
         setLoading(false);
@@ -85,7 +85,7 @@ const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) 
         notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
       );
       setUnreadCount(Math.max(0, unreadCount - 1));
-    } catch (err) {
+    } catch (_err) {
       console.error('Failed to mark as read');
     }
   };
@@ -95,7 +95,7 @@ const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) 
       await notificationsApi.markAllAsRead();
       setNotifications(notifications.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
-    } catch (err) {
+    } catch (_err) {
       console.error('Failed to mark all as read');
     }
   };
@@ -104,7 +104,7 @@ const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) 
     try {
       await notificationsApi.deleteNotification(id);
       setNotifications(notifications.filter((n) => n.id !== id));
-    } catch (err) {
+    } catch (_err) {
       console.error('Failed to delete notification');
     }
   };
@@ -518,7 +518,7 @@ describe('Notification Flow Integration Tests', () => {
       render(<MockNotificationBell />);
 
       await waitFor(() => {
-        let badge = screen.getByText('1');
+        const badge = screen.getByText('1');
         expect(badge).toHaveTextContent('1');
       });
 

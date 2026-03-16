@@ -55,7 +55,7 @@ export function EmployeeCapacityDisplay({
     <div className={cn('space-y-4', className)}>
       {/* Header with employee info */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400">
             <User className="h-5 w-5" />
           </div>
@@ -131,20 +131,20 @@ export function EmployeeCapacityDisplay({
       </div>
 
       {/* Capacity summary */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-lg bg-surface-50 p-3 dark:bg-surface-800">
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
           <p className="text-xs text-surface-500 dark:text-surface-400">Approved</p>
           <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
             {formatAllocationPercentage(capacity.approvedAllocation)}
           </p>
         </div>
-        <div className="rounded-lg bg-surface-50 p-3 dark:bg-surface-800">
+        <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
           <p className="text-xs text-surface-500 dark:text-surface-400">Pending</p>
           <p className="text-lg font-semibold text-amber-600 dark:text-amber-400">
             {formatAllocationPercentage(capacity.pendingAllocation)}
           </p>
         </div>
-        <div className="rounded-lg bg-surface-50 p-3 dark:bg-surface-800">
+        <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
           <p className="text-xs text-surface-500 dark:text-surface-400">Available</p>
           <p
             className={cn(
@@ -203,7 +203,7 @@ function CompactCapacityDisplay({
   const isOverAllocated = capacity.totalAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
 
   return (
-    <div className={cn('flex items-center gap-3', className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       {/* Mini gauge */}
       <div className="relative h-2 w-24 overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
         <div
@@ -271,13 +271,13 @@ function AllocationRow({ allocation }: { allocation: AllocationBreakdown }) {
   return (
     <div
       className={cn(
-        'flex items-center justify-between rounded-lg border p-3',
+        'flex items-center justify-between rounded-lg border p-4',
         allocation.isPendingApproval
           ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20'
           : 'border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-800'
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded bg-surface-100 dark:bg-surface-700">
           <Briefcase className="h-4 w-4 text-surface-600 dark:text-surface-400" />
         </div>

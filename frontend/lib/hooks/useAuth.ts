@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { apiClient } from '../api/client';
 import { authApi } from '../api/auth';
 import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/auth';
@@ -112,7 +112,7 @@ export const useAuth = create<AuthState>()(
 
           // Store user data in localStorage for backward compatibility with pages that access it directly
           if (typeof window !== 'undefined') {
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
           }
 
           set({ user, isAuthenticated: true, isLoading: false });
@@ -150,7 +150,7 @@ export const useAuth = create<AuthState>()(
 
           // Store user data in localStorage for backward compatibility with pages that access it directly
           if (typeof window !== 'undefined') {
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
           }
 
           set({ user, isAuthenticated: true, isLoading: false });
@@ -170,8 +170,8 @@ export const useAuth = create<AuthState>()(
           // Clear Google SSO tokens (Drive, Mail)
           clearGoogleToken();
           if (typeof window !== 'undefined') {
-            localStorage.removeItem('user');
-            localStorage.removeItem('auth-storage'); // Clear Zustand persisted auth state
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('auth-storage'); // Clear Zustand persisted auth state
           }
           set({ user: null, isAuthenticated: false });
         }
@@ -206,7 +206,7 @@ export const useAuth = create<AuthState>()(
           };
 
           if (typeof window !== 'undefined') {
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
           }
 
           set({ user, isAuthenticated: true, isLoading: false });
@@ -219,6 +219,7 @@ export const useAuth = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,

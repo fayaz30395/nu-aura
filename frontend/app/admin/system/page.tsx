@@ -75,10 +75,10 @@ export default function SystemDashboard() {
 
     try {
       const result = await impersonationMutation.mutateAsync(selectedTenant.tenantId);
-      // Store the impersonation token in localStorage or session storage
-      localStorage.setItem('impersonationToken', result.token);
-      localStorage.setItem('impersonatedTenantId', result.tenantId);
-      localStorage.setItem('impersonatedTenantName', result.tenantName);
+      // Store the impersonation token in sessionStorage (SEC-F05: sensitive auth data)
+      sessionStorage.setItem('impersonationToken', result.token);
+      sessionStorage.setItem('impersonatedTenantId', result.tenantId);
+      sessionStorage.setItem('impersonatedTenantName', result.tenantName);
       // Redirect to tenant's main dashboard
       router.push('/admin');
     } catch (error) {

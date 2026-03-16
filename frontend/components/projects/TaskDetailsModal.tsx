@@ -168,7 +168,7 @@ export function TaskDetailsModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader onClose={onClose}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(normalizedTask.type)}`}>
             {getTypeLabel(normalizedTask.type)}
           </span>
@@ -261,7 +261,7 @@ export function TaskDetailsModal({
                 <FileText className="w-4 h-4 inline mr-1" />
                 Description
               </label>
-              <p className="text-surface-700 dark:text-surface-300 bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+              <p className="text-surface-700 dark:text-surface-300 bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
                 {normalizedTask.description}
               </p>
             </div>
@@ -417,9 +417,9 @@ export function TaskDetailsModal({
                 {normalizedTask.assignees.map((assignee) => (
                   <div
                     key={assignee.id}
-                    className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-900 rounded-lg"
+                    className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary-600 font-medium">
                         {assignee.employeeName
                           .split(' ')
@@ -460,7 +460,7 @@ export function TaskDetailsModal({
                 {normalizedTask.dependencies.map((dep) => (
                   <div
                     key={dep.id}
-                    className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-900 rounded-lg"
+                    className="flex items-center gap-2 p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
                     <ArrowRight className="w-4 h-4 text-surface-400" />
                     <span className="text-surface-700 dark:text-surface-300">

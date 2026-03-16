@@ -46,7 +46,7 @@ export default function OnboardingDetailPage() {
     const { mutate: updateTaskStatus, isPending: isUpdating } = useUpdateOnboardingTaskStatus();
 
     useEffect(() => {
-        const token = localStorage.getItem('nu_drive_token');
+        const token = sessionStorage.getItem('nu_drive_token');
         if (token) setDriveToken(token);
 
         // Auto-expand first category
@@ -78,7 +78,7 @@ export default function OnboardingDetailPage() {
     const googleLogin = useGoogleLogin({
         onSuccess: (tokenResponse) => {
             const token = tokenResponse.access_token;
-            localStorage.setItem('nu_drive_token', token);
+            sessionStorage.setItem('nu_drive_token', token);
             setDriveToken(token);
         },
         scope: 'https://www.googleapis.com/auth/drive.file',

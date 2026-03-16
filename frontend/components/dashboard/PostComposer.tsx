@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import NextImage from 'next/image';
 import {
-  Edit3, BarChart3, Trophy, Image, Smile, Paperclip, Send, Loader2,
+  Edit3, BarChart3, Trophy, Image as ImageIcon, Smile, Paperclip, Send, Loader2,
   Plus, X, Search, Check,
 } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
@@ -240,7 +240,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Add image">
-                <Image size={14} />
+                <ImageIcon size={14} />
               </button>
               <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Add emoji">
                 <Smile size={14} />

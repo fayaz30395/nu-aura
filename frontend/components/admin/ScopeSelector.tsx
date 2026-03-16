@@ -64,7 +64,7 @@ export function ScopeSelector({
   showDescription = true,
 }: ScopeSelectorProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
         {SCOPE_ORDER.map((scope) => (
           <button

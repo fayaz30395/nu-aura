@@ -44,10 +44,9 @@ export default function ContactPage() {
     resolver: zodResolver(contactFormSchema),
   });
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = async (_data: ContactFormData) => {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log('Form data:', data);
     setIsSubmitted(true);
     reset();
     setTimeout(() => setIsSubmitted(false), 5000);

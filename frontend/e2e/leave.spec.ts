@@ -237,8 +237,8 @@ test.describe('Leave Management', () => {
   test.describe('Leave Balances', () => {
     test('should display leave balance correctly', async ({ page }) => {
       const annualBalance = await leavePage.getLeaveBalance('annual');
-      const sickBalance = await leavePage.getLeaveBalance('sick');
-      const casualBalance = await leavePage.getLeaveBalance('casual');
+      const _sickBalance = await leavePage.getLeaveBalance('sick');
+      const _casualBalance = await leavePage.getLeaveBalance('casual');
 
       // Balances should be displayed (even if 0)
       expect(annualBalance).toBeTruthy();
@@ -246,7 +246,7 @@ test.describe('Leave Management', () => {
 
     test('should update balance after leave application', async ({ page }) => {
       // Get initial balance
-      const initialBalance = await leavePage.getLeaveBalance('annual');
+      const _initialBalance = await leavePage.getLeaveBalance('annual');
 
       // Apply for leave
       await leavePage.applyLeave(testLeave.annual);

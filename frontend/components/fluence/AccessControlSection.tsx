@@ -73,7 +73,7 @@ export default function AccessControlSection({
         </div>
 
         {visibility === 'DEPARTMENT' && (
-          <div className="flex items-start gap-2 text-xs text-[var(--text-muted)] bg-[var(--bg-secondary)] rounded-lg p-3">
+          <div className="flex items-start gap-2 text-xs text-[var(--text-muted)] bg-[var(--bg-secondary)] rounded-lg p-4">
             <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <p>
               This content will be visible to members of your department by default.
@@ -83,7 +83,7 @@ export default function AccessControlSection({
         )}
 
         {visibility === 'RESTRICTED' && (
-          <div className="flex items-start gap-2 text-xs text-[var(--text-muted)] bg-[var(--bg-secondary)] rounded-lg p-3">
+          <div className="flex items-start gap-2 text-xs text-[var(--text-muted)] bg-[var(--bg-secondary)] rounded-lg p-4">
             <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <p>
               Only you and the people/departments you specify below will be able to see this content.

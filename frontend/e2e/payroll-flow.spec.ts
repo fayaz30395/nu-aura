@@ -100,7 +100,7 @@ test.describe('Payroll Flow', () => {
           await page.waitForLoadState('networkidle');
 
           // Verify status change or success message
-          const successMsg = page.locator('text=/success|processed|completed/i');
+          const _successMsg = page.locator('text=/success|processed|completed/i');
           // May not show, but should not error
           await expect(page.locator('text=Something went wrong')).not.toBeVisible();
         }

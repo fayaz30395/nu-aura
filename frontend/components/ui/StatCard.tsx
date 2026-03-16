@@ -135,7 +135,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             {/* Decorative accent line */}
             <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-xl', config.accent)} />
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {icon && (
                 <div
                   className={cn(

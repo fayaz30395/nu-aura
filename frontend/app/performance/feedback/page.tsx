@@ -32,7 +32,7 @@ export default function FeedbackPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !currentUserId) {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const user = JSON.parse(sessionStorage.getItem('user') || '{}');
       if (user.employeeId) {
         setCurrentUserId(user.employeeId);
       }

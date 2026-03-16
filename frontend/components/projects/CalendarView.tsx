@@ -431,7 +431,7 @@ export function CalendarView({
     <div className={`bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-700 ${className}`}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-surface-200 dark:border-surface-700">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={handlePrevious}
             className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"

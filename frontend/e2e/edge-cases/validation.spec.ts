@@ -15,7 +15,6 @@ test.describe('Form Validation', () => {
 
     test('should show error for empty email', async ({ page }) => {
       const submitButton = page.getByRole('button', { name: /sign in|log in|submit/i });
-      const emailInput = page.locator('input[type="email"]');
 
       // Leave email empty and submit
       await submitButton.click();
@@ -52,10 +51,6 @@ test.describe('Form Validation', () => {
       await emailInput.fill('test@example.com');
       await passwordInput.fill('123'); // Too short
       await submitButton.click();
-
-      // Should show password length error
-      const errorMessage = page.getByText(/password|characters|short|minimum/i);
-      const hasError = await errorMessage.first().isVisible().catch(() => false);
 
       // Form should still be on login page
       expect(page.url()).toContain('/login');

@@ -32,7 +32,7 @@ const ChartLoadingFallback = () => (
  * Table loading skeleton
  */
 const _TableLoadingFallback = () => (
-  <div className="space-y-3 p-4">
+  <div className="space-y-4 p-4">
     <Skeleton className="h-10 w-full" />
     <Skeleton className="h-8 w-full" />
     <Skeleton className="h-8 w-full" />

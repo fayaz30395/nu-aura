@@ -331,7 +331,7 @@ export function CreateAllocationModal({
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="xl">
       <ModalHeader onClose={handleClose}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span>Add Allocation</span>
           <div className="flex items-center gap-2 text-sm font-normal text-surface-500">
             <span className={step === 'project' ? 'text-primary-600 font-medium' : ''}>
@@ -648,7 +648,7 @@ export function CreateAllocationModal({
 
                   {/* Allocation Status Message */}
                   {!isComplete && remainingAllocation > 0 && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-800 text-sm text-blue-700 dark:text-blue-300">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800 text-sm text-blue-700 dark:text-blue-300">
                       <Percent className="inline-block h-4 w-4 mr-2" />
                       <strong>{remainingAllocation}%</strong> allocation remaining to reach {totalAllocationNeeded}%.
                       <div className="mt-2 text-xs opacity-90 space-y-1">
@@ -684,13 +684,13 @@ export function CreateAllocationModal({
                     </div>
                   )}
                   {isOverAllocated && (
-                    <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 border border-amber-200 dark:border-amber-800 text-sm text-amber-700 dark:text-amber-300">
+                    <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800 text-sm text-amber-700 dark:text-amber-300">
                       <AlertTriangle className="inline-block h-4 w-4 mr-2" />
                       Over-allocated by {currentAllocation - totalAllocationNeeded}%. You have allocated more than the {resourcesNeeded} resource{resourcesNeeded !== 1 ? 's' : ''} needed.
                     </div>
                   )}
                   {isComplete && !isOverAllocated && (
-                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800 text-sm text-green-700 dark:text-green-300">
+                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800 text-sm text-green-700 dark:text-green-300">
                       <Check className="inline-block h-4 w-4 mr-2" />
                       Allocation complete! {currentAllocation}% allocated across {allocations.length} employee{allocations.length !== 1 ? 's' : ''}.
                     </div>

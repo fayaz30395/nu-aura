@@ -7,9 +7,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
-import { mockEmployees, createMockEmployee, createMockPage } from '@/lib/test-utils/fixtures';
+import { mockEmployees, createMockPage } from '@/lib/test-utils/fixtures';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 
 // Mock the employee service
 vi.mock('@/lib/services/employee.service', () => ({
@@ -25,7 +24,7 @@ vi.mock('@/lib/services/employee.service', () => ({
 
 import { employeeService } from '@/lib/services/employee.service';
 
-const mockedEmployeeService = employeeService as any;
+const mockedEmployeeService = vi.mocked(employeeService);
 
 // Mock Employee List Component
 interface EmployeeListProps {
@@ -302,7 +301,6 @@ describe('Employee CRUD Flow Integration Tests', () => {
     });
 
     it('should validate required fields', async () => {
-      const user = userEvent.setup();
       render(<MockEmployeeForm />);
 
       const firstNameInput = screen.getByTestId('first-name-input') as HTMLInputElement;
@@ -349,7 +347,6 @@ describe('Employee CRUD Flow Integration Tests', () => {
     it('should clear form after successful creation', async () => {
       mockedEmployeeService.createEmployee.mockResolvedValueOnce(mockEmployees[0]);
 
-      const user = userEvent.setup();
       render(<MockEmployeeForm />);
 
       const firstNameInput = screen.getByTestId('first-name-input') as HTMLInputElement;

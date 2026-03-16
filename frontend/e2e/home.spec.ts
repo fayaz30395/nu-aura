@@ -140,7 +140,7 @@ test.describe('Home Page', () => {
 
         // Navigate to next
         await homePage.nextHoliday();
-        const secondHoliday = await homePage.getCurrentHolidayName();
+        const _secondHoliday = await homePage.getCurrentHolidayName();
 
         // Navigate back
         await homePage.prevHoliday();

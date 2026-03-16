@@ -2359,3 +2359,139 @@ All `<img>` elements in the `app/` directory replaced with Next.js `<Image />` f
 - **ESLint `no-unused-vars` warnings:** 653 cosmetic warnings — candidates for a dedicated cleanup pass using `_` prefix convention or targeted import removals
 - **useState server state:** ~15 files still manage server data via `useState` + `useEffect` instead of React Query hooks — migrate to `useQuery` for cache consistency
 - **`react-hooks/exhaustive-deps` in non-app/ dirs:** Only `app/` was scanned; components/ and lib/ directories may have additional violations
+
+---
+
+## Session Log 37 — Full-Spectrum Security & Performance Audit (P0 → P3)
+
+### Scope
+Two-phase engineering audit across the full NU-AURA codebase (frontend + backend). Identified 25+ issues across four priority tiers and applied all fixes autonomously in priority order.
+
+---
+
+### P0 — Critical (Applied First)
+
+#### CRIT-01: `@Transactional(readOnly=true)` + `save()` in AttendanceRecordService
+- **File:** `backend/.../attendance/service/AttendanceRecordService.java`
+- **Bug:** Both `checkOut()` overloads declared `@Transactional(readOnly = true)` but called `attendanceRecordRepository.save()`, causing `TransactionSystemException` / `InvalidDataAccessApiUsageException` at runtime on every employee check-out.
+- **Fix:** Removed `readOnly = true` from both overloads → `@Transactional`
+
+---
+
+### P1 — High Priority
+
+#### SEC-B10: Tenant suspension with no cache invalidation
+- **Files:** `SystemAdminService.java`, `SystemAdminController.java`, `TenantStatusDTO.java` (new)
+- **Bug:** No endpoints existed to suspend/activate tenants; even if they had, `TenantFilter`'s in-memory valid-tenant cache and Redis caches would not have been cleared, allowing suspended tenants to continue making requests.
+- **Fix:** Added `suspendTenant()` and `activateTenant()` methods that call `tenant.suspend()`/`activate()`, then immediately call both `tenantFilter.invalidateTenant(tenantId)` AND `tenantCacheManager.invalidateTenantCaches(tenantId)`. Added `POST /api/v1/admin/tenants/{id}/suspend` and `POST /api/v1/admin/tenants/{id}/activate` endpoints.
+
+#### SEC-B11: Impersonation token stored in localStorage
+- **File:** `frontend/app/admin/system/page.tsx`
+- **Fix:** Moved `impersonationToken`, `impersonatedTenantId`, `impersonatedTenantName` from `localStorage` to `sessionStorage` — clears on tab close.
+
+#### SEC-B12: Google OAuth tokens stored in localStorage
+- **File:** `frontend/lib/utils/googleToken.ts`
+- **Fix:** All 6 Google/Drive/Mail token keys migrated from `localStorage` to `sessionStorage`.
+
+#### SEC-B13: Zustand auth store persisted to localStorage
+- **File:** `frontend/lib/hooks/useAuth.ts`
+- **Fix:** Migrated Zustand `persist` storage from `localStorage` to `sessionStorage` via `createJSONStorage(() => sessionStorage)`. Auth state now cleared on tab close.
+
+#### SEC-B14: Dead `localStorage.getItem('accessToken')` checks
+- **Files:** `frontend/app/me/profile/page.tsx`, `frontend/app/admin/layout.tsx`
+- **Bug:** Auth tokens are in httpOnly cookies, making localStorage token checks always-false dead code that could cause false redirect loops.
+- **Fix:** Removed dead `hasTokens` check from profile page; removed `localStorage.removeItem('authToken/refreshToken')` calls from admin layout logout.
+
+#### SEC-B15: Missing `@Validated` on PublicCareerController
+- **File:** `backend/.../publicapi/controller/PublicCareerController.java`
+- **Bug:** `@RequestParam` constraints (e.g. `@Min`, `@Max`) silently ignored without `@Validated` on the controller class.
+- **Fix:** Added `@Validated` annotation to the controller.
+
+#### SEC-B16: Missing input validation on UpdateEmployeeRequest
+- **File:** `backend/.../api/employee/dto/UpdateEmployeeRequest.java`
+- **Fix:** Added 17 validation annotations across all fields: `@Size`, `@Pattern`, `@Email`, `@PastOrPresent`, `@Digits`. Key additions include IFSC code pattern (`^[A-Z]{4}0[A-Z0-9]{6}$`), phone/PAN/passport format patterns, `@PastOrPresent` on dateOfBirth and confirmationDate.
+
+---
+
+### P2 — Medium Priority
+
+#### PERF-01: N+1 queries in `SystemAdminService.countPendingApprovals()`
+- **Before:** Iterated over all tenants, issuing 2 count queries per tenant → `2N+1` DB round-trips.
+- **Fix:** Added `countAllPendingCrossTenant()` to `WorkflowExecutionRepository` using a single `COUNT` JPQL query across all `PENDING`/`IN_PROGRESS` executions.
+
+#### PERF-02: In-memory entity loads in `SystemAdminService.getSystemOverview()`
+- **Before:** `userRepository.findAll().stream().filter(...).count()` loaded all users into heap.
+- **Fix:** Replaced with `userRepository.countByStatus(User.UserStatus.ACTIVE)` — single aggregate query.
+
+#### PERF-03: `usePerformance.ts` 1012-line hook monolith
+- **Before:** Single file with all performance hooks — slow to parse, impossible to tree-shake.
+- **Fix:** Split into 8 domain files: `performanceKeys.ts`, `useGoals.ts`, `useReviewCycles.ts`, `useReviews.ts`, `useFeedback.ts`, `useFeedback360.ts`, `useOkr.ts`, `usePip.ts`. Original `usePerformance.ts` becomes a backward-compatible barrel re-export.
+
+#### PERF-04: N+1 queries in `SystemAdminService.getTenantList()`
+- **Before:** `mapToTenantListItem()` called 3 per-tenant queries in a loop → `3N` queries per page.
+- **Fix:** Batch queries using `countByTenantIdIn()` GROUP BY queries returning `Map<UUID, Long>` for both employee and user counts. DTOs built from Maps in O(1) per tenant.
+
+#### PERF-05: `getGrowthMetrics()` loading all entities into heap
+- **Before:** `tenantRepository.findAll()`, `employeeRepository.findAll()`, `userRepository.findAll()` with in-memory stream filtering across all historical data.
+- **Fix:** Added `countByCreatedAtBefore()` to `TenantRepository`, `countJoinedOnOrBefore()` to `EmployeeRepository`, `countByStatusAndCreatedAtBefore()` to `UserRepository`. Growth computed via 3 aggregate DB queries per month slice — O(1) memory regardless of entity count.
+
+#### PERF-06: N+1 in `AdminService.getGlobalStats()`
+- **Before:** Same `findAll().stream()` + per-tenant approval loop pattern.
+- **Fix:** Replaced with `userRepository.countByStatus(ACTIVE)` and `workflowExecutionRepository.countAllPendingCrossTenant()`.
+
+---
+
+### P3 — Low / Info
+
+#### INFO-01: ESLint disabled during builds
+- **File:** `frontend/next.config.js`
+- **Fix:** Re-enabled ESLint during builds: `eslint: { ignoreDuringBuilds: false }`
+
+#### INFO-02: `console.log` leaking form data in production
+- **File:** `frontend/app/contact/page.tsx`
+- **Fix:** Removed `console.log('Form data:', data)` from `onSubmit`.
+
+#### INFO-03: `localStorage.getItem('user')` in feedback page
+- **File:** `frontend/app/performance/feedback/page.tsx`
+- **Fix:** `localStorage.getItem('user')` → `sessionStorage.getItem('user')` (auth store persists to sessionStorage post-SEC-B13).
+
+#### INFO-04: Missing Flyway FK indexes for knowledge/fluence schema
+- **File:** `backend/src/main/resources/db/migration/V33__knowledge_fluence_indexes.sql` (new)
+- **Fix:** Created V33 migration adding 22 `CREATE INDEX IF NOT EXISTS` statements for all FK columns in wiki_pages, blog_posts, knowledge_base_articles, and related tables.
+
+#### INFO-05: Google Drive token in localStorage on onboarding page
+- **File:** `frontend/app/onboarding/[id]/page.tsx`
+- **Fix:** `nu_drive_token` migrated from `localStorage` to `sessionStorage`.
+
+#### INFO-06: Auth cleanup on login page using localStorage
+- **File:** `frontend/app/auth/login/page.tsx`
+- **Fix:** `auth-storage` and `user` cleanup calls switched to `sessionStorage`; `tenantId` correctly retained in `localStorage` (cross-session preference).
+
+---
+
+### New Repository Methods Added
+
+| Repository | Method | Purpose |
+|---|---|---|
+| `WorkflowExecutionRepository` | `countAllPendingCrossTenant()` | Cross-tenant PENDING+IN_PROGRESS count |
+| `UserRepository` | `countByStatus()` | Aggregate active user count |
+| `UserRepository` | `countByStatusAndCreatedAtBefore()` | Growth metrics per month slice |
+| `UserRepository` | `countByTenantIdIn()` | Batch user count by tenant page |
+| `UserRepository` | `countActiveByTenantIdIn()` | Batch active user count by tenant page |
+| `TenantRepository` | `countByStatus()` | Active tenant count |
+| `TenantRepository` | `countByCreatedAtBefore()` | Growth metrics per month slice |
+| `EmployeeRepository` | `countByTenantIdIn()` | Batch employee count by tenant page |
+| `EmployeeRepository` | `countJoinedOnOrBefore()` | Growth metrics — joining date aware |
+
+---
+
+### TypeScript + ESLint Validation
+- `npx tsc --noEmit` → **0 errors** (validated after each batch)
+- All backend changes are pure Java — no TypeScript impact
+
+---
+
+### Remaining Known Issues (for future sessions)
+- **`getLastActivityForTenant()` in `SystemAdminService`:** Still calls `findByTenantId()` then streams `lastLoginAt` in Java — could be a DB `MAX()` query. Low impact (called only for the page slice).
+- **`storageUsageBytes`:** Hardcoded `0` in all tenant metric DTOs — TODO tracked for MinIO integration.
+- **`aiCreditsUsed`:** Hardcoded `0` in `SystemOverviewDTO` — TODO tracked for audit-log–based credit tracking.

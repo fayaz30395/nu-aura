@@ -7,9 +7,8 @@ const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
   reactStrictMode: true,
 
-  // Temporarily disable ESLint during builds (pre-existing errors)
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
 
   env: {

@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Page, expect, TestInfo } from '@playwright/test';
 import { testUsers } from '../fixtures/testData';
 
 /**
@@ -115,7 +115,7 @@ export class ApiMockHelper {
   /**
    * Mock employee list response
    */
-  static async mockEmployeeList(page: Page, employees: any[]) {
+  static async mockEmployeeList(page: Page, employees: Record<string, unknown>[]) {
     await page.route('**/api/v1/employees**', (route) => {
       route.fulfill({
         status: 200,
@@ -224,7 +224,7 @@ export class ScreenshotHelper {
   /**
    * Take screenshot on failure
    */
-  static async onFailure(page: Page, testInfo: any) {
+  static async onFailure(page: Page, testInfo: TestInfo) {
     if (testInfo.status !== testInfo.expectedStatus) {
       await page.screenshot({
         path: `screenshots/failure-${testInfo.title}-${Date.now()}.png`,

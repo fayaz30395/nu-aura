@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from './pages/LoginPage';
 import { testUsers } from './fixtures/testData';
-import { AuthHelper, ApiMockHelper, ValidationHelper } from './utils/helpers';
+import { AuthHelper, ApiMockHelper } from './utils/helpers';
 
 /**
  * Authentication E2E Tests

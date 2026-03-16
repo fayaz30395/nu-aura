@@ -237,7 +237,7 @@ export const BulkProcessingWizard: React.FC = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg flex items-start gap-3">
+        <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg flex items-start gap-2">
           <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
           <div className="flex-1">
             <p className="font-medium">Error</p>
@@ -332,7 +332,7 @@ export const BulkProcessingWizard: React.FC = () => {
                               <p className="font-medium text-surface-900 dark:text-surface-50">
                                 {employee.fullName}
                               </p>
-                              <div className="flex items-center gap-3 mt-1 text-sm text-surface-600 dark:text-surface-400">
+                              <div className="flex items-center gap-2 mt-1 text-sm text-surface-600 dark:text-surface-400">
                                 <span>{employee.employeeCode}</span>
                                 {employee.departmentName && (
                                   <>
@@ -654,7 +654,7 @@ export const BulkProcessingWizard: React.FC = () => {
           )}
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           {currentStep === 4 ? (
             <Button
               variant="primary"

@@ -9,7 +9,7 @@ import {
   Folder,
   File,
   FileText,
-  Image,
+  Image as ImageIcon,
   Film,
   Music,
   FileSpreadsheet,
@@ -757,7 +757,7 @@ function DriveContent() {
 
   const getFileIcon = (mimeType: string) => {
     if (mimeType === 'application/vnd.google-apps.folder') return <Folder className="h-8 w-8 text-yellow-500" />;
-    if (mimeType.startsWith('image/')) return <Image className="h-8 w-8 text-green-500" />;
+    if (mimeType.startsWith('image/')) return <ImageIcon className="h-8 w-8 text-green-500" />;
     if (mimeType.startsWith('video/')) return <Film className="h-8 w-8 text-purple-500" />;
     if (mimeType.startsWith('audio/')) return <Music className="h-8 w-8 text-pink-500" />;
     if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return <FileSpreadsheet className="h-8 w-8 text-green-600" />;

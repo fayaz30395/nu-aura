@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -182,6 +183,10 @@ export default function ProjectDetailPage() {
       setEditError(msg);
     }
   };
+
+  if (!loading && !error && !project) {
+    notFound();
+  }
 
   if (loading && !project) {
     return (

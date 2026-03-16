@@ -233,7 +233,7 @@ export default function CalibrationMatrix({
       {/* Legend */}
       <div className="bg-white p-4 rounded-lg border border-[var(--border-main)]">
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">9-Box Grid Legend</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-green-500"></div>
             <span>Top Talent / Stars</span>

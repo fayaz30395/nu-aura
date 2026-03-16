@@ -48,6 +48,13 @@ public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecu
     @Query("SELECT COUNT(e) FROM WorkflowExecution e WHERE e.tenantId = :tenantId AND e.status = :status")
     long countByStatus(@Param("tenantId") UUID tenantId, @Param("status") WorkflowExecution.ExecutionStatus status);
 
+    /**
+     * Count all pending/in-progress approvals across ALL tenants.
+     * Used by SuperAdmin system overview. Single query replaces N+2 queries per tenant (N+1 fix).
+     */
+    @Query("SELECT COUNT(e) FROM WorkflowExecution e WHERE e.status IN ('PENDING', 'IN_PROGRESS')")
+    long countAllPendingCrossTenant();
+
     @Query("SELECT COUNT(e) FROM WorkflowExecution e WHERE e.tenantId = :tenantId AND e.entityType = :entityType AND e.status = :status")
     long countByEntityTypeAndStatus(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType, @Param("status") WorkflowExecution.ExecutionStatus status);
 

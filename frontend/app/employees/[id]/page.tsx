@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import { EntityType } from '@/lib/types/custom-fields';
 import { AppLayout } from '@/components/layout';
@@ -74,6 +75,10 @@ export default function EmployeeDetailPage() {
         </div>
       </AppLayout>
     );
+  }
+
+  if (!loading && !queryError && !employee) {
+    notFound();
   }
 
   if (error || !employee) {

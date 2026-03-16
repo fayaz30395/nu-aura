@@ -151,7 +151,7 @@ export function EmployeeAllocationDetailModal({
       <ModalBody className="space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-3 dark:border-surface-700 dark:bg-surface-800">
+          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
               <Percent className="h-4 w-4 text-surface-400" />
               <span className="text-xs text-surface-500">Active Allocation</span>
@@ -164,7 +164,7 @@ export function EmployeeAllocationDetailModal({
             </p>
           </div>
 
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-3 dark:border-surface-700 dark:bg-surface-800">
+          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-surface-400" />
               <span className="text-xs text-surface-500">Available</span>
@@ -174,7 +174,7 @@ export function EmployeeAllocationDetailModal({
             </p>
           </div>
 
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-3 dark:border-surface-700 dark:bg-surface-800">
+          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
               <Briefcase className="h-4 w-4 text-surface-400" />
               <span className="text-xs text-surface-500">Active Projects</span>
@@ -184,7 +184,7 @@ export function EmployeeAllocationDetailModal({
             </p>
           </div>
 
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-3 dark:border-surface-700 dark:bg-surface-800">
+          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-blue-500" />
               <span className="text-xs text-surface-500">Planned</span>
@@ -276,7 +276,7 @@ export function EmployeeAllocationDetailModal({
         {/* Tab Content */}
         <div className="min-h-[200px]">
           {activeTab === 'current' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {employee.allocations.length > 0 ? (
                 employee.allocations.map((allocation) => (
                   <AllocationCard
@@ -302,7 +302,7 @@ export function EmployeeAllocationDetailModal({
           )}
 
           {activeTab === 'history' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {loadingHistory ? (
                 <>
                   <Skeleton className="h-20" />
@@ -460,7 +460,7 @@ function AllocationCard({
   if (isEditing) {
     return (
       <div className="rounded-lg border border-primary-300 bg-primary-50 p-4 dark:border-primary-700 dark:bg-primary-900/20">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${statusStyle.icon}`}
           >
@@ -553,7 +553,7 @@ function AllocationCard({
       onClick={onClick}
     >
       <div className="flex items-start justify-between">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${statusStyle.icon}`}
           >

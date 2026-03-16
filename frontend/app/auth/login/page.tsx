@@ -162,8 +162,8 @@ function LoginPage() {
     if (!hasHydrated) return;
     if (isAuthenticated && user && !didFreshLogin) {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth-storage');
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('auth-storage');
+        sessionStorage.removeItem('user');
         localStorage.removeItem('tenantId');
       }
       setUser(null);
