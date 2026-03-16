@@ -8,10 +8,7 @@ import {
   XCircle,
   User,
   Briefcase,
-  AlertTriangle,
   RefreshCw,
-  Filter,
-  Search,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -29,6 +26,7 @@ import {
   useApproveAllocationRequest,
   useRejectAllocationRequest,
 } from '@/lib/hooks/queries/useResources';
+import { useToast } from '@/components/notifications/ToastProvider';
 import { format, parseISO } from 'date-fns';
 
 type TabKey = 'pending' | 'approved' | 'rejected';
@@ -40,6 +38,8 @@ export default function ApprovalsPage() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [approveComment, setApproveComment] = useState('');
   const [rejectReason, setRejectReason] = useState('');
+
+  const toast = useToast();
 
   // React Query hooks
   const { data: pendingData, isLoading, refetch: refetchRequests } = useMyPendingApprovals(0, 50);
@@ -68,6 +68,10 @@ export default function ApprovalsPage() {
           setApproveComment('');
           setSelectedRequest(null);
           refetchRequests();
+          toast.success('Request Approved', 'Over-allocation request has been approved');
+        },
+        onError: (error: Error) => {
+          toast.error('Approval Failed', error.message || 'Failed to approve the request');
         },
       }
     );
@@ -86,6 +90,10 @@ export default function ApprovalsPage() {
           setRejectReason('');
           setSelectedRequest(null);
           refetchRequests();
+          toast.info('Request Rejected', 'Over-allocation request has been rejected');
+        },
+        onError: (error: Error) => {
+          toast.error('Rejection Failed', error.message || 'Failed to reject the request');
         },
       }
     );
@@ -124,9 +132,9 @@ export default function ApprovalsPage() {
         <div className="border-b border-[var(--border-main)]">
           <nav className="-mb-px flex gap-6">
             {[
-              { key: 'pending', label: 'Pending', count: pendingRequests.length, color: 'amber' },
-              { key: 'approved', label: 'Approved', count: approvedRequests.length, color: 'green' },
-              { key: 'rejected', label: 'Rejected', count: rejectedRequests.length, color: 'red' },
+              { key: 'pending', label: 'Pending', count: pendingRequests.length },
+              { key: 'approved', label: 'Approved', count: approvedRequests.length },
+              { key: 'rejected', label: 'Rejected', count: rejectedRequests.length },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -142,10 +150,10 @@ export default function ApprovalsPage() {
                   <span
                     className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${
                       tab.key === 'pending'
-                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                        ? 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400'
                         : tab.key === 'approved'
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                          : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                          ? 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400'
+                          : 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
                     }`}
                   >
                     {tab.count}
@@ -176,7 +184,7 @@ export default function ApprovalsPage() {
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Request list */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               {displayedRequests.map((request) => (
                 <RequestCard
                   key={request.id}
@@ -234,7 +242,7 @@ export default function ApprovalsPage() {
                           <p className="text-xs text-[var(--text-muted)]">Requested</p>
                         </div>
                         <div>
-                          <p className="text-lg font-semibold text-red-600 dark:text-red-400">
+                          <p className="text-lg font-semibold text-danger-600 dark:text-danger-400">
                             {formatAllocationPercentage(selectedRequest.resultingAllocation)}
                           </p>
                           <p className="text-xs text-[var(--text-muted)]">Resulting Total</p>
@@ -261,10 +269,10 @@ export default function ApprovalsPage() {
 
                   {/* Actions */}
                   {selectedRequest.status === 'PENDING' && (
-                    <div className="flex gap-3">
+                    <div className="flex gap-4">
                       <Button
                         variant="outline"
-                        className="flex-1 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400"
+                        className="flex-1 border-danger-300 text-danger-700 hover:bg-danger-50 dark:border-danger-700 dark:text-danger-400"
                         onClick={() => setShowRejectModal(true)}
                       >
                         <XCircle className="mr-2 h-4 w-4" />
@@ -290,7 +298,7 @@ export default function ApprovalsPage() {
       {/* Approve Modal */}
       <Modal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} size="md">
         <ModalHeader onClose={() => setShowApproveModal(false)}>
-          <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+          <div className="flex items-center gap-2 text-success-600 dark:text-success-400">
             <CheckCircle className="h-5 w-5" />
             Approve Over-Allocation
           </div>
@@ -302,7 +310,7 @@ export default function ApprovalsPage() {
           </p>
           <p className="mt-2 text-sm text-[var(--text-muted)]">
             This will allow them to be allocated at{' '}
-            <strong className="text-red-600">
+            <strong className="text-danger-600">
               {selectedRequest && formatAllocationPercentage(selectedRequest.resultingAllocation)}
             </strong>{' '}
             total capacity.
@@ -315,7 +323,7 @@ export default function ApprovalsPage() {
               value={approveComment}
               onChange={(e) => setApproveComment(e.target.value)}
               placeholder="Add a comment for the requester..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
             />
           </div>
@@ -333,7 +341,7 @@ export default function ApprovalsPage() {
       {/* Reject Modal */}
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
         <ModalHeader onClose={() => setShowRejectModal(false)}>
-          <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
             <XCircle className="h-5 w-5" />
             Reject Over-Allocation
           </div>
@@ -345,13 +353,13 @@ export default function ApprovalsPage() {
           </p>
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span className="text-red-500">*</span>
+              Reason <span className="text-danger-500">*</span>
             </label>
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Explain why this request is being rejected..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
               required
             />
@@ -363,7 +371,7 @@ export default function ApprovalsPage() {
           </Button>
           <Button
             variant="primary"
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-danger-600 hover:bg-danger-700"
             onClick={handleReject}
             disabled={rejectMutation.isPending || !rejectReason.trim()}
           >
@@ -389,9 +397,9 @@ function RequestCard({
   onReject?: () => void;
 }) {
   const statusColors = {
-    PENDING: 'border-amber-200 dark:border-amber-800',
-    APPROVED: 'border-green-200 dark:border-green-800',
-    REJECTED: 'border-red-200 dark:border-red-800',
+    PENDING: 'border-warning-200 dark:border-warning-800',
+    APPROVED: 'border-success-200 dark:border-success-800',
+    REJECTED: 'border-danger-200 dark:border-danger-800',
   };
 
   return (
@@ -422,7 +430,7 @@ function RequestCard({
         <div className="mt-3 flex items-center justify-between text-sm">
           <span className="text-[var(--text-muted)]">
             +{formatAllocationPercentage(request.requestedAllocation)} → {' '}
-            <span className="font-medium text-red-600 dark:text-red-400">
+            <span className="font-medium text-danger-600 dark:text-danger-400">
               {formatAllocationPercentage(request.resultingAllocation)} total
             </span>
           </span>
@@ -433,7 +441,7 @@ function RequestCard({
 
         {request.status === 'PENDING' && onApprove && onReject && (
           <div className="mt-3 flex gap-2" onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="sm" className="flex-1 text-red-600" onClick={onReject}>
+            <Button variant="ghost" size="sm" className="flex-1 text-danger-600" onClick={onReject}>
               Reject
             </Button>
             <Button variant="primary" size="sm" className="flex-1" onClick={onApprove}>
@@ -448,9 +456,9 @@ function RequestCard({
 
 function StatusBadge({ status }: { status: AllocationApprovalRequest['status'] }) {
   const styles = {
-    PENDING: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-    REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    PENDING: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
+    APPROVED: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400',
+    REJECTED: 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
   };
 
   const icons = {

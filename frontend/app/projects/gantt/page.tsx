@@ -236,8 +236,8 @@ export default function GanttChartPage() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-              <Target className="h-5 w-5 text-blue-600" />
+            <div className="p-2 rounded-lg bg-info-50 dark:bg-info-900/30">
+              <Target className="h-5 w-5 text-info-600" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-muted)]">Total Tasks</p>
@@ -269,8 +269,8 @@ export default function GanttChartPage() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
-              <AlertCircle className="h-5 w-5 text-amber-600" />
+            <div className="p-2 rounded-lg bg-warning-50 dark:bg-warning-900/30">
+              <AlertCircle className="h-5 w-5 text-warning-600" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-muted)]">At Risk</p>
@@ -353,7 +353,7 @@ export default function GanttChartPage() {
                   <div
                     key={idx}
                     className={`flex-1 min-w-[80px] p-2 text-center text-sm border-r border-[var(--border-main)] ${
-                      col.isToday ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-[var(--bg-secondary)]'
+                      col.isToday ? 'bg-info-50 dark:bg-info-900/20' : 'bg-[var(--bg-secondary)]'
                     }`}
                   >
                     {col.label}

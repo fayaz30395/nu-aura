@@ -191,11 +191,11 @@ export default function ResourcesPage() {
 
         {/* Error State */}
         {error && !isApiNotAvailable && (
-          <Card className="border-red-200 dark:border-red-800">
+          <Card className="border-danger-200 dark:border-danger-800">
             <CardContent className="flex items-center gap-4 p-4">
-              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <AlertTriangle className="h-5 w-5 text-danger-600 dark:text-danger-400" />
               <div className="flex-1">
-                <p className="font-medium text-red-600 dark:text-red-400">Error Loading Data</p>
+                <p className="font-medium text-danger-600 dark:text-danger-400">Error Loading Data</p>
                 <p className="text-sm text-[var(--text-secondary)]">
                   {error instanceof Error ? error.message : 'Failed to load data'}
                 </p>
@@ -227,20 +227,20 @@ export default function ResourcesPage() {
               label="Avg Allocation"
               value={`${Math.round(summary.averageAllocation)}%`}
               icon={TrendingUp}
-              color="text-blue-600 dark:text-blue-400"
+              color="text-info-600 dark:text-info-400"
             />
             <QuickStatCard
               label="Over-Allocated"
               value={summary.overAllocatedCount}
               icon={AlertTriangle}
-              color="text-red-600 dark:text-red-400"
+              color="text-danger-600 dark:text-danger-400"
               highlight={summary.overAllocatedCount > 0}
             />
             <QuickStatCard
               label="Pending Approvals"
               value={summary.pendingApprovals}
               icon={Clock}
-              color="text-amber-600 dark:text-amber-400"
+              color="text-warning-600 dark:text-warning-400"
               highlight={summary.pendingApprovals > 0}
             />
           </div>
@@ -259,7 +259,7 @@ export default function ResourcesPage() {
                         <Icon className="h-6 w-6" />
                       </div>
                       {card.badge && (
-                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-danger-500 text-xs font-bold text-white">
                           {card.badge}
                         </span>
                       )}
@@ -335,9 +335,9 @@ export default function ResourcesPage() {
 
         {/* Alerts - Over-allocated employees */}
         {summary && summary.overAllocatedCount > 0 && (
-          <Card className="border-red-200 dark:border-red-800">
+          <Card className="border-danger-200 dark:border-danger-800">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <CardTitle className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
                 <AlertTriangle className="h-5 w-5" />
                 Attention Required
               </CardTitle>
@@ -376,7 +376,7 @@ function QuickStatCard({
   highlight?: boolean;
 }) {
   return (
-    <Card className={highlight ? 'border-red-200 dark:border-red-800' : ''}>
+    <Card className={highlight ? 'border-danger-200 dark:border-danger-800' : ''}>
       <CardContent className="flex items-center gap-3 p-4">
         <div className={`rounded-lg bg-[var(--bg-secondary)] p-2 dark:bg-[var(--bg-secondary)] ${color}`}>
           <Icon className="h-5 w-5" />

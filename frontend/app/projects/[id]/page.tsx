@@ -217,7 +217,7 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-white shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
           {loading && (
             <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching employees...</div>
           )}
@@ -530,10 +530,10 @@ export default function ProjectDetailPage() {
         </div>
 
         {projectError && (
-          <Card className="border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-950/20">
+          <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
             <CardContent className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-danger-500" />
-              <p className="text-sm text-danger-700 dark:text-danger-300">{projectError}</p>
+              <XCircle className="h-4 w-4 text-danger-700 dark:text-danger-400" />
+              <p className="text-sm text-danger-700 dark:text-danger-400">{projectError}</p>
             </CardContent>
           </Card>
         )}
@@ -631,13 +631,13 @@ export default function ProjectDetailPage() {
         <form onSubmit={handleSubmitAddMember(handleAddMemberSubmit)}>
           <ModalBody className="space-y-4">
             {addMemberError && (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 {addMemberError}
               </div>
             )}
 
             {!selectedEmployee && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+              <div className="rounded-lg border border-warning-200 bg-warning-50 px-4 py-3 text-sm text-warning-700">
                 Please select an employee
               </div>
             )}
@@ -658,7 +658,7 @@ export default function ProjectDetailPage() {
                     </option>
                   ))}
                 </Select>
-                {addMemberErrors.role && <p className="text-red-500 text-sm mt-1">{addMemberErrors.role.message}</p>}
+                {addMemberErrors.role && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.role.message}</p>}
               </div>
 
               <div>
@@ -670,18 +670,18 @@ export default function ProjectDetailPage() {
                   placeholder="e.g. 100"
                   {...registerAddMember('allocationPercentage')}
                 />
-                {addMemberErrors.allocationPercentage && <p className="text-red-500 text-sm mt-1">{addMemberErrors.allocationPercentage.message}</p>}
+                {addMemberErrors.allocationPercentage && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.allocationPercentage.message}</p>}
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start Date" type="date" {...registerAddMember('startDate')} />
-                {addMemberErrors.startDate && <p className="text-red-500 text-sm mt-1">{addMemberErrors.startDate.message}</p>}
+                {addMemberErrors.startDate && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="End Date (optional)" type="date" {...registerAddMember('endDate')} />
-                {addMemberErrors.endDate && <p className="text-red-500 text-sm mt-1">{addMemberErrors.endDate.message}</p>}
+                {addMemberErrors.endDate && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.endDate.message}</p>}
               </div>
             </div>
           </ModalBody>

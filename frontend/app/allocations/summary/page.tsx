@@ -263,7 +263,7 @@ export default function AllocationSummaryPage() {
               })}
             </div>
 
-            <div className="flex flex-wrap items-end gap-3">
+            <div className="flex flex-wrap items-end gap-4">
               <Input
                 type="date"
                 label="Start date"
