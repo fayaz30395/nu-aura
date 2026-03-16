@@ -215,6 +215,19 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
             "ORDER BY EXTRACT(MONTH FROM e.joining_date), EXTRACT(DAY FROM e.joining_date)", nativeQuery = true)
     List<Object[]> findUpcomingAnniversariesWithDepartment(@Param("tenantId") UUID tenantId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    /**
+     * Find employees where the given manager is assigned as dotted-line manager 1 or 2.
+     * Returns ACTIVE employees only for the current tenant.
+     */
+    @EntityGraph(attributePaths = {"user"})
+    @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId " +
+           "AND (e.dottedLineManager1Id = :managerId OR e.dottedLineManager2Id = :managerId) " +
+           "AND e.status = com.hrms.domain.employee.Employee.EmployeeStatus.ACTIVE " +
+           "ORDER BY e.firstName ASC, e.lastName ASC")
+    List<Employee> findDottedLineReportsByManagerId(
+            @Param("tenantId") UUID tenantId,
+            @Param("managerId") UUID managerId);
+
     // ==================== EXPLICIT FETCH QUERIES (REQUIRED FOR LAZY ASSOCIATIONS) ====================
 
     /**

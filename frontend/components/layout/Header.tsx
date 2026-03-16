@@ -24,7 +24,13 @@ import {
   Users as UsersIcon,
   CheckCircle,
 } from 'lucide-react';
-import { GlobalSearch } from './GlobalSearch';
+import dynamic from 'next/dynamic';
+
+// Lazy-load GlobalSearch — 589 lines of JS that's only needed when search opens
+const GlobalSearch = dynamic(() => import('./GlobalSearch').then(mod => ({ default: mod.GlobalSearch })), {
+  ssr: false,
+  loading: () => null,
+});
 import { cn } from '@/lib/utils';
 import AppSwitcher from '../platform/AppSwitcher';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -289,9 +295,16 @@ const Header: React.FC<HeaderProps> = ({
     setGoogleNotificationsLoading(false);
   }, []);
 
+  // Defer Google API calls — only load when notification panel is opened
+  // This prevents 3 sequential fetches (Gmail, Drive, Calendar) from blocking
+  // every route navigation.
+  const googleNotificationsLoadedRef = React.useRef(false);
   useEffect(() => {
-    loadGoogleNotifications();
-  }, [loadGoogleNotifications]);
+    if (isNotificationsOpen && !googleNotificationsLoadedRef.current) {
+      googleNotificationsLoadedRef.current = true;
+      loadGoogleNotifications();
+    }
+  }, [isNotificationsOpen, loadGoogleNotifications]);
 
   const formatRelativeTime = (date: Date) => {
     const now = new Date();

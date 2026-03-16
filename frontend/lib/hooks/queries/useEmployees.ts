@@ -18,6 +18,7 @@ export const employeeKeys = {
   subordinates: (id: string) => [...employeeKeys.all, 'subordinates', id] as const,
   // BUG-013 FIX: dedicated key for the manager-picker list
   managers: () => [...employeeKeys.all, 'managers'] as const,
+  dottedReports: (id: string) => [...employeeKeys.all, 'dotted-reports', id] as const,
 };
 
 // Get paginated list of employees
@@ -89,6 +90,16 @@ export function useSubordinates(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: employeeKeys.subordinates(id),
     queryFn: () => employeeService.getSubordinates(id),
+    enabled: enabled && !!id,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Get dotted-line reports for a manager
+export function useDottedLineReports(id: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: employeeKeys.dottedReports(id),
+    queryFn: () => employeeService.getDottedLineReports(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
   });

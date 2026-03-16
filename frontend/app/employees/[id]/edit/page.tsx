@@ -53,6 +53,8 @@ const updateEmployeeFormSchema = z.object({
   departmentId: z.string().optional().or(z.literal('')),
   employmentType: z.enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN', 'CONSULTANT']).optional(),
   managerId: z.string().optional().or(z.literal('')),
+  dottedLineManager1Id: z.string().optional().or(z.literal('')),
+  dottedLineManager2Id: z.string().optional().or(z.literal('')),
   status: z.enum(['ACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED']).optional(),
   confirmationDate: z.string().optional().or(z.literal('')),
   bankAccountNumber: z.string().optional().or(z.literal('')),
@@ -124,6 +126,8 @@ export default function EditEmployeePage() {
         employmentType: data.employmentType,
         confirmationDate: data.confirmationDate || '',
         managerId: data.managerId || '',
+        dottedLineManager1Id: data.dottedLineManager1Id || '',
+        dottedLineManager2Id: data.dottedLineManager2Id || '',
         status: data.status,
         bankAccountNumber: data.bankAccountNumber || '',
         bankName: data.bankName || '',
@@ -237,6 +241,9 @@ export default function EditEmployeePage() {
         bankName: formData.bankName || undefined,
         bankIfscCode: formData.bankIfscCode || undefined,
         taxId: formData.taxId || undefined,
+        // Dotted-line managers are informational only — always include them directly
+        dottedLineManager1Id: formData.dottedLineManager1Id || undefined,
+        dottedLineManager2Id: formData.dottedLineManager2Id || undefined,
         // Employment fields: only include if NO change request was created
         // (i.e., they haven't changed from original values)
         ...(employmentChanges ? {} : {
@@ -963,6 +970,57 @@ export default function EditEmployeePage() {
                     </p>
                   </div>
                 </div>
+
+                {/* Dotted-Line Managers (Optional, Matrix Reporting) */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      Dotted-Line Manager 1 <span className="text-[var(--text-muted)]">(Optional)</span>
+                    </label>
+                    <Controller
+                      name="dottedLineManager1Id"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                        >
+                          <option value="">None</option>
+                          {managers.filter(m => m.id !== employeeId).map((manager) => (
+                            <option key={manager.id} value={manager.id}>
+                              {manager.fullName} ({manager.employeeCode})
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      Dotted-Line Manager 2 <span className="text-[var(--text-muted)]">(Optional)</span>
+                    </label>
+                    <Controller
+                      name="dottedLineManager2Id"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                        >
+                          <option value="">None</option>
+                          {managers.filter(m => m.id !== employeeId).map((manager) => (
+                            <option key={manager.id} value={manager.id}>
+                              {manager.fullName} ({manager.employeeCode})
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-[var(--text-muted)]">
+                  Dotted-line managers represent matrix reporting relationships. They are informational only and do not participate in approval workflows.
+                </p>
               </div>
             )}
 

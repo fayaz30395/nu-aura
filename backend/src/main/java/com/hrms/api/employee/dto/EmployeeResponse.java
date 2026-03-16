@@ -46,6 +46,10 @@ public class EmployeeResponse {
     private Employee.JobRole jobRole;
     private UUID managerId;
     private String managerName;
+    private UUID dottedLineManager1Id;
+    private String dottedLineManager1Name;
+    private UUID dottedLineManager2Id;
+    private String dottedLineManager2Name;
     private UUID teamId;
     private Employee.EmploymentType employmentType;
     private Employee.EmployeeStatus status;
@@ -85,6 +89,8 @@ public class EmployeeResponse {
                 .level(employee.getLevel())
                 .jobRole(employee.getJobRole())
                 .managerId(employee.getManagerId())
+                .dottedLineManager1Id(employee.getDottedLineManager1Id())
+                .dottedLineManager2Id(employee.getDottedLineManager2Id())
                 .teamId(employee.getTeamId())
                 .employmentType(employee.getEmploymentType())
                 .status(employee.getStatus())

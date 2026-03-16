@@ -376,24 +376,15 @@ const SectionDivider: React.FC<{
   }
 
   return (
-    <motion.button
+    <button
       onClick={() => onToggleSection(sectionId)}
-      className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200"
-      style={{ ['--tw-hover-bg' as string]: 'var(--sidebar-hover-bg)' }}
-      whileHover={{ x: 2 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+      className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
     >
       <span
-        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200 relative"
+        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
         style={{ color: 'var(--sidebar-section-text)' }}
       >
         {label}
-        <motion.div
-          className="absolute -left-3 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary-500 rounded-full"
-          initial={{ opacity: 0, scaleY: 0 }}
-          whileHover={{ opacity: 1, scaleY: 1 }}
-          transition={{ duration: 0.2 }}
-        />
       </span>
       <ChevronDown
         className={cn(
@@ -402,7 +393,7 @@ const SectionDivider: React.FC<{
         )}
         style={{ color: 'var(--sidebar-text-muted)' }}
       />
-    </motion.button>
+    </button>
   );
 };
 

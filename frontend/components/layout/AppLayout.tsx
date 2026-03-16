@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
-import { motion } from 'framer-motion';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
 import { cn } from '@/lib/utils';
@@ -148,7 +147,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   // SuperAdmin users see every item; other users only see items whose
   // requiredPermission they possess. Items without a requiredPermission
   // are always visible (e.g. Home).
-  const filterSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
+  // Wrapped in useCallback to keep referential stability for the useMemo below.
+  const filterSidebarItems = useCallback((items: SidebarItem[]): SidebarItem[] => {
     if (!isReady) {
       // During hydration, show the raw menu to avoid flicker
       return items;
@@ -186,10 +186,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     return items
       .map((item) => filterItem(item))
       .filter((item): item is SidebarItem => item !== null);
-  };
+  }, [isReady, isSuperAdmin, permissions, user, hasPermission]);
 
   // Filter sections by active app, then by RBAC permissions, then drop empty sections.
-  // Dependencies use the referentially-stable arrays from usePermissions (backed by useMemo).
   const allowedSectionIds = APP_SIDEBAR_SECTIONS[appCode] || APP_SIDEBAR_SECTIONS.HRMS;
   const filteredSections: SidebarSection[] = useMemo(() => {
     return menuSections
@@ -200,8 +199,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         items: filterSidebarItems(section.items),
       }))
       .filter((section) => section.items.length > 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [permissions, roles, isReady, !!user, appCode, menuSections]);
+  }, [menuSections, allowedSectionIds, filterSidebarItems]);
 
   // Flatten sections to items for backward compatibility (memoized)
   const menuItems: SidebarItem[] = useMemo(() =>
@@ -328,12 +326,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         >
           <AuthGuard>
             <ErrorBoundary>
-              <motion.div
-                key={appCode}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.15, ease: 'easeOut' }}
+              {/* Removed key={appCode} — it forced React to unmount/remount the entire
+                  content tree on every app switch, defeating reconciliation and causing
+                  a visible lag. The sidebar already updates per-app; content should
+                  transition smoothly via React's normal diffing. */}
+              <div
                 className={cn(
                   'p-4 sm:p-6 lg:p-8',
                   // Bottom padding: mobile needs space for fixed bottom nav
@@ -341,7 +338,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                 )}
               >
                 {children}
-              </motion.div>
+              </div>
             </ErrorBoundary>
           </AuthGuard>
         </main>

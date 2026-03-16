@@ -124,6 +124,10 @@ export interface Employee {
   designation?: string;
   managerId?: string;
   managerName?: string;
+  dottedLineManager1Id?: string;
+  dottedLineManager1Name?: string;
+  dottedLineManager2Id?: string;
+  dottedLineManager2Name?: string;
   employmentType: EmploymentType;
   status: EmployeeStatus;
   bankAccountNumber?: string;
@@ -159,6 +163,8 @@ export interface CreateEmployeeRequest {
   departmentId?: string;
   designation?: string;
   managerId?: string;
+  dottedLineManager1Id?: string;
+  dottedLineManager2Id?: string;
   selfManaged?: boolean;
   employmentType: EmploymentType;
   status: EmployeeStatus;
@@ -189,6 +195,8 @@ export interface UpdateEmployeeRequest {
   departmentId?: string;
   designation?: string;
   managerId?: string;
+  dottedLineManager1Id?: string;
+  dottedLineManager2Id?: string;
   employmentType?: EmploymentType;
   status?: EmployeeStatus;
   bankAccountNumber?: string;
