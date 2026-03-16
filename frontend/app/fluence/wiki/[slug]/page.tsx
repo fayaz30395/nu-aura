@@ -288,7 +288,7 @@ export default function WikiPageDetailPage() {
                 <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4 leading-tight">{page.title}</h1>
                 <div className="flex flex-wrap items-center gap-6 mb-6">
                   {/* Author */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[var(--primary-400)] to-[var(--primary-600)] flex items-center justify-center text-sm font-semibold text-white">
                       {(page.authorName || 'A').charAt(0).toUpperCase()}
                     </div>
@@ -441,7 +441,7 @@ export default function WikiPageDetailPage() {
                     whileTap={{ scale: 0.98 }}
                     onClick={handleToggleLike}
                     disabled={likeMutation.isPending || unlikeMutation.isPending}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-[var(--text-primary)]"
                   >
                     <Heart
                       className={`${iconSize.cardInline} flex-shrink-0 ${isLiked ? 'fill-[var(--status-danger-text)] text-[var(--status-danger-text)]' : ''}`}
@@ -456,7 +456,7 @@ export default function WikiPageDetailPage() {
                     whileTap={{ scale: 0.98 }}
                     onClick={handleToggleFavorite}
                     disabled={addFavorite.isPending || removeFavorite.isPending}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-[var(--text-primary)]"
                   >
                     <Star
                       className={`${iconSize.cardInline} flex-shrink-0 ${isFavorited ? 'fill-[var(--status-warning-text)] text-[var(--status-warning-text)]' : ''}`}
@@ -471,7 +471,7 @@ export default function WikiPageDetailPage() {
                       const el = document.getElementById('comment-input');
                       el?.focus();
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
                   >
                     <MessageCircle className={`${iconSize.cardInline} flex-shrink-0`} />
                     <span>Comment</span>
@@ -481,7 +481,7 @@ export default function WikiPageDetailPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleCopyLink}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
                   >
                     <Share2 className={`${iconSize.cardInline} flex-shrink-0`} />
                     <span>Share Link</span>
@@ -491,7 +491,7 @@ export default function WikiPageDetailPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setShowHistory(true)}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
                   >
                     <History className={`${iconSize.cardInline} flex-shrink-0`} />
                     <span>Version History</span>
@@ -500,7 +500,7 @@ export default function WikiPageDetailPage() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
                   >
                     <Archive className={`${iconSize.cardInline} flex-shrink-0`} />
                     <span>Archive</span>

@@ -84,6 +84,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Check if the request path is a WebSocket/SockJS transport path.
+     * <p>SockJS transports (xhr_streaming, xhr_send, eventsource, etc.) use
+     * Content-Type: application/javascript which has no compatible message converter.
+     * These requests must be excluded from normal error response serialization.</p>
+     */
+    private boolean isWebSocketTransport(String path) {
+        return path != null && (path.startsWith("/ws/") || path.equals("/ws"));
+    }
+
+    /**
      * Log error with structured context.
      */
     private void logError(String category, String type, Exception ex, HttpStatus status, String path) {
@@ -313,6 +323,15 @@ public class GlobalExceptionHandler {
 
         String path = request.getDescription(false).replace("uri=", "");
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        // WebSocket/SockJS transports use Content-Type: application/javascript.
+        // Returning a JSON ErrorResponse body causes HttpMessageNotWritableException
+        // because there is no converter for application/javascript. Return an
+        // empty-body response to avoid the cascading serialization failure.
+        if (isWebSocketTransport(path)) {
+            log.debug("WebSocket transport error on path={}: {}", path, ex.getMessage());
+            return ResponseEntity.status(status).build();
+        }
 
         logError("server", "unexpected_error", ex, status, path);
         recordErrorMetric("server", "unexpected_error", status);

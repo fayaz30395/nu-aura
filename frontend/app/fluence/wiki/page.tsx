@@ -80,7 +80,7 @@ export default function WikiPage() {
           {/* Page Header */}
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-4 mb-2">
                 <div className="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 p-2">
                   <BookOpen className={`${iconSize.pageHeader} text-white`} />
                 </div>
@@ -243,7 +243,7 @@ export default function WikiPage() {
                         >
                           {/* Card Header: Title + Visibility */}
                           <div className="mb-4">
-                            <div className="flex items-start justify-between gap-3 mb-3">
+                            <div className="flex items-start justify-between gap-4 mb-4">
                               <h3 className={`${typography.cardTitle} line-clamp-2 flex-1`}>
                                 {page.title}
                               </h3>
@@ -254,7 +254,7 @@ export default function WikiPage() {
                           </div>
 
                           {/* Card Body: Metadata */}
-                          <div className="space-y-3 mb-4 flex-1">
+                          <div className="space-y-2 mb-4 flex-1">
                             {/* Updated Date */}
                             <div className="flex items-center gap-2">
                               <Clock

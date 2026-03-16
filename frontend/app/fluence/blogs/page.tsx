@@ -96,7 +96,7 @@ export default function BlogsPage() {
         {/* Page Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-4 mb-2">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-orange-600 flex items-center justify-center shadow-lg">
                 <Pen className="w-6 h-6 text-white" />
               </div>
@@ -285,9 +285,9 @@ export default function BlogsPage() {
                       {/* Content Section */}
                       <div className="p-8 md:p-10 flex flex-col justify-between">
                         <div>
-                          <div className="flex items-center gap-3 mb-4">
+                          <div className="flex items-center gap-4 mb-4">
                             <motion.div
-                              className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30"
+                              className="px-4 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30"
                               whileHover={{ scale: 1.05 }}
                             >
                               <span className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wide">
@@ -312,7 +312,7 @@ export default function BlogsPage() {
                         <div className="space-y-4 pt-4 border-t border-[var(--border-main)]">
                           {/* Author and Date */}
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
                                 {getAuthorInitial(featuredPost)}
                               </div>
@@ -472,7 +472,7 @@ export default function BlogsPage() {
                           )}
 
                           {/* Footer */}
-                          <div className="space-y-3 pt-3 border-t border-[var(--border-main)]">
+                          <div className="space-y-4 pt-4 border-t border-[var(--border-main)]">
                             {/* Author */}
                             <div className="flex items-center gap-2.5">
                               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-xs">
