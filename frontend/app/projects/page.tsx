@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Download, Loader2, Plus, Search, X, Edit2, MoreHorizontal, Eye } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -443,6 +444,7 @@ function MultiOwnerTypeahead({
 }
 
 export default function ProjectsPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const toast = useToast();
   const [currentPage, setCurrentPage] = useState(0);
@@ -705,7 +707,13 @@ export default function ProjectsPage() {
       header: 'Project',
       accessor: (project: HrmsProject) => (
         <div className="space-y-1">
-          <div className="font-semibold text-[var(--text-primary)]">{project.name}</div>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); router.push(`/projects/${project.id}`); }}
+            className="font-semibold text-[var(--text-primary)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-left"
+          >
+            {project.name}
+          </button>
           <div className="text-xs text-[var(--text-muted)]">
             {project.projectCode}
             {project.clientName ? ` • ${project.clientName}` : ''}
@@ -804,6 +812,14 @@ export default function ProjectsPage() {
       header: '',
       accessor: (project: HrmsProject) => (
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); router.push(`/projects/${project.id}`); }}
+            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+            aria-label={`View ${project.name}`}
+          >
+            <Eye className="h-4 w-4" />
+          </button>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); handleOpenEdit(project); }}
