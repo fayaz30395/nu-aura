@@ -239,6 +239,17 @@ class AttendanceService {
     return response.data;
   }
 
+  async rejectRegularization(id: string, reason: string): Promise<AttendanceRecord> {
+    const response = await apiClient.post<AttendanceRecord>(
+      `/attendance/${id}/reject-regularization`,
+      null,
+      {
+        params: { reason },
+      }
+    );
+    return response.data;
+  }
+
   // Time Entry History (Self-Service)
   async getMyTimeEntries(date: string): Promise<TimeEntry[]> {
     const response = await apiClient.get<TimeEntry[]>(

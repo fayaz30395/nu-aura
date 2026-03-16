@@ -285,6 +285,50 @@ export function useApproveRegularization() {
   });
 }
 
+// Reject regularization with optimistic update
+export function useRejectRegularization() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      attendanceService.rejectRegularization(id, reason),
+    onMutate: async ({ id }) => {
+      await queryClient.cancelQueries({
+        queryKey: attendanceKeys.pendingRegularizations(0, 20),
+      });
+
+      const previousData = queryClient.getQueryData<Page<AttendanceRecord>>(
+        attendanceKeys.pendingRegularizations(0, 20)
+      );
+
+      if (previousData) {
+        queryClient.setQueryData(
+          attendanceKeys.pendingRegularizations(0, 20),
+          {
+            ...previousData,
+            content: previousData.content.filter((record) => record.id !== id),
+            totalElements: previousData.totalElements - 1,
+          }
+        );
+      }
+
+      return { previousData };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          attendanceKeys.pendingRegularizations(0, 20),
+          context.previousData
+        );
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: attendanceKeys.records() });
+      queryClient.invalidateQueries({ queryKey: attendanceKeys.pendingRegularizations(0, 20) });
+    },
+  });
+}
+
 // ========== Shift Mutations ==========
 
 export function useCreateShift() {
