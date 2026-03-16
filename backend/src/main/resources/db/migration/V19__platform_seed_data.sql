@@ -23,9 +23,9 @@ INSERT INTO users (id, tenant_id, email, first_name, last_name, password_hash, s
 VALUES (
     '550e8400-e29b-41d4-a716-446655440030',
     '660e8400-e29b-41d4-a716-446655440001',
-    'fayaz.m@nulogic.io',
-    'Fayaz',
-    'M',
+    'sarankarthick.maran@nulogic.io',
+    'Sarankarthick',
+    'Maran',
     '',
     'ACTIVE',
     0,
