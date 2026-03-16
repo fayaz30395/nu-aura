@@ -26,6 +26,7 @@ import {
   DepartmentWorkload,
   WorkloadHeatmapRow,
 } from '@/lib/types/resource-management';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 interface PageResponse<T> {
   content: T[];
@@ -235,12 +236,17 @@ export const useCreateAllocationRequest = (): UseMutationResult<
   CreateAllocationApprovalRequest
 > => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: (data) => resourceManagementService.createAllocationRequest(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: resourceKeys.allocationRequests() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.myPendingApprovals() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.pendingApprovalsCount() });
+      toast.success('Request Created', 'Allocation request has been submitted for approval');
+    },
+    onError: (error: Error) => {
+      toast.error('Request Failed', error.message || 'Failed to create allocation request');
     },
   });
 };
@@ -251,6 +257,7 @@ export const useApproveAllocationRequest = (): UseMutationResult<
   { requestId: string; data?: ApproveAllocationRequest }
 > => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: ({ requestId, data }) =>
       resourceManagementService.approveAllocationRequest(requestId, data),
@@ -260,6 +267,10 @@ export const useApproveAllocationRequest = (): UseMutationResult<
       queryClient.invalidateQueries({ queryKey: resourceKeys.pendingApprovalsCount() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.capacity() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.workload() });
+      toast.success('Request Approved', 'Allocation request has been approved');
+    },
+    onError: (error: Error) => {
+      toast.error('Approval Failed', error.message || 'Failed to approve allocation request');
     },
   });
 };
@@ -270,6 +281,7 @@ export const useRejectAllocationRequest = (): UseMutationResult<
   { requestId: string; data: RejectAllocationRequest }
 > => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: ({ requestId, data }) =>
       resourceManagementService.rejectAllocationRequest(requestId, data),
@@ -277,6 +289,10 @@ export const useRejectAllocationRequest = (): UseMutationResult<
       queryClient.invalidateQueries({ queryKey: resourceKeys.allocationRequests() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.myPendingApprovals() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.pendingApprovalsCount() });
+      toast.info('Request Rejected', 'Allocation request has been rejected');
+    },
+    onError: (error: Error) => {
+      toast.error('Rejection Failed', error.message || 'Failed to reject allocation request');
     },
   });
 };
@@ -287,12 +303,17 @@ export const useUpdateAllocation = (): UseMutationResult<
   UpdateAllocationRequest
 > => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: (data) => resourceManagementService.updateAllocation(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: resourceKeys.capacity() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.workload() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.allocationRequests() });
+      toast.success('Allocation Updated', 'Resource allocation has been updated');
+    },
+    onError: (error: Error) => {
+      toast.error('Update Failed', error.message || 'Failed to update allocation');
     },
   });
 };
@@ -428,9 +449,16 @@ export const useExportWorkloadReport = (): UseMutationResult<
   Error,
   { format: 'csv' | 'excel' | 'pdf'; filters?: WorkloadFilterOptions }
 > => {
+  const toast = useToast();
   return useMutation({
     mutationFn: ({ format, filters }) =>
       resourceManagementService.exportWorkloadReport(format, filters),
+    onSuccess: () => {
+      toast.success('Export Complete', 'Workload report has been exported');
+    },
+    onError: (error: Error) => {
+      toast.error('Export Failed', error.message || 'Failed to export workload report');
+    },
   });
 };
 
@@ -508,6 +536,7 @@ export const useReallocateResource = (): UseMutationResult<
   { allocationId: string; data: { allocationPercentage?: number; role?: string; startDate?: string; endDate?: string } }
 > => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   return useMutation({
     mutationFn: ({ allocationId, data }) =>
       resourceManagementService.reallocate(allocationId, data),
@@ -515,6 +544,10 @@ export const useReallocateResource = (): UseMutationResult<
       queryClient.invalidateQueries({ queryKey: resourceKeys.pool() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.capacity() });
       queryClient.invalidateQueries({ queryKey: resourceKeys.workload() });
+      toast.success('Resource Reallocated', 'Resource has been reallocated successfully');
+    },
+    onError: (error: Error) => {
+      toast.error('Reallocation Failed', error.message || 'Failed to reallocate resource');
     },
   });
 };

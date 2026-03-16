@@ -31,7 +31,7 @@ class TravelService {
     size: number = 20,
     filters?: TravelRequestFilters
   ): Promise<Page<TravelRequest>> {
-    const params: any = { page, size };
+    const params: Record<string, string | number | boolean | undefined> = { page, size };
 
     if (filters) {
       if (filters.status) params.status = filters.status;
@@ -215,8 +215,8 @@ class TravelService {
   }
 
   // Helper Methods
-  async getTravelSummary(employeeId: string, year?: number): Promise<any> {
-    const params: any = {};
+  async getTravelSummary(employeeId: string, year?: number): Promise<unknown> {
+    const params: Record<string, number> = {};
     if (year) params.year = year;
 
     const response = await apiClient.get(

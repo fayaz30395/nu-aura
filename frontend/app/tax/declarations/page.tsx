@@ -104,7 +104,7 @@ export default function TaxDeclarationsPage() {
         }
     };
 
-    const declarations = data?.content ?? [];
+    const declarations = data ?? [];
 
     const statusColor = (status: DeclarationStatus) => {
         switch (status) {

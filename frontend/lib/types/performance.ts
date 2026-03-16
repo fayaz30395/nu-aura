@@ -707,7 +707,7 @@ export interface CreatePIPRequest {
   managerId: string;
   startDate: string;
   endDate: string;
-  reason?: string;
+  reason: string;
   goals?: string;
   checkInFrequency?: PIPCheckInFrequency;
 }
@@ -720,6 +720,6 @@ export interface PIPCheckInRequest {
 }
 
 export interface ClosePIPRequest {
-  finalStatus: 'COMPLETED' | 'EXTENDED' | 'TERMINATED';
-  notes?: string;
+  closeNotes: string;
+  status: 'COMPLETED' | 'TERMINATED';
 }

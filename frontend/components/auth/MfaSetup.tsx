@@ -39,9 +39,10 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         setQrCodeUrl(data.qrCodeUrl);
         setSecret(data.secret);
         setStep('scan');
-      } catch (err: any) {
+      } catch (err: unknown) {
         logger.error('Failed to load MFA setup:', err);
-        setError(err.response?.data?.message || 'Failed to load MFA setup. Please try again.');
+        const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+        setError(message || 'Failed to load MFA setup. Please try again.');
         setStep('scan');
       }
     };
@@ -68,9 +69,10 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
       const result = await mfaApi.verify(verificationCode);
       setBackupCodes(result.backupCodes);
       setStep('backup');
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error('Failed to verify MFA code:', err);
-      setError(err.response?.data?.message || 'Invalid code. Please try again.');
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      setError(message || 'Invalid code. Please try again.');
       setVerificationCode('');
     } finally {
       setIsVerifying(false);

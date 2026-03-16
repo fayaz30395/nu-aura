@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -29,6 +29,7 @@ import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { layout, typography, card, motion as dsMotion, iconSize, status } from '@/lib/design-system';
 import {
   useBlogPost,
   useComments,
@@ -49,6 +50,43 @@ const ContentViewer = dynamic(
   { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
 );
 
+interface BlogPost {
+  id: string;
+  title: string;
+  content: string;
+  excerpt?: string;
+  authorName?: string;
+  authorId: string;
+  publishedAt?: string;
+  updatedAt: string;
+  coverImageUrl?: string;
+  categoryName?: string;
+  viewCount?: number;
+  likeCount?: number;
+  commentCount?: number;
+  isLikedByCurrentUser?: boolean;
+  isFavoritedByCurrentUser?: boolean;
+  canEdit?: boolean;
+  visibility?: string;
+  departmentName?: string;
+  editorIds?: string[];
+  tags?: string[];
+}
+
+interface Comment {
+  id: string;
+  authorName?: string;
+  authorId: string;
+  body: string;
+  createdAt: string;
+}
+
+interface Viewer {
+  id: string;
+  viewerName?: string;
+  viewedAt: string;
+}
+
 export default function BlogPostDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -56,6 +94,8 @@ export default function BlogPostDetailPage() {
   const { user } = useAuth();
   const [commentText, setCommentText] = useState('');
   const [showViewers, setShowViewers] = useState(false);
+  const [readingProgress, setReadingProgress] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const { data: post, isLoading } = useBlogPost(postId, !!postId);
   const { data: commentsData } = useComments(postId, 'BLOG', 0, 50, !!postId && !!post);
@@ -79,6 +119,20 @@ export default function BlogPostDetailPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId, post?.id]);
+
+  // Reading progress tracking
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!contentRef.current) return;
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const totalScrollHeight = scrollHeight - clientHeight;
+      const progress = totalScrollHeight > 0 ? (scrollTop / totalScrollHeight) * 100 : 0;
+      setReadingProgress(Math.min(progress, 100));
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleToggleLike = useCallback(() => {
     if (!post) return;
@@ -133,7 +187,7 @@ export default function BlogPostDetailPage() {
     }
   }, []);
 
-  const comments = commentsData?.content || [];
+  const comments: Comment[] = commentsData?.content || [];
   const canEdit = post?.canEdit || post?.authorId === user?.id || post?.editorIds?.includes(user?.id || '');
 
   if (isLoading) {
@@ -149,7 +203,12 @@ export default function BlogPostDetailPage() {
   if (!post) {
     return (
       <AppLayout>
-        <div className="text-center py-16">
+        <motion.div
+          initial={dsMotion.pageEnter.initial}
+          animate={dsMotion.pageEnter.animate}
+          transition={dsMotion.pageEnter.transition}
+          className="text-center py-16"
+        >
           <Pen className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
           <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
             Post not found
@@ -159,316 +218,458 @@ export default function BlogPostDetailPage() {
           </p>
           <Button
             onClick={() => router.back()}
-            className="gap-2 bg-amber-600 hover:bg-amber-700"
+            className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)]"
           >
             <ArrowLeft className="w-4 h-4" />
             Go Back
           </Button>
-        </div>
+        </motion.div>
       </AppLayout>
     );
   }
 
+  const getInitial = (name?: string): string => {
+    return (name || 'A').charAt(0).toUpperCase();
+  };
+
+  const getAvatarColor = (initial: string): string => {
+    const colors = [
+      'bg-blue-100 dark:bg-blue-900/30 text-blue-700',
+      'bg-purple-100 dark:bg-purple-900/30 text-purple-700',
+      'bg-pink-100 dark:bg-pink-900/30 text-pink-700',
+      'bg-green-100 dark:bg-green-900/30 text-green-700',
+      'bg-orange-100 dark:bg-orange-900/30 text-orange-700',
+    ];
+    const index = initial.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
+
   return (
     <AppLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-start gap-4 justify-between">
-          <button
-            onClick={() => router.back()}
-            className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </button>
-          <div className="flex gap-2">
-            {canEdit && (
-              <Button
-                variant="secondary"
-                className="gap-2"
-                onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
-              >
-                <Edit className="w-4 h-4" />
-                Edit
-              </Button>
-            )}
-            <Button variant="secondary" className="gap-2" onClick={handleCopyLink}>
-              <Share className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
+      {/* Reading Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--primary-500)] to-[var(--primary-700)] origin-left z-50"
+        style={{ scaleX: readingProgress / 100 }}
+      />
 
-        {/* Featured Image */}
+      <div className="space-y-6">
+        {/* Back Button */}
+        <motion.button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-2 text-[var(--primary-600)] dark:text-[var(--primary-400)] hover:text-[var(--primary-700)] dark:hover:text-[var(--primary-300)] transition-colors group"
+          whileHover={{ x: -4 }}
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          Back
+        </motion.button>
+
+        {/* Hero Cover Image */}
         {post.coverImageUrl && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg overflow-hidden h-96 bg-gradient-to-br from-amber-300 to-orange-400"
+            initial={dsMotion.pageEnter.initial}
+            animate={dsMotion.pageEnter.animate}
+            transition={dsMotion.pageEnter.transition}
+            className="relative rounded-xl overflow-hidden h-96 bg-gradient-to-br from-[var(--primary-300)] to-[var(--primary-500)] group cursor-pointer"
           >
-            <img
+            <motion.img
               src={post.coverImageUrl}
               alt={post.title}
               className="w-full h-full object-cover"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
           </motion.div>
         )}
 
-        {/* Title and Meta */}
+        {/* Article Header */}
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={dsMotion.pageEnter.initial}
+          animate={dsMotion.pageEnter.animate}
+          transition={dsMotion.pageEnter.transition}
+          className="space-y-4"
         >
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
-            {post.title}
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-4 leading-tight">
+                {post.title}
+              </h1>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              {post.authorName || 'Unknown Author'}
+              {/* Meta Information */}
+              <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
+                {/* Author */}
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold ${getAvatarColor(getInitial(post.authorName))}`}>
+                    {getInitial(post.authorName)}
+                  </div>
+                  <span className="font-medium text-[var(--text-primary)]">
+                    {post.authorName || 'Unknown Author'}
+                  </span>
+                </div>
+
+                {/* Published Date */}
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 flex-shrink-0" />
+                  <time dateTime={post.publishedAt || post.updatedAt}>
+                    {new Date(post.publishedAt || post.updatedAt).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </time>
+                </div>
+
+                {/* Category Badge */}
+                {post.categoryName && (
+                  <motion.span
+                    whileHover={{ scale: 1.05 }}
+                    className="inline-flex items-center gap-1 bg-[var(--primary-100)] dark:bg-[var(--primary-900)]/30 text-[var(--primary-700)] dark:text-[var(--primary-300)] px-3 py-1 rounded-full text-xs font-medium"
+                  >
+                    {post.categoryName}
+                  </motion.span>
+                )}
+
+                {/* Views */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() => setShowViewers(true)}
+                  className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-600)] transition-colors cursor-pointer"
+                >
+                  <Eye className="w-4 h-4 flex-shrink-0" />
+                  <span>{post.viewCount || 0} views</span>
+                </motion.button>
+              </div>
+
+              {/* Excerpt */}
+              {post.excerpt && (
+                <p className="text-lg text-[var(--text-secondary)] mt-4 italic leading-relaxed">
+                  {post.excerpt}
+                </p>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 flex-shrink-0">
+              {canEdit && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
+                  className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--primary-600)] dark:text-[var(--primary-300)] transition-colors"
+                  title="Edit post"
+                >
+                  <Edit className="w-5 h-5" />
+                </motion.button>
+              )}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCopyLink}
+                className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--primary-600)] dark:text-[var(--primary-300)] transition-colors"
+                title="Copy link"
+              >
+                <Share className="w-5 h-5" />
+              </motion.button>
             </div>
-            <button
-              className="flex items-center gap-2 hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-              onClick={() => setShowViewers(true)}
-            >
-              <Eye className="w-4 h-4" />
-              {post.viewCount || 0} views
-            </button>
-            {post.categoryName && (
-              <span className="text-xs bg-[var(--bg-secondary)] px-2 py-1 rounded-full">
-                {post.categoryName}
-              </span>
-            )}
           </div>
-
-          {/* Excerpt */}
-          <p className="text-lg text-[var(--text-secondary)] mt-4 italic">
-            {post.excerpt}
-          </p>
         </motion.div>
 
+        {/* Main Content Grid */}
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.25, ease: 'easeOut' }}
+          initial={dsMotion.pageEnter.initial}
+          animate={dsMotion.pageEnter.animate}
+          transition={{ ...dsMotion.pageEnter.transition, delay: 0.1 }}
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          ref={contentRef}
         >
           {/* Main Content */}
-          <Card className="lg:col-span-2">
-            <CardContent className="pt-6">
+          <motion.div
+            variants={dsMotion.staggerItem}
+            className="lg:col-span-2"
+          >
+            <motion.div
+              className={`${card.base} p-8 rounded-xl`}
+              whileHover={dsMotion.cardHover}
+            >
               <ContentViewer content={post.content} />
-            </CardContent>
-          </Card>
+            </motion.div>
+          </motion.div>
 
           {/* Sidebar */}
-          <div className="space-y-4">
-            {/* Stats Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Post Stats</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Views</span>
-                  <span className="font-semibold">{post.viewCount || 0}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Likes</span>
-                  <span className="font-semibold">{post.likeCount || 0}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Comments</span>
-                  <span className="font-semibold">{post.commentCount || comments.length}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button
-                  variant="secondary"
-                  className="w-full gap-2 justify-start"
+          <motion.div
+            className="space-y-4"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.06 } },
+            }}
+          >
+            {/* Action Bar */}
+            <motion.div
+              variants={dsMotion.staggerItem}
+              className={`${card.base} rounded-xl p-4 space-y-2 sticky top-24`}
+            >
+              <div className="grid grid-cols-2 gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleToggleLike}
                   disabled={likeMutation.isPending || unlikeMutation.isPending}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg transition-all ${
+                    isLiked
+                      ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300'
+                      : 'bg-[var(--bg-secondary)] hover:bg-red-100 dark:hover:bg-red-900/30 text-[var(--text-secondary)] hover:text-red-600 dark:hover:text-red-300'
+                  }`}
+                  title={isLiked ? 'Unlike' : 'Like'}
                 >
-                  <Heart
-                    className={`w-4 h-4 ${isLiked ? 'fill-red-600 text-red-600' : ''}`}
-                  />
-                  {isLiked ? 'Unlike' : 'Like'} ({post.likeCount || 0})
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-full gap-2 justify-start"
+                  <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+                  <span className="text-xs font-medium">{post.likeCount || 0}</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleToggleFavorite}
                   disabled={addFavorite.isPending || removeFavorite.isPending}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg transition-all ${
+                    isFavorited
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300'
+                      : 'bg-[var(--bg-secondary)] hover:bg-amber-100 dark:hover:bg-amber-900/30 text-[var(--text-secondary)] hover:text-amber-600 dark:hover:text-amber-300'
+                  }`}
+                  title={isFavorited ? 'Remove favorite' : 'Add to favorites'}
                 >
-                  <Star
-                    className={`w-4 h-4 ${isFavorited ? 'fill-amber-500 text-amber-500' : ''}`}
-                  />
-                  {isFavorited ? 'Remove Favorite' : 'Add to Favorites'}
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-full gap-2 justify-start"
+                  <Star className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     const el = document.getElementById('comment-input');
                     el?.focus();
                   }}
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--text-secondary)] hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-300)] transition-all"
+                  title="Comment"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  Comment
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-full gap-2 justify-start"
+                  <span className="text-xs font-medium">{comments.length}</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleCopyLink}
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--text-secondary)] hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-300)] transition-all"
+                  title="Share"
                 >
                   <Share className="w-4 h-4" />
-                  Share Link
-                </Button>
-              </CardContent>
-            </Card>
+                </motion.button>
+              </div>
+            </motion.div>
 
-            {/* Access Control Info */}
+            {/* Stats Card */}
+            <motion.div
+              variants={dsMotion.staggerItem}
+              className={`${card.base} rounded-xl p-4`}
+              whileHover={dsMotion.cardHover}
+            >
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Stats</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+                    <Eye className="w-4 h-4 flex-shrink-0" />
+                    Views
+                  </div>
+                  <span className="font-semibold text-[var(--text-primary)]">{post.viewCount || 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+                    <Heart className="w-4 h-4 flex-shrink-0" />
+                    Likes
+                  </div>
+                  <span className="font-semibold text-[var(--text-primary)]">{post.likeCount || 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+                    <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                    Comments
+                  </div>
+                  <span className="font-semibold text-[var(--text-primary)]">{post.commentCount || comments.length}</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Visibility Card */}
             {post.visibility && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Visibility</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
+              <motion.div
+                variants={dsMotion.staggerItem}
+                className={`${card.base} rounded-xl p-4`}
+                whileHover={dsMotion.cardHover}
+              >
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Visibility</h3>
+                <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     {post.visibility === 'PUBLIC' || post.visibility === 'ORGANIZATION' ? (
-                      <Globe className="w-4 h-4 text-green-600" />
+                      <Globe className="w-4 h-4 flex-shrink-0 text-green-600" />
                     ) : post.visibility === 'DEPARTMENT' ? (
-                      <Building2 className="w-4 h-4 text-blue-600" />
+                      <Building2 className="w-4 h-4 flex-shrink-0 text-blue-600" />
                     ) : (
-                      <Lock className="w-4 h-4 text-amber-600" />
+                      <Lock className="w-4 h-4 flex-shrink-0 text-amber-600" />
                     )}
-                    <span className="text-[var(--text-secondary)] capitalize">
+                    <span className="text-[var(--text-secondary)] capitalize font-medium">
                       {post.visibility.toLowerCase()}
                     </span>
                   </div>
                   {post.departmentName && (
-                    <p className="text-xs text-[var(--text-muted)]">
-                      Department: {post.departmentName}
+                    <p className="text-xs text-[var(--text-muted)] ml-6">
+                      {post.departmentName}
                     </p>
                   )}
                   {post.editorIds && post.editorIds.length > 0 && (
-                    <div className="flex items-center gap-1 text-xs text-[var(--text-muted)] mt-2">
-                      <Users className="w-4 h-4" />
-                      {post.editorIds.length} editor{post.editorIds.length !== 1 ? 's' : ''} with edit access
+                    <div className="flex items-center gap-1 text-xs text-[var(--text-muted)] mt-2 ml-6">
+                      <Users className="w-3 h-3" />
+                      {post.editorIds.length} editor{post.editorIds.length !== 1 ? 's' : ''}
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </motion.div>
             )}
 
-            {/* Tags */}
+            {/* Tags Card */}
             {post.tags && post.tags.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Tags</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] px-4 py-1 rounded-full text-sm"
-                      >
-                        <Tag className="w-4 h-4" />
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <motion.div
+                variants={dsMotion.staggerItem}
+                className={`${card.base} rounded-xl p-4`}
+                whileHover={dsMotion.cardHover}
+              >
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {post.tags.map((tag, index) => (
+                    <motion.span
+                      key={tag}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-300)] px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
+                    >
+                      <Tag className="w-3 h-3" />
+                      {tag}
+                    </motion.span>
+                  ))}
+                </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Comments Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" />
-              Comments ({comments.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <motion.div
+          initial={dsMotion.pageEnter.initial}
+          animate={dsMotion.pageEnter.animate}
+          transition={{ ...dsMotion.pageEnter.transition, delay: 0.2 }}
+          className={`${card.base} rounded-xl p-8`}
+        >
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
+            <MessageCircle className="w-6 h-6 text-[var(--primary-600)]" />
+            Comments ({comments.length})
+          </h2>
+
+          <div className="space-y-6">
             {/* Comment Input */}
-            <div className="flex gap-2">
-              <input
-                id="comment-input"
-                type="text"
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
-                className="flex-1 px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleAddComment();
-                  }
-                }}
-              />
-              <Button
-                onClick={handleAddComment}
-                disabled={!commentText.trim() || createComment.isPending}
-                className="gap-2 bg-amber-600 hover:bg-amber-700"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
+            <div className="flex gap-3">
+              <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-semibold ${getAvatarColor(getInitial(user?.fullName))}`}>
+                {getInitial(user?.fullName)}
+              </div>
+              <div className="flex-1 flex gap-2">
+                <input
+                  id="comment-input"
+                  type="text"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Share your thoughts..."
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-500)] text-sm transition-all"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleAddComment();
+                    }
+                  }}
+                />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleAddComment}
+                  disabled={!commentText.trim() || createComment.isPending}
+                  className="px-4 py-2.5 rounded-lg bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Send className="w-4 h-4" />
+                </motion.button>
+              </div>
             </div>
 
+            {/* Comments List */}
             {comments.length === 0 ? (
-              <p className="text-center text-[var(--text-muted)] py-8">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center text-[var(--text-muted)] py-8"
+              >
                 No comments yet. Be the first to share your thoughts!
-              </p>
+              </motion.p>
             ) : (
-              <div className="space-y-4">
+              <motion.div
+                className="space-y-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.06 } },
+                }}
+              >
                 {comments.map((comment) => (
-                  <div
+                  <motion.div
                     key={comment.id}
-                    className="flex gap-4 pb-4 border-b border-[var(--border-main)] last:border-b-0"
+                    variants={dsMotion.staggerItem}
+                    className="flex gap-3 pb-4 border-b border-[var(--border-main)] last:border-b-0 hover:bg-[var(--bg-secondary)]/50 p-3 rounded-lg transition-colors"
                   >
-                    <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex-shrink-0 flex items-center justify-center text-xs font-semibold text-amber-700">
-                      {(comment.authorName || 'A').charAt(0).toUpperCase()}
+                    <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-semibold ${getAvatarColor(getInitial(comment.authorName))}`}>
+                      {getInitial(comment.authorName)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-sm">{comment.authorName || 'Anonymous'}</p>
-                        {(comment.authorId === user?.id) && (
-                          <button
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-semibold text-sm text-[var(--text-primary)]">
+                          {comment.authorName || 'Anonymous'}
+                        </p>
+                        {comment.authorId === user?.id && (
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => handleDeleteComment(comment.id)}
-                            className="text-[var(--text-muted)] hover:text-red-500 transition-colors"
+                            className="text-[var(--text-muted)] hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                             title="Delete comment"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </button>
+                          </motion.button>
                         )}
                       </div>
-                      <p className="text-sm text-[var(--text-secondary)] mt-1">
+                      <p className="text-sm text-[var(--text-secondary)] mt-1.5 leading-relaxed">
                         {comment.body}
                       </p>
                       <p className="text-xs text-[var(--text-muted)] mt-2">
-                        {new Date(comment.createdAt).toLocaleDateString()}
+                        {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </motion.div>
       </div>
 
       {/* Viewers Modal */}
@@ -477,24 +678,53 @@ export default function BlogPostDetailPage() {
         onClose={() => setShowViewers(false)}
         title="Who viewed this post"
         size="md"
+        styles={{
+          header: { backgroundColor: 'var(--bg-secondary)' },
+          content: { backgroundColor: 'var(--bg-primary)' },
+        }}
       >
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {!viewers || viewers.length === 0 ? (
-            <p className="text-center text-[var(--text-muted)] py-8">No view records yet.</p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center text-[var(--text-muted)] py-8"
+            >
+              No view records yet.
+            </motion.p>
           ) : (
-            viewers.map((v) => (
-              <div key={v.id} className="flex items-center justify-between py-2 border-b border-[var(--border-main)] last:border-b-0">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-xs font-semibold text-amber-700">
-                    {(v.viewerName || 'U').charAt(0).toUpperCase()}
+            <motion.div
+              className="space-y-2"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.06 } },
+              }}
+            >
+              {viewers.map((v: Viewer) => (
+                <motion.div
+                  key={v.id}
+                  variants={dsMotion.staggerItem}
+                  className="flex items-center justify-between py-3 px-3 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold ${getAvatarColor(getInitial(v.viewerName))}`}>
+                      {getInitial(v.viewerName)}
+                    </div>
+                    <span className="text-sm font-medium text-[var(--text-primary)] truncate">
+                      {v.viewerName || 'Unknown'}
+                    </span>
                   </div>
-                  <span className="text-sm font-medium">{v.viewerName || 'Unknown'}</span>
-                </div>
-                <span className="text-xs text-[var(--text-muted)]">
-                  {new Date(v.viewedAt).toLocaleString()}
-                </span>
-              </div>
-            ))
+                  <span className="text-xs text-[var(--text-muted)] flex-shrink-0 ml-2">
+                    {new Date(v.viewedAt).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>
+                </motion.div>
+              ))}
+            </motion.div>
           )}
         </div>
       </Modal>
