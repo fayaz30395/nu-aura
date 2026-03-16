@@ -299,7 +299,7 @@ export default function ResourcesPage() {
               </Link>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {pendingApprovals.slice(0, 3).map((approval) => (
                   <div
                     key={approval.id}

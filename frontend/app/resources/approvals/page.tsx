@@ -218,7 +218,7 @@ export default function ApprovalsPage() {
                   )}
 
                   {/* Request info */}
-                  <div className="space-y-3 border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
+                  <div className="space-y-4 border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
                     <h4 className="font-medium text-[var(--text-primary)]">
                       Requested Assignment
                     </h4>
