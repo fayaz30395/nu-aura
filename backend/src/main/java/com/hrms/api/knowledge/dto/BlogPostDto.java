@@ -48,11 +48,19 @@ public class BlogPostDto {
     private UUID createdBy;
     private UUID lastModifiedBy;
 
+    // Author information
+    private String authorName;
+    private String authorAvatarUrl;
+
     private Boolean isLikedByCurrentUser;
     private Boolean canEdit;
     private Boolean canDelete;
 
     public static BlogPostDto fromEntity(BlogPost entity) {
+        return fromEntity(entity, null, null);
+    }
+
+    public static BlogPostDto fromEntity(BlogPost entity, String authorName, String authorAvatarUrl) {
         if (entity == null) return null;
 
         return BlogPostDto.builder()
@@ -82,6 +90,8 @@ public class BlogPostDto {
                 .updatedAt(entity.getUpdatedAt())
                 .createdBy(entity.getCreatedBy())
                 .lastModifiedBy(entity.getLastModifiedBy())
+                .authorName(authorName)
+                .authorAvatarUrl(authorAvatarUrl)
                 .build();
     }
 

@@ -56,6 +56,10 @@ public class WikiPageDto {
     private Boolean canPublish;
 
     public static WikiPageDto fromEntity(WikiPage entity) {
+        return fromEntity(entity, null, null);
+    }
+
+    public static WikiPageDto fromEntity(WikiPage entity, String authorName, String authorAvatarUrl) {
         if (entity == null) return null;
 
         return WikiPageDto.builder()
@@ -85,6 +89,8 @@ public class WikiPageDto {
                 .updatedAt(entity.getUpdatedAt())
                 .createdBy(entity.getCreatedBy())
                 .lastModifiedBy(entity.getLastModifiedBy())
+                .authorName(authorName)
+                .authorAvatarUrl(authorAvatarUrl)
                 .build();
     }
 
