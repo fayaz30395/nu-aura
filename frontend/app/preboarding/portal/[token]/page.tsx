@@ -13,6 +13,9 @@ import { apiConfig } from '@/lib/config';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('PreboardingPortalPage');
 
 const personalInfoSchema = z.object({
   dateOfBirth: z.string().min(1, 'Date of birth required'),
@@ -137,7 +140,7 @@ export default function PreboardingPortalPage() {
         setActiveStep(1);
       }
     } catch (err) {
-      console.error('Failed to save personal info:', err);
+      log.error('Failed to save personal info:', err);
     } finally {
       setSaving(false);
     }
@@ -172,7 +175,7 @@ export default function PreboardingPortalPage() {
         setActiveStep(2);
       }
     } catch (err) {
-      console.error('Failed to save bank details:', err);
+      log.error('Failed to save bank details:', err);
     } finally {
       setSaving(false);
     }
@@ -190,7 +193,7 @@ export default function PreboardingPortalPage() {
         setData(result);
       }
     } catch (err) {
-      console.error('Failed to sign offer letter:', err);
+      log.error('Failed to sign offer letter:', err);
     } finally {
       setSaving(false);
     }

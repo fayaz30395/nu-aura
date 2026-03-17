@@ -39,6 +39,9 @@ import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/g
 import { employeeService } from '@/lib/services/employee.service';
 import { Employee } from '@/lib/types/employee';
 import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('NuMailPage');
 
 interface EmailAttachment {
   id: string;
@@ -180,7 +183,7 @@ function MailContent() {
       await loadSignature(tokenResponse.access_token);
     },
     onError: (errorResponse) => {
-      console.error('Google login error:', errorResponse);
+      log.error('Google login error:', errorResponse);
       setError('Failed to connect to Gmail. Please try again.');
     },
     scope: GMAIL_SCOPES,
@@ -200,7 +203,7 @@ function MailContent() {
         }));
       setContacts(employeeContacts);
     } catch (err) {
-      console.error('Error loading contacts:', err);
+      log.error('Error loading contacts:', err);
     }
   }, []);
 
@@ -234,7 +237,7 @@ function MailContent() {
         }
       }
     } catch (err) {
-      console.error('Error loading signature:', err);
+      log.error('Error loading signature:', err);
       // Signature loading is optional, don't show error to user
     }
   };
@@ -379,7 +382,7 @@ function MailContent() {
         }
       }
     } catch (err) {
-      console.error('Error loading labels:', err);
+      log.error('Error loading labels:', err);
     }
   };
 
@@ -452,7 +455,7 @@ function MailContent() {
       setEmails(emailDetails.filter(Boolean) as EmailMessage[]);
       setError(null);
     } catch (err) {
-      console.error('Error loading emails:', err);
+      log.error('Error loading emails:', err);
       setError('Failed to load emails from Gmail');
     } finally {
       setIsLoading(false);
@@ -545,7 +548,7 @@ function MailContent() {
         await markAsRead(emailId);
       }
     } catch (err) {
-      console.error('Error loading email content:', err);
+      log.error('Error loading email content:', err);
       setError('Failed to load email content');
     } finally {
       setIsLoadingEmail(false);
@@ -581,7 +584,7 @@ function MailContent() {
         setUnreadCount(unreadCount - 1);
       }
     } catch (err) {
-      console.error('Error marking email as read:', err);
+      log.error('Error marking email as read:', err);
     }
   };
 
@@ -615,7 +618,7 @@ function MailContent() {
         setSelectedEmail({ ...selectedEmail, isStarred: !isStarred });
       }
     } catch (err) {
-      console.error('Error toggling star:', err);
+      log.error('Error toggling star:', err);
     }
   };
 
@@ -642,7 +645,7 @@ function MailContent() {
       setEmails(emails.filter(e => e.id !== emailId));
       setSelectedEmail(null);
     } catch (err) {
-      console.error('Error archiving email:', err);
+      log.error('Error archiving email:', err);
     }
   };
 
@@ -665,7 +668,7 @@ function MailContent() {
       setEmails(emails.filter(e => e.id !== emailId));
       setSelectedEmail(null);
     } catch (err) {
-      console.error('Error deleting email:', err);
+      log.error('Error deleting email:', err);
     }
   };
 
@@ -700,7 +703,7 @@ function MailContent() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Error downloading attachment:', err);
+      log.error('Error downloading attachment:', err);
       setError('Failed to download attachment');
     }
   };
@@ -841,7 +844,7 @@ function MailContent() {
         }
       }, 1500);
     } catch (err: unknown) {
-      console.error('Error sending email:', err);
+      log.error('Error sending email:', err);
       setSendError(err instanceof Error ? err.message : 'Failed to send email');
     } finally {
       setIsSending(false);

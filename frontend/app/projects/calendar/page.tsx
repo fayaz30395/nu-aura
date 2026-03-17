@@ -14,6 +14,9 @@ import { hasPermission } from '@/lib/utils';
 import { toPriority } from '@/lib/utils/type-guards';
 import { useProjects } from '@/lib/hooks/queries/useProjects';
 import { useQuery } from '@tanstack/react-query';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ProjectCalendarPage');
 
 type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
 type ViewMode = 'timeline' | 'calendar';
@@ -355,7 +358,7 @@ export default function ProjectCalendarPage() {
       // For now, just close modal
       setIsModalOpen(false);
     } catch (error) {
-      console.error('Failed to update status', error);
+      log.error('Failed to update status', error);
     }
   };
 
@@ -363,7 +366,7 @@ export default function ProjectCalendarPage() {
     try {
       // Progress update would be handled by taskService mutation
     } catch (err) {
-      console.error('Failed to update task progress', err);
+      log.error('Failed to update task progress', err);
     }
   };
 

@@ -27,6 +27,9 @@ import { Badge } from '@/components/ui/Badge';
 import { useOnboardingProcess, useOnboardingProcessTasks, useUpdateOnboardingTaskStatus } from '@/lib/hooks/queries/useOnboarding';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('OnboardingPage');
 
 export default function OnboardingDetailPage() {
   const toast = useToast();
@@ -105,7 +108,7 @@ export default function OnboardingDetailPage() {
             if (!response.ok) throw new Error('Upload failed');
             toast.success('File uploaded to Google Drive successfully!');
         } catch (error) {
-            console.error('Upload error:', error);
+            log.error('Upload error:', error);
             toast.error('Failed to upload file to Google Drive');
         } finally {
             setUploading(false);

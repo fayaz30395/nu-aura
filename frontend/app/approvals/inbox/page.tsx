@@ -148,7 +148,7 @@ export default function ApprovalInboxPage() {
       setShowDelegationModal(false);
       delegationForm.reset();
     } catch (error) {
-      console.error('Error creating delegation:', error);
+      log.error('Error creating delegation:', error);
     }
   }, [createDelegationMutation, delegationForm]);
 

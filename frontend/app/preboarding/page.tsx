@@ -29,6 +29,9 @@ const preBoardingFormSchema = z.object({
 });
 
 type PreBoardingFormData = z.infer<typeof preBoardingFormSchema>;
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('PreboardingPage');
 
 interface PreBoardingModalProps {
   onClose: () => void;
@@ -65,7 +68,7 @@ function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
       reset();
       onClose();
     } catch (error) {
-      console.error('Failed to invite candidate:', error);
+      log.error('Failed to invite candidate:', error);
     }
   };
 

@@ -28,6 +28,9 @@ import { TaxDeclarationResponse, DeclarationStatus, TaxRegimeType } from '@/lib/
 import { useTaxDeclarations, useCreateTaxDeclaration } from '@/lib/hooks/queries/useTax';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { notifications } from '@mantine/notifications';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('DeclarationsPage');
 
 // Zod schema for tax declaration form
 const taxDeclarationSchema = z.object({
@@ -98,7 +101,7 @@ export default function TaxDeclarationsPage() {
             setModalOpen(false);
             reset();
         } catch (error) {
-            console.error('Error creating tax declaration:', error);
+            log.error('Error creating tax declaration:', error);
         }
     };
 

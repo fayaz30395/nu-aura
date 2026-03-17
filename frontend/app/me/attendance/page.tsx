@@ -23,6 +23,9 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useAttendanceByDateRange, useMyTimeEntries, useCheckIn, useCheckOut, useRequestRegularization } from '@/lib/hooks/queries/useAttendance';
 import { AttendanceRecord, AttendanceStatus } from '@/lib/types/attendance';
 import { getLocalDateString, getMonthStartString, getMonthEndString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('AttendancePage');
 
 export default function MyAttendancePage() {
   const router = useRouter();
@@ -84,7 +87,7 @@ export default function MyAttendancePage() {
         attendanceDate: localDate,
       });
     } catch (err: unknown) {
-      console.error('Failed to check in:', err);
+      log.error('Failed to check in:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
     }
   };
@@ -103,7 +106,7 @@ export default function MyAttendancePage() {
         attendanceDate: localDate,
       });
     } catch (err: unknown) {
-      console.error('Failed to check out:', err);
+      log.error('Failed to check out:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
     }
   };
@@ -124,7 +127,7 @@ export default function MyAttendancePage() {
       setRegularizationReason('');
       setRegularizingRecord(null);
     } catch (err: unknown) {
-      console.error('Failed to request regularization:', err);
+      log.error('Failed to request regularization:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to request regularization');
     }
   };

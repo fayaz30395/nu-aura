@@ -34,6 +34,9 @@ interface PageResponse<T> {
   totalPages: number;
   size: number;
   number: number;
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('TeamTab');
 }
 
 interface EmployeeSummary {
@@ -139,7 +142,7 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
         });
         setResults(response.data.content ?? []);
       } catch (err) {
-        console.error('Employee search failed', err);
+        log.error('Employee search failed', err);
         setResults([]);
       } finally {
         setLoading(false);

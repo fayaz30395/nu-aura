@@ -33,6 +33,9 @@ import {
 } from '@/lib/hooks/queries/useOnboarding';
 import { OnboardingChecklistTemplate, OnboardingTemplateTask, OnboardingTaskCategory, OnboardingTaskPriority } from '@/lib/types/onboarding';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('OnboardingTemplatePage');
 
 export default function TemplateEditorPage() {
     const router = useRouter();
@@ -80,7 +83,7 @@ export default function TemplateEditorPage() {
             });
             // Toast success is handled in mutation
         } catch (error) {
-            console.error('Failed to save template:', error);
+            log.error('Failed to save template:', error);
         }
     };
 
@@ -112,7 +115,7 @@ export default function TemplateEditorPage() {
             }
             setEditingTask(null);
         } catch (error) {
-            console.error('Failed to save task:', error);
+            log.error('Failed to save task:', error);
         }
     };
 
@@ -131,7 +134,7 @@ export default function TemplateEditorPage() {
             setDeleteConfirmOpen(false);
             setTaskToDelete(null);
         } catch (error) {
-            console.error('Failed to delete task:', error);
+            log.error('Failed to delete task:', error);
         }
     };
 

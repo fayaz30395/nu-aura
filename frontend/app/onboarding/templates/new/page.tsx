@@ -17,6 +17,9 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { onboardingService } from '@/lib/services/onboarding.service';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('NewTemplatePage');
 
 const templateFormSchema = z.object({
     name: z.string().min(1, 'Template name is required').max(255, 'Template name must not exceed 255 characters'),
@@ -40,7 +43,7 @@ export default function NewTemplatePage() {
             const template = await onboardingService.createTemplate({ name: data.name, description: data.description });
             router.push(`/onboarding/templates/${template.id}`);
         } catch (error) {
-            console.error('Failed to create template:', error);
+            log.error('Failed to create template:', error);
         }
     };
 

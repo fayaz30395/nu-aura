@@ -233,6 +233,9 @@ export default function BenefitsPage() {
 
     const displayBenefits: DisplayBenefit[] = plans.map((plan) => {
       const enrollment = enrollments.find(e => e.benefitPlanId === plan.id);
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('BenefitsPage');
       return {
         id: plan.id,
         name: plan.planName,
@@ -290,7 +293,7 @@ export default function BenefitsPage() {
       resetEnrollmentForm();
       showNotification(`Successfully enrolled in ${selectedBenefit.name}!`, 'success');
     } catch (err: unknown) {
-      console.error('Error enrolling:', err);
+      log.error('Error enrolling:', err);
       showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll', 'error');
     }
   };
@@ -309,7 +312,7 @@ export default function BenefitsPage() {
       setShowTerminateConfirm(false);
       setSelectedEnrollmentForTerminate(null);
     } catch (err: unknown) {
-      console.error('Error terminating:', err);
+      log.error('Error terminating:', err);
       showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to terminate enrollment', 'error');
     }
   };
@@ -351,7 +354,7 @@ export default function BenefitsPage() {
       showNotification('Claim submitted successfully!', 'success');
       setActiveTab('claims');
     } catch (err: unknown) {
-      console.error('Error submitting claim:', err);
+      log.error('Error submitting claim:', err);
       showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit claim', 'error');
     }
   };

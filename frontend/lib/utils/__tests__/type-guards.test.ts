@@ -361,7 +361,7 @@ describe('type-guards', () => {
     it('calls setter with valid value', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B', 'C'], setter);
-      const event = { target: { value: 'B' } } as any;
+      const event = { target: { value: 'B' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith('B');
     });
@@ -369,7 +369,7 @@ describe('type-guards', () => {
     it('calls setter with undefined for empty value', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B'], setter);
-      const event = { target: { value: '' } } as any;
+      const event = { target: { value: '' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith(undefined);
     });
@@ -377,7 +377,7 @@ describe('type-guards', () => {
     it('uses default value for invalid input', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B'], setter, 'A');
-      const event = { target: { value: 'INVALID' } } as any;
+      const event = { target: { value: 'INVALID' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith('A');
     });
@@ -385,7 +385,7 @@ describe('type-guards', () => {
     it('handles empty string with default value', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B'], setter, 'B');
-      const event = { target: { value: '' } } as any;
+      const event = { target: { value: '' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith('B');
     });

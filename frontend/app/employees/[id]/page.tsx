@@ -9,6 +9,9 @@ import { AppLayout } from '@/components/layout';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
 import { useEmployee, useDeleteEmployee, useDottedLineReports } from '@/lib/hooks/queries/useEmployees';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('EmployeePage');
 
 export default function EmployeeDetailPage() {
   const router = useRouter();
@@ -34,7 +37,7 @@ export default function EmployeeDetailPage() {
     } catch (err: unknown) {
       const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete employee';
       toast.error('Error', errorMsg);
-      console.error('Error deleting employee:', err);
+      log.error('Error deleting employee:', err);
       setShowDeleteModal(false);
     }
   };

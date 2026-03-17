@@ -13,6 +13,9 @@ import {
 } from '@/lib/hooks/queries/usePerformance';
 import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ReviewsPage');
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -100,7 +103,7 @@ export default function PerformanceReviewsPage() {
       setShowModal(false);
       resetFormHandler();
     } catch (error: unknown) {
-      console.error('Error saving review:', error);
+      log.error('Error saving review:', error);
     }
   };
 
@@ -111,7 +114,7 @@ export default function PerformanceReviewsPage() {
       setShowDeleteConfirm(false);
       setSelectedReview(null);
     } catch (error: unknown) {
-      console.error('Error deleting review:', error);
+      log.error('Error deleting review:', error);
     }
   };
 

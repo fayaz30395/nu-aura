@@ -14,6 +14,9 @@ import { Users } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { SkeletonTable } from '@/components/ui/Loading';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('EmployeesPage');
 
 // Zod schema for create employee form
 const createEmployeeFormSchema = z.object({
@@ -171,7 +174,7 @@ export default function EmployeesPage() {
       setCurrentTab('basic');
     } catch (err: unknown) {
       // Error handling is done by the mutation
-      console.error('Error creating employee:', err);
+      log.error('Error creating employee:', err);
     }
   };
 
@@ -188,7 +191,7 @@ export default function EmployeesPage() {
       setShowDeleteModal(false);
       setEmployeeToDelete(null);
     } catch (err: unknown) {
-      console.error('Error deleting employee:', err);
+      log.error('Error deleting employee:', err);
       setShowDeleteModal(false);
     }
   };

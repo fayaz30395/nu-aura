@@ -21,6 +21,9 @@ import { Input } from '@/components/ui/Input';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
 import { useOnboardingTemplates, useCreateOnboardingProcess } from '@/lib/hooks/queries/useOnboarding';
 import { OnboardingProcessRequest, OnboardingChecklistTemplate } from '@/lib/types/onboarding';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('NewOnboardingPage');
 
 export default function NewOnboardingPage() {
     const router = useRouter();
@@ -84,7 +87,7 @@ export default function NewOnboardingPage() {
             const result = await createProcessMutation.mutateAsync(payload);
             router.push(`/onboarding/${result.id}`);
         } catch (err: unknown) {
-            console.error('Failed to create onboarding process:', err);
+            log.error('Failed to create onboarding process:', err);
             setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to initiate onboarding');
         }
     };

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -23,6 +26,21 @@ import { useAllSpotlights, useDeleteSpotlight, useCreateSpotlight, useUpdateSpot
 import { createLogger } from '@/lib/utils/logger';
 
 const logger = createLogger('CompanySpotlight');
+
+// Zod schema for spotlight form
+const spotlightFormSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  ctaUrl: z.string().optional(),
+  ctaLabel: z.string().optional(),
+  bgGradient: z.string().optional(),
+  displayOrder: z.number().min(0, 'Display order must be at least 0').optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+});
+
+type SpotlightFormData = z.infer<typeof spotlightFormSchema>;
 
 const GRADIENT_PRESETS: Record<string, { name: string; value: string }> = {
   'indigo-purple': {
@@ -333,44 +351,66 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
   const [error, setError] = useState('');
   const createMutation = useCreateSpotlight();
   const updateMutation = useUpdateSpotlight();
-  const [formData, setFormData] = useState<CreateSpotlightRequest>({
-    title: spotlight?.title || '',
-    description: spotlight?.description || '',
-    imageUrl: spotlight?.imageUrl || '',
-    ctaUrl: spotlight?.ctaUrl || '',
-    ctaLabel: spotlight?.ctaLabel || '',
-    bgGradient: spotlight?.bgGradient || 'indigo-purple',
-    displayOrder: spotlight?.displayOrder || 0,
-    startDate: spotlight?.startDate || '',
-    endDate: spotlight?.endDate || '',
+
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SpotlightFormData>({
+    resolver: zodResolver(spotlightFormSchema),
+    defaultValues: {
+      title: spotlight?.title || '',
+      description: spotlight?.description || '',
+      imageUrl: spotlight?.imageUrl || '',
+      ctaUrl: spotlight?.ctaUrl || '',
+      ctaLabel: spotlight?.ctaLabel || '',
+      bgGradient: spotlight?.bgGradient || 'indigo-purple',
+      displayOrder: spotlight?.displayOrder || 0,
+      startDate: spotlight?.startDate || '',
+      endDate: spotlight?.endDate || '',
+    },
   });
 
-  const selectedGradient = GRADIENT_PRESETS[formData.bgGradient || 'indigo-purple'];
+  const bgGradient = watch('bgGradient');
+  const title = watch('title');
+  const description = watch('description');
+  const ctaLabel = watch('ctaLabel');
+
+  const selectedGradient = GRADIENT_PRESETS[bgGradient || 'indigo-purple'];
   const gradientClass = selectedGradient
     ? selectedGradient.value
     : 'from-indigo-600 to-purple-700';
 
-  const handleSubmit = async () => {
-    if (!formData.title) {
-      setError('Title is required');
-      return;
-    }
-
+  const onSubmit = async (data: SpotlightFormData) => {
     setError('');
 
     try {
       if (isEditing && spotlight) {
         const updatePayload: UpdateSpotlightRequest = {
-          ...formData,
-          bgGradient: formData.bgGradient || 'indigo-purple',
+          title: data.title,
+          description: data.description,
+          imageUrl: data.imageUrl,
+          ctaUrl: data.ctaUrl,
+          ctaLabel: data.ctaLabel,
+          bgGradient: data.bgGradient || 'indigo-purple',
+          displayOrder: data.displayOrder,
+          startDate: data.startDate,
+          endDate: data.endDate,
         };
         await updateMutation.mutateAsync({ id: spotlight.id, data: updatePayload });
         toast.success('Spotlight Updated', 'The spotlight slide has been updated.');
       } else {
         const createPayload: CreateSpotlightRequest = {
-          ...formData,
-          bgGradient: formData.bgGradient || 'indigo-purple',
-          displayOrder: formData.displayOrder || 0,
+          title: data.title as string, // Zod validation ensures this is non-empty
+          description: data.description,
+          imageUrl: data.imageUrl,
+          ctaUrl: data.ctaUrl,
+          ctaLabel: data.ctaLabel,
+          bgGradient: data.bgGradient || 'indigo-purple',
+          displayOrder: data.displayOrder || 0,
+          startDate: data.startDate,
+          endDate: data.endDate,
         };
         await createMutation.mutateAsync(createPayload);
         toast.success('Spotlight Created', 'The spotlight slide has been created.');
@@ -424,11 +464,13 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                 </label>
                 <input
                   type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  {...register('title')}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   placeholder="Enter slide title"
                 />
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.title.message}</p>
+                )}
               </div>
 
               {/* Description */}
@@ -437,8 +479,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   Description
                 </label>
                 <textarea
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  {...register('description')}
                   rows={3}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
                   placeholder="Optional description"
@@ -452,8 +493,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                 </label>
                 <input
                   type="url"
-                  value={formData.imageUrl || ''}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  {...register('imageUrl')}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   placeholder="https://..."
                 />
@@ -467,8 +507,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   </label>
                   <input
                     type="url"
-                    value={formData.ctaUrl || ''}
-                    onChange={(e) => setFormData({ ...formData, ctaUrl: e.target.value })}
+                    {...register('ctaUrl')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                     placeholder="https://..."
                   />
@@ -479,8 +518,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   </label>
                   <input
                     type="text"
-                    value={formData.ctaLabel || ''}
-                    onChange={(e) => setFormData({ ...formData, ctaLabel: e.target.value })}
+                    {...register('ctaLabel')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                     placeholder="Learn More"
                   />
@@ -493,8 +531,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   Background Gradient
                 </label>
                 <select
-                  value={formData.bgGradient || 'indigo-purple'}
-                  onChange={(e) => setFormData({ ...formData, bgGradient: e.target.value })}
+                  {...register('bgGradient')}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 >
                   {Object.entries(GRADIENT_PRESETS).map(([key, { name }]) => (
@@ -513,8 +550,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                 <input
                   type="number"
                   min="0"
-                  value={formData.displayOrder || 0}
-                  onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                  {...register('displayOrder', { valueAsNumber: true })}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 />
                 <p className="mt-1 text-xs text-[var(--text-muted)]">
@@ -530,8 +566,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   </label>
                   <input
                     type="date"
-                    value={formData.startDate || ''}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    {...register('startDate')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   />
                 </div>
@@ -541,8 +576,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   </label>
                   <input
                     type="date"
-                    value={formData.endDate || ''}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    {...register('endDate')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   />
                 </div>
@@ -566,16 +600,16 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
               >
                 <div className="text-white max-w-full">
                   <h3 className="font-bold text-lg mb-2 line-clamp-2">
-                    {formData.title || 'Your Slide Title'}
+                    {title || 'Your Slide Title'}
                   </h3>
-                  {formData.description && (
+                  {description && (
                     <p className="text-sm line-clamp-2 opacity-90 mb-4">
-                      {formData.description}
+                      {description}
                     </p>
                   )}
-                  {formData.ctaLabel && (
+                  {ctaLabel && (
                     <button className="mt-4 px-4 py-2 bg-white text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate">
-                      {formData.ctaLabel}
+                      {ctaLabel}
                     </button>
                   )}
                 </div>
@@ -593,7 +627,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
             Cancel
           </button>
           <button
-            onClick={handleSubmit}
+            onClick={handleSubmit(onSubmit)}
             disabled={createMutation.isPending || updateMutation.isPending}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >

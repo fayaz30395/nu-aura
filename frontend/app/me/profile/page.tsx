@@ -25,6 +25,9 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployee, useUpdateEmployee } from '@/lib/hooks/queries';
 import { UpdateEmployeeRequest } from '@/lib/types/employee';
 import { getInitials } from '@/lib/utils';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ProfilePage');
 
 export default function MyProfilePage() {
   const router = useRouter();
@@ -85,7 +88,7 @@ export default function MyProfilePage() {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      console.error('Failed to update profile:', err);
+      log.error('Failed to update profile:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update profile');
     }
   };

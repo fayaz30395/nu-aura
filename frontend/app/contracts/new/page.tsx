@@ -9,6 +9,9 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useCreateContract } from '@/lib/hooks/queries/useContracts';
 import { Button, Input, Select, Textarea, Card } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ContractPage');
 
 const contractFormSchema = z.object({
   title: z.string().min(1, 'Contract title is required').max(255, 'Title must not exceed 255 characters'),
@@ -48,7 +51,7 @@ export default function CreateContractPage() {
       });
       router.push('/contracts');
     } catch (error) {
-      console.error('Error creating contract:', error);
+      log.error('Error creating contract:', error);
     }
   };
 

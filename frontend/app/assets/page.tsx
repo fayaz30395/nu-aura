@@ -50,6 +50,9 @@ import {
   useAssignAsset,
   useReturnAsset,
 } from '@/lib/hooks/queries';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('AssetsPage');
 
 const assetFormSchema = z.object({
   assetCode: z.string().min(1, 'Asset code required'),
@@ -301,7 +304,7 @@ export default function AssetManagementPage() {
       setShowAddModal(false);
       resetForm();
     } catch (err: unknown) {
-      console.error('Error saving asset:', err);
+      log.error('Error saving asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save asset');
     }
   };
@@ -314,7 +317,7 @@ export default function AssetManagementPage() {
       resetAssignForm();
       setSelectedAsset(null);
     } catch (err: unknown) {
-      console.error('Error assigning asset:', err);
+      log.error('Error assigning asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to assign asset');
     }
   };
@@ -327,7 +330,7 @@ export default function AssetManagementPage() {
       setShowDeleteModal(false);
       setSelectedAsset(null);
     } catch (err: unknown) {
-      console.error('Error deleting asset:', err);
+      log.error('Error deleting asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete asset');
     } finally {
       setDeleting(false);
@@ -338,7 +341,7 @@ export default function AssetManagementPage() {
     try {
       await returnMutation.mutateAsync(asset.id);
     } catch (err: unknown) {
-      console.error('Error returning asset:', err);
+      log.error('Error returning asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to return asset');
     }
   };

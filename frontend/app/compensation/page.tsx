@@ -56,6 +56,9 @@ const cycleTypeLabels: Record<CycleType, string> = {
   SPECIAL: 'Special',
   AD_HOC: 'Ad Hoc',
 };
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('CompensationPage');
 
 const cycleStatusLabels: Record<CycleStatus, string> = {
   DRAFT: 'Draft',
@@ -202,13 +205,13 @@ export default function CompensationPage() {
         setSelectedRevision({ ...updated, status: 'APPROVED' as RevisionStatus });
       }
     } catch (err) {
-      console.error('Failed to approve revision:', err);
+      log.error('Failed to approve revision:', err);
     }
   };
 
   const handleRejectRevision = async (revisionId: string) => {
     if (!rejectionReason.trim()) {
-      console.warn('Rejection reason is required');
+      log.warn('Rejection reason is required');
       return;
     }
 
@@ -223,7 +226,7 @@ export default function CompensationPage() {
         setSelectedRevision({ ...updated, status: 'REJECTED' as RevisionStatus });
       }
     } catch (err) {
-      console.error('Failed to reject revision:', err);
+      log.error('Failed to reject revision:', err);
     }
   };
 

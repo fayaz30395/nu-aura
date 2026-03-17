@@ -45,6 +45,9 @@ export default function TimeTrackingPage() {
     const pendingHours = entries
       .filter((e) => e.status === 'SUBMITTED')
       .reduce((sum, e) => sum + e.hoursWorked, 0);
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('TimeTrackingListPage');
 
     return {
       totalHours: summaryData?.totalHoursWorked || 0,
@@ -93,7 +96,7 @@ export default function TimeTrackingPage() {
       await submitMultipleMutation.mutateAsync(selectedEntries);
       setSelectedEntries([]);
     } catch (error) {
-      console.error('Error submitting entries:', error);
+      log.error('Error submitting entries:', error);
     }
   };
 

@@ -353,7 +353,7 @@ export default function MyDocumentsPage() {
         )}
 
         {/* Request Modal */}
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
+        <Modal isOpen={showModal} onClose={handleModalClose} size="lg">
           <ModalHeader>
             <h2 className="text-xl font-semibold">Request Document</h2>
           </ModalHeader>
@@ -365,10 +365,7 @@ export default function MyDocumentsPage() {
                   Document Type *
                 </label>
                 <select
-                  value={formData.documentType}
-                  onChange={(e) =>
-                    setFormData({ ...formData, documentType: e.target.value as DocumentType })
-                  }
+                  {...register('documentType')}
                   className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
                   {DOCUMENT_TYPES.map((type) => (
@@ -378,7 +375,7 @@ export default function MyDocumentsPage() {
                   ))}
                 </select>
                 <p className="text-xs text-[var(--text-muted)] mt-1">
-                  {DOCUMENT_TYPES.find((t) => t.value === formData.documentType)?.description}
+                  {DOCUMENT_TYPES.find((t) => t.value === watchedDocumentType)?.description}
                 </p>
               </div>
 
@@ -388,12 +385,14 @@ export default function MyDocumentsPage() {
                   Purpose *
                 </label>
                 <textarea
-                  value={formData.purpose}
-                  onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
+                  {...register('purpose')}
                   placeholder="Why do you need this document?"
                   rows={3}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className={`w-full px-3 py-2 border ${errors.purpose ? 'border-red-500' : 'border-[var(--border-main)]'} dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]`}
                 />
+                {errors.purpose && (
+                  <p className="mt-1 text-xs text-red-500">{errors.purpose.message}</p>
+                )}
               </div>
 
               {/* Addressed To */}
@@ -403,8 +402,7 @@ export default function MyDocumentsPage() {
                 </label>
                 <input
                   type="text"
-                  value={formData.addressedTo}
-                  onChange={(e) => setFormData({ ...formData, addressedTo: e.target.value })}
+                  {...register('addressedTo')}
                   placeholder="e.g., Immigration Department, Bank Name"
                   className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 />
@@ -417,11 +415,13 @@ export default function MyDocumentsPage() {
                 </label>
                 <input
                   type="date"
-                  value={formData.requiredByDate}
-                  onChange={(e) => setFormData({ ...formData, requiredByDate: e.target.value })}
+                  {...register('requiredByDate')}
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className={`w-full px-3 py-2 border ${errors.requiredByDate ? 'border-red-500' : 'border-[var(--border-main)]'} dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]`}
                 />
+                {errors.requiredByDate && (
+                  <p className="mt-1 text-xs text-red-500">{errors.requiredByDate.message}</p>
+                )}
               </div>
 
               {/* Delivery Mode */}
@@ -434,12 +434,8 @@ export default function MyDocumentsPage() {
                     <label key={mode} className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
-                        name="deliveryMode"
+                        {...register('deliveryMode')}
                         value={mode}
-                        checked={formData.deliveryMode === mode}
-                        onChange={(e) =>
-                          setFormData({ ...formData, deliveryMode: e.target.value as DeliveryMode })
-                        }
                         className="text-primary-600"
                       />
                       <span className="text-sm text-[var(--text-secondary)] capitalize">
@@ -451,14 +447,13 @@ export default function MyDocumentsPage() {
               </div>
 
               {/* Delivery Address - only for physical delivery */}
-              {(formData.deliveryMode === 'PHYSICAL' || formData.deliveryMode === 'BOTH') && (
+              {(watchedDeliveryMode === 'PHYSICAL' || watchedDeliveryMode === 'BOTH') && (
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Delivery Address *
                   </label>
                   <textarea
-                    value={formData.deliveryAddress}
-                    onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
+                    {...register('deliveryAddress')}
                     placeholder="Enter delivery address"
                     rows={2}
                     className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
@@ -472,8 +467,7 @@ export default function MyDocumentsPage() {
                   Priority
                 </label>
                 <select
-                  value={formData.priority}
-                  onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
+                  {...register('priority', { valueAsNumber: true })}
                   className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
                   <option value={1}>High - Urgent</option>
@@ -484,12 +478,12 @@ export default function MyDocumentsPage() {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="outline" onClick={() => setShowModal(false)}>
+            <Button variant="outline" onClick={handleModalClose}>
               Cancel
             </Button>
             <Button
-              onClick={handleSubmit}
-              disabled={createMutation.isPending || !formData.purpose}
+              onClick={rhfHandleSubmit(onSubmit)}
+              disabled={createMutation.isPending}
             >
               {createMutation.isPending ? 'Submitting...' : 'Submit Request'}
             </Button>

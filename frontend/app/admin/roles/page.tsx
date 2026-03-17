@@ -28,6 +28,9 @@ import {
   useDeleteRole,
   useAssignPermissionsWithScope,
 } from '@/lib/hooks/queries/useRoles';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('RolesPage');
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -115,7 +118,7 @@ export default function RolesPage() {
       setShowCreateModal(false);
       createForm.reset();
     } catch (error) {
-      console.error('Failed to create role:', error);
+      log.error('Failed to create role:', error);
     }
   };
 
@@ -131,7 +134,7 @@ export default function RolesPage() {
       setSelectedRole(null);
       editForm.reset();
     } catch (error) {
-      console.error('Failed to update role:', error);
+      log.error('Failed to update role:', error);
     }
   };
 
@@ -147,7 +150,7 @@ export default function RolesPage() {
       setShowDeleteConfirm(false);
       setRoleToDelete(null);
     } catch (error) {
-      console.error('Failed to delete role:', error);
+      log.error('Failed to delete role:', error);
     }
   };
 
@@ -173,7 +176,7 @@ export default function RolesPage() {
       setSelectedPermissions([]);
       setPermissionScopes(new Map());
     } catch (error) {
-      console.error('Failed to assign permissions:', error);
+      log.error('Failed to assign permissions:', error);
     }
   };
 

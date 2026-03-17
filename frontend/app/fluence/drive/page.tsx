@@ -21,6 +21,9 @@ import { Button } from '@/components/ui/Button';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
 import { cn } from '@/lib/utils';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('FluenceDrivePage');
 
 type DriveTab = 'team-docs' | 'shared' | 'recent';
 
@@ -55,7 +58,7 @@ function FluenceDriveContent() {
       setError(null);
     },
     onError: (errorResponse) => {
-      console.error('Google login error:', errorResponse);
+      log.error('Google login error:', errorResponse);
       setError('Failed to connect to Google Drive. Please try again.');
     },
     scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata',

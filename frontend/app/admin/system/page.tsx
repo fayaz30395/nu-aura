@@ -35,6 +35,9 @@ import {
   useGrowthMetrics,
 } from '@/lib/hooks/queries/useSystemAdmin';
 import { TenantListItem, MonthlyGrowth } from '@/lib/types/admin-system';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('SystemPage');
 
 const SUPER_ADMIN_ONLY_ROLES = [Roles.SUPER_ADMIN];
 
@@ -82,7 +85,7 @@ export default function SystemDashboard() {
       // Redirect to tenant's main dashboard
       router.push('/admin');
     } catch (error) {
-      console.error('Failed to generate impersonation token:', error);
+      log.error('Failed to generate impersonation token:', error);
     }
   };
 

@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Award,
   Heart,
@@ -42,6 +45,20 @@ import {
   useMyPoints,
   useGiveRecognition,
 } from '@/lib/hooks/queries/useRecognition';
+
+// Zod schema for recognition form
+const recognitionFormSchema = z.object({
+  receiverId: z.string().min(1, 'Employee ID is required'),
+  type: z.nativeEnum(RecognitionType),
+  category: z.nativeEnum(RecognitionCategory),
+  title: z.string().min(1, 'Title is required').max(255, 'Title must be less than 255 characters'),
+  message: z.string().max(2000, 'Message must be less than 2000 characters').optional().or(z.literal('')),
+  pointsAwarded: z.number().int().min(0, 'Points must be 0 or more').max(100, 'Points must not exceed 100'),
+  isPublic: z.boolean().default(true),
+  isAnonymous: z.boolean().default(false),
+});
+
+type RecognitionFormData = z.infer<typeof recognitionFormSchema>;
 
 const recognitionTypeOptions = [
   { value: RecognitionType.KUDOS, label: 'Kudos', icon: ThumbsUp },
@@ -102,6 +119,7 @@ const getTypeColor = (type: RecognitionType) => {
 
 export default function RecognitionPage() {
   const [activeTab, setActiveTab] = useState<'feed' | 'received' | 'given'>('feed');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Query hooks
   const feedQuery = usePublicFeed();
@@ -111,19 +129,25 @@ export default function RecognitionPage() {
   const myPointsQuery = useMyPoints();
   const giveRecognitionMutation = useGiveRecognition();
 
-  // Modal states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Form state
-  const [formData, setFormData] = useState<Partial<RecognitionRequest>>({
-    receiverId: '',
-    type: RecognitionType.KUDOS,
-    category: RecognitionCategory.TEAMWORK,
-    title: '',
-    message: '',
-    pointsAwarded: 10,
-    isPublic: true,
-    isAnonymous: false,
+  // Form setup with React Hook Form
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<RecognitionFormData>({
+    resolver: zodResolver(recognitionFormSchema),
+    defaultValues: {
+      receiverId: '',
+      type: RecognitionType.KUDOS,
+      category: RecognitionCategory.TEAMWORK,
+      title: '',
+      message: '',
+      pointsAwarded: 10,
+      isPublic: true,
+      isAnonymous: false,
+    },
   });
 
   // Get the active query based on tab
@@ -145,25 +169,22 @@ export default function RecognitionPage() {
   const myPoints = myPointsQuery.data || null;
 
   const handleGiveRecognition = () => {
-    setFormData({
-      receiverId: '',
-      type: RecognitionType.KUDOS,
-      category: RecognitionCategory.TEAMWORK,
-      title: '',
-      message: '',
-      pointsAwarded: 10,
-      isPublic: true,
-      isAnonymous: false,
-    });
+    reset();
     setIsModalOpen(true);
   };
 
-  const handleSubmitRecognition = () => {
-    giveRecognitionMutation.mutate(formData as RecognitionRequest, {
+  const handleSubmitRecognition = (data: RecognitionFormData) => {
+    giveRecognitionMutation.mutate(data as RecognitionRequest, {
       onSuccess: () => {
         setIsModalOpen(false);
+        reset();
       },
     });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    reset();
   };
 
   // Stats
@@ -456,7 +477,7 @@ export default function RecognitionPage() {
                       <button
                         key={type.value}
                         onClick={() => {
-                          setFormData({ ...formData, type: type.value });
+                          reset({ ...watch(), type: type.value });
                           setIsModalOpen(true);
                         }}
                         className="flex flex-col items-center gap-2 p-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
@@ -473,7 +494,7 @@ export default function RecognitionPage() {
         </div>
 
         {/* Give Recognition Modal */}
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
+        <Modal isOpen={isModalOpen} onClose={handleCloseModal} size="lg">
           <ModalHeader>
             <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-yellow-500" />
@@ -487,41 +508,43 @@ export default function RecognitionPage() {
                   Employee ID *
                 </label>
                 <Input
-                  value={formData.receiverId}
-                  onChange={(e) => setFormData({ ...formData, receiverId: e.target.value })}
+                  {...register('receiverId')}
                   placeholder="Enter employee ID to recognize"
                 />
+                {errors.receiverId && (
+                  <p className="text-sm text-red-500 mt-1">{errors.receiverId.message}</p>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Recognition Type *
                   </label>
-                  <Select
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value as RecognitionType })}
-                  >
+                  <Select {...register('type')}>
                     {recognitionTypeOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
                     ))}
                   </Select>
+                  {errors.type && (
+                    <p className="text-sm text-red-500 mt-1">{errors.type.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Category
                   </label>
-                  <Select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value as RecognitionCategory })}
-                  >
+                  <Select {...register('category')}>
                     {categoryOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
                     ))}
                   </Select>
+                  {errors.category && (
+                    <p className="text-sm text-red-500 mt-1">{errors.category.message}</p>
+                  )}
                 </div>
               </div>
               <div>
@@ -529,21 +552,25 @@ export default function RecognitionPage() {
                   Title *
                 </label>
                 <Input
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  {...register('title')}
                   placeholder="e.g., Great job on the project!"
                 />
+                {errors.title && (
+                  <p className="text-sm text-red-500 mt-1">{errors.title.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Message
                 </label>
                 <Textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  {...register('message')}
                   placeholder="Share more details about why you're recognizing this person..."
                   rows={3}
                 />
+                {errors.message && (
+                  <p className="text-sm text-red-500 mt-1">{errors.message.message}</p>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -551,19 +578,20 @@ export default function RecognitionPage() {
                     Points to Award
                   </label>
                   <Input
+                    {...register('pointsAwarded', { valueAsNumber: true })}
                     type="number"
-                    value={formData.pointsAwarded}
-                    onChange={(e) => setFormData({ ...formData, pointsAwarded: parseInt(e.target.value) || 0 })}
                     min={0}
                     max={100}
                   />
+                  {errors.pointsAwarded && (
+                    <p className="text-sm text-red-500 mt-1">{errors.pointsAwarded.message}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2 justify-end">
                   <label className="flex items-center gap-2">
                     <input
+                      {...register('isPublic')}
                       type="checkbox"
-                      checked={formData.isPublic}
-                      onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
                       className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">
@@ -572,9 +600,8 @@ export default function RecognitionPage() {
                   </label>
                   <label className="flex items-center gap-2">
                     <input
+                      {...register('isAnonymous')}
                       type="checkbox"
-                      checked={formData.isAnonymous}
-                      onChange={(e) => setFormData({ ...formData, isAnonymous: e.target.checked })}
                       className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">
@@ -586,10 +613,10 @@ export default function RecognitionPage() {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+            <Button variant="outline" onClick={handleCloseModal}>
               Cancel
             </Button>
-            <Button onClick={handleSubmitRecognition}>
+            <Button onClick={handleSubmit(handleSubmitRecognition)}>
               <Send className="mr-2 h-4 w-4" />
               Send Recognition
             </Button>

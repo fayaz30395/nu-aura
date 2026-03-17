@@ -21,13 +21,16 @@ import {
   Lock,
   Star,
   Users,
+  Pen,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Skeleton, Modal } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 
-import { card, motion as dsMotion } from '@/lib/design-system';
+import { card, motion as dsMotion, iconSize } from '@/lib/design-system';
+import { TableOfContents } from '@/components/fluence/TableOfContents';
+import { Breadcrumbs } from '@/components/fluence/Breadcrumbs';
 import {
   useBlogPost,
   useComments,
@@ -71,6 +74,7 @@ export default function BlogPostDetailPage() {
   const [showViewers, setShowViewers] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: post, isLoading } = useBlogPost(postId, !!postId);
   const { data: commentsData } = useComments(postId, 'BLOG', 0, 50, !!postId && !!post);
@@ -325,20 +329,42 @@ export default function BlogPostDetailPage() {
           </div>
         </motion.div>
 
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Blog', href: '/fluence/blogs' },
+            {
+              label: post.categoryName || 'Uncategorized',
+              href: `/fluence/blogs?category=${post.categoryId}`,
+            },
+            {
+              label: post.title,
+              icon: <Pen className={iconSize.meta} />,
+            },
+          ]}
+          className="mb-4"
+        />
+
         {/* Main Content Grid */}
         <motion.div
           initial={dsMotion.pageEnter.initial}
           animate={dsMotion.pageEnter.animate}
           transition={{ ...dsMotion.pageEnter.transition, delay: 0.1 }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 lg:grid-cols-4 gap-6"
           ref={contentRef}
         >
+          {/* Table of Contents (hidden on mobile/tablet) */}
+          <div className="hidden lg:block lg:col-span-1 order-last">
+            <TableOfContents contentRef={contentContainerRef} />
+          </div>
+
           {/* Main Content */}
           <motion.div
             variants={dsMotion.staggerItem}
             className="lg:col-span-2"
           >
             <motion.div
+              ref={contentContainerRef}
               className={`${card.base} p-8 rounded-xl`}
               whileHover={dsMotion.cardHover}
             >
@@ -348,7 +374,7 @@ export default function BlogPostDetailPage() {
 
           {/* Sidebar */}
           <motion.div
-            className="space-y-4"
+            className="space-y-4 lg:col-span-1"
             initial="hidden"
             animate="visible"
             variants={{

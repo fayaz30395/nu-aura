@@ -25,6 +25,9 @@ import type { BadgeVariant } from '@/components/ui/types';
 import { useAuth } from '@/lib/hooks/useAuth';
 import type { CourseEnrollment } from '@/lib/services/lms.service';
 import { useMyEnrollments, useUpdateCourseProgress } from '@/lib/hooks/queries/useLearning';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('MyLearningPage');
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -119,7 +122,7 @@ export default function MyLearningPage() {
       // Refetch to get updated enrollments
       await refetch();
     } catch (err) {
-      console.error('Failed to update progress:', err);
+      log.error('Failed to update progress:', err);
       showNotification('Failed to update progress. Please try again.', 'error');
     } finally {
       setUpdatingId(null);

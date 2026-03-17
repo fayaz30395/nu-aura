@@ -45,6 +45,9 @@ import { ExitProcess, CreateExitProcessRequest, UpdateExitProcessRequest, ExitTy
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { extractContent } from '@/lib/utils/type-guards';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('OffboardingPage');
 
 const exitProcessFormSchema = z.object({
   employeeId: z.string().min(1, 'Employee ID required'),
@@ -221,7 +224,7 @@ export default function OffboardingPage() {
       try {
         router.push('/auth/login');
       } catch (err) {
-        console.error('Navigation error:', err);
+        log.error('Navigation error:', err);
         window.location.href = '/auth/login';
       }
     }
@@ -300,7 +303,7 @@ export default function OffboardingPage() {
       setShowAddModal(false);
       resetFormState();
     } catch (err: unknown) {
-      console.error('Error saving exit process:', err);
+      log.error('Error saving exit process:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save exit process');
     }
   };
@@ -314,7 +317,7 @@ export default function OffboardingPage() {
       setShowDeleteModal(false);
       setSelectedProcess(null);
     } catch (err: unknown) {
-      console.error('Error deleting exit process:', err);
+      log.error('Error deleting exit process:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete exit process');
     }
   };
@@ -323,7 +326,7 @@ export default function OffboardingPage() {
     try {
       await updateStatusMutation.mutateAsync({ id: process.id, status: newStatus });
     } catch (err: unknown) {
-      console.error('Error updating status:', err);
+      log.error('Error updating status:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status');
     }
   };

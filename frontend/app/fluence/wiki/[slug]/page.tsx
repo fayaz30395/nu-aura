@@ -28,6 +28,7 @@ import {
   CornerDownRight,
   ChevronDown,
   ChevronUp,
+  BookOpen,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Skeleton, Modal, Tooltip, ActionIcon, Badge } from '@mantine/core';
@@ -50,6 +51,8 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth';
 import { MentionInput, type MentionInputHandle } from '@/components/fluence/MentionInput';
 import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
+import { TableOfContents } from '@/components/fluence/TableOfContents';
+import { Breadcrumbs } from '@/components/fluence/Breadcrumbs';
 import type { FluenceComment } from '@/lib/types/fluence';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
@@ -405,6 +408,7 @@ export default function WikiPageDetailPage() {
   const [showHistory, setShowHistory] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const commentInputRef = useRef<MentionInputHandle>(null);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
   const { data: commentsData } = useComments(pageId, 'WIKI', 0, 50, !!pageId && !!page);
@@ -748,8 +752,29 @@ export default function WikiPageDetailPage() {
           </div>
         </motion.div>
 
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Wiki', href: '/fluence/wiki' },
+            {
+              label: page.spaceName || 'Untitled Space',
+              href: `/fluence/wiki?space=${page.spaceId}`,
+            },
+            {
+              label: page.title,
+              icon: <BookOpen className={iconSize.meta} />,
+            },
+          ]}
+          className="mb-4"
+        />
+
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Table of Contents (hidden on mobile/tablet) */}
+          <div className="hidden lg:block lg:col-span-1 order-last">
+            <TableOfContents contentRef={contentContainerRef} />
+          </div>
+
           {/* Main Content Area */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -757,7 +782,7 @@ export default function WikiPageDetailPage() {
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
             className="lg:col-span-2"
           >
-            <div className={`${card.base} ${card.paddingLarge}`}>
+            <div ref={contentContainerRef} className={`${card.base} ${card.paddingLarge}`}>
               <ContentViewer content={page.content} />
             </div>
           </motion.div>
@@ -767,7 +792,7 @@ export default function WikiPageDetailPage() {
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
-            className={layout.sectionGap}
+            className="lg:col-span-1"
           >
             {/* Stats Card */}
             <motion.div

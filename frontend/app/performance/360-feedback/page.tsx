@@ -31,6 +31,9 @@ import {
 } from '@/lib/hooks/queries/usePerformance';
 import { feedback360Service } from '@/lib/services/feedback360.service';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('FeedbackPage');
 
 
 const getStatusColor = (status: string) => {
@@ -151,7 +154,7 @@ export default function Feedback360Page() {
       resetCycleForm();
       fetchData();
     } catch (err) {
-      console.error('Error creating cycle:', err);
+      log.error('Error creating cycle:', err);
       setError('Failed to create cycle');
     }
   };
@@ -161,7 +164,7 @@ export default function Feedback360Page() {
       await feedback360Service.activateCycle(id);
       fetchData();
     } catch (err) {
-      console.error('Error activating cycle:', err);
+      log.error('Error activating cycle:', err);
       setError('Failed to activate cycle');
     }
   };
@@ -171,7 +174,7 @@ export default function Feedback360Page() {
       await feedback360Service.closeCycle(id);
       fetchData();
     } catch (err) {
-      console.error('Error closing cycle:', err);
+      log.error('Error closing cycle:', err);
       setError('Failed to close cycle');
     }
   };
@@ -181,7 +184,7 @@ export default function Feedback360Page() {
       await feedback360Service.deleteCycle(id);
       fetchData();
     } catch (err) {
-      console.error('Error deleting cycle:', err);
+      log.error('Error deleting cycle:', err);
       setError('Failed to delete cycle');
     }
   };
@@ -197,7 +200,7 @@ export default function Feedback360Page() {
       resetResponseForm();
       fetchData();
     } catch (err) {
-      console.error('Error submitting response:', err);
+      log.error('Error submitting response:', err);
       setError('Failed to submit response');
     }
   };
@@ -207,7 +210,7 @@ export default function Feedback360Page() {
       await feedback360Service.shareWithEmployee(summaryId);
       fetchData();
     } catch (err) {
-      console.error('Error sharing summary:', err);
+      log.error('Error sharing summary:', err);
       setError('Failed to share summary');
     }
   };

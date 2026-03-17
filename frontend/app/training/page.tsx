@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   GraduationCap,
   Plus,
@@ -68,6 +71,51 @@ import {
 } from '@/lib/hooks/queries/useTraining';
 
 type TabType = 'my-trainings' | 'catalog' | 'growth-roadmap' | 'manage';
+
+// Zod schema for training program form validation
+const trainingProgramSchema = z.object({
+  programCode: z.string().min(1, 'Program code is required'),
+  programName: z.string().min(1, 'Program name is required'),
+  description: z.string().default(''),
+  category: z.enum([
+    TrainingCategory.TECHNICAL,
+    TrainingCategory.SOFT_SKILLS,
+    TrainingCategory.LEADERSHIP,
+    TrainingCategory.COMPLIANCE,
+    TrainingCategory.SAFETY,
+    TrainingCategory.PRODUCT,
+    TrainingCategory.SALES,
+    TrainingCategory.CUSTOMER_SERVICE,
+    TrainingCategory.OTHER,
+  ]),
+  deliveryMode: z.enum([
+    DeliveryMode.IN_PERSON,
+    DeliveryMode.VIRTUAL,
+    DeliveryMode.HYBRID,
+    DeliveryMode.SELF_PACED,
+    DeliveryMode.WORKSHOP,
+  ]),
+  status: z.enum([
+    ProgramStatus.DRAFT,
+    ProgramStatus.SCHEDULED,
+    ProgramStatus.IN_PROGRESS,
+    ProgramStatus.COMPLETED,
+    ProgramStatus.CANCELLED,
+  ]),
+  durationHours: z.number({ coerce: true }).default(0),
+  startDate: z.string().default(''),
+  endDate: z.string().default(''),
+  trainerName: z.string().default(''),
+  trainerEmail: z.string().email('Invalid email').default(''),
+  location: z.string().default(''),
+  maxParticipants: z.number({ coerce: true }).default(0),
+  costPerParticipant: z.number({ coerce: true }).default(0),
+  prerequisites: z.string().default(''),
+  learningObjectives: z.string().default(''),
+  isMandatory: z.boolean().default(false),
+});
+
+type TrainingProgramFormData = z.infer<typeof trainingProgramSchema>;
 
 const categoryOptions = [
   { value: TrainingCategory.TECHNICAL, label: 'Technical' },
@@ -171,25 +219,33 @@ export default function TrainingPage() {
   // Fetch enrollments for the selected program via React Query (replaces imperative service call)
   const { data: enrollments = [] } = useEnrollmentsByProgram(selectedProgramId);
 
-  // Form state
-  const [formData, setFormData] = useState<Partial<TrainingProgramRequest>>({
-    programCode: '',
-    programName: '',
-    description: '',
-    category: TrainingCategory.TECHNICAL,
-    deliveryMode: DeliveryMode.IN_PERSON,
-    durationHours: 0,
-    startDate: '',
-    endDate: '',
-    trainerName: '',
-    trainerEmail: '',
-    location: '',
-    maxParticipants: 0,
-    costPerParticipant: 0,
-    prerequisites: '',
-    learningObjectives: '',
-    isMandatory: false,
-    status: ProgramStatus.DRAFT,
+  // Form state with React Hook Form
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TrainingProgramFormData>({
+    resolver: zodResolver(trainingProgramSchema),
+    defaultValues: {
+      programCode: '',
+      programName: '',
+      description: '',
+      category: TrainingCategory.TECHNICAL,
+      deliveryMode: DeliveryMode.IN_PERSON,
+      durationHours: 0,
+      startDate: '',
+      endDate: '',
+      trainerName: '',
+      trainerEmail: '',
+      location: '',
+      maxParticipants: 0,
+      costPerParticipant: 0,
+      prerequisites: '',
+      learningObjectives: '',
+      isMandatory: false,
+      status: ProgramStatus.DRAFT,
+    },
   });
 
   // Enrollment form state
@@ -217,7 +273,7 @@ export default function TrainingPage() {
 
   const handleCreateProgram = () => {
     setEditingProgram(null);
-    setFormData({
+    reset({
       programCode: '',
       programName: '',
       description: '',
@@ -241,7 +297,7 @@ export default function TrainingPage() {
 
   const handleEditProgram = (program: TrainingProgram) => {
     setEditingProgram(program);
-    setFormData({
+    reset({
       programCode: program.programCode,
       programName: program.programName,
       description: program.description,
@@ -307,10 +363,10 @@ export default function TrainingPage() {
     );
   };
 
-  const handleSubmitProgram = () => {
+  const onSubmitProgram = (data: TrainingProgramFormData) => {
     if (editingProgram) {
       updateProgramMutation.mutate(
-        { programId: editingProgram.id, data: formData as TrainingProgramRequest },
+        { programId: editingProgram.id, data: data as TrainingProgramRequest },
         {
           onSuccess: () => {
             showNotification('Program updated successfully', 'success');
@@ -319,7 +375,7 @@ export default function TrainingPage() {
         }
       );
     } else {
-      createProgramMutation.mutate(formData as TrainingProgramRequest, {
+      createProgramMutation.mutate(data as TrainingProgramRequest, {
         onSuccess: () => {
           showNotification('Program created successfully', 'success');
           setIsModalOpen(false);
@@ -985,196 +1041,190 @@ export default function TrainingPage() {
 
         {/* Create/Edit Program Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
-          <ModalHeader>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-              {editingProgram ? 'Edit Training Program' : 'Create Training Program'}
-            </h2>
-          </ModalHeader>
-          <ModalBody>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Program Code *
-                </label>
-                <Input
-                  value={formData.programCode}
-                  onChange={(e) => setFormData({ ...formData, programCode: e.target.value })}
-                  placeholder="e.g., TRN-001"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Program Name *
-                </label>
-                <Input
-                  value={formData.programName}
-                  onChange={(e) => setFormData({ ...formData, programName: e.target.value })}
-                  placeholder="Enter program name"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Description
-                </label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Enter program description"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Category *
-                </label>
-                <Select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value as TrainingCategory })}
-                >
-                  {categoryOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Delivery Mode *
-                </label>
-                <Select
-                  value={formData.deliveryMode}
-                  onChange={(e) => setFormData({ ...formData, deliveryMode: e.target.value as DeliveryMode })}
-                >
-                  {deliveryModeOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Status
-                </label>
-                <Select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as ProgramStatus })}
-                >
-                  {statusOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Duration (Hours)
-                </label>
-                <Input
-                  type="number"
-                  value={formData.durationHours}
-                  onChange={(e) => setFormData({ ...formData, durationHours: parseInt(e.target.value) || 0 })}
-                  placeholder="Enter duration"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Start Date
-                </label>
-                <Input
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  End Date
-                </label>
-                <Input
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Trainer Name
-                </label>
-                <Input
-                  value={formData.trainerName}
-                  onChange={(e) => setFormData({ ...formData, trainerName: e.target.value })}
-                  placeholder="Enter trainer name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Location
-                </label>
-                <Input
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Enter location"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Max Participants
-                </label>
-                <Input
-                  type="number"
-                  value={formData.maxParticipants}
-                  onChange={(e) => setFormData({ ...formData, maxParticipants: parseInt(e.target.value) || 0 })}
-                  placeholder="Enter max participants"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Cost per Participant ($)
-                </label>
-                <Input
-                  type="number"
-                  value={formData.costPerParticipant}
-                  onChange={(e) => setFormData({ ...formData, costPerParticipant: parseFloat(e.target.value) || 0 })}
-                  placeholder="Enter cost"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Learning Objectives
-                </label>
-                <Textarea
-                  value={formData.learningObjectives}
-                  onChange={(e) => setFormData({ ...formData, learningObjectives: e.target.value })}
-                  placeholder="Enter learning objectives"
-                  rows={2}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.isMandatory}
-                    onChange={(e) => setFormData({ ...formData, isMandatory: e.target.checked })}
-                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+          <form onSubmit={handleSubmit(onSubmitProgram)}>
+            <ModalHeader>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+                {editingProgram ? 'Edit Training Program' : 'Create Training Program'}
+              </h2>
+            </ModalHeader>
+            <ModalBody>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Program Code *
+                  </label>
+                  <Input
+                    {...register('programCode')}
+                    placeholder="e.g., TRN-001"
                   />
-                  <span className="text-sm font-medium text-[var(--text-secondary)]">
-                    Mandatory Training
-                  </span>
-                </label>
+                  {errors.programCode && (
+                    <p className="text-xs text-red-600 mt-1">{errors.programCode.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Program Name *
+                  </label>
+                  <Input
+                    {...register('programName')}
+                    placeholder="Enter program name"
+                  />
+                  {errors.programName && (
+                    <p className="text-xs text-red-600 mt-1">{errors.programName.message}</p>
+                  )}
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Description
+                  </label>
+                  <Textarea
+                    {...register('description')}
+                    placeholder="Enter program description"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Category *
+                  </label>
+                  <Select {...register('category')}>
+                    {categoryOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Delivery Mode *
+                  </label>
+                  <Select {...register('deliveryMode')}>
+                    {deliveryModeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Status
+                  </label>
+                  <Select {...register('status')}>
+                    {statusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Duration (Hours)
+                  </label>
+                  <Input
+                    type="number"
+                    {...register('durationHours', { valueAsNumber: true })}
+                    placeholder="Enter duration"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Start Date
+                  </label>
+                  <Input type="date" {...register('startDate')} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    End Date
+                  </label>
+                  <Input type="date" {...register('endDate')} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Trainer Name
+                  </label>
+                  <Input
+                    {...register('trainerName')}
+                    placeholder="Enter trainer name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Trainer Email
+                  </label>
+                  <Input
+                    type="email"
+                    {...register('trainerEmail')}
+                    placeholder="Enter trainer email"
+                  />
+                  {errors.trainerEmail && (
+                    <p className="text-xs text-red-600 mt-1">{errors.trainerEmail.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Location
+                  </label>
+                  <Input
+                    {...register('location')}
+                    placeholder="Enter location"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Max Participants
+                  </label>
+                  <Input
+                    type="number"
+                    {...register('maxParticipants', { valueAsNumber: true })}
+                    placeholder="Enter max participants"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Cost per Participant ($)
+                  </label>
+                  <Input
+                    type="number"
+                    {...register('costPerParticipant', { valueAsNumber: true })}
+                    placeholder="Enter cost"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Learning Objectives
+                  </label>
+                  <Textarea
+                    {...register('learningObjectives')}
+                    placeholder="Enter learning objectives"
+                    rows={2}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      {...register('isMandatory')}
+                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">
+                      Mandatory Training
+                    </span>
+                  </label>
+                </div>
               </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmitProgram}>
-              {editingProgram ? 'Update Program' : 'Create Program'}
-            </Button>
-          </ModalFooter>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {editingProgram ? 'Update Program' : 'Create Program'}
+              </Button>
+            </ModalFooter>
+          </form>
         </Modal>
 
         {/* View Program Modal */}

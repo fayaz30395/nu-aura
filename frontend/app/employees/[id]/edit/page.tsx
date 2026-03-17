@@ -16,6 +16,9 @@ import { EntityType, CustomFieldValueRequest } from '@/lib/types/custom-fields';
 import { customFieldsApi } from '@/lib/api/custom-fields';
 import { AppLayout } from '@/components/layout';
 import { AlertCircle, Clock } from 'lucide-react';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('EmployeeEditPage');
 
 // Zod schema for employee form validation
 const updateEmployeeFormSchema = z.object({
@@ -144,7 +147,7 @@ export default function EditEmployeePage() {
       });
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee');
-      console.error('Error loading employee:', err);
+      log.error('Error loading employee:', err);
     } finally {
       setLoading(false);
     }
@@ -155,7 +158,7 @@ export default function EditEmployeePage() {
       const response = await employeeService.getAllEmployees(0, 100);
       setManagers(response.content);
     } catch (err: unknown) {
-      console.error('Error loading managers:', err);
+      log.error('Error loading managers:', err);
     }
   };
 
@@ -164,7 +167,7 @@ export default function EditEmployeePage() {
       const response = await departmentService.getActiveDepartments();
       setDepartments(response);
     } catch (err: unknown) {
-      console.error('Error loading departments:', err);
+      log.error('Error loading departments:', err);
     }
   };
 
@@ -284,7 +287,7 @@ export default function EditEmployeePage() {
       }
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update employee');
-      console.error('Error updating employee:', err);
+      log.error('Error updating employee:', err);
     }
   };
 

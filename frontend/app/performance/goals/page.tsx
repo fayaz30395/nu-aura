@@ -13,6 +13,9 @@ import {
 } from '@/lib/hooks/queries/usePerformance';
 import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('GoalsPage');
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -88,7 +91,7 @@ export default function GoalsPage() {
       setShowModal(false);
       resetFormHandler();
     } catch (error: unknown) {
-      console.error('Error saving goal:', error);
+      log.error('Error saving goal:', error);
     }
   };
 
@@ -99,7 +102,7 @@ export default function GoalsPage() {
       setShowDeleteConfirm(false);
       setSelectedGoal(null);
     } catch (error: unknown) {
-      console.error('Error deleting goal:', error);
+      log.error('Error deleting goal:', error);
     }
   };
 

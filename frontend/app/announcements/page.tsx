@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -32,7 +35,6 @@ import {
   Announcement,
   AnnouncementCategory,
   AnnouncementPriority,
-  TargetAudience,
   getCategoryColor,
   getPriorityColor,
   getCategoryLabel,
@@ -55,6 +57,32 @@ import {
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 
 const logger = createLogger('Announcements');
+
+// Zod schema for announcement form
+const announcementFormSchema = z.object({
+  title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
+  content: z.string().min(1, 'Content is required').min(10, 'Content must be at least 10 characters'),
+  category: z.enum([
+    'GENERAL',
+    'POLICY_UPDATE',
+    'EVENT',
+    'HOLIDAY',
+    'ACHIEVEMENT',
+    'URGENT',
+    'BENEFIT',
+    'TRAINING',
+    'SOCIAL',
+    'IT_MAINTENANCE',
+    'HEALTH_SAFETY',
+    'OTHER',
+  ] as const),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const),
+  targetAudience: z.enum(['ALL_EMPLOYEES', 'SPECIFIC_DEPARTMENTS', 'SPECIFIC_EMPLOYEES', 'MANAGERS_ONLY', 'NEW_JOINERS'] as const),
+  isPinned: z.boolean().default(false),
+  sendEmail: z.boolean().default(false),
+});
+
+type AnnouncementFormData = z.infer<typeof announcementFormSchema>;
 
 const categoryIcons: Record<AnnouncementCategory, React.ElementType> = {
   GENERAL: Bell,
@@ -634,49 +662,52 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
   const toast = useToast();
   const isEditing = !!announcement;
   const [error, setError] = useState('');
-  const [formData, setFormData] = useState<CreateAnnouncementRequest>({
-    title: announcement?.title || '',
-    content: announcement?.content || '',
-    category: announcement?.category || 'GENERAL',
-    priority: announcement?.priority || 'MEDIUM',
-    targetAudience: announcement?.targetAudience || 'ALL_EMPLOYEES',
-    targetDepartmentIds: announcement?.targetDepartmentIds || [],
-    isPinned: announcement?.isPinned || false,
-    sendEmail: false,
-  });
+  const [targetDepartmentIds, setTargetDepartmentIds] = useState<string[]>(announcement?.targetDepartmentIds || []);
 
   // React Query hooks
   const { data: departments = [], isLoading: loadingDepartments } = useActiveDepartments();
   const createMutation = useCreateAnnouncement();
   const updateMutation = useUpdateAnnouncement();
 
+  // React Hook Form setup
+  const {
+    register,
+    watch,
+    handleSubmit: formHandleSubmit,
+    formState: { errors },
+  } = useForm<AnnouncementFormData>({
+    resolver: zodResolver(announcementFormSchema),
+    defaultValues: {
+      title: announcement?.title || '',
+      content: announcement?.content || '',
+      category: announcement?.category || 'GENERAL',
+      priority: announcement?.priority || 'MEDIUM',
+      targetAudience: announcement?.targetAudience || 'ALL_EMPLOYEES',
+      isPinned: announcement?.isPinned || false,
+      sendEmail: false,
+    },
+  });
+
+  const watchTargetAudience = watch('targetAudience');
+
   // Load departments when SPECIFIC_DEPARTMENTS is selected
   useEffect(() => {
-    if (formData.targetAudience === 'SPECIFIC_DEPARTMENTS' && departments.length === 0) {
+    if (watchTargetAudience === 'SPECIFIC_DEPARTMENTS' && departments.length === 0) {
       // useActiveDepartments will automatically load on first use
     }
-  }, [formData.targetAudience, departments.length]);
+  }, [watchTargetAudience, departments.length]);
 
   const toggleDepartment = (deptId: string) => {
-    setFormData(prev => {
-      const currentIds = prev.targetDepartmentIds || [];
-      if (currentIds.includes(deptId)) {
-        return { ...prev, targetDepartmentIds: currentIds.filter(id => id !== deptId) };
-      } else {
-        return { ...prev, targetDepartmentIds: [...currentIds, deptId] };
-      }
-    });
+    if (targetDepartmentIds.includes(deptId)) {
+      setTargetDepartmentIds(targetDepartmentIds.filter(id => id !== deptId));
+    } else {
+      setTargetDepartmentIds([...targetDepartmentIds, deptId]);
+    }
   };
 
-  const handleSubmit = async () => {
-    if (!formData.title || !formData.content) {
-      setError('Title and content are required');
-      return;
-    }
-
+  const onSubmit = async (data: AnnouncementFormData) => {
     // Validate department selection when targeting specific departments
-    if (formData.targetAudience === 'SPECIFIC_DEPARTMENTS' &&
-        (!formData.targetDepartmentIds || formData.targetDepartmentIds.length === 0)) {
+    if (data.targetAudience === 'SPECIFIC_DEPARTMENTS' && targetDepartmentIds.length === 0) {
       setError('Please select at least one department');
       return;
     }
@@ -684,11 +715,22 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
     setError('');
 
     try {
+      const payload: CreateAnnouncementRequest = {
+        title: data.title,
+        content: data.content,
+        category: data.category,
+        priority: data.priority,
+        targetAudience: data.targetAudience,
+        isPinned: data.isPinned,
+        sendEmail: data.sendEmail,
+        targetDepartmentIds: targetDepartmentIds.length > 0 ? targetDepartmentIds : undefined,
+      };
+
       if (isEditing && announcement) {
-        await updateMutation.mutateAsync({ id: announcement.id, data: formData });
+        await updateMutation.mutateAsync({ id: announcement.id, data: payload });
         toast.success('Announcement Updated', 'Your announcement has been updated successfully.');
       } else {
-        await createMutation.mutateAsync(formData);
+        await createMutation.mutateAsync(payload);
         toast.success('Announcement Published', 'Your announcement has been published successfully.');
       }
       onSuccess();
@@ -729,189 +771,191 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
-              placeholder="Enter announcement title"
-            />
-          </div>
-
-          {/* Content */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Content <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              rows={5}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
-              placeholder="Enter announcement content"
-            />
-          </div>
-
-          {/* Category and Priority */}
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={formHandleSubmit(onSubmit)} className="flex flex-col h-full">
+          <div className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
+            {/* Title */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Category
+                Title <span className="text-red-500">*</span>
               </label>
-              <select
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value as AnnouncementCategory })}
-                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
-              >
-                {Object.keys(categoryIcons).map((cat) => (
-                  <option key={cat} value={cat}>
-                    {getCategoryLabel(cat as AnnouncementCategory)}
-                  </option>
-                ))}
-              </select>
+              <input
+                type="text"
+                {...register('title')}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                  errors.title ? 'border-red-500' : 'border-[var(--border-main)]'
+                }`}
+                placeholder="Enter announcement title"
+              />
+              {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title.message}</p>}
             </div>
+
+            {/* Content */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Priority
+                Content <span className="text-red-500">*</span>
               </label>
-              <select
-                value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: e.target.value as AnnouncementPriority })}
-                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
-              >
-                {Object.entries(priorityLabels).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
+              <textarea
+                {...register('content')}
+                rows={5}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none ${
+                  errors.content ? 'border-red-500' : 'border-[var(--border-main)]'
+                }`}
+                placeholder="Enter announcement content"
+              />
+              {errors.content && <p className="text-xs text-red-500 mt-1">{errors.content.message}</p>}
             </div>
-          </div>
 
-          {/* Target Audience */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Target Audience
-            </label>
-            <select
-              value={formData.targetAudience}
-              onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value as TargetAudience, targetDepartmentIds: [] })}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
-            >
-              <option value="ALL_EMPLOYEES">All Employees</option>
-              <option value="SPECIFIC_DEPARTMENTS">Specific Departments</option>
-              <option value="MANAGERS_ONLY">Managers Only</option>
-              <option value="NEW_JOINERS">New Joiners</option>
-            </select>
-          </div>
-
-          {/* Department Selection - Only shown when SPECIFIC_DEPARTMENTS is selected */}
-          {formData.targetAudience === 'SPECIFIC_DEPARTMENTS' && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Select Departments <span className="text-red-500">*</span>
-              </label>
-              {loadingDepartments ? (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
-                  <span className="ml-2 text-sm text-[var(--text-muted)]">Loading departments...</span>
-                </div>
-              ) : departments.length === 0 ? (
-                <p className="text-sm text-[var(--text-muted)]">No departments found</p>
-              ) : (
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
-                  {departments.map((dept) => (
-                    <label
-                      key={dept.id}
-                      className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
-                        formData.targetDepartmentIds?.includes(dept.id)
-                          ? 'bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700'
-                          : 'hover:bg-[var(--bg-surface)] dark:hover:bg-slate-700 border border-transparent'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.targetDepartmentIds?.includes(dept.id) || false}
-                        onChange={() => toggleDepartment(dept.id)}
-                        className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
-                      />
-                      <span className="text-sm text-[var(--text-secondary)] truncate">
-                        {dept.name}
-                      </span>
-                    </label>
+            {/* Category and Priority */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  Category
+                </label>
+                <select
+                  {...register('category')}
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
+                >
+                  {Object.keys(categoryIcons).map((cat) => (
+                    <option key={cat} value={cat}>
+                      {getCategoryLabel(cat as AnnouncementCategory)}
+                    </option>
                   ))}
-                </div>
-              )}
-              {formData.targetDepartmentIds && formData.targetDepartmentIds.length > 0 && (
-                <p className="mt-2 text-xs text-purple-600 dark:text-purple-400">
-                  {formData.targetDepartmentIds.length} department{formData.targetDepartmentIds.length > 1 ? 's' : ''} selected
-                </p>
-              )}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  Priority
+                </label>
+                <select
+                  {...register('priority')}
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
+                >
+                  {Object.entries(priorityLabels).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          )}
 
-          {/* Options */}
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.isPinned}
-                onChange={(e) => setFormData({ ...formData, isPinned: e.target.checked })}
-                className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
-              />
-              <span className="text-sm text-[var(--text-secondary)]">Pin this announcement</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.sendEmail}
-                onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
-                className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
-              />
-              <span className="text-sm text-[var(--text-secondary)]">Send email notification</span>
-            </label>
+            {/* Target Audience */}
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Target Audience
+              </label>
+              <select
+                {...register('targetAudience')}
+                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
+              >
+                <option value="ALL_EMPLOYEES">All Employees</option>
+                <option value="SPECIFIC_DEPARTMENTS">Specific Departments</option>
+                <option value="MANAGERS_ONLY">Managers Only</option>
+                <option value="NEW_JOINERS">New Joiners</option>
+              </select>
+            </div>
+
+            {/* Department Selection - Only shown when SPECIFIC_DEPARTMENTS is selected */}
+            {watchTargetAudience === 'SPECIFIC_DEPARTMENTS' && (
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  Select Departments <span className="text-red-500">*</span>
+                </label>
+                {loadingDepartments ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+                    <span className="ml-2 text-sm text-[var(--text-muted)]">Loading departments...</span>
+                  </div>
+                ) : departments.length === 0 ? (
+                  <p className="text-sm text-[var(--text-muted)]">No departments found</p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
+                    {departments.map((dept) => (
+                      <label
+                        key={dept.id}
+                        className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
+                          targetDepartmentIds.includes(dept.id)
+                            ? 'bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700'
+                            : 'hover:bg-[var(--bg-surface)] dark:hover:bg-slate-700 border border-transparent'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={targetDepartmentIds.includes(dept.id)}
+                          onChange={() => toggleDepartment(dept.id)}
+                          className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                        />
+                        <span className="text-sm text-[var(--text-secondary)] truncate">
+                          {dept.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+                {targetDepartmentIds.length > 0 && (
+                  <p className="mt-2 text-xs text-purple-600 dark:text-purple-400">
+                    {targetDepartmentIds.length} department{targetDepartmentIds.length > 1 ? 's' : ''} selected
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Options */}
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register('isPinned')}
+                  className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                />
+                <span className="text-sm text-[var(--text-secondary)]">Pin this announcement</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register('sendEmail')}
+                  className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                />
+                <span className="text-sm text-[var(--text-secondary)]">Send email notification</span>
+              </label>
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+                {error}
+              </div>
+            )}
           </div>
 
-          {/* Error */}
-          {error && (
-            <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex gap-4">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={createMutation.isPending || updateMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {createMutation.isPending || updateMutation.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                {isEditing ? 'Updating...' : 'Publishing...'}
-              </>
-            ) : (
-              <>
-                <Megaphone className="w-4 h-4" />
-                {isEditing ? 'Update' : 'Publish'}
-              </>
-            )}
-          </button>
-        </div>
+          {/* Footer */}
+          <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex gap-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={createMutation.isPending || updateMutation.isPending}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {createMutation.isPending || updateMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {isEditing ? 'Updating...' : 'Publishing...'}
+                </>
+              ) : (
+                <>
+                  <Megaphone className="w-4 h-4" />
+                  {isEditing ? 'Update' : 'Publish'}
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </motion.div>
     </motion.div>
   );

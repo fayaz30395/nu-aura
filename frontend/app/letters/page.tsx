@@ -55,6 +55,9 @@ import {
   useRevokeLetter,
 } from '@/lib/hooks/queries/useLetter';
 import { useCandidates } from '@/lib/hooks/queries/useRecruitment';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('LettersPage');
 
 // Zod schemas for forms
 const GenerateLetterFormSchema = z.object({
@@ -247,7 +250,7 @@ export default function LettersPage() {
       try {
         router.push('/auth/login');
       } catch (err) {
-        console.error('Navigation error:', err);
+        log.error('Navigation error:', err);
         window.location.href = '/auth/login';
       }
     }
@@ -340,7 +343,7 @@ export default function LettersPage() {
           refetchLetters();
         },
         onError: (err: unknown) => {
-          console.error('Error generating letter:', err);
+          log.error('Error generating letter:', err);
         }
       }
     );
@@ -370,7 +373,7 @@ export default function LettersPage() {
           refetchCandidates();
         },
         onError: (err: unknown) => {
-          console.error('Error generating offer letter:', err);
+          log.error('Error generating offer letter:', err);
         }
       }
     );
@@ -380,21 +383,21 @@ export default function LettersPage() {
     // This calls approveLetterMutation with status update
     approveLetterMutation.mutate(
       { letterId: letter.id, approverId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
     );
   };
 
   const handleApproveLetter = async (letter: GeneratedLetter) => {
     approveLetterMutation.mutate(
       { letterId: letter.id, approverId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
     );
   };
 
   const handleIssueLetter = async (letter: GeneratedLetter) => {
     issueLetterMutation.mutate(
       { letterId: letter.id, issuerId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
     );
   };
 
@@ -402,14 +405,14 @@ export default function LettersPage() {
     // For e-sign, use the same issue mutation (backend handles e-sign flag)
     issueLetterMutation.mutate(
       { letterId: letter.id, issuerId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => console.error('Error:', err) }
+      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
     );
   };
 
   const handleRevokeLetter = async (letter: GeneratedLetter) => {
     revokeLetterMutation.mutate(letter.id, {
       onSuccess: () => refetchLetters(),
-      onError: (err) => console.error('Error:', err),
+      onError: (err) => log.error('Error:', err),
     });
   };
 
