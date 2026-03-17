@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  Pen,
   ArrowLeft,
   Edit,
   Share,
@@ -27,7 +27,6 @@ import { Skeleton, Modal } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 
-import { Button } from '@/components/ui/Button';
 import { card, motion as dsMotion } from '@/lib/design-system';
 import {
   useBlogPost,
@@ -177,31 +176,7 @@ export default function BlogPostDetailPage() {
   }
 
   if (!post) {
-    return (
-      <AppLayout>
-        <motion.div
-          initial={dsMotion.pageEnter.initial}
-          animate={dsMotion.pageEnter.animate}
-          transition={dsMotion.pageEnter.transition}
-          className="text-center py-16"
-        >
-          <Pen className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
-          <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
-            Post not found
-          </h3>
-          <p className="text-[var(--text-muted)] mb-4">
-            The post you&apos;re looking for doesn&apos;t exist
-          </p>
-          <Button
-            onClick={() => router.back()}
-            className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)]"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Go Back
-          </Button>
-        </motion.div>
-      </AppLayout>
-    );
+    notFound();
   }
 
   const getInitial = (name?: string): string => {

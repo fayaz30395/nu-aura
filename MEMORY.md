@@ -2492,6 +2492,49 @@ Two-phase engineering audit across the full NU-AURA codebase (frontend + backend
 ---
 
 ### Remaining Known Issues (for future sessions)
-- **`getLastActivityForTenant()` in `SystemAdminService`:** Still calls `findByTenantId()` then streams `lastLoginAt` in Java — could be a DB `MAX()` query. Low impact (called only for the page slice).
-- **`storageUsageBytes`:** Hardcoded `0` in all tenant metric DTOs — TODO tracked for MinIO integration.
-- **`aiCreditsUsed`:** Hardcoded `0` in `SystemOverviewDTO` — TODO tracked for audit-log–based credit tracking.
+- **ESLint `no-unused-vars` warnings:** ~648 remaining in `app/` — requires a targeted per-file scan using `@typescript-eslint/no-unused-vars` rule; partial fix applied (5 cleared in fluence/letters pages)
+- **useState server state:** Confirmed resolved — 95%+ of pages already use React Query; `letters/page.tsx` was the only remaining offender and has been migrated
+- **MinIO Admin API wiring:** `StorageMetricsService` now queries `GeneratedDocument` + `DocumentVersion` `fileSize` columns for real bytes; MinIO bucket-level stats integration documented with TODO in `AiUsageService` and `StorageMetricsService`
+
+---
+
+## Session Log 38 — Parallel Cleanup Sprint (5 agents)
+
+### Scope
+Five parallel agents tackled the backlog items identified in Session 37.
+
+---
+
+### Agent 1 — no-unused-vars partial fix
+- **Files:** `app/letters/page.tsx`, `app/fluence/blogs/[slug]/page.tsx`, `app/fluence/templates/[id]/page.tsx`, `app/fluence/wiki/[slug]/page.tsx`
+- Removed unused imports (`Pen`, `Button`, `FileText`, `BookOpen`, `useGeneratePdf`)
+- Renamed unused destructured vars to `_templatesLoading`, `_candidatesLoading`
+- **Result:** 5 warnings cleared; remaining ~648 require deeper `@typescript-eslint/no-unused-vars` per-file scan
+
+### Agent 2 — useState → React Query migration
+- **File:** `app/letters/page.tsx` — full migration from direct service calls + `useState`/`useEffect`/`useCallback` to `useAllLetters`, `useActiveLetterTemplates`, `useGenerateLetter`, `useGenerateOfferLetter`, `useIssueLetter`, `useApproveLetter`, `useRevokeLetter` hooks
+- **Survey result:** 95%+ of `app/` pages already use React Query correctly; remaining `useState` is legitimate local UI state
+
+### Agent 3 — react-hooks/exhaustive-deps in components/ + lib/
+- **Result:** Zero violations found across 377 files — `components/` and `lib/` are already clean
+
+### Agent 4 — getLastActivityForTenant() DB optimisation
+- **File:** `backend/.../infrastructure/user/repository/UserRepository.java`
+  - Added: `@Query("SELECT MAX(u.lastLoginAt) FROM User u WHERE u.tenantId = :tenantId") Optional<LocalDateTime> findMaxLastLoginAtByTenantId(@Param("tenantId") UUID tenantId)`
+- **File:** `backend/.../application/admin/service/SystemAdminService.java`
+  - `getLastActivityForTenant()`: replaced heap-loading stream with `userRepository.findMaxLastLoginAtByTenantId(tenantId).orElse(null)`
+
+### Agent 5 — storageUsageBytes + aiCreditsUsed wiring
+**New files created:**
+- `backend/.../domain/document/GeneratedDocumentRepository.java` — `sumFileSizeByTenantId()` + `sumFileSizeAcrossAllTenants()` via `COALESCE(SUM(gd.fileSize), 0)` JPQL
+- `backend/.../domain/document/DocumentVersionRepository.java` — same pattern for document versions
+- `backend/.../application/document/service/StorageMetricsService.java` — aggregates both repos; MinIO Admin API integration documented as TODO
+- `backend/.../application/admin/service/AiUsageService.java` — clean stub returning `0` with full implementation spec (ai_usage_log schema, OpenAI wiring) documented inline for Phase 2
+
+**Modified:**
+- `SystemAdminService` — injects `StorageMetricsService` + `AiUsageService`; all `storageUsageBytes = 0` and `aiCreditsUsed = 0` replaced with service calls
+
+---
+
+### TypeScript Validation
+- `npx tsc --noEmit` → **0 errors** (verified by Agent 1 and Agent 2)

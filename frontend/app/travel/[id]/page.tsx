@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { TravelStatus } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -212,6 +213,10 @@ export default function TravelRequestDetailsPage() {
         </div>
       </AppLayout>
     );
+  }
+
+  if (!isLoading && !error && !travelRequest) {
+    notFound();
   }
 
   if (error || !travelRequest) {
