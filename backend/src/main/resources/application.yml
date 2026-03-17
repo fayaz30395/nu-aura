@@ -9,13 +9,13 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/hrms}
-    username: ${SPRING_DATASOURCE_USERNAME:hrms}
-    password: ${SPRING_DATASOURCE_PASSWORD:hrms_dev_password}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require}
+    username: ${SPRING_DATASOURCE_USERNAME:neondb_owner}
+    password: ${SPRING_DATASOURCE_PASSWORD:npg_p3Nnmrd9PvhB}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 25
-      minimum-idle: 10
+      maximum-pool-size: 10
+      minimum-idle: 2
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
@@ -63,6 +63,10 @@ spring:
     out-of-order: true
     validate-on-migrate: false
     clean-disabled: true
+    # Flyway uses direct (non-pooler) Neon endpoint to avoid PgBouncer transaction-mode issues
+    url: ${FLYWAY_URL:jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require}
+    user: ${FLYWAY_USER:neondb_owner}
+    password: ${FLYWAY_PASSWORD:npg_p3Nnmrd9PvhB}
 
   data:
     redis:

@@ -196,7 +196,13 @@
       "Bash(rm -f .fuse_hidden*)",
       "Bash(./docker-db-export.sh)",
       "Bash(./docker-volume-export.sh)",
-      "Bash(docker volume:*)"
+      "Bash(docker volume:*)",
+      "Bash(docker-compose -f /Users/macbook/IdeaProjects/nulogic/nu-aura/docker-compose.yml ps)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker stop:*)",
+      "Bash(while ps:*)",
+      "Bash(do sleep:*)"
     ],
     "additionalDirectories": [
       "/tmp"
