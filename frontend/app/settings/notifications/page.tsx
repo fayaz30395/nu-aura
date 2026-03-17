@@ -175,7 +175,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'email')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.email ? 'bg-primary' : 'bg-gray-300'
+                        pref.email ? 'bg-primary-600' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -190,7 +190,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'push')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.push ? 'bg-primary' : 'bg-gray-300'
+                        pref.push ? 'bg-primary-600' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -205,7 +205,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'inApp')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.inApp ? 'bg-primary' : 'bg-gray-300'
+                        pref.inApp ? 'bg-primary-600' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span

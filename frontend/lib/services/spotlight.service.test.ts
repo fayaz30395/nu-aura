@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+/// <vitest config="{ environment: 'node' }" />
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 vi.mock('@/lib/api/client', () => ({

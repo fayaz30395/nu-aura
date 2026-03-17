@@ -11,7 +11,7 @@ services:
     environment:
       POSTGRES_DB: hrms_dev
       POSTGRES_USER: hrms
-      POSTGRES_PASSWORD: hrms_dev_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hrms_dev_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -94,8 +94,9 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_KMS_AUTO_ENCRYPTION: "on"
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
@@ -122,16 +123,15 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/hrms_dev
       SPRING_DATASOURCE_USERNAME: hrms
-      SPRING_DATASOURCE_PASSWORD: hrms_dev_password
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-hrms_dev_password}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-      # DEV ONLY — replace with APP_SECURITY_ENCRYPTION_KEY in production
-      JWT_SECRET: local-dev-jwt-secret-change-in-production-minimum-32-chars
-      APP_SECURITY_ENCRYPTION_KEY: local-dev-enc-key-change-in-prod-32b
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      JWT_SECRET: ${JWT_SECRET:-local-dev-jwt-secret-change-in-production-minimum-32-chars}
+      APP_SECURITY_ENCRYPTION_KEY: ${APP_SECURITY_ENCRYPTION_KEY:-local-dev-enc-key-change-in-prod-32b}
       FRONTEND_URL: http://localhost:3000
     networks:
       - hrms_network

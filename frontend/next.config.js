@@ -142,7 +142,7 @@ const nextConfig = {
           "default-src 'self'",
           process.env.NODE_ENV === 'development'
             ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
-            : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com",
+            : "script-src 'self' 'strict-dynamic' 'unsafe-inline' https://accounts.google.com https://apis.google.com",
           "style-src 'self' 'unsafe-inline' https://accounts.google.com",
           `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://*.googleapis.com https://www.googleapis.com`,
           "img-src 'self' data: blob: https:",

@@ -53,6 +53,7 @@ public class JwtTokenProvider {
                 .claim("roles", authentication.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
+                .claim("type", "access")
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
@@ -89,6 +90,7 @@ public class JwtTokenProvider {
                 .claim("locationId", locationId != null ? locationId.toString() : null)
                 .claim("departmentId", departmentId != null ? departmentId.toString() : null)
                 .claim("teamId", teamId != null ? teamId.toString() : null)
+                .claim("type", "access")
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
@@ -159,6 +161,12 @@ public class JwtTokenProvider {
             // Check if token is blacklisted
             String jti = claims.getId();
             if (jti != null && tokenBlacklistService.isBlacklisted(jti)) {
+                return false;
+            }
+
+            // Reject refresh tokens used as access tokens (BUG-010)
+            String tokenType = claims.get("type", String.class);
+            if ("refresh".equals(tokenType)) {
                 return false;
             }
 
@@ -334,6 +342,7 @@ public class JwtTokenProvider {
                 .claim("tenantId", targetTenantId.toString())
                 .claim("roles", new ArrayList<>(roles))
                 .claim("isImpersonation", true) // Flag to indicate this is an impersonation token
+                .claim("type", "access")
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())

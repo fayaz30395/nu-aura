@@ -51,8 +51,8 @@ public class TenantFilter extends OncePerRequestFilter {
     /** Maximum number of entries in the valid-tenant cache before a full reset is forced. */
     private static final int MAX_CACHE_SIZE = 10_000;
 
-    /** Cache full-refresh interval in milliseconds (30 minutes). */
-    private static final long CACHE_REFRESH_INTERVAL_MS = 30 * 60 * 1_000L;
+    /** Cache full-refresh interval in milliseconds (5 minutes — reduced from 30 to limit stale tenant data). */
+    private static final long CACHE_REFRESH_INTERVAL_MS = 5 * 60 * 1_000L;
 
     @Value("${app.tenant.header-name}")
     private String tenantHeader;
