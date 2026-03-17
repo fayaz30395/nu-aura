@@ -1,0 +1,432 @@
+package com.hrms.api.notification.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.notification.dto.CreateNotificationRequest;
+import com.hrms.api.notification.dto.NotificationResponse;
+import com.hrms.application.notification.service.NotificationService;
+import com.hrms.common.security.JwtAuthenticationFilter;
+import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantFilter;
+import com.hrms.domain.notification.Notification;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(NotificationController.class)
+@ContextConfiguration(classes = {NotificationController.class, NotificationControllerTest.TestConfig.class})
+@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
+@DisplayName("NotificationController Unit Tests")
+class NotificationControllerTest {
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
+            return new JpaMetamodelMappingContext();
+        }
+    }
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private NotificationService notificationService;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private TenantFilter tenantFilter;
+
+    private UUID userId;
+    private UUID notificationId;
+    private Notification notification;
+
+    @BeforeEach
+    void setUp() {
+        userId = UUID.randomUUID();
+        notificationId = UUID.randomUUID();
+
+        notification = new Notification();
+        notification.setId(notificationId);
+        notification.setUserId(userId);
+        notification.setTitle("Leave Approved");
+        notification.setMessage("Your leave request has been approved.");
+        notification.setType(Notification.NotificationType.LEAVE_APPROVED);
+        notification.setPriority(Notification.Priority.NORMAL);
+        notification.setRead(false);
+        notification.setCreatedAt(LocalDateTime.now());
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/notifications — Paginated user notifications")
+    class GetMyNotificationsTests {
+
+        @Test
+        @DisplayName("Should return paginated notifications for current user")
+        void shouldReturnPaginatedNotifications() throws Exception {
+            Page<Notification> page = new PageImpl<>(List.of(notification));
+
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getUserNotifications(eq(userId), eq(0), eq(20)))
+                        .thenReturn(page);
+
+                mockMvc.perform(get("/api/v1/notifications")
+                                .param("page", "0")
+                                .param("size", "20"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.content.length()").value(1))
+                        .andExpect(jsonPath("$.content[0].id").value(notificationId.toString()))
+                        .andExpect(jsonPath("$.content[0].title").value("Leave Approved"));
+
+                verify(notificationService).getUserNotifications(eq(userId), eq(0), eq(20));
+            }
+        }
+
+        @Test
+        @DisplayName("Should return empty page when no notifications")
+        void shouldReturnEmptyPageWhenNoNotifications() throws Exception {
+            Page<Notification> emptyPage = new PageImpl<>(List.of());
+
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getUserNotifications(eq(userId), eq(0), eq(20)))
+                        .thenReturn(emptyPage);
+
+                mockMvc.perform(get("/api/v1/notifications"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.content.length()").value(0))
+                        .andExpect(jsonPath("$.totalElements").value(0));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/notifications/unread")
+    class GetUnreadNotificationsTests {
+
+        @Test
+        @DisplayName("Should return unread notifications")
+        void shouldReturnUnreadNotifications() throws Exception {
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getUnreadNotifications(userId))
+                        .thenReturn(List.of(notification));
+
+                mockMvc.perform(get("/api/v1/notifications/unread"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.length()").value(1))
+                        .andExpect(jsonPath("$[0].read").value(false));
+
+                verify(notificationService).getUnreadNotifications(userId);
+            }
+        }
+
+        @Test
+        @DisplayName("Should return empty list when no unread notifications")
+        void shouldReturnEmptyListWhenNoneUnread() throws Exception {
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getUnreadNotifications(userId))
+                        .thenReturn(List.of());
+
+                mockMvc.perform(get("/api/v1/notifications/unread"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.length()").value(0));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/notifications/unread/count")
+    class GetUnreadCountTests {
+
+        @Test
+        @DisplayName("Should return correct unread count")
+        void shouldReturnUnreadCount() throws Exception {
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getUnreadCount(userId)).thenReturn(7L);
+
+                mockMvc.perform(get("/api/v1/notifications/unread/count"))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string("7"));
+
+                verify(notificationService).getUnreadCount(userId);
+            }
+        }
+
+        @Test
+        @DisplayName("Should return 0 when no unread notifications")
+        void shouldReturnZeroWhenNoneUnread() throws Exception {
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getUnreadCount(userId)).thenReturn(0L);
+
+                mockMvc.perform(get("/api/v1/notifications/unread/count"))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string("0"));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/notifications/recent")
+    class GetRecentNotificationsTests {
+
+        @Test
+        @DisplayName("Should return recent notifications with default 24h window")
+        void shouldReturnRecentNotificationsDefault() throws Exception {
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getRecentNotifications(userId, 24))
+                        .thenReturn(List.of(notification));
+
+                mockMvc.perform(get("/api/v1/notifications/recent"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.length()").value(1));
+
+                verify(notificationService).getRecentNotifications(userId, 24);
+            }
+        }
+
+        @Test
+        @DisplayName("Should return recent notifications with custom hours window")
+        void shouldReturnRecentNotificationsCustomHours() throws Exception {
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                when(notificationService.getRecentNotifications(userId, 48))
+                        .thenReturn(List.of(notification));
+
+                mockMvc.perform(get("/api/v1/notifications/recent")
+                                .param("hours", "48"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.length()").value(1));
+
+                verify(notificationService).getRecentNotifications(userId, 48);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/notifications/{id}")
+    class GetNotificationByIdTests {
+
+        @Test
+        @DisplayName("Should return notification by ID")
+        void shouldReturnNotificationById() throws Exception {
+            when(notificationService.getNotificationById(notificationId))
+                    .thenReturn(notification);
+
+            mockMvc.perform(get("/api/v1/notifications/{id}", notificationId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(notificationId.toString()))
+                    .andExpect(jsonPath("$.title").value("Leave Approved"))
+                    .andExpect(jsonPath("$.message").value("Your leave request has been approved."));
+
+            verify(notificationService).getNotificationById(notificationId);
+        }
+
+        @Test
+        @DisplayName("Should return 404 when notification not found")
+        void shouldReturn404WhenNotFound() throws Exception {
+            UUID unknownId = UUID.randomUUID();
+            when(notificationService.getNotificationById(unknownId))
+                    .thenThrow(new IllegalArgumentException("Notification not found"));
+
+            mockMvc.perform(get("/api/v1/notifications/{id}", unknownId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/v1/notifications")
+    class CreateNotificationTests {
+
+        @Test
+        @DisplayName("Should create notification successfully")
+        void shouldCreateNotificationSuccessfully() throws Exception {
+            CreateNotificationRequest request = new CreateNotificationRequest();
+            request.setUserId(userId);
+            request.setType("LEAVE_APPROVED");
+            request.setTitle("Leave Approved");
+            request.setMessage("Your leave request has been approved.");
+            request.setPriority("NORMAL");
+
+            when(notificationService.createNotification(
+                    eq(userId),
+                    eq(Notification.NotificationType.LEAVE_APPROVED),
+                    eq("Leave Approved"),
+                    eq("Your leave request has been approved."),
+                    isNull(), isNull(), isNull(),
+                    eq(Notification.Priority.NORMAL)
+            )).thenReturn(notification);
+
+            mockMvc.perform(post("/api/v1/notifications")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(notificationId.toString()))
+                    .andExpect(jsonPath("$.title").value("Leave Approved"));
+
+            verify(notificationService).createNotification(
+                    any(), any(), any(), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("Should create notification with null priority when not provided")
+        void shouldCreateNotificationWithNullPriority() throws Exception {
+            CreateNotificationRequest request = new CreateNotificationRequest();
+            request.setUserId(userId);
+            request.setType("SYSTEM_ALERT");
+            request.setTitle("System Alert");
+            request.setMessage("Scheduled maintenance tonight.");
+            // priority intentionally null
+
+            when(notificationService.createNotification(
+                    any(), any(), any(), any(), any(), any(), any(), isNull()
+            )).thenReturn(notification);
+
+            mockMvc.perform(post("/api/v1/notifications")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated());
+        }
+
+        @Test
+        @DisplayName("Should create notification with relatedEntity reference")
+        void shouldCreateNotificationWithEntityReference() throws Exception {
+            UUID leaveRequestId = UUID.randomUUID();
+            CreateNotificationRequest request = new CreateNotificationRequest();
+            request.setUserId(userId);
+            request.setType("LEAVE_APPROVED");
+            request.setTitle("Leave Approved");
+            request.setMessage("Your leave request has been approved.");
+            request.setRelatedEntityId(leaveRequestId);
+            request.setRelatedEntityType("LEAVE_REQUEST");
+            request.setActionUrl("/leave/requests/" + leaveRequestId);
+            request.setPriority("HIGH");
+
+            notification.setRelatedEntityId(leaveRequestId);
+            notification.setRelatedEntityType("LEAVE_REQUEST");
+
+            when(notificationService.createNotification(
+                    eq(userId),
+                    eq(Notification.NotificationType.LEAVE_APPROVED),
+                    any(), any(),
+                    eq(leaveRequestId),
+                    eq("LEAVE_REQUEST"),
+                    eq("/leave/requests/" + leaveRequestId),
+                    eq(Notification.Priority.HIGH)
+            )).thenReturn(notification);
+
+            mockMvc.perform(post("/api/v1/notifications")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.relatedEntityId").value(leaveRequestId.toString()));
+        }
+    }
+
+    @Nested
+    @DisplayName("PUT /api/v1/notifications/{id}/read")
+    class MarkAsReadTests {
+
+        @Test
+        @DisplayName("Should mark notification as read successfully")
+        void shouldMarkAsRead() throws Exception {
+            doNothing().when(notificationService).markAsRead(notificationId);
+
+            mockMvc.perform(put("/api/v1/notifications/{id}/read", notificationId))
+                    .andExpect(status().isOk());
+
+            verify(notificationService).markAsRead(notificationId);
+        }
+
+        @Test
+        @DisplayName("Should return error when notification not found")
+        void shouldReturnErrorWhenNotFoundOnMarkRead() throws Exception {
+            UUID unknownId = UUID.randomUUID();
+            doThrow(new IllegalArgumentException("Notification not found"))
+                    .when(notificationService).markAsRead(unknownId);
+
+            mockMvc.perform(put("/api/v1/notifications/{id}/read", unknownId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("PUT /api/v1/notifications/read-all")
+    class MarkAllAsReadTests {
+
+        @Test
+        @DisplayName("Should mark all notifications as read for current user")
+        void shouldMarkAllAsRead() throws Exception {
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+                doNothing().when(notificationService).markAllAsRead(userId);
+
+                mockMvc.perform(put("/api/v1/notifications/read-all"))
+                        .andExpect(status().isOk());
+
+                verify(notificationService).markAllAsRead(userId);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("DELETE /api/v1/notifications/{id}")
+    class DeleteNotificationTests {
+
+        @Test
+        @DisplayName("Should delete notification successfully")
+        void shouldDeleteNotification() throws Exception {
+            doNothing().when(notificationService).deleteNotification(notificationId);
+
+            mockMvc.perform(delete("/api/v1/notifications/{id}", notificationId))
+                    .andExpect(status().isNoContent());
+
+            verify(notificationService).deleteNotification(notificationId);
+        }
+
+        @Test
+        @DisplayName("Should return error when deleting non-existent notification")
+        void shouldReturnErrorWhenDeletingNonExistent() throws Exception {
+            UUID unknownId = UUID.randomUUID();
+            doThrow(new IllegalArgumentException("Notification not found"))
+                    .when(notificationService).deleteNotification(unknownId);
+
+            mockMvc.perform(delete("/api/v1/notifications/{id}", unknownId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+}
