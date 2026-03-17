@@ -191,7 +191,9 @@
       "WebFetch(domain:www.nulogic.io)",
       "WebFetch(domain:brandfetch.com)",
       "WebFetch(domain:www.keka.com)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/contracts/[id])",
+      "Bash(rm -f .fuse_hidden*)"
     ],
     "additionalDirectories": [
       "/tmp"
