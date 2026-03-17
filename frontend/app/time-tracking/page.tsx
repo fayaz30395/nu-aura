@@ -48,9 +48,7 @@ export default function TimeTrackingPage() {
     const pendingHours = entries
       .filter((e) => e.status === 'SUBMITTED')
       .reduce((sum, e) => sum + e.hoursWorked, 0);
-import { createLogger } from '@/lib/utils/logger';
 
-const log = createLogger('TimeTrackingListPage');
 
     return {
       totalHours: summaryData?.totalHoursWorked || 0,

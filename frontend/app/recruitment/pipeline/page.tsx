@@ -36,6 +36,9 @@ import type {
   ApplicantStatusUpdate,
   PipelineData,
 } from '@/lib/types/applicant';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('PipelinePage');
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -666,9 +669,7 @@ export default function ApplicantPipelinePage() {
 
     try {
       setMovingId(draggableId);
-import { createLogger } from '@/lib/utils/logger';
 
-const log = createLogger('PipelinePage');
       const payload: ApplicantStatusUpdate = {
         status: toStage,
         notes: applicant.notes,

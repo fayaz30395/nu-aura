@@ -39,6 +39,9 @@ import {
   Building,
   Info,
 } from 'lucide-react';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('TravelPage');
 
 export default function TravelRequestDetailsPage() {
   const toast = useToast();
@@ -49,9 +52,6 @@ export default function TravelRequestDetailsPage() {
   const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showCancelReasonModal, setShowCancelReasonModal] = useState(false);
-import { createLogger } from '@/lib/utils/logger';
-
-const log = createLogger('TravelPage');
   const [cancelReason, setCancelReason] = useState('');
   const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
 
