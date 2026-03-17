@@ -28,6 +28,9 @@ import {
 import type { BadgeVariant } from '@/components/ui/types';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { lmsService, CourseSummaryDto } from '@/lib/services/lms.service';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('CatalogPage');
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -109,7 +112,7 @@ export default function CourseCatalogPage() {
       setHasMore(incoming.length >= PAGE_SIZE);
       setPage(pageNum);
     } catch (err) {
-      console.error('Failed to load catalog:', err);
+      log.error('Failed to load catalog:', err);
       setError('Failed to load the course catalog. Please try again.');
     } finally {
       setLoading(false);
@@ -134,7 +137,7 @@ export default function CourseCatalogPage() {
       setEnrolledIds((prev) => new Set([...prev, course.id]));
       showNotification(`Successfully enrolled in "${course.title}"`, 'success');
     } catch (err: unknown) {
-      console.error('Failed to enroll:', err);
+      log.error('Failed to enroll:', err);
       const errStatus = (err as { response?: { status?: number } })?.response?.status;
       const msg = errStatus === 409
         ? `You are already enrolled in "${course.title}"`

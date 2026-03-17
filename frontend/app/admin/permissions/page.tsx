@@ -32,6 +32,9 @@ import {
   useAssignRolesToUser,
 } from '@/lib/hooks/queries/useRoles';
 import type { User } from '@/lib/api/users';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('PermissionsPage');
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -449,7 +452,7 @@ export default function PermissionsPage() {
                 setIsEditRoleModalOpen(false);
                 setSelectedRole(null);
               } catch (error) {
-                console.error('Failed to update role:', error);
+                log.error('Failed to update role:', error);
               }
             }}
           />
@@ -472,7 +475,7 @@ export default function PermissionsPage() {
                 });
                 setIsCreateRoleModalOpen(false);
               } catch (error) {
-                console.error('Failed to create role:', error);
+                log.error('Failed to create role:', error);
               }
             }}
           />
@@ -495,7 +498,7 @@ export default function PermissionsPage() {
                 setIsEditUserModalOpen(false);
                 setSelectedUser(null);
               } catch (error) {
-                console.error('Failed to update user roles:', error);
+                log.error('Failed to update user roles:', error);
               }
             }}
           />

@@ -49,6 +49,9 @@ export default function TravelRequestDetailsPage() {
   const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showCancelReasonModal, setShowCancelReasonModal] = useState(false);
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('TravelPage');
   const [cancelReason, setCancelReason] = useState('');
   const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
 
@@ -83,7 +86,7 @@ export default function TravelRequestDetailsPage() {
       { id: travelRequest.id, approverId: user.employeeId, reason: rejectReason },
       {
         onError: (error: unknown) => {
-          console.error('Error rejecting travel request:', error);
+          log.error('Error rejecting travel request:', error);
           toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject travel request');
         },
         onSuccess: () => {
@@ -106,7 +109,7 @@ export default function TravelRequestDetailsPage() {
       { id: travelRequest.id, reason: cancelReason },
       {
         onError: (error: unknown) => {
-          console.error('Error cancelling travel request:', error);
+          log.error('Error cancelling travel request:', error);
           toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel travel request');
         },
         onSuccess: () => {
@@ -127,7 +130,7 @@ export default function TravelRequestDetailsPage() {
 
     completeMutation.mutate(travelRequest.id, {
       onError: (error: unknown) => {
-        console.error('Error completing travel request:', error);
+        log.error('Error completing travel request:', error);
         toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to complete travel request');
       },
       onSuccess: () => {

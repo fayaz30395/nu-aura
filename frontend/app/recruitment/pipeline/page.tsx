@@ -623,7 +623,7 @@ export default function ApplicantPipelinePage() {
       });
       await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
-      console.error('Failed to advance stage:', err);
+      log.error('Failed to advance stage:', err);
     } finally {
       setMovingId(null);
     }
@@ -638,7 +638,7 @@ export default function ApplicantPipelinePage() {
       });
       await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
-      console.error('Failed to reject:', err);
+      log.error('Failed to reject:', err);
     } finally {
       setMovingId(null);
     }
@@ -666,6 +666,9 @@ export default function ApplicantPipelinePage() {
 
     try {
       setMovingId(draggableId);
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('PipelinePage');
       const payload: ApplicantStatusUpdate = {
         status: toStage,
         notes: applicant.notes,

@@ -50,6 +50,9 @@ import {
 import { useOnboardingProcessesByStatus } from '@/lib/hooks/queries/useOnboarding';
 import { getLocalDateString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('DashboardPage');
 
 interface EmailHeader {
   name: string;
@@ -202,7 +205,7 @@ export default function DashboardPage() {
         }
       }
     } catch (err) {
-      console.error('Error loading emails:', err);
+      log.error('Error loading emails:', err);
     }
 
     try {
@@ -242,7 +245,7 @@ export default function DashboardPage() {
         }
       }
     } catch (err) {
-      console.error('Error loading drive files:', err);
+      log.error('Error loading drive files:', err);
     }
 
     try {
@@ -290,7 +293,7 @@ export default function DashboardPage() {
         }
       }
     } catch (err) {
-      console.error('Error loading calendar events:', err);
+      log.error('Error loading calendar events:', err);
     }
 
     // Sort by timestamp (most recent first)
@@ -420,7 +423,7 @@ export default function DashboardPage() {
         setEmailContent(content || data.snippet || 'No content available');
       }
     } catch (err) {
-      console.error('Error loading email content:', err);
+      log.error('Error loading email content:', err);
       setEmailContent('Failed to load email content');
     } finally {
       setEmailLoading(false);

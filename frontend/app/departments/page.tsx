@@ -22,6 +22,9 @@ import {
   useDeleteDepartment,
 } from '@/lib/hooks/queries/useDepartments';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('DepartmentsPage');
 
 const departmentSchema = z.object({
   code: z.string().min(1, 'Code required').max(50),
@@ -127,7 +130,7 @@ export default function DepartmentsPage() {
       const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`;
       setError(errorMsg);
       toast.error('Error', errorMsg);
-      console.error('Error saving department:', err);
+      log.error('Error saving department:', err);
     }
   };
 
@@ -165,7 +168,7 @@ export default function DepartmentsPage() {
       const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete department';
       setError(errorMsg);
       toast.error('Error', errorMsg);
-      console.error('Error deleting department:', err);
+      log.error('Error deleting department:', err);
     }
   };
 
@@ -192,7 +195,7 @@ export default function DepartmentsPage() {
       const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update department status';
       setError(errorMsg);
       toast.error('Error', errorMsg);
-      console.error('Error toggling department status:', err);
+      log.error('Error toggling department status:', err);
     }
   };
 

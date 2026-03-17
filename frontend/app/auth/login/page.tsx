@@ -247,7 +247,7 @@ function LoginPage() {
       }
     },
     onError: (errorResponse) => {
-      console.error('[Google SSO] Error callback triggered:', errorResponse);
+      log.error('[Google SSO] Error callback triggered:', errorResponse);
       setError('Google sign-in failed. Please ensure popups are allowed and third-party cookies are enabled.');
     },
     scope: GOOGLE_SSO_SCOPES + ' openid email profile',
@@ -281,6 +281,9 @@ function LoginPage() {
         }
         @keyframes fadeIn {
           from { opacity: 0; }
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('LoginPage');
           to { opacity: 1; }
         }
         @keyframes shimmer {

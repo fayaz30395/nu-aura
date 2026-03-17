@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   ClipboardList,
   Plus,
@@ -61,6 +64,21 @@ const statusOptions = [
   { value: SurveyStatus.ARCHIVED, label: 'Archived' },
 ];
 
+// Form validation schema
+const surveyFormSchema = z.object({
+  surveyCode: z.string().min(1, 'Survey code is required'),
+  title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
+  description: z.string().optional().default(''),
+  surveyType: z.nativeEnum(SurveyType),
+  isAnonymous: z.boolean().default(false),
+  startDate: z.string().optional().default(''),
+  endDate: z.string().optional().default(''),
+  status: z.nativeEnum(SurveyStatus),
+  targetAudience: z.string().default('ALL'),
+});
+
+type SurveyFormData = z.infer<typeof surveyFormSchema>;
+
 const _getStatusColor = (status: SurveyStatus) => {
   switch (status) {
     case SurveyStatus.DRAFT:
@@ -116,22 +134,30 @@ export default function SurveysPage() {
   const [editingSurvey, setEditingSurvey] = useState<Survey | null>(null);
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 
-  // Form state
-  const [formData, setFormData] = useState<Partial<SurveyRequest>>({
-    surveyCode: '',
-    title: '',
-    description: '',
-    surveyType: SurveyType.ENGAGEMENT,
-    isAnonymous: false,
-    startDate: '',
-    endDate: '',
-    status: SurveyStatus.DRAFT,
-    targetAudience: 'ALL',
+  // Form state with React Hook Form
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SurveyFormData>({
+    resolver: zodResolver(surveyFormSchema),
+    defaultValues: {
+      surveyCode: '',
+      title: '',
+      description: '',
+      surveyType: SurveyType.ENGAGEMENT,
+      isAnonymous: false,
+      startDate: '',
+      endDate: '',
+      status: SurveyStatus.DRAFT,
+      targetAudience: 'ALL',
+    },
   });
 
   const handleCreateSurvey = () => {
     setEditingSurvey(null);
-    setFormData({
+    reset({
       surveyCode: '',
       title: '',
       description: '',
@@ -147,16 +173,16 @@ export default function SurveysPage() {
 
   const handleEditSurvey = (survey: Survey) => {
     setEditingSurvey(survey);
-    setFormData({
+    reset({
       surveyCode: survey.surveyCode,
       title: survey.title,
-      description: survey.description,
+      description: survey.description || '',
       surveyType: survey.surveyType,
       isAnonymous: survey.isAnonymous,
       startDate: survey.startDate?.split('T')[0] || '',
       endDate: survey.endDate?.split('T')[0] || '',
       status: survey.status,
-      targetAudience: survey.targetAudience,
+      targetAudience: survey.targetAudience || 'ALL',
     });
     setIsModalOpen(true);
   };
@@ -166,17 +192,17 @@ export default function SurveysPage() {
     setIsViewModalOpen(true);
   };
 
-  const handleSubmitSurvey = async () => {
-    const submitData = {
+  const onSubmitSurvey = async (formData: SurveyFormData) => {
+    const submitData: SurveyRequest = {
       ...formData,
       startDate: formData.startDate ? `${formData.startDate}T00:00:00` : undefined,
       endDate: formData.endDate ? `${formData.endDate}T23:59:59` : undefined,
-    };
+    } as SurveyRequest;
 
     if (editingSurvey) {
-      updateMutation.mutate({ surveyId: editingSurvey.id, data: submitData as SurveyRequest });
+      updateMutation.mutate({ surveyId: editingSurvey.id, data: submitData });
     } else {
-      createMutation.mutate(submitData as SurveyRequest);
+      createMutation.mutate(submitData);
     }
     setIsModalOpen(false);
   };
@@ -495,126 +521,146 @@ export default function SurveysPage() {
               {editingSurvey ? 'Edit Survey' : 'Create Survey'}
             </h2>
           </ModalHeader>
-          <ModalBody>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Survey Code *
-                </label>
-                <Input
-                  value={formData.surveyCode}
-                  onChange={(e) => setFormData({ ...formData, surveyCode: e.target.value })}
-                  placeholder="e.g., SRV-2024-001"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Survey Type *
-                </label>
-                <Select
-                  value={formData.surveyType}
-                  onChange={(e) => setFormData({ ...formData, surveyType: e.target.value as SurveyType })}
-                >
-                  {surveyTypeOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Title *
-                </label>
-                <Input
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Enter survey title"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Description
-                </label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Enter survey description"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Start Date
-                </label>
-                <Input
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  End Date
-                </label>
-                <Input
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Target Audience
-                </label>
-                <Select
-                  value={formData.targetAudience}
-                  onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value })}
-                >
-                  <option value="ALL">All Employees</option>
-                  <option value="DEPARTMENT">By Department</option>
-                  <option value="MANAGER">Managers Only</option>
-                  <option value="NEW_HIRE">New Hires</option>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Status
-                </label>
-                <Select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as SurveyStatus })}
-                >
-                  {statusOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.isAnonymous}
-                    onChange={(e) => setFormData({ ...formData, isAnonymous: e.target.checked })}
-                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+          <form onSubmit={handleSubmit(onSubmitSurvey)}>
+            <ModalBody>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Survey Code *
+                  </label>
+                  <Input
+                    {...register('surveyCode')}
+                    placeholder="e.g., SRV-2024-001"
                   />
-                  <span className="text-sm font-medium text-[var(--text-secondary)]">
-                    Anonymous Survey (responses will not be linked to employees)
-                  </span>
-                </label>
+                  {errors.surveyCode && (
+                    <p className="mt-1 text-sm text-red-600">{errors.surveyCode.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Survey Type *
+                  </label>
+                  <Select
+                    {...register('surveyType')}
+                  >
+                    {surveyTypeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                  {errors.surveyType && (
+                    <p className="mt-1 text-sm text-red-600">{errors.surveyType.message}</p>
+                  )}
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Title *
+                  </label>
+                  <Input
+                    {...register('title')}
+                    placeholder="Enter survey title"
+                  />
+                  {errors.title && (
+                    <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+                  )}
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Description
+                  </label>
+                  <Textarea
+                    {...register('description')}
+                    placeholder="Enter survey description"
+                    rows={3}
+                  />
+                  {errors.description && (
+                    <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Start Date
+                  </label>
+                  <Input
+                    type="date"
+                    {...register('startDate')}
+                  />
+                  {errors.startDate && (
+                    <p className="mt-1 text-sm text-red-600">{errors.startDate.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    End Date
+                  </label>
+                  <Input
+                    type="date"
+                    {...register('endDate')}
+                  />
+                  {errors.endDate && (
+                    <p className="mt-1 text-sm text-red-600">{errors.endDate.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Target Audience
+                  </label>
+                  <Select
+                    {...register('targetAudience')}
+                  >
+                    <option value="ALL">All Employees</option>
+                    <option value="DEPARTMENT">By Department</option>
+                    <option value="MANAGER">Managers Only</option>
+                    <option value="NEW_HIRE">New Hires</option>
+                  </Select>
+                  {errors.targetAudience && (
+                    <p className="mt-1 text-sm text-red-600">{errors.targetAudience.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    Status
+                  </label>
+                  <Select
+                    {...register('status')}
+                  >
+                    {statusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                  {errors.status && (
+                    <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
+                  )}
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      {...register('isAnonymous')}
+                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">
+                      Anonymous Survey (responses will not be linked to employees)
+                    </span>
+                  </label>
+                  {errors.isAnonymous && (
+                    <p className="mt-1 text-sm text-red-600">{errors.isAnonymous.message}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmitSurvey}>
-              {editingSurvey ? 'Update Survey' : 'Create Survey'}
-            </Button>
-          </ModalFooter>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {editingSurvey ? 'Update Survey' : 'Create Survey'}
+              </Button>
+            </ModalFooter>
+          </form>
         </Modal>
 
         {/* View Survey Modal */}

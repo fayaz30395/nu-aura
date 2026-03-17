@@ -39,6 +39,9 @@ const leaveFormSchema = z.object({
 });
 
 type LeaveFormData = z.infer<typeof leaveFormSchema>;
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('LeavesPage');
 
 const cancelFormSchema = z.object({
   reason: z.string().min(1, 'Please provide a reason for cancellation'),
@@ -148,7 +151,7 @@ export default function MyLeavesPage() {
       resetLeave();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      console.error('Failed to submit leave request:', err);
+      log.error('Failed to submit leave request:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
     }
   };
@@ -189,7 +192,7 @@ export default function MyLeavesPage() {
       resetCancel();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      console.error('Failed to cancel leave request:', err);
+      log.error('Failed to cancel leave request:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
     }
   };

@@ -23,6 +23,9 @@ import {
   Send,
 } from 'lucide-react';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('TimeTrackingPage');
 
 export default function TimeEntryDetailPage() {
   const router = useRouter();
@@ -40,7 +43,7 @@ export default function TimeEntryDetailPage() {
     try {
       await submitMutation.mutateAsync(entry.id);
     } catch (error) {
-      console.error('Error submitting entry:', error);
+      log.error('Error submitting entry:', error);
     }
   };
 
@@ -51,7 +54,7 @@ export default function TimeEntryDetailPage() {
       await deleteMutation.mutateAsync(entry.id);
       router.push('/time-tracking');
     } catch (error) {
-      console.error('Error deleting entry:', error);
+      log.error('Error deleting entry:', error);
     }
   };
 

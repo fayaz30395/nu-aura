@@ -32,6 +32,9 @@ const expenseClaimSchema = z.object({
   receiptUrl: z.string().url().optional().or(z.literal('')),
   notes: z.string().optional().or(z.literal('')),
 });
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ExpensesPage');
 
 type ExpenseClaimFormData = z.infer<typeof expenseClaimSchema>;
 
@@ -205,7 +208,7 @@ export default function ExpenseClaims() {
       setSelectedClaims(new Set());
       showNotification(`${selectedClaims.size} claims approved successfully!`, 'success');
     } catch (err) {
-      console.error('Bulk approve error:', err);
+      log.error('Bulk approve error:', err);
       showNotification('Failed to approve some claims', 'error');
     } finally {
       setBulkProcessing(false);
@@ -226,7 +229,7 @@ export default function ExpenseClaims() {
       setBulkRejectReason('');
       showNotification(`${selectedClaims.size} claims rejected`, 'success');
     } catch (err) {
-      console.error('Bulk reject error:', err);
+      log.error('Bulk reject error:', err);
       showNotification('Failed to reject some claims', 'error');
     } finally {
       setBulkProcessing(false);
@@ -268,7 +271,7 @@ export default function ExpenseClaims() {
       setShowForm(false);
       showNotification('Expense claim created successfully!', 'success');
     } catch (err) {
-      console.error('Error creating claim:', err);
+      log.error('Error creating claim:', err);
       showNotification('Failed to create expense claim', 'error');
     }
   };
@@ -278,7 +281,7 @@ export default function ExpenseClaims() {
       await submitMutation.mutateAsync(claimId);
       showNotification('Expense claim submitted successfully!', 'success');
     } catch (err) {
-      console.error('Error submitting claim:', err);
+      log.error('Error submitting claim:', err);
       showNotification('Failed to submit expense claim', 'error');
     }
   };
@@ -290,7 +293,7 @@ export default function ExpenseClaims() {
       await approveMutation.mutateAsync(claimId);
       showNotification('Expense claim approved successfully!', 'success');
     } catch (err) {
-      console.error('Error approving claim:', err);
+      log.error('Error approving claim:', err);
       showNotification('Failed to approve expense claim', 'error');
     }
   };
@@ -311,7 +314,7 @@ export default function ExpenseClaims() {
       setSelectedClaimForAction(null);
       setRejectReason('');
     } catch (err) {
-      console.error('Error rejecting claim:', err);
+      log.error('Error rejecting claim:', err);
       showNotification('Failed to reject expense claim', 'error');
     }
   };
@@ -330,7 +333,7 @@ export default function ExpenseClaims() {
       setShowDeleteConfirm(false);
       setSelectedClaimForAction(null);
     } catch (err) {
-      console.error('Error deleting claim:', err);
+      log.error('Error deleting claim:', err);
       showNotification('Failed to delete expense claim', 'error');
     }
   };

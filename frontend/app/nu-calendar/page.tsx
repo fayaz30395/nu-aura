@@ -26,6 +26,9 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('NuCalendarPage');
 
 interface CalendarEvent {
   id: string;
@@ -123,7 +126,7 @@ function CalendarContent() {
       await loadEvents(tokenResponse.access_token);
     },
     onError: (errorResponse) => {
-      console.error('Google login error:', errorResponse);
+      log.error('Google login error:', errorResponse);
       setError('Failed to connect to Google Calendar. Please try again.');
     },
     scope: GOOGLE_SSO_SCOPES,
@@ -170,7 +173,7 @@ function CalendarContent() {
       const data = await response.json();
       setCalendars(data.items || []);
     } catch (err) {
-      console.error('Error loading calendars:', err);
+      log.error('Error loading calendars:', err);
     }
   };
 
@@ -200,7 +203,7 @@ function CalendarContent() {
           return;
         }
         const errorData = await response.json().catch(() => ({}));
-        console.error('Calendar API error:', response.status, errorData);
+        log.error('Calendar API error:', response.status, errorData);
         throw new Error(errorData.error?.message || 'Failed to fetch events');
       }
 
@@ -208,7 +211,7 @@ function CalendarContent() {
       setEvents(data.items || []);
       setError(null);
     } catch (err) {
-      console.error('Error loading events:', err);
+      log.error('Error loading events:', err);
       setError('Failed to load calendar events');
     } finally {
       setIsLoading(false);
@@ -272,7 +275,7 @@ function CalendarContent() {
       });
       await loadEvents(accessToken);
     } catch (err) {
-      console.error('Error creating event:', err);
+      log.error('Error creating event:', err);
       setError('Failed to create event');
     } finally {
       setCreating(false);
@@ -304,7 +307,7 @@ function CalendarContent() {
       setDeleteConfirmOpen(false);
       setEventToDelete(null);
     } catch (err) {
-      console.error('Error deleting event:', err);
+      log.error('Error deleting event:', err);
       setError('Failed to delete event');
     }
   };

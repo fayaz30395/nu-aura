@@ -46,6 +46,9 @@ interface PageResponse<T> {
   totalPages: number;
   size: number;
   number: number;
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ProjectsPage');
 }
 
 interface EmployeeSummary {
@@ -212,7 +215,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
         });
         setResults(response.data.content ?? []);
       } catch (err) {
-        console.error('Owner search failed', err);
+        log.error('Owner search failed', err);
         setResults([]);
       } finally {
         setLoading(false);
@@ -338,7 +341,7 @@ function MultiOwnerTypeahead({
         const filtered = (response.data.content ?? []).filter((emp) => !selectedIds.has(emp.id));
         setResults(filtered);
       } catch (err) {
-        console.error('Owner search failed', err);
+        log.error('Owner search failed', err);
         setResults([]);
       } finally {
         setLoading(false);

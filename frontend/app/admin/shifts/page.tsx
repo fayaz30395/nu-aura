@@ -16,6 +16,9 @@ import {
   useUpdateShiftDetails,
   useRemoveShift,
 } from '@/lib/hooks/queries/useShifts';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ShiftsPage');
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -136,7 +139,7 @@ export default function ShiftsManagementPage() {
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingShift ? 'update' : 'create'} shift`;
       setError(message);
-      console.error('Error saving shift:', err);
+      log.error('Error saving shift:', err);
     }
   };
 
@@ -202,7 +205,7 @@ export default function ShiftsManagementPage() {
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete shift';
       setError(message);
-      console.error('Error deleting shift:', err);
+      log.error('Error deleting shift:', err);
     }
   };
 
@@ -213,7 +216,7 @@ export default function ShiftsManagementPage() {
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update shift status';
       setError(message);
-      console.error('Error toggling shift status:', err);
+      log.error('Error toggling shift status:', err);
     }
   };
 

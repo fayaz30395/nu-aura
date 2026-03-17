@@ -19,6 +19,9 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { useSelfServiceDashboard } from '@/lib/hooks/queries';
 import { SelfServiceDashboard } from '@/lib/types/selfservice';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('Dashboard');
 
 export default function MyDashboardPage() {
   const { user, hasHydrated } = useAuth();
@@ -124,7 +127,7 @@ export default function MyDashboardPage() {
           setCheckInTime(null);
         }
       } catch (err) {
-        console.error('Failed to fetch today\'s attendance:', err);
+        log.error('Failed to fetch today\'s attendance:', err);
         // Fallback to self-service dashboard data
         const checkedIn = dashboardData.todayAttendanceStatus === 'CHECKED_IN' || dashboardData.todayAttendanceStatus === 'PRESENT';
         setIsCheckedIn(checkedIn);
@@ -135,7 +138,7 @@ export default function MyDashboardPage() {
         }
       }
     } catch (error) {
-      console.error('Failed to load dashboard:', error);
+      log.error('Failed to load dashboard:', error);
       // Set fallback data for demo
       setDashboard({
         employeeName: user?.fullName || 'Employee',
@@ -185,7 +188,7 @@ export default function MyDashboardPage() {
       }
       loadDashboard();
     } catch (error) {
-      console.error('Check-in failed:', error);
+      log.error('Check-in failed:', error);
     } finally {
       setCheckingIn(false);
     }
@@ -204,7 +207,7 @@ export default function MyDashboardPage() {
       setCheckInTime(null); // Clear the timer
       loadDashboard();
     } catch (error) {
-      console.error('Check-out failed:', error);
+      log.error('Check-out failed:', error);
     } finally {
       setCheckingIn(false);
     }

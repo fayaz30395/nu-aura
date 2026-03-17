@@ -18,6 +18,9 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePayslipsByEmployee, usePayslips, useDownloadPayslipPdf } from '@/lib/hooks/queries/usePayroll';
 import { Payslip } from '@/lib/types/payroll';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('PayslipsPage');
 
 export default function MyPayslipsPage() {
   const router = useRouter();
@@ -114,7 +117,7 @@ export default function MyPayslipsPage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err: unknown) {
-      console.error('Failed to download payslip:', err);
+      log.error('Failed to download payslip:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download payslip PDF');
     } finally {
       setDownloadingId(null);

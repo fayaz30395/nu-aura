@@ -155,12 +155,12 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('accepts all valid holiday types', () => {
-      const types = ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTRICTED', 'FESTIVAL', 'COMPANY_EVENT'];
+      const types: Array<'NATIONAL' | 'REGIONAL' | 'OPTIONAL' | 'RESTRICTED' | 'FESTIVAL' | 'COMPANY_EVENT'> = ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTRICTED', 'FESTIVAL', 'COMPANY_EVENT'];
       types.forEach((type) => {
         const valid = {
           holidayName: 'Holiday',
           holidayDate: '2024-07-04',
-          holidayType: type as any,
+          holidayType: type,
         };
         const result = holidaySchema.safeParse(valid);
         expect(result.success).toBe(true);
@@ -204,11 +204,11 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('validates source enum', () => {
-      const sources = ['WEB', 'MOBILE', 'BIOMETRIC', 'MANUAL'];
+      const sources: Array<'WEB' | 'MOBILE' | 'BIOMETRIC' | 'MANUAL'> = ['WEB', 'MOBILE', 'BIOMETRIC', 'MANUAL'];
       sources.forEach((source) => {
         const valid = {
           employeeId: '550e8400-e29b-41d4-a716-446655440000',
-          source: source as any,
+          source: source,
         };
         const result = checkInSchema.safeParse(valid);
         expect(result.success).toBe(true);
@@ -310,13 +310,13 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('validates status enum', () => {
-      const statuses = ['PRESENT', 'ABSENT', 'HALF_DAY', 'ON_LEAVE', 'WEEKLY_OFF', 'HOLIDAY'];
+      const statuses: Array<'PRESENT' | 'ABSENT' | 'HALF_DAY' | 'ON_LEAVE' | 'WEEKLY_OFF' | 'HOLIDAY'> = ['PRESENT', 'ABSENT', 'HALF_DAY', 'ON_LEAVE', 'WEEKLY_OFF', 'HOLIDAY'];
       statuses.forEach((status) => {
         const valid = {
           employeeId: '550e8400-e29b-41d4-a716-446655440000',
           attendanceDate: '2024-01-15',
           checkInTime: '09:00',
-          status: status as any,
+          status: status,
         };
         const result = manualAttendanceSchema.safeParse(valid);
         expect(result.success).toBe(true);

@@ -43,6 +43,9 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('NuDrivePage');
 
 interface DriveFile {
   id: string;
@@ -159,7 +162,7 @@ function DriveContent() {
       await loadDriveStats(tokenResponse.access_token);
     },
     onError: (errorResponse) => {
-      console.error('Google login error:', errorResponse);
+      log.error('Google login error:', errorResponse);
       setError('Failed to connect to Google Drive. Please try again.');
     },
     scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata',
@@ -210,7 +213,7 @@ function DriveContent() {
       await loadDriveStats(accessToken);
 
     } catch (error) {
-      console.error('Upload error:', error);
+      log.error('Upload error:', error);
       setError('Failed to upload file');
     } finally {
       setUploading(false);
@@ -259,7 +262,7 @@ function DriveContent() {
       await loadDriveFiles(accessToken, currentFolder, activeTab);
 
     } catch (error) {
-      console.error('Create folder error:', error);
+      log.error('Create folder error:', error);
       setError('Failed to create folder');
     } finally {
       setCreatingFolder(false);
@@ -300,7 +303,7 @@ function DriveContent() {
       }, 3000);
 
     } catch (error) {
-      console.error('Share error:', error);
+      log.error('Share error:', error);
       setError('Failed to share file');
     } finally {
       setSharing(false);
@@ -342,7 +345,7 @@ function DriveContent() {
       }
 
     } catch (error) {
-      console.error('Error getting shareable link:', error);
+      log.error('Error getting shareable link:', error);
     }
   };
 
@@ -382,7 +385,7 @@ function DriveContent() {
       setFileToDelete(null);
 
     } catch (error) {
-      console.error('Delete error:', error);
+      log.error('Delete error:', error);
       setError('Failed to delete file');
     }
   };
@@ -417,7 +420,7 @@ function DriveContent() {
       setRenameValue('');
 
     } catch (error) {
-      console.error('Rename error:', error);
+      log.error('Rename error:', error);
       setError('Failed to rename file');
     } finally {
       setRenaming(false);
@@ -450,7 +453,7 @@ function DriveContent() {
       setShowContextMenu(false);
 
     } catch (error) {
-      console.error('Star toggle error:', error);
+      log.error('Star toggle error:', error);
     }
   };
 
@@ -569,7 +572,7 @@ function DriveContent() {
           setPreviewContent(text);
         }
       } catch (err) {
-        console.error('Error fetching text content:', err);
+        log.error('Error fetching text content:', err);
       }
     }
 
@@ -678,7 +681,7 @@ function DriveContent() {
       setFiles(data.files || []);
       setError(null);
     } catch (err) {
-      console.error('Error loading Drive files:', err);
+      log.error('Error loading Drive files:', err);
       setError('Failed to load files from Google Drive');
     } finally {
       setIsLoading(false);
@@ -708,7 +711,7 @@ function DriveContent() {
         usedInTrash: parseInt(data.storageQuota?.usageInTrash || '0'),
       });
     } catch (err) {
-      console.error('Error loading storage stats:', err);
+      log.error('Error loading storage stats:', err);
     }
   };
 

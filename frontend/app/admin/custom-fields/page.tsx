@@ -26,6 +26,9 @@ import {
   useActivateCustomFieldDefinition,
   useDeactivateCustomFieldDefinition,
 } from '@/lib/hooks/queries/useCustomFields';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('CustomFieldsPage');
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -164,7 +167,7 @@ export default function CustomFieldsPage() {
       setShowEditModal(false);
       setSelectedDefinition(null);
     } catch (err: unknown) {
-      console.error('Failed to save custom field:', err);
+      log.error('Failed to save custom field:', err);
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save custom field';
       setError(message);
     }
@@ -182,7 +185,7 @@ export default function CustomFieldsPage() {
       setShowDeleteConfirm(false);
       setFieldToDelete(null);
     } catch (err) {
-      console.error('Failed to delete custom field:', err);
+      log.error('Failed to delete custom field:', err);
       setError('Failed to delete custom field');
     }
   };
@@ -195,7 +198,7 @@ export default function CustomFieldsPage() {
         await activateMutation.mutateAsync(definition.id);
       }
     } catch (err) {
-      console.error('Failed to toggle field status:', err);
+      log.error('Failed to toggle field status:', err);
     }
   };
 
