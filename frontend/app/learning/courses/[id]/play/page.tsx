@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
 import {
@@ -338,6 +339,10 @@ export default function CoursePlayerPage() {
         </div>
       </div>
     );
+  }
+
+  if (!isLoading && !error && !course) {
+    notFound();
   }
 
   if (error || !course) {

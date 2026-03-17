@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
@@ -206,6 +207,10 @@ export default function QuizPage() {
         </div>
       </div>
     );
+  }
+
+  if (!isLoading && !error && !quiz) {
+    notFound();
   }
 
   if (error || !quiz) {

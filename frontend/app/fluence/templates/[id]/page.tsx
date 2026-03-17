@@ -2,9 +2,9 @@
 
 import { useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  FileText,
   ArrowLeft,
   Copy,
   Eye,
@@ -115,27 +115,8 @@ export default function TemplateDetailPage() {
     );
   }
 
-  if (!template) {
-    return (
-      <AppLayout>
-        <div className="text-center py-16">
-          <FileText className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)]" />
-          <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
-            Template not found
-          </h3>
-          <p className="text-[var(--text-muted)] mb-4">
-            The template you&#39;re looking for doesn&#39;t exist
-          </p>
-          <Button
-            onClick={() => router.back()}
-            className="gap-2 bg-violet-600 hover:bg-violet-700"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Go Back
-          </Button>
-        </div>
-      </AppLayout>
-    );
+  if (!isLoading && !template) {
+    notFound();
   }
 
   return (

@@ -1,6 +1,47 @@
 
 ---
 
+## Section 30 — notFound() Propagation + letters/page.tsx bugfix (2026-03-17)
+
+### Objective
+Replace inline "not found" UI patterns in dynamic routes with Next.js `notFound()` to trigger the global `not-found.tsx` page. Also fixed a pre-existing stale variable reference bug in `letters/page.tsx`.
+
+### Bug Fixed
+`app/letters/page.tsx:422` — `letters.filter(...)` referenced undeclared variable `letters`; should have been `filteredLetters`. Was a stale reference from before the React Query migration.
+
+### notFound() Added To (14 files)
+All dynamic routes now call `notFound()` when data is unavailable after loading completes:
+
+- `app/contracts/[id]/page.tsx` — replaced inline "Contract not found" div
+- `app/employees/[id]/page.tsx` — guard before existing error block
+- `app/projects/[id]/page.tsx`
+- `app/loans/[id]/page.tsx`
+- `app/calendar/[id]/page.tsx`
+- `app/fluence/templates/[id]/page.tsx` — replaced full "Template not found" UI
+- `app/fluence/wiki/[slug]/page.tsx` — replaced motion animated not-found card
+- `app/fluence/blogs/[slug]/page.tsx` — replaced motion animated not-found card
+- `app/fluence/wiki/[slug]/edit/page.tsx`
+- `app/fluence/blogs/[slug]/edit/page.tsx`
+- `app/learning/courses/[id]/page.tsx`
+- `app/learning/courses/[id]/play/page.tsx`
+- `app/learning/courses/[id]/quiz/[quizId]/page.tsx`
+- `app/travel/[id]/page.tsx`
+
+### Pattern (Locked In)
+Guard after isLoading check, before error display:
+```tsx
+if (!isLoading && !error && !data) { notFound(); }
+if (error || !data) { /* show error UI */ }
+```
+
+### Final State
+- **TypeScript**: 0 errors
+- **ESLint**: 0 errors, 0 warnings
+
+*Last updated: 2026-03-17 (notFound() propagation complete)*
+
+---
+
 ## Section 29 — Route Boundary Coverage: loading.tsx + error.tsx (2026-03-17)
 
 ### Objective

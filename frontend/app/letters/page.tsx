@@ -158,7 +158,7 @@ export default function LettersPage() {
 
   // React Query hooks for data fetching
   const [currentPage, setCurrentPage] = useState(0);
-  const { data: lettersData, isLoading: _lettersLoading, error: lettersError, refetch: refetchLetters } = useAllLetters(currentPage, 20, isAuthenticated && hasHydrated);
+  const { data: lettersData, isLoading: lettersLoading, error: lettersError, refetch: refetchLetters } = useAllLetters(currentPage, 20, isAuthenticated && hasHydrated);
   const { data: templatesData, isLoading: _templatesLoading } = useActiveLetterTemplates(isAuthenticated && hasHydrated);
   const { data: candidatesData, isLoading: _candidatesLoading, refetch: refetchCandidates } = useCandidates(0, 100);
 

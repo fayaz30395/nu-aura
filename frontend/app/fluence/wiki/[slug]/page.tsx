@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useEffect, useRef, Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  BookOpen,
   ArrowLeft,
   Edit,
   Share2,
@@ -33,7 +33,6 @@ import dynamic from 'next/dynamic';
 import { Skeleton, Modal, Tooltip, ActionIcon, Badge } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
 import {
   useWikiPage,
   useComments,
@@ -562,31 +561,7 @@ export default function WikiPageDetailPage() {
   }
 
   if (!page) {
-    return (
-      <AppLayout>
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="text-center py-16"
-        >
-          <BookOpen
-            className={`${iconSize.pageHeader} mx-auto mb-4 text-[var(--text-muted)]`}
-          />
-          <h3 className={`${typography.sectionTitle} mb-1`}>Page not found</h3>
-          <p className={`${typography.caption} mb-6`}>
-            The page you&apos;re looking for doesn&apos;t exist
-          </p>
-          <Button
-            onClick={() => router.back()}
-            className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)]"
-          >
-            <ArrowLeft className={iconSize.button} />
-            Go Back
-          </Button>
-        </motion.div>
-      </AppLayout>
-    );
+    notFound();
   }
 
   const VisibilityIcon =

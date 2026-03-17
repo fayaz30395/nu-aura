@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { LoanStatus } from '@/lib/types/loan';
 import { useLoan } from '@/lib/hooks/queries/useLoans';
@@ -83,6 +84,10 @@ export default function LoanDetailPage() {
         </div>
       </AppLayout>
     );
+  }
+
+  if (!isLoading && !error && !loan) {
+    notFound();
   }
 
   if (error || !loan) {

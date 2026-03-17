@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -163,16 +164,7 @@ export default function EditBlogPost() {
   }
 
   if (!post) {
-    return (
-      <AppLayout>
-        <div className="text-center py-16">
-          <p className="text-[var(--text-muted)]">Post not found</p>
-          <Button onClick={() => router.back()} variant="secondary" className="mt-4">
-            Go Back
-          </Button>
-        </div>
-      </AppLayout>
-    );
+    notFound();
   }
 
   return (

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { calendarService } from '@/lib/services/calendar.service';
@@ -112,6 +113,10 @@ export default function EventDetailPage() {
         </div>
       </AppLayout>
     );
+  }
+
+  if (!isLoading && !error && !event) {
+    notFound();
   }
 
   if (error || !event) {
