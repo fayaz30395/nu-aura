@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Clock, CheckCircle, XCircle, PlusCircle, AlertCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -21,6 +24,17 @@ interface CompOffRequest {
   createdAt: string;
 }
 
+// ─── Zod Schema ────────────────────────────────────────────────────────────────
+
+const compOffSchema = z.object({
+  attendanceDate: z.string().min(1, 'Please select an attendance date'),
+  reason: z.string().optional(),
+});
+
+type CompOffFormData = z.infer<typeof compOffSchema>;
+
+// ─── Status config ──────────────────────────────────────────────────────────────
+
 const statusConfig: Record<string, { color: string; icon: typeof Clock; label: string }> = {
   PENDING:  { color: 'text-yellow-600 tint-warning',  icon: AlertCircle,   label: 'Pending' },
   APPROVED: { color: 'text-blue-600 tint-info',       icon: CheckCircle,   label: 'Approved' },
@@ -31,9 +45,18 @@ const statusConfig: Record<string, { color: string; icon: typeof Clock; label: s
 export default function CompOffPage() {
   const queryClient = useQueryClient();
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [form, setForm] = useState({ attendanceDate: '', reason: '' });
   const [activeTab, setActiveTab] = useState<'my' | 'pending'>('my');
   const [employeeId] = useState('current'); // resolved by backend from JWT
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CompOffFormData>({
+    resolver: zodResolver(compOffSchema),
+    defaultValues: { attendanceDate: '', reason: '' },
+  });
 
   const { data: myRequests, isLoading: loadingMy } = useQuery<CompOffRequest[]>({
     queryKey: ['comp-off', 'my', employeeId],
@@ -47,14 +70,23 @@ export default function CompOffPage() {
   });
 
   const requestMutation = useMutation({
-    mutationFn: (data: { employeeId: string; attendanceDate: string; reason: string }) =>
+    mutationFn: (data: { employeeId: string; attendanceDate: string; reason?: string }) =>
       apiClient.post('/comp-off/request', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comp-off'] });
       setShowRequestModal(false);
-      setForm({ attendanceDate: '', reason: '' });
+      reset();
     },
   });
+
+  const onSubmitForm = (data: CompOffFormData) => {
+    requestMutation.mutate({ employeeId, attendanceDate: data.attendanceDate, reason: data.reason });
+  };
+
+  const handleModalClose = () => {
+    setShowRequestModal(false);
+    reset();
+  };
 
   const approveMutation = useMutation({
     mutationFn: ({ id, action }: { id: string; action: 'approve' | 'reject' }) =>
@@ -191,40 +223,36 @@ export default function CompOffPage() {
             <CardHeader>
               <CardTitle>Request Comp-Off</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Attendance Date *</label>
-                <input
-                  type="date"
-                  value={form.attendanceDate}
-                  onChange={e => setForm(f => ({ ...f, attendanceDate: e.target.value }))}
-                  className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
-                />
-                <p className="text-xs text-[var(--text-muted)] mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
-                <textarea
-                  rows={3}
-                  value={form.reason}
-                  onChange={e => setForm(f => ({ ...f, reason: e.target.value }))}
-                  placeholder="Optional: why you worked overtime"
-                  className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
-                />
-              </div>
-              <div className="flex gap-4 justify-end pt-2">
-                <Button variant="outline" onClick={() => setShowRequestModal(false)}>Cancel</Button>
-                <Button
-                  onClick={() => requestMutation.mutate({
-                    employeeId,
-                    attendanceDate: form.attendanceDate,
-                    reason: form.reason,
-                  })}
-                  disabled={!form.attendanceDate || requestMutation.isPending}
-                >
-                  {requestMutation.isPending ? 'Submitting...' : 'Submit Request'}
-                </Button>
-              </div>
+            <CardContent>
+              <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Attendance Date *</label>
+                  <input
+                    type="date"
+                    {...register('attendanceDate')}
+                    className={`w-full border ${errors.attendanceDate ? 'border-red-500' : 'border-[var(--border-strong)]'} rounded-md px-3 py-2 text-sm`}
+                  />
+                  {errors.attendanceDate && (
+                    <p className="mt-1 text-xs text-red-500">{errors.attendanceDate.message}</p>
+                  )}
+                  <p className="text-xs text-[var(--text-muted)] mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
+                  <textarea
+                    {...register('reason')}
+                    rows={3}
+                    placeholder="Optional: why you worked overtime"
+                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                  />
+                </div>
+                <div className="flex gap-4 justify-end pt-2">
+                  <Button type="button" variant="outline" onClick={handleModalClose}>Cancel</Button>
+                  <Button type="submit" disabled={requestMutation.isPending}>
+                    {requestMutation.isPending ? 'Submitting...' : 'Submit Request'}
+                  </Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </div>

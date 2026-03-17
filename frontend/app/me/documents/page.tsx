@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { format } from 'date-fns';
 import {
   FileText,
@@ -61,13 +64,30 @@ const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; colo
   CANCELLED: { icon: <X className="h-4 w-4" />, color: 'text-[var(--text-muted)]', bgColor: 'bg-[var(--bg-secondary)]' },
 };
 
+// ─── Zod Schema ────────────────────────────────────────────────────────────────
+
+const documentRequestSchema = z.object({
+  documentType: z.enum([
+    'EMPLOYMENT_CERTIFICATE', 'SALARY_CERTIFICATE', 'EXPERIENCE_LETTER',
+    'RELIEVING_LETTER', 'BONAFIDE_CERTIFICATE', 'ADDRESS_PROOF_LETTER',
+    'VISA_LETTER', 'BANK_LETTER', 'SALARY_SLIP', 'FORM_16', 'APPOINTMENT_LETTER_COPY',
+  ]),
+  purpose: z.string().min(1, 'Purpose is required'),
+  addressedTo: z.string().optional(),
+  requiredByDate: z.string().min(1, 'Required by date is required'),
+  deliveryMode: z.enum(['DIGITAL', 'PHYSICAL', 'BOTH']),
+  deliveryAddress: z.string().optional(),
+  priority: z.number({ coerce: true }).int().min(1).max(3),
+});
+
+type DocumentRequestFormData = z.infer<typeof documentRequestSchema>;
+
 export default function MyDocumentsPage() {
   const router = useRouter();
   const { user, hasHydrated } = useAuth();
   const [showModal, setShowModal] = useState(false);
 
-  // Form state
-  const [formData, setFormData] = useState<DocumentRequestDto>({
+  const defaultValues: DocumentRequestFormData = {
     documentType: 'EMPLOYMENT_CERTIFICATE',
     purpose: '',
     addressedTo: '',
@@ -75,7 +95,21 @@ export default function MyDocumentsPage() {
     deliveryMode: 'DIGITAL',
     deliveryAddress: '',
     priority: 2,
+  };
+
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<DocumentRequestFormData>({
+    resolver: zodResolver(documentRequestSchema),
+    defaultValues,
   });
+
+  const watchedDocumentType = watch('documentType');
+  const watchedDeliveryMode = watch('deliveryMode');
 
   // React Query hooks
   const { data: requestsData, isLoading } = useMyDocumentRequests(
@@ -94,27 +128,27 @@ export default function MyDocumentsPage() {
     }
   }, [hasHydrated, user, router]);
 
-  const handleSubmit = async () => {
-    if (!user?.employeeId || !formData.purpose) return;
+  const onSubmit = async (data: DocumentRequestFormData) => {
+    if (!user?.employeeId) return;
 
-    try {
-      await createMutation.mutateAsync({
-        employeeId: user.employeeId,
-        data: formData,
-      });
-      setShowModal(false);
-      setFormData({
-        documentType: 'EMPLOYMENT_CERTIFICATE',
-        purpose: '',
-        addressedTo: '',
-        requiredByDate: format(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
-        deliveryMode: 'DIGITAL',
-        deliveryAddress: '',
-        priority: 2,
-      });
-    } catch (error) {
-      console.error('Failed to create document request:', error);
-    }
+    const payload: DocumentRequestDto = {
+      documentType: data.documentType as DocumentType,
+      purpose: data.purpose,
+      addressedTo: data.addressedTo || '',
+      requiredByDate: data.requiredByDate,
+      deliveryMode: data.deliveryMode as DeliveryMode,
+      deliveryAddress: data.deliveryAddress || '',
+      priority: data.priority,
+    };
+
+    await createMutation.mutateAsync({ employeeId: user.employeeId, data: payload });
+    setShowModal(false);
+    reset(defaultValues);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    reset(defaultValues);
   };
 
   if (!hasHydrated || isLoading) {

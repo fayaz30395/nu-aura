@@ -103,7 +103,6 @@ export default function TeamDirectory() {
   useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [loading] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
@@ -142,7 +141,7 @@ export default function TeamDirectory() {
   }, [deptData]);
 
   // React Query - search employees with filters
-  const { data: employeeSearchResponse = { content: [], totalPages: 0, totalElements: 0 } } = useQuery({
+  const { data: employeeSearchResponse = { content: [], totalPages: 0, totalElements: 0 }, isPending } = useQuery({
     queryKey: ['employees', 'directory', filters],
     queryFn: async () => {
       const response = await apiClient.post<{
@@ -433,7 +432,7 @@ export default function TeamDirectory() {
         </motion.div>
 
         {/* Employee Grid/List */}
-        {loading ? (
+        {isPending ? (
           <div className="flex justify-center items-center h-64">
             <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
           </div>
@@ -675,7 +674,7 @@ export default function TeamDirectory() {
             )}
 
             {/* Empty State */}
-            {employees.length === 0 && !loading && (
+            {employees.length === 0 && !isPending && (
               <div className="text-center py-12">
                 <Users className="w-16 h-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">

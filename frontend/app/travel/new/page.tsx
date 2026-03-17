@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { TravelType, TransportMode, TravelRequestRequest } from '@/lib/types/travel';
+import { TravelType, TransportMode } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useCreateTravelRequest, useSubmitTravelRequest } from '@/lib/hooks/queries/useTravel';
+import { isAxiosError } from '@/lib/utils/type-guards';
 import {
   Plane,
   ArrowLeft,
@@ -19,139 +23,100 @@ import {
   Send,
 } from 'lucide-react';
 
+// ─── Zod Schema ────────────────────────────────────────────────────────────────
+
+const travelRequestSchema = z
+  .object({
+    travelType: z.enum(['BUSINESS', 'TRAINING', 'CLIENT_VISIT', 'CONFERENCE', 'RELOCATION', 'OTHER']),
+    purpose: z.string().min(1, 'Purpose is required'),
+    clientName: z.string().optional(),
+    projectId: z.string().optional(),
+    originCity: z.string().min(1, 'Origin city is required'),
+    destinationCity: z.string().min(1, 'Destination city is required'),
+    departureDate: z.string().min(1, 'Departure date is required'),
+    returnDate: z.string().min(1, 'Return date is required'),
+    departureTime: z.string().optional(),
+    returnTime: z.string().optional(),
+    isInternational: z.boolean().default(false),
+    visaRequired: z.boolean().default(false),
+    transportMode: z.enum(['FLIGHT', 'TRAIN', 'BUS', 'CAR', 'SELF_ARRANGED']),
+    transportClass: z.string().optional(),
+    cabRequired: z.boolean().default(false),
+    accommodationRequired: z.boolean().default(false),
+    hotelPreference: z.string().optional(),
+    checkInDate: z.string().optional(),
+    checkOutDate: z.string().optional(),
+    estimatedCost: z
+      .number({ coerce: true, invalid_type_error: 'Please enter a valid cost' })
+      .positive('Estimated cost must be greater than 0'),
+    advanceRequired: z.number({ coerce: true }).min(0).optional(),
+    specialInstructions: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.departureDate && data.returnDate) {
+      if (new Date(data.returnDate) < new Date(data.departureDate)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Return date must be after departure date',
+          path: ['returnDate'],
+        });
+      }
+    }
+    if (data.accommodationRequired) {
+      if (!data.checkInDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Check-in date is required',
+          path: ['checkInDate'],
+        });
+      }
+      if (!data.checkOutDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Check-out date is required',
+          path: ['checkOutDate'],
+        });
+      }
+    }
+  });
+
+type TravelFormData = z.infer<typeof travelRequestSchema>;
+
+// ─── Component ─────────────────────────────────────────────────────────────────
+
 export default function NewTravelRequestPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-
-  // Mutations
   const createMutation = useCreateTravelRequest();
   const submitMutation = useSubmitTravelRequest();
 
-  // Form state
-  const [formData, setFormData] = useState<Partial<TravelRequestRequest>>({
-    travelType: 'BUSINESS',
-    transportMode: 'FLIGHT',
-    accommodationRequired: false,
-    cabRequired: false,
-    isInternational: false,
-    visaRequired: false,
-    advanceRequired: 0,
-    estimatedCost: 0,
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<TravelFormData>({
+    resolver: zodResolver(travelRequestSchema),
+    defaultValues: {
+      travelType: 'BUSINESS',
+      transportMode: 'FLIGHT',
+      accommodationRequired: false,
+      cabRequired: false,
+      isInternational: false,
+      visaRequired: false,
+      advanceRequired: 0,
+      estimatedCost: 0,
+    },
   });
 
   useEffect(() => {
     if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    if (user?.employeeId) {
-      setFormData((prev) => ({ ...prev, employeeId: user.employeeId }));
-    }
-  }, [isAuthenticated, hasHydrated, router, user]);
+    if (!isAuthenticated) router.push('/login');
+  }, [isAuthenticated, hasHydrated, router]);
 
-  const validateForm = (): boolean => {
-    const errors: Record<string, string> = {};
-
-    if (!formData.travelType) errors.travelType = 'Travel type is required';
-    if (!formData.purpose || formData.purpose.trim() === '') errors.purpose = 'Purpose is required';
-    if (!formData.originCity || formData.originCity.trim() === '')
-      errors.originCity = 'Origin city is required';
-    if (!formData.destinationCity || formData.destinationCity.trim() === '')
-      errors.destinationCity = 'Destination city is required';
-    if (!formData.departureDate) errors.departureDate = 'Departure date is required';
-    if (!formData.returnDate) errors.returnDate = 'Return date is required';
-
-    if (formData.departureDate && formData.returnDate) {
-      if (new Date(formData.returnDate) < new Date(formData.departureDate)) {
-        errors.returnDate = 'Return date must be after departure date';
-      }
-    }
-
-    if (!formData.transportMode) errors.transportMode = 'Transport mode is required';
-    if (!formData.estimatedCost || formData.estimatedCost <= 0)
-      errors.estimatedCost = 'Estimated cost must be greater than 0';
-
-    if (formData.accommodationRequired) {
-      if (!formData.checkInDate) errors.checkInDate = 'Check-in date is required';
-      if (!formData.checkOutDate) errors.checkOutDate = 'Check-out date is required';
-    }
-
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = (isDraft: boolean = false) => {
-    if (!isDraft && !validateForm()) {
-      setError('Please fix the validation errors before submitting');
-      return;
-    }
-
-    if (!user?.employeeId) {
-      setError('Employee ID not found');
-      return;
-    }
-
-    const requestData: TravelRequestRequest = {
-      employeeId: user.employeeId,
-      travelType: formData.travelType || 'BUSINESS',
-      purpose: formData.purpose || '',
-      projectId: formData.projectId,
-      clientName: formData.clientName,
-      originCity: formData.originCity || '',
-      destinationCity: formData.destinationCity || '',
-      departureDate: formData.departureDate || '',
-      returnDate: formData.returnDate || '',
-      departureTime: formData.departureTime,
-      returnTime: formData.returnTime,
-      accommodationRequired: formData.accommodationRequired || false,
-      hotelPreference: formData.hotelPreference,
-      checkInDate: formData.checkInDate,
-      checkOutDate: formData.checkOutDate,
-      transportMode: formData.transportMode || 'FLIGHT',
-      transportClass: formData.transportClass,
-      cabRequired: formData.cabRequired || false,
-      estimatedCost: formData.estimatedCost || 0,
-      advanceRequired: formData.advanceRequired || 0,
-      specialInstructions: formData.specialInstructions,
-      isInternational: formData.isInternational || false,
-      visaRequired: formData.visaRequired || false,
-    };
-
-    createMutation.mutate(requestData, {
-      onSuccess: (response) => {
-        if (!isDraft && response.id) {
-          submitMutation.mutate(response.id, {
-            onSuccess: () => {
-              router.push(`/travel/${response.id}`);
-            },
-            onError: () => {
-              setError('Travel request created but failed to submit');
-            },
-          });
-        } else {
-          router.push(`/travel/${response.id}`);
-        }
-      },
-      onError: (error: unknown) => {
-        console.error('Error creating travel request:', error);
-        setError((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create travel request');
-      },
-    });
-  };
-
-  const handleInputChange = (field: keyof TravelRequestRequest, value: string | number | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (validationErrors[field]) {
-      setValidationErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  };
+  const watchedAccommodation = watch('accommodationRequired');
+  const watchedIsInternational = watch('isInternational');
+  const watchedDepartureDate = watch('departureDate');
 
   if (!hasHydrated || !isAuthenticated) {
     return (
@@ -163,62 +128,142 @@ export default function NewTravelRequestPage() {
     );
   }
 
+  const handleSave = handleSubmit(async (data: TravelFormData) => {
+    if (!user?.employeeId) return;
+    createMutation.mutate(
+      {
+        employeeId: user.employeeId,
+        travelType: data.travelType as TravelType,
+        purpose: data.purpose,
+        projectId: data.projectId || undefined,
+        clientName: data.clientName || undefined,
+        originCity: data.originCity,
+        destinationCity: data.destinationCity,
+        departureDate: data.departureDate,
+        returnDate: data.returnDate,
+        departureTime: data.departureTime || undefined,
+        returnTime: data.returnTime || undefined,
+        accommodationRequired: data.accommodationRequired,
+        hotelPreference: data.hotelPreference || undefined,
+        checkInDate: data.checkInDate || undefined,
+        checkOutDate: data.checkOutDate || undefined,
+        transportMode: data.transportMode as TransportMode,
+        transportClass: data.transportClass || undefined,
+        cabRequired: data.cabRequired,
+        estimatedCost: data.estimatedCost as number,
+        advanceRequired: data.advanceRequired ?? 0,
+        specialInstructions: data.specialInstructions || undefined,
+        isInternational: data.isInternational,
+        visaRequired: data.visaRequired,
+      },
+      {
+        onSuccess: (response) => router.push(`/travel/${response.id}`),
+        onError: (error: unknown) => {
+          const message = isAxiosError(error)
+            ? (error.response?.data as { message?: string })?.message ?? 'Failed to create travel request'
+            : 'Failed to create travel request';
+          // Error is surfaced via createMutation.isError
+          void message;
+        },
+      }
+    );
+  });
+
+  const handleSubmitRequest = handleSubmit(async (data: TravelFormData) => {
+    if (!user?.employeeId) return;
+    createMutation.mutate(
+      {
+        employeeId: user.employeeId,
+        travelType: data.travelType as TravelType,
+        purpose: data.purpose,
+        projectId: data.projectId || undefined,
+        clientName: data.clientName || undefined,
+        originCity: data.originCity,
+        destinationCity: data.destinationCity,
+        departureDate: data.departureDate,
+        returnDate: data.returnDate,
+        departureTime: data.departureTime || undefined,
+        returnTime: data.returnTime || undefined,
+        accommodationRequired: data.accommodationRequired,
+        hotelPreference: data.hotelPreference || undefined,
+        checkInDate: data.checkInDate || undefined,
+        checkOutDate: data.checkOutDate || undefined,
+        transportMode: data.transportMode as TransportMode,
+        transportClass: data.transportClass || undefined,
+        cabRequired: data.cabRequired,
+        estimatedCost: data.estimatedCost as number,
+        advanceRequired: data.advanceRequired ?? 0,
+        specialInstructions: data.specialInstructions || undefined,
+        isInternational: data.isInternational,
+        visaRequired: data.visaRequired,
+      },
+      {
+        onSuccess: (response) => {
+          if (response.id) {
+            submitMutation.mutate(response.id, {
+              onSuccess: () => router.push(`/travel/${response.id}`),
+            });
+          }
+        },
+      }
+    );
+  });
+
+  const isLoading = isSubmitting || createMutation.isPending || submitMutation.isPending;
+
+  const inputClass = (hasError: boolean) =>
+    `w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
+      hasError ? 'border-red-500' : 'border-[var(--border-main)]'
+    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`;
+
+  const cardInputClass = (hasError: boolean) =>
+    `w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
+      hasError ? 'border-red-500' : 'border-[var(--border-main)]'
+    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`;
+
   return (
     <AppLayout activeMenuItem="travel">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <button
+            type="button"
             onClick={() => router.back()}
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-              New Travel Request
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Submit a new travel request for approval
-            </p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">New Travel Request</h1>
+            <p className="text-[var(--text-muted)] mt-1">Submit a new travel request for approval</p>
           </div>
         </div>
 
-        {/* Error Message */}
-        {error && (
+        {(createMutation.isError || submitMutation.isError) && (
           <div className="flex items-center gap-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
             <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <p className="text-sm text-red-600 dark:text-red-400">Failed to create travel request. Please try again.</p>
           </div>
         )}
 
-        {/* Form */}
         <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
-          {/* Travel Type & Purpose */}
+          {/* Travel Details */}
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                 <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                Travel Details
-              </h2>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Travel Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Travel Type */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Travel Type <span className="text-red-500">*</span>
                 </label>
                 <select
-                  value={formData.travelType}
-                  onChange={(e) => handleInputChange('travelType', e.target.value as TravelType)}
-                  className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
-                    validationErrors.travelType
-                      ? 'border-red-500'
-                      : 'border-[var(--border-main)]'
-                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                  {...register('travelType')}
+                  className={inputClass(!!errors.travelType)}
                 >
                   <option value="BUSINESS">Business</option>
                   <option value="TRAINING">Training</option>
@@ -227,44 +272,36 @@ export default function NewTravelRequestPage() {
                   <option value="RELOCATION">Relocation</option>
                   <option value="OTHER">Other</option>
                 </select>
-                {validationErrors.travelType && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.travelType}</p>
+                {errors.travelType && (
+                  <p className="mt-1 text-sm text-red-500">{errors.travelType.message}</p>
                 )}
               </div>
 
-              {/* Client Name */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Client Name
                 </label>
                 <input
                   type="text"
-                  value={formData.clientName || ''}
-                  onChange={(e) => handleInputChange('clientName', e.target.value)}
+                  {...register('clientName')}
                   placeholder="Enter client name"
-                  className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className={inputClass(false)}
                 />
               </div>
             </div>
 
-            {/* Purpose */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Purpose <span className="text-red-500">*</span>
               </label>
               <textarea
-                value={formData.purpose || ''}
-                onChange={(e) => handleInputChange('purpose', e.target.value)}
+                {...register('purpose')}
                 placeholder="Describe the purpose of your travel"
                 rows={3}
-                className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
-                  validationErrors.purpose
-                    ? 'border-red-500'
-                    : 'border-[var(--border-main)]'
-                } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none`}
+                className={`${inputClass(!!errors.purpose)} resize-none`}
               />
-              {validationErrors.purpose && (
-                <p className="mt-1 text-sm text-red-500">{validationErrors.purpose}</p>
+              {errors.purpose && (
+                <p className="mt-1 text-sm text-red-500">{errors.purpose.message}</p>
               )}
             </div>
           </div>
@@ -275,121 +312,88 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
                 <MapPin className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                Journey Details
-              </h2>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Journey Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Origin City */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Origin City <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.originCity || ''}
-                  onChange={(e) => handleInputChange('originCity', e.target.value)}
+                  {...register('originCity')}
                   placeholder="e.g., Mumbai"
-                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
-                    validationErrors.originCity
-                      ? 'border-red-500'
-                      : 'border-[var(--border-main)]'
-                  } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                  className={cardInputClass(!!errors.originCity)}
                 />
-                {validationErrors.originCity && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.originCity}</p>
+                {errors.originCity && (
+                  <p className="mt-1 text-sm text-red-500">{errors.originCity.message}</p>
                 )}
               </div>
 
-              {/* Destination City */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Destination City <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.destinationCity || ''}
-                  onChange={(e) => handleInputChange('destinationCity', e.target.value)}
+                  {...register('destinationCity')}
                   placeholder="e.g., Delhi"
-                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
-                    validationErrors.destinationCity
-                      ? 'border-red-500'
-                      : 'border-[var(--border-main)]'
-                  } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                  className={cardInputClass(!!errors.destinationCity)}
                 />
-                {validationErrors.destinationCity && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.destinationCity}</p>
+                {errors.destinationCity && (
+                  <p className="mt-1 text-sm text-red-500">{errors.destinationCity.message}</p>
                 )}
               </div>
 
-              {/* Departure Date */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Departure Date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
-                  value={formData.departureDate || ''}
-                  onChange={(e) => handleInputChange('departureDate', e.target.value)}
-                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
-                    validationErrors.departureDate
-                      ? 'border-red-500'
-                      : 'border-[var(--border-main)]'
-                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                  {...register('departureDate')}
+                  className={cardInputClass(!!errors.departureDate)}
                 />
-                {validationErrors.departureDate && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.departureDate}</p>
+                {errors.departureDate && (
+                  <p className="mt-1 text-sm text-red-500">{errors.departureDate.message}</p>
                 )}
               </div>
 
-              {/* Return Date */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Return Date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
-                  value={formData.returnDate || ''}
-                  onChange={(e) => handleInputChange('returnDate', e.target.value)}
-                  min={formData.departureDate}
-                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
-                    validationErrors.returnDate
-                      ? 'border-red-500'
-                      : 'border-[var(--border-main)]'
-                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                  {...register('returnDate')}
+                  min={watchedDepartureDate}
+                  className={cardInputClass(!!errors.returnDate)}
                 />
-                {validationErrors.returnDate && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.returnDate}</p>
+                {errors.returnDate && (
+                  <p className="mt-1 text-sm text-red-500">{errors.returnDate.message}</p>
                 )}
               </div>
             </div>
 
-            {/* International Travel */}
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={formData.isInternational || false}
-                  onChange={(e) => handleInputChange('isInternational', e.target.checked)}
-                  className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
+                  {...register('isInternational')}
+                  className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-primary-500"
                 />
-                <span className="text-sm text-[var(--text-secondary)]">
-                  International Travel
-                </span>
+                <span className="text-sm text-[var(--text-secondary)]">International Travel</span>
               </label>
 
-              {formData.isInternational && (
+              {watchedIsInternational && (
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={formData.visaRequired || false}
-                    onChange={(e) => handleInputChange('visaRequired', e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
+                    {...register('visaRequired')}
+                    className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-primary-500"
                   />
-                  <span className="text-sm text-[var(--text-secondary)]">
-                    Visa Required
-                  </span>
+                  <span className="text-sm text-[var(--text-secondary)]">Visa Required</span>
                 </label>
               )}
             </div>
@@ -401,27 +405,17 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
                 <Plane className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                Transport Details
-              </h2>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Transport Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Transport Mode */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Transport Mode <span className="text-red-500">*</span>
                 </label>
                 <select
-                  value={formData.transportMode}
-                  onChange={(e) =>
-                    handleInputChange('transportMode', e.target.value as TransportMode)
-                  }
-                  className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
-                    validationErrors.transportMode
-                      ? 'border-red-500'
-                      : 'border-[var(--border-main)]'
-                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                  {...register('transportMode')}
+                  className={inputClass(!!errors.transportMode)}
                 >
                   <option value="FLIGHT">Flight</option>
                   <option value="TRAIN">Train</option>
@@ -429,37 +423,31 @@ export default function NewTravelRequestPage() {
                   <option value="CAR">Car</option>
                   <option value="SELF_ARRANGED">Self Arranged</option>
                 </select>
-                {validationErrors.transportMode && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.transportMode}</p>
+                {errors.transportMode && (
+                  <p className="mt-1 text-sm text-red-500">{errors.transportMode.message}</p>
                 )}
               </div>
 
-              {/* Transport Class */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Class/Type
                 </label>
                 <input
                   type="text"
-                  value={formData.transportClass || ''}
-                  onChange={(e) => handleInputChange('transportClass', e.target.value)}
+                  {...register('transportClass')}
                   placeholder="e.g., Economy, Business"
-                  className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className={inputClass(false)}
                 />
               </div>
             </div>
 
-            {/* Cab Required */}
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                checked={formData.cabRequired || false}
-                onChange={(e) => handleInputChange('cabRequired', e.target.checked)}
-                className="w-4 h-4 text-primary-600 bg-[var(--bg-secondary)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
+                {...register('cabRequired')}
+                className="w-4 h-4 text-primary-600 bg-[var(--bg-secondary)] border-[var(--border-main)] rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-[var(--text-secondary)]">
-                Local cab/taxi required
-              </span>
+              <span className="text-sm text-[var(--text-secondary)]">Local cab/taxi required</span>
             </label>
           </div>
 
@@ -469,80 +457,58 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Hotel className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                Accommodation
-              </h2>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Accommodation</h2>
             </div>
 
-            {/* Accommodation Required */}
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                checked={formData.accommodationRequired || false}
-                onChange={(e) => handleInputChange('accommodationRequired', e.target.checked)}
-                className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
+                {...register('accommodationRequired')}
+                className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-[var(--text-secondary)]">
-                Accommodation required
-              </span>
+              <span className="text-sm text-[var(--text-secondary)]">Accommodation required</span>
             </label>
 
-            {formData.accommodationRequired && (
+            {watchedAccommodation && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Hotel Preference */}
                 <div className="md:col-span-3">
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Hotel Preference
                   </label>
                   <input
                     type="text"
-                    value={formData.hotelPreference || ''}
-                    onChange={(e) => handleInputChange('hotelPreference', e.target.value)}
+                    {...register('hotelPreference')}
                     placeholder="Enter preferred hotel or area"
-                    className="w-full px-4 py-2.5 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    className={cardInputClass(false)}
                   />
                 </div>
 
-                {/* Check-in Date */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Check-in Date <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
-                    value={formData.checkInDate || ''}
-                    onChange={(e) => handleInputChange('checkInDate', e.target.value)}
-                    min={formData.departureDate}
-                    className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
-                      validationErrors.checkInDate
-                        ? 'border-red-500'
-                        : 'border-[var(--border-main)]'
-                    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                    {...register('checkInDate')}
+                    min={watchedDepartureDate}
+                    className={cardInputClass(!!errors.checkInDate)}
                   />
-                  {validationErrors.checkInDate && (
-                    <p className="mt-1 text-sm text-red-500">{validationErrors.checkInDate}</p>
+                  {errors.checkInDate && (
+                    <p className="mt-1 text-sm text-red-500">{errors.checkInDate.message}</p>
                   )}
                 </div>
 
-                {/* Check-out Date */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Check-out Date <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
-                    value={formData.checkOutDate || ''}
-                    onChange={(e) => handleInputChange('checkOutDate', e.target.value)}
-                    min={formData.checkInDate || formData.departureDate}
-                    max={formData.returnDate}
-                    className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
-                      validationErrors.checkOutDate
-                        ? 'border-red-500'
-                        : 'border-[var(--border-main)]'
-                    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                    {...register('checkOutDate')}
+                    className={cardInputClass(!!errors.checkOutDate)}
                   />
-                  {validationErrors.checkOutDate && (
-                    <p className="mt-1 text-sm text-red-500">{validationErrors.checkOutDate}</p>
+                  {errors.checkOutDate && (
+                    <p className="mt-1 text-sm text-red-500">{errors.checkOutDate.message}</p>
                   )}
                 </div>
               </div>
@@ -555,63 +521,51 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                 <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                Budget Details
-              </h2>
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Budget Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Estimated Cost */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Estimated Cost (INR) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
-                  value={formData.estimatedCost || ''}
-                  onChange={(e) => handleInputChange('estimatedCost', parseFloat(e.target.value))}
-                  placeholder="0.00"
-                  min="0"
                   step="0.01"
-                  className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
-                    validationErrors.estimatedCost
-                      ? 'border-red-500'
-                      : 'border-[var(--border-main)]'
-                  } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                  min="0"
+                  {...register('estimatedCost', { valueAsNumber: true })}
+                  placeholder="0.00"
+                  className={inputClass(!!errors.estimatedCost)}
                 />
-                {validationErrors.estimatedCost && (
-                  <p className="mt-1 text-sm text-red-500">{validationErrors.estimatedCost}</p>
+                {errors.estimatedCost && (
+                  <p className="mt-1 text-sm text-red-500">{errors.estimatedCost.message}</p>
                 )}
               </div>
 
-              {/* Advance Required */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Advance Required (INR)
                 </label>
                 <input
                   type="number"
-                  value={formData.advanceRequired || ''}
-                  onChange={(e) => handleInputChange('advanceRequired', parseFloat(e.target.value))}
-                  placeholder="0.00"
-                  min="0"
                   step="0.01"
-                  className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  min="0"
+                  {...register('advanceRequired', { valueAsNumber: true })}
+                  placeholder="0.00"
+                  className={inputClass(false)}
                 />
               </div>
             </div>
 
-            {/* Special Instructions */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Special Instructions
               </label>
               <textarea
-                value={formData.specialInstructions || ''}
-                onChange={(e) => handleInputChange('specialInstructions', e.target.value)}
+                {...register('specialInstructions')}
                 placeholder="Any special requirements or instructions"
                 rows={3}
-                className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
+                className={`${inputClass(false)} resize-none`}
               />
             </div>
           </div>
@@ -620,34 +574,29 @@ export default function NewTravelRequestPage() {
         {/* Action Buttons */}
         <div className="flex items-center justify-end gap-4 pb-6">
           <button
+            type="button"
             onClick={() => router.back()}
-            disabled={createMutation.isPending || submitMutation.isPending}
+            disabled={isLoading}
             className="px-6 py-2.5 bg-[var(--bg-card)] border border-[var(--border-main)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
-            onClick={() => handleSubmit(true)}
-            disabled={createMutation.isPending || submitMutation.isPending}
+            type="button"
+            onClick={handleSave}
+            disabled={isLoading}
             className="flex items-center gap-2 px-6 py-2.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {createMutation.isPending || submitMutation.isPending ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Save className="h-5 w-5" />
-            )}
+            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
             Save as Draft
           </button>
           <button
-            onClick={() => handleSubmit(false)}
-            disabled={createMutation.isPending || submitMutation.isPending}
+            type="button"
+            onClick={handleSubmitRequest}
+            disabled={isLoading}
             className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {createMutation.isPending || submitMutation.isPending ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Send className="h-5 w-5" />
-            )}
+            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
             Submit Request
           </button>
         </div>
