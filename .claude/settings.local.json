@@ -193,7 +193,8 @@
       "WebFetch(domain:www.keka.com)",
       "Bash(git remote:*)",
       "Bash(cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/contracts/[id])",
-      "Bash(rm -f .fuse_hidden*)"
+      "Bash(rm -f .fuse_hidden*)",
+      "Bash(./docker-db-export.sh)"
     ],
     "additionalDirectories": [
       "/tmp"
