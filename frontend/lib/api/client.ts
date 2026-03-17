@@ -11,9 +11,13 @@ const API_URL = apiConfig.baseUrl;
  * share a single refresh attempt instead of racing (SEC-F06).
  *
  * isRedirecting: prevents multiple concurrent hard-redirects to /auth/login.
+ * Auto-resets after REDIRECT_DEBOUNCE_MS to prevent permanent lockout if
+ * navigation fails or user returns via browser back button.
  */
 let refreshPromise: Promise<boolean> | null = null;
 let isRedirecting = false;
+let redirectResetTimer: ReturnType<typeof setTimeout> | null = null;
+const REDIRECT_DEBOUNCE_MS = 5000;
 
 /**
  * API Client with secure cookie-based authentication.
@@ -63,7 +67,8 @@ class ApiClient {
         return response;
       },
       async (error) => {
-        logger.error('[ApiClient] Error:', error.config?.method?.toUpperCase(), error.config?.url, error.response?.status, error.message);
+        const method = error.config?.method?.toUpperCase?.() ?? 'UNKNOWN';
+        logger.error('[ApiClient] Error:', method, error.config?.url, error.response?.status, error.message);
         const originalRequest = error.config;
 
         // Handle 401 Unauthorized — try to refresh token.
@@ -88,24 +93,12 @@ class ApiClient {
               return this.client(originalRequest);
             }
 
-            // Refresh failed — redirect to login (debounced)
-            if (!isRedirecting) {
-              isRedirecting = true;
-              this.clearTokens();
-              if (typeof window !== 'undefined') {
-                window.location.href = '/auth/login?reason=expired';
-              }
-            }
+            // Refresh failed — redirect to login (debounced with auto-reset)
+            this.redirectToLogin();
 
             return Promise.reject(error);
           } catch (refreshError) {
-            if (!isRedirecting) {
-              isRedirecting = true;
-              this.clearTokens();
-              if (typeof window !== 'undefined') {
-                window.location.href = '/auth/login?reason=expired';
-              }
-            }
+            this.redirectToLogin();
             return Promise.reject(refreshError);
           }
         }
@@ -116,17 +109,38 @@ class ApiClient {
   }
 
   /**
+   * Redirect to login page with debounce protection.
+   * Auto-resets after REDIRECT_DEBOUNCE_MS to prevent permanent lockout
+   * if navigation fails or user returns via browser back button.
+   */
+  private redirectToLogin(): void {
+    if (isRedirecting) return;
+
+    isRedirecting = true;
+    this.clearTokens();
+
+    // Auto-reset redirect flag to prevent permanent lockout
+    if (redirectResetTimer) clearTimeout(redirectResetTimer);
+    redirectResetTimer = setTimeout(() => {
+      isRedirecting = false;
+      redirectResetTimer = null;
+    }, REDIRECT_DEBOUNCE_MS);
+
+    if (typeof window !== 'undefined') {
+      window.location.href = '/auth/login?reason=expired';
+    }
+  }
+
+  /**
    * Get CSRF token from cookie for double-submit pattern.
+   * Uses regex matching to correctly handle cookie values containing '=' characters.
    */
   private getCsrfToken(): string | null {
     if (typeof document === 'undefined') return null;
 
-    const cookies = document.cookie.split(';');
-    for (const cookie of cookies) {
-      const [name, value] = cookie.trim().split('=');
-      if (name === 'XSRF-TOKEN') {
-        return decodeURIComponent(value);
-      }
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+    if (match && match[1]) {
+      return decodeURIComponent(match[1]);
     }
     return null;
   }
