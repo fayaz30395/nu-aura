@@ -39,6 +39,9 @@ import {
   useExportHrmsProjects,
   useUpdateHrmsProject,
 } from '@/lib/hooks/queries/useProjects';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('ProjectsPage');
 
 interface PageResponse<T> {
   content: T[];
@@ -46,9 +49,6 @@ interface PageResponse<T> {
   totalPages: number;
   size: number;
   number: number;
-import { createLogger } from '@/lib/utils/logger';
-
-const log = createLogger('ProjectsPage');
 }
 
 interface EmployeeSummary {

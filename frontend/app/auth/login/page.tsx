@@ -15,6 +15,9 @@ import {
   Globe,
   ArrowRight,
 } from 'lucide-react';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('LoginPage');
 
 /**
  * Validates a returnUrl to prevent open redirect attacks (SEC-F03).

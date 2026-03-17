@@ -27,6 +27,9 @@ import {
   useEndAllocation,
   useExportAllocations,
 } from '@/lib/hooks/queries/useProjects';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('TeamTab');
 
 interface PageResponse<T> {
   content: T[];
@@ -34,9 +37,6 @@ interface PageResponse<T> {
   totalPages: number;
   size: number;
   number: number;
-import { createLogger } from '@/lib/utils/logger';
-
-const log = createLogger('TeamTab');
 }
 
 interface EmployeeSummary {
