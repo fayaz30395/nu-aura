@@ -236,9 +236,7 @@ export default function BenefitsPage() {
 
     const displayBenefits: DisplayBenefit[] = plans.map((plan) => {
       const enrollment = enrollments.find(e => e.benefitPlanId === plan.id);
-import { createLogger } from '@/lib/utils/logger';
 
-const log = createLogger('BenefitsPage');
       return {
         id: plan.id,
         name: plan.planName,

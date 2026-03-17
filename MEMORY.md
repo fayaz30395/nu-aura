@@ -2818,3 +2818,35 @@ Rule 5 in CLAUDE.md: "All forms must use React Hook Form + Zod. No uncontrolled 
 - `app/onboarding/new/page.tsx`: Multi-step wizard, only 2 simple form fields. Low risk, low priority.
 
 ---
+
+## Session Log 41 — Logger Migration (console → logger utility) (2026-03-17)
+
+Systematically replaced all raw `console.error/log/warn` calls in app pages with the project's production-safe logger utility (`@/lib/utils/logger`).
+
+### Motivation
+
+48 files had raw console calls that bypass the logger's `NODE_ENV` gating, risking information leakage in production and violating the project's observability strategy.
+
+### Approach
+
+- Used `createLogger('ComponentName')` namespaced instances in each file
+- `console.error` → `log.error`
+- `console.warn` → `log.warn`
+- `console.log` → `log.info` (or `log.debug` for trace-level calls)
+- Skipped calls already inside `if (NODE_ENV === 'development')` guards
+
+### Files Fixed: 48 total
+
+- `approvals/inbox/page.tsx` (1 call — fixed inline)
+- 47 files via agent: nu-mail, nu-drive, letters, expenses, performance/360-feedback, nu-calendar, offboarding, me/dashboard, employees/[id]/edit, dashboard, assets, admin/roles, admin/custom-fields, admin/permissions, admin/shifts, admin/system, auth/login, benefits, compensation, contracts/new, departments, employees/[id], employees, fluence/drive, global-error, me/attendance, me/leaves, me/payslips, me/profile, onboarding/[id], onboarding/new, onboarding/templates/[id], onboarding/templates/new, performance/goals, performance/reviews, preboarding, preboarding/portal/[token], projects/[id]/_tabs/TeamTab, projects/calendar, projects, recruitment/pipeline, tax/declarations, time-tracking/[id], time-tracking, training/catalog, training/my-learning, travel/[id]
+
+### Post-Migration State
+
+```
+✅ TypeScript: 0 errors
+✅ ESLint: 0 errors, 0 warnings
+✅ Raw console calls in app/: 0
+✅ All 48 files use createLogger() with component namespaces
+```
+
+---
