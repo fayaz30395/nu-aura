@@ -24,6 +24,9 @@ import {
   DollarSign,
   Send,
 } from 'lucide-react';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('TimeTrackingListPage');
 
 export default function TimeTrackingPage() {
   const router = useRouter();

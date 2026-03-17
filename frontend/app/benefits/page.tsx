@@ -51,6 +51,9 @@ import {
   useTerminateEnrollment,
   useSubmitBenefitClaim,
 } from '@/lib/hooks/queries';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('BenefitsPage');
 
 const enrollmentFormSchema = z.object({
   coverageLevel: z.string().min(1, 'Coverage level required'),
