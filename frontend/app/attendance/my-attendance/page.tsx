@@ -540,7 +540,7 @@ export default function MyAttendancePage() {
                   onClick={() => setUse24h(!use24h)}
                   className={`
                     relative w-10 h-5 rounded-full transition-colors
-                    ${use24h ? 'bg-primary-500' : 'bg-surface-300 dark:bg-surface-600'}
+                    ${use24h ? 'bg-primary-600' : 'bg-[var(--border-main)]'}
                   `}
                 >
                   <div

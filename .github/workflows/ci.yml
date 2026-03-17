@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 env:
-  JAVA_VERSION: '17'
+  JAVA_VERSION: '21'
   NODE_VERSION: '18'
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16
         env:
           POSTGRES_DB: hrms_test
           POSTGRES_USER: hrms
@@ -43,43 +43,32 @@ jobs:
           cache: 'maven'
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build parent POM
-        working-directory: ./
-        run: mvn install -N -DskipTests
-
-      - name: Build common module
-        working-directory: ./modules/common
-        run: mvn clean install -DskipTests
-
-      - name: Build PM module
-        working-directory: ./modules/pm
-        run: mvn clean install -DskipTests
-
-      - name: Build HRMS Backend
-        working-directory: ./hrms-backend
+      - name: Build Backend
+        working-directory: ./backend
         run: mvn clean compile -DskipTests
 
       - name: Run Backend Tests
-        working-directory: ./hrms-backend
+        working-directory: ./backend
         run: mvn test
         env:
+          SPRING_PROFILES_ACTIVE: test
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hrms_test
           SPRING_DATASOURCE_USERNAME: hrms
           SPRING_DATASOURCE_PASSWORD: hrms_test
 
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: backend-test-results
-          path: hrms-backend/target/surefire-reports/
+          path: backend/target/surefire-reports/
 
   # Frontend Build & Test
   frontend:
@@ -95,49 +84,26 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: hrms-frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./hrms-frontend
+        working-directory: ./frontend
         run: npm ci
 
       - name: Run ESLint
-        working-directory: ./hrms-frontend
+        working-directory: ./frontend
         run: npm run lint
 
       - name: TypeScript check
-        working-directory: ./hrms-frontend
+        working-directory: ./frontend
         run: npx tsc --noEmit
 
+      - name: Run unit tests
+        working-directory: ./frontend
+        run: npm run test:run
+
       - name: Build Frontend
-        working-directory: ./hrms-frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_API_URL: http://localhost:8080
-
-  # PM Frontend Build (if exists)
-  pm-frontend:
-    name: PM Frontend (Next.js)
-    runs-on: ubuntu-latest
-    if: ${{ hashFiles('pm-frontend/package.json') != '' }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: pm-frontend/package-lock.json
-
-      - name: Install dependencies
-        working-directory: ./pm-frontend
-        run: npm ci
-
-      - name: Build PM Frontend
-        working-directory: ./pm-frontend
+        working-directory: ./frontend
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8080
@@ -184,8 +150,8 @@ jobs:
       - name: Build Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./hrms-backend
-          file: ./hrms-backend/Dockerfile
+          context: .
+          file: ./backend/Dockerfile
           push: false
           tags: nulogic/hrms-backend:${{ github.sha }}
           cache-from: type=gha
@@ -194,8 +160,8 @@ jobs:
       - name: Build Frontend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./hrms-frontend
-          file: ./hrms-frontend/Dockerfile
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: false
           tags: nulogic/hrms-frontend:${{ github.sha }}
           cache-from: type=gha

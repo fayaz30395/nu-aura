@@ -73,9 +73,10 @@ app:
   frontend:
     url: ${FRONTEND_URL:http://localhost:3000}
 
-  # Rate limiting disabled in development
+  # Rate limiting enabled in dev with generous limits for local testing
   rate-limit:
-    enabled: false
+    enabled: true
+    requests-per-minute: 300
 
 # Development health probes with relaxed group membership validation
 management:
