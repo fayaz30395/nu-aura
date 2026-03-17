@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { ArrowLeftRight, PlusCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -37,21 +40,44 @@ const swapTypeLabels: Record<string, string> = {
   PICK_UP:   'Pick Up',
 };
 
+// ─── Zod Schema ────────────────────────────────────────────────────────────────
+
+const shiftSwapSchema = z.object({
+  swapType: z.enum(['SWAP', 'GIVE_AWAY', 'PICK_UP']),
+  requesterShiftDate: z.string().min(1, 'My shift date is required'),
+  targetShiftDate: z.string().optional(),
+  requesterAssignmentId: z.string().min(1, 'My assignment ID is required'),
+  targetEmployeeId: z.string().optional(),
+  reason: z.string().optional(),
+});
+
+type ShiftSwapFormData = z.infer<typeof shiftSwapSchema>;
+
 export default function ShiftSwapPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'my' | 'incoming' | 'approval'>('my');
   const [showModal, setShowModal] = useState(false);
   const [employeeId] = useState('current'); // resolved from JWT by backend
 
-  const [form, setForm] = useState({
-    targetEmployeeId: '',
-    requesterAssignmentId: '',
-    requesterShiftDate: '',
-    targetAssignmentId: '',
-    targetShiftDate: '',
-    swapType: 'SWAP',
-    reason: '',
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<ShiftSwapFormData>({
+    resolver: zodResolver(shiftSwapSchema),
+    defaultValues: {
+      swapType: 'SWAP',
+      requesterShiftDate: '',
+      targetShiftDate: '',
+      requesterAssignmentId: '',
+      targetEmployeeId: '',
+      reason: '',
+    },
   });
+
+  const watchedSwapType = watch('swapType');
 
   const { data: myRequestsData, isLoading: loadingMy } = useQuery<{ content: ShiftSwapRequest[] }>({
     queryKey: ['shift-swap', 'my', employeeId],
@@ -72,14 +98,23 @@ export default function ShiftSwapPage() {
   });
 
   const submitMutation = useMutation({
-    mutationFn: (data: typeof form) =>
+    mutationFn: (data: ShiftSwapFormData) =>
       apiClient.post('/shift-swaps', { ...data, requesterEmployeeId: employeeId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shift-swap'] });
       setShowModal(false);
-      setForm({ targetEmployeeId: '', requesterAssignmentId: '', requesterShiftDate: '', targetAssignmentId: '', targetShiftDate: '', swapType: 'SWAP', reason: '' });
+      reset();
     },
   });
+
+  const onSubmitForm = (data: ShiftSwapFormData) => {
+    submitMutation.mutate(data);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    reset();
+  };
 
   const actionMutation = useMutation({
     mutationFn: ({ id, action, payload }: { id: string; action: string; payload: Record<string, string> }) =>
@@ -218,64 +253,84 @@ export default function ShiftSwapPage() {
             <CardHeader>
               <CardTitle>New Shift Swap Request</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Type *</label>
-                <select
-                  value={form.swapType}
-                  onChange={e => setForm(f => ({ ...f, swapType: e.target.value }))}
-                  className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
-                >
-                  <option value="SWAP">Shift Swap (exchange with another employee)</option>
-                  <option value="GIVE_AWAY">Give Away (transfer shift to another employee)</option>
-                  <option value="PICK_UP">Pick Up (take an available shift)</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+            <CardContent>
+              <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Date *</label>
-                  <input type="date" value={form.requesterShiftDate}
-                    onChange={e => setForm(f => ({ ...f, requesterShiftDate: e.target.value }))}
-                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm" />
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Type *</label>
+                  <select
+                    {...register('swapType')}
+                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                  >
+                    <option value="SWAP">Shift Swap (exchange with another employee)</option>
+                    <option value="GIVE_AWAY">Give Away (transfer shift to another employee)</option>
+                    <option value="PICK_UP">Pick Up (take an available shift)</option>
+                  </select>
+                  {errors.swapType && (
+                    <p className="mt-1 text-xs text-red-500">{errors.swapType.message}</p>
+                  )}
                 </div>
-                {form.swapType === 'SWAP' && (
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Shift Date</label>
-                    <input type="date" value={form.targetShiftDate}
-                      onChange={e => setForm(f => ({ ...f, targetShiftDate: e.target.value }))}
-                      className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm" />
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Date *</label>
+                    <input
+                      type="date"
+                      {...register('requesterShiftDate')}
+                      className={`w-full border ${errors.requesterShiftDate ? 'border-red-500' : 'border-[var(--border-strong)]'} rounded-md px-3 py-2 text-sm`}
+                    />
+                    {errors.requesterShiftDate && (
+                      <p className="mt-1 text-xs text-red-500">{errors.requesterShiftDate.message}</p>
+                    )}
+                  </div>
+                  {watchedSwapType === 'SWAP' && (
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Shift Date</label>
+                      <input
+                        type="date"
+                        {...register('targetShiftDate')}
+                        className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Assignment ID *</label>
+                  <input
+                    type="text"
+                    {...register('requesterAssignmentId')}
+                    placeholder="UUID of your shift assignment"
+                    className={`w-full border ${errors.requesterAssignmentId ? 'border-red-500' : 'border-[var(--border-strong)]'} rounded-md px-3 py-2 text-sm`}
+                  />
+                  {errors.requesterAssignmentId && (
+                    <p className="mt-1 text-xs text-red-500">{errors.requesterAssignmentId.message}</p>
+                  )}
+                </div>
+                {watchedSwapType !== 'PICK_UP' && (
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Employee ID</label>
+                    <input
+                      type="text"
+                      {...register('targetEmployeeId')}
+                      placeholder="UUID of the other employee"
+                      className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                    />
                   </div>
                 )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Assignment ID *</label>
-                <input type="text" value={form.requesterAssignmentId} placeholder="UUID of your shift assignment"
-                  onChange={e => setForm(f => ({ ...f, requesterAssignmentId: e.target.value }))}
-                  className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm" />
-              </div>
-              {form.swapType !== 'PICK_UP' && (
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Employee ID</label>
-                  <input type="text" value={form.targetEmployeeId} placeholder="UUID of the other employee"
-                    onChange={e => setForm(f => ({ ...f, targetEmployeeId: e.target.value }))}
-                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm" />
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
+                  <textarea
+                    {...register('reason')}
+                    rows={2}
+                    placeholder="Optional reason for the swap"
+                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                  />
                 </div>
-              )}
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
-                <textarea rows={2} value={form.reason} placeholder="Optional reason for the swap"
-                  onChange={e => setForm(f => ({ ...f, reason: e.target.value }))}
-                  className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm" />
-              </div>
-              <div className="flex gap-4 justify-end pt-2">
-                <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
-                <Button
-                  onClick={() => submitMutation.mutate(form)}
-                  disabled={!form.requesterShiftDate || !form.requesterAssignmentId || submitMutation.isPending}
-                >
-                  {submitMutation.isPending ? 'Submitting...' : 'Submit Request'}
-                </Button>
-              </div>
+                <div className="flex gap-4 justify-end pt-2">
+                  <Button type="button" variant="outline" onClick={handleModalClose}>Cancel</Button>
+                  <Button type="submit" disabled={submitMutation.isPending}>
+                    {submitMutation.isPending ? 'Submitting...' : 'Submit Request'}
+                  </Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </div>
