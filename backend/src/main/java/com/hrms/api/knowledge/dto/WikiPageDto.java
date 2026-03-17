@@ -47,6 +47,10 @@ public class WikiPageDto {
     private UUID createdBy;
     private UUID lastModifiedBy;
 
+    // Author information
+    private String authorName;
+    private String authorAvatarUrl;
+
     private Boolean canEdit;
     private Boolean canDelete;
     private Boolean canPublish;
