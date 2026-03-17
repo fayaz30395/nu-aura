@@ -1,22 +1,57 @@
 # Multi-stage build for HRMS Backend
-# Stage 1: Build
+# Build context must be the REPO ROOT (not ./backend) because the backend
+# depends on a parent POM and sibling modules (modules/common, modules/pm).
+
+# ── Stage 1: Build ────────────────────────────────────────────────────────────
 FROM maven:3.9-eclipse-temurin-21-alpine AS build
 
 WORKDIR /app
 
-# Copy pom.xml first for dependency caching
-COPY pom.xml .
+# Copy all POM files first for dependency caching (parent + modules + backend)
+COPY pom.xml ./pom.xml
+COPY modules/common/pom.xml ./modules/common/pom.xml
+COPY modules/pm/pom.xml ./modules/pm/pom.xml
+COPY backend/pom.xml ./backend/pom.xml
 
-# Download dependencies (cached layer)
-RUN mvn dependency:go-offline -B
+# Download dependencies (cached unless POMs change)
+RUN mvn dependency:go-offline -B -pl backend -am
 
-# Copy source code
-COPY src ./src
+# Copy source code for all modules
+COPY modules/common/src ./modules/common/src
+COPY modules/pm/src ./modules/pm/src
+COPY backend/src ./backend/src
 
-# Build the application
-RUN mvn clean package -DskipTests -B
+# Build the backend (and its dependencies)
+RUN mvn clean package -DskipTests -B -pl backend -am
 
-# Stage 2: Runtime
+# ── Stage 2: Development (used by docker-compose.override.yml) ────────────────
+# Full JDK + Maven for hot reload via spring-boot-devtools.
+# Source and target dirs are volume-mounted from the host.
+FROM maven:3.9-eclipse-temurin-21-alpine AS development
+
+WORKDIR /app
+
+# Copy all POM files
+COPY pom.xml ./pom.xml
+COPY modules/common/pom.xml ./modules/common/pom.xml
+COPY modules/pm/pom.xml ./modules/pm/pom.xml
+COPY backend/pom.xml ./backend/pom.xml
+
+RUN mvn dependency:go-offline -B -pl backend -am
+
+# Copy all source
+COPY modules/common/src ./modules/common/src
+COPY modules/pm/src ./modules/pm/src
+COPY backend/src ./backend/src
+
+EXPOSE 8080 5005
+
+WORKDIR /app/backend
+
+# Run with spring-boot:run for devtools class-reload support
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
+
+# ── Stage 3: Production Runtime ───────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
@@ -29,7 +64,7 @@ RUN addgroup -g 1001 -S hrms && \
 RUN apk add --no-cache curl
 
 # Copy JAR from builder
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/backend/target/*.jar app.jar
 
 # Change ownership
 RUN chown -R hrms:hrms /app

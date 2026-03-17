@@ -347,11 +347,22 @@ public class KafkaConfig {
 
     /**
      * Kafka admin client for managing topics programmatically.
+     *
+     * <p>{@code setFatalIfBrokerNotAvailable(false)} allows the application to start
+     * even when Kafka is unreachable (e.g., local dev without Docker).
+     * Topic creation will be retried automatically on the next KafkaAdmin refresh cycle.
      */
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        return new KafkaAdmin(configs);
+        // Reduce admin request timeout so startup doesn't hang for 60s when Kafka is down
+        configs.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
+        configs.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 10000);
+        KafkaAdmin admin = new KafkaAdmin(configs);
+        // Don't block application startup if Kafka broker is unavailable
+        admin.setFatalIfBrokerNotAvailable(false);
+        log.info("KafkaAdmin configured — fatalIfBrokerNotAvailable=false, bootstrap={}", bootstrapServers);
+        return admin;
     }
 }

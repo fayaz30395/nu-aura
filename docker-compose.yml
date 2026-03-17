@@ -1,5 +1,3 @@
-version: '3.9'
-
 # NU-AURA HRMS — Development Docker Compose
 # For production, use docker-compose.prod.yml (see .env.production.example for required vars)
 # For demo mode (seed data), add override: docker-compose -f docker-compose.yml -f docker-compose.demo.yml up
@@ -106,8 +104,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: hrms-backend
     ports:
       - "8080:8080"
