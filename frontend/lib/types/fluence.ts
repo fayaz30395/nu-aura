@@ -26,6 +26,7 @@ export interface WikiPage {
   parentId?: string; // For hierarchical pages
   authorId: string;
   authorName?: string;
+  authorAvatarUrl?: string;
   status: WikiPageStatus;
   visibility: WikiVisibility;
   version: number;
@@ -121,6 +122,7 @@ export interface BlogPost {
   coverImageUrl?: string;
   authorId: string;
   authorName?: string;
+  authorAvatarUrl?: string;
   categoryId?: string;
   categoryName?: string;
   status: BlogPostStatus;

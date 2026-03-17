@@ -533,7 +533,19 @@ export default function WikiPage() {
                           {/* Card Footer: Author Badge */}
                           {page.authorName && (
                             <div className="flex items-center gap-2 pt-4 border-t border-[var(--border-main)]">
-                              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white text-xs font-medium">
+                              {page.authorAvatarUrl ? (
+                                <img
+                                  src={page.authorAvatarUrl}
+                                  alt={page.authorName}
+                                  className="w-6 h-6 rounded-full object-cover border border-[var(--border-subtle)]"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    target.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <div className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {authorInitials}
                               </div>
                               <span

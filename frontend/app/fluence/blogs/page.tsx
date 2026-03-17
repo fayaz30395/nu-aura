@@ -34,6 +34,7 @@ interface BlogPost {
   updatedAt?: string;
   authorName?: string;
   authorInitial?: string;
+  authorAvatarUrl?: string;
   tags?: string[];
 }
 
@@ -316,7 +317,19 @@ export default function BlogsPage() {
                           {/* Author and Date */}
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
+                              {featuredPost.authorAvatarUrl ? (
+                                <img
+                                  src={featuredPost.authorAvatarUrl}
+                                  alt={featuredPost.authorName || 'Author'}
+                                  className="w-10 h-10 rounded-full object-cover border-2 border-amber-500/20"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    target.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm ${featuredPost.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(featuredPost)}
                               </div>
                               <div>
