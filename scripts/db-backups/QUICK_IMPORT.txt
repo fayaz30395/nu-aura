@@ -1,0 +1,76 @@
+================================================================================
+NU-AURA DATABASE MIGRATION - QUICK IMPORT GUIDE
+================================================================================
+
+FILE TO IMPORT: nuaura_migration_20260318_020943.sql (833 KB)
+
+================================================================================
+ONE-LINE IMPORT COMMANDS
+================================================================================
+
+DOCKER:
+-------
+docker exec -i postgres psql -U hrms -d postgres < nuaura_migration_20260318_020943.sql
+
+
+NATIVE POSTGRESQL:
+------------------
+psql -U hrms -d postgres -f nuaura_migration_20260318_020943.sql
+
+
+COMPRESSED FILE:
+----------------
+gunzip -c nuaura_migration_20260318_020943.sql.gz | docker exec -i postgres psql -U hrms -d postgres
+
+
+REMOTE TRANSFER:
+----------------
+scp nuaura_migration_20260318_020943.sql.gz user@target:/tmp/
+ssh user@target "gunzip /tmp/nuaura_migration_20260318_020943.sql.gz && docker exec -i postgres psql -U hrms -d postgres < /tmp/nuaura_migration_20260318_020943.sql"
+
+================================================================================
+VERIFY IMPORT
+================================================================================
+
+docker exec postgres psql -U hrms -d hrms_dev -c "SELECT COUNT(*) FROM users;"
+Expected: 9
+
+docker exec postgres psql -U hrms -d hrms_dev -c "SELECT COUNT(*) FROM employees;"
+Expected: 9
+
+docker exec postgres psql -U hrms -d hrms_dev -c "SELECT COUNT(*) FROM permissions;"
+Expected: 44
+
+================================================================================
+DATABASE INFO
+================================================================================
+
+Database: hrms_dev
+User:     hrms
+Port:     5432
+Tables:   ~80
+Size:     833 KB
+
+Data Included:
+- 1 Tenant
+- 9 Users
+- 9 Employees
+- 4 Roles
+- 44 Permissions
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If error "database exists":
+    docker exec postgres psql -U hrms -d postgres -c "DROP DATABASE IF EXISTS hrms_dev;"
+    Then re-run import command
+
+If error "role hrms does not exist":
+    docker exec postgres psql -U postgres -c "CREATE USER hrms WITH PASSWORD 'password' CREATEDB;"
+    Then re-run import command
+
+If error "permission denied":
+    docker exec postgres psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE hrms_dev TO hrms;"
+
+================================================================================
