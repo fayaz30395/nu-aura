@@ -7,7 +7,10 @@ import com.hrms.application.knowledge.service.BlogPostService;
 import com.hrms.common.api.ApiResponses;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.TenantContext;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.knowledge.BlogPost;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,34 @@ import jakarta.validation.Valid;
 public class BlogPostController {
 
     private final BlogPostService blogPostService;
+    private final EmployeeRepository employeeRepository;
+
+    /**
+     * Convert BlogPost entity to DTO with author information
+     */
+    private BlogPostDto toDto(BlogPost post) {
+        if (post == null) return null;
+
+        String authorName = null;
+        String authorAvatarUrl = null;
+
+        // Fetch author info
+        if (post.getCreatedBy() != null) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            Employee author = employeeRepository.findByUserIdWithUser(post.getCreatedBy(), tenantId)
+                .orElse(null);
+
+            if (author != null) {
+                authorName = author.getFirstName() +
+                    (author.getLastName() != null ? " " + author.getLastName() : "");
+                if (author.getUser() != null) {
+                    authorAvatarUrl = author.getUser().getProfilePictureUrl();
+                }
+            }
+        }
+
+        return toDto(post, authorName, authorAvatarUrl);
+    }
 
     @PostMapping
     @Operation(summary = "Create blog post")
@@ -51,7 +82,7 @@ public class BlogPostController {
                 .build();
 
         BlogPost created = blogPostService.createPost(post);
-        return ResponseEntity.status(HttpStatus.CREATED).body(BlogPostDto.fromEntity(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(created));
     }
 
     @GetMapping("/{postId}")
@@ -60,7 +91,7 @@ public class BlogPostController {
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_READ)
     public ResponseEntity<BlogPostDto> getPostById(@PathVariable UUID postId) {
         BlogPost post = blogPostService.getPostById(postId);
-        return ResponseEntity.ok(BlogPostDto.fromEntity(post));
+        return ResponseEntity.ok(toDto(post));
     }
 
     @GetMapping("/slug/{slug}")
@@ -69,7 +100,7 @@ public class BlogPostController {
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_READ)
     public ResponseEntity<BlogPostDto> getPostBySlug(@PathVariable String slug) {
         BlogPost post = blogPostService.getPostBySlug(slug);
-        return ResponseEntity.ok(BlogPostDto.fromEntity(post));
+        return ResponseEntity.ok(toDto(post));
     }
 
     @GetMapping
@@ -78,7 +109,7 @@ public class BlogPostController {
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_READ)
     public ResponseEntity<Page<BlogPostDto>> getPublishedPosts(Pageable pageable) {
         Page<BlogPost> posts = blogPostService.getPublishedPosts(pageable);
-        return ResponseEntity.ok(posts.map(BlogPostDto::fromEntity));
+        return ResponseEntity.ok(posts.map(this::toDto));
     }
 
     @GetMapping("/category/{categoryId}")
@@ -89,7 +120,7 @@ public class BlogPostController {
             @PathVariable UUID categoryId,
             Pageable pageable) {
         Page<BlogPost> posts = blogPostService.getPostsByCategory(categoryId, pageable);
-        return ResponseEntity.ok(posts.map(BlogPostDto::fromEntity));
+        return ResponseEntity.ok(posts.map(this::toDto));
     }
 
     @GetMapping("/featured")
@@ -100,7 +131,7 @@ public class BlogPostController {
         List<BlogPost> posts = blogPostService.getFeaturedPosts();
         return ResponseEntity.ok(
             posts.stream()
-                .map(BlogPostDto::fromEntity)
+                .map(this::toDto)
                 .collect(Collectors.toList())
         );
     }
@@ -126,7 +157,7 @@ public class BlogPostController {
                 .build();
 
         BlogPost updated = blogPostService.updatePost(postId, postData);
-        return ResponseEntity.ok(BlogPostDto.fromEntity(updated));
+        return ResponseEntity.ok(toDto(updated));
     }
 
     @PostMapping("/{postId}/publish")
@@ -135,7 +166,7 @@ public class BlogPostController {
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_PUBLISH)
     public ResponseEntity<BlogPostDto> publishPost(@PathVariable UUID postId) {
         BlogPost published = blogPostService.publishPost(postId);
-        return ResponseEntity.ok(BlogPostDto.fromEntity(published));
+        return ResponseEntity.ok(toDto(published));
     }
 
     @PostMapping("/{postId}/schedule")
@@ -146,7 +177,7 @@ public class BlogPostController {
             @PathVariable UUID postId,
             @RequestParam LocalDateTime scheduledFor) {
         BlogPost scheduled = blogPostService.schedulePost(postId, scheduledFor);
-        return ResponseEntity.ok(BlogPostDto.fromEntity(scheduled));
+        return ResponseEntity.ok(toDto(scheduled));
     }
 
     @PostMapping("/{postId}/archive")
@@ -155,7 +186,7 @@ public class BlogPostController {
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_UPDATE)
     public ResponseEntity<BlogPostDto> archivePost(@PathVariable UUID postId) {
         BlogPost archived = blogPostService.archivePost(postId);
-        return ResponseEntity.ok(BlogPostDto.fromEntity(archived));
+        return ResponseEntity.ok(toDto(archived));
     }
 
     @DeleteMapping("/{postId}")
@@ -175,6 +206,6 @@ public class BlogPostController {
             @RequestParam String query,
             Pageable pageable) {
         Page<BlogPost> results = blogPostService.searchPosts(query, pageable);
-        return ResponseEntity.ok(results.map(BlogPostDto::fromEntity));
+        return ResponseEntity.ok(results.map(this::toDto));
     }
 }

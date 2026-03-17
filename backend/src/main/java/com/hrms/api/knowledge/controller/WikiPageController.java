@@ -7,7 +7,10 @@ import com.hrms.application.knowledge.service.WikiPageService;
 import com.hrms.common.api.ApiResponses;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.TenantContext;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.knowledge.WikiPage;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,34 @@ import jakarta.validation.Valid;
 public class WikiPageController {
 
     private final WikiPageService wikiPageService;
+    private final EmployeeRepository employeeRepository;
+
+    /**
+     * Convert WikiPage entity to DTO with author information
+     */
+    private WikiPageDto toDto(WikiPage page) {
+        if (page == null) return null;
+
+        String authorName = null;
+        String authorAvatarUrl = null;
+
+        // Fetch author info
+        if (page.getCreatedBy() != null) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            Employee author = employeeRepository.findByUserIdWithUser(page.getCreatedBy(), tenantId)
+                .orElse(null);
+
+            if (author != null) {
+                authorName = author.getFirstName() +
+                    (author.getLastName() != null ? " " + author.getLastName() : "");
+                if (author.getUser() != null) {
+                    authorAvatarUrl = author.getUser().getProfilePictureUrl();
+                }
+            }
+        }
+
+        return WikiPageDto.fromEntity(page, authorName, authorAvatarUrl);
+    }
 
     @PostMapping
     @Operation(summary = "Create wiki page")
@@ -47,7 +78,7 @@ public class WikiPageController {
                 .build();
 
         WikiPage created = wikiPageService.createPage(page);
-        return ResponseEntity.status(HttpStatus.CREATED).body(WikiPageDto.fromEntity(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(created));
     }
 
     @GetMapping("/{pageId}")
@@ -56,7 +87,7 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
     public ResponseEntity<WikiPageDto> getPageById(@PathVariable UUID pageId) {
         WikiPage page = wikiPageService.getPageById(pageId);
-        return ResponseEntity.ok(WikiPageDto.fromEntity(page));
+        return ResponseEntity.ok(toDto(page));
     }
 
     @GetMapping("/space/{spaceId}")
@@ -67,7 +98,7 @@ public class WikiPageController {
             @PathVariable UUID spaceId,
             Pageable pageable) {
         Page<WikiPage> pages = wikiPageService.getPagesBySpace(spaceId, pageable);
-        return ResponseEntity.ok(pages.map(WikiPageDto::fromEntity));
+        return ResponseEntity.ok(pages.map(this::toDto));
     }
 
     @PutMapping("/{pageId}")
@@ -87,7 +118,7 @@ public class WikiPageController {
                 .build();
 
         WikiPage updated = wikiPageService.updatePage(pageId, pageData);
-        return ResponseEntity.ok(WikiPageDto.fromEntity(updated));
+        return ResponseEntity.ok(toDto(updated));
     }
 
     @PostMapping("/{pageId}/publish")
@@ -96,7 +127,7 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_PUBLISH)
     public ResponseEntity<WikiPageDto> publishPage(@PathVariable UUID pageId) {
         WikiPage published = wikiPageService.publishPage(pageId);
-        return ResponseEntity.ok(WikiPageDto.fromEntity(published));
+        return ResponseEntity.ok(toDto(published));
     }
 
     @PostMapping("/{pageId}/archive")
@@ -105,7 +136,7 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
     public ResponseEntity<WikiPageDto> archivePage(@PathVariable UUID pageId) {
         WikiPage archived = wikiPageService.archivePage(pageId);
-        return ResponseEntity.ok(WikiPageDto.fromEntity(archived));
+        return ResponseEntity.ok(toDto(archived));
     }
 
     @PostMapping("/{pageId}/toggle-pin")
@@ -114,7 +145,7 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
     public ResponseEntity<WikiPageDto> togglePin(@PathVariable UUID pageId) {
         WikiPage toggled = wikiPageService.togglePin(pageId);
-        return ResponseEntity.ok(WikiPageDto.fromEntity(toggled));
+        return ResponseEntity.ok(toDto(toggled));
     }
 
     @DeleteMapping("/{pageId}")
@@ -134,7 +165,7 @@ public class WikiPageController {
             @RequestParam String query,
             Pageable pageable) {
         Page<WikiPage> results = wikiPageService.searchPages(query, pageable);
-        return ResponseEntity.ok(results.map(WikiPageDto::fromEntity));
+        return ResponseEntity.ok(results.map(this::toDto));
     }
 
     @GetMapping("/{pageId}/versions")
