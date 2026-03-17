@@ -61,7 +61,7 @@ public class BlogPostController {
             }
         }
 
-        return toDto(post, authorName, authorAvatarUrl);
+        return BlogPostDto.fromEntity(post, authorName, authorAvatarUrl);
     }
 
     @PostMapping
