@@ -493,7 +493,19 @@ export default function BlogsPage() {
                           <div className="space-y-4 pt-4 border-t border-[var(--border-main)]">
                             {/* Author */}
                             <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-xs">
+                              {post.authorAvatarUrl ? (
+                                <img
+                                  src={post.authorAvatarUrl}
+                                  alt={post.authorName || 'Author'}
+                                  className="w-8 h-8 rounded-full object-cover border border-amber-500/20"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    target.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-xs ${post.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(post)}
                               </div>
                               <div className="flex-1 min-w-0">
