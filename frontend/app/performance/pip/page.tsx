@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api/client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -103,31 +104,18 @@ async function fetchPIPs(filters?: PIPFilter): Promise<PIPResponse[]> {
   if (filters?.dateTo) params.append('dateTo', filters.dateTo);
   if (filters?.search) params.append('search', filters.search);
 
-  const res = await fetch(`/api/v1/performance/pip?${params}`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to load PIPs');
-  return res.json();
+  const res = await apiClient.get<PIPResponse[]>(`/performance/pip?${params}`);
+  return res.data;
 }
 
 async function createPIP(data: CreatePIPRequest): Promise<PIPResponse> {
-  const res = await fetch('/api/v1/performance/pip', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Failed to create PIP');
-  return res.json();
+  const res = await apiClient.post<PIPResponse>('/performance/pip', data);
+  return res.data;
 }
 
 async function addCheckIn(pipId: string, data: PIPCheckInRequest): Promise<PIPResponse> {
-  const res = await fetch(`/api/v1/performance/pip/${pipId}/check-in`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Failed to add check-in');
-  return res.json();
+  const res = await apiClient.post<PIPResponse>(`/performance/pip/${pipId}/check-in`, data);
+  return res.data;
 }
 
 async function closePIP(
@@ -135,14 +123,8 @@ async function closePIP(
   status: 'COMPLETED' | 'EXTENDED' | 'TERMINATED',
   notes?: string
 ): Promise<PIPResponse> {
-  const res = await fetch(`/api/v1/performance/pip/${pipId}/status`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ status, notes }),
-  });
-  if (!res.ok) throw new Error('Failed to update PIP status');
-  return res.json();
+  const res = await apiClient.patch<PIPResponse>(`/performance/pip/${pipId}/status`, { status, notes });
+  return res.data;
 }
 
 // ─── Utility Functions ────────────────────────────────────────────────────────

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Share2, RefreshCw, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { RefreshCw, Home, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
@@ -13,7 +13,7 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function LinkedInPostsError({ error, reset }: ErrorProps) {
+export default function LinkedinPostsError({ error, reset }: ErrorProps) {
   useEffect(() => {
     handleError(error, { source: 'linkedin-posts-error-boundary', digest: error.digest });
   }, [error]);
@@ -31,10 +31,10 @@ export default function LinkedInPostsError({ error, reset }: ErrorProps) {
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <Share2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+              <Grid className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
-              LinkedIn Posts Error
+              App Error
             </CardTitle>
             <CardDescription className="text-surface-600 dark:text-surface-400">
               {userMessage}
@@ -63,8 +63,8 @@ export default function LinkedInPostsError({ error, reset }: ErrorProps) {
                 onClick={() => (window.location.href = '/linkedin-posts')}
                 className="w-full"
               >
-                <Share2 className="mr-2 h-4 w-4" />
-                Back to LinkedIn Posts
+                <Grid className="mr-2 h-4 w-4" />
+                Back to App
               </Button>
               <Button
                 variant="outline"

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Target, RefreshCw, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { RefreshCw, Home, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
@@ -13,9 +13,9 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function ModuleError({ error, reset }: ErrorProps) {
+export default function GoalsError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    handleError(error, { source: 'performance-goals-error-boundary', digest: error.digest });
+    handleError(error, { source: 'goals-error-boundary', digest: error.digest });
   }, [error]);
 
   const category = categorizeError(error);
@@ -31,10 +31,10 @@ export default function ModuleError({ error, reset }: ErrorProps) {
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <Target className="h-6 w-6 text-red-600 dark:text-red-400" />
+              <Grid className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
-              Performance Error
+              App Error
             </CardTitle>
             <CardDescription className="text-surface-600 dark:text-surface-400">
               {userMessage}
@@ -63,8 +63,8 @@ export default function ModuleError({ error, reset }: ErrorProps) {
                 onClick={() => (window.location.href = '/performance')}
                 className="w-full"
               >
-                <Target className="mr-2 h-4 w-4" />
-                Back to Performance
+                <Grid className="mr-2 h-4 w-4" />
+                Back to App
               </Button>
               <Button
                 variant="outline"

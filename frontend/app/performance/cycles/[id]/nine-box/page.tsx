@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/layout';
 
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api/client';
 import {
   Title,
   Text,
@@ -53,11 +54,8 @@ const BOX_COLORS: Record<string, string> = {
 };
 
 async function fetchCalibration(cycleId: string): Promise<CalibrationResponse> {
-  const res = await fetch(`/api/v1/review-cycles/${cycleId}/calibration`, {
-    credentials: 'include',
-  });
-  if (!res.ok) throw new Error('Failed to load calibration data');
-  return res.json();
+  const res = await apiClient.get<CalibrationResponse>(`/review-cycles/${cycleId}/calibration`);
+  return res.data;
 }
 
 export default function NineBoxPage() {

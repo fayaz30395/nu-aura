@@ -5,6 +5,7 @@ import { AlertCircle, Shield, HelpCircle } from 'lucide-react';
 import { mfaApi } from '@/lib/api/mfa';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { logger } from '@/lib/utils/logger';
 
 interface MfaVerificationProps {
   userId: string;
@@ -63,7 +64,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
       const result = await mfaApi.mfaLogin(userId, verificationCode);
       onSuccess(result.accessToken);
     } catch (err: unknown) {
-      console.error('Failed to verify MFA code:', err);
+      logger.error('Failed to verify MFA code:', err);
       const message = err instanceof Error ? err.message : (typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null) || 'Invalid code. Please try again.';
       setError(message);
       setCode('');

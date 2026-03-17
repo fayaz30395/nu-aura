@@ -18,6 +18,7 @@ import { TalentProfile } from '@/lib/types/employee';
 import { employeeService } from '@/lib/services/employee.service';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { logger } from '@/lib/utils/logger';
 
 interface TalentJourneyTabProps {
     employeeId: string;
@@ -39,7 +40,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
             const data = await employeeService.getTalentProfile(employeeId);
             setProfile(data);
         } catch (err) {
-            console.error('Failed to load talent profile:', err);
+            logger.error('Failed to load talent profile:', err);
         } finally {
             setLoading(false);
         }

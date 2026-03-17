@@ -34,7 +34,7 @@ export default function NineBoxError({ error, reset }: ErrorProps) {
               <Grid className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
-              Nine-Box Grid Error
+              App Error
             </CardTitle>
             <CardDescription className="text-surface-600 dark:text-surface-400">
               {userMessage}
@@ -64,7 +64,7 @@ export default function NineBoxError({ error, reset }: ErrorProps) {
                 className="w-full"
               >
                 <Grid className="mr-2 h-4 w-4" />
-                Back to Performance
+                Back to App
               </Button>
               <Button
                 variant="outline"

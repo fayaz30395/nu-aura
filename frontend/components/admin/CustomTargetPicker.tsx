@@ -6,6 +6,7 @@ import { employeeService } from '@/lib/services/employee.service';
 import { departmentService } from '@/lib/services/department.service';
 import { officeLocationService, OfficeLocation } from '@/lib/services/office-location.service';
 import { Employee, Department } from '@/lib/types/employee';
+import { logger } from '@/lib/utils/logger';
 
 interface CustomTargetPickerProps {
   targets: CustomTarget[];
@@ -147,7 +148,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
 
       setSearchResults(results);
     } catch (err) {
-      console.error('Search failed:', err);
+      logger.error('Search failed:', err);
       setError('Failed to search. Please try again.');
       setSearchResults([]);
     } finally {

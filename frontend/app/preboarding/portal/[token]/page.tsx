@@ -9,7 +9,7 @@ import {
   User, Building2, CreditCard, FileText, CheckCircle2,
   Upload, ChevronRight, AlertCircle
 } from 'lucide-react';
-import { apiConfig } from '@/lib/config';
+import { apiClient } from '@/lib/api/client';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -78,10 +78,6 @@ export default function PreboardingPortalPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [saving, setSaving] = useState(false);
 
-  // API_URL is derived from validated env config
-  // Removes the /api/v1 suffix from the base URL for fetch() calls
-  const API_URL = apiConfig.baseUrl.replace('/api/v1', '');
-
   useEffect(() => {
     loadData();
     // loadData is defined below and only depends on `token` (already listed).
@@ -92,15 +88,10 @@ export default function PreboardingPortalPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/api/v1/preboarding/portal/${token}`);
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Invalid or expired link');
-      }
-      const result = await response.json();
-      setData(result);
+      const response = await apiClient.get<PreboardingData>(`/preboarding/portal/${token}`);
+      setData(response.data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(err instanceof Error ? err.message : 'Invalid or expired link');
     } finally {
       setLoading(false);
     }
@@ -128,17 +119,9 @@ export default function PreboardingPortalPage() {
   const savePersonalInfo = async (formData: PersonalInfoFormData) => {
     setSaving(true);
     try {
-      const response = await fetch(`${API_URL}/api/v1/preboarding/portal/${token}/personal-info`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setData(result);
-        setActiveStep(1);
-      }
+      const response = await apiClient.put<PreboardingData>(`/preboarding/portal/${token}/personal-info`, formData);
+      setData(response.data);
+      setActiveStep(1);
     } catch (err) {
       log.error('Failed to save personal info:', err);
     } finally {
@@ -163,17 +146,9 @@ export default function PreboardingPortalPage() {
   const saveBankDetails = async (formData: BankDetailsFormData) => {
     setSaving(true);
     try {
-      const response = await fetch(`${API_URL}/api/v1/preboarding/portal/${token}/bank-details`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setData(result);
-        setActiveStep(2);
-      }
+      const response = await apiClient.put<PreboardingData>(`/preboarding/portal/${token}/bank-details`, formData);
+      setData(response.data);
+      setActiveStep(2);
     } catch (err) {
       log.error('Failed to save bank details:', err);
     } finally {
@@ -184,14 +159,8 @@ export default function PreboardingPortalPage() {
   const signOfferLetter = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`${API_URL}/api/v1/preboarding/portal/${token}/sign-offer`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setData(result);
-      }
+      const response = await apiClient.post<PreboardingData>(`/preboarding/portal/${token}/sign-offer`);
+      setData(response.data);
     } catch (err) {
       log.error('Failed to sign offer letter:', err);
     } finally {

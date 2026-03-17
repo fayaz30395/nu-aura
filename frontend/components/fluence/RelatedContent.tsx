@@ -108,7 +108,7 @@ export function RelatedContent({
                 </div>
 
                 {(item.viewCount || item.likeCount) && (
-                  <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
                     {item.viewCount !== undefined && (
                       <div className="flex items-center gap-1">
                         <Eye className={iconSize.meta} />

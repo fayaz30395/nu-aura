@@ -90,7 +90,7 @@ export function ContentGrid({
           },
         }}
       >
-        {items.map((item, index) => (
+        {items.map((item) => (
           <motion.div
             key={item.id}
             variants={{
@@ -126,9 +126,9 @@ export function ContentGrid({
                 </CardContent>
               )}
 
-              <CardContent className="space-y-3 pt-0">
+              <CardContent className="space-y-2 pt-0">
                 {(item.viewCount !== undefined || item.likeCount !== undefined || item.commentCount !== undefined) && (
-                  <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
                     {item.viewCount !== undefined && (
                       <div className="flex items-center gap-1">
                         <Eye className={iconSize.meta} />

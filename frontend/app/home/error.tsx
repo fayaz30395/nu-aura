@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCw, Home as HomeIcon } from 'lucide-react';
+import { RefreshCw, Home, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
@@ -31,10 +31,10 @@ export default function HomeError({ error, reset }: ErrorProps) {
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <HomeIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
+              <Grid className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
-              Home Error
+              App Error
             </CardTitle>
             <CardDescription className="text-surface-600 dark:text-surface-400">
               {userMessage}
@@ -60,19 +60,19 @@ export default function HomeError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/me/dashboard')}
+                onClick={() => (window.location.href = '/home')}
                 className="w-full"
               >
-                <HomeIcon className="mr-2 h-4 w-4" />
-                Back to Home
+                <Grid className="mr-2 h-4 w-4" />
+                Back to App
               </Button>
               <Button
                 variant="outline"
-                onClick={() => window.location.reload()}
+                onClick={() => (window.location.href = '/me/dashboard')}
                 className="w-full"
               >
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Reload Page
+                <Home className="mr-2 h-4 w-4" />
+                Go to Home
               </Button>
             </div>
           </CardContent>

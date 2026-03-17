@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCw, Home, Calendar } from 'lucide-react';
+import { RefreshCw, Home, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
@@ -13,9 +13,9 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function ProjectsCalendarError({ error, reset }: ErrorProps) {
+export default function CalendarError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    handleError(error, { source: 'projects-calendar-error-boundary', digest: error.digest });
+    handleError(error, { source: 'calendar-error-boundary', digest: error.digest });
   }, [error]);
 
   const category = categorizeError(error);
@@ -31,10 +31,10 @@ export default function ProjectsCalendarError({ error, reset }: ErrorProps) {
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-red-600 dark:text-red-400" />
+              <Grid className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
-              Projects Calendar Error
+              App Error
             </CardTitle>
             <CardDescription className="text-surface-600 dark:text-surface-400">
               {userMessage}
@@ -60,11 +60,11 @@ export default function ProjectsCalendarError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/projects/calendar')}
+                onClick={() => (window.location.href = '/projects')}
                 className="w-full"
               >
-                <Calendar className="mr-2 h-4 w-4" />
-                Back to Calendar
+                <Grid className="mr-2 h-4 w-4" />
+                Back to App
               </Button>
               <Button
                 variant="outline"

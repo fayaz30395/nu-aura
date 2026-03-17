@@ -8,6 +8,7 @@ import {
   WebSocketStatus,
 } from '@/lib/websocket';
 import { useToast } from './ToastProvider';
+import { logger } from '@/lib/utils/logger';
 
 interface WebSocketContextType {
   isConnected: boolean;
@@ -84,7 +85,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       await webSocketService.connect(userId, tenantId, token);
       setIsConnected(true);
     } catch (error) {
-      console.error('Failed to connect to WebSocket:', error);
+      logger.error('Failed to connect to WebSocket:', error);
       setIsConnected(false);
     }
   }, []);

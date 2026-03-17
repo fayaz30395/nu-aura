@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api/client';
 import {
   Title,
   Text,
@@ -34,19 +35,12 @@ const RATING_LABELS: Record<number, { label: string; color: string }> = {
 };
 
 async function fetchCalibration(cycleId: string): Promise<CalibrationResponse> {
-  const res = await fetch(`/api/v1/review-cycles/${cycleId}/calibration`, {
-    credentials: 'include',
-  });
-  if (!res.ok) throw new Error('Failed to load calibration data');
-  return res.json();
+  const res = await apiClient.get<CalibrationResponse>(`/review-cycles/${cycleId}/calibration`);
+  return res.data;
 }
 
 async function saveCalibrationRating(reviewId: string, finalRating: number) {
-  const res = await fetch(
-    `/api/v1/review-cycles/reviews/${reviewId}/calibration-rating?finalRating=${finalRating}`,
-    { method: 'PUT', credentials: 'include' }
-  );
-  if (!res.ok) throw new Error('Failed to save rating');
+  await apiClient.put(`/review-cycles/reviews/${reviewId}/calibration-rating?finalRating=${finalRating}`);
 }
 
 export default function CalibrationPage() {

@@ -7,6 +7,7 @@ import { notificationsApi } from '@/lib/api/notifications';
 import { Notification, NotificationType } from '@/lib/types/notifications';
 import { formatDistanceToNow } from 'date-fns';
 import { useWebSocket } from '@/lib/contexts/WebSocketContext';
+import { logger } from '@/lib/utils/logger';
 
 // Map notification types to their navigation routes
 const getNotificationRoute = (notification: Notification): string | null => {
@@ -119,7 +120,7 @@ export const NotificationBell: React.FC = () => {
       const count = await notificationsApi.getUnreadCount();
       setUnreadCount(count);
     } catch (error) {
-      console.error('Failed to load unread count:', error);
+      logger.error('Failed to load unread count:', error);
     }
   };
 
@@ -129,7 +130,7 @@ export const NotificationBell: React.FC = () => {
       const recent = await notificationsApi.getRecentNotifications(72);
       setNotifications(recent);
     } catch (error) {
-      console.error('Failed to load notifications:', error);
+      logger.error('Failed to load notifications:', error);
     } finally {
       setLoading(false);
     }
@@ -143,7 +144,7 @@ export const NotificationBell: React.FC = () => {
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
-      console.error('Failed to mark as read:', error);
+      logger.error('Failed to mark as read:', error);
     }
   };
 
@@ -153,7 +154,7 @@ export const NotificationBell: React.FC = () => {
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
       setUnreadCount(0);
     } catch (error) {
-      console.error('Failed to mark all as read:', error);
+      logger.error('Failed to mark all as read:', error);
     }
   };
 
@@ -163,7 +164,7 @@ export const NotificationBell: React.FC = () => {
       setNotifications(prev => prev.filter(n => n.id !== id));
       loadUnreadCount();
     } catch (error) {
-      console.error('Failed to delete notification:', error);
+      logger.error('Failed to delete notification:', error);
     }
   };
 

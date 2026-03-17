@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useCallback, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,10 +9,10 @@ import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Candidate, CandidateStatus, CandidateSource, RecruitmentStage, CandidateStage, CreateCandidateRequest } from '@/lib/types/recruitment';
+import { Candidate, CandidateStatus, CandidateSource, CandidateStage, CreateCandidateRequest } from '@/lib/types/recruitment';
 import {
-  Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X,
-  Eye, Send, CheckCircle, XCircle, Loader2, Sparkles, Brain, MessageSquare,
+  Users, Plus, Mail, Phone, Building, MapPin, Trash2, X,
+  CheckCircle, XCircle, Loader2, Sparkles, Brain, MessageSquare,
   AlertTriangle, ShieldAlert
 } from 'lucide-react';
 
@@ -46,6 +46,12 @@ import {
   FeedbackSynthesisResponse,
   ResumeParseResponse,
 } from '@/lib/types/ai-recruitment';
+
+// Extracted sub-components (Loop 3 refactor — FE-016)
+import { CandidateStats } from './CandidateStats';
+import { CandidateFilters } from './CandidateFilters';
+import { CandidateTableRow } from './CandidateTableRow';
+import { computeStats, filterCandidates, getStatusColor, getStageColor } from './utils';
 
 // ==================== Loading Fallback ====================
 
@@ -122,7 +128,7 @@ function CandidatesPage() {
   const { data: employeesData } = useEmployees(0, 100);
   useActiveLetterTemplates(true);
 
-  const candidates = candidatesData?.content || [];
+  const candidates = useMemo(() => candidatesData?.content || [], [candidatesData?.content]);
   const jobOpenings = jobOpeningsData?.content || [];
   const recruiters = employeesData?.content || [];
   // React Hook Form setup
@@ -230,7 +236,7 @@ function CandidatesPage() {
     }
   };
 
-  const handleEditCandidate = (candidate: Candidate) => {
+  const handleEditCandidate = useCallback((candidate: Candidate) => {
     setEditingCandidate(candidate);
     candidateForm.reset({
       candidateCode: candidate.candidateCode,
@@ -255,7 +261,7 @@ function CandidatesPage() {
       assignedRecruiterId: candidate.assignedRecruiterId || '',
     });
     setShowAddModal(true);
-  };
+  }, [candidateForm]);
 
   const handleDeleteCandidate = async () => {
     if (!candidateToDelete) return;
@@ -401,7 +407,7 @@ function CandidatesPage() {
     resumeParseForm.reset();
   };
 
-  const handleCalculateMatchScore = async (candidate: Candidate) => {
+  const handleCalculateMatchScore = useCallback(async (candidate: Candidate) => {
     if (!candidate.jobOpeningId) {
       notifications.show({
         title: 'Info',
@@ -416,9 +422,11 @@ function CandidatesPage() {
         candidateId: candidate.id,
         jobOpeningId: candidate.jobOpeningId,
       });
-      const newScores = new Map(matchScores);
-      newScores.set(candidate.id, result);
-      setMatchScores(newScores);
+      setMatchScores(prev => {
+        const next = new Map(prev);
+        next.set(candidate.id, result);
+        return next;
+      });
       notifications.show({
         title: 'Success',
         message: 'Match score calculated',
@@ -433,9 +441,9 @@ function CandidatesPage() {
     } finally {
       setAiLoadingState(null);
     }
-  };
+  }, [calculateMatchScoreMutation]);
 
-  const handleGenerateScreeningSummary = async (candidate: Candidate) => {
+  const handleGenerateScreeningSummary = useCallback(async (candidate: Candidate) => {
     if (!candidate.jobOpeningId) {
       notifications.show({
         title: 'Info',
@@ -466,9 +474,9 @@ function CandidatesPage() {
     } finally {
       setAiLoadingState(null);
     }
-  };
+  }, [generateScreeningSummaryMutation]);
 
-  const handleSynthesizeFeedback = async (candidate: Candidate) => {
+  const handleSynthesizeFeedback = useCallback(async (candidate: Candidate) => {
     if (!candidate.jobOpeningId) {
       notifications.show({
         title: 'Info',
@@ -499,65 +507,27 @@ function CandidatesPage() {
     } finally {
       setAiLoadingState(null);
     }
-  };
+  }, [synthesizeFeedbackMutation]);
 
   // ==================== Helpers ====================
 
-  const getStatusColor = (status: CandidateStatus) => {
-    const colorMap: Record<CandidateStatus, string> = {
-      NEW: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
-      SCREENING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
-      INTERVIEW: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
-      SELECTED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
-      OFFER_EXTENDED: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300',
-      OFFER_ACCEPTED: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300',
-      OFFER_DECLINED: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
-      REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-      WITHDRAWN: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]',
-    };
-    return colorMap[status] || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
-  };
+  // ==================== Derived Data (memoized) ====================
 
-  const getStageColor = (stage?: RecruitmentStage) => {
-    const colorMap: Record<RecruitmentStage, string> = {
-      RECRUITERS_PHONE_CALL: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
-      PANEL_REVIEW: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
-      PANEL_REJECT: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-      PANEL_SHORTLISTED: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300',
-      TECHNICAL_INTERVIEW_SCHEDULED: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
-      TECHNICAL_INTERVIEW_COMPLETED: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
-      MANAGEMENT_INTERVIEW_SCHEDULED: 'bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300',
-      MANAGEMENT_INTERVIEW_COMPLETED: 'bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300',
-      CLIENT_INTERVIEW_SCHEDULED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
-      CLIENT_INTERVIEW_COMPLETED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
-      HR_FINAL_INTERVIEW_COMPLETED: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300',
-      CANDIDATE_REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-      OFFER_NDA_TO_BE_RELEASED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
-    };
-    return colorMap[stage || 'RECRUITERS_PHONE_CALL'] || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
-  };
+  const filteredCandidates = useMemo(
+    () => filterCandidates(candidates, searchQuery, statusFilter, selectedJobFilter),
+    [candidates, searchQuery, statusFilter, selectedJobFilter]
+  );
 
-  const getMatchScoreColor = (score: number) => {
-    if (score >= 70) return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-    if (score >= 50) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-    return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-  };
+  const stats = useMemo(() => computeStats(candidates), [candidates]);
 
-  const filteredCandidates = candidates.filter(candidate => {
-    const matchesSearch = candidate.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.candidateCode.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = !statusFilter || candidate.status === statusFilter;
-    const matchesJob = !selectedJobFilter || candidate.jobOpeningId === selectedJobFilter;
-    return matchesSearch && matchesStatus && matchesJob;
-  });
+  // ==================== Stable Callbacks for Memoized Children ====================
 
-  const stats = {
-    total: candidates.length,
-    new: candidates.filter(c => c.status === 'NEW').length,
-    interview: candidates.filter(c => c.status === 'INTERVIEW').length,
-    selected: candidates.filter(c => c.status === 'SELECTED' || c.status === 'OFFER_ACCEPTED').length,
-  };
+  const handleView = useCallback((c: Candidate) => { setSelectedCandidate(c); setShowViewModal(true); }, []);
+  const handleStartEdit = useCallback((c: Candidate) => handleEditCandidate(c), [handleEditCandidate]);
+  const handleStartDelete = useCallback((c: Candidate) => { setCandidateToDelete(c); setShowDeleteModal(true); }, []);
+  const handleStartOffer = useCallback((c: Candidate) => { setCandidateForOffer(c); setShowOfferModal(true); }, []);
+  const handleStartAccept = useCallback((c: Candidate) => { setSelectedCandidate(c); setShowAcceptModal(true); }, []);
+  const handleStartDecline = useCallback((c: Candidate) => { setSelectedCandidate(c); setShowDeclineModal(true); }, []);
 
 
   return (
@@ -598,104 +568,23 @@ function CandidatesPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-[var(--bg-card)]">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-muted)]">Total Candidates</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-[var(--bg-card)]">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-muted)]">New</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.new}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-[var(--bg-card)]">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-muted)]">In Interview</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.interview}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-[var(--bg-card)]">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-muted)]">Selected</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.selected}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <CandidateStats
+          total={stats.total}
+          newCount={stats.new}
+          interview={stats.interview}
+          selected={stats.selected}
+        />
 
         {/* Search and Filters */}
-        <Card className="bg-[var(--bg-card)]">
-          <CardContent className="p-4">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
-                <input
-                  type="text"
-                  placeholder="Search candidates..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                />
-              </div>
-              <select
-                value={selectedJobFilter}
-                onChange={(e) => setSelectedJobFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-              >
-                <option value="">All Job Openings</option>
-                {jobOpenings.map((job) => (
-                  <option key={job.id} value={job.id}>{job.jobTitle}</option>
-                ))}
-              </select>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-              >
-                <option value="">All Status</option>
-                <option value="NEW">New</option>
-                <option value="SCREENING">Screening</option>
-                <option value="INTERVIEW">Interview</option>
-                <option value="SELECTED">Selected</option>
-                <option value="OFFER_EXTENDED">Offer Extended</option>
-                <option value="OFFER_ACCEPTED">Offer Accepted</option>
-                <option value="OFFER_DECLINED">Offer Declined</option>
-                <option value="REJECTED">Rejected</option>
-                <option value="WITHDRAWN">Withdrawn</option>
-              </select>
-            </div>
-          </CardContent>
-        </Card>
+        <CandidateFilters
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          statusFilter={statusFilter}
+          onStatusChange={setStatusFilter}
+          jobFilter={selectedJobFilter}
+          onJobChange={setSelectedJobFilter}
+          jobOpenings={jobOpenings}
+        />
 
         {/* Candidates Table */}
         <Card className="bg-[var(--bg-card)]">
@@ -725,148 +614,23 @@ function CandidatesPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                    {filteredCandidates.map((candidate) => {
-                      const matchScore = matchScores.get(candidate.id);
-                      return (
-                        <tr key={candidate.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
-                                <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-                                  {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
-                                </span>
-                              </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-medium text-[var(--text-primary)]">{candidate.fullName}</div>
-                                <div className="text-sm text-[var(--text-muted)]">{candidate.email}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="text-sm text-[var(--text-primary)]">{candidate.jobTitle || '-'}</div>
-                            <div className="text-xs text-[var(--text-muted)]">{candidate.candidateCode}</div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
-                            {candidate.totalExperience ? `${candidate.totalExperience} years` : '-'}
-                          </td>
-                          <td className="px-6 py-4">
-                            {candidate.currentStage && (
-                              <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
-                                {candidate.currentStage.replace(/_/g, ' ')}
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
-                              {candidate.status.replace(/_/g, ' ')}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
-                            {candidate.source?.replace(/_/g, ' ') || '-'}
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <button
-                                onClick={() => { setSelectedCandidate(candidate); setShowViewModal(true); }}
-                                className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
-                                title="View"
-                              >
-                                <Eye className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleCalculateMatchScore(candidate)}
-                                disabled={aiLoadingState === `match-${candidate.id}`}
-                                className="p-2 text-[var(--text-muted)] hover:text-purple-600 dark:text-[var(--text-muted)] dark:hover:text-purple-400 transition-colors disabled:opacity-50"
-                                title="Calculate Match Score"
-                              >
-                                {aiLoadingState === `match-${candidate.id}` ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Brain className="h-4 w-4" />
-                                )}
-                              </button>
-                              {matchScore && (
-                                <div className={`px-2 py-1 text-xs font-medium rounded-full ${getMatchScoreColor(matchScore.overallScore)}`}>
-                                  {Math.round(matchScore.overallScore)}%
-                                </div>
-                              )}
-                              <button
-                                onClick={() => handleGenerateScreeningSummary(candidate)}
-                                disabled={aiLoadingState === `screening-${candidate.id}`}
-                                className="p-2 text-[var(--text-muted)] hover:text-cyan-600 dark:text-[var(--text-muted)] dark:hover:text-cyan-400 transition-colors disabled:opacity-50"
-                                title="Screening Summary"
-                              >
-                                {aiLoadingState === `screening-${candidate.id}` ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <FileText className="h-4 w-4" />
-                                )}
-                              </button>
-                              <button
-                                onClick={() => handleSynthesizeFeedback(candidate)}
-                                disabled={aiLoadingState === `feedback-${candidate.id}`}
-                                className="p-2 text-[var(--text-muted)] hover:text-lime-600 dark:text-[var(--text-muted)] dark:hover:text-lime-400 transition-colors disabled:opacity-50"
-                                title="Synthesize Feedback"
-                              >
-                                {aiLoadingState === `feedback-${candidate.id}` ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <MessageSquare className="h-4 w-4" />
-                                )}
-                              </button>
-                              <button
-                                onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
-                                className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
-                                title="Schedule Interview"
-                              >
-                                <Calendar className="h-4 w-4" />
-                              </button>
-                              {candidate.status === 'SELECTED' && (
-                                <button
-                                  onClick={() => { setCandidateForOffer(candidate); setShowOfferModal(true); }}
-                                  className="p-2 text-[var(--text-muted)] hover:text-teal-600 dark:text-[var(--text-muted)] dark:hover:text-teal-400 transition-colors"
-                                  title="Generate Offer Letter"
-                                >
-                                  <Send className="h-4 w-4" />
-                                </button>
-                              )}
-                              {candidate.status === 'OFFER_EXTENDED' && (
-                                <>
-                                  <button
-                                    onClick={() => { setCandidateForOffer(candidate); setConfirmedJoiningDate(candidate.proposedJoiningDate || ''); setShowAcceptModal(true); }}
-                                    className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:text-[var(--text-muted)] dark:hover:text-green-400 transition-colors"
-                                    title="Accept Offer"
-                                  >
-                                    <CheckCircle className="h-4 w-4" />
-                                  </button>
-                                  <button
-                                    onClick={() => { setCandidateForOffer(candidate); setDeclineReason(''); setShowDeclineModal(true); }}
-                                    className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
-                                    title="Decline Offer"
-                                  >
-                                    <XCircle className="h-4 w-4" />
-                                  </button>
-                                </>
-                              )}
-                              <button
-                                onClick={() => handleEditCandidate(candidate)}
-                                className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
-                                title="Edit"
-                              >
-                                <Edit2 className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => { setCandidateToDelete(candidate); setShowDeleteModal(true); }}
-                                className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
-                                title="Delete"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {filteredCandidates.map((candidate) => (
+                      <CandidateTableRow
+                        key={candidate.id}
+                        candidate={candidate}
+                        matchScore={matchScores.get(candidate.id)}
+                        aiLoadingState={aiLoadingState}
+                        onView={handleView}
+                        onEdit={handleStartEdit}
+                        onDelete={handleStartDelete}
+                        onOffer={handleStartOffer}
+                        onAccept={handleStartAccept}
+                        onDecline={handleStartDecline}
+                        onCalculateMatch={handleCalculateMatchScore}
+                        onScreeningSummary={handleGenerateScreeningSummary}
+                        onSynthesizeFeedback={handleSynthesizeFeedback}
+                      />
+                    ))}
                   </tbody>
                 </table>
               </div>
