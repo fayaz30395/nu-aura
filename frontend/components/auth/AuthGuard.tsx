@@ -10,6 +10,7 @@ import {
   RouteConfig,
 } from '@/lib/config/routes';
 import { NuAuraLoader } from '@/components/ui/Loading';
+import { logger } from '@/lib/utils/logger';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -122,7 +123,7 @@ export function AuthGuard({
     setIsAuthorized(authorized);
 
     if (!authorized) {
-      console.warn(`[AuthGuard] Access denied to ${pathname}`);
+      logger.warn(`[AuthGuard] Access denied to ${pathname}`);
     }
     // Intentional omissions: checkAuthorization is a stable hoisted function; router is stable
     // from useRouter; restoreSession is a stable Zustand action; isRestoringSession is omitted

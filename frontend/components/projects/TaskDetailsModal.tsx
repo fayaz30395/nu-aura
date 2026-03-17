@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { logger } from '@/lib/utils/logger';
 import {
   Calendar,
   Clock,
@@ -113,7 +114,7 @@ export function TaskDetailsModal({
       await onUpdateProgress(normalizedTask.id, editProgress);
       setIsEditingProgress(false);
     } catch (error) {
-      console.error('Failed to update progress:', error);
+      logger.error('Failed to update progress:', error);
     } finally {
       setIsSaving(false);
     }
@@ -125,7 +126,7 @@ export function TaskDetailsModal({
     try {
       await onUpdateStatus(normalizedTask.id, newStatus);
     } catch (error) {
-      console.error('Failed to update status:', error);
+      logger.error('Failed to update status:', error);
     } finally {
       setIsSaving(false);
     }

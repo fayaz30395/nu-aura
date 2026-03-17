@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api/client';
 import {
   Title,
   Text,
@@ -22,6 +23,11 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconAlertCircle } from '@tabler/icons-react';
 
+interface ExitInterviewData {
+  status: string;
+  employeeName: string;
+}
+
 const LEAVING_REASONS = [
   { value: 'BETTER_OPPORTUNITY', label: 'Better Opportunity' },
   { value: 'COMPENSATION', label: 'Compensation' },
@@ -39,19 +45,13 @@ const LEAVING_REASONS = [
   { value: 'OTHER', label: 'Other' },
 ];
 
-async function fetchInterview(token: string) {
-  const res = await fetch(`/api/v1/exit/interview/public/${token}`);
-  if (!res.ok) throw new Error('Invalid or expired link');
-  return res.json();
+async function fetchInterview(token: string): Promise<ExitInterviewData> {
+  const res = await apiClient.get<ExitInterviewData>(`/exit/interview/public/${token}`);
+  return res.data;
 }
 
-async function submitInterview(token: string, data: object) {
-  const res = await fetch(`/api/v1/exit/interview/public/${token}/submit`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Submission failed');
+async function submitInterview(token: string, data: object): Promise<void> {
+  await apiClient.post(`/exit/interview/public/${token}/submit`, data);
 }
 
 export default function PublicExitInterviewPage() {

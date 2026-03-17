@@ -5,6 +5,7 @@ import { Search, Loader2, User, X } from 'lucide-react';
 import { Employee } from '@/lib/types/employee';
 import { employeeService } from '@/lib/services/employee.service';
 import { getInitials } from '@/lib/utils';
+import { logger } from '@/lib/utils/logger';
 
 interface EmployeeSearchAutocompleteProps {
   value?: { id: string; name: string } | null;
@@ -58,7 +59,7 @@ export function EmployeeSearchAutocomplete({
       );
       setResults(filteredResults);
     } catch (error) {
-      console.error('Error searching employees:', error);
+      logger.error('Error searching employees:', error);
       setResults([]);
     } finally {
       setLoading(false);

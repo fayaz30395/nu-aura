@@ -6,10 +6,10 @@ import {
   checkOutSchema,
   regularizationSchema,
   manualAttendanceSchema,
-  type ShiftFormData,
-  type HolidayFormData,
-  type CheckInFormData,
-  type ManualAttendanceFormData,
+  type ShiftFormData as _ShiftFormData,
+  type HolidayFormData as _HolidayFormData,
+  type CheckInFormData as _CheckInFormData,
+  type ManualAttendanceFormData as _ManualAttendanceFormData,
 } from '../attendance';
 
 describe('Attendance Validation Schemas', () => {

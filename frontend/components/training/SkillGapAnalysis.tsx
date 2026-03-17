@@ -14,6 +14,7 @@ import {
     Badge
 } from '@/components/ui';
 import { lmsService, SkillGapReport } from '@/lib/services/lms.service';
+import { logger } from '@/lib/utils/logger';
 
 interface SkillGapAnalysisProps {
     employeeId: string;
@@ -30,7 +31,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
                 const data = await lmsService.getSkillGaps(employeeId);
                 setReport(data);
             } catch (err) {
-                console.error('Error fetching skill gaps:', err);
+                logger.error('Error fetching skill gaps:', err);
             } finally {
                 setLoading(false);
             }

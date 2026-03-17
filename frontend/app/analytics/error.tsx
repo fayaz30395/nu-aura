@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCw, Home, LineChart } from 'lucide-react';
+import { RefreshCw, Home, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
@@ -31,7 +31,7 @@ export default function AnalyticsError({ error, reset }: ErrorProps) {
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <LineChart className="h-6 w-6 text-red-600 dark:text-red-400" />
+              <TrendingUp className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
               Analytics Error
@@ -63,7 +63,7 @@ export default function AnalyticsError({ error, reset }: ErrorProps) {
                 onClick={() => (window.location.href = '/analytics')}
                 className="w-full"
               >
-                <LineChart className="mr-2 h-4 w-4" />
+                <TrendingUp className="mr-2 h-4 w-4" />
                 Back to Analytics
               </Button>
               <Button

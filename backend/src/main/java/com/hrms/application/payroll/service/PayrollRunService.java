@@ -21,15 +21,22 @@ public class PayrollRunService {
 
     private final PayrollRunRepository payrollRunRepository;
 
+    /**
+     * Create a new payroll run for a given period.
+     * Uses pessimistic locking to prevent race conditions where two concurrent
+     * requests both check existence and both create a run for the same period.
+     */
     @Transactional
     public PayrollRun createPayrollRun(PayrollRun payrollRun) {
         UUID tenantId = TenantContext.getCurrentTenant();
         payrollRun.setTenantId(tenantId);
 
-        if (payrollRunRepository.existsByTenantIdAndPayPeriodYearAndPayPeriodMonth(
+        // Pessimistic lock: if a concurrent run exists, lock it to prevent duplicates.
+        // This replaces the non-atomic exists-then-create pattern.
+        if (payrollRunRepository.findByTenantIdAndPeriodForUpdate(
                 tenantId,
                 payrollRun.getPayPeriodYear(),
-                payrollRun.getPayPeriodMonth())) {
+                payrollRun.getPayPeriodMonth()).isPresent()) {
             throw new IllegalArgumentException("Payroll run already exists for this period");
         }
 
@@ -91,30 +98,33 @@ public class PayrollRunService {
 
     /**
      * Transition a payroll run from DRAFT → PROCESSED.
+     * Uses pessimistic locking to prevent concurrent processing of the same run.
      * R2-011: State guard is enforced in {@link PayrollRun#process}
      * (throws IllegalStateException if not in DRAFT).
      */
     @Transactional
     public PayrollRun processPayrollRun(UUID id, UUID processedBy) {
-        PayrollRun payrollRun = getPayrollRunById(id);
+        PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.process(processedBy);
         return payrollRunRepository.save(payrollRun);
     }
 
     /**
      * Transition a payroll run from PROCESSED → APPROVED.
+     * Uses pessimistic locking to prevent concurrent approval of the same run.
      * R2-011: State guard is enforced in {@link PayrollRun#approve}
      * (throws IllegalStateException if not in PROCESSED).
      */
     @Transactional
     public PayrollRun approvePayrollRun(UUID id, UUID approvedBy) {
-        PayrollRun payrollRun = getPayrollRunById(id);
+        PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.approve(approvedBy);
         return payrollRunRepository.save(payrollRun);
     }
 
     /**
      * Transition a payroll run from APPROVED → LOCKED.
+     * Uses pessimistic locking to prevent concurrent lock operations.
      * R2-011 FIX: Added missing {@code @Transactional} annotation — without it the
      * {@code save()} call ran outside a transaction and was silently ignored on
      * read-only connections, leaving the payroll run in APPROVED status.
@@ -123,9 +133,21 @@ public class PayrollRunService {
      */
     @Transactional
     public PayrollRun lockPayrollRun(UUID id) {
-        PayrollRun payrollRun = getPayrollRunById(id);
+        PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.lock();
         return payrollRunRepository.save(payrollRun);
+    }
+
+    /**
+     * Acquire a pessimistic write lock on a payroll run for state transitions.
+     * Blocks concurrent reads/writes on the same row until the transaction commits.
+     * This prevents race conditions where two concurrent requests both see
+     * the run in DRAFT status and both try to process it.
+     */
+    private PayrollRun getPayrollRunForUpdate(UUID id) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return payrollRunRepository.findByIdAndTenantIdForUpdate(id, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
     }
 
     @Transactional

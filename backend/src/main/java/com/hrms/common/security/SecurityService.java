@@ -100,6 +100,32 @@ public class SecurityService {
         return permissions;
     }
 
+    /**
+     * Fetch permissions directly from the database, bypassing the cache.
+     * Used by {@link PermissionAspect} when {@code @RequiresPermission(revalidate = true)}
+     * is set on sensitive operations (payroll, admin, role changes).
+     *
+     * <p>This ensures that even if a user's role was revoked after JWT issuance,
+     * the permission check reflects their current DB state.</p>
+     */
+    @Transactional(readOnly = true)
+    public Set<String> getFreshPermissions(Collection<String> roles) {
+        Set<String> permissions = new HashSet<>();
+        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null || roles == null || roles.isEmpty()) {
+            return permissions;
+        }
+        List<Role> activeRoles = roleRepository.findByCodeInAndTenantId(roles, tenantId);
+        for (Role role : activeRoles) {
+            if (role.getPermissions() != null) {
+                for (RolePermission rp : role.getPermissions()) {
+                    permissions.add(rp.getPermission().getCode());
+                }
+            }
+        }
+        return permissions;
+    }
+
     /** Used by the {@code @Cacheable} condition SpEL expression. */
     public boolean isTenantContextPresent() {
         return TenantContext.getCurrentTenant() != null;

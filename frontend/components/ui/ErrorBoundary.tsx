@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Component, ReactNode } from 'react';
+import { logger } from '@/lib/utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -39,10 +40,10 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // In production, only log sanitized error info
     if (isDevelopment) {
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
+      logger.error('ErrorBoundary caught an error:', error, errorInfo);
     } else {
       // Log sanitized error for production monitoring
-      console.error('Application error:', {
+      logger.error('Application error:', {
         errorId: this.state.errorId,
         message: error.message,
         name: error.name,

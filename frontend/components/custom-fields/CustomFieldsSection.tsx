@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { customFieldsApi } from '@/lib/api/custom-fields';
+import { logger } from '@/lib/utils/logger';
 import {
   CustomFieldDefinition,
   CustomFieldValue,
@@ -71,7 +72,7 @@ export default function CustomFieldsSection({
         setFieldValues(initialValues);
       }
     } catch (err) {
-      console.error('Failed to load custom fields:', err);
+      logger.error('Failed to load custom fields:', err);
       setError('Failed to load custom fields');
     } finally {
       setLoading(false);

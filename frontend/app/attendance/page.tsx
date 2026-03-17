@@ -1,19 +1,12 @@
 'use client';
 
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import {
-  Clock, LogIn, LogOut, Calendar, MapPin, CheckCircle, AlertCircle,
-  CalendarDays, ClipboardCheck, History, Coffee,
-  BarChart3, Target, ArrowRight, Flame, Zap, Users,
-  Sun, Moon, Sunrise, AlertTriangle,
+  Clock, LogIn, LogOut, MapPin, CheckCircle, AlertCircle,
+  Target, Flame, Sunrise, AlertTriangle,
 } from 'lucide-react';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-  ResponsiveContainer, Cell, ReferenceLine,
-} from 'recharts';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -30,8 +23,21 @@ import {
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useToast } from '@/components/ui/Toast';
 
-const STANDARD_WORK_HOURS = 8;
-const GRACE_PERIOD_MINS = 15; // Grace period for late marking (configurable later)
+// Extracted sub-components (Loop 3 refactor — FE-016)
+import {
+  STANDARD_WORK_HOURS,
+  GRACE_PERIOD_MINS,
+  calculateHours,
+  formatDuration,
+  formatTime,
+  computeStreak,
+  computeMonthStats,
+  computeWeekStats,
+} from './utils';
+import { ChartEntry } from './AttendanceWeeklyChart';
+import { AttendanceWeeklyChart } from './AttendanceWeeklyChart';
+import { AttendanceMonthlyStats } from './AttendanceMonthlyStats';
+import { AttendanceQuickActions, AttendanceUpcomingHolidays, AttendanceWeekProgress } from './AttendanceSidebar';
 
 // ─── Progress Ring Component ──────────────────────────────────────────────────
 function ProgressRing({
@@ -70,73 +76,7 @@ function ProgressRing({
   );
 }
 
-// ─── Custom Chart Tooltip ─────────────────────────────────────────────────────
-interface ChartEntry {
-  name: string;
-  date: string;
-  hours: number;
-  isToday: boolean;
-  isHoliday: boolean;
-  isWeeklyOff: boolean;
-  checkIn: string | null;
-  checkOut: string | null;
-  status: string;
-  overtime: number;
-}
-
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: ChartEntry }> }) {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
-
-  return (
-    <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-xl p-4 min-w-[180px]">
-      <div className="text-xs font-semibold text-[var(--text-primary)] mb-2">
-        {d.name} · {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-      </div>
-      {d.isHoliday ? (
-        <div className="flex items-center gap-1.5 text-xs text-purple-600"><Sun className="h-3 w-3" /> Holiday</div>
-      ) : d.isWeeklyOff ? (
-        <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]"><Moon className="h-3 w-3" /> Weekly Off</div>
-      ) : d.hours > 0 ? (
-        <div className="space-y-1.5">
-          <div className="flex justify-between text-xs">
-            <span className="text-[var(--text-secondary)]">Hours</span>
-            <span className="font-bold text-[var(--text-primary)]">{d.hours}h</span>
-          </div>
-          {d.checkIn && (
-            <div className="flex justify-between text-xs">
-              <span className="text-[var(--text-secondary)]">Check In</span>
-              <span className="font-medium text-[var(--text-primary)]">{d.checkIn}</span>
-            </div>
-          )}
-          {d.checkOut && (
-            <div className="flex justify-between text-xs">
-              <span className="text-[var(--text-secondary)]">Check Out</span>
-              <span className="font-medium text-[var(--text-primary)]">{d.checkOut}</span>
-            </div>
-          )}
-          {d.overtime > 0 && (
-            <div className="flex justify-between text-xs">
-              <span className="text-amber-600">Overtime</span>
-              <span className="font-bold text-amber-600">+{d.overtime}h</span>
-            </div>
-          )}
-          <div className="pt-1 border-t border-[var(--border-subtle)]">
-            <span className={`inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded ${
-              d.hours >= STANDARD_WORK_HOURS ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-              d.hours >= STANDARD_WORK_HOURS / 2 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-              'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-            }`}>
-              {d.hours >= STANDARD_WORK_HOURS ? 'Full Day' : d.hours >= STANDARD_WORK_HOURS / 2 ? 'Half Day' : 'Short Day'}
-            </span>
-          </div>
-        </div>
-      ) : (
-        <div className="text-xs text-[var(--text-muted)]">No attendance</div>
-      )}
-    </div>
-  );
-}
+// ChartEntry type and CustomTooltip moved to ./AttendanceWeeklyChart.tsx
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function AttendancePage() {
@@ -236,22 +176,7 @@ export default function AttendancePage() {
     }
   };
 
-  // ─── Computed Values ──────────────────────────────────────────────────
-  const calculateHours = (checkInStr?: string, checkOutStr?: string) => {
-    if (!checkInStr) return 0;
-    const start = new Date(checkInStr).getTime();
-    const end = checkOutStr ? new Date(checkOutStr).getTime() : Date.now();
-    return Math.max(0, (end - start) / (1000 * 60 * 60));
-  };
-
-  const formatDuration = (hours: number) => {
-    const h = Math.floor(hours);
-    const m = Math.floor((hours - h) * 60);
-    return `${h}h ${m}m`;
-  };
-
-  const formatTime = (isoStr: string) =>
-    new Date(isoStr).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  // calculateHours, formatDuration, formatTime — imported from ./utils
 
   const isCheckedIn = !!todayRecord?.checkInTime;
   const isCheckedOut = !!todayRecord?.checkOutTime;
@@ -286,76 +211,14 @@ export default function AttendancePage() {
   }, [isLateToday, todayRecord]);
 
   // ─── Streak Calculation ───────────────────────────────────────────────
-  const streak = useMemo(() => {
-    if (!monthlyRecords.length) return 0;
-    const sorted = [...monthlyRecords]
-      .filter(r => r.status === 'PRESENT' || r.status === 'HALF_DAY' || r.checkInTime)
-      .sort((a, b) => b.attendanceDate.localeCompare(a.attendanceDate));
-    let count = 0;
-    const today = new Date();
-    for (let i = 0; i < sorted.length; i++) {
-      const recDate = new Date(sorted[i].attendanceDate + 'T00:00:00');
-      const expected = new Date(today);
-      expected.setDate(today.getDate() - i);
-      // Skip weekends
-      while (expected.getDay() === 0 || expected.getDay() === 6) {
-        expected.setDate(expected.getDate() - 1);
-      }
-      if (recDate.toDateString() === expected.toDateString()) {
-        count++;
-      } else {
-        break;
-      }
-    }
-    return count;
-  }, [monthlyRecords]);
+  const streak = useMemo(() => computeStreak(monthlyRecords), [monthlyRecords]);
 
   // ─── Monthly Stats ────────────────────────────────────────────────────
-  const monthStats = useMemo(() => {
-    const present = monthlyRecords.filter(r =>
-      r.status === 'PRESENT' || r.checkInTime
-    ).length;
-    const late = monthlyRecords.filter(r => r.isLate).length;
-    const totalHours = monthlyRecords.reduce((acc, r) =>
-      acc + calculateHours(r.checkInTime, r.checkOutTime), 0);
-    const overtimeTotal = monthlyRecords.reduce((acc, r) => {
-      const h = calculateHours(r.checkInTime, r.checkOutTime);
-      return acc + Math.max(0, h - STANDARD_WORK_HOURS);
-    }, 0);
-    const avgHours = present > 0 ? totalHours / present : 0;
-
-    // Business days so far this month
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    let businessDays = 0;
-    const d = new Date(monthStart);
-    while (d <= now) {
-      if (d.getDay() !== 0 && d.getDay() !== 6) businessDays++;
-      d.setDate(d.getDate() + 1);
-    }
-    const absent = Math.max(0, businessDays - present);
-    const attendanceRate = businessDays > 0 ? Math.round((present / businessDays) * 100) : 0;
-
-    return { present, absent, late, totalHours, overtimeTotal, avgHours, businessDays, attendanceRate };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [monthlyRecords]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const monthStats = useMemo(() => computeMonthStats(monthlyRecords, now), [monthlyRecords]);
 
   // ─── Weekly Stats ─────────────────────────────────────────────────────
-  const weekStats = useMemo(() => {
-    const totalHours = weeklyRecords.reduce((acc, r) =>
-      acc + calculateHours(r.checkInTime, r.checkOutTime), 0);
-    const avgHours = weeklyRecords.length ? totalHours / weeklyRecords.length : 0;
-    const checkInTimes = weeklyRecords
-      .filter((r): r is AttendanceRecord & { checkInTime: string } => !!r.checkInTime)
-      .map(r => new Date(r.checkInTime).getHours() * 60 + new Date(r.checkInTime).getMinutes());
-    let avgCheckInStr = '--:--';
-    if (checkInTimes.length) {
-      const avgMins = checkInTimes.reduce((a, b) => a + b, 0) / checkInTimes.length;
-      const h = Math.floor(avgMins / 60);
-      const m = Math.floor(avgMins % 60);
-      avgCheckInStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-    }
-    return { avgHours: avgHours.toFixed(1), avgCheckIn: avgCheckInStr, presentDays: weeklyRecords.filter(r => r.checkInTime).length };
-  }, [weeklyRecords]);
+  const weekStats = useMemo(() => computeWeekStats(weeklyRecords), [weeklyRecords]);
 
   // ─── Chart Data ───────────────────────────────────────────────────────
   const holidaySet = useMemo(() => new Set(holidays.map(h => h.holidayDate)), [holidays]);
@@ -681,217 +544,17 @@ export default function AttendancePage() {
         </div>
 
         {/* ── Monthly Stats Row ───────────────────────────────── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Present', value: monthStats.present, total: monthStats.businessDays, icon: CheckCircle, color: 'from-emerald-500 to-green-600', textColor: 'text-emerald-600 dark:text-emerald-400', tintClass: 'tint-success' },
-            { label: 'Absent', value: monthStats.absent, total: monthStats.businessDays, icon: AlertCircle, color: 'from-red-500 to-rose-600', textColor: 'text-red-600 dark:text-red-400', tintClass: 'tint-danger' },
-            { label: 'Late Arrivals', value: monthStats.late, total: monthStats.present, icon: AlertTriangle, color: 'from-amber-500 to-orange-600', textColor: 'text-amber-600 dark:text-amber-400', tintClass: 'tint-warning' },
-            { label: 'Overtime', value: `${monthStats.overtimeTotal.toFixed(1)}h`, total: null, icon: Zap, color: 'from-blue-500 to-cyan-600', textColor: 'text-blue-600 dark:text-blue-400', tintClass: 'tint-info' },
-          ].map((stat, idx) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.06 }}
-            >
-              <Card className="card-interactive border border-[var(--border-main)] hover:shadow-lg transition-all">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}>
-                      <stat.icon className="h-5 w-5 text-white" />
-                    </div>
-                    {stat.total !== null && (
-                      <span className="text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full">/ {stat.total}</span>
-                    )}
-                  </div>
-                  <div className={`text-stat-large tabular-nums ${stat.textColor}`}>{stat.value}</div>
-                  <div className="text-xs font-semibold text-[var(--text-secondary)] mt-1">{stat.label}</div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+        <AttendanceMonthlyStats monthStats={monthStats} />
 
         {/* ── Chart + Quick Actions ───────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Weekly Chart */}
-          <Card className="lg:col-span-2 card-aura border border-[var(--border-main)] shadow-md">
-            <CardHeader className="border-b border-[var(--border-main)] pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-sm">
-                    <BarChart3 className="h-4 w-4 text-white" />
-                  </div>
-                  Weekly Overview
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5" /> Last 7 days
-                  </span>
-                  {monthStats.attendanceRate > 0 && (
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                      monthStats.attendanceRate >= 95 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                      monthStats.attendanceRate >= 80 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                    }`}>
-                      {monthStats.attendanceRate}% this month
-                    </span>
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4 h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false}
-                    tick={{ fill: 'var(--chart-muted)', fontSize: 11, fontWeight: 500 }} dy={8} />
-                  <YAxis axisLine={false} tickLine={false}
-                    tick={{ fill: 'var(--chart-muted)', fontSize: 11 }}
-                    domain={[0, 'auto']} />
-                  <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'var(--chart-grid)', opacity: 0.3 }} />
-                  <ReferenceLine y={STANDARD_WORK_HOURS} stroke="var(--chart-primary)" strokeDasharray="6 4" strokeWidth={1.5} strokeOpacity={0.5} />
-                  <Bar dataKey="hours" radius={[8, 8, 0, 0]} maxBarSize={48}>
-                    {chartData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          entry.isHoliday ? 'var(--chart-purple, #a855f7)'
-                          : entry.hours >= STANDARD_WORK_HOURS ? 'var(--chart-success)'
-                          : entry.isToday ? 'var(--chart-primary)'
-                          : entry.hours > 0 ? 'var(--chart-warning)'
-                          : 'var(--chart-grid)'
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              {/* Legend */}
-              <div className="flex items-center justify-center gap-6 mt-2 text-xs">
-                {[
-                  { color: 'bg-emerald-500', label: `Full Day (${STANDARD_WORK_HOURS}h+)` },
-                  { color: 'bg-indigo-500', label: 'Today' },
-                  { color: 'bg-amber-500', label: 'Partial' },
-                  { color: 'bg-purple-500', label: 'Holiday' },
-                ].map(l => (
-                  <div key={l.label} className="flex items-center gap-1.5">
-                    <div className={`h-3 w-3 rounded-sm ${l.color} shadow-sm`} />
-                    <span className="font-medium text-[var(--text-secondary)]">{l.label}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <AttendanceWeeklyChart chartData={chartData} attendanceRate={monthStats.attendanceRate} />
 
-          {/* Quick Actions + Holidays */}
+          {/* Quick Actions + Holidays + Week Progress */}
           <div className="space-y-4">
-            {/* Quick Actions */}
-            {[
-              { href: '/attendance/my-attendance', icon: History, title: 'Attendance History', desc: 'View complete records & calendar', gradient: 'from-indigo-500 to-blue-600', hoverColor: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400' },
-              { href: '/attendance/regularization', icon: ClipboardCheck, title: 'Regularization', desc: 'Request corrections', gradient: 'from-orange-500 to-amber-600', hoverColor: 'group-hover:text-orange-600 dark:group-hover:text-orange-400' },
-              { href: '/attendance/team', icon: Users, title: 'Team Attendance', desc: 'Monitor your team', gradient: 'from-emerald-500 to-teal-600', hoverColor: 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400' },
-            ].map((action, idx) => (
-              <motion.div
-                key={action.href}
-                initial={{ opacity: 0, x: 8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.06 }}
-              >
-                <Link href={action.href} className="block group">
-                  <Card className="card-interactive border border-[var(--border-main)] hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
-                        <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all`}>
-                          <action.icon className="h-5 w-5 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className={`text-sm font-bold text-[var(--text-primary)] ${action.hoverColor} transition-colors`}>{action.title}</h3>
-                          <p className="text-xs text-[var(--text-muted)] mt-0.5">{action.desc}</p>
-                        </div>
-                        <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-
-            {/* Upcoming Holidays */}
-            {upcomingHolidays.length > 0 && (
-              <Card className="card-aura border border-[var(--border-main)] shadow-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm">
-                      <CalendarDays className="h-3.5 w-3.5 text-white" />
-                    </div>
-                    <h4 className="text-sm font-bold text-[var(--text-primary)]">Upcoming Holidays</h4>
-                  </div>
-                  <div className="space-y-2">
-                    {upcomingHolidays.map(h => {
-                      const hDate = new Date(h.holidayDate + 'T00:00:00');
-                      const daysAway = Math.ceil((hDate.getTime() - new Date(todayStr + 'T00:00:00').getTime()) / 86400000);
-                      return (
-                        <div key={h.id} className="flex items-center justify-between py-1.5 border-b border-[var(--border-subtle)] last:border-0">
-                          <div>
-                            <div className="text-xs font-semibold text-[var(--text-primary)]">{h.holidayName}</div>
-                            <div className="text-xs text-[var(--text-muted)]">
-                              {hDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                            </div>
-                          </div>
-                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                            daysAway === 0 ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
-                            'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
-                          }`}>
-                            {daysAway === 0 ? 'Today' : daysAway === 1 ? 'Tomorrow' : `${daysAway}d away`}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* This Week Progress */}
-            <Card className="card-aura border border-[var(--border-main)] shadow-sm">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-sm">
-                    <Coffee className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <h4 className="text-sm font-bold text-[var(--text-primary)]">This Week</h4>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="font-medium text-[var(--text-secondary)]">Present Days</span>
-                      <span className="font-bold text-emerald-600 dark:text-emerald-400">{weekStats.presentDays}/5</span>
-                    </div>
-                    <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, (weekStats.presentDays / 5) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="font-medium text-[var(--text-secondary)]">Total Hours</span>
-                      <span className="font-bold text-primary-600 dark:text-primary-400">
-                        {weeklyRecords.reduce((acc, r) => acc + calculateHours(r.checkInTime, r.checkOutTime), 0).toFixed(1)}h / {STANDARD_WORK_HOURS * 5}h
-                      </span>
-                    </div>
-                    <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary-500 to-blue-500 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, (weeklyRecords.reduce((acc, r) => acc + calculateHours(r.checkInTime, r.checkOutTime), 0) / (STANDARD_WORK_HOURS * 5)) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <AttendanceQuickActions />
+            <AttendanceUpcomingHolidays holidays={upcomingHolidays} todayStr={todayStr} />
+            <AttendanceWeekProgress weekStats={weekStats} weeklyRecords={weeklyRecords} />
           </div>
         </div>
 

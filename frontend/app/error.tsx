@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Paper, Container, Center, Stack, Button, Group, Text, Accordion, Badge } from '@mantine/core';
-import { IconAlertTriangle, IconRefresh, IconHome } from '@tabler/icons-react';
-import { handleError, getUserMessage, categorizeError, ErrorCategory } from '@/lib/utils/error-handler';
+import { motion } from 'framer-motion';
+import { RefreshCw, Home, Grid } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
 import { isDevelopment } from '@/lib/config';
 
 interface ErrorProps {
@@ -11,133 +13,71 @@ interface ErrorProps {
   reset: () => void;
 }
 
-/**
- * Error page for segment-level errors (SSR + client boundary errors)
- * This is rendered when an error.tsx file catches an error in a page segment
- */
-export default function Error({ error, reset }: ErrorProps) {
+export default function AppError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    // Log and report the error using centralized error handler
-    handleError(error, {
-      source: 'page-error-boundary',
-      digest: error.digest,
-      isDevelopment
-    });
+    handleError(error, { source: 'app-error-boundary', digest: error.digest });
   }, [error]);
 
   const category = categorizeError(error);
   const userMessage = getUserMessage(category, error.message);
 
-  const getCategoryColor = (cat: ErrorCategory): string => {
-    switch (cat) {
-      case ErrorCategory.NETWORK:
-        return 'orange';
-      case ErrorCategory.AUTH:
-      case ErrorCategory.PERMISSION:
-        return 'red';
-      case ErrorCategory.SERVER:
-        return 'red';
-      case ErrorCategory.NOT_FOUND:
-        return 'yellow';
-      default:
-        return 'blue';
-    }
-  };
-
   return (
-    <Container size="xs" py="xl">
-      <Center style={{ minHeight: '100vh' }}>
-        <Paper p="xl" radius="md" shadow="md" w="100%">
-          <Center mb="lg">
-            <div style={{
-              width: '4rem',
-              height: '4rem',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#fee2e2',
-            }}>
-              <IconAlertTriangle size={28} color="#dc2626" />
+    <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
+        <Card className="w-full max-w-md bg-[var(--bg-card)]">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+              <Grid className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
-          </Center>
-
-          <Stack gap="sm" align="center">
-            <Text fw={600} size="lg" c="dark">
-              Something went wrong
-            </Text>
-            <Badge color={getCategoryColor(category)} variant="light">
-              {category.replace('_', ' ')}
-            </Badge>
-            <Text c="dimmed" ta="center">
+            <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+              App Error
+            </CardTitle>
+            <CardDescription className="text-surface-600 dark:text-surface-400">
               {userMessage}
-            </Text>
-          </Stack>
-
-          {isDevelopment && (
-            <Accordion mt="lg" defaultValue="error-details">
-              <Accordion.Item value="error-details">
-                <Accordion.Control>Developer Details</Accordion.Control>
-                <Accordion.Panel>
-                  <Stack gap="xs">
-                    <Text size="xs" c="dimmed" fw={500}>Error Message:</Text>
-                    <Text
-                      size="xs"
-                      ff="monospace"
-                      c="red"
-                      style={{ wordBreak: 'break-all' }}
-                    >
-                      {error.message}
-                    </Text>
-                    {error.stack && (
-                      <>
-                        <Text size="xs" c="dimmed" fw={500} mt="sm">Stack Trace:</Text>
-                        <Text
-                          size="xs"
-                          ff="monospace"
-                          c="dark"
-                          style={{
-                            wordBreak: 'break-all',
-                            whiteSpace: 'pre-wrap',
-                            maxHeight: '200px',
-                            overflow: 'auto'
-                          }}
-                        >
-                          {error.stack}
-                        </Text>
-                      </>
-                    )}
-                    {error.digest && (
-                      <>
-                        <Text size="xs" c="dimmed" fw={500} mt="sm">Error ID:</Text>
-                        <Text size="xs" ff="monospace" c="blue">{error.digest}</Text>
-                      </>
-                    )}
-                  </Stack>
-                </Accordion.Panel>
-              </Accordion.Item>
-            </Accordion>
-          )}
-
-          <Group grow mt="lg">
-            <Button
-              leftSection={<IconRefresh size={16} />}
-              onClick={reset}
-              color="blue"
-            >
-              Try Again
-            </Button>
-            <Button
-              leftSection={<IconHome size={16} />}
-              variant="light"
-              onClick={() => (window.location.href = '/me/dashboard')}
-              color="gray"
-            >
-              Go Home
-            </Button>
-          </Group>
-        </Paper>
-      </Center>
-    </Container>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isDevelopment && (
+              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-4">
+                <p className="text-sm font-mono text-surface-700 dark:text-surface-300 break-all">
+                  {error.message}
+                </p>
+                {error.digest && (
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                    Error ID: {error.digest}
+                  </p>
+                )}
+              </div>
+            )}
+            <div className="flex flex-col gap-2">
+              <Button onClick={reset} className="w-full">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try Again
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = '/app')}
+                className="w-full"
+              >
+                <Grid className="mr-2 h-4 w-4" />
+                Back to App
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = '/me/dashboard')}
+                className="w-full"
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Go to Home
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { logger } from '@/lib/utils/logger';
 import {
   AlertTriangle,
   Check,
@@ -111,7 +112,7 @@ export function CreateAllocationModal({
           setProjects(projData.content);
         })
         .catch((err) => {
-          console.error('Failed to load data:', err);
+          logger.error('Failed to load data:', err);
           const errorMessage = err?.response?.data?.message || err?.message || 'Unknown error';
           const statusCode = err?.response?.status;
           if (statusCode === 403) {
@@ -164,7 +165,7 @@ export function CreateAllocationModal({
 
       return Math.max(0, 100 - totalAllocated);
     } catch (err) {
-      console.error('Failed to fetch employee capacity:', err);
+      logger.error('Failed to fetch employee capacity:', err);
       return 100; // Default to 100% on error
     } finally {
       setLoadingCapacity(null);

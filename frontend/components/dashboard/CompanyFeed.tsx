@@ -19,6 +19,7 @@ import type { FeedItem, FeedItemType } from '@/lib/types/feed';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/utils/logger';
 
 // ─── Config ──────────────────────────────────────────────────────────
 const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; icon: string; badge: string }> = {
@@ -188,7 +189,7 @@ function DateSection({
         await onLoadMore();
         setHasFetched(true);
       } catch (error) {
-        console.error('Failed to load section:', error);
+        logger.error('Failed to load section:', error);
       } finally {
         setIsLoading(false);
       }
@@ -303,7 +304,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
       });
       setOlderLoaded(true);
     } catch (error) {
-      console.error('Failed to load older feed items:', error);
+      logger.error('Failed to load older feed items:', error);
     }
   }, [employeeId, olderLoaded]);
 
@@ -504,7 +505,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
       setIsHidden(true);
       onDeleted?.(item.id);
     } catch (error) {
-      console.error('Failed to delete post:', error);
+      logger.error('Failed to delete post:', error);
     } finally {
       setIsDeleting(false);
       setShowActionMenu(false);
@@ -530,7 +531,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
       setIsEditing(false);
       onUpdated?.(item.id, editContent.trim());
     } catch (error) {
-      console.error('Failed to update post:', error);
+      logger.error('Failed to update post:', error);
     } finally {
       setIsSavingEdit(false);
     }
@@ -552,7 +553,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
       setLocalHasVoted(true);
       setLocalVotedOptionId(optionId);
     } catch (error) {
-      console.error('Failed to vote:', error);
+      logger.error('Failed to vote:', error);
     } finally {
       setIsVoting(false);
     }
@@ -568,7 +569,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
       setComments(data.content);
       setLocalCommentCount(data.totalElements);
     } catch (error) {
-      console.error('Failed to load comments:', error);
+      logger.error('Failed to load comments:', error);
     } finally {
       setIsLoadingComments(false);
     }
@@ -585,7 +586,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
   const handleLike = async () => {
     // If no wallPostId, this item doesn't support likes yet
     if (!item.wallPostId) {
-      console.warn('This feed item does not support likes yet');
+      logger.warn('This feed item does not support likes yet');
       return;
     }
 
@@ -611,7 +612,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
         await wallService.addReaction(item.wallPostId, 'LIKE');
       }
     } catch (error) {
-      console.error('Failed to update reaction:', error);
+      logger.error('Failed to update reaction:', error);
       // Revert on error
       setLiked(wasLiked);
       setLocalLikeCount(item.likesCount ?? 0);
@@ -628,7 +629,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
         const data = await wallService.getPostReactions(item.wallPostId, 0, 50);
         setAllReactors(data.content);
       } catch (error) {
-        console.error('Failed to load reactors:', error);
+        logger.error('Failed to load reactors:', error);
       } finally {
         setIsLoadingAllReactors(false);
       }
@@ -645,7 +646,7 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
       setCommentText('');
       setLocalCommentCount((prev) => prev + 1);
     } catch (error) {
-      console.error('Failed to add comment:', error);
+      logger.error('Failed to add comment:', error);
     } finally {
       setIsSubmittingComment(false);
     }
@@ -1282,7 +1283,7 @@ function FeedCommentItem({
       setRepliesFetched(true);
       setShowReplies(true);
     } catch (error) {
-      console.error('Failed to load replies:', error);
+      logger.error('Failed to load replies:', error);
     } finally {
       setIsLoadingReplies(false);
     }
@@ -1303,7 +1304,7 @@ function FeedCommentItem({
       setRepliesFetched(true);
       onReplyAdded();
     } catch (error) {
-      console.error('Failed to add reply:', error);
+      logger.error('Failed to add reply:', error);
     } finally {
       setIsSubmittingReply(false);
     }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { employeeService } from '@/lib/services/employee.service';
 import { payrollService } from '@/lib/services/payroll.service';
 import { Employee } from '@/lib/types/employee';
+import { logger } from '@/lib/utils/logger';
 import {
   CheckCircle2,
   Circle,
@@ -74,7 +75,7 @@ export const BulkProcessingWizard: React.FC = () => {
       setEmployees(response.content.filter(emp => emp.status === 'ACTIVE'));
     } catch (err: unknown) {
       setError('Failed to load employees');
-      console.error('Error loading employees:', err);
+      logger.error('Error loading employees:', err);
     } finally {
       setLoading(false);
     }
