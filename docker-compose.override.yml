@@ -1,5 +1,3 @@
-version: '3.9'
-
 # Development overrides — hot reload, debug ports, volume mounts
 services:
   backend:
@@ -9,8 +7,10 @@ services:
       - "8080:8080"
       - "5005:5005"    # JVM remote debug port
     volumes:
-      - ./backend/src:/app/src:cached
-      - ./backend/target:/app/target:cached
+      - ./backend/src:/app/backend/src:cached
+      - ./backend/target:/app/backend/target:cached
+      - ./modules/common/src:/app/modules/common/src:cached
+      - ./modules/pm/src:/app/modules/pm/src:cached
     environment:
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       SPRING_DEVTOOLS_RESTART_ENABLED: "true"

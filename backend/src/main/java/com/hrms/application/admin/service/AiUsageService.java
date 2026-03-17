@@ -1,7 +1,7 @@
 package com.hrms.application.admin.service;
 
 import com.hrms.domain.audit.AuditLog;
-import com.hrms.domain.audit.AuditLogRepository;
+import com.hrms.infrastructure.audit.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
