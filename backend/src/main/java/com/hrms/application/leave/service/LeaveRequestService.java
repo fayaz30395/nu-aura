@@ -1,9 +1,13 @@
 package com.hrms.application.leave.service;
 
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.notification.service.WebSocketNotificationService;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.event.leave.LeaveApprovedEvent;
+import com.hrms.domain.event.leave.LeaveRejectedEvent;
+import com.hrms.domain.event.leave.LeaveRequestedEvent;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.leave.LeaveType;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -30,6 +34,7 @@ public class LeaveRequestService {
     private final WebSocketNotificationService webSocketNotificationService;
     private final EmployeeRepository employeeRepository;
     private final LeaveTypeRepository leaveTypeRepository;
+    private final DomainEventPublisher domainEventPublisher;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
@@ -61,6 +66,9 @@ public class LeaveRequestService {
 
         // Send WebSocket notification to approver/manager
         notifyLeaveRequestCreated(saved);
+
+        // Publish domain event for downstream consumers (notifications, analytics, audit)
+        publishLeaveRequestedEvent(saved, tenantId);
 
         return saved;
     }
@@ -94,6 +102,9 @@ public class LeaveRequestService {
         // Send WebSocket notification to employee
         notifyLeaveApproved(saved);
 
+        // Publish domain event for downstream consumers
+        publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
+
         return saved;
     }
 
@@ -113,6 +124,9 @@ public class LeaveRequestService {
 
         // Send WebSocket notification to employee
         notifyLeaveRejected(saved, reason);
+
+        // Publish domain event for downstream consumers
+        publishLeaveRejectedEvent(saved, tenantId, approverId, reason);
 
         return saved;
     }
@@ -229,8 +243,57 @@ public class LeaveRequestService {
         return leaveRequestRepository.findAllByTenantIdAndStatus(tenantId, status, pageable);
     }
 
-    // ======================== WebSocket Notification Helpers
-    // ========================
+    // ======================== Domain Event Publishing Helpers ========================
+
+    private void publishLeaveRequestedEvent(LeaveRequest saved, UUID tenantId) {
+        try {
+            Employee employee = employeeRepository.findByIdAndTenantId(saved.getEmployeeId(), tenantId).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findById(saved.getLeaveTypeId()).orElse(null);
+            if (employee == null) return;
+
+            String requesterName = employee.getFirstName() + " " + employee.getLastName();
+            String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
+
+            domainEventPublisher.publish(LeaveRequestedEvent.of(
+                    this, tenantId, saved.getId(),
+                    saved.getEmployeeId(), requesterName, leaveTypeName,
+                    saved.getStartDate(), saved.getEndDate(), employee.getManagerId()));
+        } catch (Exception e) {
+            log.warn("Failed to publish LeaveRequestedEvent for {}: {}", saved.getId(), e.getMessage());
+        }
+    }
+
+    private void publishLeaveApprovedEvent(LeaveRequest saved, UUID tenantId,
+                                           UUID approverId, java.math.BigDecimal daysDeducted) {
+        try {
+            LeaveType leaveType = leaveTypeRepository.findById(saved.getLeaveTypeId()).orElse(null);
+            String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
+
+            domainEventPublisher.publish(LeaveApprovedEvent.of(
+                    this, tenantId, saved.getId(),
+                    saved.getEmployeeId(), approverId, leaveTypeName,
+                    saved.getStartDate(), saved.getEndDate(), daysDeducted));
+        } catch (Exception e) {
+            log.warn("Failed to publish LeaveApprovedEvent for {}: {}", saved.getId(), e.getMessage());
+        }
+    }
+
+    private void publishLeaveRejectedEvent(LeaveRequest saved, UUID tenantId,
+                                           UUID approverId, String reason) {
+        try {
+            LeaveType leaveType = leaveTypeRepository.findById(saved.getLeaveTypeId()).orElse(null);
+            String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
+
+            domainEventPublisher.publish(LeaveRejectedEvent.of(
+                    this, tenantId, saved.getId(),
+                    saved.getEmployeeId(), approverId, leaveTypeName,
+                    saved.getStartDate(), saved.getEndDate(), reason));
+        } catch (Exception e) {
+            log.warn("Failed to publish LeaveRejectedEvent for {}: {}", saved.getId(), e.getMessage());
+        }
+    }
+
+    // ======================== WebSocket Notification Helpers ========================
 
     private void notifyLeaveRequestCreated(LeaveRequest leaveRequest) {
         try {
