@@ -45,7 +45,7 @@
 - Modify: `domain/webhook/Webhook.java:64`
 - Create: `backend/src/test/java/com/hrms/domain/EagerToLazyMigrationTest.java`
 
-- [ ] **Step 1: Write integration test for auth flow with lazy loading**
+- [ ] **Step 1: Write query-count integration test for lazy loading verification**
 
 ```java
 // backend/src/test/java/com/hrms/domain/EagerToLazyMigrationTest.java
@@ -53,14 +53,14 @@ package com.hrms.domain;
 
 import com.hrms.domain.platform.AppRole;
 import com.hrms.domain.platform.UserAppAccess;
-import com.hrms.domain.user.RolePermission;
-import com.hrms.common.security.ApiKey;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,39 +73,66 @@ class EagerToLazyMigrationTest {
     private EntityManager entityManager;
 
     @Test
-    void appRole_permissions_loadLazily() {
-        // Verify AppRole.permissions is LAZY — accessing outside transaction should fail
-        // Within transaction, it should load on access
+    void appRole_query_doesNotEagerLoadPermissions() {
+        // Enable Hibernate statistics to count queries
+        SessionFactory sf = entityManager.getEntityManagerFactory().unwrap(SessionFactory.class);
+        Statistics stats = sf.getStatistics();
+        stats.setStatisticsEnabled(true);
+        stats.clear();
+
+        // Query roles only — should NOT trigger permission loading
         var roles = entityManager.createQuery(
             "SELECT r FROM AppRole r", AppRole.class
         ).getResultList();
 
-        if (!roles.isEmpty()) {
-            // Access permissions within transaction — should work with LAZY
-            var permissions = roles.get(0).getPermissions();
-            assertThat(permissions).isNotNull();
-        }
+        long queryCount = stats.getQueryExecutionCount();
+
+        // With LAZY, loading roles should be 1 query (no join to permissions)
+        // With EAGER, it would be 1 + N queries (one per role's permissions)
+        // We verify the query count stays at 1
+        assertThat(queryCount).isEqualTo(1);
+        stats.setStatisticsEnabled(false);
     }
 
     @Test
-    void userAppAccess_roles_loadLazily() {
+    void userAppAccess_query_doesNotEagerLoadRoles() {
+        SessionFactory sf = entityManager.getEntityManagerFactory().unwrap(SessionFactory.class);
+        Statistics stats = sf.getStatistics();
+        stats.setStatisticsEnabled(true);
+        stats.clear();
+
         var accesses = entityManager.createQuery(
             "SELECT u FROM UserAppAccess u", UserAppAccess.class
         ).getResultList();
 
-        if (!accesses.isEmpty()) {
-            var roles = accesses.get(0).getRoles();
-            assertThat(roles).isNotNull();
-        }
+        long queryCount = stats.getQueryExecutionCount();
+        assertThat(queryCount).isEqualTo(1);
+        stats.setStatisticsEnabled(false);
     }
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails (currently EAGER, test should pass — baseline)**
+- [ ] **Step 2: Run test to establish baseline (currently EAGER — query count will be >1)**
 
 Run: `cd backend && ./mvnw test -Dtest=EagerToLazyMigrationTest -pl . -q`
 
-Expected: PASS (baseline — entities currently load eagerly within transaction).
+Expected: FAIL — query count > 1 because EAGER loading triggers additional queries. This confirms the test catches the problem.
+
+- [ ] **Step 2.5: Proactively add @EntityGraph to auth-critical repository methods**
+
+The JwtAuthenticationFilter loads user roles/permissions outside a transactional context. Without `@EntityGraph`, converting to LAZY will throw `LazyInitializationException` at runtime. Add these BEFORE converting to LAZY:
+
+```java
+// In UserAppAccessRepository (or equivalent):
+@EntityGraph(attributePaths = {"roles", "roles.permissions", "directPermissions"})
+List<UserAppAccess> findByUserId(UUID userId);
+
+// In AppRoleRepository (or equivalent):
+@EntityGraph(attributePaths = {"permissions"})
+Optional<AppRole> findByCode(String code);
+```
+
+Search the codebase for all repository methods that load `UserAppAccess` or `AppRole` and add `@EntityGraph` where the caller needs the relationship data.
 
 - [ ] **Step 3: Convert AppRole.permissions to LAZY**
 
@@ -309,17 +336,13 @@ In `KafkaConfig.java`, modify the `createListenerContainerFactory` method (lines
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 
         // Retry with exponential backoff: 1s, 5s, 30s (3 attempts before DLT)
-        DefaultErrorHandler errorHandler = new DefaultErrorHandler(
-            new FixedBackOff(0L, 0L) // Placeholder — overridden by backOff below
-        );
-        errorHandler.setBackOffFunction((record, ex) ->
-            new org.springframework.util.backoff.ExponentialBackOff() {{
-                setInitialInterval(1000L);
-                setMultiplier(5.0);
-                setMaxInterval(30000L);
-                setMaxElapsedTime(36000L); // ~3 retries
-            }}
-        );
+        ExponentialBackOff backOff = new ExponentialBackOff();
+        backOff.setInitialInterval(1000L);   // 1 second
+        backOff.setMultiplier(5.0);          // 1s → 5s → 25s (capped at 30s)
+        backOff.setMaxInterval(30000L);      // Cap at 30 seconds
+        backOff.setMaxElapsedTime(36000L);   // Stop retrying after ~36s total
+
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(backOff);
         factory.setCommonErrorHandler(errorHandler);
 
         return factory;
@@ -330,7 +353,7 @@ Add imports at the top of the file:
 
 ```java
 import org.springframework.kafka.listener.DefaultErrorHandler;
-import org.springframework.util.backoff.FixedBackOff;
+import org.springframework.util.backoff.ExponentialBackOff;
 ```
 
 - [ ] **Step 2: Run Kafka-related tests**

@@ -16,7 +16,7 @@
 
 | File | Action | Task |
 |------|--------|------|
-| `application/ai/service/AIRecruitmentService.java` (1,513 LOC) | Split into 3 sub-services | Task 1 |
+| `application/ai/service/AIRecruitmentService.java` (1,513 LOC) | Split into 3 sub-services | Task 1 (after Task 4) |
 | `application/resourcemanagement/service/ResourceManagementService.java` (1,137 LOC) | Split into 2-3 sub-services | Task 2 |
 | `application/recruitment/service/RecruitmentManagementService.java` (1,121 LOC) | Split into 3 sub-services | Task 3 |
 | ~96 service files with `catch(Exception e)` | Replace with specific exceptions (4 PRs) | Task 4 |
@@ -34,6 +34,8 @@
 ---
 
 ### Task 1: Refactor AIRecruitmentService (C1 — PR 1/3)
+
+> **Execution order:** Run Task 4 (exception narrowing) BEFORE Tasks 1-3 (service splitting). Narrowing exceptions in the monolithic service is simpler than doing it after the split. The spec recommends this order: C3 first, then C1.
 
 **Source:** `backend/src/main/java/com/hrms/application/ai/service/AIRecruitmentService.java` (1,513 LOC)
 
