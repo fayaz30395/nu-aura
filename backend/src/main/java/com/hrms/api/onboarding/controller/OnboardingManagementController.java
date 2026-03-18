@@ -7,11 +7,13 @@ import com.hrms.domain.onboarding.OnboardingTask;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/onboarding")
 @RequiredArgsConstructor
+@Validated
 public class OnboardingManagementController {
 
     private final OnboardingManagementService onboardingService;
@@ -161,7 +164,7 @@ public class OnboardingManagementController {
     public ResponseEntity<OnboardingTaskResponse> updateTaskStatus(
             @PathVariable UUID taskId,
             @RequestParam OnboardingTask.TaskStatus status,
-            @RequestParam(required = false) String remarks) {
+            @Size(max = 1000) @RequestParam(required = false) String remarks) {
         return ResponseEntity.ok(onboardingService.updateTaskStatus(taskId, status, remarks));
     }
 

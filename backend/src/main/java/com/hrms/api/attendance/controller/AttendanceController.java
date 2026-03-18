@@ -17,6 +17,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.access.AccessDeniedException;
@@ -42,6 +45,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/attendance")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Attendance", description = "Attendance management endpoints for time tracking, check-in/out, and regularization")
 public class AttendanceController {
 
@@ -285,7 +289,7 @@ public class AttendanceController {
     })
     public ResponseEntity<AttendanceResponse> requestRegularization(
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
-            @Parameter(description = "Reason for regularization") @RequestParam String reason) {
+            @Parameter(description = "Reason for regularization") @NotBlank @Size(max = 1000) @RequestParam String reason) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
         validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_REGULARIZE);
         AttendanceRecord updated = attendanceService.requestRegularization(id, reason);
@@ -319,7 +323,7 @@ public class AttendanceController {
     })
     public ResponseEntity<AttendanceResponse> rejectRegularization(
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
-            @Parameter(description = "Rejection reason (optional)") @RequestParam(required = false, defaultValue = "") String reason) {
+            @Parameter(description = "Rejection reason (optional)") @Size(max = 1000) @RequestParam(required = false, defaultValue = "") String reason) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
         validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
         UUID rejectorId = requireCurrentEmployeeId();

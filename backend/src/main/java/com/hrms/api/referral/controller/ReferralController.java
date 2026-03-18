@@ -9,11 +9,14 @@ import com.hrms.domain.referral.EmployeeReferral.ReferralStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/referrals")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Employee Referral Program", description = "Manage employee referrals, tracking, and bonuses")
 public class ReferralController {
 
@@ -76,7 +80,7 @@ public class ReferralController {
     public ResponseEntity<ReferralResponse> updateStatus(
             @PathVariable UUID id,
             @RequestParam ReferralStatus status,
-            @RequestParam(required = false) String notes) {
+            @Size(max = 1000) @RequestParam(required = false) String notes) {
         log.info("Updating referral {} to status {}", id, status);
         return ResponseEntity.ok(referralService.updateStatus(id, status, notes));
     }
@@ -86,8 +90,8 @@ public class ReferralController {
     @Operation(summary = "Reject a referral")
     public ResponseEntity<ReferralResponse> rejectReferral(
             @PathVariable UUID id,
-            @RequestParam String reason,
-            @RequestParam(required = false) String stage) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason,
+            @Size(max = 255) @RequestParam(required = false) String stage) {
         log.info("Rejecting referral {} with reason: {}", id, reason);
         return ResponseEntity.ok(referralService.rejectReferral(id, reason, stage));
     }
@@ -124,7 +128,7 @@ public class ReferralController {
     @Operation(summary = "Mark bonus as paid")
     public ResponseEntity<ReferralResponse> markBonusPaid(
             @PathVariable UUID id,
-            @RequestParam String paymentReference) {
+            @NotBlank @Size(max = 255) @RequestParam String paymentReference) {
         log.info("Marking bonus paid for referral {} with reference {}", id, paymentReference);
         return ResponseEntity.ok(referralService.markBonusPaid(id, paymentReference));
     }

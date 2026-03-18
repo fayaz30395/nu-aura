@@ -15,16 +15,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.validation.annotation.Validated;
 
 import static com.hrms.common.security.Permission.*;
 
 @RestController
 @RequestMapping("/api/v1/project-timesheets")
 @RequiredArgsConstructor
+@Validated
 public class ProjectTimesheetController {
 
     private final ProjectTimesheetService projectTimesheetService;
@@ -65,7 +70,7 @@ public class ProjectTimesheetController {
     public ResponseEntity<TimeEntryResponse> rejectTimeEntry(
             @PathVariable UUID id,
             @RequestParam UUID approverId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         return ResponseEntity.ok(projectTimesheetService.rejectTimeEntry(id, approverId, reason));
     }
 

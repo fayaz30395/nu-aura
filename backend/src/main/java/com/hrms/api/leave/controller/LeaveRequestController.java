@@ -16,12 +16,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -34,6 +37,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/leave-requests")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Leave Requests", description = "Leave request management endpoints for applying, approving, and tracking leave")
 public class LeaveRequestController {
 
@@ -177,7 +181,7 @@ public class LeaveRequestController {
     })
     public ResponseEntity<LeaveRequestResponse> rejectLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id,
-            @Parameter(description = "Rejection reason") @RequestParam String reason) {
+            @Parameter(description = "Rejection reason") @NotBlank @Size(max = 1000) @RequestParam String reason) {
         // L1 Approval: Use current user as approver - service validates manager relationship
         UUID approverId = SecurityContext.getCurrentEmployeeId();
         LeaveRequest rejected = leaveRequestService.rejectLeaveRequest(id, approverId, reason);
@@ -195,7 +199,7 @@ public class LeaveRequestController {
     })
     public ResponseEntity<LeaveRequestResponse> cancelLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id,
-            @Parameter(description = "Cancellation reason") @RequestParam String reason) {
+            @Parameter(description = "Cancellation reason") @NotBlank @Size(max = 1000) @RequestParam String reason) {
         LeaveRequest cancelled = leaveRequestService.cancelLeaveRequest(id, reason);
         return ResponseEntity.ok(toResponse(cancelled));
     }

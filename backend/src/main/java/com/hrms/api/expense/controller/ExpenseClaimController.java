@@ -7,6 +7,8 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.expense.ExpenseClaim;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -24,6 +27,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/expenses")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class ExpenseClaimController {
 
     private final ExpenseClaimService expenseClaimService;
@@ -66,7 +70,7 @@ public class ExpenseClaimController {
     @RequiresPermission(Permission.EXPENSE_APPROVE)
     public ResponseEntity<ExpenseClaimResponse> rejectExpenseClaim(
             @PathVariable UUID claimId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         log.info("Rejecting expense claim: {}", claimId);
         return ResponseEntity.ok(expenseClaimService.rejectExpenseClaim(claimId, reason));
     }
@@ -76,7 +80,7 @@ public class ExpenseClaimController {
     public ResponseEntity<ExpenseClaimResponse> markAsPaid(
             @PathVariable UUID claimId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate,
-            @RequestParam String paymentReference) {
+            @NotBlank @Size(max = 255) @RequestParam String paymentReference) {
         log.info("Marking expense claim as paid: {}", claimId);
         return ResponseEntity.ok(expenseClaimService.markAsPaid(claimId, paymentDate, paymentReference));
     }

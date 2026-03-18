@@ -8,12 +8,15 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.selfservice.DocumentRequest.DocumentType;
 import com.hrms.domain.selfservice.ProfileUpdateRequest.UpdateCategory;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/self-service")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class SelfServiceController {
 
     private final SelfServiceService selfServiceService;
@@ -68,7 +72,7 @@ public class SelfServiceController {
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     public ResponseEntity<ProfileUpdateResponse> approveProfileUpdateRequest(
             @PathVariable UUID requestId,
-            @RequestParam(required = false) String comments) {
+            @Size(max = 1000) @RequestParam(required = false) String comments) {
         UUID reviewerId = SecurityContext.getCurrentEmployeeId();
         log.info("Approving profile update request: {} by reviewer: {}", requestId, reviewerId);
         return ResponseEntity.ok(selfServiceService.approveProfileUpdateRequest(requestId, reviewerId, comments));
@@ -78,7 +82,7 @@ public class SelfServiceController {
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     public ResponseEntity<ProfileUpdateResponse> rejectProfileUpdateRequest(
             @PathVariable UUID requestId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         UUID reviewerId = SecurityContext.getCurrentEmployeeId();
         log.info("Rejecting profile update request: {} by reviewer: {}", requestId, reviewerId);
         return ResponseEntity.ok(selfServiceService.rejectProfileUpdateRequest(requestId, reviewerId, reason));
@@ -142,7 +146,7 @@ public class SelfServiceController {
     @RequiresPermission(Permission.DOCUMENT_APPROVE)
     public ResponseEntity<DocumentRequestResponse> completeDocumentRequest(
             @PathVariable UUID requestId,
-            @RequestParam String documentUrl) {
+            @NotBlank @Size(max = 255) @RequestParam String documentUrl) {
         log.info("Completing document request: {}", requestId);
         return ResponseEntity.ok(selfServiceService.completeDocumentRequest(requestId, documentUrl));
     }
@@ -158,7 +162,7 @@ public class SelfServiceController {
     @RequiresPermission(Permission.DOCUMENT_APPROVE)
     public ResponseEntity<DocumentRequestResponse> rejectDocumentRequest(
             @PathVariable UUID requestId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         UUID rejectedBy = SecurityContext.getCurrentEmployeeId();
         log.info("Rejecting document request: {} by: {}", requestId, rejectedBy);
         return ResponseEntity.ok(selfServiceService.rejectDocumentRequest(requestId, rejectedBy, reason));

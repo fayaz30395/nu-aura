@@ -8,11 +8,14 @@ import com.hrms.domain.benefits.BenefitPlanEnhanced;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -23,6 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/benefits-enhanced")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Enhanced Benefits", description = "Comprehensive benefits administration APIs")
 public class BenefitEnhancedController {
 
@@ -107,7 +111,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Approve an enrollment")
     public ResponseEntity<EnrollmentResponse> approveEnrollment(
             @PathVariable UUID enrollmentId,
-            @RequestParam(required = false) String comments) {
+            @Size(max = 1000) @RequestParam(required = false) String comments) {
         return ResponseEntity.ok(benefitService.approveEnrollment(enrollmentId, comments));
     }
 
@@ -123,7 +127,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Terminate an enrollment")
     public ResponseEntity<EnrollmentResponse> terminateEnrollment(
             @PathVariable UUID enrollmentId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         return ResponseEntity.ok(benefitService.terminateEnrollment(enrollmentId, reason));
     }
 
@@ -182,7 +186,7 @@ public class BenefitEnhancedController {
     public ResponseEntity<ClaimResponse> processClaim(
             @PathVariable UUID claimId,
             @RequestParam BigDecimal approvedAmount,
-            @RequestParam(required = false) String comments) {
+            @Size(max = 1000) @RequestParam(required = false) String comments) {
         return ResponseEntity.ok(benefitService.processClaim(claimId, approvedAmount, comments));
     }
 
@@ -191,7 +195,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Reject a claim")
     public ResponseEntity<ClaimResponse> rejectClaim(
             @PathVariable UUID claimId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         return ResponseEntity.ok(benefitService.rejectClaim(claimId, reason));
     }
 
@@ -207,7 +211,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Complete payment for a claim")
     public ResponseEntity<ClaimResponse> completePayment(
             @PathVariable UUID claimId,
-            @RequestParam String paymentReference) {
+            @NotBlank @Size(max = 255) @RequestParam String paymentReference) {
         return ResponseEntity.ok(benefitService.completeClaimPayment(claimId, paymentReference));
     }
 
@@ -216,7 +220,7 @@ public class BenefitEnhancedController {
     @Operation(summary = "Appeal a rejected claim")
     public ResponseEntity<ClaimResponse> appealClaim(
             @PathVariable UUID claimId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         return ResponseEntity.ok(benefitService.appealClaim(claimId, reason));
     }
 

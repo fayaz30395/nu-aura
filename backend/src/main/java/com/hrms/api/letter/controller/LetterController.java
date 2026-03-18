@@ -7,12 +7,14 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.letter.LetterTemplate.LetterCategory;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import static com.hrms.common.security.Permission.*;
 @RequestMapping("/api/v1/letters")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class LetterController {
 
     private final LetterService letterService;
@@ -150,7 +153,7 @@ public class LetterController {
     @RequiresPermission(LETTER_APPROVE)
     public ResponseEntity<GeneratedLetterResponse> approveLetter(
             @PathVariable UUID letterId,
-            @RequestParam(required = false) String comments) {
+            @Size(max = 1000) @RequestParam(required = false) String comments) {
         UUID approverId = SecurityContext.getCurrentEmployeeId();
         log.info("Approving letter: {} by: {}", letterId, approverId);
         return ResponseEntity.ok(letterService.approveLetter(letterId, approverId, comments));
