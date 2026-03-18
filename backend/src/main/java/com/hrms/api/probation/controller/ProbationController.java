@@ -6,6 +6,8 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.probation.ProbationPeriod.ProbationStatus;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +26,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/probation")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class ProbationController {
 
     private final ProbationService probationService;
@@ -124,7 +128,7 @@ public class ProbationController {
     @RequiresPermission(Permission.PROBATION_MANAGE)
     public ResponseEntity<ProbationPeriodResponse> putOnHold(
             @PathVariable UUID probationId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         log.info("Putting probation on hold: {}", probationId);
         return ResponseEntity.ok(probationService.putOnHold(probationId, reason));
     }
@@ -161,7 +165,7 @@ public class ProbationController {
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     public ResponseEntity<ProbationEvaluationResponse> acknowledgeEvaluation(
             @PathVariable UUID evaluationId,
-            @RequestParam(required = false) String comments) {
+            @Size(max = 1000) @RequestParam(required = false) String comments) {
         log.info("Acknowledging evaluation: {}", evaluationId);
         return ResponseEntity.ok(probationService.acknowledgeEvaluation(evaluationId, comments));
     }

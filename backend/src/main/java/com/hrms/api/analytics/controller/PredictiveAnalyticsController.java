@@ -6,11 +6,14 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -21,6 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/predictive-analytics")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Predictive Analytics", description = "AI-powered workforce analytics and predictions")
 public class PredictiveAnalyticsController {
 
@@ -72,7 +76,7 @@ public class PredictiveAnalyticsController {
     @Operation(summary = "Mark action taken", description = "Marks that retention action was taken for a prediction")
     public ResponseEntity<Void> markActionTaken(
             @PathVariable UUID predictionId,
-            @RequestParam(required = false) String notes) {
+            @Size(max = 1000) @RequestParam(required = false) String notes) {
         analyticsService.markActionTaken(predictionId, notes);
         return ResponseEntity.ok().build();
     }
@@ -154,8 +158,8 @@ public class PredictiveAnalyticsController {
     @Operation(summary = "Update insight status", description = "Updates the status of an insight")
     public ResponseEntity<AnalyticsInsightDto> updateInsightStatus(
             @PathVariable UUID insightId,
-            @RequestParam String status,
-            @RequestParam(required = false) String notes) {
+            @NotBlank @Size(max = 255) @RequestParam String status,
+            @Size(max = 1000) @RequestParam(required = false) String notes) {
         return ResponseEntity.ok(analyticsService.updateInsightStatus(insightId, status, notes));
     }
 
@@ -173,11 +177,11 @@ public class PredictiveAnalyticsController {
     @RequiresPermission(Permission.PREDICTIVE_ANALYTICS_MANAGE)
     @Operation(summary = "Create insight", description = "Creates a manual analytics insight")
     public ResponseEntity<AnalyticsInsightDto> createInsight(
-            @RequestParam String title,
-            @RequestParam String description,
-            @RequestParam String category,
-            @RequestParam String severity,
-            @RequestParam(required = false) String recommendation) {
+            @NotBlank @Size(max = 255) @RequestParam String title,
+            @NotBlank @Size(max = 1000) @RequestParam String description,
+            @NotBlank @Size(max = 255) @RequestParam String category,
+            @NotBlank @Size(max = 255) @RequestParam String severity,
+            @Size(max = 1000) @RequestParam(required = false) String recommendation) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(analyticsService.createInsight(title, description, category, severity, recommendation));
     }

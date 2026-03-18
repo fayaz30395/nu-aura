@@ -9,10 +9,12 @@ import com.hrms.domain.survey.SurveyInsight;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/survey-analytics")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Survey Analytics", description = "Advanced survey analytics, sentiment analysis, and engagement scoring")
 public class SurveyAnalyticsController {
 
@@ -134,7 +137,7 @@ public class SurveyAnalyticsController {
             @PathVariable UUID insightId,
             @RequestParam SurveyInsight.ActionStatus status,
             @RequestParam(required = false) UUID assignedTo,
-            @RequestParam(required = false) String notes) {
+            @Size(max = 1000) @RequestParam(required = false) String notes) {
         return ResponseEntity.ok(analyticsService.updateInsightAction(insightId, status, assignedTo, notes));
     }
 

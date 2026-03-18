@@ -9,12 +9,15 @@ import com.hrms.domain.compensation.CompensationReviewCycle.CycleStatus;
 import com.hrms.domain.featureflag.FeatureFlag;
 import com.hrms.domain.compensation.SalaryRevision.RevisionType;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/compensation")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 @RequiresFeature(FeatureFlag.ENABLE_PAYROLL)
 public class CompensationController {
 
@@ -130,7 +134,7 @@ public class CompensationController {
     @RequiresPermission(Permission.COMPENSATION_APPROVE)
     public ResponseEntity<SalaryRevisionResponse> reviewRevision(
             @PathVariable UUID revisionId,
-            @RequestParam(required = false) String comments) {
+            @Size(max = 1000) @RequestParam(required = false) String comments) {
         log.info("Reviewing salary revision: {}", revisionId);
         return ResponseEntity.ok(compensationService.reviewRevision(revisionId, comments));
     }
@@ -139,7 +143,7 @@ public class CompensationController {
     @RequiresPermission(Permission.COMPENSATION_APPROVE)
     public ResponseEntity<SalaryRevisionResponse> approveRevision(
             @PathVariable UUID revisionId,
-            @RequestParam(required = false) String comments) {
+            @Size(max = 1000) @RequestParam(required = false) String comments) {
         log.info("Approving salary revision: {}", revisionId);
         return ResponseEntity.ok(compensationService.approveRevision(revisionId, comments));
     }
@@ -148,7 +152,7 @@ public class CompensationController {
     @RequiresPermission(Permission.COMPENSATION_APPROVE)
     public ResponseEntity<SalaryRevisionResponse> rejectRevision(
             @PathVariable UUID revisionId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         log.info("Rejecting salary revision: {} - Reason: {}", revisionId, reason);
         return ResponseEntity.ok(compensationService.rejectRevision(revisionId, reason));
     }

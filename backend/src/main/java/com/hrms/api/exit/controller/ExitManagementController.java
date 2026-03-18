@@ -17,15 +17,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.validation.annotation.Validated;
+
 @RestController
 @RequestMapping("/api/v1/exit")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Exit Management", description = "Offboarding and Exit Management APIs")
 public class ExitManagementController {
 
@@ -159,7 +164,7 @@ public class ExitManagementController {
     public ResponseEntity<FullAndFinalSettlementResponse> processSettlementPayment(
             @PathVariable UUID id,
             @RequestParam FullAndFinalSettlement.PaymentMode paymentMode,
-            @RequestParam String paymentReference) {
+            @NotBlank @Size(max = 255) @RequestParam String paymentReference) {
         return ResponseEntity.ok(exitService.processPayment(id, paymentMode, paymentReference));
     }
 
@@ -270,7 +275,7 @@ public class ExitManagementController {
     public ResponseEntity<AssetRecoveryResponse> markAssetAsLost(
             @PathVariable UUID id,
             @RequestParam(required = false) BigDecimal deductionAmount,
-            @RequestParam(required = false) String remarks) {
+            @Size(max = 1000) @RequestParam(required = false) String remarks) {
         return ResponseEntity.ok(exitService.markAssetAsLost(id, deductionAmount, remarks));
     }
 
@@ -279,7 +284,7 @@ public class ExitManagementController {
     @Operation(summary = "Waive asset recovery")
     public ResponseEntity<AssetRecoveryResponse> waiveAssetRecovery(
             @PathVariable UUID id,
-            @RequestParam String waiverReason) {
+            @NotBlank @Size(max = 1000) @RequestParam String waiverReason) {
         return ResponseEntity.ok(exitService.waiveAssetRecovery(id, waiverReason));
     }
 

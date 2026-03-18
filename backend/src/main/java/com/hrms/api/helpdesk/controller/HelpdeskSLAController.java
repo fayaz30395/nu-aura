@@ -9,11 +9,13 @@ import com.hrms.domain.helpdesk.*;
 import com.hrms.domain.helpdesk.TicketEscalation.EscalationLevel;
 import com.hrms.domain.helpdesk.TicketEscalation.EscalationReason;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,6 +27,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/helpdesk/sla")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class HelpdeskSLAController {
 
     private final HelpdeskSLAService slaService;
@@ -117,7 +120,7 @@ public class HelpdeskSLAController {
             @RequestParam UUID escalatedTo,
             @RequestParam EscalationLevel level,
             @RequestParam EscalationReason reason,
-            @RequestParam(required = false) String notes) {
+            @Size(max = 1000) @RequestParam(required = false) String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID escalatedFrom = SecurityContext.getCurrentEmployeeId();
 

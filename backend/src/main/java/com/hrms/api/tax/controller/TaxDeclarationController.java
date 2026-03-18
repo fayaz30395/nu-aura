@@ -5,11 +5,14 @@ import com.hrms.application.tax.service.TaxDeclarationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -19,6 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/tax-declarations")
 @RequiredArgsConstructor
+@Validated
 public class TaxDeclarationController {
 
     private final TaxDeclarationService taxDeclarationService;
@@ -58,7 +62,7 @@ public class TaxDeclarationController {
     public ResponseEntity<TaxDeclarationResponse> rejectTaxDeclaration(
             @PathVariable UUID id,
             @RequestParam UUID rejectedBy,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
         return ResponseEntity.ok(taxDeclarationService.rejectTaxDeclaration(id, rejectedBy, reason));
     }
 
@@ -104,7 +108,7 @@ public class TaxDeclarationController {
             @PathVariable UUID proofId,
             @RequestParam UUID verifiedBy,
             @RequestParam(required = false) BigDecimal approvedAmount,
-            @RequestParam(required = false) String notes) {
+            @Size(max = 1000) @RequestParam(required = false) String notes) {
         return ResponseEntity.ok(taxDeclarationService.verifyTaxProof(proofId, verifiedBy, approvedAmount, notes));
     }
 

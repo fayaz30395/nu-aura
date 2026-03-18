@@ -6,12 +6,15 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.payment.PaymentTransaction;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
+@Validated
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -83,7 +87,7 @@ public class PaymentController {
     @RequiresPermission(Permission.PAYMENT_REFUND)
     public ResponseEntity<String> refundPayment(
             @PathVariable UUID paymentId,
-            @RequestParam String reason) {
+            @NotBlank @Size(max = 1000) @RequestParam String reason) {
 
         paymentService.processRefund(paymentId, reason);
         return ResponseEntity.ok("Refund initiated successfully");
