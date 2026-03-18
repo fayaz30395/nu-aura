@@ -24,7 +24,7 @@ public class RolePermission extends TenantAware {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.EAGER) // Permission metadata is usually small and needed
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "permission_id", nullable = false)
     private Permission permission;
 

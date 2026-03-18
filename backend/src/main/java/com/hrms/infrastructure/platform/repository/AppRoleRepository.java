@@ -1,6 +1,7 @@
 package com.hrms.infrastructure.platform.repository;
 
 import com.hrms.domain.platform.AppRole;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +15,11 @@ import java.util.UUID;
 public interface AppRoleRepository extends JpaRepository<AppRole, UUID> {
 
     /**
-     * Find role by code, tenant, and application
+     * Find role by code, tenant, and application.
+     * Fetches permissions eagerly via @EntityGraph to prevent LazyInitializationException
+     * when hasPermission() or getPermissionCodes() is called on the returned role.
      */
+    @EntityGraph(attributePaths = {"permissions"})
     Optional<AppRole> findByCodeAndTenantIdAndApplicationId(String code, UUID tenantId, UUID applicationId);
 
     /**

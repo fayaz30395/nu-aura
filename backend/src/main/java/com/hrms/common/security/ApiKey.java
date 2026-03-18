@@ -38,7 +38,7 @@ public class ApiKey extends TenantAware {
     @Column(name = "key_prefix", length = 10)
     private String keyPrefix;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
         name = "api_key_scopes",
         joinColumns = @JoinColumn(name = "api_key_id")

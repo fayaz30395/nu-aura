@@ -61,7 +61,7 @@ public class Webhook extends TenantAware {
     /**
      * Events this webhook subscribes to.
      */
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "webhook_events", joinColumns = @JoinColumn(name = "webhook_id"))
     @Column(name = "event_type")
     @Enumerated(EnumType.STRING)

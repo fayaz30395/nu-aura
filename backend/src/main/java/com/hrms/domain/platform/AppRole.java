@@ -80,7 +80,7 @@ public class AppRole extends TenantAware {
     /**
      * Permissions assigned to this role
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "app_role_permissions",
         joinColumns = @JoinColumn(name = "role_id"),
