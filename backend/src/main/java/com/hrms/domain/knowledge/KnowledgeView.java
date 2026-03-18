@@ -1,6 +1,6 @@
 package com.hrms.domain.knowledge;
 
-import com.hrms.common.entity.BaseEntity;
+import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -19,10 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class KnowledgeView extends BaseEntity {
-
-    @Column(nullable = false)
-    private UUID tenantId;
+public class KnowledgeView extends TenantAware {
 
     @Column(name = "content_type", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)

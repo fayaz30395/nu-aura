@@ -1,6 +1,6 @@
 package com.hrms.domain.knowledge;
 
-import com.hrms.common.entity.BaseEntity;
+import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -19,10 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class WikiPageApprovalTask extends BaseEntity {
-
-    @Column(nullable = false)
-    private UUID tenantId;
+public class WikiPageApprovalTask extends TenantAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "page_id", nullable = false)
