@@ -27,11 +27,13 @@ public class OnboardingProcess {
     private LocalDate expectedCompletionDate;
     @Column(name = "actual_completion_date")
     private LocalDate actualCompletionDate;
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private ProcessStatus status = ProcessStatus.NOT_STARTED;
     @Column(name = "assigned_buddy_id")
     private UUID assignedBuddyId;
+    @Builder.Default
     @Column(name = "completion_percentage")
     private Integer completionPercentage = 0;
     @Column(name = "notes", columnDefinition = "TEXT")
@@ -42,6 +44,7 @@ public class OnboardingProcess {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Builder.Default
     @Version
     private Long version = 0L;
 

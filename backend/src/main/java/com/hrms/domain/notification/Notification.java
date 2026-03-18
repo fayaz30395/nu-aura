@@ -44,12 +44,14 @@ public class Notification extends TenantAware {
     @Column(length = 500)
     private String actionUrl;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isRead = false;
 
     @Column
     private LocalDateTime readAt;
 
+    @Builder.Default
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private Priority priority = Priority.NORMAL;
@@ -77,7 +79,13 @@ public class Notification extends TenantAware {
         ROLE_UPDATED,
         SYSTEM_ALERT,
         TASK_ASSIGNED,
-        GENERAL
+        GENERAL,
+        // Workflow/Approval related types (P0 escalation scheduler)
+        APPROVAL_REQUIRED,
+        APPROVAL_UPDATE,
+        APPROVAL_ESCALATED,
+        REMINDER,
+        SYSTEM
     }
 
     public enum Priority {

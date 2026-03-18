@@ -28,6 +28,7 @@ public class DocumentApprovalTask extends TenantAware {
     @Column(nullable = false)
     private UUID approverId;
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private TaskStatus status = TaskStatus.PENDING;

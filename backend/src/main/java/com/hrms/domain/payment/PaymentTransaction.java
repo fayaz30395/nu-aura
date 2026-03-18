@@ -39,9 +39,11 @@ public class PaymentTransaction extends TenantAware {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
+    @Builder.Default
     @Column(nullable = false, length = 3)
     private String currency = "INR";
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status = PaymentStatus.INITIATED;

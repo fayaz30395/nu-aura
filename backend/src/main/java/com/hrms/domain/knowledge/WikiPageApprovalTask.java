@@ -31,6 +31,7 @@ public class WikiPageApprovalTask extends BaseEntity {
     @Column(name = "approval_task_id")
     private UUID approvalTaskId;
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status = ApprovalStatus.PENDING;

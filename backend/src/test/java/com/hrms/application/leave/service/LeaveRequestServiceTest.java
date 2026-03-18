@@ -1,5 +1,6 @@
 package com.hrms.application.leave.service;
 
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
@@ -45,6 +46,9 @@ class LeaveRequestServiceTest {
 
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
+
+    @Mock
+    private DomainEventPublisher domainEventPublisher;
 
     @InjectMocks
     private LeaveRequestService leaveRequestService;
@@ -325,6 +329,140 @@ class LeaveRequestServiceTest {
             assertThatThrownBy(() -> leaveRequestService.cancelLeaveRequest(requestId, "Not authorized"))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("not found");
+        }
+    }
+
+    @Nested
+    @DisplayName("Half-Day Leave Handling")
+    class HalfDayLeaveTests {
+
+        @Test
+        @DisplayName("Should deduct 0.5 days for half-day leave approval (R2-006 fix)")
+        void shouldDeductHalfDayForHalfDayLeave() {
+            // Given - half-day leave request
+            leaveRequest.setIsHalfDay(true);
+            leaveRequest.setTotalDays(BigDecimal.valueOf(1.0)); // totalDays may store 1.0 for UI purposes
+            UUID requestId = leaveRequest.getId();
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            // When
+            leaveRequestService.approveLeaveRequest(requestId, managerId);
+
+            // Then - should deduct 0.5 regardless of totalDays value
+            verify(leaveBalanceService).deductLeave(
+                    eq(employeeId),
+                    eq(leaveTypeId),
+                    eq(new BigDecimal("0.5")));
+        }
+
+        @Test
+        @DisplayName("Should deduct full days for non-half-day leave")
+        void shouldDeductFullDaysForRegularLeave() {
+            // Given - regular (non-half-day) leave request
+            leaveRequest.setIsHalfDay(false);
+            leaveRequest.setTotalDays(BigDecimal.valueOf(3.0));
+            UUID requestId = leaveRequest.getId();
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            // When
+            leaveRequestService.approveLeaveRequest(requestId, managerId);
+
+            // Then - should deduct totalDays value
+            verify(leaveBalanceService).deductLeave(
+                    eq(employeeId),
+                    eq(leaveTypeId),
+                    eq(BigDecimal.valueOf(3.0)));
+        }
+    }
+
+    @Nested
+    @DisplayName("Update Leave Request")
+    class UpdateLeaveRequestTests {
+
+        @Test
+        @DisplayName("Should update pending leave request successfully")
+        void shouldUpdatePendingLeaveRequestSuccessfully() {
+            UUID requestId = leaveRequest.getId();
+            LeaveRequest updateData = LeaveRequest.builder()
+                    .leaveTypeId(leaveTypeId)
+                    .startDate(LocalDate.now().plusDays(5))
+                    .endDate(LocalDate.now().plusDays(7))
+                    .totalDays(BigDecimal.valueOf(3.0))
+                    .isHalfDay(false)
+                    .reason("Updated reason")
+                    .build();
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                    .thenReturn(Collections.emptyList());
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            LeaveRequest result = leaveRequestService.updateLeaveRequest(requestId, updateData);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getReason()).isEqualTo("Updated reason");
+            assertThat(result.getStartDate()).isEqualTo(LocalDate.now().plusDays(5));
+        }
+
+        @Test
+        @DisplayName("Should throw exception when updating approved leave request")
+        void shouldThrowExceptionWhenUpdatingApprovedLeaveRequest() {
+            UUID requestId = leaveRequest.getId();
+            leaveRequest.setStatus(LeaveRequest.LeaveRequestStatus.APPROVED);
+
+            LeaveRequest updateData = LeaveRequest.builder()
+                    .startDate(LocalDate.now().plusDays(5))
+                    .endDate(LocalDate.now().plusDays(7))
+                    .build();
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+
+            assertThatThrownBy(() -> leaveRequestService.updateLeaveRequest(requestId, updateData))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Cannot edit leave request");
+        }
+
+        @Test
+        @DisplayName("Should throw exception when update causes overlap with another leave")
+        void shouldThrowExceptionWhenUpdateCausesOverlap() {
+            UUID requestId = leaveRequest.getId();
+            LeaveRequest updateData = LeaveRequest.builder()
+                    .leaveTypeId(leaveTypeId)
+                    .startDate(LocalDate.now().plusDays(10))
+                    .endDate(LocalDate.now().plusDays(12))
+                    .build();
+
+            // Another leave request that would overlap
+            LeaveRequest overlappingLeave = LeaveRequest.builder()
+                    .employeeId(employeeId)
+                    .startDate(LocalDate.now().plusDays(11))
+                    .endDate(LocalDate.now().plusDays(13))
+                    .build();
+            overlappingLeave.setId(UUID.randomUUID()); // Different ID
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                    .thenReturn(List.of(overlappingLeave));
+
+            assertThatThrownBy(() -> leaveRequestService.updateLeaveRequest(requestId, updateData))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("overlaps");
         }
     }
 

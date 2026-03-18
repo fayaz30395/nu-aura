@@ -9,9 +9,12 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require}
-    username: ${SPRING_DATASOURCE_USERNAME:neondb_owner}
-    password: ${SPRING_DATASOURCE_PASSWORD:npg_p3Nnmrd9PvhB}
+    # SECURITY: Database credentials must be provided via environment variables
+    # For local dev, use application-dev.yml with localhost defaults
+    # For production, inject via K8s secrets or CI/CD
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -64,9 +67,10 @@ spring:
     validate-on-migrate: false
     clean-disabled: true
     # Flyway uses direct (non-pooler) Neon endpoint to avoid PgBouncer transaction-mode issues
-    url: ${FLYWAY_URL:jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require}
-    user: ${FLYWAY_USER:neondb_owner}
-    password: ${FLYWAY_PASSWORD:npg_p3Nnmrd9PvhB}
+    # SECURITY: Credentials must be provided via environment variables
+    url: ${FLYWAY_URL:${SPRING_DATASOURCE_URL}}
+    user: ${FLYWAY_USER:${SPRING_DATASOURCE_USERNAME}}
+    password: ${FLYWAY_PASSWORD:${SPRING_DATASOURCE_PASSWORD}}
 
   data:
     redis:
@@ -217,6 +221,38 @@ app:
     csrf:
       # Enable CSRF protection (recommended for cookie-based auth)
       enabled: ${CSRF_ENABLED:true}
+    # Password policy configuration (P0 stabilization - OWASP compliance)
+    password:
+      min-length: ${PASSWORD_MIN_LENGTH:12}
+      max-length: ${PASSWORD_MAX_LENGTH:128}
+      require-uppercase: ${PASSWORD_REQUIRE_UPPERCASE:true}
+      require-lowercase: ${PASSWORD_REQUIRE_LOWERCASE:true}
+      require-digit: ${PASSWORD_REQUIRE_DIGIT:true}
+      require-special: ${PASSWORD_REQUIRE_SPECIAL:true}
+      max-consecutive-chars: ${PASSWORD_MAX_CONSECUTIVE:3}
+      history-count: ${PASSWORD_HISTORY_COUNT:5}
+      max-age-days: ${PASSWORD_MAX_AGE_DAYS:90}
+      reject-common-passwords: ${PASSWORD_REJECT_COMMON:true}
+      reject-user-info: ${PASSWORD_REJECT_USER_INFO:true}
+
+  # Workflow escalation scheduler configuration (P0 stabilization)
+  workflow:
+    escalation:
+      enabled: ${WORKFLOW_ESCALATION_ENABLED:true}
+      reminder-hours-before-deadline: ${WORKFLOW_REMINDER_HOURS:4}
+      max-reminders: ${WORKFLOW_MAX_REMINDERS:3}
+      min-hours-between-reminders: ${WORKFLOW_MIN_REMINDER_INTERVAL:4}
+
+  # Attendance configuration (P4 stabilization)
+  attendance:
+    max-overnight-shift-hours: ${ATTENDANCE_MAX_OVERNIGHT_SHIFT_HOURS:16}
+    max-lookback-days: ${ATTENDANCE_MAX_LOOKBACK_DAYS:2}
+    comp-off:
+      min-overtime-minutes: ${COMPOFF_MIN_OVERTIME_MINUTES:60}
+      full-day-minutes: ${COMPOFF_FULL_DAY_MINUTES:480}
+      half-day-minutes: ${COMPOFF_HALF_DAY_MINUTES:240}
+      leave-code: ${COMPOFF_LEAVE_CODE:COMP_OFF}
+      expiry-days: ${COMPOFF_EXPIRY_DAYS:90}
 
   google:
     client-id: ${GOOGLE_CLIENT_ID:}
@@ -271,13 +307,19 @@ app:
     nulogic-tenant-id: ${APP_AUTH_NULOGIC_TENANT_ID:660e8400-e29b-41d4-a716-446655440001}
 
   # API Rate Limiting Configuration (Bucket4j Token Bucket Algorithm)
+  # SECURITY FIX (P1.3): Enabled by default to prevent DoS/brute-force attacks
+  # Disable in dev profile only (application-dev.yml)
   rate-limit:
-    enabled: false
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    # Use Redis for distributed rate limiting (shared across instances)
+    # Falls back to in-memory Bucket4j when Redis is unavailable
+    use-redis: ${RATE_LIMIT_USE_REDIS:true}
     requests-per-minute: 600
     # Authentication endpoints (login, register, etc.)
+    # Tighter limits to prevent brute-force attacks
     auth:
-      capacity: ${RATE_LIMIT_AUTH_CAPACITY:10}              # Max 10 requests
-      refill-tokens: ${RATE_LIMIT_AUTH_REFILL:10}           # Refill 10 tokens
+      capacity: ${RATE_LIMIT_AUTH_CAPACITY:5}               # Max 5 login attempts
+      refill-tokens: ${RATE_LIMIT_AUTH_REFILL:5}            # Refill 5 tokens
       refill-minutes: ${RATE_LIMIT_AUTH_REFILL_MIN:1}       # Every 1 minute
     # General API endpoints (CRUD operations, queries)
     api:
@@ -357,6 +399,9 @@ app:
   security:
     csrf:
       enabled: false
+  rate-limit:
+    # Use in-memory rate limiting in dev (Redis not required)
+    use-redis: false
 
 server:
   error:

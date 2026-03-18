@@ -45,6 +45,7 @@ public class WikiPage extends TenantAware {
     @Column(columnDefinition = "JSONB", nullable = false)
     private String content;
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private PageStatus status = PageStatus.DRAFT;
@@ -53,12 +54,15 @@ public class WikiPage extends TenantAware {
     @Enumerated(EnumType.STRING)
     private VisibilityLevel visibility;
 
+    @Builder.Default
     @Column(name = "view_count", nullable = false)
     private Integer viewCount = 0;
 
+    @Builder.Default
     @Column(name = "like_count", nullable = false)
     private Integer likeCount = 0;
 
+    @Builder.Default
     @Column(name = "comment_count", nullable = false)
     private Integer commentCount = 0;
 
@@ -68,6 +72,7 @@ public class WikiPage extends TenantAware {
     @Column(name = "last_viewed_by")
     private UUID lastViewedBy;
 
+    @Builder.Default
     @Column(name = "is_pinned", nullable = false)
     private Boolean isPinned = false;
 

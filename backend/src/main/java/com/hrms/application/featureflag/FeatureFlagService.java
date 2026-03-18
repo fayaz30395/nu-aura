@@ -1,5 +1,6 @@
 package com.hrms.application.featureflag;
 
+import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.featureflag.FeatureFlag;
 import com.hrms.infrastructure.featureflag.FeatureFlagRepository;
@@ -27,7 +28,7 @@ public class FeatureFlagService {
     /**
      * Check if a feature is enabled for the current tenant
      */
-    @Cacheable(value = "featureFlags", key = "#featureKey + '_' + T(com.hrms.common.security.SecurityContext).getCurrentTenantId()")
+    @Cacheable(value = CacheConfig.FEATURE_FLAGS, key = "#featureKey + '_' + T(com.hrms.common.security.SecurityContext).getCurrentTenantId()")
     public boolean isFeatureEnabled(String featureKey) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         if (tenantId == null) {
@@ -42,7 +43,7 @@ public class FeatureFlagService {
     /**
      * Check if a feature is enabled for a specific tenant
      */
-    @Cacheable(value = "featureFlags", key = "#featureKey + '_' + #tenantId")
+    @Cacheable(value = CacheConfig.FEATURE_FLAGS, key = "#featureKey + '_' + #tenantId")
     public boolean isFeatureEnabled(String featureKey, UUID tenantId) {
         return featureFlagRepository.isFeatureEnabled(tenantId, featureKey)
                 .orElse(false);
@@ -82,7 +83,7 @@ public class FeatureFlagService {
      * Create or update a feature flag
      */
     @Transactional
-    @CacheEvict(value = "featureFlags", key = "#featureKey + '_' + T(com.hrms.common.security.SecurityContext).getCurrentTenantId()")
+    @CacheEvict(value = CacheConfig.FEATURE_FLAGS, key = "#featureKey + '_' + T(com.hrms.common.security.SecurityContext).getCurrentTenantId()")
     public FeatureFlag setFeatureFlag(String featureKey, boolean enabled, String name, String description, String category) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -107,7 +108,7 @@ public class FeatureFlagService {
      * Toggle a feature flag
      */
     @Transactional
-    @CacheEvict(value = "featureFlags", key = "#featureKey + '_' + T(com.hrms.common.security.SecurityContext).getCurrentTenantId()")
+    @CacheEvict(value = CacheConfig.FEATURE_FLAGS, key = "#featureKey + '_' + T(com.hrms.common.security.SecurityContext).getCurrentTenantId()")
     public FeatureFlag toggleFeature(String featureKey) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 

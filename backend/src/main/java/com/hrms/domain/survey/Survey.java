@@ -24,17 +24,20 @@ public class Survey {
     @Enumerated(EnumType.STRING)
     @Column(name = "survey_type", length = 50)
     private SurveyType surveyType;
+    @Builder.Default
     @Column(name = "is_anonymous")
     private Boolean isAnonymous = false;
     @Column(name = "start_date")
     private LocalDateTime startDate;
     @Column(name = "end_date")
     private LocalDateTime endDate;
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private SurveyStatus status = SurveyStatus.DRAFT;
     @Column(name = "target_audience", length = 50)
     private String targetAudience;
+    @Builder.Default
     @Column(name = "total_responses")
     private Integer totalResponses = 0;
     @CreationTimestamp
@@ -45,6 +48,7 @@ public class Survey {
     private LocalDateTime updatedAt;
     @Column(name = "created_by")
     private UUID createdBy;
+    @Builder.Default
     @Version
     private Long version = 0L;
 

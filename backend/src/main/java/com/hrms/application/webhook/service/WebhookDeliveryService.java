@@ -1,6 +1,7 @@
 package com.hrms.application.webhook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.resilience.CircuitBreaker;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.webhook.*;
@@ -22,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +51,7 @@ public class WebhookDeliveryService {
     private final WebhookService webhookService;
     private final ObjectMapper objectMapper;
     private final MeterRegistry meterRegistry;
+    private final MetricsService metricsService;
     private final RestTemplate restTemplate;
 
     // Circuit breakers per webhook URL to prevent cascading failures
@@ -185,6 +188,17 @@ public class WebhookDeliveryService {
         deliveryRepository.save(delivery);
 
         recordDurationMetric(webhook, durationMs);
+
+        // Record to centralized metrics
+        UUID tenantId = delivery.getTenantId();
+        if (tenantId != null) {
+            boolean success = errorMessage == null && statusCode >= 200 && statusCode < 300;
+            metricsService.recordWebhookDelivery(
+                    tenantId,
+                    delivery.getEventType().name(),
+                    success,
+                    Duration.ofMillis(durationMs));
+        }
     }
 
     /**
@@ -268,6 +282,16 @@ public class WebhookDeliveryService {
             webhookRepository.findById(delivery.getWebhookId()).ifPresent(webhook -> {
                 if (webhook.getStatus() == WebhookStatus.ACTIVE) {
                     log.info("Retrying webhook delivery {} (attempt {})", delivery.getId(), delivery.getAttempts() + 1);
+
+                    // Record retry metrics
+                    UUID tenantId = delivery.getTenantId();
+                    if (tenantId != null) {
+                        metricsService.recordWebhookRetry(
+                                tenantId,
+                                delivery.getEventType().name(),
+                                delivery.getAttempts() + 1);
+                    }
+
                     deliverWebhook(webhook, delivery);
                 }
             });

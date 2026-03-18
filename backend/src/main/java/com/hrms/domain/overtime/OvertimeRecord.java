@@ -57,10 +57,12 @@ public class OvertimeRecord {
     @Column(name = "effective_hours", precision = 5, scale = 2, nullable = false)
     private BigDecimal effectiveHours; // overtime_hours * multiplier
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private OvertimeStatus status = OvertimeStatus.PENDING;
 
+    @Builder.Default
     @Column(name = "is_pre_approved")
     private Boolean isPreApproved = false;
 
@@ -82,6 +84,7 @@ public class OvertimeRecord {
     @Column(name = "payroll_run_id")
     private UUID payrollRunId;
 
+    @Builder.Default
     @Column(name = "processed_in_payroll")
     private Boolean processedInPayroll = false;
 
@@ -91,6 +94,7 @@ public class OvertimeRecord {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Builder.Default
     @Column(name = "auto_calculated")
     private Boolean autoCalculated = true;
 
@@ -108,6 +112,7 @@ public class OvertimeRecord {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
+    @Builder.Default
     @Version
     @Column(name = "version")
     private Long version = 0L;

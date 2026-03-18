@@ -29,6 +29,7 @@ public class WikiPageWatch extends BaseEntity {
     @Column(nullable = false)
     private UUID userId;
 
+    @Builder.Default
     @Column(name = "watch_type", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private WatchType watchType = WatchType.COMMENTS;

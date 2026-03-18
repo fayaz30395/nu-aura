@@ -202,7 +202,8 @@
       "Bash(docker compose:*)",
       "Bash(docker stop:*)",
       "Bash(while ps:*)",
-      "Bash(do sleep:*)"
+      "Bash(do sleep:*)",
+      "Skill(update-config)"
     ],
     "additionalDirectories": [
       "/tmp"

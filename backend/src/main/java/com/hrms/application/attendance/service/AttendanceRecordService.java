@@ -1,5 +1,6 @@
 package com.hrms.application.attendance.service;
 
+import com.hrms.common.config.AttendanceConfigProperties;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
@@ -25,11 +26,9 @@ import java.util.UUID;
 @Slf4j
 public class AttendanceRecordService {
 
-    private static final int MAX_OVERNIGHT_SHIFT_HOURS = 16;
-    private static final int MAX_LOOKBACK_DAYS = 2;
-
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final AttendanceTimeEntryRepository timeEntryRepository;
+    private final AttendanceConfigProperties config;
 
     /**
      * Check in an employee at the specified time.
@@ -114,7 +113,7 @@ public class AttendanceRecordService {
 
     /**
      * Check out an employee at the specified time.
-     * Supports overnight shifts by looking back up to MAX_LOOKBACK_DAYS days for an
+     * Supports overnight shifts by looking back for configured max lookback days for an
      * open check-in.
      *
      * @param employeeId   The employee's UUID
@@ -134,7 +133,7 @@ public class AttendanceRecordService {
 
     /**
      * Check out an employee at the specified time with explicit attendance date.
-     * Supports overnight shifts by looking back up to MAX_LOOKBACK_DAYS days for an
+     * Supports overnight shifts by looking back for configured max lookback days for an
      * open check-in.
      *
      * @param employeeId     The employee's UUID
@@ -183,11 +182,12 @@ public class AttendanceRecordService {
 
     /**
      * Find an open attendance record for the employee, looking back up to
-     * MAX_LOOKBACK_DAYS.
+     * configured max lookback days.
      * Also checks for open time entries (for multi check-in/out support).
      */
     private AttendanceRecord findOpenAttendanceRecord(UUID employeeId, LocalDate checkOutDate, UUID tenantId) {
-        for (int i = 0; i <= MAX_LOOKBACK_DAYS; i++) {
+        int maxLookbackDays = config.getMaxLookbackDays();
+        for (int i = 0; i <= maxLookbackDays; i++) {
             LocalDate searchDate = checkOutDate.minusDays(i);
             Optional<AttendanceRecord> recordOpt = attendanceRecordRepository
                     .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, searchDate, tenantId);
@@ -210,7 +210,7 @@ public class AttendanceRecordService {
         }
 
         throw new IllegalArgumentException(
-                String.format("No open check-in found for employee in the last %d days", MAX_LOOKBACK_DAYS + 1));
+                String.format("No open check-in found for employee in the last %d days", maxLookbackDays + 1));
     }
 
     /**
@@ -232,7 +232,7 @@ public class AttendanceRecordService {
 
         if (relevantCheckInTime != null) {
             long hoursWorked = java.time.Duration.between(relevantCheckInTime, checkOutTime).toHours();
-            if (hoursWorked > MAX_OVERNIGHT_SHIFT_HOURS) {
+            if (hoursWorked > config.getMaxOvernightShiftHours()) {
                 log.warn("Unusually long shift detected for record {}: {} hours", record.getId(), hoursWorked);
             }
         }

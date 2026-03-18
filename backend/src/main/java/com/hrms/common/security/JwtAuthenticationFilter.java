@@ -118,7 +118,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     // Set SecurityContext with NU Platform app-aware data
                     SecurityContext.setCurrentUser(principal.getId(), employeeId, roles, permissionScopes);
-                    SecurityContext.setCurrentTenantId(tenantId);
+                    TenantContext.setCurrentTenant(tenantId);
                     SecurityContext.setOrgContext(locationId, departmentId, teamId);
 
                     // Set app context if available from token

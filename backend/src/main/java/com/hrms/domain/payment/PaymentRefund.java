@@ -34,6 +34,7 @@ public class PaymentRefund extends TenantAware {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private RefundStatus status = RefundStatus.INITIATED;

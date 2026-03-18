@@ -1,5 +1,6 @@
 package com.hrms.api.contract.dto;
 
+import com.hrms.common.validation.DateRangeValid;
 import com.hrms.domain.contract.ContractType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -10,9 +11,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * DTO for creating a new contract
+ * DTO for creating a new contract.
+ * Includes validation for date ranges and field constraints.
  */
 @Data
+@DateRangeValid(
+        startDateField = "startDate",
+        endDateField = "endDate",
+        message = "Contract end date must be on or after start date"
+)
 public class CreateContractRequest {
 
     @NotBlank(message = "Contract title is required")

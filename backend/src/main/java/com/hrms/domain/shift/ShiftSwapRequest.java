@@ -47,6 +47,7 @@ public class ShiftSwapRequest {
     @Column(name = "swap_type", nullable = false, length = 20)
     private SwapType swapType;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private SwapStatus status = SwapStatus.PENDING;
@@ -86,6 +87,7 @@ public class ShiftSwapRequest {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @Version
     @Column(name = "version")
     private Long version = 0L;

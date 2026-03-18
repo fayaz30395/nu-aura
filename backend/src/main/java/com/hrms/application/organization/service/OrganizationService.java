@@ -1,8 +1,12 @@
 package com.hrms.application.organization.service;
 
+import com.hrms.api.organization.dto.NineBoxDataResponse;
+import com.hrms.api.organization.dto.SuccessionAnalyticsResponse;
+import com.hrms.common.logging.Audited;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.organization.*;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.organization.repository.*;
@@ -33,6 +37,7 @@ public class OrganizationService {
     // ==================== Organization Unit Operations ====================
 
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "ORGANIZATION_UNIT", description = "Created organization unit")
     public OrganizationUnit createUnit(OrganizationUnit unit) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -85,6 +90,7 @@ public class OrganizationService {
     // ==================== Position Operations ====================
 
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "POSITION", description = "Created position")
     public Position createPosition(Position position) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -126,6 +132,7 @@ public class OrganizationService {
     // ==================== Succession Plan Operations ====================
 
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "SUCCESSION_PLAN", description = "Created succession plan")
     public SuccessionPlan createSuccessionPlan(SuccessionPlan plan) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -170,6 +177,7 @@ public class OrganizationService {
     // ==================== Succession Candidate Operations ====================
 
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "SUCCESSION_CANDIDATE", description = "Added succession candidate")
     public SuccessionCandidate addCandidate(UUID planId, SuccessionCandidate candidate) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -278,17 +286,12 @@ public class OrganizationService {
     // ==================== Analytics ====================
 
     @Transactional(readOnly = true)
-    public Map<String, Object> getSuccessionAnalytics() {
+    public SuccessionAnalyticsResponse getSuccessionAnalytics() {
         UUID tenantId = TenantContext.getCurrentTenant();
-
-        Map<String, Object> analytics = new HashMap<>();
 
         // Plan counts
         long activePlans = planRepository.countActivePlans(tenantId);
         List<SuccessionPlan> highRiskPlans = planRepository.findHighRiskPlans(tenantId);
-
-        analytics.put("activePlans", activePlans);
-        analytics.put("highRiskPlans", highRiskPlans.size());
 
         // Critical positions
         List<Position> criticalPositions = positionRepository.findCriticalPositions(tenantId);
@@ -298,28 +301,30 @@ public class OrganizationService {
                         .isEmpty())
                 .count();
 
-        analytics.put("criticalPositions", criticalPositions.size());
-        analytics.put("criticalWithoutPlan", criticalWithoutPlan);
-
         // Readiness distribution
         List<Object[]> readinessDistribution = candidateRepository.countByReadiness(tenantId);
         Map<String, Integer> readinessMap = readinessDistribution.stream()
                 .collect(Collectors.toMap(
                         r -> r[0].toString(),
                         r -> ((Long) r[1]).intValue()));
-        analytics.put("readinessDistribution", readinessMap);
 
         // Talent pools
         List<TalentPool> pools = poolRepository.findByTenantIdAndIsActiveTrue(tenantId);
         int totalPoolMembers = pools.stream().mapToInt(TalentPool::getMemberCount).sum();
-        analytics.put("talentPools", pools.size());
-        analytics.put("totalPoolMembers", totalPoolMembers);
 
-        return analytics;
+        return SuccessionAnalyticsResponse.builder()
+                .activePlans(activePlans)
+                .highRiskPlans(highRiskPlans.size())
+                .criticalPositions(criticalPositions.size())
+                .criticalWithoutPlan(criticalWithoutPlan)
+                .readinessDistribution(readinessMap)
+                .talentPools(pools.size())
+                .totalPoolMembers(totalPoolMembers)
+                .build();
     }
 
     @Transactional(readOnly = true)
-    public Map<String, Object> getNineBoxData() {
+    public NineBoxDataResponse getNineBoxData() {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // Get all active candidates with performance and potential ratings
@@ -334,10 +339,9 @@ public class OrganizationService {
             }
         }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("distribution", nineBoxDistribution);
-        result.put("totalCandidates", nineBoxDistribution.values().stream().mapToInt(Integer::intValue).sum());
-
-        return result;
+        return NineBoxDataResponse.builder()
+                .distribution(nineBoxDistribution)
+                .totalCandidates(nineBoxDistribution.values().stream().mapToInt(Integer::intValue).sum())
+                .build();
     }
 }

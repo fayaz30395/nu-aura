@@ -31,9 +31,11 @@ public class WikiPageComment extends TenantAware {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Builder.Default
     @Column(name = "like_count", nullable = false)
     private Integer likeCount = 0;
 
+    @Builder.Default
     @Column(name = "is_pinned", nullable = false)
     private Boolean isPinned = false;
 }

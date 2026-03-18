@@ -69,6 +69,7 @@ public class CompOffRequest {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @Version
     @Column(name = "version")
     private Long version = 0L;

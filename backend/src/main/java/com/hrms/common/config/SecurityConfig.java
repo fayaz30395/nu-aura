@@ -77,7 +77,8 @@ public class SecurityConfig {
                         .frameOptions(frame -> frame.deny())
                         .contentSecurityPolicy(
                                 csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"))
-                        .xssProtection(xss -> xss.disable())
+                        // X-XSS-Protection header is deprecated in modern browsers and removed in Spring Security 6.2+
+                        // CSP header above provides better protection. Omitting xssProtection() entirely.
                         // Enforce HTTPS for 1 year (Strict-Transport-Security)
                         // Only effective over HTTPS; browsers ignore HSTS over plain HTTP.
                         .httpStrictTransportSecurity(hsts -> hsts
@@ -170,12 +171,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> allowedOrigins = Arrays.asList(allowedOriginsStr.split(","));
-        // Use allowedOriginPatterns to support wildcard ports (e.g., http://localhost:*)
-        // This is required when allowCredentials is true and the origin port varies
-        // (e.g., Next.js dev server on random ports, preview servers, etc.)
-        List<String> patterns = new java.util.ArrayList<>(allowedOrigins);
-        patterns.add("http://localhost:*");
-        configuration.setAllowedOriginPatterns(patterns);
+        // SECURITY FIX (P1.2): Removed wildcard port pattern "http://localhost:*"
+        // which allowed ANY localhost port. Use explicit origins only.
+        // Configure additional origins via app.cors.allowed-origins property.
+        configuration.setAllowedOriginPatterns(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         // Enumerate required headers explicitly rather than using "*".
         // Wildcards bypass security review and could allow future abuse if an

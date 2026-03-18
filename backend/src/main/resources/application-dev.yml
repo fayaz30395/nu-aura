@@ -41,8 +41,15 @@ spring:
               LOG_QUERIES_SLOWER_THAN_MS: 100
 
   flyway:
-    # Temporarily disable Flyway to test if backend can start
-    enabled: false
+    # Re-enabled for schema consistency (P0 stabilization)
+    enabled: true
+    # Relaxed validation for development - allow schema drift during active development
+    validate-on-migrate: false
+    # Allow out-of-order migrations in dev (team may commit migrations non-sequentially)
+    out-of-order: true
+    # Baseline on existing database if Flyway hasn't run before
+    baseline-on-migrate: true
+    baseline-version: 0
 
 app:
   jwt:

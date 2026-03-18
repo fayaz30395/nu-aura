@@ -32,6 +32,7 @@ public class PaymentConfig extends TenantAware {
     @Column(length = 255)
     private String merchantId;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isActive = false;
 

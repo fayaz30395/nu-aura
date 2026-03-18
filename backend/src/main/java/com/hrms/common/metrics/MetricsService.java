@@ -2,6 +2,7 @@ package com.hrms.common.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -347,5 +348,96 @@ public class MetricsService {
                 .tag("name", jobName)
                 .register(meterRegistry)
                 .record(duration);
+    }
+
+    /**
+     * Record contract lifecycle events (create, update, activate, terminate, renew)
+     */
+    public void recordContractLifecycle(UUID tenantId, String action, String contractType) {
+        Counter.builder("contract_lifecycle")
+                .tag("tenant_id", tenantId.toString())
+                .tag("action", action)
+                .tag("contract_type", contractType)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record contract lifecycle events with duration
+     */
+    public void recordContractLifecycle(UUID tenantId, String action, String contractType, Duration duration) {
+        recordContractLifecycle(tenantId, action, contractType);
+
+        Timer.builder("contract_lifecycle_duration")
+                .tag("tenant_id", tenantId.toString())
+                .tag("action", action)
+                .tag("contract_type", contractType)
+                .register(meterRegistry)
+                .record(duration);
+    }
+
+    /**
+     * Record contract status changes
+     */
+    public void recordContractStatusChange(UUID tenantId, String fromStatus, String toStatus) {
+        Counter.builder("contract_status_transitions")
+                .tag("tenant_id", tenantId.toString())
+                .tag("from_status", fromStatus)
+                .tag("to_status", toStatus)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record contract expiry alerts
+     */
+    public void recordContractExpiryAlert(UUID tenantId, int expiringCount, int expiredCount) {
+        meterRegistry.gauge("contracts_expiring",
+                io.micrometer.core.instrument.Tags.of("tenant_id", tenantId.toString()),
+                expiringCount);
+        meterRegistry.gauge("contracts_expired",
+                io.micrometer.core.instrument.Tags.of("tenant_id", tenantId.toString()),
+                expiredCount);
+    }
+
+    /**
+     * Record webhook delivery metrics
+     */
+    public void recordWebhookDelivery(UUID tenantId, String eventType, boolean success, Duration duration) {
+        Counter.builder("webhook_deliveries")
+                .tag("tenant_id", tenantId.toString())
+                .tag("event_type", eventType)
+                .tag("success", String.valueOf(success))
+                .register(meterRegistry)
+                .increment();
+
+        Timer.builder("webhook_delivery_duration")
+                .tag("tenant_id", tenantId.toString())
+                .tag("event_type", eventType)
+                .register(meterRegistry)
+                .record(duration);
+    }
+
+    /**
+     * Record webhook retry attempts
+     */
+    public void recordWebhookRetry(UUID tenantId, String eventType, int attemptNumber) {
+        Counter.builder("webhook_retries")
+                .tag("tenant_id", tenantId.toString())
+                .tag("event_type", eventType)
+                .tag("attempt", String.valueOf(attemptNumber))
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record webhook circuit breaker state changes
+     */
+    public void recordWebhookCircuitBreaker(UUID webhookId, String state) {
+        Counter.builder("webhook_circuit_breaker")
+                .tag("webhook_id", webhookId.toString())
+                .tag("state", state)
+                .register(meterRegistry)
+                .increment();
     }
 }

@@ -12,6 +12,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.performance.repository.PerformanceReviewRepository;
 import com.hrms.infrastructure.performance.repository.ReviewCompetencyRepository;
 import com.hrms.infrastructure.performance.repository.ReviewCycleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PerformanceReviewService {
 
     @Autowired

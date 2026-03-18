@@ -1,6 +1,7 @@
 package com.hrms.common.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
@@ -53,6 +54,7 @@ public abstract class BaseEntity implements Serializable {
     @Version
     private Long version;
 
+    @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 

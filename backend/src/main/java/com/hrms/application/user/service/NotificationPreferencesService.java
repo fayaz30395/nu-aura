@@ -6,6 +6,7 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.user.model.UserNotificationPreferences;
 import com.hrms.infrastructure.user.repository.UserNotificationPreferencesRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationPreferencesService {
 
     private final UserNotificationPreferencesRepository preferencesRepository;
