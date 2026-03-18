@@ -7,6 +7,7 @@ import { employeeService } from '@/lib/services/employee.service';
 import { payrollService } from '@/lib/services/payroll.service';
 import { Employee } from '@/lib/types/employee';
 import { logger } from '@/lib/utils/logger';
+import { formatCurrency } from '@/lib/utils';
 import {
   CheckCircle2,
   Circle,
@@ -164,12 +165,6 @@ export const BulkProcessingWizard: React.FC = () => {
     emp.departmentName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value);
-  };
 
   const canProceedFromStep1 = selectedEmployeeIds.size > 0;
   const canProceedFromStep2 = payrollPeriodStart && payrollPeriodEnd && paymentDate && runName;

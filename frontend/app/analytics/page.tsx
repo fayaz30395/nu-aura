@@ -37,6 +37,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
 
 import { chartColors } from '@/lib/utils/theme-colors';
+import { formatCurrency } from '@/lib/utils';
 
 // Chart colors - now using CSS variables defined in globals.css
 const COLORS = chartColors.palette();
@@ -86,13 +87,6 @@ export default function AnalyticsPage() {
     }
   }, [hasHydrated, isAuthenticated, router]);
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
 
   if (!hasHydrated || isLoading) {
     return (

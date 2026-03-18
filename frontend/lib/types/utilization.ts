@@ -248,9 +248,4 @@ export const formatPercentage = (rate: number): string => {
   return `${rate.toFixed(1)}%`;
 };
 
-export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
-};
+export { formatCurrency } from '@/lib/utils';

@@ -43,6 +43,7 @@ import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useExecutiveDashboard } from '@/lib/hooks/queries/useDashboards';
 import { StrategicAlert } from '@/lib/types/dashboard';
+import { formatCurrency } from '@/lib/utils';
 
 // Use CSS vars so chart colors adapt to dark mode automatically
 const COLORS = [
@@ -74,14 +75,6 @@ export default function ExecutiveDashboardPage() {
     }
   }, [hasHydrated, isAuthenticated, router]);
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
 
   const formatNumber = (value: number) => {
     return new Intl.NumberFormat('en-IN').format(value);

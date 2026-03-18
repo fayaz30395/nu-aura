@@ -51,6 +51,7 @@ import { useOnboardingProcessesByStatus } from '@/lib/hooks/queries/useOnboardin
 import { getLocalDateString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
 import { createLogger } from '@/lib/utils/logger';
+import { formatCurrency } from '@/lib/utils';
 
 const log = createLogger('DashboardPage');
 
@@ -357,8 +358,6 @@ export default function DashboardPage() {
   };
 
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(value);
 
   const formatRelativeTime = (date: Date) => {
     const now = new Date();

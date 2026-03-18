@@ -16,11 +16,18 @@ export function getInitials(name: string): string {
 }
 
 
-export function formatCurrency(amount: number, currency: string = 'INR'): string {
-  return new Intl.NumberFormat('en-IN', {
+export function formatCurrency(
+  amount: number | undefined | null,
+  currency: string = 'INR',
+  options?: { locale?: string; minimumFractionDigits?: number; maximumFractionDigits?: number; fallback?: string },
+): string {
+  if (amount === undefined || amount === null) return options?.fallback ?? '-';
+  return new Intl.NumberFormat(options?.locale ?? 'en-IN', {
     style: 'currency',
-    currency: currency,
-  }).format(amount)
+    currency,
+    ...(options?.minimumFractionDigits !== undefined && { minimumFractionDigits: options.minimumFractionDigits }),
+    ...(options?.maximumFractionDigits !== undefined && { maximumFractionDigits: options.maximumFractionDigits }),
+  }).format(amount);
 }
 
 export function formatDate(date: string | Date): string {

@@ -48,6 +48,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { extractContent } from '@/lib/utils/type-guards';
 import { createLogger } from '@/lib/utils/logger';
+import { formatCurrency } from '@/lib/utils';
 
 const log = createLogger('OffboardingPage');
 
@@ -143,15 +144,6 @@ const formatStatusLabel = (status: ExitStatus | string | null | undefined) => {
   return String(status).replace(/_/g, ' ');
 };
 
-const formatCurrency = (amount: number | undefined) => {
-  if (amount === undefined || amount === null) return '-';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 export default function OffboardingPage() {
   const router = useRouter();

@@ -56,12 +56,7 @@ export interface FormModalState {
 }
 
 // Shared formatter helpers
-export function formatCurrency(value: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value);
-}
+export { formatCurrency } from '@/lib/utils';
 
 export function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
