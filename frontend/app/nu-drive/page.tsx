@@ -1,90 +1,32 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import NextImage from 'next/image';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useRouter } from 'next/navigation';
-import {
-  HardDrive,
-  Folder,
-  File,
-  FileText,
-  Image as ImageIcon,
-  Film,
-  Music,
-  FileSpreadsheet,
-  Presentation,
-  Search,
-  Grid,
-  List,
-  Star,
-  Clock,
-  Users,
-  AlertCircle,
-  ExternalLink,
-  RefreshCw,
-  UploadCloud,
-  Loader2,
-  FolderPlus,
-  Share2,
-  Download,
-  Trash2,
-  MoreVertical,
-  X,
-  Copy,
-  Check,
-  Edit3,
-  FolderOpen,
-} from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
 import { createLogger } from '@/lib/utils/logger';
 
+import {
+  DriveOAuthPanel,
+  DriveToolbar,
+  DriveEmptyState,
+  FileGridView,
+  FileListView,
+  FileContextMenu,
+  NewFolderModal,
+  ShareModal,
+  RenameModal,
+  FilePreviewModal,
+  DeleteConfirm,
+  DriveFile,
+  DriveFileMetadata,
+  DriveStats,
+  ViewTab,
+} from './_components';
+
 const log = createLogger('NuDrivePage');
-
-interface DriveFile {
-  id: string;
-  name: string;
-  mimeType: string;
-  size?: string;
-  modifiedTime?: string;
-  starred?: boolean;
-  shared?: boolean;
-  webViewLink?: string;
-  webContentLink?: string;
-  sharingUser?: { displayName: string; emailAddress?: string };
-  owners?: { displayName: string; emailAddress?: string; photoLink?: string }[];
-  iconLink?: string;
-}
-
-interface DriveFileMetadata {
-  name: string;
-  mimeType: string;
-  parents?: string[];
-  modifiedTime?: string;
-  iconLink?: string;
-  webViewLink?: string;
-  webContentLink?: string;
-  owners?: { displayName: string; emailAddress?: string; photoLink?: string }[];
-  shared?: boolean;
-  starred?: boolean;
-  sharingUser?: { displayName: string; emailAddress?: string };
-  permissions?: { type: string; role: string; emailAddress?: string }[];
-}
-
-interface DriveStats {
-  used: number;
-  limit: number;
-  usedInDrive: number;
-  usedInTrash: number;
-}
-
-type ViewTab = 'my-drive' | 'shared' | 'starred' | 'recent';
 
 function DriveContent() {
   const router = useRouter();
@@ -135,7 +77,7 @@ function DriveContent() {
 
   const contextMenuRef = useRef<HTMLDivElement>(null);
 
-  // Save token using unified storage (also saves to Drive-specific keys for compatibility)
+  // Save token using unified storage
   const saveToken = (token: string, expiresIn: number = 3600) => {
     saveGoogleToken(token, expiresIn);
     setAccessToken(token);
@@ -149,7 +91,6 @@ function DriveContent() {
     setDriveStats(null);
   };
 
-  // Check if stored token is still valid (uses unified token from SSO login)
   const getStoredToken = (): string | null => {
     return getGoogleToken();
   };
@@ -200,20 +141,16 @@ function DriveContent() {
 
       const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
         body: form,
       });
 
       if (!response.ok) throw new Error('Upload failed');
 
-      // Refresh list
       await loadDriveFiles(accessToken, currentFolder, activeTab);
       await loadDriveStats(accessToken);
-
-    } catch (error) {
-      log.error('Upload error:', error);
+    } catch (uploadError) {
+      log.error('Upload error:', uploadError);
       setError('Failed to upload file');
     } finally {
       setUploading(false);
@@ -226,7 +163,6 @@ function DriveContent() {
     }
   };
 
-  // Create new folder
   const createNewFolder = async () => {
     if (!accessToken || !newFolderName.trim()) return;
 
@@ -236,13 +172,8 @@ function DriveContent() {
       const metadata: DriveFileMetadata = {
         name: newFolderName.trim(),
         mimeType: 'application/vnd.google-apps.folder',
+        parents: currentFolder !== 'root' ? [currentFolder] : ['root'],
       };
-
-      if (currentFolder !== 'root') {
-        metadata.parents = [currentFolder];
-      } else {
-        metadata.parents = ['root'];
-      }
 
       const response = await fetch('https://www.googleapis.com/drive/v3/files', {
         method: 'POST',
@@ -257,19 +188,15 @@ function DriveContent() {
 
       setNewFolderName('');
       setShowNewFolderModal(false);
-
-      // Refresh list
       await loadDriveFiles(accessToken, currentFolder, activeTab);
-
-    } catch (error) {
-      log.error('Create folder error:', error);
+    } catch (folderError) {
+      log.error('Create folder error:', folderError);
       setError('Failed to create folder');
     } finally {
       setCreatingFolder(false);
     }
   };
 
-  // Share file
   const shareFile = async () => {
     if (!accessToken || !selectedFile || !shareEmail.trim()) return;
 
@@ -296,26 +223,19 @@ function DriveContent() {
 
       setShareSuccess(true);
       setShareEmail('');
-
-      // Refresh file list
-      setTimeout(() => {
-        setShareSuccess(false);
-      }, 3000);
-
-    } catch (error) {
-      log.error('Share error:', error);
+      setTimeout(() => { setShareSuccess(false); }, 3000);
+    } catch (shareError) {
+      log.error('Share error:', shareError);
       setError('Failed to share file');
     } finally {
       setSharing(false);
     }
   };
 
-  // Get shareable link
   const getShareableLink = async () => {
     if (!accessToken || !selectedFile) return;
 
     try {
-      // First, make the file accessible via link
       await fetch(
         `https://www.googleapis.com/drive/v3/files/${selectedFile.id}/permissions`,
         {
@@ -324,32 +244,24 @@ function DriveContent() {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            type: 'anyone',
-            role: 'reader',
-          }),
+          body: JSON.stringify({ type: 'anyone', role: 'reader' }),
         }
       );
 
-      // Get the file with webViewLink
       const response = await fetch(
         `https://www.googleapis.com/drive/v3/files/${selectedFile.id}?fields=webViewLink`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
       if (response.ok) {
         const data = await response.json();
         setShareLink(data.webViewLink);
       }
-
-    } catch (error) {
-      log.error('Error getting shareable link:', error);
+    } catch (linkError) {
+      log.error('Error getting shareable link:', linkError);
     }
   };
 
-  // Copy link to clipboard
   const copyLink = () => {
     if (shareLink) {
       navigator.clipboard.writeText(shareLink);
@@ -358,7 +270,6 @@ function DriveContent() {
     }
   };
 
-  // Delete file
   const deleteFile = async (fileId: string) => {
     setFileToDelete(fileId);
     setDeleteConfirmOpen(true);
@@ -378,19 +289,16 @@ function DriveContent() {
 
       if (!response.ok) throw new Error('Failed to delete file');
 
-      // Remove from local state
       setFiles(files.filter(f => f.id !== fileToDelete));
       setShowContextMenu(false);
       setDeleteConfirmOpen(false);
       setFileToDelete(null);
-
-    } catch (error) {
-      log.error('Delete error:', error);
+    } catch (deleteError) {
+      log.error('Delete error:', deleteError);
       setError('Failed to delete file');
     }
   };
 
-  // Rename file
   const renameFile = async () => {
     if (!accessToken || !contextMenuFile || !renameValue.trim()) return;
 
@@ -411,23 +319,19 @@ function DriveContent() {
 
       if (!response.ok) throw new Error('Failed to rename file');
 
-      // Update local state
       setFiles(files.map(f =>
         f.id === contextMenuFile.id ? { ...f, name: renameValue.trim() } : f
       ));
-
       setShowRenameModal(false);
       setRenameValue('');
-
-    } catch (error) {
-      log.error('Rename error:', error);
+    } catch (renameError) {
+      log.error('Rename error:', renameError);
       setError('Failed to rename file');
     } finally {
       setRenaming(false);
     }
   };
 
-  // Toggle star
   const toggleStar = async (file: DriveFile) => {
     if (!accessToken) return;
 
@@ -446,106 +350,15 @@ function DriveContent() {
 
       if (!response.ok) throw new Error('Failed to update star');
 
-      // Update local state
       setFiles(files.map(f =>
         f.id === file.id ? { ...f, starred: !f.starred } : f
       ));
       setShowContextMenu(false);
-
-    } catch (error) {
-      log.error('Star toggle error:', error);
+    } catch (starError) {
+      log.error('Star toggle error:', starError);
     }
   };
 
-  // Get preview URL for a file
-  const getPreviewUrl = (file: DriveFile): string | null => {
-    const mimeType = file.mimeType;
-
-    // Google Docs types - use export/preview links
-    if (mimeType === 'application/vnd.google-apps.document') {
-      return `https://docs.google.com/document/d/${file.id}/preview`;
-    }
-    if (mimeType === 'application/vnd.google-apps.spreadsheet') {
-      return `https://docs.google.com/spreadsheets/d/${file.id}/preview`;
-    }
-    if (mimeType === 'application/vnd.google-apps.presentation') {
-      return `https://docs.google.com/presentation/d/${file.id}/preview`;
-    }
-    if (mimeType === 'application/vnd.google-apps.drawing') {
-      return `https://docs.google.com/drawings/d/${file.id}/preview`;
-    }
-    if (mimeType === 'application/vnd.google-apps.form') {
-      return `https://docs.google.com/forms/d/${file.id}/viewform`;
-    }
-
-    // PDFs
-    if (mimeType === 'application/pdf') {
-      return `https://drive.google.com/file/d/${file.id}/preview`;
-    }
-
-    // Images
-    if (mimeType.startsWith('image/')) {
-      return `https://drive.google.com/uc?id=${file.id}`;
-    }
-
-    // Videos
-    if (mimeType.startsWith('video/')) {
-      return `https://drive.google.com/file/d/${file.id}/preview`;
-    }
-
-    // Audio
-    if (mimeType.startsWith('audio/')) {
-      return `https://drive.google.com/file/d/${file.id}/preview`;
-    }
-
-    // Text files - fetch content
-    if (mimeType.startsWith('text/') || mimeType === 'application/json' || mimeType === 'application/javascript') {
-      return null; // Will fetch content instead
-    }
-
-    // Office files (Word, Excel, PowerPoint) - use Google's viewer
-    if (
-      mimeType.includes('word') ||
-      mimeType.includes('excel') ||
-      mimeType.includes('spreadsheet') ||
-      mimeType.includes('powerpoint') ||
-      mimeType.includes('presentation')
-    ) {
-      return `https://drive.google.com/file/d/${file.id}/preview`;
-    }
-
-    // Default: try Google Drive preview
-    return `https://drive.google.com/file/d/${file.id}/preview`;
-  };
-
-  // Check if file type supports inline preview
-  const _supportsPreview = (mimeType: string): boolean => {
-    // Folders don't have preview
-    if (mimeType === 'application/vnd.google-apps.folder') return false;
-
-    // Supported types
-    const supportedTypes = [
-      'application/vnd.google-apps.document',
-      'application/vnd.google-apps.spreadsheet',
-      'application/vnd.google-apps.presentation',
-      'application/vnd.google-apps.drawing',
-      'application/vnd.google-apps.form',
-      'application/pdf',
-      'image/',
-      'video/',
-      'audio/',
-      'text/',
-      'application/json',
-      'application/javascript',
-      'word',
-      'excel',
-      'powerpoint',
-    ];
-
-    return supportedTypes.some(type => mimeType.includes(type) || mimeType.startsWith(type));
-  };
-
-  // Open file preview
   const openPreview = async (file: DriveFile) => {
     if (file.mimeType === 'application/vnd.google-apps.folder') {
       navigateToFolder(file.id, file.name);
@@ -558,28 +371,24 @@ function DriveContent() {
     setPreviewImgError(false);
     setShowPreviewModal(true);
 
-    // For text files, fetch the content
     if (file.mimeType.startsWith('text/') || file.mimeType === 'application/json' || file.mimeType === 'application/javascript') {
       try {
         const response = await fetch(
           `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
+          { headers: { Authorization: `Bearer ${accessToken}` } }
         );
         if (response.ok) {
           const text = await response.text();
           setPreviewContent(text);
         }
-      } catch (err) {
-        log.error('Error fetching text content:', err);
+      } catch (previewError) {
+        log.error('Error fetching text content:', previewError);
       }
     }
 
     setPreviewLoading(false);
   };
 
-  // Download file
   const downloadFile = async (file: DriveFile) => {
     if (!accessToken || !file.webContentLink) return;
 
@@ -599,9 +408,7 @@ function DriveContent() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-
-    } catch (_error) {
-      // Fall back to opening in new tab
+    } catch (_downloadError) {
       if (file.webViewLink) {
         window.open(file.webViewLink, '_blank');
       }
@@ -661,11 +468,7 @@ function DriveContent() {
 
       const response = await fetch(
         `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name,mimeType,size,modifiedTime,iconLink,webViewLink,webContentLink,owners,shared,starred,sharingUser,permissions)&orderBy=${orderBy}&pageSize=50`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (!response.ok) {
@@ -692,16 +495,10 @@ function DriveContent() {
     try {
       const response = await fetch(
         'https://www.googleapis.com/drive/v3/about?fields=storageQuota',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch storage info');
-      }
+      if (!response.ok) throw new Error('Failed to fetch storage info');
 
       const data = await response.json();
       setDriveStats({
@@ -733,7 +530,6 @@ function DriveContent() {
 
     setCurrentFolder(folderId);
 
-    // If coming from shared/starred/recent view, reset breadcrumbs for the shared folder
     if (activeTab !== 'my-drive') {
       setActiveTab('my-drive');
       setBreadcrumbs([{ id: 'root', name: 'My Drive' }, { id: folderId, name: folderName }]);
@@ -746,38 +542,13 @@ function DriveContent() {
       }
     }
 
-    // Load folder contents - for shared folders, we query by parent ID
     await loadDriveFiles(accessToken, folderId, 'my-drive');
   };
-
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const getFileIcon = (mimeType: string) => {
-    if (mimeType === 'application/vnd.google-apps.folder') return <Folder className="h-8 w-8 text-yellow-500" />;
-    if (mimeType.startsWith('image/')) return <ImageIcon className="h-8 w-8 text-green-500" />;
-    if (mimeType.startsWith('video/')) return <Film className="h-8 w-8 text-purple-500" />;
-    if (mimeType.startsWith('audio/')) return <Music className="h-8 w-8 text-pink-500" />;
-    if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return <FileSpreadsheet className="h-8 w-8 text-green-600" />;
-    if (mimeType.includes('presentation') || mimeType.includes('powerpoint')) return <Presentation className="h-8 w-8 text-orange-500" />;
-    if (mimeType.includes('document') || mimeType.includes('word')) return <FileText className="h-8 w-8 text-blue-500" />;
-    return <File className="h-8 w-8 text-[var(--text-muted)]" />;
-  };
-
-  const filteredFiles = files.filter(file =>
-    file.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const handleFileClick = (file: DriveFile) => {
     if (file.mimeType === 'application/vnd.google-apps.folder') {
       navigateToFolder(file.id, file.name);
     } else {
-      // Open file in inline preview
       openPreview(file);
     }
   };
@@ -812,9 +583,9 @@ function DriveContent() {
     }
   };
 
-  const handleConnectClick = () => {
-    googleLogin();
-  };
+  const filteredFiles = files.filter(file =>
+    file.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading && !accessToken) {
     return (
@@ -833,231 +604,36 @@ function DriveContent() {
       breadcrumbs={[{ label: 'NU-Drive', href: '/nu-drive' }]}
     >
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center">
-              <HardDrive className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">NU-Drive</h1>
-              <p className="text-sm text-[var(--text-muted)]">Your organization&apos;s Google Drive</p>
-            </div>
-          </div>
-          {!accessToken ? (
-            <Button
-              variant="primary"
-              onClick={handleConnectClick}
-              leftIcon={<HardDrive className="h-4 w-4" />}
-            >
-              Connect Google Drive
-            </Button>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowNewFolderModal(true)}
-                leftIcon={<FolderPlus className="h-4 w-4" />}
-              >
-                New Folder
-              </Button>
-              <label>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={handleFileSelect}
-                  disabled={uploading}
-                />
-                <div className={`cursor-pointer inline-flex items-center gap-2 h-8 px-3 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 disabled:opacity-50 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                  {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
-                  <span>Upload</span>
-                </div>
-              </label>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshFiles}
-                leftIcon={<RefreshCw className="h-4 w-4" />}
-              >
-                Refresh
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearToken}
-                className="text-[var(--text-muted)] hover:text-red-600"
-              >
-                Disconnect
-              </Button>
-            </div>
-          )}
-        </div>
+        {/* Header + OAuth Panel */}
+        <DriveOAuthPanel
+          isConnected={!!accessToken}
+          uploading={uploading}
+          error={error}
+          onConnect={() => googleLogin()}
+          onNewFolder={() => setShowNewFolderModal(true)}
+          onFileSelect={handleFileSelect}
+          onRefresh={refreshFiles}
+          onDisconnect={clearToken}
+        />
 
-        {/* Error State */}
-        {error && (
-          <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30">
-            <CardContent className="py-4">
-              <div className="flex items-center gap-4 text-red-600 dark:text-red-400">
-                <AlertCircle className="h-5 w-5" />
-                <span>{error}</span>
-                <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
-                  Try Again
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {!accessToken ? (
-          /* Connect Card */
-          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
-            <CardContent className="py-16">
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center mx-auto mb-6">
-                  <HardDrive className="h-10 w-10 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                  Connect to Google Drive
-                </h2>
-                <p className="text-[var(--text-muted)] mb-6 max-w-md mx-auto">
-                  Access your organization&apos;s Google Drive files directly within NuLogic.
-                  View, search, upload, share, and manage your documents all in one place.
-                </p>
-                <Button
-                  variant="primary"
-                  size="lg"
-                  onClick={handleConnectClick}
-                  leftIcon={<HardDrive className="h-5 w-5" />}
-                >
-                  Connect Google Drive
-                </Button>
-                <p className="text-xs text-[var(--text-muted)] mt-4">
-                  You&apos;ll be asked to grant access to your Google Drive files.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
+        {accessToken && (
           <>
-            {/* Storage Stats */}
-            {driveStats && driveStats.limit > 0 && (
-              <Card>
-                <CardContent className="py-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-[var(--text-secondary)]">Storage Used</span>
-                    <span className="text-sm text-[var(--text-muted)]">
-                      {formatBytes(driveStats.used)} of {formatBytes(driveStats.limit)}
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min((driveStats.used / driveStats.limit) * 100, 100)}%` }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            {/* Toolbar: storage stats, tabs, search, breadcrumbs */}
+            <DriveToolbar
+              searchQuery={searchQuery}
+              viewMode={viewMode}
+              activeTab={activeTab}
+              breadcrumbs={breadcrumbs}
+              driveStats={driveStats}
+              onSearchChange={setSearchQuery}
+              onViewModeChange={setViewMode}
+              onTabChange={handleTabChange}
+              onNavigateToFolder={navigateToFolder}
+              onNewFolder={() => setShowNewFolderModal(true)}
+              onFileSelect={handleFileSelect}
+            />
 
-            {/* Tabs */}
-            <div className="flex items-center gap-1 border-b border-[var(--border-main)]">
-              <button
-                onClick={() => handleTabChange('my-drive')}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'my-drive'
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
-                }`}
-              >
-                <FolderOpen className="h-4 w-4" />
-                My Drive
-              </button>
-              <button
-                onClick={() => handleTabChange('shared')}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'shared'
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
-                }`}
-              >
-                <Users className="h-4 w-4" />
-                Shared with me
-              </button>
-              <button
-                onClick={() => handleTabChange('starred')}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'starred'
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
-                }`}
-              >
-                <Star className="h-4 w-4" />
-                Starred
-              </button>
-              <button
-                onClick={() => handleTabChange('recent')}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'recent'
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
-                }`}
-              >
-                <Clock className="h-4 w-4" />
-                Recent
-              </button>
-            </div>
-
-            {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
-                <Input
-                  placeholder="Search files..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 ${viewMode === 'grid' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
-                  >
-                    <Grid className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 ${viewMode === 'list' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
-                  >
-                    <List className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Breadcrumbs */}
-            {activeTab === 'my-drive' && breadcrumbs.length > 1 && (
-              <div className="flex items-center gap-2 text-sm">
-                {breadcrumbs.map((crumb, index) => (
-                  <React.Fragment key={crumb.id}>
-                    {index > 0 && <span className="text-[var(--text-muted)]">/</span>}
-                    <button
-                      onClick={() => navigateToFolder(crumb.id, crumb.name)}
-                      className={`hover:text-primary-600 ${index === breadcrumbs.length - 1
-                          ? 'text-[var(--text-primary)] font-medium'
-                          : 'text-[var(--text-muted)]'
-                        }`}
-                    >
-                      {crumb.name}
-                    </button>
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
-
-            {/* Loading State */}
+            {/* File Area */}
             {isLoading ? (
               <div className="flex items-center justify-center py-16">
                 <div className="flex flex-col items-center gap-4">
@@ -1066,147 +642,25 @@ function DriveContent() {
                 </div>
               </div>
             ) : filteredFiles.length === 0 ? (
-              /* Empty State */
-              <Card>
-                <CardContent className="py-16">
-                  <div className="text-center">
-                    <Folder className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
-                      {searchQuery ? 'No files found' :
-                       activeTab === 'shared' ? 'No files shared with you' :
-                       activeTab === 'starred' ? 'No starred files' :
-                       activeTab === 'recent' ? 'No recent files' :
-                       'This folder is empty'}
-                    </h3>
-                    <p className="text-[var(--text-muted)]">
-                      {searchQuery
-                        ? 'Try adjusting your search query'
-                        : activeTab === 'my-drive'
-                          ? 'Upload files or create a new folder'
-                          : 'Files will appear here when available'}
-                    </p>
-                    {activeTab === 'my-drive' && !searchQuery && (
-                      <div className="flex items-center justify-center gap-4 mt-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowNewFolderModal(true)}
-                          leftIcon={<FolderPlus className="h-4 w-4" />}
-                        >
-                          New Folder
-                        </Button>
-                        <label className="cursor-pointer">
-                          <input type="file" className="hidden" onChange={handleFileSelect} />
-                          <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
-                            <UploadCloud className="h-4 w-4" />
-                            Upload File
-                          </span>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+              <DriveEmptyState
+                searchQuery={searchQuery}
+                activeTab={activeTab}
+                onNewFolder={() => setShowNewFolderModal(true)}
+                onFileSelect={handleFileSelect}
+              />
             ) : viewMode === 'grid' ? (
-              /* Grid View */
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {filteredFiles.map((file) => (
-                  <div
-                    key={file.id}
-                    onClick={() => handleFileClick(file)}
-                    onContextMenu={(e) => handleContextMenu(e, file)}
-                    className="group p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer relative"
-                  >
-                    <button
-                      onClick={(e) => handleContextMenu(e, file)}
-                      className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-opacity"
-                    >
-                      <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
-                    </button>
-                    <div className="flex flex-col items-center text-center">
-                      <div className="mb-3 p-4 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30 transition-colors">
-                        {getFileIcon(file.mimeType)}
-                      </div>
-                      <p className="text-sm font-medium text-[var(--text-primary)] truncate w-full">
-                        {file.name}
-                      </p>
-                      {file.modifiedTime && (
-                        <p className="text-xs text-[var(--text-muted)] mt-1">
-                          {new Date(file.modifiedTime).toLocaleDateString()}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-1 mt-1">
-                        {file.starred && (
-                          <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                        )}
-                        {file.shared && (
-                          <Users className="h-3 w-3 text-[var(--text-muted)]" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <FileGridView
+                files={filteredFiles}
+                onFileClick={handleFileClick}
+                onContextMenu={handleContextMenu}
+              />
             ) : (
-              /* List View */
-              <Card>
-                <div className="divide-y divide-surface-100 dark:divide-surface-800">
-                  {filteredFiles.map((file) => (
-                    <div
-                      key={file.id}
-                      onClick={() => handleFileClick(file)}
-                      onContextMenu={(e) => handleContextMenu(e, file)}
-                      className="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors"
-                    >
-                      <div className="flex-shrink-0">
-                        {getFileIcon(file.mimeType)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                            {file.name}
-                          </p>
-                          {file.starred && (
-                            <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
-                          )}
-                          {file.shared && (
-                            <Users className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
-                          )}
-                        </div>
-                        <div className="flex items-center gap-4 mt-1">
-                          {activeTab === 'shared' && file.sharingUser && (
-                            <span className="text-xs text-[var(--text-muted)]">
-                              Shared by {file.sharingUser.displayName}
-                            </span>
-                          )}
-                          {file.owners?.[0] && activeTab !== 'shared' && (
-                            <span className="text-xs text-[var(--text-muted)]">
-                              {file.owners[0].displayName}
-                            </span>
-                          )}
-                          {file.modifiedTime && (
-                            <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {new Date(file.modifiedTime).toLocaleDateString()}
-                            </span>
-                          )}
-                          {file.size && (
-                            <span className="text-xs text-[var(--text-muted)]">
-                              {formatBytes(parseInt(file.size))}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <button
-                        onClick={(e) => handleContextMenu(e, file)}
-                        className="p-2 rounded-full hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
-                      >
-                        <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              <FileListView
+                files={filteredFiles}
+                activeTab={activeTab}
+                onFileClick={handleFileClick}
+                onContextMenu={handleContextMenu}
+              />
             )}
           </>
         )}
@@ -1214,398 +668,73 @@ function DriveContent() {
 
       {/* Context Menu */}
       {showContextMenu && contextMenuFile && (
-        <div
-          ref={contextMenuRef}
-          style={{ left: contextMenuPos.x, top: contextMenuPos.y }}
-          className="fixed z-50 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg py-1 min-w-[180px]"
-        >
-          {contextMenuFile.mimeType !== 'application/vnd.google-apps.folder' && (
-            <button
-              onClick={() => {
-                openPreview(contextMenuFile);
-                setShowContextMenu(false);
-              }}
-              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
-            >
-              <File className="h-4 w-4" />
-              Open
-            </button>
-          )}
-          {contextMenuFile.webViewLink && (
-            <button
-              onClick={() => {
-                window.open(contextMenuFile.webViewLink, '_blank');
-                setShowContextMenu(false);
-              }}
-              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Open in Drive
-            </button>
-          )}
-          {contextMenuFile.mimeType !== 'application/vnd.google-apps.folder' && contextMenuFile.webContentLink && (
-            <button
-              onClick={() => downloadFile(contextMenuFile)}
-              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
-            >
-              <Download className="h-4 w-4" />
-              Download
-            </button>
-          )}
-          <button
-            onClick={() => openShareModal(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
-          >
-            <Share2 className="h-4 w-4" />
-            Share
-          </button>
-          <button
-            onClick={() => toggleStar(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
-          >
-            <Star className={`h-4 w-4 ${contextMenuFile.starred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
-            {contextMenuFile.starred ? 'Remove star' : 'Add star'}
-          </button>
-          <button
-            onClick={() => openRenameModal(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
-          >
-            <Edit3 className="h-4 w-4" />
-            Rename
-          </button>
-          <div className="border-t border-[var(--border-main)] dark:border-[var(--border-main)] my-1" />
-          <button
-            onClick={() => {
-              deleteFile(contextMenuFile.id);
-            }}
-            className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-4"
-          >
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
-        </div>
+        <FileContextMenu
+          file={contextMenuFile}
+          position={contextMenuPos}
+          menuRef={contextMenuRef}
+          onOpen={(file) => { openPreview(file); setShowContextMenu(false); }}
+          onOpenInDrive={(file) => { window.open(file.webViewLink, '_blank'); setShowContextMenu(false); }}
+          onDownload={downloadFile}
+          onShare={openShareModal}
+          onToggleStar={toggleStar}
+          onRename={openRenameModal}
+          onDelete={deleteFile}
+        />
       )}
 
-      {/* New Folder Modal */}
-      {showNewFolderModal && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="font-semibold text-[var(--text-primary)]">Create New Folder</h3>
-              <button
-                onClick={() => {
-                  setShowNewFolderModal(false);
-                  setNewFolderName('');
-                }}
-                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Folder Name
-                </label>
-                <Input
-                  value={newFolderName}
-                  onChange={(e) => setNewFolderName(e.target.value)}
-                  placeholder="Enter folder name"
-                  autoFocus
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setShowNewFolderModal(false);
-                    setNewFolderName('');
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={createNewFolder}
-                  disabled={creatingFolder || !newFolderName.trim()}
-                  leftIcon={creatingFolder ? <Loader2 className="h-4 w-4 animate-spin" /> : <FolderPlus className="h-4 w-4" />}
-                >
-                  {creatingFolder ? 'Creating...' : 'Create'}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
+      {/* Modals */}
+      <NewFolderModal
+        opened={showNewFolderModal}
+        newFolderName={newFolderName}
+        creatingFolder={creatingFolder}
+        onClose={() => { setShowNewFolderModal(false); setNewFolderName(''); }}
+        onNameChange={setNewFolderName}
+        onCreate={createNewFolder}
+      />
 
-      {/* Share Modal */}
-      {showShareModal && selectedFile && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="font-semibold text-[var(--text-primary)]">Share &quot;{selectedFile.name}&quot;</h3>
-              <button
-                onClick={() => setShowShareModal(false)}
-                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="p-4 space-y-4">
-              {shareSuccess && (
-                <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg">
-                  <Check className="h-4 w-4" />
-                  <span className="text-sm">Shared successfully!</span>
-                </div>
-              )}
+      <ShareModal
+        opened={showShareModal}
+        file={selectedFile}
+        shareEmail={shareEmail}
+        shareRole={shareRole}
+        sharing={sharing}
+        shareSuccess={shareSuccess}
+        shareLink={shareLink}
+        linkCopied={linkCopied}
+        onClose={() => setShowShareModal(false)}
+        onEmailChange={setShareEmail}
+        onRoleChange={setShareRole}
+        onShare={shareFile}
+        onGetShareableLink={getShareableLink}
+        onCopyLink={copyLink}
+      />
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Share with
-                </label>
-                <Input
-                  value={shareEmail}
-                  onChange={(e) => setShareEmail(e.target.value)}
-                  placeholder="Enter email address"
-                  type="email"
-                />
-              </div>
+      <RenameModal
+        opened={showRenameModal}
+        file={contextMenuFile}
+        renameValue={renameValue}
+        renaming={renaming}
+        onClose={() => { setShowRenameModal(false); setRenameValue(''); }}
+        onRenameChange={setRenameValue}
+        onRename={renameFile}
+      />
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Permission
-                </label>
-                <select
-                  value={shareRole}
-                  onChange={(e) => setShareRole(e.target.value as 'reader' | 'writer' | 'commenter')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
-                >
-                  <option value="reader">Viewer</option>
-                  <option value="commenter">Commenter</option>
-                  <option value="writer">Editor</option>
-                </select>
-              </div>
+      <FilePreviewModal
+        opened={showPreviewModal}
+        file={previewFile}
+        previewLoading={previewLoading}
+        previewContent={previewContent}
+        previewImgError={previewImgError}
+        onClose={() => { setShowPreviewModal(false); setPreviewFile(null); setPreviewContent(null); }}
+        onDownload={downloadFile}
+        onShare={openShareModal}
+        onImgError={() => setPreviewImgError(true)}
+      />
 
-              <Button
-                variant="primary"
-                onClick={shareFile}
-                disabled={sharing || !shareEmail.trim()}
-                leftIcon={sharing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
-                className="w-full"
-              >
-                {sharing ? 'Sharing...' : 'Share'}
-              </Button>
-
-              <div className="border-t border-[var(--border-main)] pt-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Get shareable link
-                </label>
-                {shareLink ? (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={shareLink}
-                      readOnly
-                      className="flex-1"
-                    />
-                    <Button
-                      variant="outline"
-                      onClick={copyLink}
-                      leftIcon={linkCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    >
-                      {linkCopied ? 'Copied!' : 'Copy'}
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    onClick={getShareableLink}
-                    className="w-full"
-                  >
-                    Generate Link
-                  </Button>
-                )}
-                <p className="text-xs text-[var(--text-muted)] mt-2">
-                  Anyone with this link can view the file.
-                </p>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Rename Modal */}
-      {showRenameModal && contextMenuFile && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="font-semibold text-[var(--text-primary)]">Rename</h3>
-              <button
-                onClick={() => {
-                  setShowRenameModal(false);
-                  setRenameValue('');
-                }}
-                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  New name
-                </label>
-                <Input
-                  value={renameValue}
-                  onChange={(e) => setRenameValue(e.target.value)}
-                  placeholder="Enter new name"
-                  autoFocus
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setShowRenameModal(false);
-                    setRenameValue('');
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={renameFile}
-                  disabled={renaming || !renameValue.trim()}
-                  leftIcon={renaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Edit3 className="h-4 w-4" />}
-                >
-                  {renaming ? 'Renaming...' : 'Rename'}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* File Preview Modal */}
-      {showPreviewModal && previewFile && (
-        <div className="fixed inset-0 bg-black/80 flex flex-col z-50">
-          {/* Preview Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
-            <div className="flex items-center gap-4">
-              {getFileIcon(previewFile.mimeType)}
-              <div>
-                <h3 className="font-medium text-white truncate max-w-md">{previewFile.name}</h3>
-                {previewFile.modifiedTime && (
-                  <p className="text-xs text-[var(--text-muted)]">
-                    Modified {new Date(previewFile.modifiedTime).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {previewFile.webContentLink && previewFile.mimeType !== 'application/vnd.google-apps.folder' && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => downloadFile(previewFile)}
-                  className="text-white hover:bg-[var(--bg-secondary)]"
-                  leftIcon={<Download className="h-4 w-4" />}
-                >
-                  Download
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => openShareModal(previewFile)}
-                className="text-white hover:bg-[var(--bg-secondary)]"
-                leftIcon={<Share2 className="h-4 w-4" />}
-              >
-                Share
-              </Button>
-              {previewFile.webViewLink && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => window.open(previewFile.webViewLink, '_blank')}
-                  className="text-white hover:bg-[var(--bg-secondary)]"
-                  leftIcon={<ExternalLink className="h-4 w-4" />}
-                >
-                  Open in Drive
-                </Button>
-              )}
-              <button
-                onClick={() => {
-                  setShowPreviewModal(false);
-                  setPreviewFile(null);
-                  setPreviewContent(null);
-                }}
-                className="p-2 rounded-full hover:bg-[var(--bg-secondary)] text-white ml-2"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Preview Content */}
-          <div className="flex-1 flex items-center justify-center overflow-hidden">
-            {previewLoading ? (
-              <div className="flex flex-col items-center gap-4">
-                <Loader2 className="h-10 w-10 text-white animate-spin" />
-                <p className="text-white">Loading preview...</p>
-              </div>
-            ) : previewContent ? (
-              // Text content preview
-              <div className="w-full h-full overflow-auto p-4">
-                <pre className="bg-[var(--bg-secondary)] text-[var(--text-primary)] p-4 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-auto max-h-full">
-                  {previewContent}
-                </pre>
-              </div>
-            ) : previewFile.mimeType.startsWith('image/') ? (
-              // Image preview - direct display; falls back to Drive iframe on error
-              <div className="relative flex items-center justify-center w-full h-[calc(100vh-100px)]">
-                {previewImgError || !getPreviewUrl(previewFile) ? (
-                  <iframe
-                    src={`https://drive.google.com/file/d/${previewFile.id}/preview`}
-                    className="w-full h-full rounded-lg"
-                    allow="autoplay"
-                    title={previewFile.name}
-                  />
-                ) : (
-                  <NextImage
-                    src={getPreviewUrl(previewFile)!}
-                    alt={previewFile.name}
-                    fill
-                    sizes="100vw"
-                    className="object-contain rounded-lg shadow-2xl"
-                    onError={() => setPreviewImgError(true)}
-                  />
-                )}
-              </div>
-            ) : (
-              // iframe preview for documents, videos, PDFs, etc.
-              <iframe
-                src={getPreviewUrl(previewFile) || `https://drive.google.com/file/d/${previewFile.id}/preview`}
-                className="w-full h-full"
-                allow="autoplay"
-                style={{ border: 'none' }}
-              />
-            )}
-          </div>
-        </div>
-      )}
-
-      <ConfirmDialog
+      <DeleteConfirm
         isOpen={deleteConfirmOpen}
-        onClose={() => {
-          setDeleteConfirmOpen(false);
-          setFileToDelete(null);
-        }}
+        onClose={() => { setDeleteConfirmOpen(false); setFileToDelete(null); }}
         onConfirm={confirmDeleteFile}
-        title="Delete File"
-        message="Are you sure you want to delete this file? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
-        type="danger"
       />
     </AppLayout>
   );
