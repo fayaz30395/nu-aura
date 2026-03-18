@@ -96,22 +96,61 @@ public class LeaveBalanceService {
 
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance accrueLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
-        LeaveBalance balance = getOrCreateBalance(employeeId, leaveTypeId, Year.now().getValue());
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
         balance.accrueLeave(days);
         return leaveBalanceRepository.save(balance);
     }
 
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance deductLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
-        LeaveBalance balance = getOrCreateBalance(employeeId, leaveTypeId, Year.now().getValue());
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
         balance.deduct(days);
         return leaveBalanceRepository.save(balance);
     }
 
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance creditLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
-        LeaveBalance balance = getOrCreateBalance(employeeId, leaveTypeId, Year.now().getValue());
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
         balance.credit(days);
         return leaveBalanceRepository.save(balance);
+    }
+
+    /**
+     * Pessimistic-write variant of {@link #getOrCreateBalance}.
+     *
+     * <p>Used exclusively by mutation paths ({@code accrueLeave}, {@code deductLeave},
+     * {@code creditLeave}) to prevent concurrent updates from producing lost-update
+     * anomalies. Issues a {@code SELECT … FOR UPDATE} so the row is exclusively locked
+     * for the duration of the enclosing transaction. Row creation falls through to a
+     * plain save — the newly inserted row is owned by this transaction so no concurrent
+     * reader can race on it.</p>
+     */
+    @Transactional
+    private LeaveBalance getOrCreateBalanceForUpdate(UUID employeeId, UUID leaveTypeId, int year) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        return leaveBalanceRepository.findForUpdate(employeeId, leaveTypeId, year, tenantId)
+            .orElseGet(() -> {
+                BigDecimal opening = BigDecimal.ZERO;
+                LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId).orElse(null);
+                if (leaveType != null && leaveType.getAnnualQuota() != null) {
+                    LeaveType.AccrualType accrualType = leaveType.getAccrualType();
+                    if (accrualType == null
+                            || accrualType == LeaveType.AccrualType.NONE
+                            || accrualType == LeaveType.AccrualType.YEARLY) {
+                        opening = leaveType.getAnnualQuota();
+                    }
+                }
+
+                LeaveBalance balance = LeaveBalance.builder()
+                    .employeeId(employeeId)
+                    .leaveTypeId(leaveTypeId)
+                    .year(year)
+                    .openingBalance(opening)
+                    .build();
+                balance.setTenantId(tenantId);
+                balance.calculateAvailable();
+                return leaveBalanceRepository.save(balance);
+            });
     }
 }
