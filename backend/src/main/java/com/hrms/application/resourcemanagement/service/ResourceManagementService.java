@@ -19,7 +19,6 @@ import com.hrms.infrastructure.resourcemanagement.repository.AllocationApprovalR
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,6 +35,13 @@ import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
 import static com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
 import static com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.*;
 
+/**
+ * Facade for resource management. Owns core capacity and availability logic.
+ * Delegates approval workflow to {@link AllocationApprovalService} and
+ * analytics/dashboard concerns to {@link WorkloadAnalyticsService}.
+ *
+ * <p>No controller changes are required — all public method signatures are preserved.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -50,8 +55,12 @@ public class ResourceManagementService {
         private final HolidayRepository holidayRepository;
         private final LeaveRequestRepository leaveRequestRepository;
 
+        // Sub-services
+        private final AllocationApprovalService allocationApprovalService;
+        private final WorkloadAnalyticsService workloadAnalyticsService;
+
         // ============================================
-        // CAPACITY & ALLOCATION
+        // CAPACITY & ALLOCATION (CORE)
         // ============================================
 
         @Transactional(readOnly = true)
@@ -74,13 +83,11 @@ public class ResourceManagementService {
                 EmployeeCapacity current = getEmployeeCapacity(employeeId, startDate);
                 int proposed = allocationPercentage;
 
-                // Check for existing allocation on the same project within the date range
                 List<ProjectEmployee> existingProjectAllocations = projectEmployeeRepository
                                 .findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true)
                                 .stream()
                                 .filter(pe -> pe.getProjectId().equals(projectId))
                                 .filter(pe -> {
-                                        // Check date overlap
                                         LocalDate peStart = pe.getStartDate();
                                         LocalDate peEnd = pe.getEndDate() != null ? pe.getEndDate() : LocalDate.MAX;
                                         LocalDate reqEnd = endDate != null ? endDate : LocalDate.MAX;
@@ -88,14 +95,11 @@ public class ResourceManagementService {
                                 })
                                 .collect(Collectors.toList());
 
-                // Check if already allocated to this project in overlapping period
                 boolean hasOverlappingAllocation = !existingProjectAllocations.isEmpty();
                 int existingAllocationForProject = existingProjectAllocations.stream()
                                 .mapToInt(ProjectEmployee::getAllocationPercentage)
                                 .sum();
 
-                // Calculate resulting allocation excluding existing allocation on same project
-                // (in case of update)
                 int adjustedCurrentAllocation = current.getTotalAllocation() - existingAllocationForProject;
                 int resulting = adjustedCurrentAllocation + proposed;
 
@@ -190,7 +194,8 @@ public class ResourceManagementService {
         }
 
         @Transactional(readOnly = true)
-        public List<EmployeeCapacity> getAvailableEmployees(Integer minCapacity, UUID departmentId, Pageable pageable) {
+        public List<EmployeeCapacity> getAvailableEmployees(Integer minCapacity, UUID departmentId,
+                        Pageable pageable) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 List<Employee> employees = departmentId != null
                                 ? employeeRepository.findByTenantId(tenantId).stream()
@@ -220,7 +225,8 @@ public class ResourceManagementService {
                                 .filter(r -> r.getEmployeeId().equals(employeeId))
                                 .collect(Collectors.toList());
 
-                int approvedAllocation = assignments.stream().mapToInt(ProjectEmployee::getAllocationPercentage).sum();
+                int approvedAllocation = assignments.stream()
+                                .mapToInt(ProjectEmployee::getAllocationPercentage).sum();
                 int pendingAllocation = pendingRequests.stream()
                                 .mapToInt(AllocationApprovalRequest::getRequestedAllocation)
                                 .sum();
@@ -237,7 +243,8 @@ public class ResourceManagementService {
                                         .allocationPercentage(assignment.getAllocationPercentage())
                                         .role(assignment.getRole())
                                         .startDate(assignment.getStartDate().toString())
-                                        .endDate(assignment.getEndDate() != null ? assignment.getEndDate().toString()
+                                        .endDate(assignment.getEndDate() != null
+                                                        ? assignment.getEndDate().toString()
                                                         : null)
                                         .isActive(true)
                                         .isPendingApproval(false)
@@ -254,7 +261,9 @@ public class ResourceManagementService {
                                         .allocationPercentage(request.getRequestedAllocation())
                                         .role(request.getRole())
                                         .startDate(request.getStartDate().toString())
-                                        .endDate(request.getEndDate() != null ? request.getEndDate().toString() : null)
+                                        .endDate(request.getEndDate() != null
+                                                        ? request.getEndDate().toString()
+                                                        : null)
                                         .isActive(false)
                                         .isPendingApproval(true)
                                         .build());
@@ -285,226 +294,6 @@ public class ResourceManagementService {
                                 .build();
         }
 
-        private AllocationStatus calculateStatus(int allocation) {
-                if (allocation > 100)
-                        return AllocationStatus.OVER_ALLOCATED;
-                if (allocation >= 75)
-                        return AllocationStatus.OPTIMAL;
-                if (allocation > 0)
-                        return AllocationStatus.UNDER_UTILIZED;
-                return AllocationStatus.UNASSIGNED;
-        }
-
-        // ============================================
-        // ALLOCATION APPROVAL REQUESTS
-        // ============================================
-
-        @Transactional
-        public AllocationApprovalResponse createAllocationRequest(CreateAllocationRequest request) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                UUID requestedById = SecurityContext.getCurrentEmployeeId();
-
-                AllocationApprovalRequest entity = AllocationApprovalRequest.builder()
-                                .employeeId(request.getEmployeeId())
-                                .projectId(request.getProjectId())
-                                .requestedAllocation(request.getAllocationPercentage())
-                                .role(request.getRole())
-                                .startDate(request.getStartDate())
-                                .endDate(request.getEndDate())
-                                .requestedById(requestedById)
-                                .status(AllocationApprovalRequest.ApprovalStatus.PENDING)
-                                .requestReason(request.getReason())
-                                .build();
-                entity.setId(UUID.randomUUID());
-                entity.setTenantId(tenantId);
-
-                AllocationApprovalRequest saved = approvalRepository.save(entity);
-
-                // Fetch display names for response
-                Employee employee = employeeRepository.findById(request.getEmployeeId()).orElse(null);
-                Project project = projectRepository.findById(request.getProjectId()).orElse(null);
-                Employee requester = employeeRepository.findById(requestedById).orElse(null);
-
-                return AllocationApprovalResponse.fromEntity(saved,
-                                employee != null ? employee.getFullName() : "N/A",
-                                employee != null ? employee.getEmployeeCode() : "N/A",
-                                project != null ? project.getName() : "N/A",
-                                project != null ? project.getProjectCode() : "N/A",
-                                requester != null ? requester.getFullName() : "System",
-                                null,
-                                getEmployeeAllocation(request.getEmployeeId()));
-        }
-
-        private int getEmployeeAllocation(UUID employeeId) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                return projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true)
-                                .stream().mapToInt(ProjectEmployee::getAllocationPercentage).sum();
-        }
-
-        @Transactional(readOnly = true)
-        public AllocationApprovalResponse getAllocationRequest(UUID requestId) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                AllocationApprovalRequest request = approvalRepository.findById(requestId)
-                                .filter(r -> r.getTenantId().equals(tenantId))
-                                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
-                return mapToApprovalResponse(request);
-        }
-
-        @Transactional(readOnly = true)
-        public Page<AllocationApprovalResponse> getAllPendingRequests(UUID departmentId, Pageable pageable) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                return approvalRepository
-                                .findAllByTenantIdAndStatus(tenantId, AllocationApprovalRequest.ApprovalStatus.PENDING,
-                                                pageable)
-                                .map(this::mapToApprovalResponse);
-        }
-
-        @Transactional(readOnly = true)
-        public Page<AllocationApprovalResponse> getEmployeeAllocationHistory(UUID employeeId, Pageable pageable) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                return approvalRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
-                                .map(this::mapToApprovalResponse);
-        }
-
-        @Transactional(readOnly = true)
-        public long getPendingApprovalsCount() {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                return approvalRepository.countByTenantIdAndStatus(tenantId,
-                                AllocationApprovalRequest.ApprovalStatus.PENDING);
-        }
-
-        @Transactional
-        public void approveAllocationRequest(UUID requestId, String comment) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                UUID approverId = SecurityContext.getCurrentEmployeeId();
-
-                // Permission check: user must be a manager or have ALLOCATION:APPROVE permission
-                validateApprovalPermission(approverId);
-
-                AllocationApprovalRequest request = approvalRepository.findById(requestId)
-                                .filter(r -> r.getTenantId().equals(tenantId))
-                                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
-
-                if (request.getStatus() != AllocationApprovalRequest.ApprovalStatus.PENDING) {
-                        throw new IllegalStateException("Request is already " + request.getStatus());
-                }
-
-                // Cannot approve your own request
-                if (request.getRequestedById().equals(approverId)) {
-                        throw new IllegalStateException("Cannot approve your own allocation request");
-                }
-
-                request.setStatus(AllocationApprovalRequest.ApprovalStatus.APPROVED);
-                request.setApproverId(approverId);
-                request.setApprovalComment(comment);
-                request.setResolvedAt(LocalDateTime.now());
-                approvalRepository.save(request);
-
-                // Actually create the assignment
-                ProjectEmployee assignment = ProjectEmployee.builder()
-                                .projectId(request.getProjectId())
-                                .employeeId(request.getEmployeeId())
-                                .role(request.getRole())
-                                .allocationPercentage(request.getRequestedAllocation())
-                                .startDate(request.getStartDate())
-                                .endDate(request.getEndDate())
-                                .isActive(true)
-                                .build();
-                assignment.setTenantId(tenantId);
-                projectEmployeeRepository.save(assignment);
-        }
-
-        @Transactional
-        public void rejectAllocationRequest(UUID requestId, String reason) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                UUID approverId = SecurityContext.getCurrentEmployeeId();
-
-                // Permission check: user must be a manager or have ALLOCATION:APPROVE permission
-                validateApprovalPermission(approverId);
-
-                AllocationApprovalRequest request = approvalRepository.findById(requestId)
-                                .filter(r -> r.getTenantId().equals(tenantId))
-                                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
-
-                if (request.getStatus() != AllocationApprovalRequest.ApprovalStatus.PENDING) {
-                        throw new IllegalStateException("Request is already " + request.getStatus());
-                }
-
-                // Cannot reject your own request
-                if (request.getRequestedById().equals(approverId)) {
-                        throw new IllegalStateException("Cannot reject your own allocation request");
-                }
-
-                request.setStatus(AllocationApprovalRequest.ApprovalStatus.REJECTED);
-                request.setApproverId(approverId);
-                request.setRejectionReason(reason);
-                request.setResolvedAt(LocalDateTime.now());
-                approvalRepository.save(request);
-        }
-
-        private void validateApprovalPermission(UUID approverId) {
-                // Check if user has approval permission or is a manager
-                boolean hasApprovalPermission = SecurityContext.hasAnyPermission(
-                                com.hrms.common.security.Permission.ALLOCATION_APPROVE,
-                                com.hrms.common.security.Permission.ALLOCATION_MANAGE,
-                                com.hrms.common.security.Permission.PROJECT_MANAGE,
-                                com.hrms.common.security.Permission.SYSTEM_ADMIN);
-
-                boolean isManager = SecurityContext.isManager();
-
-                if (!hasApprovalPermission && !isManager) {
-                        throw new SecurityException(
-                                        "You do not have permission to approve or reject allocation requests. "
-                                                        + "Required: ALLOCATION:APPROVE permission or Manager role.");
-                }
-        }
-
-        // ============================================
-        // WORKLOAD DASHBOARD
-        // ============================================
-
-        @Transactional(readOnly = true)
-        public WorkloadDashboardData getWorkloadDashboard(WorkloadFilterOptions filters) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                // Only include ACTIVE employees in workload dashboard
-                List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId).stream()
-                                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
-                                .collect(Collectors.toList());
-                List<Project> activeProjects = projectRepository.findAllByTenantId(tenantId, PageRequest.of(0, 10_000))
-                                .getContent();
-
-                // First, map ALL active employees to workloads (before applying filters)
-                // This ensures employees with no allocations are included
-                List<EmployeeWorkload> allWorkloads = allEmployees.stream()
-                                .map(emp -> getEmployeeWorkload(emp.getId()))
-                                .collect(Collectors.toList());
-
-                // Apply filters for display (but keep all for summary calculation)
-                List<EmployeeWorkload> workloads = allWorkloads.stream()
-                                .filter(wl -> applyFilters(wl, filters))
-                                .collect(Collectors.toList());
-
-                WorkloadSummary summary = calculateWorkloadSummary(workloads, activeProjects.size(), filters);
-
-                List<DepartmentWorkload> deptWorkloads = departmentRepository.findByTenantId(tenantId).stream()
-                                .map(dept -> calculateDepartmentWorkload(dept.getId(), dept.getName(), workloads))
-                                .collect(Collectors.toList());
-
-                // Calculate project workloads, heatmap, and trends
-                List<ProjectWorkloadSummary> projectWorkloads = calculateProjectWorkloads(activeProjects, tenantId);
-                List<WorkloadHeatmapRow> heatmapData = calculateHeatmapData(allEmployees, filters);
-                List<WorkloadTrend> trends = calculateWorkloadTrends(allEmployees, tenantId);
-
-                return WorkloadDashboardData.builder()
-                                .summary(summary)
-                                .employeeWorkloads(workloads)
-                                .departmentWorkloads(deptWorkloads)
-                                .projectWorkloads(projectWorkloads)
-                                .heatmapData(heatmapData)
-                                .trends(trends)
-                                .build();
-        }
-
         @Transactional(readOnly = true)
         public EmployeeWorkload getEmployeeWorkload(UUID employeeId) {
                 EmployeeCapacity capacity = getEmployeeCapacity(employeeId, LocalDate.now());
@@ -525,316 +314,9 @@ public class ResourceManagementService {
                                 .build();
         }
 
-        private boolean applyFilters(EmployeeWorkload wl, WorkloadFilterOptions filters) {
-                if (filters == null)
-                        return true;
-                if (filters.getDepartmentIds() != null && !filters.getDepartmentIds().isEmpty()
-                                && !filters.getDepartmentIds().contains(wl.getDepartmentId()))
-                        return false;
-                if (filters.getAllocationStatus() != null && !filters.getAllocationStatus().isEmpty()
-                                && !filters.getAllocationStatus().contains(wl.getAllocationStatus()))
-                        return false;
-                if (filters.getMinAllocation() != null && wl.getTotalAllocation() < filters.getMinAllocation())
-                        return false;
-                if (filters.getMaxAllocation() != null && wl.getTotalAllocation() > filters.getMaxAllocation())
-                        return false;
-                return true;
-        }
-
-        private WorkloadSummary calculateWorkloadSummary(List<EmployeeWorkload> workloads, int projectCount,
-                        WorkloadFilterOptions filters) {
-                if (workloads.isEmpty())
-                        return WorkloadSummary.builder()
-                                        .totalEmployees(0).activeProjects(projectCount).averageAllocation(0.0)
-                                        .medianAllocation(0.0)
-                                        .overAllocatedCount(0).optimalCount(0).underUtilizedCount(0).unassignedCount(0)
-                                        .pendingApprovals(0).totalAllocatedHours(0L)
-                                        .periodStart(filters != null ? filters.getStartDate() : LocalDate.now())
-                                        .periodEnd(filters != null ? filters.getEndDate()
-                                                        : LocalDate.now().plusMonths(1))
-                                        .build();
-
-                double avg = workloads.stream().mapToInt(EmployeeWorkload::getTotalAllocation).average().orElse(0.0);
-                int over = (int) workloads.stream()
-                                .filter(w -> w.getAllocationStatus() == AllocationStatus.OVER_ALLOCATED)
-                                .count();
-                int optimal = (int) workloads.stream().filter(w -> w.getAllocationStatus() == AllocationStatus.OPTIMAL)
-                                .count();
-                int under = (int) workloads.stream()
-                                .filter(w -> w.getAllocationStatus() == AllocationStatus.UNDER_UTILIZED)
-                                .count();
-                int unassigned = (int) workloads.stream()
-                                .filter(w -> w.getAllocationStatus() == AllocationStatus.UNASSIGNED)
-                                .count();
-                int pending = (int) workloads.stream().filter(EmployeeWorkload::getHasPendingApprovals).count();
-
-                return WorkloadSummary.builder()
-                                .totalEmployees(workloads.size())
-                                .activeProjects(projectCount)
-                                .averageAllocation(avg)
-                                .medianAllocation(avg) // Simplification
-                                .overAllocatedCount(over)
-                                .optimalCount(optimal)
-                                .underUtilizedCount(under)
-                                .unassignedCount(unassigned)
-                                .pendingApprovals(pending)
-                                .totalAllocatedHours((long) (avg * workloads.size() * 1.6)) // Rough heuristic
-                                .periodStart(filters != null ? filters.getStartDate() : LocalDate.now())
-                                .periodEnd(filters != null ? filters.getEndDate() : LocalDate.now().plusMonths(1))
-                                .build();
-        }
-
-        private List<ProjectWorkloadSummary> calculateProjectWorkloads(List<Project> projects, UUID tenantId) {
-                return projects.stream().map(project -> {
-                        List<ProjectEmployee> assignments = projectEmployeeRepository
-                                        .findAllByProjectIdAndTenantIdAndIsActive(project.getId(), tenantId, true);
-
-                        int teamSize = assignments.size();
-                        int totalAllocatedPercentage = assignments.stream()
-                                        .mapToInt(ProjectEmployee::getAllocationPercentage)
-                                        .sum();
-                        double averageAllocation = teamSize > 0 ? (double) totalAllocatedPercentage / teamSize : 0.0;
-
-                        return ProjectWorkloadSummary.builder()
-                                        .projectId(project.getId())
-                                        .projectName(project.getName())
-                                        .projectCode(project.getProjectCode())
-                                        .projectStatus(project.getStatus().name())
-                                        .teamSize(teamSize)
-                                        .totalAllocatedPercentage(totalAllocatedPercentage)
-                                        .averageAllocation(averageAllocation)
-                                        .startDate(project.getStartDate())
-                                        .endDate(project.getEndDate())
-                                        .build();
-                }).collect(Collectors.toList());
-        }
-
-        private List<WorkloadHeatmapRow> calculateHeatmapData(List<Employee> employees, WorkloadFilterOptions filters) {
-                LocalDate startDate = filters != null && filters.getStartDate() != null
-                                ? filters.getStartDate()
-                                : LocalDate.now();
-                LocalDate endDate = filters != null && filters.getEndDate() != null
-                                ? filters.getEndDate()
-                                : LocalDate.now().plusWeeks(4);
-
-                // Limit to first 20 employees for dashboard heatmap
-                List<Employee> limitedEmployees = employees.stream().limit(20).collect(Collectors.toList());
-
-                return limitedEmployees.stream().map(emp -> {
-                        List<WorkloadHeatmapCell> cells = new ArrayList<>();
-                        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusWeeks(1)) {
-                                LocalDate weekStart = date;
-                                LocalDate weekEnd = date.plusDays(6).isAfter(endDate) ? endDate : date.plusDays(6);
-                                EmployeeCapacity cap = getEmployeeCapacity(emp.getId(), weekStart);
-                                cells.add(WorkloadHeatmapCell.builder()
-                                                .weekStart(weekStart)
-                                                .weekEnd(weekEnd)
-                                                .allocation(cap.getTotalAllocation())
-                                                .status(cap.getAllocationStatus())
-                                                .projectCount(cap.getAllocations().size())
-                                                .build());
-                        }
-
-                        String deptName = emp.getDepartmentId() != null
-                                        ? departmentRepository.findById(emp.getDepartmentId())
-                                                        .map(d -> d.getName())
-                                                        .orElse("N/A")
-                                        : "N/A";
-
-                        return WorkloadHeatmapRow.builder()
-                                        .employeeId(emp.getId())
-                                        .employeeName(emp.getFullName())
-                                        .employeeCode(emp.getEmployeeCode())
-                                        .departmentName(deptName)
-                                        .cells(cells)
-                                        .build();
-                }).collect(Collectors.toList());
-        }
-
-        private List<WorkloadTrend> calculateWorkloadTrends(List<Employee> employees, UUID tenantId) {
-                List<WorkloadTrend> trends = new ArrayList<>();
-                LocalDate today = LocalDate.now();
-
-                // Generate trends for last 6 months
-                for (int i = 5; i >= 0; i--) {
-                        LocalDate monthStart = today.minusMonths(i).withDayOfMonth(1);
-                        String period = monthStart.getYear() + "-" + String.format("%02d", monthStart.getMonthValue());
-                        String periodLabel = monthStart.getMonth().toString().substring(0, 3) + " "
-                                        + monthStart.getYear();
-
-                        // Calculate workload for each employee as of that month
-                        int overCount = 0, optimalCount = 0, underCount = 0;
-                        double totalAllocation = 0;
-
-                        for (Employee emp : employees) {
-                                EmployeeCapacity capacity = getEmployeeCapacity(emp.getId(), monthStart);
-                                totalAllocation += capacity.getTotalAllocation();
-
-                                switch (capacity.getAllocationStatus()) {
-                                        case OVER_ALLOCATED:
-                                                overCount++;
-                                                break;
-                                        case OPTIMAL:
-                                                optimalCount++;
-                                                break;
-                                        case UNDER_UTILIZED:
-                                        case UNASSIGNED:
-                                                underCount++;
-                                                break;
-                                }
-                        }
-
-                        double avgAllocation = employees.isEmpty() ? 0 : totalAllocation / employees.size();
-
-                        trends.add(WorkloadTrend.builder()
-                                        .period(period)
-                                        .periodLabel(periodLabel)
-                                        .averageAllocation(avgAllocation)
-                                        .overAllocatedCount(overCount)
-                                        .optimalCount(optimalCount)
-                                        .underUtilizedCount(underCount)
-                                        .totalEmployees(employees.size())
-                                        .build());
-                }
-
-                return trends;
-        }
-
-        private DepartmentWorkload calculateDepartmentWorkload(UUID departmentId, String name,
-                        List<EmployeeWorkload> allWorkloads) {
-                List<EmployeeWorkload> deptWorkloads = allWorkloads.stream()
-                                .filter(w -> departmentId.equals(w.getDepartmentId()))
-                                .collect(Collectors.toList());
-
-                if (deptWorkloads.isEmpty())
-                        return DepartmentWorkload.builder()
-                                        .departmentId(departmentId).departmentName(name).employeeCount(0)
-                                        .averageAllocation(0.0)
-                                        .overAllocatedCount(0).optimalCount(0).underUtilizedCount(0).unassignedCount(0)
-                                        .activeProjects(0).totalAllocatedHours(0L).build();
-
-                double avg = deptWorkloads.stream().mapToInt(EmployeeWorkload::getTotalAllocation).average()
-                                .orElse(0.0);
-                int over = (int) deptWorkloads.stream()
-                                .filter(w -> w.getAllocationStatus() == AllocationStatus.OVER_ALLOCATED)
-                                .count();
-
-                return DepartmentWorkload.builder()
-                                .departmentId(departmentId)
-                                .departmentName(name)
-                                .employeeCount(deptWorkloads.size())
-                                .averageAllocation(avg)
-                                .overAllocatedCount(over)
-                                .optimalCount((int) deptWorkloads.stream()
-                                                .filter(w -> w.getAllocationStatus() == AllocationStatus.OPTIMAL)
-                                                .count())
-                                .underUtilizedCount((int) deptWorkloads.stream()
-                                                .filter(w -> w.getAllocationStatus() == AllocationStatus.UNDER_UTILIZED)
-                                                .count())
-                                .unassignedCount((int) deptWorkloads.stream()
-                                                .filter(w -> w.getAllocationStatus() == AllocationStatus.UNASSIGNED)
-                                                .count())
-                                .activeProjects(deptWorkloads.stream().mapToInt(EmployeeWorkload::getProjectCount)
-                                                .sum())
-                                .totalAllocatedHours((long) (avg * deptWorkloads.size() * 1.6))
-                                .build();
-        }
-
         @Transactional(readOnly = true)
-        public Page<EmployeeWorkload> getEmployeeWorkloads(WorkloadFilterOptions filters, Pageable pageable) {
-                WorkloadDashboardData dashboardData = getWorkloadDashboard(filters);
-                List<EmployeeWorkload> workloads = dashboardData.getEmployeeWorkloads();
-                int start = (int) pageable.getOffset();
-                int end = Math.min((start + pageable.getPageSize()), workloads.size());
-                if (start > workloads.size())
-                        return new PageImpl<>(Collections.emptyList(), pageable, workloads.size());
-                return new PageImpl<>(workloads.subList(start, end), pageable, workloads.size());
-        }
-
-        @Transactional(readOnly = true)
-        public List<DepartmentWorkload> getDepartmentWorkloads(LocalDate startDate, LocalDate endDate) {
-                WorkloadFilterOptions filters = new WorkloadFilterOptions();
-                filters.setStartDate(startDate);
-                filters.setEndDate(endDate);
-                return getWorkloadDashboard(filters).getDepartmentWorkloads();
-        }
-
-        @Transactional(readOnly = true)
-        public List<WorkloadHeatmapRow> getWorkloadHeatmap(LocalDate startDate, LocalDate endDate, UUID departmentId,
-                        Integer limit) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                List<Employee> employees = departmentId != null
-                                ? employeeRepository.findByTenantId(tenantId).stream()
-                                                .filter(e -> departmentId.equals(e.getDepartmentId()))
-                                                .limit(limit != null ? limit : 50).collect(Collectors.toList())
-                                : employeeRepository.findByTenantId(tenantId).stream()
-                                                .limit(limit != null ? limit : 50).collect(Collectors.toList());
-
-                List<WorkloadHeatmapRow> heatmapRows = employees.stream().map(emp -> {
-                        List<WorkloadHeatmapCell> cells = new ArrayList<>();
-                        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusWeeks(1)) {
-                                LocalDate weekStart = date;
-                                LocalDate weekEnd = date.plusDays(6).isAfter(endDate) ? endDate : date.plusDays(6);
-                                EmployeeCapacity cap = getEmployeeCapacity(emp.getId(), weekStart);
-                                cells.add(WorkloadHeatmapCell.builder()
-                                                .weekStart(weekStart)
-                                                .weekEnd(weekEnd)
-                                                .allocation(cap.getTotalAllocation())
-                                                .status(cap.getAllocationStatus())
-                                                .projectCount(cap.getAllocations().size())
-                                                .build());
-                        }
-
-                        String deptName = emp.getDepartmentId() != null
-                                        ? departmentRepository.findById(emp.getDepartmentId())
-                                                        .map(d -> d.getName())
-                                                        .orElse("N/A")
-                                        : "N/A";
-
-                        return WorkloadHeatmapRow.builder()
-                                        .employeeId(emp.getId())
-                                        .employeeName(emp.getFullName())
-                                        .employeeCode(emp.getEmployeeCode())
-                                        .departmentName(deptName)
-                                        .cells(cells)
-                                        .build();
-                }).collect(Collectors.toList());
-
-                return heatmapRows;
-        }
-
-        public List<com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.Holiday> getHolidays(LocalDate startDate,
+        public EmployeeAvailability getEmployeeAvailability(UUID employeeId, LocalDate startDate,
                         LocalDate endDate) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                return holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, startDate, endDate).stream()
-                                .map(h -> com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.Holiday.builder()
-                                                .id(h.getId().toString())
-                                                .name(h.getHolidayName())
-                                                .date(h.getHolidayDate())
-                                                .isOptional(h.getIsOptional())
-                                                .build())
-                                .collect(Collectors.toList());
-        }
-
-        @Transactional(readOnly = true)
-        public TeamAvailabilityView getAggregatedAvailability(LocalDate startDate, LocalDate endDate,
-                        UUID departmentId) {
-                return getTeamAvailability(departmentId != null ? Collections.singletonList(departmentId) : null,
-                                startDate, endDate);
-        }
-
-        @Transactional(readOnly = true)
-        public Page<AllocationApprovalResponse> getMyPendingApprovals(Pageable pageable) {
-                UUID tenantId = SecurityContext.getCurrentTenantId();
-                UUID managerId = SecurityContext.getCurrentEmployeeId();
-                return approvalRepository
-                                .findAllByTenantIdAndApproverIdAndStatus(tenantId, managerId,
-                                                AllocationApprovalRequest.ApprovalStatus.PENDING, pageable)
-                                .map(this::mapToApprovalResponse);
-        }
-
-        @Transactional(readOnly = true)
-        public EmployeeAvailability getEmployeeAvailability(UUID employeeId, LocalDate startDate, LocalDate endDate) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 Employee employee = employeeRepository.findById(employeeId)
                                 .filter(e -> e.getTenantId().equals(tenantId))
@@ -842,15 +324,15 @@ public class ResourceManagementService {
 
                 List<ProjectEmployee> projectAssignments = projectEmployeeRepository
                                 .findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true);
-                List<LeaveRequest> leaves = (List<LeaveRequest>) leaveRequestRepository.findOverlappingLeaves(tenantId,
-                                employeeId, startDate, endDate);
-                List<Holiday> holidays = holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, startDate,
-                                endDate);
+                List<LeaveRequest> leaves = (List<LeaveRequest>) leaveRequestRepository
+                                .findOverlappingLeaves(tenantId, employeeId, startDate, endDate);
+                List<Holiday> holidays = holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId,
+                                startDate, endDate);
 
                 List<ResourceAvailabilityDay> days = new ArrayList<>();
                 long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-                int workingDays = 0, availableDays = 0, partialDays = 0, fullyAllocatedDays = 0, leaveDays = 0,
-                                holidayCount = 0;
+                int workingDays = 0, availableDays = 0, partialDays = 0, fullyAllocatedDays = 0,
+                                leaveDays = 0, holidayCount = 0;
                 int totalCapacitySum = 0;
 
                 for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
@@ -870,8 +352,8 @@ public class ResourceManagementService {
                                                                         || !currentDate.isAfter(p.getEndDate())))
                                         .collect(Collectors.toList());
 
-                        int allocatedCapacity = dayProjects.stream().mapToInt(ProjectEmployee::getAllocationPercentage)
-                                        .sum();
+                        int allocatedCapacity = dayProjects.stream()
+                                        .mapToInt(ProjectEmployee::getAllocationPercentage).sum();
                         boolean onLeave = !dayLeaves.isEmpty();
                         boolean isHoliday = holiday.isPresent();
 
@@ -883,7 +365,7 @@ public class ResourceManagementService {
                                 status = AvailabilityStatus.HOLIDAY;
                                 holidayCount++;
                         } else if (isWeekend) {
-                                status = AvailabilityStatus.HOLIDAY; // Simulating weekend as holiday for simplicity
+                                status = AvailabilityStatus.HOLIDAY;
                         } else {
                                 workingDays++;
                                 if (allocatedCapacity >= 100) {
@@ -962,13 +444,14 @@ public class ResourceManagementService {
                                 .fullyAllocatedDays(fullyAllocatedDays)
                                 .leaveDays(leaveDays)
                                 .holidays(holidayCount)
-                                .averageAvailability(workingDays > 0 ? (double) totalCapacitySum / workingDays : 0.0)
+                                .averageAvailability(
+                                                workingDays > 0 ? (double) totalCapacitySum / workingDays : 0.0)
                                 .build();
 
                 String departmentName = employee.getDepartmentId() != null
                                 ? departmentRepository.findById(employee.getDepartmentId())
-                                        .map(d -> d.getName())
-                                        .orElse("N/A")
+                                                .map(d -> d.getName())
+                                                .orElse("N/A")
                                 : "N/A";
 
                 return EmployeeAvailability.builder()
@@ -988,10 +471,10 @@ public class ResourceManagementService {
                 if (filter == null) {
                         return getTeamAvailability(null, LocalDate.now(), LocalDate.now().plusMonths(1));
                 }
-                // Map filter to the existing method
                 return getTeamAvailability(filter.getDepartmentIds(),
                                 filter.getStartDate() != null ? filter.getStartDate() : LocalDate.now(),
-                                filter.getEndDate() != null ? filter.getEndDate() : LocalDate.now().plusMonths(1));
+                                filter.getEndDate() != null ? filter.getEndDate()
+                                                : LocalDate.now().plusMonths(1));
         }
 
         @Transactional(readOnly = true)
@@ -1020,17 +503,17 @@ public class ResourceManagementService {
                                         .collect(Collectors.toList());
 
                         int total = dayAvails.size();
-                        int avail = (int) dayAvails.stream().filter(d -> d.getStatus() == AvailabilityStatus.AVAILABLE)
-                                        .count();
-                        int partial = (int) dayAvails.stream().filter(d -> d.getStatus() == AvailabilityStatus.PARTIAL)
-                                        .count();
-                        int fully = (int) dayAvails.stream().filter(d -> d.getStatus() == AvailabilityStatus.ALLOCATED)
-                                        .count();
-                        int onLeave = (int) dayAvails.stream().filter(d -> d.getStatus() == AvailabilityStatus.ON_LEAVE)
-                                        .count();
-                        double avgCap = dayAvails.stream().mapToInt(ResourceAvailabilityDay::getAvailableCapacity)
-                                        .average()
-                                        .orElse(0.0);
+                        int avail = (int) dayAvails.stream()
+                                        .filter(d -> d.getStatus() == AvailabilityStatus.AVAILABLE).count();
+                        int partial = (int) dayAvails.stream()
+                                        .filter(d -> d.getStatus() == AvailabilityStatus.PARTIAL).count();
+                        int fully = (int) dayAvails.stream()
+                                        .filter(d -> d.getStatus() == AvailabilityStatus.ALLOCATED).count();
+                        int onLeave = (int) dayAvails.stream()
+                                        .filter(d -> d.getStatus() == AvailabilityStatus.ON_LEAVE).count();
+                        double avgCap = dayAvails.stream()
+                                        .mapToInt(ResourceAvailabilityDay::getAvailableCapacity)
+                                        .average().orElse(0.0);
 
                         aggregated.add(AggregatedAvailability.builder()
                                         .date(currentDate)
@@ -1051,87 +534,100 @@ public class ResourceManagementService {
                                 .build();
         }
 
+        // ============================================
+        // FACADE: APPROVAL WORKFLOW — delegates to AllocationApprovalService
+        // ============================================
+
+        @Transactional
+        public AllocationApprovalResponse createAllocationRequest(CreateAllocationRequest request) {
+                return allocationApprovalService.createAllocationRequest(request);
+        }
+
+        @Transactional(readOnly = true)
+        public AllocationApprovalResponse getAllocationRequest(UUID requestId) {
+                return allocationApprovalService.getAllocationRequest(requestId);
+        }
+
+        @Transactional(readOnly = true)
+        public Page<AllocationApprovalResponse> getAllPendingRequests(UUID departmentId, Pageable pageable) {
+                return allocationApprovalService.getAllPendingRequests(departmentId, pageable);
+        }
+
+        @Transactional(readOnly = true)
+        public Page<AllocationApprovalResponse> getEmployeeAllocationHistory(UUID employeeId, Pageable pageable) {
+                return allocationApprovalService.getEmployeeAllocationHistory(employeeId, pageable);
+        }
+
+        @Transactional(readOnly = true)
+        public long getPendingApprovalsCount() {
+                return allocationApprovalService.getPendingApprovalsCount();
+        }
+
+        @Transactional
+        public void approveAllocationRequest(UUID requestId, String comment) {
+                allocationApprovalService.approveAllocationRequest(requestId, comment);
+        }
+
+        @Transactional
+        public void rejectAllocationRequest(UUID requestId, String reason) {
+                allocationApprovalService.rejectAllocationRequest(requestId, reason);
+        }
+
+        @Transactional(readOnly = true)
+        public Page<AllocationApprovalResponse> getMyPendingApprovals(Pageable pageable) {
+                return allocationApprovalService.getMyPendingApprovals(pageable);
+        }
+
+        // ============================================
+        // FACADE: ANALYTICS & DASHBOARDS — delegates to WorkloadAnalyticsService
+        // ============================================
+
+        @Transactional(readOnly = true)
+        public WorkloadDashboardData getWorkloadDashboard(WorkloadFilterOptions filters) {
+                return workloadAnalyticsService.getWorkloadDashboard(filters);
+        }
+
+        @Transactional(readOnly = true)
+        public Page<EmployeeWorkload> getEmployeeWorkloads(WorkloadFilterOptions filters, Pageable pageable) {
+                return workloadAnalyticsService.getEmployeeWorkloads(filters, pageable);
+        }
+
+        @Transactional(readOnly = true)
+        public List<DepartmentWorkload> getDepartmentWorkloads(LocalDate startDate, LocalDate endDate) {
+                return workloadAnalyticsService.getDepartmentWorkloads(startDate, endDate);
+        }
+
+        @Transactional(readOnly = true)
+        public List<WorkloadHeatmapRow> getWorkloadHeatmap(LocalDate startDate, LocalDate endDate,
+                        UUID departmentId, Integer limit) {
+                return workloadAnalyticsService.getWorkloadHeatmap(startDate, endDate, departmentId, limit);
+        }
+
+        public List<AvailabilityDTOs.Holiday> getHolidays(LocalDate startDate, LocalDate endDate) {
+                return workloadAnalyticsService.getHolidays(startDate, endDate);
+        }
+
+        @Transactional(readOnly = true)
+        public TeamAvailabilityView getAggregatedAvailability(LocalDate startDate, LocalDate endDate,
+                        UUID departmentId) {
+                return getTeamAvailability(
+                                departmentId != null ? Collections.singletonList(departmentId) : null,
+                                startDate, endDate);
+        }
+
         @Transactional(readOnly = true)
         public byte[] exportWorkloadReport(String format, WorkloadFilterOptions filters) {
-                WorkloadDashboardData data = getWorkloadDashboard(filters);
-
-                String normalizedFormat = format != null ? format.toLowerCase().trim() : "csv";
-
-                switch (normalizedFormat) {
-                        case "csv":
-                                return exportWorkloadAsCsv(data);
-                        case "xlsx":
-                        case "excel":
-                                log.warn("Excel workload export requested but not implemented; falling back to CSV");
-                                return exportWorkloadAsCsv(data);
-                        case "pdf":
-                                log.warn("PDF workload export requested but not implemented; falling back to CSV");
-                                return exportWorkloadAsCsv(data);
-                        default:
-                                throw new IllegalArgumentException(
-                                                "Unsupported export format: " + format + ". Supported formats: csv");
-                }
+                return workloadAnalyticsService.exportWorkloadReport(format, filters);
         }
 
-        private byte[] exportWorkloadAsCsv(WorkloadDashboardData data) {
-                StringBuilder csv = new StringBuilder();
+        // ============================================
+        // PRIVATE HELPERS
+        // ============================================
 
-                // Header
-                csv.append("Employee,Employee Code,Department,Designation,Total Allocation,Approved Allocation,");
-                csv.append("Pending Allocation,Status,Project Count,Has Pending Approvals\n");
-
-                // Employee workloads
-                for (EmployeeWorkload wl : data.getEmployeeWorkloads()) {
-                        csv.append(String.format("\"%s\",\"%s\",\"%s\",\"%s\",%d%%,%d%%,%d%%,\"%s\",%d,%s\n",
-                                        escapeForCsv(wl.getEmployeeName()),
-                                        escapeForCsv(wl.getEmployeeCode()),
-                                        escapeForCsv(wl.getDepartmentName()),
-                                        escapeForCsv(wl.getDesignation()),
-                                        wl.getTotalAllocation(),
-                                        wl.getApprovedAllocation(),
-                                        wl.getPendingAllocation(),
-                                        wl.getAllocationStatus(),
-                                        wl.getProjectCount(),
-                                        wl.getHasPendingApprovals()));
-                }
-
-                // Add summary section
-                WorkloadSummary summary = data.getSummary();
-                csv.append("\n--- Summary ---\n");
-                csv.append(String.format("Total Employees,%d\n", summary.getTotalEmployees()));
-                csv.append(String.format("Active Projects,%d\n", summary.getActiveProjects()));
-                csv.append(String.format("Average Allocation,%.1f%%\n", summary.getAverageAllocation()));
-                csv.append(String.format("Over-Allocated,%d\n", summary.getOverAllocatedCount()));
-                csv.append(String.format("Optimal,%d\n", summary.getOptimalCount()));
-                csv.append(String.format("Under-Utilized,%d\n", summary.getUnderUtilizedCount()));
-                csv.append(String.format("Unassigned,%d\n", summary.getUnassignedCount()));
-                csv.append(String.format("Pending Approvals,%d\n", summary.getPendingApprovals()));
-
-                return csv.toString().getBytes();
-        }
-
-        private String escapeForCsv(String value) {
-                if (value == null) {
-                        return "";
-                }
-                return value.replace("\"", "\"\"");
-        }
-
-        private AllocationApprovalResponse mapToApprovalResponse(AllocationApprovalRequest request) {
-                Employee employee = employeeRepository.findById(request.getEmployeeId()).orElse(null);
-                Project project = projectRepository.findById(request.getProjectId()).orElse(null);
-                Employee requester = employeeRepository.findById(request.getRequestedById()).orElse(null);
-                Employee approver = request.getApproverId() != null
-                                ? employeeRepository.findById(request.getApproverId()).orElse(null)
-                                : null;
-
-                return AllocationApprovalResponse.fromEntity(request,
-                                employee != null ? employee.getFullName() : "N/A",
-                                employee != null ? employee.getEmployeeCode() : "N/A",
-                                project != null ? project.getName() : "N/A",
-                                project != null ? project.getProjectCode() : "N/A",
-                                requester != null ? requester.getFullName() : "System",
-                                approver != null ? approver.getFullName() : null,
-                                getEmployeeAllocation(request.getEmployeeId()));
+        private AllocationStatus calculateStatus(int allocation) {
+                if (allocation > 100) return AllocationStatus.OVER_ALLOCATED;
+                if (allocation >= 75) return AllocationStatus.OPTIMAL;
+                if (allocation > 0) return AllocationStatus.UNDER_UTILIZED;
+                return AllocationStatus.UNASSIGNED;
         }
 }
