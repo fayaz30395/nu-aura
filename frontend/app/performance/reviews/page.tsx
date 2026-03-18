@@ -14,6 +14,8 @@ import {
 import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { createLogger } from '@/lib/utils/logger';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const log = createLogger('ReviewsPage');
 
@@ -233,15 +235,17 @@ export default function PerformanceReviewsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Performance Reviews</h1>
-          <button
-            onClick={() => {
-              resetFormHandler();
-              setShowModal(true);
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-          >
-            Create Review
-          </button>
+          <PermissionGate permission={Permissions.REVIEW_CREATE}>
+            <button
+              onClick={() => {
+                resetFormHandler();
+                setShowModal(true);
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            >
+              Create Review
+            </button>
+          </PermissionGate>
         </div>
 
         <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
@@ -291,15 +295,17 @@ export default function PerformanceReviewsPage() {
         ) : filteredReviews.length === 0 ? (
           <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">No reviews found</div>
-            <button
-              onClick={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-            >
-              Create Your First Review
-            </button>
+            <PermissionGate permission={Permissions.REVIEW_CREATE}>
+              <button
+                onClick={() => {
+                  resetFormHandler();
+                  setShowModal(true);
+                }}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              >
+                Create Your First Review
+              </button>
+            </PermissionGate>
           </div>
         ) : (
           <div className="space-y-4">
@@ -342,18 +348,22 @@ export default function PerformanceReviewsPage() {
                 </div>
 
                 <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => openEditModal(review)}
-                    className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
-                  >
-                    View/Edit
-                  </button>
-                  <button
-                    onClick={() => openDeleteConfirm(review)}
-                    className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
-                  >
-                    Delete
-                  </button>
+                  <PermissionGate permission={Permissions.REVIEW_UPDATE}>
+                    <button
+                      onClick={() => openEditModal(review)}
+                      className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
+                    >
+                      View/Edit
+                    </button>
+                  </PermissionGate>
+                  <PermissionGate permission={Permissions.REVIEW_DELETE}>
+                    <button
+                      onClick={() => openDeleteConfirm(review)}
+                      className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
+                    >
+                      Delete
+                    </button>
+                  </PermissionGate>
                 </div>
               </div>
             ))}

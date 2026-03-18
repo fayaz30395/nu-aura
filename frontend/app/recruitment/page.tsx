@@ -29,6 +29,8 @@ import {
   Loader2,
 } from 'lucide-react';
 import { JobOpening, Candidate, Interview, CandidateStatus } from '@/lib/types/recruitment';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -273,21 +275,25 @@ export default function RecruitmentDashboard() {
             </p>
           </div>
           <div className="flex gap-4">
-            <Button
-              onClick={() => router.push('/recruitment/jobs')}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Post New Job
-            </Button>
-            <Button
-              onClick={() => router.push('/recruitment/candidates')}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Users className="h-4 w-4" />
-              Add Candidate
-            </Button>
+            <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
+              <Button
+                onClick={() => router.push('/recruitment/jobs')}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Post New Job
+              </Button>
+            </PermissionGate>
+            <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
+              <Button
+                onClick={() => router.push('/recruitment/candidates')}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Users className="h-4 w-4" />
+                Add Candidate
+              </Button>
+            </PermissionGate>
           </div>
         </motion.div>
 

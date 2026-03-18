@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   useMyObjectives,
   useCompanyObjectives,
@@ -255,17 +257,19 @@ export default function OKRPage() {
             Objectives and Key Results tracking
           </p>
         </div>
-        <button
-          onClick={() => {
-            resetObjectiveForm();
-            setEditingObjective(null);
-            setShowObjectiveModal(true);
-          }}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          New Objective
-        </button>
+        <PermissionGate permission={Permissions.OKR_CREATE}>
+          <button
+            onClick={() => {
+              resetObjectiveForm();
+              setEditingObjective(null);
+              setShowObjectiveModal(true);
+            }}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            New Objective
+          </button>
+        </PermissionGate>
       </div>
 
       {/* Tabs */}
@@ -395,18 +399,22 @@ export default function OKRPage() {
                     </div>
                     {activeTab === 'my' && (
                       <>
-                        <button
-                          onClick={() => openEditObjective(objective)}
-                          className="p-2 text-[var(--text-muted)] hover:text-blue-600"
-                        >
-                          <Pencil className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteObjectiveConfirm(objective.id)}
-                          className="p-2 text-[var(--text-muted)] hover:text-red-600"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
+                        <PermissionGate permission={Permissions.OKR_UPDATE}>
+                          <button
+                            onClick={() => openEditObjective(objective)}
+                            className="p-2 text-[var(--text-muted)] hover:text-blue-600"
+                          >
+                            <Pencil className="h-5 w-5" />
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.OKR_DELETE}>
+                          <button
+                            onClick={() => setDeleteObjectiveConfirm(objective.id)}
+                            className="p-2 text-[var(--text-muted)] hover:text-red-600"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </button>
+                        </PermissionGate>
                       </>
                     )}
                   </div>
@@ -421,13 +429,15 @@ export default function OKRPage() {
                       Key Results ({objective.keyResults?.length || 0})
                     </h4>
                     {activeTab === 'my' && (
-                      <button
-                        onClick={() => openAddKeyResult(objective.id)}
-                        className="text-sm text-blue-600 hover:text-blue-700 flex items-center"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add Key Result
-                      </button>
+                      <PermissionGate permission={Permissions.OKR_UPDATE}>
+                        <button
+                          onClick={() => openAddKeyResult(objective.id)}
+                          className="text-sm text-blue-600 hover:text-blue-700 flex items-center"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add Key Result
+                        </button>
+                      </PermissionGate>
                     )}
                   </div>
                   {objective.keyResults && objective.keyResults.length > 0 ? (
@@ -480,12 +490,14 @@ export default function OKRPage() {
                                         }
                                         className="w-16 px-2 py-1 text-xs border border-[var(--border-strong)] rounded"
                                       />
-                                      <button
-                                        onClick={() => setDeleteKeyResultConfirm(kr.id)}
-                                        className="p-1 text-[var(--text-muted)] hover:text-red-600"
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                      </button>
+                                      <PermissionGate permission={Permissions.OKR_DELETE}>
+                                        <button
+                                          onClick={() => setDeleteKeyResultConfirm(kr.id)}
+                                          className="p-1 text-[var(--text-muted)] hover:text-red-600"
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </button>
+                                      </PermissionGate>
                                     </div>
                                   )}
                                 </div>

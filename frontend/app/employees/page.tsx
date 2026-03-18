@@ -14,6 +14,8 @@ import { Users } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { SkeletonTable } from '@/components/ui/Loading';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('EmployeesPage');
@@ -57,6 +59,8 @@ type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
 
 export default function EmployeesPage() {
   const router = useRouter();
+  const { hasPermission } = usePermissions();
+  const canCreate = hasPermission(Permissions.EMPLOYEE_CREATE);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -227,20 +231,24 @@ export default function EmployeesPage() {
             >
               Change Requests
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.push('/employees/import')}
-            >
-              Import
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => setShowAddModal(true)}
-            >
-              + Add Employee
-            </Button>
+            <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/employees/import')}
+              >
+                Import
+              </Button>
+            </PermissionGate>
+            <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setShowAddModal(true)}
+              >
+                + Add Employee
+              </Button>
+            </PermissionGate>
           </div>
         </div>
         {/* Error Message */}
@@ -286,7 +294,7 @@ export default function EmployeesPage() {
               icon={<Users className="h-12 w-12" />}
               title={searchQuery.trim() ? 'No employees match your search' : 'No Employees Found'}
               description={searchQuery.trim() ? 'Try adjusting your search terms' : 'Add your first employee to get started'}
-              action={{ label: 'Add Employee', onClick: () => setShowAddModal(true) }}
+              action={canCreate ? { label: 'Add Employee', onClick: () => setShowAddModal(true) } : undefined}
             />
           ) : (
             <>
@@ -371,17 +379,19 @@ export default function EmployeesPage() {
                         >
                           View
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          className="text-danger-600 dark:text-danger-400 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/30"
-                          onClick={() => {
-                            setEmployeeToDelete(employee);
-                            setShowDeleteModal(true);
-                          }}
-                        >
-                          Delete
-                        </Button>
+                        <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
+                          <Button
+                            variant="ghost"
+                            size="xs"
+                            className="text-danger-600 dark:text-danger-400 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/30"
+                            onClick={() => {
+                              setEmployeeToDelete(employee);
+                              setShowDeleteModal(true);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </PermissionGate>
                       </div>
                     </td>
                   </tr>

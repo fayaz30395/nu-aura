@@ -14,6 +14,8 @@ import {
 import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { createLogger } from '@/lib/utils/logger';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const log = createLogger('GoalsPage');
 
@@ -208,15 +210,17 @@ export default function GoalsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Goals</h1>
-          <button
-            onClick={() => {
-              resetFormHandler();
-              setShowModal(true);
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-          >
-            Create Goal
-          </button>
+          <PermissionGate permission={Permissions.GOAL_CREATE}>
+            <button
+              onClick={() => {
+                resetFormHandler();
+                setShowModal(true);
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            >
+              Create Goal
+            </button>
+          </PermissionGate>
         </div>
 
         <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
@@ -267,15 +271,17 @@ export default function GoalsPage() {
         ) : filteredGoals.length === 0 ? (
           <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">No goals found</div>
-            <button
-              onClick={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-            >
-              Create Your First Goal
-            </button>
+            <PermissionGate permission={Permissions.GOAL_CREATE}>
+              <button
+                onClick={() => {
+                  resetFormHandler();
+                  setShowModal(true);
+                }}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              >
+                Create Your First Goal
+              </button>
+            </PermissionGate>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -324,18 +330,22 @@ export default function GoalsPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => openEditModal(goal)}
-                      className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => openDeleteConfirm(goal)}
-                      className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
-                    >
-                      Delete
-                    </button>
+                    <PermissionGate permission={Permissions.GOAL_UPDATE}>
+                      <button
+                        onClick={() => openEditModal(goal)}
+                        className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                      >
+                        Edit
+                      </button>
+                    </PermissionGate>
+                    <PermissionGate permission={Permissions.GOAL_DELETE}>
+                      <button
+                        onClick={() => openDeleteConfirm(goal)}
+                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                      >
+                        Delete
+                      </button>
+                    </PermissionGate>
                   </div>
                 </div>
               );
