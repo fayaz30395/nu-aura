@@ -32,6 +32,17 @@ spec:
   # ranges (130.211.0.0/22, 35.191.0.0/16) and VPC-internal IPs.
   # We allow from 0.0.0.0/0 on port 8080 here; further restriction should be
   # done via Cloud Armor security policy (ingress.yaml armor-config annotation).
+
+  # SECURITY NOTE (2026-03-19):
+  # The 0.0.0.0/0 CIDR on port 8080 is required for GKE GCE ingress which
+  # bypasses in-cluster controllers and connects directly to node IPs.
+  # To restrict this:
+  #   1. Configure Cloud Armor security policy 'hrms-security-policy' in GCP
+  #   2. Verify Cloud Armor is active on the backend backend-config
+  #   3. Then replace 0.0.0.0/0 with GCP LB health check ranges:
+  #      - 130.211.0.0/22
+  #      - 35.191.0.0/16
+  # DO NOT tighten without Cloud Armor — it will break production ingress.
   - ports:
     - protocol: TCP
       port: 8080
