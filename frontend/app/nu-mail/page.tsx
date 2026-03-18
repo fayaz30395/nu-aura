@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
 import { Card } from '@/components/ui/Card';
+import { Skeleton } from '@mantine/core';
+import dynamic from 'next/dynamic';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
 import { employeeService } from '@/lib/services/employee.service';
@@ -15,7 +17,6 @@ import {
   MailSidebar,
   EmailList,
   EmailViewer,
-  ComposeModal,
   OAuthPanel,
   EmailMessage,
   EmailLabel,
@@ -24,6 +25,12 @@ import {
   SendAsAddress,
   EmailAttachment,
 } from './_components';
+
+// Dynamic import — ComposeModal is a rich editor only needed when the user opens compose
+const ComposeModal = dynamic(
+  () => import('./_components/ComposeModal').then((m) => ({ default: m.ComposeModal })),
+  { loading: () => <Skeleton height={500} radius="md" />, ssr: false }
+);
 
 const log = createLogger('NuMailPage');
 
