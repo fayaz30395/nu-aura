@@ -123,15 +123,15 @@ Binary documents (`NU-AURA_System_Forensics_Report.docx`, `march-19.docx`) and c
 
 ### B1 — Convert EAGER JPA Relationships to LAZY (P1)
 
-7 JPA relationships across 5 entities use `FetchType.EAGER` (`AppRole`, `UserAppAccess`, `Announcement`, `RolePermission`, `Webhook`), loading related data on every query. The auth-related ones (`AppRole`, `UserAppAccess`, `RolePermission`) are highest risk — they load all roles/permissions on every user query.
+8 JPA relationships across 6 entities use `FetchType.EAGER` (`AppRole`, `UserAppAccess`, `Announcement`, `RolePermission`, `Webhook`, `ApiKey`), loading related data on every query. The auth-related ones (`AppRole`, `UserAppAccess`, `RolePermission`, `ApiKey`) are highest risk — they load all roles/permissions/scopes on every user query.
 
 **Actions**:
-- Convert all 7 `EAGER` to `LAZY` in the 5 affected entities
+- Convert all 8 `EAGER` to `LAZY` in the 6 affected entities
 - Add `@EntityGraph` annotations for explicit fetch joins where relationships are needed
 - Test all auth/permission flows thoroughly — this is the critical path
 - Execute this item first within Spec B to allow maximum testing time
 
-**Files**: 5 entity files in `domain/`
+**Files**: 6 entity files in `domain/` and `common/security/`
 
 **Risk**: Highest-risk item. Changing fetch strategy can break code that assumes relationships are loaded. Auth flows are critical path.
 
