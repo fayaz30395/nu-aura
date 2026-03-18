@@ -12,15 +12,15 @@ import java.util.UUID;
 /**
  * Service for calculating storage metrics across the system.
  *
- * <p>Provides two sources of storage metrics:
- * <ol>
+ * <p>Provides storage metrics:
+ * <ul>
  *   <li><strong>Database-tracked storage:</strong> Sum of fileSize columns in
  *       generated_documents and document_versions tables. This is the current active
  *       source.</li>
- *   <li><strong>MinIO integration (TODO):</strong> Once MinIO Admin API is integrated,
+ *   <li><strong>MinIO integration (future):</strong> Once MinIO Admin API is integrated,
  *       this service will support querying actual bucket usage statistics for more
  *       accurate billing. See NUJIRA-XXX for tracking.</li>
- * </ol>
+ * </ul>
  *
  * <p>For now, callers should use {@link #getStorageBytesForTenant(UUID)} and
  * {@link #getStorageBytesAcrossAllTenants()} which rely on the database-tracked
