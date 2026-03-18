@@ -1,6 +1,6 @@
 package com.hrms.domain.knowledge;
 
-import com.hrms.common.entity.BaseEntity;
+import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,10 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class BlogLike extends BaseEntity {
-
-    @Column(nullable = false)
-    private UUID tenantId;
+public class BlogLike extends TenantAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
