@@ -51,150 +51,40 @@ public class RecruitmentManagementService {
     private final DomainEventPublisher eventPublisher;
     private final GoogleMeetService googleMeetService;
 
-    // ==================== Job Opening Operations ====================
+    // Focused sub-services (facade delegation)
+    private final JobOpeningService jobOpeningService;
+    private final InterviewManagementService interviewManagementService;
+
+    // ==================== Job Opening Operations (delegated) ====================
 
     @Transactional
     public JobOpeningResponse createJobOpening(JobOpeningRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        log.info("Creating job opening {} for tenant {}", request.getJobCode(), tenantId);
-
-        if (jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, request.getJobCode())) {
-            throw new IllegalArgumentException("Job opening with code " + request.getJobCode() + " already exists");
-        }
-
-        JobOpening jobOpening = new JobOpening();
-        jobOpening.setId(UUID.randomUUID());
-        jobOpening.setTenantId(tenantId);
-        jobOpening.setJobCode(request.getJobCode());
-        jobOpening.setJobTitle(request.getJobTitle());
-        jobOpening.setDepartmentId(request.getDepartmentId());
-        jobOpening.setLocation(request.getLocation());
-        jobOpening.setEmploymentType(request.getEmploymentType());
-        jobOpening.setExperienceRequired(request.getExperienceRequired());
-        jobOpening.setMinSalary(request.getMinSalary());
-        jobOpening.setMaxSalary(request.getMaxSalary());
-        jobOpening.setNumberOfOpenings(request.getNumberOfOpenings());
-        jobOpening.setJobDescription(request.getJobDescription());
-        jobOpening.setRequirements(request.getRequirements());
-        jobOpening.setSkillsRequired(request.getSkillsRequired());
-        jobOpening.setHiringManagerId(request.getHiringManagerId());
-        jobOpening.setStatus(request.getStatus() != null ? request.getStatus() : JobOpening.JobStatus.DRAFT);
-        jobOpening.setPostedDate(request.getPostedDate());
-        jobOpening.setClosingDate(request.getClosingDate());
-        jobOpening.setPriority(request.getPriority());
-        jobOpening.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
-
-        JobOpening savedJobOpening = jobOpeningRepository.save(jobOpening);
-
-        // Audit: job opening created
-        auditLogService.logAction(
-                "JOB_OPENING",
-                savedJobOpening.getId(),
-                AuditAction.CREATE,
-                null,
-                savedJobOpening.getJobCode() + " - " + savedJobOpening.getJobTitle(),
-                "Job opening created: " + savedJobOpening.getJobCode() + " (" + savedJobOpening.getJobTitle() + ")"
-        );
-
-        return mapToJobOpeningResponse(savedJobOpening);
+        return jobOpeningService.createJobOpening(request);
     }
 
     @Transactional
     public JobOpeningResponse updateJobOpening(UUID jobOpeningId, JobOpeningRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        log.info("Updating job opening {} for tenant {}", jobOpeningId, tenantId);
-
-        JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
-
-        jobOpening.setJobTitle(request.getJobTitle());
-        jobOpening.setDepartmentId(request.getDepartmentId());
-        jobOpening.setLocation(request.getLocation());
-        jobOpening.setEmploymentType(request.getEmploymentType());
-        jobOpening.setExperienceRequired(request.getExperienceRequired());
-        jobOpening.setMinSalary(request.getMinSalary());
-        jobOpening.setMaxSalary(request.getMaxSalary());
-        jobOpening.setNumberOfOpenings(request.getNumberOfOpenings());
-        jobOpening.setJobDescription(request.getJobDescription());
-        jobOpening.setRequirements(request.getRequirements());
-        jobOpening.setSkillsRequired(request.getSkillsRequired());
-        jobOpening.setHiringManagerId(request.getHiringManagerId());
-        jobOpening.setStatus(request.getStatus());
-        jobOpening.setPostedDate(request.getPostedDate());
-        jobOpening.setClosingDate(request.getClosingDate());
-        jobOpening.setPriority(request.getPriority());
-        jobOpening.setIsActive(request.getIsActive());
-
-        JobOpening updatedJobOpening = jobOpeningRepository.save(jobOpening);
-
-        // Audit: job opening updated
-        auditLogService.logAction(
-                "JOB_OPENING",
-                jobOpeningId,
-                AuditAction.UPDATE,
-                null,
-                updatedJobOpening.getJobCode() + " - " + updatedJobOpening.getStatus(),
-                "Job opening updated: " + updatedJobOpening.getJobCode() + " (" + updatedJobOpening.getJobTitle() + ")"
-        );
-
-        return mapToJobOpeningResponse(updatedJobOpening);
+        return jobOpeningService.updateJobOpening(jobOpeningId, request);
     }
 
     @Transactional(readOnly = true)
     public JobOpeningResponse getJobOpeningById(UUID jobOpeningId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
-
-        // Enforce scope: validate the user can access this job opening
-        String permission = determineViewPermission();
-        validateJobOpeningAccess(jobOpening, permission);
-
-        return mapToJobOpeningResponse(jobOpening);
+        return jobOpeningService.getJobOpeningById(jobOpeningId);
     }
 
     @Transactional(readOnly = true)
     public Page<JobOpeningResponse> getAllJobOpenings(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-
-        Specification<JobOpening> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        Specification<JobOpening> scopeSpec = dataScopeService.getScopeSpecification(Permission.RECRUITMENT_VIEW);
-
-        return jobOpeningRepository.findAll(Specification.where(tenantSpec).and(scopeSpec), pageable)
-                .map(this::mapToJobOpeningResponse);
+        return jobOpeningService.getAllJobOpenings(pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<JobOpeningResponse> getJobOpeningsByStatus(JobOpening.JobStatus status, Pageable pageable) {
-        String permission = determineViewPermission();
-        Specification<JobOpening> scopeSpec = dataScopeService.getScopeSpecification(permission);
-
-        UUID tenantId = TenantContext.getCurrentTenant();
-        Specification<JobOpening> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        Specification<JobOpening> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), status);
-
-        return jobOpeningRepository.findAll(
-                Specification.where(tenantSpec).and(statusSpec).and(scopeSpec),
-                pageable).map(this::mapToJobOpeningResponse);
+        return jobOpeningService.getJobOpeningsByStatus(status, pageable);
     }
 
     @Transactional
     public void deleteJobOpening(UUID jobOpeningId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
-
-        // Audit: job opening deleted
-        auditLogService.logAction(
-                "JOB_OPENING",
-                jobOpeningId,
-                AuditAction.DELETE,
-                jobOpening.getJobCode() + " - " + jobOpening.getJobTitle(),
-                null,
-                "Job opening deleted: " + jobOpening.getJobCode() + " (" + jobOpening.getJobTitle() + ")"
-        );
-
-        jobOpeningRepository.delete(jobOpening);
+        jobOpeningService.deleteJobOpening(jobOpeningId);
     }
 
     // ==================== Candidate Operations ====================
@@ -234,7 +124,6 @@ public class RecruitmentManagementService {
 
         Candidate savedCandidate = candidateRepository.save(candidate);
 
-        // Audit: candidate created
         auditLogService.logAction(
                 "CANDIDATE",
                 savedCandidate.getId(),
@@ -275,7 +164,6 @@ public class RecruitmentManagementService {
 
         Candidate updatedCandidate = candidateRepository.save(candidate);
 
-        // Audit: candidate updated
         auditLogService.logAction(
                 "CANDIDATE",
                 candidateId,
@@ -294,7 +182,6 @@ public class RecruitmentManagementService {
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
 
-        // Enforce scope: validate the user can access this candidate
         String permission = determineViewPermission();
         validateCandidateAccess(candidate, permission);
 
@@ -332,7 +219,6 @@ public class RecruitmentManagementService {
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
 
-        // Audit: candidate deleted
         auditLogService.logAction(
                 "CANDIDATE",
                 candidateId,
@@ -367,19 +253,12 @@ public class RecruitmentManagementService {
         candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
         candidate.setOfferAcceptedDate(java.time.LocalDate.now());
 
-        // Update joining date if candidate provided a different one
         if (confirmedJoiningDate != null) {
             candidate.setProposedJoiningDate(confirmedJoiningDate);
         }
 
-        // Keep stage at OFFER - candidate moves to JOINED only after actual
-        // onboarding/joining
-        // The JOINED stage is set by a separate process when the employee record is
-        // created
-
         Candidate savedCandidate = candidateRepository.save(candidate);
 
-        // Audit log: offer acceptance
         auditLogService.logAction(
                 "CANDIDATE",
                 candidateId,
@@ -417,7 +296,6 @@ public class RecruitmentManagementService {
 
         Candidate savedCandidate = candidateRepository.save(candidate);
 
-        // Audit log: offer decline
         auditLogService.logAction(
                 "CANDIDATE",
                 candidateId,
@@ -450,12 +328,10 @@ public class RecruitmentManagementService {
             candidate.setNotes(notes);
         }
 
-        // Map recruitment stage to candidate status for consistency
         updateStatusFromStage(candidate, stage);
 
         Candidate savedCandidate = candidateRepository.save(candidate);
 
-        // Audit log: stage change (only log if stage actually changed)
         if (oldStage != stage) {
             auditLogService.logAction(
                     "CANDIDATE",
@@ -467,8 +343,6 @@ public class RecruitmentManagementService {
             );
         }
 
-        // Publish CandidateHiredEvent when candidate reaches OFFER_NDA_TO_BE_RELEASED
-        // (This is the terminal success stage in the nu-hire pipeline; actual onboarding triggers separately)
         if (stage == Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED && oldStage != Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED) {
             try {
                 JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
@@ -513,7 +387,6 @@ public class RecruitmentManagementService {
 
         Candidate savedCandidate = candidateRepository.save(candidate);
 
-        // Audit log: offer created
         auditLogService.logAction(
                 "CANDIDATE",
                 candidateId,
@@ -525,7 +398,6 @@ public class RecruitmentManagementService {
                 ", Joining Date: " + (request.getJoiningDate() != null ? request.getJoiningDate() : "N/A")
         );
 
-        // Trigger approval workflow for the offer
         try {
             WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
             workflowRequest.setEntityType(WorkflowDefinition.EntityType.RECRUITMENT_OFFER);
@@ -534,7 +406,6 @@ public class RecruitmentManagementService {
                     + " - " + (request.getPositionTitle() != null ? request.getPositionTitle() : ""));
             workflowRequest.setAmount(request.getOfferedSalary() != null
                     ? request.getOfferedSalary() : BigDecimal.ZERO);
-            // Department comes from the associated job opening if available
             if (candidate.getJobOpeningId() != null) {
                 jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
                         .ifPresent(job -> workflowRequest.setDepartmentId(job.getDepartmentId()));
@@ -543,13 +414,45 @@ public class RecruitmentManagementService {
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for recruitment offer: candidate={}", savedCandidate.getId());
         } catch (Exception e) {
-            // Log but don't fail the offer creation if no workflow is configured
             log.warn("Could not start approval workflow for offer (candidate={}): {}",
                     savedCandidate.getId(), e.getMessage());
         }
 
         return mapToCandidateResponse(savedCandidate);
     }
+
+    // ==================== Interview Operations (delegated) ====================
+
+    public InterviewResponse scheduleInterview(InterviewRequest request) {
+        return interviewManagementService.scheduleInterview(request);
+    }
+
+    @Transactional
+    public InterviewResponse updateInterview(UUID interviewId, InterviewRequest request) {
+        return interviewManagementService.updateInterview(interviewId, request);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<InterviewResponse> getAllInterviews(Pageable pageable) {
+        return interviewManagementService.getAllInterviews(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public InterviewResponse getInterviewById(UUID interviewId) {
+        return interviewManagementService.getInterviewById(interviewId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<InterviewResponse> getInterviewsByCandidate(UUID candidateId, Pageable pageable) {
+        return interviewManagementService.getInterviewsByCandidate(candidateId, pageable);
+    }
+
+    @Transactional
+    public void deleteInterview(UUID interviewId) {
+        interviewManagementService.deleteInterview(interviewId);
+    }
+
+    // ==================== Private helpers ====================
 
     private void updateStatusFromStage(Candidate candidate, Candidate.RecruitmentStage stage) {
         switch (stage) {
@@ -584,242 +487,6 @@ public class RecruitmentManagementService {
                 candidate.setStatus(Candidate.CandidateStatus.REJECTED);
                 break;
         }
-    }
-
-    // ==================== Interview Operations ====================
-
-    public InterviewResponse scheduleInterview(InterviewRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        log.info("Scheduling interview for candidate {} for tenant {}", request.getCandidateId(), tenantId);
-
-        Interview interview = new Interview();
-        interview.setId(UUID.randomUUID());
-        interview.setTenantId(tenantId);
-        interview.setCandidateId(request.getCandidateId());
-        interview.setJobOpeningId(request.getJobOpeningId());
-        interview.setInterviewRound(request.getInterviewRound());
-        interview.setInterviewType(request.getInterviewType());
-        interview.setScheduledAt(request.getScheduledAt());
-        interview.setDurationMinutes(request.getDurationMinutes());
-        interview.setInterviewerId(request.getInterviewerId());
-        interview.setLocation(request.getLocation());
-        interview.setMeetingLink(request.getMeetingLink());
-        interview.setStatus(request.getStatus() != null ? request.getStatus() : Interview.InterviewStatus.SCHEDULED);
-        interview.setFeedback(request.getFeedback());
-        interview.setRating(request.getRating());
-        interview.setResult(request.getResult());
-        interview.setNotes(request.getNotes());
-
-        // Google Meet integration: create a Calendar event with Meet link if requested
-        if (request.isCreateGoogleMeet() && request.getGoogleAccessToken() != null) {
-            try {
-                String candidateName = candidateRepository.findById(request.getCandidateId())
-                        .map(Candidate::getFullName).orElse("Candidate");
-                String jobTitle = jobOpeningRepository.findById(request.getJobOpeningId())
-                        .map(JobOpening::getJobTitle).orElse("Position");
-                String title = interview.getInterviewRound() + " Interview - " + candidateName + " (" + jobTitle + ")";
-                String description = "Interview scheduled via NU-AURA HRMS\n"
-                        + "Candidate: " + candidateName + "\n"
-                        + "Position: " + jobTitle + "\n"
-                        + "Round: " + interview.getInterviewRound();
-
-                // Collect attendee emails
-                List<String> attendeeEmails = new java.util.ArrayList<>();
-                candidateRepository.findById(request.getCandidateId())
-                        .map(Candidate::getEmail)
-                        .ifPresent(attendeeEmails::add);
-                if (request.getInterviewerId() != null) {
-                    employeeRepository.findById(request.getInterviewerId())
-                            .map(Employee::getPersonalEmail)
-                            .ifPresent(attendeeEmails::add);
-                }
-
-                int duration = request.getDurationMinutes() != null ? request.getDurationMinutes() : 60;
-
-                GoogleMeetService.GoogleMeetResult meetResult = googleMeetService.createMeetEvent(
-                        request.getGoogleAccessToken(),
-                        title,
-                        description,
-                        request.getScheduledAt(),
-                        duration,
-                        attendeeEmails,
-                        request.getLocation()
-                );
-
-                if (meetResult.success()) {
-                    interview.setGoogleMeetLink(meetResult.meetLink());
-                    interview.setGoogleCalendarEventId(meetResult.calendarEventId());
-                    // Also set meetingLink so existing UI can display it
-                    if (interview.getMeetingLink() == null || interview.getMeetingLink().isBlank()) {
-                        interview.setMeetingLink(meetResult.meetLink());
-                    }
-                    log.info("Google Meet created for interview: {}", meetResult.meetLink());
-                } else {
-                    log.warn("Google Meet creation failed: {}. Interview will be saved without Meet link.", meetResult.errorMessage());
-                }
-            } catch (Exception e) {
-                log.error("Error creating Google Meet for interview: {}", e.getMessage(), e);
-                // Don't fail the interview creation if Meet creation fails
-            }
-        }
-
-        Interview savedInterview = interviewRepository.save(interview);
-
-        // Audit: interview scheduled
-        auditLogService.logAction(
-                "INTERVIEW",
-                savedInterview.getId(),
-                AuditAction.CREATE,
-                null,
-                savedInterview.getInterviewRound() + " - " + savedInterview.getStatus(),
-                "Interview scheduled: " + savedInterview.getInterviewRound() + " for candidate " + savedInterview.getCandidateId() + " at " + savedInterview.getScheduledAt()
-        );
-
-        return mapToInterviewResponse(savedInterview);
-    }
-
-    @Transactional
-    public InterviewResponse updateInterview(UUID interviewId, InterviewRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        log.info("Updating interview {} for tenant {}", interviewId, tenantId);
-
-        Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
-
-        interview.setInterviewRound(request.getInterviewRound());
-        interview.setInterviewType(request.getInterviewType());
-        interview.setScheduledAt(request.getScheduledAt());
-        interview.setDurationMinutes(request.getDurationMinutes());
-        interview.setInterviewerId(request.getInterviewerId());
-        interview.setLocation(request.getLocation());
-        interview.setMeetingLink(request.getMeetingLink());
-        interview.setStatus(request.getStatus());
-        interview.setFeedback(request.getFeedback());
-        interview.setRating(request.getRating());
-        interview.setResult(request.getResult());
-        interview.setNotes(request.getNotes());
-
-        Interview updatedInterview = interviewRepository.save(interview);
-
-        // Audit: interview updated
-        auditLogService.logAction(
-                "INTERVIEW",
-                interviewId,
-                AuditAction.UPDATE,
-                null,
-                updatedInterview.getInterviewRound() + " - " + updatedInterview.getStatus() + (updatedInterview.getResult() != null ? " - " + updatedInterview.getResult() : ""),
-                "Interview updated: " + updatedInterview.getInterviewRound() + " for candidate " + updatedInterview.getCandidateId()
-        );
-
-        return mapToInterviewResponse(updatedInterview);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<InterviewResponse> getAllInterviews(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        String permission = determineViewPermission();
-        Specification<Interview> scopeSpec = dataScopeService.getScopeSpecification(permission);
-        Specification<Interview> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        return interviewRepository.findAll(
-                Specification.where(tenantSpec).and(scopeSpec), pageable)
-                .map(this::mapToInterviewResponse);
-    }
-
-    @Transactional(readOnly = true)
-    public InterviewResponse getInterviewById(UUID interviewId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
-
-        // Enforce scope: validate the user can access this interview
-        String permission = determineViewPermission();
-        validateInterviewAccess(interview, permission);
-
-        return mapToInterviewResponse(interview);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<InterviewResponse> getInterviewsByCandidate(UUID candidateId, Pageable pageable) {
-        String permission = determineViewPermission();
-
-        // First validate access to the candidate
-        UUID tenantId = TenantContext.getCurrentTenant();
-        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
-        validateCandidateAccess(candidate, permission);
-
-        // Apply scope filtering to interviews
-        Specification<Interview> scopeSpec = dataScopeService.getScopeSpecification(permission);
-        Specification<Interview> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        Specification<Interview> candidateSpec = (root, query, cb) -> cb.equal(root.get("candidateId"), candidateId);
-
-        return interviewRepository.findAll(
-                Specification.where(tenantSpec).and(candidateSpec).and(scopeSpec),
-                pageable).map(this::mapToInterviewResponse);
-    }
-
-    @Transactional
-    public void deleteInterview(UUID interviewId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
-
-        // Audit: interview deleted
-        auditLogService.logAction(
-                "INTERVIEW",
-                interviewId,
-                AuditAction.DELETE,
-                interview.getInterviewRound() + " - " + interview.getStatus(),
-                null,
-                "Interview deleted: " + interview.getInterviewRound() + " for candidate " + interview.getCandidateId()
-        );
-
-        interviewRepository.delete(interview);
-    }
-
-    // ==================== Mapper Methods ====================
-
-    private JobOpeningResponse mapToJobOpeningResponse(JobOpening jobOpening) {
-        String hiringManagerName = null;
-        if (jobOpening.getHiringManagerId() != null) {
-            hiringManagerName = employeeRepository.findById(jobOpening.getHiringManagerId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
-        }
-
-        Integer candidateCount = candidateRepository.findByTenantIdAndJobOpeningId(
-                jobOpening.getTenantId(), jobOpening.getId()).size();
-
-        return JobOpeningResponse.builder()
-                .id(jobOpening.getId())
-                .tenantId(jobOpening.getTenantId())
-                .jobCode(jobOpening.getJobCode())
-                .jobTitle(jobOpening.getJobTitle())
-                .departmentId(jobOpening.getDepartmentId())
-                .departmentName(null)
-                .location(jobOpening.getLocation())
-                .employmentType(jobOpening.getEmploymentType())
-                .experienceRequired(jobOpening.getExperienceRequired())
-                .minSalary(jobOpening.getMinSalary())
-                .maxSalary(jobOpening.getMaxSalary())
-                .numberOfOpenings(jobOpening.getNumberOfOpenings())
-                .jobDescription(jobOpening.getJobDescription())
-                .requirements(jobOpening.getRequirements())
-                .skillsRequired(jobOpening.getSkillsRequired())
-                .hiringManagerId(jobOpening.getHiringManagerId())
-                .hiringManagerName(hiringManagerName)
-                .status(jobOpening.getStatus())
-                .postedDate(jobOpening.getPostedDate())
-                .closingDate(jobOpening.getClosingDate())
-                .priority(jobOpening.getPriority())
-                .isActive(jobOpening.getIsActive())
-                .candidateCount(candidateCount)
-                .createdAt(jobOpening.getCreatedAt())
-                .updatedAt(jobOpening.getUpdatedAt())
-                .createdBy(jobOpening.getCreatedBy())
-                .lastModifiedBy(jobOpening.getLastModifiedBy())
-                .version(jobOpening.getVersion())
-                .build();
     }
 
     private CandidateResponse mapToCandidateResponse(Candidate candidate) {
@@ -868,71 +535,21 @@ public class RecruitmentManagementService {
                 .build();
     }
 
-    private InterviewResponse mapToInterviewResponse(Interview interview) {
-        String candidateName = candidateRepository.findById(interview.getCandidateId())
-                .map(Candidate::getFullName)
-                .orElse(null);
-
-        String jobTitle = jobOpeningRepository.findById(interview.getJobOpeningId())
-                .map(JobOpening::getJobTitle)
-                .orElse(null);
-
-        String interviewerName = null;
-        if (interview.getInterviewerId() != null) {
-            interviewerName = employeeRepository.findById(interview.getInterviewerId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
-        }
-
-        return InterviewResponse.builder()
-                .id(interview.getId())
-                .tenantId(interview.getTenantId())
-                .candidateId(interview.getCandidateId())
-                .candidateName(candidateName)
-                .jobOpeningId(interview.getJobOpeningId())
-                .jobTitle(jobTitle)
-                .interviewRound(interview.getInterviewRound())
-                .interviewType(interview.getInterviewType())
-                .scheduledAt(interview.getScheduledAt())
-                .durationMinutes(interview.getDurationMinutes())
-                .interviewerId(interview.getInterviewerId())
-                .interviewerName(interviewerName)
-                .location(interview.getLocation())
-                .meetingLink(interview.getMeetingLink())
-                .status(interview.getStatus())
-                .feedback(interview.getFeedback())
-                .rating(interview.getRating())
-                .result(interview.getResult())
-                .notes(interview.getNotes())
-                .createdAt(interview.getCreatedAt())
-                .updatedAt(interview.getUpdatedAt())
-                .createdBy(interview.getCreatedBy())
-                .lastModifiedBy(interview.getLastModifiedBy())
-                .version(interview.getVersion())
-                .googleMeetLink(interview.getGoogleMeetLink())
-                .googleCalendarEventId(interview.getGoogleCalendarEventId())
-                .build();
-    }
-
     // ==================== Scope Validation Helpers ====================
 
     /**
      * Determines which view permission the user has (in priority order).
      * Returns the actual permission that has a scope assigned, not just any
-     * permission that passes
-     * hasPermission() check. This ensures getPermissionScope() can find the scope
-     * for validation.
+     * permission that passes hasPermission() check. This ensures
+     * getPermissionScope() can find the scope for validation.
      *
      * Note: Checks for explicit RECRUITMENT_VIEW_* and CANDIDATE_VIEW permissions
      * first, then falls back to RECRUITMENT:MANAGE.
      * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled
-     * by @RequiresPermission
-     * for access control, and this method ensures scope enforcement works for users
-     * with only MANAGE.
+     * by @RequiresPermission for access control, and this method ensures scope
+     * enforcement works for users with only MANAGE.
      */
     private String determineViewPermission() {
-        // Check recruitment view permissions in priority order (highest to lowest
-        // privilege)
         if (SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_ALL) != null) {
             return Permission.RECRUITMENT_VIEW_ALL;
         }
@@ -942,41 +559,19 @@ public class RecruitmentManagementService {
         if (SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW) != null) {
             return Permission.RECRUITMENT_VIEW;
         }
-
-        // Check candidate view permissions
         if (SecurityContext.getPermissionScope(Permission.CANDIDATE_VIEW) != null) {
             return Permission.CANDIDATE_VIEW;
         }
-
-        // Fallback to RECRUITMENT:MANAGE - users with MANAGE permission can view with
-        // that permission's scope
         RoleScope manageScope = SecurityContext.getPermissionScope(Permission.RECRUITMENT_MANAGE);
         if (manageScope != null) {
             return Permission.RECRUITMENT_MANAGE;
         }
-
-        // Final fallback: user passed @RequiresPermission check but has no scoped
-        // permission
-        // This can happen with system admin. Return VIEW as safest default for scope
-        // lookup.
         return Permission.RECRUITMENT_VIEW;
     }
 
     /**
-     * Validates that the current user can access a specific job opening based on
-     * their scope.
-     * Throws AccessDeniedException if access is not allowed.
-     */
-    private void validateJobOpeningAccess(JobOpening jobOpening, String permission) {
-        if (jobOpening.getHiringManagerId() != null) {
-            validateEmployeeAccess(jobOpening.getHiringManagerId(), permission);
-        }
-    }
-
-    /**
      * Validates that the current user can access a specific candidate based on
-     * their scope.
-     * Throws AccessDeniedException if access is not allowed.
+     * their scope. Throws AccessDeniedException if access is not allowed.
      */
     private void validateCandidateAccess(Candidate candidate, String permission) {
         if (candidate.getAssignedRecruiterId() != null) {
@@ -985,27 +580,13 @@ public class RecruitmentManagementService {
     }
 
     /**
-     * Validates that the current user can access a specific interview based on
-     * their scope.
-     * Throws AccessDeniedException if access is not allowed.
-     */
-    private void validateInterviewAccess(Interview interview, String permission) {
-        if (interview.getInterviewerId() != null) {
-            validateEmployeeAccess(interview.getInterviewerId(), permission);
-        }
-    }
-
-    /**
      * Validates that the current user can access data for a specific employee based
-     * on their scope.
-     * This is used to check access to hiring managers, recruiters, and
-     * interviewers.
-     * Throws AccessDeniedException if access is not allowed.
+     * on their scope. This is used to check access to hiring managers, recruiters,
+     * and interviewers. Throws AccessDeniedException if access is not allowed.
      */
     private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {
         UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
 
-        // Super admin (includes system admin and SUPER_ADMIN role) bypasses all checks
         if (SecurityContext.isSuperAdmin()) {
             return;
         }
@@ -1017,39 +598,33 @@ public class RecruitmentManagementService {
 
         switch (scope) {
             case ALL:
-                // ALL scope: can access any employee's data
                 return;
 
             case LOCATION:
-                // LOCATION scope: target employee must be in same location
                 if (isEmployeeInUserLocations(targetEmployeeId)) {
                     return;
                 }
                 break;
 
             case DEPARTMENT:
-                // DEPARTMENT scope: target employee must be in same department
                 if (isEmployeeInUserDepartment(targetEmployeeId)) {
                     return;
                 }
                 break;
 
             case TEAM:
-                // TEAM scope: target must be self or a reportee
                 if (targetEmployeeId.equals(currentEmployeeId) || isReportee(targetEmployeeId)) {
                     return;
                 }
                 break;
 
             case SELF:
-                // SELF scope: can only access own data
                 if (targetEmployeeId.equals(currentEmployeeId)) {
                     return;
                 }
                 break;
 
             case CUSTOM:
-                // CUSTOM scope: check if target is in custom targets
                 if (targetEmployeeId.equals(currentEmployeeId) || isInCustomTargets(targetEmployeeId, permission)) {
                     return;
                 }
@@ -1088,13 +663,11 @@ public class RecruitmentManagementService {
     }
 
     private boolean isInCustomTargets(UUID employeeId, String permission) {
-        // Check if employee is directly in custom employee targets
         Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
         if (customEmployeeIds != null && customEmployeeIds.contains(employeeId)) {
             return true;
         }
 
-        // Check if employee's department is in custom department targets
         Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
         if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
@@ -1105,7 +678,6 @@ public class RecruitmentManagementService {
             }
         }
 
-        // Check if employee's location is in custom location targets
         Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
         if (customLocationIds != null && !customLocationIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
