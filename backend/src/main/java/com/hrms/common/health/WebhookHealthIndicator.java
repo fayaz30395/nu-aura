@@ -81,7 +81,7 @@ public class WebhookHealthIndicator implements HealthIndicator {
 
             return builder.build();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Webhook health check failed", e);
             return Health.unknown()
                     .withDetail("error", e.getMessage())

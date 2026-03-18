@@ -60,7 +60,7 @@ public class TenantCacheManager {
             } else {
                 log.debug("No cache entries found for tenant: {}", tenantId);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error invalidating caches for tenant: {}", tenantId, e);
         }
     }
@@ -101,7 +101,7 @@ public class TenantCacheManager {
             } else {
                 log.debug("No cache entries found for '{}' in tenant: {}", cacheName, tenantId);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error invalidating cache '{}' for tenant: {}", cacheName, tenantId, e);
         }
     }
@@ -117,7 +117,7 @@ public class TenantCacheManager {
             if (Boolean.TRUE.equals(deleted)) {
                 log.debug("Invalidated cache key: {}", fullKey);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error invalidating cache key: {}", fullKey, e);
         }
     }
@@ -154,7 +154,7 @@ public class TenantCacheManager {
         try {
             Set<String> keys = redisTemplate.keys(pattern);
             return keys != null ? keys.size() : 0;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error counting cache entries for tenant: {}", tenantId, e);
             return 0;
         }
@@ -172,7 +172,7 @@ public class TenantCacheManager {
                 Long deleted = redisTemplate.delete(keys);
                 log.warn("Invalidated {} cache entries across ALL tenants", deleted);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error invalidating all caches", e);
         }
     }

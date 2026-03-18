@@ -77,7 +77,7 @@ public class AuditLogAspect {
 
             return result;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) { // Intentional broad catch — AOP around-advice re-throws for all service errors
             long duration = System.currentTimeMillis() - startTime;
 
             log.error("AUDIT: Exception in {}.{} - Duration: {}ms - User: {} - Tenant: {} - Error: {}",
@@ -109,7 +109,7 @@ public class AuditLogAspect {
 
             return result;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) { // Intentional broad catch — AOP around-advice re-throws for all controller errors
             long duration = System.currentTimeMillis() - startTime;
             log.error("API: {}.{} failed after {}ms - Error: {}",
                     className, methodName, duration, e.getMessage());
@@ -165,11 +165,11 @@ public class AuditLogAspect {
         }
 
         Object result = null;
-        Exception caughtException = null;
+        RuntimeException caughtException = null;
 
         try {
             result = joinPoint.proceed();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             caughtException = e;
             if (!audited.logOnException()) {
                 throw e;
@@ -190,7 +190,7 @@ public class AuditLogAspect {
                         result,
                         description);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to create audit log for @Audited method: {}", e.getMessage());
         }
 
@@ -232,7 +232,7 @@ public class AuditLogAspect {
                 if (id instanceof UUID) {
                     return (UUID) id;
                 }
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 // No getId() method or error
             }
         }

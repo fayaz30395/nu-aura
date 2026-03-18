@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -98,7 +99,7 @@ public class FileStorageService {
                     .uploadedAt(LocalDateTime.now())
                     .build();
 
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             log.error("Failed to upload file: {}", file.getOriginalFilename(), e);
             throw new BusinessException("Failed to upload file: " + e.getMessage());
         }
@@ -143,7 +144,7 @@ public class FileStorageService {
                     .uploadedAt(LocalDateTime.now())
                     .build();
 
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             log.error("Failed to upload file from stream: {}", filename, e);
             throw new BusinessException("Failed to upload file: " + e.getMessage());
         }
@@ -161,7 +162,7 @@ public class FileStorageService {
                     .method(Method.GET)
                     .expiry(urlExpiryHours, TimeUnit.HOURS)
                     .build());
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             log.error("Failed to generate download URL for: {}", objectName, e);
             throw new BusinessException("Failed to generate download URL");
         }
@@ -177,7 +178,7 @@ public class FileStorageService {
                     .bucket(defaultBucket)
                     .object(objectName)
                     .build());
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             log.error("Failed to get file: {}", objectName, e);
             throw new BusinessException("Failed to retrieve file");
         }
@@ -194,7 +195,7 @@ public class FileStorageService {
                     .object(objectName)
                     .build());
             log.info("File deleted: {}", objectName);
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             log.error("Failed to delete file: {}", objectName, e);
             throw new BusinessException("Failed to delete file");
         }
@@ -210,7 +211,7 @@ public class FileStorageService {
                     .object(objectName)
                     .build());
             return true;
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             return false;
         }
     }
@@ -235,7 +236,7 @@ public class FileStorageService {
 
             log.info("File copied from {} to {}", sourceObjectName, destinationObjectName);
             return destinationObjectName;
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             log.error("Failed to copy file: {}", sourceObjectName, e);
             throw new BusinessException("Failed to copy file");
         }
@@ -290,7 +291,7 @@ public class FileStorageService {
                         .build());
                 log.info("Created bucket: {}", defaultBucket);
             }
-        } catch (Exception e) {
+        } catch (IOException | java.security.GeneralSecurityException e) {
             log.error("Failed to ensure bucket exists: {}", defaultBucket, e);
             throw new BusinessException("Failed to initialize storage");
         }

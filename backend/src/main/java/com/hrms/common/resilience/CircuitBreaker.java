@@ -79,7 +79,7 @@ public class CircuitBreaker {
             T result = supplier.get();
             recordSuccess();
             return result;
-        } catch (Exception e) {
+        } catch (RuntimeException e) { // Intentional broad catch — circuit breaker wraps arbitrary supplier calls
             recordFailure(e);
             return fallback;
         }
@@ -101,7 +101,7 @@ public class CircuitBreaker {
             runnable.run();
             recordSuccess();
             return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) { // Intentional broad catch — circuit breaker wraps arbitrary runnable calls
             recordFailure(e);
             return false;
         }

@@ -137,7 +137,7 @@ public @interface WebhookUrlValidator {
                 return !address.isLoopbackAddress() &&
                        !address.isSiteLocalAddress() &&
                        !address.isLinkLocalAddress();
-            } catch (Exception e) {
+            } catch (java.net.UnknownHostException e) {
                 // DNS resolution failed - may be temporary
                 return true;
             }

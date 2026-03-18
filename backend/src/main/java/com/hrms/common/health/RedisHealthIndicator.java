@@ -54,7 +54,7 @@ public class RedisHealthIndicator implements HealthIndicator {
                             builder.withDetail("maxMemory", maxMemory);
                         }
                     }
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     // Info command might not be available, continue without it
                     log.debug("Could not retrieve Redis info: {}", e.getMessage());
                 }
@@ -69,7 +69,7 @@ public class RedisHealthIndicator implements HealthIndicator {
                         .withDetail("error", "Unexpected PING response: " + pong)
                         .build();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Redis health check failed", e);
             return Health.down()
                     .withDetail("error", e.getMessage())

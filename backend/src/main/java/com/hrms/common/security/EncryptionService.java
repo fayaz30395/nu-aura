@@ -100,7 +100,7 @@ public class EncryptionService {
             System.arraycopy(ciphertext, 0, blob, iv.length, ciphertext.length);
 
             return GCM_PREFIX + Base64.getEncoder().encodeToString(blob);
-        } catch (Exception e) {
+        } catch (java.security.GeneralSecurityException e) {
             log.error("AES-GCM encryption failed", e);
             throw new RuntimeException("Encryption failed", e);
         }
@@ -129,7 +129,7 @@ public class EncryptionService {
             // Legacy path: value was encrypted with old ECB scheme
             log.warn("Decrypting legacy ECB-encrypted value; re-encrypt with encrypt() to upgrade to AES-GCM");
             return decryptLegacyEcb(encryptedValue);
-        } catch (Exception e) {
+        } catch (java.security.GeneralSecurityException | IllegalArgumentException e) {
             log.error("Decryption failed", e);
             throw new RuntimeException("Decryption failed", e);
         }
