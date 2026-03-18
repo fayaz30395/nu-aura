@@ -46,6 +46,8 @@ import {
   FeedbackSynthesisResponse,
   ResumeParseResponse,
 } from '@/lib/types/ai-recruitment';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // Extracted sub-components (Loop 3 refactor — FE-016)
 import { CandidateStats } from './CandidateStats';
@@ -545,25 +547,29 @@ function CandidatesPage() {
             <p className="text-[var(--text-secondary)] mt-1">Track and manage candidate applications</p>
           </div>
           <div className="flex gap-2">
-            <Button
-              onClick={() => {
-                setEditingCandidate(null);
-                candidateForm.reset();
-                setShowAddModal(true);
-              }}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Add Candidate
-            </Button>
-            <Button
-              onClick={() => setShowParseResumeModal(true)}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Sparkles className="h-4 w-4" />
-              Parse Resume
-            </Button>
+            <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
+              <Button
+                onClick={() => {
+                  setEditingCandidate(null);
+                  candidateForm.reset();
+                  setShowAddModal(true);
+                }}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Candidate
+              </Button>
+            </PermissionGate>
+            <PermissionGate permission={Permissions.CANDIDATE_EVALUATE}>
+              <Button
+                onClick={() => setShowParseResumeModal(true)}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                Parse Resume
+              </Button>
+            </PermissionGate>
           </div>
         </div>
 

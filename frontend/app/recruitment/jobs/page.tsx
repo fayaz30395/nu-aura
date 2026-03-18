@@ -24,6 +24,8 @@ import { Department } from '@/lib/types/employee';
 import { JobDescriptionResponse } from '@/lib/types/ai-recruitment';
 import { Briefcase, MapPin, Users, Calendar, DollarSign, Plus, Search, Eye, Edit2, Trash2, X, Sparkles } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 export default function JobOpeningsPage() {
   const router = useRouter();
@@ -246,10 +248,12 @@ export default function JobOpeningsPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Job Openings</h1>
             <p className="text-[var(--text-secondary)] mt-1">Manage job openings and recruitment positions</p>
           </div>
-          <Button onClick={() => { reset(); setEditingJob(null); setShowAddModal(true); }} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create Job Opening
-          </Button>
+          <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
+            <Button onClick={() => { reset(); setEditingJob(null); setShowAddModal(true); }} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Create Job Opening
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats Cards */}
@@ -476,13 +480,15 @@ export default function JobOpeningsPage() {
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
-                      <button
-                        onClick={() => { setJobToDelete(job); setShowDeleteModal(true); }}
-                        className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
+                        <button
+                          onClick={() => { setJobToDelete(job); setShowDeleteModal(true); }}
+                          className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </PermissionGate>
                     </div>
                   </div>
                 </CardContent>

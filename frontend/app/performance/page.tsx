@@ -26,6 +26,8 @@ import {
 import { AppLayout } from '@/components/layout';
 import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
 import { SkeletonStatCard } from '@/components/ui/Skeleton';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 interface DashboardStats {
   totalGoals: number;

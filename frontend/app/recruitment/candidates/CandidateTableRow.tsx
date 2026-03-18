@@ -9,6 +9,8 @@ import {
   Loader2, Brain, FileText, MessageSquare,
 } from 'lucide-react';
 import { getStatusColor, getStageColor, getMatchScoreColor } from './utils';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 interface CandidateTableRowProps {
   candidate: Candidate;
@@ -202,13 +204,15 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           </button>
 
           {/* Delete */}
-          <button
-            onClick={() => onDelete(candidate)}
-            className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 transition-colors"
-            title="Delete"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+          <PermissionGate permission={Permissions.CANDIDATE_EVALUATE}>
+            <button
+              onClick={() => onDelete(candidate)}
+              className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </PermissionGate>
         </div>
       </td>
     </tr>

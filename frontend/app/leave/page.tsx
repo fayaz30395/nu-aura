@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   useEmployeeBalancesForYear,
   useActiveLeaveTypes,
@@ -193,13 +195,15 @@ export default function LeavePage() {
               Track your leave balance and requests
             </p>
           </div>
-          <button
-            onClick={() => router.push('/leave/apply')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
-          >
-            <Plus className="h-5 w-5" />
-            Apply for Leave
-          </button>
+          <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
+            <button
+              onClick={() => router.push('/leave/apply')}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+            >
+              <Plus className="h-5 w-5" />
+              Apply for Leave
+            </button>
+          </PermissionGate>
         </div>
 
         {/* Leave Balance Cards */}
