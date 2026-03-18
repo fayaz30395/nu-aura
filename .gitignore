@@ -43,6 +43,23 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+.env.production
+.env.production.local
+
+# Binary documents
+*.docx
+*.doc
+*.xlsx
+*.pptx
+
+# SSL/TLS certificates
+*.pem
+*.key
+*.crt
+*.p12
+
+# MCP configuration
+.mcp.json
 
 # Temporary files
 *.tmp
