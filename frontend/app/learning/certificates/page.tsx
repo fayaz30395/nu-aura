@@ -27,7 +27,6 @@ export default function CertificateGalleryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('ALL');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
     if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);

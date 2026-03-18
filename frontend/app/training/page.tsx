@@ -202,7 +202,6 @@ export default function TrainingPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
   const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
     if (notifTimerRef.current) clearTimeout(notifTimerRef.current);

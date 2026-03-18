@@ -67,15 +67,11 @@ export default function EmployeesPage() {
   const [currentTab, setCurrentTab] = useState('basic'); // basic, personal, employment, bank
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
-  // BUG-006 FIX: paginate the employee list instead of hard-coding page=0, size=100
   const [currentPage, setCurrentPage] = useState(0);
   const PAGE_SIZE = 20;
 
   // React Query - fetch employees, managers, and departments
-  // BUG-006 FIX: pass currentPage so navigation actually changes the query
   const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(currentPage, PAGE_SIZE);
-  // BUG-013 FIX: use useManagers() instead of useEmployees(0,100) so the dropdown
-  // only lists employees who are eligible to be assigned as managers (LEAD and above)
   const { data: managers = [], isLoading: managersLoading } = useManagers();
   const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
 
@@ -400,7 +396,6 @@ export default function EmployeesPage() {
               </table>
             </div>
 
-            {/* BUG-006 FIX: Pagination controls */}
             {totalPages > 1 && (
               <div className="px-6 py-4 border-t border-[var(--border-subtle)] flex items-center justify-between">
                 <p className="text-sm text-[var(--text-secondary)]">

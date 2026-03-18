@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
@@ -32,6 +33,7 @@ const log = createLogger('TimeTrackingListPage');
 
 export default function TimeTrackingPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
 
   const { weekStart, weekEnd } = useMemo(() => timeTrackingService.getWeekDates(), []);
@@ -124,7 +126,7 @@ export default function TimeTrackingPage() {
             <AlertCircle className="h-12 w-12 text-red-500" />
             <p className="text-[var(--text-secondary)]">{error instanceof Error ? error.message : 'Failed to load time entries'}</p>
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['time-tracking'] })}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
             >
               Retry

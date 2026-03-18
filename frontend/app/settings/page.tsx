@@ -45,7 +45,6 @@ export default function SettingsPage() {
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
     if (successTimerRef.current) clearTimeout(successTimerRef.current);
