@@ -19,6 +19,8 @@ import {
   Home,
 } from 'lucide-react';
 import { apiClient } from '@/lib/api/client';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 interface Question {
   id: string;
@@ -512,22 +514,24 @@ export default function QuizPage() {
               Next <ChevronRight className="h-4 w-4" />
             </button>
 
-            <button
-              onClick={handleSubmitQuiz}
-              disabled={submitQuizMutation.isPending || questionsAnswered < quiz.questions.length}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {submitQuizMutation.isPending ? (
-                <>
-                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="h-4 w-4" /> Submit Quiz
-                </>
-              )}
-            </button>
+            <PermissionGate permission={Permissions.LMS_ENROLL}>
+              <button
+                onClick={handleSubmitQuiz}
+                disabled={submitQuizMutation.isPending || questionsAnswered < quiz.questions.length}
+                className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {submitQuizMutation.isPending ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="h-4 w-4" /> Submit Quiz
+                  </>
+                )}
+              </button>
+            </PermissionGate>
           </div>
         </div>
       </div>

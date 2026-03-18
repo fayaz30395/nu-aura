@@ -17,6 +17,8 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/Button';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { Input } from '@/components/ui/Input';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
 import { Card } from '@/components/ui/Card';
@@ -319,13 +321,15 @@ export default function KnowledgeBasePage() {
             </p>
           </div>
           {isAdmin && (
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              variant="primary"
-              leftIcon={<Plus className="h-4 w-4" />}
-            >
-              New Article
-            </Button>
+            <PermissionGate permission={Permissions.HELPDESK_KB_CREATE}>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                variant="primary"
+                leftIcon={<Plus className="h-4 w-4" />}
+              >
+                New Article
+              </Button>
+            </PermissionGate>
           )}
         </div>
 
@@ -508,12 +512,14 @@ export default function KnowledgeBasePage() {
             <Button variant="outline" onClick={() => setShowCreateModal(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={() => setShowCreateModal(false)}
-              variant="primary"
-            >
-              Create Article
-            </Button>
+            <PermissionGate permission={Permissions.HELPDESK_KB_CREATE}>
+              <Button
+                onClick={() => setShowCreateModal(false)}
+                variant="primary"
+              >
+                Create Article
+              </Button>
+            </PermissionGate>
           </ModalFooter>
         </Modal>
       )}

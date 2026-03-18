@@ -10,6 +10,8 @@ import {
   ChangeType,
 } from '@/lib/types/employment-change-request';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Clock,
   CheckCircle,
@@ -372,20 +374,24 @@ export default function EmploymentChangeRequestsPage() {
                     {/* Actions */}
                     {request.status === 'PENDING' && (
                       <div className="flex gap-4 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <button
-                          onClick={() => setApproveConfirm(request.id)}
-                          disabled={approveMutation.isPending || rejectMutation.isPending}
-                          className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium transition-colors"
-                        >
-                          {approveMutation.isPending ? 'Processing...' : 'Approve Changes'}
-                        </button>
-                        <button
-                          onClick={() => setShowRejectModal(request.id)}
-                          disabled={approveMutation.isPending || rejectMutation.isPending}
-                          className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium transition-colors"
-                        >
-                          Reject
-                        </button>
+                        <PermissionGate permission={Permissions.EMPLOYMENT_CHANGE_APPROVE}>
+                          <button
+                            onClick={() => setApproveConfirm(request.id)}
+                            disabled={approveMutation.isPending || rejectMutation.isPending}
+                            className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium transition-colors"
+                          >
+                            {approveMutation.isPending ? 'Processing...' : 'Approve Changes'}
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.EMPLOYMENT_CHANGE_APPROVE}>
+                          <button
+                            onClick={() => setShowRejectModal(request.id)}
+                            disabled={approveMutation.isPending || rejectMutation.isPending}
+                            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium transition-colors"
+                          >
+                            Reject
+                          </button>
+                        </PermissionGate>
                       </div>
                     )}
                   </div>

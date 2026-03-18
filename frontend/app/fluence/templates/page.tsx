@@ -23,6 +23,8 @@ import {
   input as dsInput,
 } from '@/lib/design-system';
 import { useFluenceTemplates } from '@/lib/hooks/queries/useFluence';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 interface Template {
   id: string;
@@ -86,13 +88,15 @@ export default function TemplatesPage() {
               Reusable document templates for your team
             </p>
           </div>
-          <Button
-            onClick={handleCreateTemplate}
-            className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white shadow-sm hover:shadow-md transition-shadow duration-150 flex-shrink-0"
-          >
-            <Plus className={iconSize.button} />
-            Create Template
-          </Button>
+          <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
+            <Button
+              onClick={handleCreateTemplate}
+              className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white shadow-sm hover:shadow-md transition-shadow duration-150 flex-shrink-0"
+            >
+              <Plus className={iconSize.button} />
+              Create Template
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Search Bar */}
@@ -139,13 +143,15 @@ export default function TemplatesPage() {
                   <p className={`${typography.bodySecondary} mb-6`}>
                     Create your first template to get started
                   </p>
-                  <Button
-                    onClick={handleCreateTemplate}
-                    className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white shadow-sm hover:shadow-md transition-shadow duration-150"
-                  >
-                    <Plus className={iconSize.button} />
-                    Create Template
-                  </Button>
+                  <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
+                    <Button
+                      onClick={handleCreateTemplate}
+                      className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white shadow-sm hover:shadow-md transition-shadow duration-150"
+                    >
+                      <Plus className={iconSize.button} />
+                      Create Template
+                    </Button>
+                  </PermissionGate>
                 </motion.div>
               </CardContent>
             </Card>
@@ -230,14 +236,16 @@ export default function TemplatesPage() {
                   </CardContent>
 
                   <div className="p-4 border-t border-[var(--border-main)] flex gap-2">
-                    <Button
-                      variant="secondary"
-                      className="flex-1 gap-2 h-9 text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors duration-150"
-                      onClick={() => handleUseTemplate(template.id)}
-                    >
-                      <Copy className={iconSize.button} />
-                      Use
-                    </Button>
+                    <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
+                      <Button
+                        variant="secondary"
+                        className="flex-1 gap-2 h-9 text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors duration-150"
+                        onClick={() => handleUseTemplate(template.id)}
+                      >
+                        <Copy className={iconSize.button} />
+                        Use
+                      </Button>
+                    </PermissionGate>
                     <Button
                       variant="secondary"
                       className="flex-1 gap-2 h-9 text-sm font-medium hover:bg-[var(--bg-secondary)] transition-colors duration-150"

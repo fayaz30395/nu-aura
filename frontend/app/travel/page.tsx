@@ -6,6 +6,8 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { TravelStatus, TravelType, TransportMode } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useTravelRequests } from '@/lib/hooks/queries/useTravel';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
   Plane,
@@ -171,13 +173,15 @@ export default function TravelPage() {
               Manage travel requests and expenses
             </p>
           </div>
-          <button
-            onClick={() => router.push('/travel/new')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
-          >
-            <Plus className="h-5 w-5" />
-            New Travel Request
-          </button>
+          <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div />}>
+            <button
+              onClick={() => router.push('/travel/new')}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+            >
+              <Plus className="h-5 w-5" />
+              New Travel Request
+            </button>
+          </PermissionGate>
         </div>
 
         {/* Filters */}
@@ -263,12 +267,14 @@ export default function TravelPage() {
             </button>
           </div>
         ) : travelRequests.length === 0 ? (
-          <EmptyState
-            icon={<Plane className="h-12 w-12" />}
-            title="No Travel Requests"
-            description="Submit a travel request"
-            action={{ label: 'New Request', onClick: () => router.push('/travel/new') }}
-          />
+          <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<EmptyState icon={<Plane className="h-12 w-12" />} title="No Travel Requests" description="No travel requests available" />}>
+            <EmptyState
+              icon={<Plane className="h-12 w-12" />}
+              title="No Travel Requests"
+              description="Submit a travel request"
+              action={{ label: 'New Request', onClick: () => router.push('/travel/new') }}
+            />
+          </PermissionGate>
         ) : (
           <div className="space-y-4">
             {travelRequests.map((request) => {

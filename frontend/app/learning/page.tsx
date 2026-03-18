@@ -14,6 +14,8 @@ import {
   useEnrollCourse,
 } from '@/lib/hooks/queries/useLearning';
 import type { Course, CourseEnrollment, Certificate } from '@/lib/services/lms.service';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 export default function LearningPage() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'my-courses' | 'certificates'>('catalog');
@@ -192,16 +194,18 @@ export default function LearningPage() {
                             </span>
                           )}
                         </div>
-                        <Button
-                          onClick={() => handleEnroll(course.id)}
-                          disabled={enrollMutation.isPending}
-                          variant="primary"
-                          size="md"
-                          className="w-full"
-                          aria-label={`Enroll in ${course.title}`}
-                        >
-                          {enrollMutation.isPending ? 'Enrolling...' : 'Enroll Now'}
-                        </Button>
+                        <PermissionGate permission={Permissions.LMS_ENROLL}>
+                          <Button
+                            onClick={() => handleEnroll(course.id)}
+                            disabled={enrollMutation.isPending}
+                            variant="primary"
+                            size="md"
+                            className="w-full"
+                            aria-label={`Enroll in ${course.title}`}
+                          >
+                            {enrollMutation.isPending ? 'Enrolling...' : 'Enroll Now'}
+                          </Button>
+                        </PermissionGate>
                       </div>
                     </div>
                   ))

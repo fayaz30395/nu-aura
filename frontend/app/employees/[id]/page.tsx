@@ -10,6 +10,8 @@ import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourne
 import { useEmployee, useDeleteEmployee, useDottedLineReports } from '@/lib/hooks/queries/useEmployees';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { createLogger } from '@/lib/utils/logger';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const log = createLogger('EmployeePage');
 
@@ -134,18 +136,22 @@ export default function EmployeeDetailPage() {
                 <h1 className="text-xl font-bold text-[var(--text-primary)]">Employee Details</h1>
               </div>
               <div className="flex gap-4">
-                <button
-                  onClick={() => router.push(`/employees/${employeeId}/edit`)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md"
-                >
-                  Edit Employee
-                </button>
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md"
-                >
-                  Delete
-                </button>
+                <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
+                  <button
+                    onClick={() => router.push(`/employees/${employeeId}/edit`)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md"
+                  >
+                    Edit Employee
+                  </button>
+                </PermissionGate>
+                <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
+                  <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md"
+                  >
+                    Delete
+                  </button>
+                </PermissionGate>
               </div>
             </div>
           </div>

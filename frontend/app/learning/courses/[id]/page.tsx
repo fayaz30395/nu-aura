@@ -21,6 +21,8 @@ import {
   Download,
   AlertCircle,
 } from 'lucide-react';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { apiClient } from '@/lib/api/client';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { useCourseDetail, useMyEnrollments, useEnrollCourse } from '@/lib/hooks/queries/useLearning';
@@ -433,17 +435,19 @@ export default function CourseDetailPage() {
                 )}
               </>
             ) : (
-              <button
-                onClick={handleEnroll}
-                disabled={enrollMutation.isPending}
-                className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {enrollMutation.isPending ? (
-                  <><div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> Enrolling...</>
-                ) : (
-                  <><Play className="h-4 w-4" /> Enroll &amp; Start</>
-                )}
-              </button>
+              <PermissionGate permission={Permissions.LMS_ENROLL}>
+                <button
+                  onClick={handleEnroll}
+                  disabled={enrollMutation.isPending}
+                  className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {enrollMutation.isPending ? (
+                    <><div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> Enrolling...</>
+                  ) : (
+                    <><Play className="h-4 w-4" /> Enroll &amp; Start</>
+                  )}
+                </button>
+              </PermissionGate>
             )}
 
             {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}

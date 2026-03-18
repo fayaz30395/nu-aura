@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { calendarService } from '@/lib/services/calendar.service';
 import { EventStatus } from '@/lib/types/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -381,26 +383,30 @@ export default function EventDetailPage() {
 
           {event.status !== 'CANCELLED' && (
             <>
-              <button
-                onClick={handleSyncToGoogle}
-                disabled={syncToGoogleMutation.isPending}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-xl font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50"
-              >
-                {syncToGoogleMutation.isPending ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <RefreshCw className="h-5 w-5" />
-                )}
-                Sync to Google
-              </button>
+              <PermissionGate permission={Permissions.CALENDAR_MANAGE}>
+                <button
+                  onClick={handleSyncToGoogle}
+                  disabled={syncToGoogleMutation.isPending}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-xl font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50"
+                >
+                  {syncToGoogleMutation.isPending ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <RefreshCw className="h-5 w-5" />
+                  )}
+                  Sync to Google
+                </button>
+              </PermissionGate>
 
-              <button
-                onClick={handleDelete}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
-              >
-                <Trash2 className="h-5 w-5" />
-                Delete
-              </button>
+              <PermissionGate permission={Permissions.CALENDAR_DELETE}>
+                <button
+                  onClick={handleDelete}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                >
+                  <Trash2 className="h-5 w-5" />
+                  Delete
+                </button>
+              </PermissionGate>
             </>
           )}
         </div>

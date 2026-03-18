@@ -8,6 +8,8 @@ import { AppLayout } from '@/components/layout';
 import { TicketSLA } from '@/lib/services/helpdesk-sla.service';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -202,12 +204,14 @@ export default function HelpdeskSLAPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-[var(--text-primary)]">SLA Management</h1>
           {activeTab === 'slas' && (
-            <button
-              onClick={() => { setShowForm(true); setEditingId(null); resetFormHandler(); }}
-              className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-            >
-              Create SLA Policy
-            </button>
+            <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
+              <button
+                onClick={() => { setShowForm(true); setEditingId(null); resetFormHandler(); }}
+                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+              >
+                Create SLA Policy
+              </button>
+            </PermissionGate>
           )}
         </div>
 
@@ -395,13 +399,15 @@ export default function HelpdeskSLAPage() {
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
-                >
-                  {editingId ? 'Update' : 'Create'}
-                </button>
+                <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                  >
+                    {editingId ? 'Update' : 'Create'}
+                  </button>
+                </PermissionGate>
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setEditingId(null); }}
@@ -512,18 +518,20 @@ export default function HelpdeskSLAPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <button
-                            onClick={() => handleEdit(sla)}
-                            className="text-primary-600 dark:text-primary-400 hover:text-primary-600 mr-4"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(sla)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            Delete
-                          </button>
+                          <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
+                            <button
+                              onClick={() => handleEdit(sla)}
+                              className="text-primary-600 dark:text-primary-400 hover:text-primary-600 mr-4"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(sla)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              Delete
+                            </button>
+                          </PermissionGate>
                         </td>
                       </tr>
                     ))}
@@ -570,12 +578,14 @@ export default function HelpdeskSLAPage() {
                             Escalated: {new Date(escalation.escalatedAt).toLocaleString()}
                           </div>
                         </div>
-                        <button
-                          onClick={() => handleAcknowledge(escalation.id)}
-                          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-                        >
-                          Acknowledge
-                        </button>
+                        <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
+                          <button
+                            onClick={() => handleAcknowledge(escalation.id)}
+                            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                          >
+                            Acknowledge
+                          </button>
+                        </PermissionGate>
                       </div>
                     </div>
                   ))

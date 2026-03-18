@@ -21,6 +21,8 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 type ImportStep = 'upload' | 'preview' | 'result';
 
@@ -277,22 +279,26 @@ export default function EmployeeImportPage() {
                 Download a template file with the required columns and fill it with your employee data.
               </p>
               <div className="flex gap-4">
-                <button
-                  onClick={() => downloadTemplate('csv')}
-                  disabled={loading}
-                  className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
-                >
-                  <FileText className="w-5 h-5 mr-2 text-green-600" />
-                  <span className="text-[var(--text-secondary)]">CSV Template</span>
-                </button>
-                <button
-                  onClick={() => downloadTemplate('xlsx')}
-                  disabled={loading}
-                  className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
-                >
-                  <FileSpreadsheet className="w-5 h-5 mr-2 text-primary-600 dark:text-primary-400" />
-                  <span className="text-[var(--text-secondary)]">Excel Template</span>
-                </button>
+                <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
+                  <button
+                    onClick={() => downloadTemplate('csv')}
+                    disabled={loading}
+                    className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
+                  >
+                    <FileText className="w-5 h-5 mr-2 text-green-600" />
+                    <span className="text-[var(--text-secondary)]">CSV Template</span>
+                  </button>
+                </PermissionGate>
+                <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
+                  <button
+                    onClick={() => downloadTemplate('xlsx')}
+                    disabled={loading}
+                    className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
+                  >
+                    <FileSpreadsheet className="w-5 h-5 mr-2 text-primary-600 dark:text-primary-400" />
+                    <span className="text-[var(--text-secondary)]">Excel Template</span>
+                  </button>
+                </PermissionGate>
               </div>
             </div>
 
@@ -367,23 +373,25 @@ export default function EmployeeImportPage() {
 
               {selectedFile && (
                 <div className="mt-6 flex justify-end">
-                  <button
-                    onClick={handlePreview}
-                    disabled={loading}
-                    className="flex items-center px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Validating...
-                      </>
-                    ) : (
-                      <>
-                        Preview Import
-                        <CheckCircle className="w-4 h-4 ml-2" />
-                      </>
-                    )}
-                  </button>
+                  <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
+                    <button
+                      onClick={handlePreview}
+                      disabled={loading}
+                      className="flex items-center px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Validating...
+                        </>
+                      ) : (
+                        <>
+                          Preview Import
+                          <CheckCircle className="w-4 h-4 ml-2" />
+                        </>
+                      )}
+                    </button>
+                  </PermissionGate>
                 </div>
               )}
             </div>
@@ -556,23 +564,25 @@ export default function EmployeeImportPage() {
               >
                 Start Over
               </button>
-              <button
-                onClick={handleExecuteImport}
-                disabled={loading || (preview.hasErrors && !skipInvalid) || preview.validRows === 0}
-                className="flex items-center px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Importing...
-                  </>
-                ) : (
-                  <>
-                    Import {skipInvalid ? preview.validRows : preview.totalRows} Employees
-                    <Upload className="w-4 h-4 ml-2" />
-                  </>
-                )}
-              </button>
+              <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
+                <button
+                  onClick={handleExecuteImport}
+                  disabled={loading || (preview.hasErrors && !skipInvalid) || preview.validRows === 0}
+                  className="flex items-center px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Importing...
+                    </>
+                  ) : (
+                    <>
+                      Import {skipInvalid ? preview.validRows : preview.totalRows} Employees
+                      <Upload className="w-4 h-4 ml-2" />
+                    </>
+                  )}
+                </button>
+              </PermissionGate>
             </div>
           </div>
         )}

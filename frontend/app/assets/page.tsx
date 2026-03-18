@@ -41,6 +41,8 @@ import {
   ModalFooter,
   EmptyState,
 } from '@/components/ui';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { Asset, CreateAssetRequest, UpdateAssetRequest, AssetCategory, AssetStatus } from '@/lib/types/asset';
 import {
   useAllAssets,
@@ -383,10 +385,12 @@ export default function AssetManagementPage() {
               Manage and track company assets
             </p>
           </div>
-          <Button onClick={handleOpenAddModal}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Asset
-          </Button>
+          <PermissionGate permission={Permissions.ASSET_CREATE}>
+            <Button onClick={handleOpenAddModal}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Asset
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Error Alert */}
@@ -585,38 +589,46 @@ export default function AssetManagementPage() {
                                 <Eye className="h-4 w-4" />
                                 View Details
                               </button>
-                              <button
-                                onClick={() => handleOpenEditModal(asset)}
-                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                              >
-                                <Edit className="h-4 w-4" />
-                                Edit
-                              </button>
-                              {asset.status === AssetStatus.AVAILABLE && (
+                              <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
                                 <button
-                                  onClick={() => handleAssignClick(asset)}
+                                  onClick={() => handleOpenEditModal(asset)}
                                   className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
-                                  <UserPlus className="h-4 w-4" />
-                                  Assign
+                                  <Edit className="h-4 w-4" />
+                                  Edit
                                 </button>
+                              </PermissionGate>
+                              {asset.status === AssetStatus.AVAILABLE && (
+                                <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
+                                  <button
+                                    onClick={() => handleAssignClick(asset)}
+                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  >
+                                    <UserPlus className="h-4 w-4" />
+                                    Assign
+                                  </button>
+                                </PermissionGate>
                               )}
                               {asset.status === AssetStatus.ASSIGNED && (
-                                <button
-                                  onClick={() => handleReturn(asset)}
-                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                                >
-                                  <RotateCcw className="h-4 w-4" />
-                                  Return
-                                </button>
+                                <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
+                                  <button
+                                    onClick={() => handleReturn(asset)}
+                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  >
+                                    <RotateCcw className="h-4 w-4" />
+                                    Return
+                                  </button>
+                                </PermissionGate>
                               )}
-                              <button
-                                onClick={() => handleDeleteClick(asset)}
-                                className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                Delete
-                              </button>
+                              <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
+                                <button
+                                  onClick={() => handleDeleteClick(asset)}
+                                  className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Delete
+                                </button>
+                              </PermissionGate>
                             </div>
                           </div>
                         </td>

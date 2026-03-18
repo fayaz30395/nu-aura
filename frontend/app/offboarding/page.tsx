@@ -34,6 +34,8 @@ import {
   ModalBody,
   ModalFooter,
 } from '@/components/ui';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   useExitProcesses,
   useCreateExitProcess,
@@ -369,10 +371,12 @@ export default function OffboardingPage() {
               Manage employee offboarding and exit processes
             </p>
           </div>
-          <Button onClick={handleOpenAddModal}>
-            <Plus className="h-4 w-4 mr-2" />
-            Initiate Exit
-          </Button>
+          <PermissionGate permission={Permissions.EXIT_INITIATE}>
+            <Button onClick={handleOpenAddModal}>
+              <Plus className="h-4 w-4 mr-2" />
+              Initiate Exit
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Error Alert */}
@@ -583,47 +587,57 @@ export default function OffboardingPage() {
                                 <Eye className="h-4 w-4" />
                                 View Details
                               </button>
-                              <button
-                                onClick={() => handleOpenEditModal(process)}
-                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                              >
-                                <Edit className="h-4 w-4" />
-                                Edit
-                              </button>
-                              {process.status === ExitStatus.INITIATED && (
+                              <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                 <button
-                                  onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
+                                  onClick={() => handleOpenEditModal(process)}
                                   className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
-                                  <Clock className="h-4 w-4" />
-                                  Start Process
+                                  <Edit className="h-4 w-4" />
+                                  Edit
                                 </button>
+                              </PermissionGate>
+                              {process.status === ExitStatus.INITIATED && (
+                                <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
+                                  <button
+                                    onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
+                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  >
+                                    <Clock className="h-4 w-4" />
+                                    Start Process
+                                  </button>
+                                </PermissionGate>
                               )}
                               {process.status === ExitStatus.IN_PROGRESS && (
-                                <button
-                                  onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
-                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                                >
-                                  <FileText className="h-4 w-4" />
-                                  Request Clearance
-                                </button>
+                                <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
+                                  <button
+                                    onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
+                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  >
+                                    <FileText className="h-4 w-4" />
+                                    Request Clearance
+                                  </button>
+                                </PermissionGate>
                               )}
                               {process.status === ExitStatus.CLEARANCE_PENDING && (
-                                <button
-                                  onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
-                                  className="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-2"
-                                >
-                                  <CheckCircle className="h-4 w-4" />
-                                  Complete
-                                </button>
+                                <PermissionGate permission={Permissions.EXIT_APPROVE} fallback={<div />}>
+                                  <button
+                                    onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
+                                    className="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-2"
+                                  >
+                                    <CheckCircle className="h-4 w-4" />
+                                    Complete
+                                  </button>
+                                </PermissionGate>
                               )}
-                              <button
-                                onClick={() => handleDeleteClick(process)}
-                                className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                Delete
-                              </button>
+                              <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
+                                <button
+                                  onClick={() => handleDeleteClick(process)}
+                                  className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Delete
+                                </button>
+                              </PermissionGate>
                             </div>
                           </div>
                         </td>

@@ -7,6 +7,8 @@ import { useContracts, useExpiringContracts, useActiveContracts, useExpiredContr
 import { contractService } from '@/lib/services/contract.service';
 import { Button, Table, Badge, Input, Select } from '@mantine/core';
 import { Plus, Search, FileText } from 'lucide-react';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 export default function ContractsPage() {
   const router = useRouter();
@@ -62,13 +64,15 @@ export default function ContractsPage() {
             <h1 className="text-3xl font-bold text-[var(--text-primary)]">Contracts</h1>
             <p className="text-[var(--text-secondary)] mt-1">Manage employment, vendor, and other contracts</p>
           </div>
-          <Button
-            onClick={() => router.push('/contracts/new')}
-            leftSection={<Plus className="w-4 h-4" />}
-            size="md"
-          >
-            New Contract
-          </Button>
+          <PermissionGate permission={Permissions.CONTRACT_CREATE}>
+            <Button
+              onClick={() => router.push('/contracts/new')}
+              leftSection={<Plus className="w-4 h-4" />}
+              size="md"
+            >
+              New Contract
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats Cards */}

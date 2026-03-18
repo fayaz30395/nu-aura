@@ -20,6 +20,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
 import { useOnboardingTemplates, useCreateOnboardingProcess } from '@/lib/hooks/queries/useOnboarding';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { OnboardingProcessRequest, OnboardingChecklistTemplate } from '@/lib/types/onboarding';
 import { createLogger } from '@/lib/utils/logger';
 
@@ -313,28 +315,30 @@ export default function NewOnboardingPage() {
 
                     <div className="flex items-center gap-4">
                         {error && <span className="text-sm font-bold text-red-500 animate-pulse">{error}</span>}
-                        {currentStep < 3 ? (
-                            <Button
-                                variant="primary"
-                                onClick={handleNext}
-                                size="lg"
-                                className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs shadow-xl shadow-primary-500/20"
-                                rightIcon={<ChevronRight className="h-4 w-4" />}
-                            >
-                                Continue
-                            </Button>
-                        ) : (
-                            <Button
-                                variant="primary"
-                                onClick={handleSubmit}
-                                isLoading={createProcessMutation.isPending}
-                                size="lg"
-                                className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20"
-                                leftIcon={<Zap className="h-4 w-4" />}
-                            >
-                                Launch Process
-                            </Button>
-                        )}
+                        <PermissionGate permission={Permissions.ONBOARDING_CREATE} fallback={<div />}>
+                            {currentStep < 3 ? (
+                                <Button
+                                    variant="primary"
+                                    onClick={handleNext}
+                                    size="lg"
+                                    className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs shadow-xl shadow-primary-500/20"
+                                    rightIcon={<ChevronRight className="h-4 w-4" />}
+                                >
+                                    Continue
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="primary"
+                                    onClick={handleSubmit}
+                                    isLoading={createProcessMutation.isPending}
+                                    size="lg"
+                                    className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20"
+                                    leftIcon={<Zap className="h-4 w-4" />}
+                                >
+                                    Launch Process
+                                </Button>
+                            )}
+                        </PermissionGate>
                     </div>
                 </div>
             </div>

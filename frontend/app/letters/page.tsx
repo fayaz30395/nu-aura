@@ -43,6 +43,8 @@ import {
   LetterCategory,
   LetterStatus,
 } from '@/lib/types/letter';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import {
@@ -454,14 +456,18 @@ export default function LettersPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={handleOpenOfferLetterModal}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              Generate Offer Letter
-            </Button>
-            <Button onClick={handleOpenGenerateModal}>
-              <Plus className="h-4 w-4 mr-2" />
-              Generate Letter
-            </Button>
+            <PermissionGate permission={Permissions.LETTER_GENERATE}>
+              <Button variant="outline" onClick={handleOpenOfferLetterModal}>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Generate Offer Letter
+              </Button>
+            </PermissionGate>
+            <PermissionGate permission={Permissions.LETTER_GENERATE}>
+              <Button onClick={handleOpenGenerateModal}>
+                <Plus className="h-4 w-4 mr-2" />
+                Generate Letter
+              </Button>
+            </PermissionGate>
           </div>
         </div>
 
@@ -698,31 +704,37 @@ export default function LettersPage() {
                                     </button>
                                   )}
                                   {letter.status === LetterStatus.PENDING_APPROVAL && (
-                                    <button
-                                      onClick={() => handleApproveLetter(letter)}
-                                      className="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-2"
-                                    >
-                                      <CheckCircle className="h-4 w-4" />
-                                      Approve
-                                    </button>
+                                    <PermissionGate permission={Permissions.LETTER_APPROVE} fallback={<div />}>
+                                      <button
+                                        onClick={() => handleApproveLetter(letter)}
+                                        className="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-2"
+                                      >
+                                        <CheckCircle className="h-4 w-4" />
+                                        Approve
+                                      </button>
+                                    </PermissionGate>
                                   )}
                                   {letter.status === LetterStatus.APPROVED && (
                                     <>
-                                      <button
-                                        onClick={() => handleIssueLetter(letter)}
-                                        className="w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2"
-                                      >
-                                        <FileCheck className="h-4 w-4" />
-                                        Issue Letter
-                                      </button>
-                                      {letter.candidateId && letter.category === LetterCategory.OFFER && (
+                                      <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
                                         <button
-                                          onClick={() => handleIssueWithESign(letter)}
-                                          className="w-full px-3 py-2 text-left text-sm text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 flex items-center gap-2"
+                                          onClick={() => handleIssueLetter(letter)}
+                                          className="w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2"
                                         >
-                                          <PenTool className="h-4 w-4" />
-                                          Issue with E-Sign
+                                          <FileCheck className="h-4 w-4" />
+                                          Issue Letter
                                         </button>
+                                      </PermissionGate>
+                                      {letter.candidateId && letter.category === LetterCategory.OFFER && (
+                                        <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
+                                          <button
+                                            onClick={() => handleIssueWithESign(letter)}
+                                            className="w-full px-3 py-2 text-left text-sm text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 flex items-center gap-2"
+                                          >
+                                            <PenTool className="h-4 w-4" />
+                                            Issue with E-Sign
+                                          </button>
+                                        </PermissionGate>
                                       )}
                                     </>
                                   )}

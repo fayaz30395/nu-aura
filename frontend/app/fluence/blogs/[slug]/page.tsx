@@ -27,6 +27,8 @@ import dynamic from 'next/dynamic';
 import { Skeleton, Modal } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 import { card, motion as dsMotion, iconSize } from '@/lib/design-system';
 import { TableOfContents } from '@/components/fluence/TableOfContents';
@@ -306,15 +308,17 @@ export default function BlogPostDetailPage() {
             {/* Action Buttons */}
             <div className="flex gap-2 flex-shrink-0">
               {canEdit && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
-                  className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--primary-600)] dark:text-[var(--primary-300)] transition-colors"
-                  title="Edit post"
-                >
-                  <Edit className="w-5 h-5" />
-                </motion.button>
+                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_UPDATE}>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
+                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--primary-600)] dark:text-[var(--primary-300)] transition-colors"
+                    title="Edit post"
+                  >
+                    <Edit className="w-5 h-5" />
+                  </motion.button>
+                </PermissionGate>
               )}
               <motion.button
                 whileHover={{ scale: 1.05 }}

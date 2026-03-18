@@ -23,6 +23,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { useOnboardingProcesses } from '@/lib/hooks/queries/useOnboarding';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import type { BadgeVariant } from '@/components/ui/types';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -78,22 +80,26 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <Button
-                            variant="outline"
-                            className="font-black tracking-widest uppercase text-xs rounded-2xl"
-                            leftIcon={<Layout className="h-3.5 w-3.5" />}
-                            onClick={() => router.push('/onboarding/templates')}
-                        >
-                            Manage Templates
-                        </Button>
-                        <Button
-                            variant="primary"
-                            className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
-                            leftIcon={<UserPlus className="h-4 w-4" />}
-                            onClick={() => router.push('/onboarding/new')}
-                        >
-                            Initiate New Hire
-                        </Button>
+                        <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                            <Button
+                                variant="outline"
+                                className="font-black tracking-widest uppercase text-xs rounded-2xl"
+                                leftIcon={<Layout className="h-3.5 w-3.5" />}
+                                onClick={() => router.push('/onboarding/templates')}
+                            >
+                                Manage Templates
+                            </Button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.ONBOARDING_CREATE}>
+                            <Button
+                                variant="primary"
+                                className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
+                                leftIcon={<UserPlus className="h-4 w-4" />}
+                                onClick={() => router.push('/onboarding/new')}
+                            >
+                                Initiate New Hire
+                            </Button>
+                        </PermissionGate>
                     </div>
                 </div>
 

@@ -28,6 +28,8 @@ import {
 import type { BadgeVariant } from '@/components/ui/types';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { lmsService, CourseSummaryDto } from '@/lib/services/lms.service';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('CatalogPage');
@@ -345,30 +347,32 @@ export default function CourseCatalogPage() {
                     </div>
 
                     {/* Enroll button */}
-                    <Button
-                      size="sm"
-                      className="w-full"
-                      onClick={() => handleEnroll(course)}
-                      disabled={isEnrolled || isEnrolling}
-                      variant={isEnrolled ? 'outline' : 'default'}
-                    >
-                      {isEnrolling ? (
-                        <span className="flex items-center gap-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Enrolling…
-                        </span>
-                      ) : isEnrolled ? (
-                        <span className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                          Enrolled
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <Award className="h-4 w-4" />
-                          Enroll
-                        </span>
+                    <PermissionGate permission={Permissions.TRAINING_ENROLL}>
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        onClick={() => handleEnroll(course)}
+                        disabled={isEnrolled || isEnrolling}
+                        variant={isEnrolled ? 'outline' : 'default'}
+                      >
+                        {isEnrolling ? (
+                          <span className="flex items-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Enrolling…
+                          </span>
+                        ) : isEnrolled ? (
+                          <span className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            Enrolled
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            <Award className="h-4 w-4" />
+                            Enroll
+                          </span>
                       )}
-                    </Button>
+                      </Button>
+                    </PermissionGate>
                   </CardContent>
                 </Card>
               );

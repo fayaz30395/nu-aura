@@ -31,6 +31,8 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeTimesheets, useTimesheetEntries, useCreateTimesheet, useSubmitTimesheet, useAddTimeEntry } from '@/lib/hooks/queries/useTimesheets';
 import { useProjects } from '@/lib/hooks/queries/useProjects';
 import { Timesheet, ActivityType, CreateTimeEntryRequest } from '@/lib/types/timesheet';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
@@ -390,10 +392,12 @@ export default function TimesheetsPage() {
                   </Button>
                 </div>
               ) : (
-                <Button onClick={() => setShowCreateModal(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Timesheet
-                </Button>
+                <PermissionGate permission={Permissions.TIMESHEET_CREATE}>
+                  <Button onClick={() => setShowCreateModal(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Timesheet
+                  </Button>
+                </PermissionGate>
               )}
             </div>
 
@@ -512,10 +516,12 @@ export default function TimesheetsPage() {
                 </div>
                 <div className="flex gap-2">
                   {currentWeekTimesheet.status === 'DRAFT' && (
-                    <Button size="sm" onClick={handleAddEntry}>
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add Entry
-                    </Button>
+                    <PermissionGate permission={Permissions.TIMESHEET_CREATE}>
+                      <Button size="sm" onClick={handleAddEntry}>
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add Entry
+                      </Button>
+                    </PermissionGate>
                   )}
                 </div>
               </div>
@@ -709,19 +715,21 @@ export default function TimesheetsPage() {
               Close
             </Button>
             {selectedTimesheet?.status === 'DRAFT' && (
-              <Button onClick={handleSubmitTimesheet} disabled={submitting}>
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Submit for Approval
-                  </>
-                )}
-              </Button>
+              <PermissionGate permission={Permissions.TIMESHEET_SUBMIT}>
+                <Button onClick={handleSubmitTimesheet} disabled={submitting}>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Submit for Approval
+                    </>
+                  )}
+                </Button>
+              </PermissionGate>
             )}
           </ModalFooter>
         </Modal>

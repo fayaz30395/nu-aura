@@ -40,6 +40,7 @@ import {
   useCompensationCycles,
 } from '@/lib/hooks/queries/useCompensation';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import type {
   CompensationReviewCycle,
   SalaryRevision,
@@ -698,12 +699,14 @@ export default function CompensationPage() {
                             >
                               Review
                             </Button>
-                            <Button
-                              size="sm"
-                              onClick={() => handleApproveRevision(revision.id)}
-                            >
-                              Approve
-                            </Button>
+                            <PermissionGate permission={Permissions.COMPENSATION_APPROVE}>
+                              <Button
+                                size="sm"
+                                onClick={() => handleApproveRevision(revision.id)}
+                              >
+                                Approve
+                              </Button>
+                            </PermissionGate>
                           </div>
                         </div>
                       </div>
@@ -995,20 +998,24 @@ export default function CompensationPage() {
                     </>
                   ) : (
                     <>
-                      <Button
-                        variant="outline"
-                        className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/40 dark:text-red-400 dark:border-red-700"
-                        disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
-                        onClick={() => setShowRejectionReasonInput(true)}
-                      >
-                        Reject
-                      </Button>
-                      <Button
-                        disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
-                        onClick={() => handleApproveRevision(selectedRevision.id)}
-                      >
-                        {approveRevisionMutation.isPending ? 'Approving...' : 'Approve'}
-                      </Button>
+                      <PermissionGate permission={Permissions.COMPENSATION_APPROVE}>
+                        <Button
+                          variant="outline"
+                          className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/40 dark:text-red-400 dark:border-red-700"
+                          disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
+                          onClick={() => setShowRejectionReasonInput(true)}
+                        >
+                          Reject
+                        </Button>
+                      </PermissionGate>
+                      <PermissionGate permission={Permissions.COMPENSATION_APPROVE}>
+                        <Button
+                          disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
+                          onClick={() => handleApproveRevision(selectedRevision.id)}
+                        >
+                          {approveRevisionMutation.isPending ? 'Approving...' : 'Approve'}
+                        </Button>
+                      </PermissionGate>
                     </>
                   )}
                 </>

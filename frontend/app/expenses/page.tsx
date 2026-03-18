@@ -7,6 +7,8 @@ import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle, Filter, ChevronDown, Search } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import { ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
 import { Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
 import { ExpenseAnalytics } from '@/components/expenses';
@@ -656,13 +658,15 @@ export default function ExpenseClaims() {
               </div>
 
               <div className="md:col-span-2 flex gap-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? 'Creating...' : 'Create Claim'}
-                </button>
+                <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? 'Creating...' : 'Create Claim'}
+                  </button>
+                </PermissionGate>
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
@@ -690,22 +694,26 @@ export default function ExpenseClaims() {
               </span>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={handleBulkApprove}
-                disabled={bulkProcessing}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
-              >
-                <CheckCircle className="w-4 h-4" />
-                {bulkProcessing ? 'Processing...' : `Approve ${selectedClaims.size}`}
-              </button>
-              <button
-                onClick={() => setShowBulkRejectModal(true)}
-                disabled={bulkProcessing}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
-              >
-                <XCircle className="w-4 h-4" />
-                Reject {selectedClaims.size}
-              </button>
+              <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                <button
+                  onClick={handleBulkApprove}
+                  disabled={bulkProcessing}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  {bulkProcessing ? 'Processing...' : `Approve ${selectedClaims.size}`}
+                </button>
+              </PermissionGate>
+              <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                <button
+                  onClick={() => setShowBulkRejectModal(true)}
+                  disabled={bulkProcessing}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
+                >
+                  <XCircle className="w-4 h-4" />
+                  Reject {selectedClaims.size}
+                </button>
+              </PermissionGate>
               <button
                 onClick={() => setSelectedClaims(new Set())}
                 className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-sm"
@@ -874,37 +882,45 @@ export default function ExpenseClaims() {
                   <div className="flex flex-wrap gap-2 pt-3 border-t border-[var(--border-main)]">
                     {claim.status === 'DRAFT' && activeTab === 'my-claims' && (
                       <>
-                        <button
-                          onClick={() => handleSubmitClaim(claim.id)}
-                          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm transition-colors"
-                        >
-                          Submit for Approval
-                        </button>
-                        <button
-                          onClick={() => handleDeleteStart(claim.id)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm transition-colors flex items-center gap-2"
-                        >
-                          <XCircle className="w-4 h-4" />
-                          Delete
-                        </button>
+                        <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+                          <button
+                            onClick={() => handleSubmitClaim(claim.id)}
+                            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm transition-colors"
+                          >
+                            Submit for Approval
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+                          <button
+                            onClick={() => handleDeleteStart(claim.id)}
+                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm transition-colors flex items-center gap-2"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            Delete
+                          </button>
+                        </PermissionGate>
                       </>
                     )}
                     {claim.status === 'SUBMITTED' && activeTab === 'pending' && (
                       <>
-                        <button
-                          onClick={() => handleApprove(claim.id)}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm transition-colors flex items-center gap-2"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => handleRejectStart(claim.id)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm transition-colors flex items-center gap-2"
-                        >
-                          <XCircle className="w-4 h-4" />
-                          Reject
-                        </button>
+                        <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                          <button
+                            onClick={() => handleApprove(claim.id)}
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm transition-colors flex items-center gap-2"
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            Approve
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                          <button
+                            onClick={() => handleRejectStart(claim.id)}
+                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm transition-colors flex items-center gap-2"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            Reject
+                          </button>
+                        </PermissionGate>
                       </>
                     )}
                     {claim.receiptUrl && (

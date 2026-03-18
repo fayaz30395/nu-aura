@@ -25,6 +25,8 @@ import {
 import { notifications } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import type { CalibrationResponse, CalibrationEmployee } from '@/lib/types/performance';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const RATING_LABELS: Record<number, { label: string; color: string }> = {
   1: { label: 'Needs Improvement', color: 'red' },
@@ -166,16 +168,18 @@ export default function CalibrationPage() {
                   </Table.Td>
                   {emp.editable && (
                     <Table.Td>
-                      <Button
-                        size="xs"
-                        disabled={draftVal == null || draftVal === emp.finalRating}
-                        loading={saveMutation.isPending}
-                        onClick={() =>
-                          saveMutation.mutate({ reviewId: emp.reviewId, rating: draftVal! })
-                        }
-                      >
-                        Save
-                      </Button>
+                      <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
+                        <Button
+                          size="xs"
+                          disabled={draftVal == null || draftVal === emp.finalRating}
+                          loading={saveMutation.isPending}
+                          onClick={() =>
+                            saveMutation.mutate({ reviewId: emp.reviewId, rating: draftVal! })
+                          }
+                        >
+                          Save
+                        </Button>
+                      </PermissionGate>
                     </Table.Td>
                   )}
                 </Table.Tr>

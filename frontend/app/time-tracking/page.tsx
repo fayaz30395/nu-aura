@@ -10,6 +10,8 @@ import {
   useTimeSummary,
   useSubmitMultipleTimeEntries,
 } from '@/lib/hooks/queries/useTimeTracking';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Clock,
   Plus,
@@ -148,13 +150,15 @@ export default function TimeTrackingPage() {
               Log and manage your time entries
             </p>
           </div>
-          <button
-            onClick={() => router.push('/time-tracking/new')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
-          >
-            <Plus className="h-5 w-5" />
-            Log Time
-          </button>
+          <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
+            <button
+              onClick={() => router.push('/time-tracking/new')}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+            >
+              <Plus className="h-5 w-5" />
+              Log Time
+            </button>
+          </PermissionGate>
         </div>
 
         {/* Summary Cards */}
@@ -226,26 +230,28 @@ export default function TimeTrackingPage() {
 
         {/* Bulk Submit */}
         {draftEntries.length > 0 && (
-          <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-            <div className="flex items-center gap-4">
-              <AlertCircle className="h-5 w-5 text-amber-500" />
-              <span className="text-sm text-amber-700 dark:text-amber-400">
-                You have {draftEntries.length} draft entries ready to submit
-              </span>
+          <PermissionGate permission={Permissions.TIME_TRACKING_UPDATE}>
+            <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+              <div className="flex items-center gap-4">
+                <AlertCircle className="h-5 w-5 text-amber-500" />
+                <span className="text-sm text-amber-700 dark:text-amber-400">
+                  You have {draftEntries.length} draft entries ready to submit
+                </span>
+              </div>
+              <button
+                onClick={handleSubmitSelected}
+                disabled={selectedEntries.length === 0 || submitMultipleMutation.isPending}
+                className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
+              >
+                {submitMultipleMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+                Submit Selected ({selectedEntries.length})
+              </button>
             </div>
-            <button
-              onClick={handleSubmitSelected}
-              disabled={selectedEntries.length === 0 || submitMultipleMutation.isPending}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
-            >
-              {submitMultipleMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-              Submit Selected ({selectedEntries.length})
-            </button>
-          </div>
+          </PermissionGate>
         )}
 
         {/* Entries List */}
@@ -385,23 +391,25 @@ export default function TimeTrackingPage() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            onClick={() => router.push('/time-tracking/new')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
-                <Plus className="h-5 w-5 text-white" />
+          <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
+            <button
+              onClick={() => router.push('/time-tracking/new')}
+              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+                  <Plus className="h-5 w-5 text-white" />
+                </div>
+                <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
-            </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
-              Log Time
-            </h3>
-            <p className="text-sm text-[var(--text-muted)]">
-              Create a new time entry
-            </p>
-          </button>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+                Log Time
+              </h3>
+              <p className="text-sm text-[var(--text-muted)]">
+                Create a new time entry
+              </p>
+            </button>
+          </PermissionGate>
 
           <button
             onClick={() => router.push('/time-tracking?view=week')}

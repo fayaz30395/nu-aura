@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import {
   Card,
   CardContent,
@@ -419,10 +421,12 @@ export default function BenefitsPage() {
               View and manage your employee benefits enrollment
             </p>
           </div>
-          <Button onClick={handleOpenClaimModal}>
-            <Plus className="h-4 w-4 mr-1" />
-            Submit Claim
-          </Button>
+          <PermissionGate permission={Permissions.BENEFIT_CLAIM_SUBMIT}>
+            <Button onClick={handleOpenClaimModal}>
+              <Plus className="h-4 w-4 mr-1" />
+              Submit Claim
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats Cards */}
@@ -616,14 +620,16 @@ export default function BenefitsPage() {
                                 {benefit.provider}
                               </span>
                             </div>
-                            <Button
-                              size="sm"
-                              className="mt-3"
-                              onClick={() => handleOpenEnrollModal(benefit)}
-                            >
-                              <Plus className="h-4 w-4 mr-1" />
-                              Enroll
-                            </Button>
+                            <PermissionGate permission={Permissions.BENEFIT_ENROLL}>
+                              <Button
+                                size="sm"
+                                className="mt-3"
+                                onClick={() => handleOpenEnrollModal(benefit)}
+                              >
+                                <Plus className="h-4 w-4 mr-1" />
+                                Enroll
+                              </Button>
+                            </PermissionGate>
                           </div>
                         </div>
                       </CardContent>
@@ -704,15 +710,17 @@ export default function BenefitsPage() {
                         )}
                       </div>
                       {enrollment.status === 'ACTIVE' && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          onClick={() => handleTerminateStart(enrollment.id)}
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Terminate
-                        </Button>
+                        <PermissionGate permission={Permissions.BENEFIT_MANAGE}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            onClick={() => handleTerminateStart(enrollment.id)}
+                          >
+                            <XCircle className="h-4 w-4 mr-1" />
+                            Terminate
+                          </Button>
+                        </PermissionGate>
                       )}
                     </div>
                   </CardContent>

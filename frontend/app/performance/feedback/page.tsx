@@ -8,6 +8,8 @@ import { AppLayout } from '@/components/layout';
 import { useReceivedFeedback, useGivenFeedback, useCreateFeedback, useUpdateFeedback, useDeleteFeedback } from '@/lib/hooks/queries/usePerformance';
 import { Feedback, FeedbackRequest, FeedbackType } from '@/lib/types/performance';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -166,15 +168,17 @@ export default function FeedbackPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Feedback</h1>
-          <button
-            onClick={() => {
-              resetFormHandler();
-              setShowModal(true);
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-          >
-            Give Feedback
-          </button>
+          <PermissionGate permission={Permissions.REVIEW_CREATE}>
+            <button
+              onClick={() => {
+                resetFormHandler();
+                setShowModal(true);
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            >
+              Give Feedback
+            </button>
+          </PermissionGate>
         </div>
 
         <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md mb-6">
@@ -223,15 +227,17 @@ export default function FeedbackPage() {
               No {activeTab === 'received' ? 'received' : 'given'} feedback found
             </div>
             {activeTab === 'given' && (
-              <button
-                onClick={() => {
-                  resetFormHandler();
-                  setShowModal(true);
-                }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-              >
-                Give Your First Feedback
-              </button>
+              <PermissionGate permission={Permissions.REVIEW_CREATE}>
+                <button
+                  onClick={() => {
+                    resetFormHandler();
+                    setShowModal(true);
+                  }}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                >
+                  Give Your First Feedback
+                </button>
+              </PermissionGate>
             )}
           </div>
         ) : (
@@ -278,18 +284,22 @@ export default function FeedbackPage() {
 
                 {activeTab === 'given' && (
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => openEditModal(feedback)}
-                      className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => openDeleteConfirm(feedback)}
-                      className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
-                    >
-                      Delete
-                    </button>
+                    <PermissionGate permission={Permissions.REVIEW_UPDATE}>
+                      <button
+                        onClick={() => openEditModal(feedback)}
+                        className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                      >
+                        Edit
+                      </button>
+                    </PermissionGate>
+                    <PermissionGate permission={Permissions.REVIEW_DELETE}>
+                      <button
+                        onClick={() => openDeleteConfirm(feedback)}
+                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                      >
+                        Delete
+                      </button>
+                    </PermissionGate>
                   </div>
                 )}
               </div>
@@ -405,13 +415,15 @@ export default function FeedbackPage() {
                     >
                       Cancel
                     </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
-                    >
-                      {isSubmitting ? 'Saving...' : selectedFeedback ? 'Update' : 'Submit'}
-                    </button>
+                    <PermissionGate permission={selectedFeedback ? Permissions.REVIEW_UPDATE : Permissions.REVIEW_CREATE}>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                      >
+                        {isSubmitting ? 'Saving...' : selectedFeedback ? 'Update' : 'Submit'}
+                      </button>
+                    </PermissionGate>
                   </div>
                 </form>
               </div>
@@ -436,13 +448,15 @@ export default function FeedbackPage() {
                 >
                   Cancel
                 </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
-                >
-                  {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-                </button>
+                <PermissionGate permission={Permissions.REVIEW_DELETE}>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleteMutation.isPending}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                  </button>
+                </PermissionGate>
               </div>
             </div>
           </div>

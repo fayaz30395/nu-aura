@@ -27,6 +27,8 @@ import type {
   PIPStatus,
   PIPCheckInRequest,
 } from '@/lib/types/performance';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -750,13 +752,15 @@ export default function PIPPage() {
             <h1 className="text-3xl font-bold text-[var(--text-primary)]">Performance Improvement Plans</h1>
             <p className="text-[var(--text-muted)] mt-1">Manage and track employee PIPs</p>
           </div>
-          <Button
-            onClick={() => setCreateOpen(true)}
-            variant="primary"
-            leftIcon={<Plus size={18} />}
-          >
-            Create PIP
-          </Button>
+          <PermissionGate permission={Permissions.PIP_CREATE}>
+            <Button
+              onClick={() => setCreateOpen(true)}
+              variant="primary"
+              leftIcon={<Plus size={18} />}
+            >
+              Create PIP
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats */}

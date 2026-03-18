@@ -20,6 +20,8 @@ import { ArrowLeft, Save, RefreshCw } from 'lucide-react';
 import { isAxiosError } from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const FluenceEditor = dynamic(
   () => import('@/components/fluence/editor/FluenceEditor'),
@@ -381,14 +383,16 @@ export default function EditBlogPost() {
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="gap-2 bg-amber-600 hover:bg-amber-700"
-            >
-              <Save className="w-4 h-4" />
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </Button>
+            <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_UPDATE}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="gap-2 bg-amber-600 hover:bg-amber-700"
+              >
+                <Save className="w-4 h-4" />
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </PermissionGate>
           </div>
         </form>
 

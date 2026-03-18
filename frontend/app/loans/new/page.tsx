@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/logger';
@@ -317,20 +319,22 @@ export default function NewLoanPage() {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                'Submit Application'
-              )}
-            </button>
+            <PermissionGate permission={Permissions.LOAN_CREATE}>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Submit Application'
+                )}
+              </button>
+            </PermissionGate>
           </div>
         </form>
       </div>

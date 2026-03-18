@@ -16,6 +16,8 @@ import {
 import { usePerformanceAllCycles, useAllReviews, useUpdateReview } from '@/lib/hooks/queries/usePerformance';
 import type { ReviewRequest } from '@/lib/types/performance';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -348,13 +350,15 @@ export default function CalibrationPage() {
               <Download size={16} />
               Export
             </button>
-            <button
-              onClick={publishRatings}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
-            >
-              <TrendingUp size={16} />
-              Publish
-            </button>
+            <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
+              <button
+                onClick={publishRatings}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
+              >
+                <TrendingUp size={16} />
+                Publish
+              </button>
+            </PermissionGate>
           </div>
         </div>
 
@@ -647,13 +651,15 @@ export default function CalibrationPage() {
                             </td>
                             <td className="px-4 py-3 text-center">
                               {isDirty && (
-                                <button
-                                  onClick={() => handleSaveFinal(row)}
-                                  disabled={saving === row.employeeId}
-                                  className="px-3 py-1 text-xs font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg disabled:opacity-50 transition-colors"
-                                >
-                                  {saving === row.employeeId ? 'Saving...' : 'Save'}
-                                </button>
+                                <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
+                                  <button
+                                    onClick={() => handleSaveFinal(row)}
+                                    disabled={saving === row.employeeId}
+                                    className="px-3 py-1 text-xs font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg disabled:opacity-50 transition-colors"
+                                  >
+                                    {saving === row.employeeId ? 'Saving...' : 'Save'}
+                                  </button>
+                                </PermissionGate>
                               )}
                             </td>
                           </tr>
