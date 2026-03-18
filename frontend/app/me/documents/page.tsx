@@ -33,6 +33,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import {
   useMyDocumentRequests,
   useCreateDocumentRequest,
+  useDocumentTypes,
 } from '@/lib/hooks/queries';
 import {
   DocumentRequestDto,
@@ -41,19 +42,32 @@ import {
   DocumentRequestStatus,
 } from '@/lib/types/selfservice';
 
-const DOCUMENT_TYPES: { value: DocumentType; label: string; description: string }[] = [
-  { value: 'EMPLOYMENT_CERTIFICATE', label: 'Employment Certificate', description: 'Confirms your employment status' },
-  { value: 'SALARY_CERTIFICATE', label: 'Salary Certificate', description: 'Shows your current salary details' },
-  { value: 'EXPERIENCE_LETTER', label: 'Experience Letter', description: 'Details your work experience' },
-  { value: 'RELIEVING_LETTER', label: 'Relieving Letter', description: 'Confirms employment termination' },
-  { value: 'BONAFIDE_CERTIFICATE', label: 'Bonafide Certificate', description: 'Verifies you are an employee' },
-  { value: 'ADDRESS_PROOF_LETTER', label: 'Address Proof Letter', description: 'Confirms your address on record' },
-  { value: 'VISA_LETTER', label: 'Visa Support Letter', description: 'For visa application purposes' },
-  { value: 'BANK_LETTER', label: 'Bank Letter', description: 'For bank account opening or loans' },
-  { value: 'SALARY_SLIP', label: 'Salary Slip', description: 'Monthly salary breakdown' },
-  { value: 'FORM_16', label: 'Form 16', description: 'Tax deduction certificate' },
-  { value: 'APPOINTMENT_LETTER_COPY', label: 'Appointment Letter Copy', description: 'Copy of your offer letter' },
-];
+// UI metadata for known document types. Used to enrich API-returned type values with
+// human-readable labels and descriptions. If the backend introduces a new type that is
+// not listed here, the UI will fall back to a formatted label derived from the enum value.
+// TODO: Consider moving label/description to a backend endpoint when the API supports it.
+const DOCUMENT_TYPE_META: Partial<Record<DocumentType, { label: string; description: string }>> = {
+  EMPLOYMENT_CERTIFICATE: { label: 'Employment Certificate', description: 'Confirms your employment status' },
+  SALARY_CERTIFICATE:     { label: 'Salary Certificate',     description: 'Shows your current salary details' },
+  EXPERIENCE_LETTER:      { label: 'Experience Letter',      description: 'Details your work experience' },
+  RELIEVING_LETTER:       { label: 'Relieving Letter',       description: 'Confirms employment termination' },
+  BONAFIDE_CERTIFICATE:   { label: 'Bonafide Certificate',   description: 'Verifies you are an employee' },
+  ADDRESS_PROOF_LETTER:   { label: 'Address Proof Letter',   description: 'Confirms your address on record' },
+  VISA_LETTER:            { label: 'Visa Support Letter',    description: 'For visa application purposes' },
+  BANK_LETTER:            { label: 'Bank Letter',            description: 'For bank account opening or loans' },
+  SALARY_SLIP:            { label: 'Salary Slip',            description: 'Monthly salary breakdown' },
+  FORM_16:                { label: 'Form 16',                description: 'Tax deduction certificate' },
+  APPOINTMENT_LETTER_COPY:{ label: 'Appointment Letter Copy',description: 'Copy of your offer letter' },
+  CUSTOM:                 { label: 'Custom Document',        description: 'Any other document on request' },
+};
+
+/** Converts an enum value like SALARY_SLIP to "Salary Slip" as a display fallback. */
+function formatDocumentTypeLabel(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; color: string; bgColor: string }> = {
   PENDING: { icon: <Clock className="h-4 w-4" />, color: 'text-warning-600', bgColor: 'bg-warning-100 dark:bg-warning-900/30' },
@@ -112,6 +126,18 @@ export default function MyDocumentsPage() {
   const watchedDeliveryMode = watch('deliveryMode');
 
   // React Query hooks
+  const { data: documentTypeValues } = useDocumentTypes();
+
+  // Enrich API-returned type values with UI labels/descriptions.
+  // Falls back to a formatted label for any type not present in DOCUMENT_TYPE_META,
+  // so newly added backend types are always surfaced in the select.
+  const documentTypeOptions: { value: DocumentType; label: string; description: string }[] =
+    (documentTypeValues ?? []).map((value) => ({
+      value,
+      label: DOCUMENT_TYPE_META[value]?.label ?? formatDocumentTypeLabel(value),
+      description: DOCUMENT_TYPE_META[value]?.description ?? '',
+    }));
+
   const { data: requestsData, isLoading } = useMyDocumentRequests(
     user?.employeeId || '',
     0,
@@ -368,14 +394,14 @@ export default function MyDocumentsPage() {
                   {...register('documentType')}
                   className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
-                  {DOCUMENT_TYPES.map((type) => (
+                  {documentTypeOptions.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
                     </option>
                   ))}
                 </select>
                 <p className="text-xs text-[var(--text-muted)] mt-1">
-                  {DOCUMENT_TYPES.find((t) => t.value === watchedDocumentType)?.description}
+                  {documentTypeOptions.find((t) => t.value === watchedDocumentType)?.description}
                 </p>
               </div>
 

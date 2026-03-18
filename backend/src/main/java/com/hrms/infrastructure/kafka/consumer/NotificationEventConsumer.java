@@ -1,5 +1,6 @@
 package com.hrms.infrastructure.kafka.consumer;
 
+import com.hrms.common.security.TenantContext;
 import com.hrms.infrastructure.kafka.KafkaTopics;
 import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.events.NotificationEvent;
@@ -57,7 +58,11 @@ public class NotificationEventConsumer {
 
         String eventId = event.getEventId();
         String channel = event.getChannel();
+        UUID tenantId = event.getTenantId();
 
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
         try {
             // Check idempotency (distributed via Redis)
             if (idempotencyService.isProcessed(eventId)) {
@@ -92,6 +97,8 @@ public class NotificationEventConsumer {
 
             // Handle retry logic
             handleRetry(event, acknowledgment);
+        } finally {
+            TenantContext.clear();
         }
     }
 

@@ -35,7 +35,8 @@ metadata:
     # CORS
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://hrms.example.com"
+    # TODO: Replace with exact production subdomain once DNS is finalised (e.g. https://app.nulogic.io)
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.nulogic.io, https://localhost:3000"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
 
     # Security headers

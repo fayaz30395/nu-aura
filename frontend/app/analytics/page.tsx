@@ -35,6 +35,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
+import type { DashboardAnalyticsParams } from '@/lib/hooks/queries/useAnalytics';
 
 import { chartColors } from '@/lib/utils/theme-colors';
 import { formatCurrency } from '@/lib/utils';
@@ -74,10 +75,18 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 export default function AnalyticsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'custom'>('30d');
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
+
+  const analyticsParams: DashboardAnalyticsParams | undefined =
+    timeRange === 'custom' && customStart && customEnd
+      ? { startDate: customStart, endDate: customEnd }
+      : undefined;
 
   const { data: analytics, isLoading, error, refetch } = useDashboardAnalytics(
-    isAuthenticated && hasHydrated
+    isAuthenticated && hasHydrated,
+    analyticsParams
   );
 
   React.useEffect(() => {
@@ -149,9 +158,9 @@ export default function AnalyticsPage() {
               Comprehensive HR metrics and insights
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center bg-[var(--bg-input)] rounded-lg border border-slate-200 dark:border-slate-700 p-1">
-              {(['7d', '30d', '90d'] as const).map((range) => (
+              {(['7d', '30d', '90d', 'custom'] as const).map((range) => (
                 <button
                   key={range}
                   onClick={() => setTimeRange(range)}
@@ -161,10 +170,31 @@ export default function AnalyticsPage() {
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
-                  {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : '90 Days'}
+                  {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '90d' ? '90 Days' : 'Custom'}
                 </button>
               ))}
             </div>
+            {timeRange === 'custom' && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={customStart}
+                  max={customEnd || undefined}
+                  onChange={(e) => setCustomStart(e.target.value)}
+                  className="px-3 py-1.5 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-[var(--bg-input)] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  aria-label="Start date"
+                />
+                <span className="text-sm text-slate-400">to</span>
+                <input
+                  type="date"
+                  value={customEnd}
+                  min={customStart || undefined}
+                  onChange={(e) => setCustomEnd(e.target.value)}
+                  className="px-3 py-1.5 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-[var(--bg-input)] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  aria-label="End date"
+                />
+              </div>
+            )}
             <Button
               variant="outline"
               size="sm"
