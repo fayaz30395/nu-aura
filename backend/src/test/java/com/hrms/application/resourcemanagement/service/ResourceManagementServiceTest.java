@@ -2,6 +2,7 @@ package com.hrms.application.resourcemanagement.service;
 
 import com.hrms.api.resourcemanagement.dto.AllocationDTOs.*;
 import com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
+import com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
@@ -33,6 +34,16 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the {@link ResourceManagementService} facade.
+ *
+ * <p>Core capacity and availability logic is tested directly here.
+ * Approval workflow tests validate delegation to {@link AllocationApprovalService}.
+ * Analytics tests validate delegation to {@link WorkloadAnalyticsService}.
+ *
+ * <p>Dedicated unit tests for the sub-services live in
+ * {@link AllocationApprovalServiceTest} and {@link WorkloadAnalyticsServiceTest}.
+ */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ResourceManagementService Tests")
 class ResourceManagementServiceTest {
@@ -57,6 +68,12 @@ class ResourceManagementServiceTest {
 
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
+
+    @Mock
+    private AllocationApprovalService allocationApprovalService;
+
+    @Mock
+    private WorkloadAnalyticsService workloadAnalyticsService;
 
     @InjectMocks
     private ResourceManagementService resourceManagementService;
@@ -93,6 +110,10 @@ class ResourceManagementServiceTest {
         project.setId(projectId);
         project.setTenantId(tenantId);
     }
+
+    // ============================================
+    // CORE: Allocation Validation
+    // ============================================
 
     @Nested
     @DisplayName("Allocation Validation Tests")
@@ -162,7 +183,7 @@ class ResourceManagementServiceTest {
 
                 AllocationValidationResult result = resourceManagementService.validateAllocation(
                         employeeId, projectId, 50,
-                        LocalDate.now().plusMonths(1), LocalDate.now()); // End before start
+                        LocalDate.now().plusMonths(1), LocalDate.now()); // end before start
 
                 assertThat(result.getIsValid()).isFalse();
                 assertThat(result.getMessage()).contains("End date cannot be before start date");
@@ -170,240 +191,124 @@ class ResourceManagementServiceTest {
         }
     }
 
+    // ============================================
+    // FACADE: Approval delegation
+    // ============================================
+
     @Nested
-    @DisplayName("Approval Permission Tests")
-    class ApprovalPermissionTests {
+    @DisplayName("Approval Delegation Tests")
+    class ApprovalDelegationTests {
 
         @Test
-        @DisplayName("Should throw exception when user lacks approval permission")
-        void shouldThrowWhenUserLacksApprovalPermission() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                UUID requestId = UUID.randomUUID();
+        @DisplayName("approveAllocationRequest delegates to AllocationApprovalService")
+        void shouldDelegateApproveToSubService() {
+            UUID requestId = UUID.randomUUID();
+            doNothing().when(allocationApprovalService)
+                    .approveAllocationRequest(requestId, "OK");
 
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                securityContext.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
-                securityContext.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(false);
-                securityContext.when(SecurityContext::isManager).thenReturn(false);
+            resourceManagementService.approveAllocationRequest(requestId, "OK");
 
-                // Permission check happens before findById is called
-                assertThatThrownBy(() ->
-                        resourceManagementService.approveAllocationRequest(requestId, "Approved"))
-                        .isInstanceOf(SecurityException.class)
-                        .hasMessageContaining("do not have permission");
-            }
+            verify(allocationApprovalService).approveAllocationRequest(requestId, "OK");
         }
 
         @Test
-        @DisplayName("Should throw exception when approving own request")
-        void shouldThrowWhenApprovingOwnRequest() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                UUID requestId = UUID.randomUUID();
+        @DisplayName("rejectAllocationRequest delegates to AllocationApprovalService")
+        void shouldDelegateRejectToSubService() {
+            UUID requestId = UUID.randomUUID();
+            doNothing().when(allocationApprovalService)
+                    .rejectAllocationRequest(requestId, "Not needed");
 
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                securityContext.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
-                securityContext.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(true);
-                securityContext.when(SecurityContext::isManager).thenReturn(true);
+            resourceManagementService.rejectAllocationRequest(requestId, "Not needed");
 
-                AllocationApprovalRequest request = AllocationApprovalRequest.builder()
-                        .employeeId(employeeId)
-                        .projectId(projectId)
-                        .requestedAllocation(50)
-                        .requestedById(managerId) // Same as approver
-                        .status(AllocationApprovalRequest.ApprovalStatus.PENDING)
-                        .build();
-                request.setId(requestId);
-                request.setTenantId(tenantId);
-
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
-
-                assertThatThrownBy(() ->
-                        resourceManagementService.approveAllocationRequest(requestId, "Approved"))
-                        .isInstanceOf(IllegalStateException.class)
-                        .hasMessageContaining("Cannot approve your own");
-            }
+            verify(allocationApprovalService).rejectAllocationRequest(requestId, "Not needed");
         }
 
         @Test
-        @DisplayName("Should allow manager to approve requests")
-        void shouldAllowManagerToApprove() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                UUID requestId = UUID.randomUUID();
-                UUID requesterId = UUID.randomUUID();
+        @DisplayName("getPendingApprovalsCount delegates to AllocationApprovalService")
+        void shouldDelegatePendingCountToSubService() {
+            when(allocationApprovalService.getPendingApprovalsCount()).thenReturn(5L);
 
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-                securityContext.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
-                securityContext.when(() -> SecurityContext.hasAnyPermission(
-                        Permission.ALLOCATION_APPROVE,
-                        Permission.ALLOCATION_MANAGE,
-                        Permission.PROJECT_MANAGE,
-                        Permission.SYSTEM_ADMIN)).thenReturn(true);
-                securityContext.when(SecurityContext::isManager).thenReturn(true);
+            long count = resourceManagementService.getPendingApprovalsCount();
 
-                AllocationApprovalRequest request = AllocationApprovalRequest.builder()
-                        .employeeId(employeeId)
-                        .projectId(projectId)
-                        .requestedAllocation(50)
-                        .requestedById(requesterId)
-                        .role("Developer")
-                        .startDate(LocalDate.now())
-                        .status(AllocationApprovalRequest.ApprovalStatus.PENDING)
-                        .build();
-                request.setId(requestId);
-                request.setTenantId(tenantId);
+            assertThat(count).isEqualTo(5L);
+            verify(allocationApprovalService).getPendingApprovalsCount();
+        }
 
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
-                when(approvalRepository.save(any())).thenReturn(request);
-                when(projectEmployeeRepository.save(any())).thenReturn(null);
+        @Test
+        @DisplayName("getAllPendingRequests delegates to AllocationApprovalService")
+        void shouldDelegateGetPendingRequestsToSubService() {
+            Page<AllocationApprovalResponse> page = Page.empty();
+            when(allocationApprovalService.getAllPendingRequests(null, Pageable.unpaged()))
+                    .thenReturn(page);
 
-                assertThatCode(() ->
-                        resourceManagementService.approveAllocationRequest(requestId, "Approved"))
-                        .doesNotThrowAnyException();
+            Page<AllocationApprovalResponse> result =
+                    resourceManagementService.getAllPendingRequests(null, Pageable.unpaged());
 
-                verify(approvalRepository).save(argThat(r ->
-                        r.getStatus() == AllocationApprovalRequest.ApprovalStatus.APPROVED));
-                verify(projectEmployeeRepository).save(any(ProjectEmployee.class));
-            }
+            assertThat(result).isSameAs(page);
+        }
+
+        @Test
+        @DisplayName("getMyPendingApprovals delegates to AllocationApprovalService")
+        void shouldDelegateMyPendingApprovalsToSubService() {
+            Page<AllocationApprovalResponse> page = Page.empty();
+            when(allocationApprovalService.getMyPendingApprovals(Pageable.unpaged())).thenReturn(page);
+
+            Page<AllocationApprovalResponse> result =
+                    resourceManagementService.getMyPendingApprovals(Pageable.unpaged());
+
+            assertThat(result).isSameAs(page);
         }
     }
 
-    @Nested
-    @DisplayName("Export Tests")
-    class ExportTests {
-
-        @Test
-        @DisplayName("Should export workload report as CSV")
-        void shouldExportWorkloadReportAsCsv() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(new PageImpl<>(List.of(project)));
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
-                        any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(projectEmployeeRepository.findAllByProjectIdAndTenantIdAndIsActive(
-                        any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByTenantIdAndStatus(
-                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
-
-                byte[] result = resourceManagementService.exportWorkloadReport("csv", null);
-
-                assertThat(result).isNotNull();
-                String csv = new String(result);
-                assertThat(csv).contains("Employee");
-                assertThat(csv).contains("Department");
-                assertThat(csv).contains("Total Allocation");
-            }
-        }
-
-        @Test
-        @DisplayName("Should fallback to CSV for Excel format")
-        void shouldFallbackToCsvForExcelFormat() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-
-                byte[] result = resourceManagementService.exportWorkloadReport("xlsx", null);
-                assertThat(result).isNotNull();
-                assertThat(new String(result)).contains("Employee");
-            }
-        }
-
-        @Test
-        @DisplayName("Should fallback to CSV for PDF format")
-        void shouldFallbackToCsvForPdfFormat() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-
-                byte[] result = resourceManagementService.exportWorkloadReport("pdf", null);
-                assertThat(result).isNotNull();
-                assertThat(new String(result)).contains("Employee");
-            }
-        }
-
-        @Test
-        @DisplayName("Should throw for unknown format")
-        void shouldThrowForUnknownFormat() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
-
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-
-                assertThatThrownBy(() ->
-                        resourceManagementService.exportWorkloadReport("unknown", null))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessageContaining("Unsupported export format");
-            }
-        }
-    }
+    // ============================================
+    // FACADE: Analytics delegation
+    // ============================================
 
     @Nested
-    @DisplayName("Workload Dashboard Tests")
-    class WorkloadDashboardTests {
+    @DisplayName("Analytics Delegation Tests")
+    class AnalyticsDelegationTests {
 
         @Test
-        @DisplayName("Should return dashboard with project workloads")
-        void shouldReturnDashboardWithProjectWorkloads() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
+        @DisplayName("getWorkloadDashboard delegates to WorkloadAnalyticsService")
+        void shouldDelegateDashboardToSubService() {
+            WorkloadDashboardData dashboard = WorkloadDashboardData.builder()
+                    .employeeWorkloads(Collections.emptyList())
+                    .departmentWorkloads(Collections.emptyList())
+                    .projectWorkloads(Collections.emptyList())
+                    .heatmapData(Collections.emptyList())
+                    .trends(Collections.emptyList())
+                    .build();
+            when(workloadAnalyticsService.getWorkloadDashboard(null)).thenReturn(dashboard);
 
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(new PageImpl<>(List.of(project)));
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
-                        any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(projectEmployeeRepository.findAllByProjectIdAndTenantIdAndIsActive(
-                        eq(projectId), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByTenantIdAndStatus(
-                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
+            WorkloadDashboardData result = resourceManagementService.getWorkloadDashboard(null);
 
-                WorkloadDashboardData result = resourceManagementService.getWorkloadDashboard(null);
-
-                assertThat(result).isNotNull();
-                assertThat(result.getProjectWorkloads()).isNotNull();
-                assertThat(result.getHeatmapData()).isNotNull();
-                assertThat(result.getTrends()).isNotNull();
-                assertThat(result.getSummary()).isNotNull();
-            }
+            assertThat(result).isSameAs(dashboard);
+            verify(workloadAnalyticsService).getWorkloadDashboard(null);
         }
 
         @Test
-        @DisplayName("Should calculate trends for last 6 months")
-        void shouldCalculateTrendsForLast6Months() {
-            try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
-                securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
+        @DisplayName("getDepartmentWorkloads delegates to WorkloadAnalyticsService")
+        void shouldDelegateDeptWorkloadsToSubService() {
+            LocalDate start = LocalDate.now();
+            LocalDate end = start.plusMonths(1);
+            when(workloadAnalyticsService.getDepartmentWorkloads(start, end))
+                    .thenReturn(Collections.emptyList());
 
-                when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-                when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
-                        .thenReturn(Page.empty());
-                when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
-                when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
-                        any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByTenantIdAndStatus(
-                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
+            resourceManagementService.getDepartmentWorkloads(start, end);
 
-                WorkloadDashboardData result = resourceManagementService.getWorkloadDashboard(null);
+            verify(workloadAnalyticsService).getDepartmentWorkloads(start, end);
+        }
 
-                assertThat(result.getTrends()).hasSize(6);
-                assertThat(result.getTrends().get(0).getPeriodLabel()).isNotNull();
-            }
+        @Test
+        @DisplayName("exportWorkloadReport delegates to WorkloadAnalyticsService")
+        void shouldDelegateExportToSubService() {
+            byte[] csv = "Employee,Code\n".getBytes();
+            when(workloadAnalyticsService.exportWorkloadReport(eq("csv"), any())).thenReturn(csv);
+
+            byte[] result = resourceManagementService.exportWorkloadReport("csv", null);
+
+            assertThat(result).isSameAs(csv);
+            verify(workloadAnalyticsService).exportWorkloadReport(eq("csv"), any());
         }
     }
 }
