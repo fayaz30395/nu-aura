@@ -382,7 +382,7 @@ public class ContractService {
             try {
                 Employee emp = employeeService.getByIdAndTenant(contract.getEmployeeId(), SecurityContext.getCurrentTenantId());
                 employeeName = emp.getFirstName() + " " + emp.getLastName();
-            } catch (Exception e) {
+            } catch (ResourceNotFoundException e) {
                 log.debug("Could not load employee for contract: {}", contract.getEmployeeId());
             }
         }
@@ -428,7 +428,7 @@ public class ContractService {
             try {
                 Employee emp = employeeService.getByIdAndTenant(contract.getEmployeeId(), SecurityContext.getCurrentTenantId());
                 employeeName = emp.getFirstName() + " " + emp.getLastName();
-            } catch (Exception e) {
+            } catch (ResourceNotFoundException e) {
                 log.debug("Could not load employee for contract: {}", contract.getEmployeeId());
             }
         }

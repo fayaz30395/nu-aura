@@ -258,7 +258,7 @@ public class LeaveRequestService {
                     this, tenantId, saved.getId(),
                     saved.getEmployeeId(), requesterName, leaveTypeName,
                     saved.getStartDate(), saved.getEndDate(), employee.getManagerId()));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to publish LeaveRequestedEvent for {}: {}", saved.getId(), e.getMessage());
         }
     }
@@ -273,7 +273,7 @@ public class LeaveRequestService {
                     this, tenantId, saved.getId(),
                     saved.getEmployeeId(), approverId, leaveTypeName,
                     saved.getStartDate(), saved.getEndDate(), daysDeducted));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to publish LeaveApprovedEvent for {}: {}", saved.getId(), e.getMessage());
         }
     }
@@ -288,7 +288,7 @@ public class LeaveRequestService {
                     this, tenantId, saved.getId(),
                     saved.getEmployeeId(), approverId, leaveTypeName,
                     saved.getStartDate(), saved.getEndDate(), reason));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to publish LeaveRejectedEvent for {}: {}", saved.getId(), e.getMessage());
         }
     }
@@ -314,7 +314,7 @@ public class LeaveRequestService {
                 webSocketNotificationService.notifyLeaveRequestSubmitted(
                         employee.getManagerId(), employeeName, leaveTypeName, dates);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to send leave request notification: {}", e.getMessage());
         }
     }
@@ -327,7 +327,7 @@ public class LeaveRequestService {
 
             webSocketNotificationService.notifyLeaveApproved(
                     leaveRequest.getEmployeeId(), leaveTypeName, dates);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to send leave approval notification: {}", e.getMessage());
         }
     }
@@ -339,7 +339,7 @@ public class LeaveRequestService {
 
             webSocketNotificationService.notifyLeaveRejected(
                     leaveRequest.getEmployeeId(), leaveTypeName, reason != null ? reason : "No reason provided");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to send leave rejection notification: {}", e.getMessage());
         }
     }

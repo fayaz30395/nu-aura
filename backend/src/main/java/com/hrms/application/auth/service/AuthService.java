@@ -22,6 +22,7 @@ import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.metrics.MetricsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -186,7 +187,7 @@ public class AuthService {
             // Record failed login metric
             metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during login
             // Record unexpected error during login
             metricsService.recordLoginFailure("password", "unknown_error");
             throw e;
@@ -323,7 +324,7 @@ public class AuthService {
                     .build();
         } catch (AuthenticationException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during Google login
             metricsService.recordLoginFailure("google", "unknown_error");
             throw e;
         }
@@ -796,7 +797,7 @@ public class AuthService {
             // Validation errors during employee creation (bad data, null fields)
             log.error("Validation error during auto-creation of employee for SuperAdmin {}: {}", user.getId(), e.getMessage(), e);
             return Optional.empty();
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             // Database constraint violations, deadlocks, or other persistence errors
             // Log the full error but allow login to succeed with null employeeId
             log.error("Database error during auto-creation of employee for SuperAdmin {}: {} - Details: {}",

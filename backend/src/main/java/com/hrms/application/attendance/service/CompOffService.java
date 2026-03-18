@@ -12,8 +12,10 @@ import com.hrms.infrastructure.attendance.repository.CompOffRequestRepository;
 import com.hrms.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.exception.BusinessException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -204,7 +206,7 @@ public class CompOffService {
                 req.setReviewNote("Auto-approved by system after " + autoApproveAfterDays + " days");
                 compOffRequestRepository.save(req);
                 count++;
-            } catch (Exception e) {
+            } catch (DataAccessException | BusinessException e) {
                 log.warn("Failed to auto-approve comp-off request {}: {}", req.getId(), e.getMessage());
             }
         }

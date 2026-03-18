@@ -8,6 +8,7 @@ import com.hrms.infrastructure.customfield.repository.CustomFieldDefinitionRepos
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.dao.DataAccessException;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -140,7 +141,7 @@ public class EmployeeImportParserService {
             }
             log.debug("Found {} active custom fields for EMPLOYEE import", codes.size());
             return codes;
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             log.warn("Could not load custom field definitions: {}", e.getMessage());
             return Collections.emptySet();
         }
@@ -156,7 +157,7 @@ public class EmployeeImportParserService {
             return customFieldDefinitionRepository
                     .findByEntityTypeAndTenantIdAndIsActiveTrueOrderByDisplayOrderAsc(
                             CustomFieldDefinition.EntityType.EMPLOYEE, tenantId);
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             log.warn("Could not load custom field definitions: {}", e.getMessage());
             return Collections.emptyList();
         }
@@ -436,7 +437,7 @@ public class EmployeeImportParserService {
             case FORMULA -> {
                 try {
                     yield cell.getStringCellValue();
-                } catch (Exception e) {
+                } catch (IllegalStateException e) {
                     yield String.valueOf(cell.getNumericCellValue());
                 }
             }

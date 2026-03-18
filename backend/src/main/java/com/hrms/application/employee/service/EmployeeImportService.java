@@ -16,6 +16,7 @@ import com.hrms.infrastructure.user.repository.RoleRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,7 +155,7 @@ public class EmployeeImportService {
 
                 log.debug("Successfully imported employee: {} ({})", employee.getFullName(), employee.getEmployeeCode());
 
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-row error boundary: isolates one row failure from the rest of the batch
                 log.error("Failed to import row {}: {}", row.getRowNumber(), e.getMessage(), e);
                 failed.add(EmployeeImportResult.FailedImport.builder()
                         .rowNumber(row.getRowNumber())
@@ -344,7 +345,7 @@ public class EmployeeImportService {
                             def -> def,
                             (a, b) -> a
                     ));
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             log.warn("Could not load custom field definitions: {}", e.getMessage());
             return Collections.emptyMap();
         }
@@ -386,7 +387,7 @@ public class EmployeeImportService {
                 customFieldValueRepository.save(customFieldValue);
                 log.debug("Saved custom field value for {} = {} on employee {}", fieldCode, value, employeeId);
 
-            } catch (Exception e) {
+            } catch (DataAccessException e) {
                 log.warn("Failed to save custom field {} for employee {}: {}",
                         fieldCode, employeeId, e.getMessage());
             }

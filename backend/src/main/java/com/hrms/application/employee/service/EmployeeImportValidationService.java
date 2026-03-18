@@ -12,6 +12,7 @@ import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -503,7 +504,7 @@ public class EmployeeImportValidationService {
                             def -> def,
                             (a, b) -> a
                     ));
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             log.warn("Could not load custom field definitions: {}", e.getMessage());
             return Collections.emptyMap();
         }
