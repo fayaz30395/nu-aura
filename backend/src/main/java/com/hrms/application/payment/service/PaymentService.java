@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -39,6 +40,7 @@ public class PaymentService {
     /**
      * Initiate a single payment transaction
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public PaymentTransaction initiatePayment(PaymentTransaction transaction) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -74,6 +76,7 @@ public class PaymentService {
     /**
      * Initiate batch payments (for payroll, expense reimbursement, etc.)
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public PaymentBatch initiateBatchPayment(PaymentBatch batch, List<PaymentTransaction> transactions) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -167,7 +170,7 @@ public class PaymentService {
     /**
      * Process refund for a payment
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public PaymentRefund processRefund(UUID paymentId, String reason) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -220,7 +223,7 @@ public class PaymentService {
     /**
      * Process incoming webhook from payment provider
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void processWebhook(String provider, String payload, String signature) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -277,7 +280,7 @@ public class PaymentService {
     /**
      * Save payment configuration
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public PaymentConfig savePaymentConfig(PaymentConfig config) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         config.setTenantId(tenantId);
