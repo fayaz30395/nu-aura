@@ -4,6 +4,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
+import { Skeleton } from '@mantine/core';
+import dynamic from 'next/dynamic';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
 import { createLogger } from '@/lib/utils/logger';
@@ -15,16 +17,33 @@ import {
   FileGridView,
   FileListView,
   FileContextMenu,
-  NewFolderModal,
-  ShareModal,
-  RenameModal,
-  FilePreviewModal,
-  DeleteConfirm,
   DriveFile,
   DriveFileMetadata,
   DriveStats,
   ViewTab,
 } from './_components';
+
+// Dynamic imports for Drive modals — only loaded on first open
+const NewFolderModal = dynamic(
+  () => import('./_components/DriveModals').then((m) => ({ default: m.NewFolderModal })),
+  { loading: () => <Skeleton height={250} radius="md" />, ssr: false }
+);
+const ShareModal = dynamic(
+  () => import('./_components/DriveModals').then((m) => ({ default: m.ShareModal })),
+  { loading: () => <Skeleton height={350} radius="md" />, ssr: false }
+);
+const RenameModal = dynamic(
+  () => import('./_components/DriveModals').then((m) => ({ default: m.RenameModal })),
+  { loading: () => <Skeleton height={220} radius="md" />, ssr: false }
+);
+const FilePreviewModal = dynamic(
+  () => import('./_components/DriveModals').then((m) => ({ default: m.FilePreviewModal })),
+  { loading: () => <Skeleton height={600} radius="md" />, ssr: false }
+);
+const DeleteConfirm = dynamic(
+  () => import('./_components/DriveModals').then((m) => ({ default: m.DeleteConfirm })),
+  { loading: () => <Skeleton height={180} radius="md" />, ssr: false }
+);
 
 const log = createLogger('NuDrivePage');
 

@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AppLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
+import { Skeleton } from '@mantine/core';
+import dynamic from 'next/dynamic';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   usePayrollRuns,
@@ -33,10 +35,6 @@ import {
   PayrollRunsTab,
   PayslipsTab,
   SalaryStructuresTab,
-  PayrollRunModal,
-  PayslipModal,
-  SalaryStructureModal,
-  DeleteConfirmModal,
   PayrollRun,
   Payslip,
   SalaryStructure,
@@ -50,6 +48,24 @@ import {
   payslipFormSchema,
   salaryStructureSchema,
 } from './_components';
+
+// Dynamic imports for heavy modal components — only loaded when a modal is opened
+const PayrollRunModal = dynamic(
+  () => import('./_components/PayrollModals').then((m) => ({ default: m.PayrollRunModal })),
+  { loading: () => <Skeleton height={400} radius="md" />, ssr: false }
+);
+const PayslipModal = dynamic(
+  () => import('./_components/PayrollModals').then((m) => ({ default: m.PayslipModal })),
+  { loading: () => <Skeleton height={400} radius="md" />, ssr: false }
+);
+const SalaryStructureModal = dynamic(
+  () => import('./_components/PayrollModals').then((m) => ({ default: m.SalaryStructureModal })),
+  { loading: () => <Skeleton height={500} radius="md" />, ssr: false }
+);
+const DeleteConfirmModal = dynamic(
+  () => import('./_components/PayrollModals').then((m) => ({ default: m.DeleteConfirmModal })),
+  { loading: () => <Skeleton height={200} radius="md" />, ssr: false }
+);
 
 export default function PayrollPage() {
   const router = useRouter();
@@ -371,45 +387,47 @@ export default function PayrollPage() {
           </div>
 
           {/* Tab Content */}
-          {activeTab === 'runs' && (
-            <PayrollRunsTab
-              payrollRuns={payrollRuns}
-              loading={loading}
-              payrollRunFilter={payrollRunFilter}
-              onFilterChange={setPayrollRunFilter}
-              onCreateRun={handleCreatePayrollRun}
-              onEditRun={handleEditPayrollRun}
-              onProcessRun={handleProcessPayrollRun}
-              onApproveRun={handleApprovePayrollRun}
-              onDeleteRun={(run) => { setSelectedPayrollRun(run); setShowRunDeleteConfirm(true); }}
-            />
-          )}
+          <Suspense fallback={<Skeleton height={400} radius="md" />}>
+            {activeTab === 'runs' && (
+              <PayrollRunsTab
+                payrollRuns={payrollRuns}
+                loading={loading}
+                payrollRunFilter={payrollRunFilter}
+                onFilterChange={setPayrollRunFilter}
+                onCreateRun={handleCreatePayrollRun}
+                onEditRun={handleEditPayrollRun}
+                onProcessRun={handleProcessPayrollRun}
+                onApproveRun={handleApprovePayrollRun}
+                onDeleteRun={(run) => { setSelectedPayrollRun(run); setShowRunDeleteConfirm(true); }}
+              />
+            )}
 
-          {activeTab === 'payslips' && (
-            <PayslipsTab
-              payslips={payslips}
-              loading={loading}
-              payslipSearchMonth={payslipSearchMonth}
-              payslipSearchEmployee={payslipSearchEmployee}
-              onMonthChange={setPayslipSearchMonth}
-              onEmployeeSearch={setPayslipSearchEmployee}
-              onCreatePayslip={handleCreatePayslip}
-              onEditPayslip={handleEditPayslip}
-              onDeletePayslip={(payslip) => { setSelectedPayslip(payslip); setShowPayslipDeleteConfirm(true); }}
-            />
-          )}
+            {activeTab === 'payslips' && (
+              <PayslipsTab
+                payslips={payslips}
+                loading={loading}
+                payslipSearchMonth={payslipSearchMonth}
+                payslipSearchEmployee={payslipSearchEmployee}
+                onMonthChange={setPayslipSearchMonth}
+                onEmployeeSearch={setPayslipSearchEmployee}
+                onCreatePayslip={handleCreatePayslip}
+                onEditPayslip={handleEditPayslip}
+                onDeletePayslip={(payslip) => { setSelectedPayslip(payslip); setShowPayslipDeleteConfirm(true); }}
+              />
+            )}
 
-          {activeTab === 'structures' && (
-            <SalaryStructuresTab
-              salaryStructures={salaryStructures}
-              loading={loading}
-              structureFilter={structureFilter}
-              onFilterChange={setStructureFilter}
-              onCreateStructure={handleCreateStructure}
-              onEditStructure={handleEditStructure}
-              onDeleteStructure={(structure) => { setSelectedStructure(structure); setShowStructureDeleteConfirm(true); }}
-            />
-          )}
+            {activeTab === 'structures' && (
+              <SalaryStructuresTab
+                salaryStructures={salaryStructures}
+                loading={loading}
+                structureFilter={structureFilter}
+                onFilterChange={setStructureFilter}
+                onCreateStructure={handleCreateStructure}
+                onEditStructure={handleEditStructure}
+                onDeleteStructure={(structure) => { setSelectedStructure(structure); setShowStructureDeleteConfirm(true); }}
+              />
+            )}
+          </Suspense>
         </div>
 
         {/* ============ MODALS ============ */}
