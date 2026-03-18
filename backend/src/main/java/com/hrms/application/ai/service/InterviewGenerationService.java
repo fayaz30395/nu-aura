@@ -8,7 +8,7 @@ import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
-import JsonProcessingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package com.hrms.application.ai.service;
 
-import JsonProcessingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -130,8 +130,7 @@ public class LlmStreamingService {
 
             onDone.run();
 
-        } catch (java.io.IOException | InterruptedException e) {
-            // Intentional broad catch — LLM streaming involves network I/O and thread interruption
+        } catch (java.io.IOException e) {
             log.error("Error streaming from LLM: {}", e.getMessage(), e);
             onError.accept("Streaming error: " + e.getMessage());
         } finally {
