@@ -2,9 +2,11 @@ package com.hrms.common.config;
 
 import com.hrms.common.security.TenantContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -139,5 +141,42 @@ public class CacheConfig implements CachingConfigurer {
     @Bean("tenantAwareKeyGenerator")
     public KeyGenerator tenantAwareKeyGenerator() {
         return keyGenerator();
+    }
+
+    /**
+     * Graceful cache degradation: log errors and bypass cache on Redis failure.
+     * Prevents 500 errors when Redis is unavailable — application falls through
+     * to database queries instead.
+     */
+    @Override
+    public CacheErrorHandler errorHandler() {
+        return new CacheErrorHandler() {
+            private static final org.slf4j.Logger log =
+                org.slf4j.LoggerFactory.getLogger("CacheErrorHandler");
+
+            @Override
+            public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
+                log.warn("Cache GET failed for key={} in cache={}: {}",
+                    key, cache.getName(), exception.getMessage());
+            }
+
+            @Override
+            public void handleCachePutError(RuntimeException exception, Cache cache, Object key, Object value) {
+                log.warn("Cache PUT failed for key={} in cache={}: {}",
+                    key, cache.getName(), exception.getMessage());
+            }
+
+            @Override
+            public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
+                log.warn("Cache EVICT failed for key={} in cache={}: {}",
+                    key, cache.getName(), exception.getMessage());
+            }
+
+            @Override
+            public void handleCacheClearError(RuntimeException exception, Cache cache) {
+                log.warn("Cache CLEAR failed for cache={}: {}",
+                    cache.getName(), exception.getMessage());
+            }
+        };
     }
 }
