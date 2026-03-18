@@ -3,6 +3,7 @@ package com.hrms.application.auth.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.auth.dto.MfaSetupResponse;
 import com.hrms.api.auth.dto.MfaStatusResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.user.User;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.GeneralSecurityException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -80,7 +82,7 @@ public class MfaService {
             // Don't enable yet - wait for verification
             user.setMfaSetupAt(LocalDateTime.now());
             userRepository.save(user);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Failed to serialize backup codes for user: {}", userId, e);
             throw new RuntimeException("Failed to setup MFA", e);
         }
@@ -229,7 +231,7 @@ public class MfaService {
                 }
             }
             return false;
-        } catch (Exception e) {
+        } catch (GeneralSecurityException e) {
             log.error("Error validating TOTP", e);
             return false;
         }
@@ -412,7 +414,7 @@ public class MfaService {
             }
 
             return false;
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error verifying backup code", e);
             return false;
         }
@@ -454,7 +456,7 @@ public class MfaService {
             }
 
             userRepository.save(user);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error consuming backup code for user: {}", userId, e);
         }
     }

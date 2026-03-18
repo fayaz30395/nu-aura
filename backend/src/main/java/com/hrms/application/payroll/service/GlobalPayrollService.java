@@ -296,7 +296,7 @@ public class GlobalPayrollService {
                                 record.setStatus(EmployeePayrollRecord.RecordStatus.CALCULATED);
                                 recordRepository.save(record);
 
-                        } catch (Exception e) {
+                        } catch (Exception e) { // Intentional broad catch — per-employee error boundary: isolates payroll calculation failure; sets record to ERROR and continues batch
                                 log.error("Error processing record for employee {}: {}", record.getEmployeeId(),
                                                 e.getMessage());
                                 record.setStatus(EmployeePayrollRecord.RecordStatus.ERROR);

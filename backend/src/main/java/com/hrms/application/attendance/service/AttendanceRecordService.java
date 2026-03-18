@@ -340,7 +340,7 @@ public class AttendanceRecordService {
             try {
                 AttendanceRecord record = checkIn(employeeId, checkInTime, source, location, ip);
                 successful.add(record);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-employee error boundary: isolates one failure from the bulk batch
                 log.error("Failed to check in employee {}: {}", employeeId, e.getMessage());
                 failed.add(new BulkResult.FailedEntry(employeeId, e.getMessage()));
             }
@@ -361,7 +361,7 @@ public class AttendanceRecordService {
             try {
                 AttendanceRecord record = checkOut(employeeId, checkOutTime, source, location, ip);
                 successful.add(record);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-employee error boundary: isolates one failure from the bulk batch
                 log.error("Failed to check out employee {}: {}", employeeId, e.getMessage());
                 failed.add(new BulkResult.FailedEntry(employeeId, e.getMessage()));
             }

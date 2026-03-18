@@ -164,7 +164,7 @@ public class AttendanceImportService {
                 try {
                     boolean isUpdate = processRow(row, rowIndex + 1, tenantId, response);
                     successCount++;
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-row error boundary: isolates one row failure from the rest of the batch
                     failureCount++;
                     log.error("Error processing row {}: {}", rowIndex + 1, e.getMessage());
                     addError(response, rowIndex + 1, null, ImportErrorCode.UNKNOWN_ERROR,
@@ -410,10 +410,10 @@ public class AttendanceImportService {
             case FORMULA:
                 try {
                     return cell.getStringCellValue();
-                } catch (Exception e) {
+                } catch (IllegalStateException e) {
                     try {
                         return String.valueOf(cell.getNumericCellValue());
-                    } catch (Exception ex) {
+                    } catch (IllegalStateException ex) {
                         return null;
                     }
                 }
