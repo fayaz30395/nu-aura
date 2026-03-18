@@ -1,6 +1,7 @@
 package com.hrms.application.analytics.service;
 
 import com.hrms.application.analytics.dto.*;
+import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.leave.LeaveRequest;
@@ -14,7 +15,9 @@ import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
 import com.hrms.infrastructure.workflow.repository.StepExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +46,7 @@ public class AnalyticsService {
      * Lightweight summary for the main dashboard KPI widget.
      * Returns only the 6 top-level numbers needed for overview cards.
      */
-    @Cacheable(value = "analyticsSummary", key = "#root.target.getCurrentTenantKey()")
+    @Cacheable(value = CacheConfig.ANALYTICS_SUMMARY, key = "#root.target.getCurrentTenantKey()")
     @Transactional(readOnly = true)
     public AnalyticsSummary getAnalyticsSummary() {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -76,7 +79,7 @@ public class AnalyticsService {
                 .build();
     }
 
-    @Cacheable(value = "dashboardMetrics", key = "#root.target.getCurrentTenantKey()")
+    @Cacheable(value = CacheConfig.DASHBOARD_METRICS, key = "#root.target.getCurrentTenantKey()")
     @Transactional(readOnly = true)
     public DashboardMetrics getDashboardMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -250,5 +253,23 @@ public class AnalyticsService {
     public String getCurrentTenantKey() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return tenantId != null ? tenantId.toString() : "default";
+    }
+
+    /**
+     * Evict both analytics caches for the current tenant.
+     *
+     * <p>Call this from any service that mutates data reflected in dashboard
+     * metrics — e.g., employee create/terminate, leave approval, payroll run,
+     * attendance import. Uses {@code allEntries = true} because keys contain
+     * tenant IDs embedded in the key string (not a Spring-managed prefix), so
+     * a single targeted eviction is not reliably possible without resolving the
+     * tenant key at eviction time.</p>
+     */
+    @Caching(evict = {
+        @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+        @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+    })
+    public void evictAnalyticsCache() {
+        log.debug("Analytics caches evicted");
     }
 }

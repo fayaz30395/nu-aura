@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +54,11 @@ public class EmployeeService {
     private AuditLogService auditLogService;
 
     @Transactional
-    @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
+        @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+        @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+    })
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -137,7 +142,11 @@ public class EmployeeService {
     }
 
     @Transactional
-    @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
+        @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+        @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+    })
     public EmployeeResponse updateEmployee(UUID employeeId, UpdateEmployeeRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

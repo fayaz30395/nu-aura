@@ -2,10 +2,12 @@ package com.hrms.application.notification.service;
 
 import com.hrms.api.notification.dto.SendNotificationRequest;
 import com.hrms.api.notification.dto.SendNotificationRequest.RecipientInfo;
+import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.notification.NotificationChannel;
 import com.hrms.domain.notification.NotificationPriority;
+import com.hrms.domain.tenant.Tenant;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.tenant.repository.TenantRepository;
@@ -54,13 +56,16 @@ public class ScheduledNotificationService {
         log.info("Starting birthday notification job...");
 
         try {
-            // Get all active tenants
-            tenantRepository.findAll().forEach(tenant -> {
+            // Only iterate over ACTIVE tenants — skip suspended/inactive/pending
+            tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE).forEach(tenant -> {
+                TenantContext.setCurrentTenant(tenant.getId());
                 try {
                     sendBirthdayNotificationsForTenant(tenant.getId());
                 } catch (RuntimeException e) {
                     // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending birthday notifications for tenant {}: {}", tenant.getId(), e.getMessage());
+                } finally {
+                    TenantContext.clear();
                 }
             });
         } catch (RuntimeException e) {
@@ -85,10 +90,8 @@ public class ScheduledNotificationService {
 
         log.info("Found {} employees with birthdays today for tenant {}", birthdayEmployees.size(), tenantId);
 
-        // Get all active employees to notify
-        List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId).stream()
-                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
-                .collect(Collectors.toList());
+        // Get all active employees to notify — use status-filtered query to avoid loading entire employee table
+        List<Employee> allEmployees = employeeRepository.findByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
 
         for (Employee birthdayPerson : birthdayEmployees) {
 
@@ -170,13 +173,17 @@ public class ScheduledNotificationService {
         log.info("Starting work anniversary notification job...");
 
         try {
-            tenantRepository.findAll().forEach(tenant -> {
+            // Only iterate over ACTIVE tenants — skip suspended/inactive/pending
+            tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE).forEach(tenant -> {
+                TenantContext.setCurrentTenant(tenant.getId());
                 try {
                     sendAnniversaryNotificationsForTenant(tenant.getId());
                 } catch (RuntimeException e) {
                     // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending anniversary notifications for tenant {}: {}", tenant.getId(),
                             e.getMessage());
+                } finally {
+                    TenantContext.clear();
                 }
             });
         } catch (RuntimeException e) {
@@ -202,10 +209,8 @@ public class ScheduledNotificationService {
         log.info("Found {} employees with work anniversaries today for tenant {}", anniversaryEmployees.size(),
                 tenantId);
 
-        // Get all active employees to notify
-        List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId).stream()
-                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
-                .collect(Collectors.toList());
+        // Get all active employees to notify — use status-filtered query to avoid loading entire employee table
+        List<Employee> allEmployees = employeeRepository.findByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
 
         for (Employee anniversaryPerson : anniversaryEmployees) {
             int yearsOfService = Period.between(anniversaryPerson.getJoiningDate(), today).getYears();
@@ -296,12 +301,16 @@ public class ScheduledNotificationService {
         log.info("Starting attendance reminder notification job...");
 
         try {
-            tenantRepository.findAll().forEach(tenant -> {
+            // Only iterate over ACTIVE tenants — skip suspended/inactive/pending
+            tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE).forEach(tenant -> {
+                TenantContext.setCurrentTenant(tenant.getId());
                 try {
                     sendAttendanceRemindersForTenant(tenant.getId());
                 } catch (RuntimeException e) {
                     // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending attendance reminders for tenant {}: {}", tenant.getId(), e.getMessage());
+                } finally {
+                    TenantContext.clear();
                 }
             });
         } catch (RuntimeException e) {
@@ -321,12 +330,16 @@ public class ScheduledNotificationService {
         log.info("Starting checkout reminder notification job...");
 
         try {
-            tenantRepository.findAll().forEach(tenant -> {
+            // Only iterate over ACTIVE tenants — skip suspended/inactive/pending
+            tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE).forEach(tenant -> {
+                TenantContext.setCurrentTenant(tenant.getId());
                 try {
                     sendCheckoutRemindersForTenant(tenant.getId());
                 } catch (RuntimeException e) {
                     // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending checkout reminders for tenant {}: {}", tenant.getId(), e.getMessage());
+                } finally {
+                    TenantContext.clear();
                 }
             });
         } catch (RuntimeException e) {
@@ -340,10 +353,8 @@ public class ScheduledNotificationService {
     private void sendAttendanceRemindersForTenant(UUID tenantId) {
         LocalDate today = LocalDate.now();
 
-        // Get all active employees
-        List<Employee> activeEmployees = employeeRepository.findByTenantId(tenantId).stream()
-                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
-                .collect(Collectors.toList());
+        // Get all active employees — use status-filtered query to avoid loading entire employee table
+        List<Employee> activeEmployees = employeeRepository.findByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
 
         // Get today's attendance records
         List<AttendanceRecord> todayRecords = attendanceRecordRepository.findByTenantIdAndAttendanceDate(tenantId,

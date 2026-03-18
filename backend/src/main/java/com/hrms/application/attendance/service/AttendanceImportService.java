@@ -41,6 +41,8 @@ public class AttendanceImportService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    /** Number of records to accumulate before issuing a batched saveAll() to the DB. */
+    private static final int BATCH_FLUSH_SIZE = 50;
 
     /**
      * Generate Excel template for attendance import
@@ -151,6 +153,9 @@ public class AttendanceImportService {
             int failureCount = 0;
             int skippedCount = 0;
 
+            // Accumulate parsed records; flush to DB in chunks to avoid per-row round-trips
+            List<AttendanceRecord> pendingRecords = new ArrayList<>();
+
             // Skip header row, start from row 1
             for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                 Row row = sheet.getRow(rowIndex);
@@ -162,13 +167,20 @@ public class AttendanceImportService {
                 totalRows++;
 
                 try {
-                    boolean isUpdate = processRow(row, rowIndex + 1, tenantId, response);
+                    AttendanceRecord record = buildRecord(row, rowIndex + 1, tenantId, response);
+                    pendingRecords.add(record);
                     successCount++;
                 } catch (Exception e) { // Intentional broad catch — per-row error boundary: isolates one row failure from the rest of the batch
                     failureCount++;
                     log.error("Error processing row {}: {}", rowIndex + 1, e.getMessage());
                     addError(response, rowIndex + 1, null, ImportErrorCode.UNKNOWN_ERROR,
                             "Unexpected error: " + e.getMessage(), "Contact support if this persists");
+                }
+
+                // Flush in batches of 50 to bound memory usage and reduce DB round-trips
+                if (pendingRecords.size() >= BATCH_FLUSH_SIZE) {
+                    attendanceRecordRepository.saveAll(pendingRecords);
+                    pendingRecords.clear();
                 }
 
                 // Limit to 1000 rows per import
@@ -179,6 +191,11 @@ public class AttendanceImportService {
                             "Split your data into multiple files of 1000 rows or fewer");
                     break;
                 }
+            }
+
+            // Flush any remaining records
+            if (!pendingRecords.isEmpty()) {
+                attendanceRecordRepository.saveAll(pendingRecords);
             }
 
             response.setTotalRecords(totalRows);
@@ -223,10 +240,12 @@ public class AttendanceImportService {
     }
 
     /**
-     * Process a single row from the Excel file.
-     * @return true if this was an update to an existing record, false if new record
+     * Parse and build an {@link AttendanceRecord} from a single Excel row.
+     * Does NOT persist — the caller accumulates records and flushes them in batches.
+     *
+     * @return the built/updated AttendanceRecord ready for batch saveAll()
      */
-    private boolean processRow(Row row, int rowNumber, UUID tenantId, BulkAttendanceImportResponse response) {
+    private AttendanceRecord buildRecord(Row row, int rowNumber, UUID tenantId, BulkAttendanceImportResponse response) {
         // Get employee code (required)
         String employeeCode = getCellValueAsString(row.getCell(0));
         if (employeeCode == null || employeeCode.trim().isEmpty()) {
@@ -354,8 +373,7 @@ public class AttendanceImportService {
             record.setWorkDurationMinutes((int) minutes);
         }
 
-        attendanceRecordRepository.save(record);
-
+        // Record success in response (persisting is done by the caller in batches)
         response.getSuccesses().add(BulkAttendanceImportResponse.ImportSuccess.builder()
                 .rowNumber(rowNumber)
                 .employeeCode(employeeCode)
@@ -364,7 +382,7 @@ public class AttendanceImportService {
                 .updated(isUpdate)
                 .build());
 
-        return isUpdate;
+        return record;
     }
 
     private boolean isRowEmpty(Row row) {
