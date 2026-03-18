@@ -5,6 +5,7 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.domain.workflow.*;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.workflow.repository.*;
@@ -39,6 +40,7 @@ public class WorkflowService {
     private final ApprovalDelegateRepository approvalDelegateRepository;
     private final WorkflowRuleRepository workflowRuleRepository;
     private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
@@ -438,14 +440,24 @@ public class WorkflowService {
                 .orElse(null);
     }
 
+    /**
+     * Find the department head (manager) for a given department.
+     *
+     * <p>Uses {@link com.hrms.domain.employee.Department#getManagerId()}, which stores
+     * the employee ID of the person designated as department head/manager.</p>
+     *
+     * @param departmentId the department to look up
+     * @param tenantId     current tenant for isolation
+     * @return the employee UUID of the department head, or {@code null} if the
+     *         department doesn't exist or has no manager assigned
+     */
     private UUID findDepartmentHead(UUID departmentId, UUID tenantId) {
         if (departmentId == null) {
             return null;
         }
-        // Find an employee who is marked as department head or has manager role in the department
-        // For now, return null - requires department entity to have headId field
-        log.debug("Department head lookup not fully implemented for department: {}", departmentId);
-        return null;
+        return departmentRepository.findByIdAndTenantId(departmentId, tenantId)
+                .map(dept -> dept.getManagerId())
+                .orElse(null);
     }
 
     private UUID findUserByRoleCode(String roleCode, UUID tenantId) {

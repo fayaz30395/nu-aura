@@ -365,26 +365,33 @@ public class EmployeeService {
 
         EmployeeResponse response = EmployeeResponse.fromEmployee(employee);
 
-        // Add department name if exists
+        // Batch-fetch related names in at most 2 queries instead of 4 individual lookups.
+        // Collect all manager/dotted-line IDs, fetch them in a single findAllById, then map.
+        Set<UUID> relatedEmployeeIds = new HashSet<>();
+        if (employee.getManagerId() != null) relatedEmployeeIds.add(employee.getManagerId());
+        if (employee.getDottedLineManager1Id() != null) relatedEmployeeIds.add(employee.getDottedLineManager1Id());
+        if (employee.getDottedLineManager2Id() != null) relatedEmployeeIds.add(employee.getDottedLineManager2Id());
+
+        if (!relatedEmployeeIds.isEmpty()) {
+            Map<UUID, String> empNames = new HashMap<>();
+            employeeRepository.findAllById(relatedEmployeeIds)
+                    .forEach(emp -> empNames.put(emp.getId(), emp.getFullName()));
+
+            if (employee.getManagerId() != null) {
+                response.setManagerName(empNames.get(employee.getManagerId()));
+            }
+            if (employee.getDottedLineManager1Id() != null) {
+                response.setDottedLineManager1Name(empNames.get(employee.getDottedLineManager1Id()));
+            }
+            if (employee.getDottedLineManager2Id() != null) {
+                response.setDottedLineManager2Name(empNames.get(employee.getDottedLineManager2Id()));
+            }
+        }
+
+        // Single department lookup (1 query instead of individual findById)
         if (employee.getDepartmentId() != null) {
             departmentRepository.findById(employee.getDepartmentId())
                     .ifPresent(dept -> response.setDepartmentName(dept.getName()));
-        }
-
-        // Add manager name if exists
-        if (employee.getManagerId() != null) {
-            employeeRepository.findById(employee.getManagerId())
-                    .ifPresent(manager -> response.setManagerName(manager.getFullName()));
-        }
-
-        // Add dotted-line manager names if they exist
-        if (employee.getDottedLineManager1Id() != null) {
-            employeeRepository.findById(employee.getDottedLineManager1Id())
-                    .ifPresent(mgr -> response.setDottedLineManager1Name(mgr.getFullName()));
-        }
-        if (employee.getDottedLineManager2Id() != null) {
-            employeeRepository.findById(employee.getDottedLineManager2Id())
-                    .ifPresent(mgr -> response.setDottedLineManager2Name(mgr.getFullName()));
         }
 
         return response;
