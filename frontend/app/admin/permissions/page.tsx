@@ -16,6 +16,9 @@ import {
   X,
   Key,
 } from 'lucide-react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Permission, RoleWithDetails } from '@/lib/types/roles';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
@@ -37,6 +40,33 @@ import { createLogger } from '@/lib/utils/logger';
 const log = createLogger('PermissionsPage');
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
+
+const editRoleSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  description: z.string().optional(),
+  permissions: z.array(z.string()),
+});
+type EditRoleData = z.infer<typeof editRoleSchema>;
+
+const createRoleSchema = z.object({
+  roleCode: z
+    .string()
+    .min(1, 'Role code is required')
+    .regex(/^[A-Z0-9_]+$/, 'Code must be uppercase letters, digits, or underscores'),
+  name: z.string().min(1, 'Name is required').max(100),
+  description: z.string().optional(),
+  permissions: z.array(z.string()),
+});
+type CreateRoleData = z.infer<typeof createRoleSchema>;
+
+const assignRolesSchema = z.object({
+  roleCodes: z.array(z.string()),
+});
+type AssignRolesData = z.infer<typeof assignRolesSchema>;
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function PermissionsPage() {
   const router = useRouter();
@@ -455,6 +485,7 @@ export default function PermissionsPage() {
                 log.error('Failed to update role:', error);
               }
             }}
+            isSaving={updateRoleMutation.isPending || assignPermissionsMutation.isPending}
           />
         )}
       </AnimatePresence>
@@ -478,6 +509,7 @@ export default function PermissionsPage() {
                 log.error('Failed to create role:', error);
               }
             }}
+            isSaving={createRoleMutation.isPending}
           />
         )}
       </AnimatePresence>
@@ -501,6 +533,7 @@ export default function PermissionsPage() {
                 log.error('Failed to update user roles:', error);
               }
             }}
+            isSaving={assignRoleMutation.isPending}
           />
         )}
       </AnimatePresence>
@@ -508,44 +541,53 @@ export default function PermissionsPage() {
   );
 }
 
-// Edit Role Modal Component
+// ─── EditRoleModal ─────────────────────────────────────────────────────────────
+
 function EditRoleModal({
   role,
   permissionsByResource,
   onClose,
-  onSave
+  onSave,
+  isSaving,
 }: {
   role: RoleWithDetails;
   permissionsByResource: Record<string, Permission[]>;
   onClose: () => void;
-  onSave: (roleData: { name: string, description: string }, permissionCodes: string[]) => void;
+  onSave: (roleData: { name: string; description?: string }, permissionCodes: string[]) => void;
+  isSaving: boolean;
 }) {
-  const [name, setName] = useState(role.name);
-  const [description, setDescription] = useState(role.description);
-  const [selectedPermissions, setSelectedPermissions] = useState<Set<string>>(
-    new Set(role.permissions.map(p => p.code))
-  );
-  const [saving, setSaving] = useState(false);
+  const form = useForm<EditRoleData>({
+    resolver: zodResolver(editRoleSchema),
+    defaultValues: {
+      name: role.name,
+      description: role.description ?? '',
+      permissions: role.permissions.map(p => p.code),
+    },
+  });
 
-  const togglePermission = (code: string) => {
-    const newSet = new Set(selectedPermissions);
-    if (newSet.has(code)) {
-      newSet.delete(code);
-    } else {
-      newSet.add(code);
-    }
-    setSelectedPermissions(newSet);
+  // Reset form whenever the modal opens with a new role
+  useEffect(() => {
+    form.reset({
+      name: role.name,
+      description: role.description ?? '',
+      permissions: role.permissions.map(p => p.code),
+    });
+  }, [role, form]);
+
+  const handleClose = () => {
+    form.reset();
+    onClose();
   };
 
-  const handleSave = async () => {
-    if (!name.trim()) return;
-    setSaving(true);
-    await onSave(
-      { name, description },
-      Array.from(selectedPermissions)
+  const onSubmit = (data: EditRoleData) => {
+    onSave(
+      { name: data.name, description: data.description },
+      data.permissions,
     );
-    setSaving(false);
   };
+
+  const selectedPermissions = form.watch('permissions');
+  const selectedCount = selectedPermissions.length;
 
   return (
     <motion.div
@@ -553,7 +595,7 @@ function EditRoleModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -568,98 +610,130 @@ function EditRoleModal({
               Edit Role: {role.code}
             </h2>
             <p className="text-sm text-[var(--text-muted)]">
-              {selectedPermissions.size} permissions selected
+              {selectedCount} permissions selected
             </p>
           </div>
-          <button onClick={onClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
+          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Name *</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-aura" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className="input-aura" />
-            </div>
-          </div>
-          <div className="border-t border-[var(--border-main)] my-4"></div>
-          {Object.entries(permissionsByResource).map(([resource, perms]) => (
-            <div key={resource} className="mb-6">
-              <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3 uppercase tracking-wider">{resource}</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {perms.map((perm) => (
-                  <button
-                    key={perm.code}
-                    onClick={() => togglePermission(perm.code)}
-                    className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${selectedPermissions.has(perm.code) ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
-                  >
-                    <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedPermissions.has(perm.code) ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
-                      {selectedPermissions.has(perm.code) && <Check className="w-3 h-3" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
-                      <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
-                    </div>
-                  </button>
-                ))}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
+          <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Name *</label>
+                <input
+                  type="text"
+                  {...form.register('name')}
+                  className="input-aura"
+                />
+                {form.formState.errors.name && (
+                  <p className="mt-1 text-xs text-red-500">{form.formState.errors.name.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
+                <textarea
+                  {...form.register('description')}
+                  rows={2}
+                  className="input-aura"
+                />
               </div>
             </div>
-          ))}
-        </div>
+            <div className="border-t border-[var(--border-main)] my-4"></div>
+            <Controller
+              name="permissions"
+              control={form.control}
+              render={({ field }) => (
+                <>
+                  {Object.entries(permissionsByResource).map(([resource, perms]) => (
+                    <div key={resource} className="mb-6">
+                      <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3 uppercase tracking-wider">{resource}</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {perms.map((perm) => {
+                          const isChecked = field.value.includes(perm.code);
+                          const toggle = () => {
+                            const next = isChecked
+                              ? field.value.filter(c => c !== perm.code)
+                              : [...field.value, perm.code];
+                            field.onChange(next);
+                          };
+                          return (
+                            <button
+                              key={perm.code}
+                              type="button"
+                              onClick={toggle}
+                              className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
+                            >
+                              <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
+                                {isChecked && <Check className="w-3 h-3" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
+                                <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            />
+          </div>
 
-        <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
-          <Button onClick={onClose} variant="ghost" size="md">Cancel</Button>
-          <Button onClick={handleSave} disabled={saving || !name.trim()} variant="primary" size="md" isLoading={saving} loadingText="Saving...">
-            Save Changes
-          </Button>
-        </div>
+          <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
+            <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
+            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving} loadingText="Saving...">
+              Save Changes
+            </Button>
+          </div>
+        </form>
       </motion.div>
     </motion.div>
   );
 }
 
-// Create Role Modal Component
+// ─── CreateRoleModal ───────────────────────────────────────────────────────────
+
 function CreateRoleModal({
   permissionsByResource,
   onClose,
-  onSave
+  onSave,
+  isSaving,
 }: {
   permissionsByResource: Record<string, Permission[]>;
   onClose: () => void;
   onSave: (data: { code: string; name: string; description?: string; permissionCodes?: string[] }) => void;
+  isSaving: boolean;
 }) {
-  const [roleCode, setRoleCode] = useState('');
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [selectedPermissions, setSelectedPermissions] = useState<Set<string>>(new Set());
-  const [saving, setSaving] = useState(false);
+  const form = useForm<CreateRoleData>({
+    resolver: zodResolver(createRoleSchema),
+    defaultValues: {
+      roleCode: '',
+      name: '',
+      description: '',
+      permissions: [],
+    },
+  });
 
-  const togglePermission = (code: string) => {
-    const newSet = new Set(selectedPermissions);
-    if (newSet.has(code)) {
-      newSet.delete(code);
-    } else {
-      newSet.add(code);
-    }
-    setSelectedPermissions(newSet);
+  const handleClose = () => {
+    form.reset();
+    onClose();
   };
 
-  const handleSave = async () => {
-    if (!roleCode.trim() || !name.trim()) return;
-    setSaving(true);
-    await onSave({
-      code: roleCode.toUpperCase().replace(/\s+/g, '_'),
-      name,
-      description: description || undefined,
-      permissionCodes: selectedPermissions.size > 0 ? Array.from(selectedPermissions) : undefined
+  const onSubmit = (data: CreateRoleData) => {
+    onSave({
+      code: data.roleCode.toUpperCase().replace(/\s+/g, '_'),
+      name: data.name,
+      description: data.description || undefined,
+      permissionCodes: data.permissions.length > 0 ? data.permissions : undefined,
     });
-    setSaving(false);
   };
+
+  const selectedPermissions = form.watch('permissions');
 
   return (
     <motion.div
@@ -667,7 +741,7 @@ function CreateRoleModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -681,95 +755,141 @@ function CreateRoleModal({
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Create New Role</h2>
             <p className="text-sm text-[var(--text-muted)]">Create a custom role with specific permissions</p>
           </div>
-          <button onClick={onClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
+          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Code *</label>
-              <input type="text" value={roleCode} onChange={(e) => setRoleCode(e.target.value)} placeholder="e.g., FINANCE_MANAGER" className="input-aura" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Display Name *</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Finance Manager" className="input-aura" />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe this role's purpose..." rows={2} className="input-aura" />
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3">Permissions ({selectedPermissions.size} selected)</h3>
-            {Object.entries(permissionsByResource).map(([resource, perms]) => (
-              <div key={resource} className="mb-4">
-                <h4 className="text-xs font-medium text-[var(--text-muted)] mb-2 uppercase tracking-wider">{resource}</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {perms.map((perm) => (
-                    <button
-                      key={perm.code}
-                      onClick={() => togglePermission(perm.code)}
-                      className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${selectedPermissions.has(perm.code) ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
-                    >
-                      <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedPermissions.has(perm.code) ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
-                        {selectedPermissions.has(perm.code) && <Check className="w-3 h-3" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
-                        <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
+          <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Code *</label>
+                <input
+                  type="text"
+                  {...form.register('roleCode')}
+                  placeholder="e.g., FINANCE_MANAGER"
+                  className="input-aura"
+                />
+                {form.formState.errors.roleCode && (
+                  <p className="mt-1 text-xs text-red-500">{form.formState.errors.roleCode.message}</p>
+                )}
               </div>
-            ))}
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Display Name *</label>
+                <input
+                  type="text"
+                  {...form.register('name')}
+                  placeholder="e.g., Finance Manager"
+                  className="input-aura"
+                />
+                {form.formState.errors.name && (
+                  <p className="mt-1 text-xs text-red-500">{form.formState.errors.name.message}</p>
+                )}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
+              <textarea
+                {...form.register('description')}
+                placeholder="Describe this role's purpose..."
+                rows={2}
+                className="input-aura"
+              />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3">
+                Permissions ({selectedPermissions.length} selected)
+              </h3>
+              <Controller
+                name="permissions"
+                control={form.control}
+                render={({ field }) => (
+                  <>
+                    {Object.entries(permissionsByResource).map(([resource, perms]) => (
+                      <div key={resource} className="mb-4">
+                        <h4 className="text-xs font-medium text-[var(--text-muted)] mb-2 uppercase tracking-wider">{resource}</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {perms.map((perm) => {
+                            const isChecked = field.value.includes(perm.code);
+                            const toggle = () => {
+                              const next = isChecked
+                                ? field.value.filter(c => c !== perm.code)
+                                : [...field.value, perm.code];
+                              field.onChange(next);
+                            };
+                            return (
+                              <button
+                                key={perm.code}
+                                type="button"
+                                onClick={toggle}
+                                className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
+                              >
+                                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
+                                  {isChecked && <Check className="w-3 h-3" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
+                                  <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
-          <Button onClick={onClose} variant="ghost" size="md">Cancel</Button>
-          <Button onClick={handleSave} disabled={saving || !roleCode.trim() || !name.trim()} variant="primary" size="md" isLoading={saving} loadingText="Creating...">
-            Create Role
-          </Button>
-        </div>
+          <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
+            <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
+            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving} loadingText="Creating...">
+              Create Role
+            </Button>
+          </div>
+        </form>
       </motion.div>
     </motion.div>
   );
 }
 
-// Edit User Modal Component
+// ─── EditUserModal ─────────────────────────────────────────────────────────────
+
 function EditUserModal({
   user,
   allRoles,
   onClose,
-  onSave
+  onSave,
+  isSaving,
 }: {
   user: User;
   allRoles: RoleWithDetails[];
   onClose: () => void;
   onSave: (roleCodes: string[]) => void;
+  isSaving: boolean;
 }) {
-  const [selectedRoleCodes, setSelectedRoleCodes] = useState<Set<string>>(
-    new Set(user.roles.map(r => r.code))
-  );
-  const [saving, setSaving] = useState(false);
+  const form = useForm<AssignRolesData>({
+    resolver: zodResolver(assignRolesSchema),
+    defaultValues: {
+      roleCodes: user.roles.map(r => r.code),
+    },
+  });
 
-  const toggleRole = (code: string) => {
-    const newSet = new Set(selectedRoleCodes);
-    if (newSet.has(code)) {
-      newSet.delete(code);
-    } else {
-      newSet.add(code);
-    }
-    setSelectedRoleCodes(newSet);
+  // Reset when a different user is opened
+  useEffect(() => {
+    form.reset({ roleCodes: user.roles.map(r => r.code) });
+  }, [user, form]);
+
+  const handleClose = () => {
+    form.reset();
+    onClose();
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    await onSave(Array.from(selectedRoleCodes));
-    setSaving(false);
+  const onSubmit = (data: AssignRolesData) => {
+    onSave(data.roleCodes);
   };
 
   return (
@@ -778,7 +898,7 @@ function EditUserModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -796,47 +916,65 @@ function EditUserModal({
               Assign roles to {user.fullName}
             </p>
           </div>
-          <button onClick={onClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
+          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto max-h-[60vh] space-y-4">
-          <div className="grid grid-cols-1 gap-2">
-            {allRoles.map((role) => (
-              <button
-                key={role.code}
-                onClick={() => toggleRole(role.code)}
-                className={`flex items-center gap-4 p-4 rounded-lg border text-left transition-colors ${selectedRoleCodes.has(role.code)
-                    ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700'
-                    : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'
-                  }`}
-              >
-                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedRoleCodes.has(role.code)
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'
-                  }`}>
-                  {selectedRoleCodes.has(role.code) && <Check className="w-3 h-3" />}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-hidden flex-1">
+          <div className="p-4 overflow-y-auto max-h-[60vh] space-y-4">
+            <Controller
+              name="roleCodes"
+              control={form.control}
+              render={({ field }) => (
+                <div className="grid grid-cols-1 gap-2">
+                  {allRoles.map((role) => {
+                    const isChecked = field.value.includes(role.code);
+                    const toggle = () => {
+                      const next = isChecked
+                        ? field.value.filter(c => c !== role.code)
+                        : [...field.value, role.code];
+                      field.onChange(next);
+                    };
+                    return (
+                      <button
+                        key={role.code}
+                        type="button"
+                        onClick={toggle}
+                        className={`flex items-center gap-4 p-4 rounded-lg border text-left transition-colors ${isChecked
+                            ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700'
+                            : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'
+                          }`}
+                      >
+                        <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'
+                          }`}>
+                          {isChecked && <Check className="w-3 h-3" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">
+                            {role.name}
+                          </p>
+                          <p className="text-xs text-[var(--text-muted)]">
+                            {role.description || role.code}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">
-                    {role.name}
-                  </p>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    {role.description || role.code}
-                  </p>
-                </div>
-              </button>
-            ))}
+              )}
+            />
           </div>
-        </div>
 
-        <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
-          <Button onClick={onClose} variant="ghost" size="md">Cancel</Button>
-          <Button onClick={handleSave} disabled={saving} variant="primary" size="md" isLoading={saving} loadingText="Saving...">
-            Save Changes
-          </Button>
-        </div>
+          <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
+            <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
+            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving} loadingText="Saving...">
+              Save Changes
+            </Button>
+          </div>
+        </form>
       </motion.div>
     </motion.div>
   );
