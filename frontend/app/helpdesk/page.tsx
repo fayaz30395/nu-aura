@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppLayout, PageHeader } from '@/components/layout';
+import { AppLayout } from '@/components/layout';
 import { useSLADashboard, useMyPendingEscalations, useSlaConfigs } from '@/lib/hooks/queries/useHelpdeskSla';
 import {
   Headphones,
@@ -62,10 +62,10 @@ export default function HelpdeskPage() {
   return (
     <AppLayout>
       <div className="space-y-6">
-        <PageHeader
-          title="Helpdesk"
-          description="Manage SLA policies, escalations, and support metrics"
-        />
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Helpdesk</h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1">Manage SLA policies, escalations, and support metrics</p>
+        </div>
 
         {/* Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

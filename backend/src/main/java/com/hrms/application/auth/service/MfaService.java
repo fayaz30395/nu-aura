@@ -231,7 +231,7 @@ public class MfaService {
                 }
             }
             return false;
-        } catch (GeneralSecurityException e) {
+        } catch (Exception e) {
             log.error("Error validating TOTP", e);
             return false;
         }
