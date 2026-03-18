@@ -20,6 +20,12 @@ class EmployeeService {
     return response.data;
   }
 
+  /** Fetch the authenticated user's own employee profile (no ID needed). */
+  async getMyProfile(): Promise<Employee> {
+    const response = await apiClient.get<Employee>('/employees/me');
+    return response.data;
+  }
+
   async getAllEmployees(
     page: number = 0,
     size: number = 20,

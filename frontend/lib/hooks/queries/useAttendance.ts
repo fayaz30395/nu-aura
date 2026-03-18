@@ -185,9 +185,12 @@ export function useCheckIn() {
       }
     },
     onSettled: (_data, _error, variables) => {
-      // Refetch to ensure data is fresh
+      // Surgical invalidation: only today's record changes on clock-in.
+      // Do NOT invalidate attendanceKeys.records() (broad) — that would refetch
+      // the weekly and monthly queries too, causing the whole page to re-render
+      // multiple times as each query resolves sequentially.
       const today = variables.attendanceDate || new Date().toISOString().split('T')[0];
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.records() });
+      queryClient.invalidateQueries({ queryKey: attendanceKeys.dateRange(today, today) });
       queryClient.invalidateQueries({ queryKey: attendanceKeys.timeEntries(today) });
     },
   });
@@ -218,8 +221,9 @@ export function useCheckOut() {
       }
     },
     onSettled: (_data, _error, variables) => {
+      // Surgical invalidation: only today's record changes on clock-out.
       const today = variables.attendanceDate || new Date().toISOString().split('T')[0];
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.records() });
+      queryClient.invalidateQueries({ queryKey: attendanceKeys.dateRange(today, today) });
       queryClient.invalidateQueries({ queryKey: attendanceKeys.timeEntries(today) });
     },
   });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { memo, useMemo, useState, useEffect, useCallback } from 'react';
 import {
   Clock, LogIn, LogOut, MapPin, CheckCircle, AlertCircle,
   Target, Flame, Sunrise, AlertTriangle,
@@ -39,7 +39,7 @@ import { AttendanceWeeklyChart } from './AttendanceWeeklyChart';
 import { AttendanceMonthlyStats } from './AttendanceMonthlyStats';
 import { AttendanceQuickActions, AttendanceUpcomingHolidays, AttendanceWeekProgress } from './AttendanceSidebar';
 
-// ─── Progress Ring Component ──────────────────────────────────────────────────
+// ─── Progress Ring ────────────────────────────────────────────────────────────
 function ProgressRing({
   progress,
   size = 120,
@@ -76,13 +76,313 @@ function ProgressRing({
   );
 }
 
-// ChartEntry type and CustomTooltip moved to ./AttendanceWeeklyChart.tsx
+// ─── Clock Widget ─────────────────────────────────────────────────────────────
+// Isolated into its own memoized component so the 1-second clock tick only
+// re-renders this subtree. AttendanceMonthlyStats, AttendanceWeeklyChart, and
+// the sidebar are completely unaffected by the interval.
+interface AttendanceClockWidgetProps {
+  todayRecord: AttendanceRecord | null;
+  userName: string | undefined;
+  streak: number;
+  weekStats: ReturnType<typeof computeWeekStats>;
+  error: string | null;
+  onCheckIn: () => Promise<void>;
+  onCheckOutRequest: () => void;
+  checkInPending: boolean;
+  checkOutPending: boolean;
+}
+
+const AttendanceClockWidget = memo(function AttendanceClockWidget({
+  todayRecord,
+  userName,
+  streak,
+  weekStats,
+  error,
+  onCheckIn,
+  onCheckOutRequest,
+  checkInPending,
+  checkOutPending,
+}: AttendanceClockWidgetProps) {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const greeting = useMemo(() => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  }, [currentTime]);
+
+  const isCheckedIn = !!todayRecord?.checkInTime;
+  const isCheckedOut = !!todayRecord?.checkOutTime;
+  const dayComplete = isCheckedIn && isCheckedOut;
+
+  const currentWorkHours = useMemo(
+    () => calculateHours(todayRecord?.checkInTime, todayRecord?.checkOutTime || undefined),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [todayRecord, currentTime]
+  );
+
+  const workProgress = Math.min((currentWorkHours / STANDARD_WORK_HOURS) * 100, 100);
+  const isOvertime = currentWorkHours > STANDARD_WORK_HOURS;
+  const overtimeHours = isOvertime ? currentWorkHours - STANDARD_WORK_HOURS : 0;
+
+  const isLateToday = useMemo(() => {
+    if (!todayRecord?.checkInTime) return false;
+    const checkIn = new Date(todayRecord.checkInTime);
+    const shiftStart = new Date(checkIn);
+    shiftStart.setHours(9, GRACE_PERIOD_MINS, 0, 0);
+    return checkIn > shiftStart;
+  }, [todayRecord]);
+
+  const lateByMinutes = useMemo(() => {
+    if (!isLateToday || !todayRecord?.checkInTime) return 0;
+    const checkIn = new Date(todayRecord.checkInTime);
+    const shiftStart = new Date(checkIn);
+    shiftStart.setHours(9, GRACE_PERIOD_MINS, 0, 0);
+    return Math.round((checkIn.getTime() - shiftStart.getTime()) / 60000);
+  }, [isLateToday, todayRecord]);
+
+  return (
+    <>
+      {/* ── Header ─────────────────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
+              <Clock className="h-4 w-4 text-white" />
+            </div>
+            <h1 className="text-page-title text-[var(--text-primary)]">Attendance</h1>
+          </div>
+          <p className="text-sm ml-10">
+            <span className="font-medium text-[var(--text-primary)]">{greeting}, {userName || 'there'}</span>
+            <span className="text-[var(--text-muted)]"> · </span>
+            <span className="text-[var(--text-secondary)]">{currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          {/* Streak Badge */}
+          {streak > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+              <Flame className="h-5 w-5 text-orange-500" />
+              <div>
+                <div className="text-lg font-bold text-orange-600 dark:text-orange-400 leading-none">{streak}</div>
+                <div className="text-xs text-orange-500 dark:text-orange-400">day streak</div>
+              </div>
+            </div>
+          )}
+          {/* Live Clock */}
+          <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] rounded-lg shadow-sm border border-[var(--border-main)]">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
+              <Clock className="h-5 w-5 text-white animate-pulse" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-primary-500 dark:text-primary-400 uppercase tracking-wider">Live Time</div>
+              <div className="text-xl font-mono font-bold text-[var(--text-primary)] tabular-nums">
+                {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div className="p-4 tint-danger border-l-4 border-red-500 rounded-lg flex items-start gap-2 text-red-700 dark:text-red-400">
+          <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+          <div><p className="font-semibold text-sm">Error</p><p className="text-xs">{error}</p></div>
+        </div>
+      )}
+
+      {/* ── Main Section: Clock Card + Progress Ring ────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Attendance Card */}
+        <div className="lg:col-span-2">
+          <Card className="bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 text-white overflow-hidden relative border-0 shadow-lg">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+            </div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+            <CardContent className="flex flex-col justify-between p-6 relative z-10">
+              <div className="flex items-start justify-between mb-6">
+                <div className="space-y-1">
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider ${
+                    dayComplete ? 'bg-emerald-500/25 text-emerald-200' : isCheckedIn ? 'bg-green-400/25 text-green-200' : 'bg-white/15 text-white/80'
+                  }`}>
+                    <div className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? 'bg-green-400 animate-pulse' : dayComplete ? 'bg-emerald-400' : 'bg-white/50'}`} />
+                    {dayComplete ? 'Day Complete' : isCheckedIn ? 'Currently Working' : 'Not Started'}
+                  </div>
+                  <div className="text-2xl lg:text-3xl font-extrabold text-white drop-shadow-sm">
+                    {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                  </div>
+                  {isLateToday && (
+                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/30 rounded-full text-xs font-medium text-red-200">
+                      <AlertTriangle className="h-3 w-3" />
+                      Late by {lateByMinutes}m
+                    </div>
+                  )}
+                </div>
+                <div className="text-right">
+                  <div className="text-4xl lg:text-5xl font-extrabold font-mono tracking-tight tabular-nums drop-shadow-lg">
+                    {currentTime.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                  <div className="flex items-center gap-2 text-indigo-200/80 justify-end mt-1.5">
+                    <MapPin className="h-3.5 w-3.5" />
+                    <span className="text-xs font-medium">{todayRecord?.checkInLocation || 'Location unavailable'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Time + Action */}
+              <div className="flex items-end justify-between">
+                <div className="flex gap-6">
+                  <div>
+                    <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Check In</div>
+                    <div className="text-xl font-bold tabular-nums text-white">
+                      {todayRecord?.checkInTime ? formatTime(todayRecord.checkInTime) : '--:--'}
+                    </div>
+                  </div>
+                  {isCheckedOut && todayRecord?.checkOutTime && (
+                    <div>
+                      <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Check Out</div>
+                      <div className="text-xl font-bold tabular-nums text-white">{formatTime(todayRecord.checkOutTime)}</div>
+                    </div>
+                  )}
+                  {isCheckedIn && (
+                    <div>
+                      <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Duration</div>
+                      <div className="text-xl font-bold tabular-nums text-white">{formatDuration(currentWorkHours)}</div>
+                    </div>
+                  )}
+                  {isOvertime && (
+                    <div>
+                      <div className="text-xs font-semibold text-amber-300/80 uppercase tracking-wider mb-1">Overtime</div>
+                      <div className="text-xl font-bold tabular-nums text-amber-300">+{formatDuration(overtimeHours)}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  {dayComplete ? (
+                    <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/20">
+                      <CheckCircle className="h-8 w-8 text-emerald-300 mx-auto mb-1" />
+                      <div className="text-sm font-bold">Day Complete!</div>
+                      <div className="text-xs text-indigo-100 mt-0.5">
+                        {formatDuration(calculateHours(todayRecord?.checkInTime, todayRecord?.checkOutTime))} worked
+                      </div>
+                    </div>
+                  ) : !isCheckedIn ? (
+                    <Button
+                      onClick={onCheckIn}
+                      isLoading={checkInPending}
+                      className="h-14 px-8 text-base font-semibold bg-white text-primary-600 hover:bg-gray-50 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                    >
+                      <LogIn className="h-5 w-5 mr-2" />
+                      Check In
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={onCheckOutRequest}
+                      isLoading={checkOutPending}
+                      className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                    >
+                      <LogOut className="h-5 w-5 mr-2" />
+                      Check Out
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Progress Ring + Today Stats */}
+        <div className="space-y-4">
+          {/* Work Progress */}
+          <Card className="card-aura border border-[var(--border-main)] shadow-md overflow-hidden">
+            <CardContent className="p-6 flex items-center gap-6 relative">
+              <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-amber-500 to-orange-500' : workProgress >= 100 ? 'bg-gradient-to-br from-emerald-500 to-green-500' : 'bg-gradient-to-br from-primary-500 to-violet-500'}`} />
+              <ProgressRing
+                progress={workProgress}
+                size={110}
+                strokeWidth={10}
+                color={isOvertime ? '#f59e0b' : workProgress >= 100 ? '#22c55e' : '#6366f1'}
+              >
+                <div className="text-center">
+                  <div className="text-stat-medium text-[var(--text-primary)] tabular-nums leading-none">
+                    {currentWorkHours.toFixed(1)}
+                  </div>
+                  <div className="text-xs font-medium text-[var(--text-muted)] mt-0.5">/ {STANDARD_WORK_HOURS}h</div>
+                </div>
+              </ProgressRing>
+              <div className="flex-1 space-y-2 relative z-10">
+                <h3 className="text-card-title text-[var(--text-primary)]">Work Progress</h3>
+                <div className={`text-sm font-medium ${
+                  dayComplete ? 'text-emerald-600 dark:text-emerald-400' :
+                  isOvertime ? 'text-amber-600 dark:text-amber-400' :
+                  isCheckedIn ? 'text-[var(--text-secondary)]' :
+                  'text-primary-600 dark:text-primary-400'
+                }`}>
+                  {dayComplete
+                    ? 'Great work today!'
+                    : isOvertime
+                    ? `+${formatDuration(overtimeHours)} overtime`
+                    : isCheckedIn
+                    ? `${formatDuration(STANDARD_WORK_HOURS - currentWorkHours)} remaining`
+                    : 'Clock in to start your day'}
+                </div>
+                {isCheckedIn && (
+                  <div className="flex items-center gap-1.5">
+                    <div className={`h-2 w-2 rounded-full ${isOvertime ? 'bg-amber-500' : workProgress >= 100 ? 'bg-emerald-500' : 'bg-primary-500'} animate-pulse`} />
+                    <span className={`text-xs font-bold ${isOvertime ? 'text-amber-600 dark:text-amber-400' : workProgress >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-primary-600 dark:text-primary-400'}`}>
+                      {Math.round(workProgress)}% complete
+                    </span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Weekly Averages */}
+          <Card className="card-aura border border-[var(--border-main)] shadow-md">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm">
+                      <Sunrise className="h-4 w-4 text-white" />
+                    </div>
+                    <p className="text-micro text-purple-600 dark:text-purple-400">Avg In</p>
+                  </div>
+                  <p className="text-stat-medium text-[var(--text-primary)] tabular-nums">{weekStats.avgCheckIn}</p>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+                      <Target className="h-4 w-4 text-white" />
+                    </div>
+                    <p className="text-micro text-amber-600 dark:text-amber-400">Avg Hrs</p>
+                  </div>
+                  <p className="text-stat-medium text-[var(--text-primary)] tabular-nums">{weekStats.avgHours}h</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </>
+  );
+});
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function AttendancePage() {
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const toast = useToast();
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
   const [showCheckOutConfirm, setShowCheckOutConfirm] = useState(false);
 
@@ -115,13 +415,8 @@ export default function AttendancePage() {
   const checkInMutation = useCheckIn();
   const checkOutMutation = useCheckOut();
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   const todayRecord: AttendanceRecord | null = todayData?.[0] ?? null;
-  // Stable references: prevents downstream useMemo hooks from re-running on every render.
+  // Stable references prevent downstream useMemo hooks from re-running on every render
   const weeklyRecords = useMemo<AttendanceRecord[]>(() => weeklyData ?? [], [weeklyData]);
   const monthlyRecords = useMemo<AttendanceRecord[]>(() => monthlyData ?? [], [monthlyData]);
   const holidays = useMemo<Holiday[]>(() => holidaysData ?? [], [holidaysData]);
@@ -141,7 +436,7 @@ export default function AttendancePage() {
     return 'Location unavailable';
   }, [toast]);
 
-  const handleCheckIn = async () => {
+  const handleCheckIn = useCallback(async () => {
     try {
       setError(null);
       if (!user?.employeeId) { setError('User not found. Please login again.'); return; }
@@ -156,9 +451,9 @@ export default function AttendancePage() {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || 'Failed to check in. Please try again.');
     }
-  };
+  }, [user?.employeeId, getLocation, checkInMutation]);
 
-  const performCheckOut = async () => {
+  const performCheckOut = useCallback(async () => {
     try {
       setError(null);
       if (!user?.employeeId) { setError('User not found. Please login again.'); return; }
@@ -174,53 +469,16 @@ export default function AttendancePage() {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || 'Failed to check out. Please try again.');
     }
-  };
+  }, [user?.employeeId, getLocation, checkOutMutation]);
 
-  // calculateHours, formatDuration, formatTime — imported from ./utils
-
-  const isCheckedIn = !!todayRecord?.checkInTime;
-  const isCheckedOut = !!todayRecord?.checkOutTime;
-  const dayComplete = isCheckedIn && isCheckedOut;
-
-  const currentWorkHours = useMemo(
-    () => calculateHours(todayRecord?.checkInTime, todayRecord?.checkOutTime || undefined),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [todayRecord, currentTime]
-  );
-
-  const workProgress = Math.min((currentWorkHours / STANDARD_WORK_HOURS) * 100, 100);
-  const isOvertime = currentWorkHours > STANDARD_WORK_HOURS;
-  const overtimeHours = isOvertime ? currentWorkHours - STANDARD_WORK_HOURS : 0;
-
-  // Late check detection
-  const isLateToday = useMemo(() => {
-    if (!todayRecord?.checkInTime) return false;
-    const checkIn = new Date(todayRecord.checkInTime);
-    // Default shift start 9:00 AM + grace period
-    const shiftStart = new Date(checkIn);
-    shiftStart.setHours(9, GRACE_PERIOD_MINS, 0, 0);
-    return checkIn > shiftStart;
-  }, [todayRecord]);
-
-  const lateByMinutes = useMemo(() => {
-    if (!isLateToday || !todayRecord?.checkInTime) return 0;
-    const checkIn = new Date(todayRecord.checkInTime);
-    const shiftStart = new Date(checkIn);
-    shiftStart.setHours(9, GRACE_PERIOD_MINS, 0, 0);
-    return Math.round((checkIn.getTime() - shiftStart.getTime()) / 60000);
-  }, [isLateToday, todayRecord]);
-
-  // ─── Streak Calculation ───────────────────────────────────────────────
+  // ─── Derived Data ──────────────────────────────────────────────────────
   const streak = useMemo(() => computeStreak(monthlyRecords), [monthlyRecords]);
 
-  // ─── Monthly Stats ────────────────────────────────────────────────────
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const monthStats = useMemo(() => computeMonthStats(monthlyRecords, now), [monthlyRecords]);
 
-  // ─── Weekly Stats ─────────────────────────────────────────────────────
   const weekStats = useMemo(() => computeWeekStats(weeklyRecords), [weeklyRecords]);
 
-  // ─── Chart Data ───────────────────────────────────────────────────────
   const holidaySet = useMemo(() => new Set(holidays.map(h => h.holidayDate)), [holidays]);
 
   const chartData: ChartEntry[] = useMemo(() => {
@@ -252,21 +510,12 @@ export default function AttendancePage() {
     return days;
   }, [weeklyRecords, holidaySet]);
 
-  // ─── Upcoming Holidays ────────────────────────────────────────────────
   const upcomingHolidays = useMemo(() => {
     return holidays
       .filter(h => new Date(h.holidayDate + 'T00:00:00') >= new Date(todayStr + 'T00:00:00'))
       .sort((a, b) => a.holidayDate.localeCompare(b.holidayDate))
       .slice(0, 3);
   }, [holidays, todayStr]);
-
-  // ─── Greeting ─────────────────────────────────────────────────────────
-  const greeting = useMemo(() => {
-    const hour = currentTime.getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  }, [currentTime]);
 
   // ─── Loading ──────────────────────────────────────────────────────────
   const dataLoading = todayLoading || weeklyLoading;
@@ -275,12 +524,10 @@ export default function AttendancePage() {
     return (
       <AppLayout activeMenuItem="attendance">
         <div className="p-6 max-w-[1600px] mx-auto space-y-6">
-          {/* Skeleton header */}
           <div className="flex justify-between items-center">
             <div className="space-y-2"><Skeleton className="h-8 w-48 rounded-lg" /><Skeleton className="h-4 w-32 rounded" /></div>
             <Skeleton className="h-14 w-48 rounded-xl" />
           </div>
-          {/* Skeleton main grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2"><Skeleton className="h-56 rounded-2xl" /></div>
             <div className="space-y-4">
@@ -288,11 +535,9 @@ export default function AttendancePage() {
               <Skeleton className="h-24 rounded-xl" />
             </div>
           </div>
-          {/* Skeleton stats row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-24 rounded-xl" />)}
           </div>
-          {/* Skeleton bottom grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2"><Skeleton className="h-80 rounded-2xl" /></div>
             <div className="space-y-4">
@@ -315,233 +560,19 @@ export default function AttendancePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
       >
-        {/* ── Header ─────────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
-                <Clock className="h-4 w-4 text-white" />
-              </div>
-              <h1 className="text-page-title text-[var(--text-primary)]">Attendance</h1>
-            </div>
-            <p className="text-sm ml-10">
-              <span className="font-medium text-[var(--text-primary)]">{greeting}, {user?.firstName || 'there'}</span>
-              <span className="text-[var(--text-muted)]"> · </span>
-              <span className="text-[var(--text-secondary)]">{currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Streak Badge */}
-            {streak > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                <Flame className="h-5 w-5 text-orange-500" />
-                <div>
-                  <div className="text-lg font-bold text-orange-600 dark:text-orange-400 leading-none">{streak}</div>
-                  <div className="text-xs text-orange-500 dark:text-orange-400">day streak</div>
-                </div>
-              </div>
-            )}
-            {/* Live Clock */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] rounded-lg shadow-sm border border-[var(--border-main)]">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-white animate-pulse" />
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-primary-500 dark:text-primary-400 uppercase tracking-wider">Live Time</div>
-                <div className="text-xl font-mono font-bold text-[var(--text-primary)] tabular-nums">
-                  {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="p-4 tint-danger border-l-4 border-red-500 rounded-lg flex items-start gap-2 text-red-700 dark:text-red-400">
-            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <div><p className="font-semibold text-sm">Error</p><p className="text-xs">{error}</p></div>
-          </div>
-        )}
-
-        {/* ── Main Section: Clock Card + Progress Ring ────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Attendance Card */}
-          <div className="lg:col-span-2">
-            <Card className="bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 text-white overflow-hidden relative border-0 shadow-lg">
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-              </div>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-
-              <CardContent className="flex flex-col justify-between p-6 relative z-10">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="space-y-1">
-                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider ${
-                      dayComplete ? 'bg-emerald-500/25 text-emerald-200' : isCheckedIn ? 'bg-green-400/25 text-green-200' : 'bg-white/15 text-white/80'
-                    }`}>
-                      <div className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? 'bg-green-400 animate-pulse' : dayComplete ? 'bg-emerald-400' : 'bg-white/50'}`} />
-                      {dayComplete ? 'Day Complete' : isCheckedIn ? 'Currently Working' : 'Not Started'}
-                    </div>
-                    <div className="text-2xl lg:text-3xl font-extrabold text-white drop-shadow-sm">
-                      {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-                    </div>
-                    {isLateToday && (
-                      <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/30 rounded-full text-xs font-medium text-red-200">
-                        <AlertTriangle className="h-3 w-3" />
-                        Late by {lateByMinutes}m
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <div className="text-4xl lg:text-5xl font-extrabold font-mono tracking-tight tabular-nums drop-shadow-lg">
-                      {currentTime.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                    <div className="flex items-center gap-2 text-indigo-200/80 justify-end mt-1.5">
-                      <MapPin className="h-3.5 w-3.5" />
-                      <span className="text-xs font-medium">{todayRecord?.checkInLocation || 'Location unavailable'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Time + Action */}
-                <div className="flex items-end justify-between">
-                  <div className="flex gap-6">
-                    <div>
-                      <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Check In</div>
-                      <div className="text-xl font-bold tabular-nums text-white">
-                        {todayRecord?.checkInTime ? formatTime(todayRecord.checkInTime) : '--:--'}
-                      </div>
-                    </div>
-                    {isCheckedOut && todayRecord?.checkOutTime && (
-                      <div>
-                        <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Check Out</div>
-                        <div className="text-xl font-bold tabular-nums text-white">{formatTime(todayRecord.checkOutTime)}</div>
-                      </div>
-                    )}
-                    {isCheckedIn && (
-                      <div>
-                        <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Duration</div>
-                        <div className="text-xl font-bold tabular-nums text-white">{formatDuration(currentWorkHours)}</div>
-                      </div>
-                    )}
-                    {isOvertime && (
-                      <div>
-                        <div className="text-xs font-semibold text-amber-300/80 uppercase tracking-wider mb-1">Overtime</div>
-                        <div className="text-xl font-bold tabular-nums text-amber-300">+{formatDuration(overtimeHours)}</div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    {dayComplete ? (
-                      <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/20">
-                        <CheckCircle className="h-8 w-8 text-emerald-300 mx-auto mb-1" />
-                        <div className="text-sm font-bold">Day Complete!</div>
-                        <div className="text-xs text-indigo-100 mt-0.5">
-                          {formatDuration(calculateHours(todayRecord?.checkInTime, todayRecord?.checkOutTime))} worked
-                        </div>
-                      </div>
-                    ) : !isCheckedIn ? (
-                      <Button
-                        onClick={handleCheckIn}
-                        isLoading={checkInMutation.isPending}
-                        className="h-14 px-8 text-base font-semibold bg-white text-primary-600 hover:bg-gray-50 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
-                      >
-                        <LogIn className="h-5 w-5 mr-2" />
-                        Check In
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => setShowCheckOutConfirm(true)}
-                        isLoading={checkOutMutation.isPending}
-                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
-                      >
-                        <LogOut className="h-5 w-5 mr-2" />
-                        Check Out
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Progress Ring + Today Stats */}
-          <div className="space-y-4">
-            {/* Work Progress */}
-            <Card className="card-aura border border-[var(--border-main)] shadow-md overflow-hidden">
-              <CardContent className="p-6 flex items-center gap-6 relative">
-                {/* Subtle gradient background */}
-                <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-amber-500 to-orange-500' : workProgress >= 100 ? 'bg-gradient-to-br from-emerald-500 to-green-500' : 'bg-gradient-to-br from-primary-500 to-violet-500'}`} />
-                <ProgressRing
-                  progress={workProgress}
-                  size={110}
-                  strokeWidth={10}
-                  color={isOvertime ? '#f59e0b' : workProgress >= 100 ? '#22c55e' : '#6366f1'}
-                >
-                  <div className="text-center">
-                    <div className="text-stat-medium text-[var(--text-primary)] tabular-nums leading-none">
-                      {currentWorkHours.toFixed(1)}
-                    </div>
-                    <div className="text-xs font-medium text-[var(--text-muted)] mt-0.5">/ {STANDARD_WORK_HOURS}h</div>
-                  </div>
-                </ProgressRing>
-                <div className="flex-1 space-y-2 relative z-10">
-                  <h3 className="text-card-title text-[var(--text-primary)]">Work Progress</h3>
-                  <div className={`text-sm font-medium ${
-                    dayComplete ? 'text-emerald-600 dark:text-emerald-400' :
-                    isOvertime ? 'text-amber-600 dark:text-amber-400' :
-                    isCheckedIn ? 'text-[var(--text-secondary)]' :
-                    'text-primary-600 dark:text-primary-400'
-                  }`}>
-                    {dayComplete
-                      ? 'Great work today!'
-                      : isOvertime
-                      ? `+${formatDuration(overtimeHours)} overtime`
-                      : isCheckedIn
-                      ? `${formatDuration(STANDARD_WORK_HOURS - currentWorkHours)} remaining`
-                      : 'Clock in to start your day'}
-                  </div>
-                  {isCheckedIn && (
-                    <div className="flex items-center gap-1.5">
-                      <div className={`h-2 w-2 rounded-full ${isOvertime ? 'bg-amber-500' : workProgress >= 100 ? 'bg-emerald-500' : 'bg-primary-500'} animate-pulse`} />
-                      <span className={`text-xs font-bold ${isOvertime ? 'text-amber-600 dark:text-amber-400' : workProgress >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-primary-600 dark:text-primary-400'}`}>
-                        {Math.round(workProgress)}% complete
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Weekly Averages */}
-            <Card className="card-aura border border-[var(--border-main)] shadow-md">
-              <CardContent className="p-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm">
-                        <Sunrise className="h-4 w-4 text-white" />
-                      </div>
-                      <p className="text-micro text-purple-600 dark:text-purple-400">Avg In</p>
-                    </div>
-                    <p className="text-stat-medium text-[var(--text-primary)] tabular-nums">{weekStats.avgCheckIn}</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
-                        <Target className="h-4 w-4 text-white" />
-                      </div>
-                      <p className="text-micro text-amber-600 dark:text-amber-400">Avg Hrs</p>
-                    </div>
-                    <p className="text-stat-medium text-[var(--text-primary)] tabular-nums">{weekStats.avgHours}h</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        {/* Clock widget — owns currentTime; isolated so the 1s tick doesn't
+            propagate to the stats, chart, or sidebar below */}
+        <AttendanceClockWidget
+          todayRecord={todayRecord}
+          userName={user?.firstName}
+          streak={streak}
+          weekStats={weekStats}
+          error={error}
+          onCheckIn={handleCheckIn}
+          onCheckOutRequest={() => setShowCheckOutConfirm(true)}
+          checkInPending={checkInMutation.isPending}
+          checkOutPending={checkOutMutation.isPending}
+        />
 
         {/* ── Monthly Stats Row ───────────────────────────────── */}
         <AttendanceMonthlyStats monthStats={monthStats} />
@@ -550,7 +581,6 @@ export default function AttendancePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <AttendanceWeeklyChart chartData={chartData} attendanceRate={monthStats.attendanceRate} />
 
-          {/* Quick Actions + Holidays + Week Progress */}
           <div className="space-y-4">
             <AttendanceQuickActions />
             <AttendanceUpcomingHolidays holidays={upcomingHolidays} todayStr={todayStr} />
@@ -564,7 +594,7 @@ export default function AttendancePage() {
           onClose={() => setShowCheckOutConfirm(false)}
           onConfirm={performCheckOut}
           title="Confirm Check Out"
-          message={`You have worked ${formatDuration(currentWorkHours)} today. Are you sure you want to check out?`}
+          message={`You have worked ${formatDuration(calculateHours(todayRecord?.checkInTime, undefined))} today. Are you sure you want to check out?`}
           confirmText="Check Out"
           cancelText="Cancel"
           type="warning"

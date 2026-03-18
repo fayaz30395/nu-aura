@@ -22,7 +22,7 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useEmployee, useUpdateEmployee } from '@/lib/hooks/queries';
+import { useMyEmployee, useUpdateEmployee } from '@/lib/hooks/queries';
 import { UpdateEmployeeRequest } from '@/lib/types/employee';
 import { getInitials } from '@/lib/utils';
 import { createLogger } from '@/lib/utils/logger';
@@ -38,11 +38,8 @@ export default function MyProfilePage() {
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // React Query hooks
-  const { data: employee, isLoading } = useEmployee(
-    user?.employeeId || '',
-    hasHydrated && !!user?.employeeId
-  );
+  // React Query hooks — use /employees/me (no ID needed)
+  const { data: employee, isLoading } = useMyEmployee(hasHydrated && isAuthenticated);
 
   const updateMutation = useUpdateEmployee();
 
@@ -115,26 +112,6 @@ export default function MyProfilePage() {
       <AppLayout activeMenuItem="profile">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-        </div>
-      </AppLayout>
-    );
-  }
-
-  if (!user?.employeeId) {
-    return (
-      <AppLayout activeMenuItem="profile">
-        <div className="text-center py-12">
-          <User className="h-16 w-16 mx-auto text-slate-300 mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
-          <p className="text-slate-500 max-w-md mx-auto">
-            Profile management requires an employee profile. Use the admin panels to manage employees.
-          </p>
-          <button
-            onClick={() => router.push('/employees')}
-            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            Go to Employees
-          </button>
         </div>
       </AppLayout>
     );
