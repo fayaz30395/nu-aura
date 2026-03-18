@@ -173,7 +173,9 @@ const ChildrenFlyover: React.FC<{
               </>
             );
 
-            // Use Link for instant navigation
+            // Use Link for instant navigation with hard-nav fallback.
+            // In dev mode, first-time page compilation can make client-side
+            // routing hang. A timeout ensures users always reach the target.
             if (child.href) {
               return (
                 <Link
@@ -182,6 +184,25 @@ const ChildrenFlyover: React.FC<{
                   onClick={() => {
                     onItemClick?.(child);
                     onClose();
+                    // Fallback: if Next.js client navigation doesn't complete
+                    // within 3s (e.g. first compile in dev), force a hard nav.
+                    if (child.href) {
+                      const fallbackHref = child.href;
+                      const timeout = setTimeout(() => {
+                        window.location.href = fallbackHref;
+                      }, 3000);
+                      // Clear timeout if navigation succeeds (page unmounts)
+                      const cleanup = () => clearTimeout(timeout);
+                      window.addEventListener('beforeunload', cleanup, { once: true });
+                      // Also clear on popstate (successful SPA navigation changes URL)
+                      const checkNav = () => {
+                        if (window.location.pathname === fallbackHref || window.location.pathname.startsWith(fallbackHref)) {
+                          clearTimeout(timeout);
+                        }
+                      };
+                      setTimeout(checkNav, 500);
+                      setTimeout(checkNav, 1500);
+                    }
                   }}
                   className={childClasses}
                   prefetch={true}
@@ -245,6 +266,24 @@ const SidebarMenuItem: React.FC<{
     } else {
       // Let Link handle navigation naturally for speed
       onItemClick?.(item);
+      // Fallback: if Next.js client navigation doesn't complete within 3s
+      // (e.g. dev-mode first compile), hard-navigate to the target.
+      if (item.href) {
+        const targetHref = item.href;
+        const timeout = setTimeout(() => {
+          if (window.location.pathname !== targetHref) {
+            window.location.href = targetHref;
+          }
+        }, 3000);
+        // Clear timeout quickly if navigation succeeds
+        const checkAndClear = () => {
+          if (window.location.pathname === targetHref || window.location.pathname.startsWith(targetHref + '/')) {
+            clearTimeout(timeout);
+          }
+        };
+        setTimeout(checkAndClear, 500);
+        setTimeout(checkAndClear, 1500);
+      }
     }
   };
 

@@ -92,9 +92,22 @@ export function AuthGuard({
         restoreSession().then((restored) => {
           setIsRestoringSession(false);
           if (!restored) {
-            // Cookie is truly expired/invalid — redirect to login
+            // Cookie is truly expired/invalid — redirect to login.
+            // Use window.location.href as fallback to avoid infinite RSC fetch
+            // loops when the backend is down and router.replace hangs.
             const returnUrl = encodeURIComponent(pathname);
-            router.replace(`/auth/login?returnUrl=${returnUrl}`);
+            const loginUrl = `/auth/login?returnUrl=${returnUrl}`;
+            try {
+              router.replace(loginUrl);
+              // Fallback: if router.replace doesn't complete in 3s, hard navigate
+              setTimeout(() => {
+                if (window.location.pathname !== '/auth/login') {
+                  window.location.href = loginUrl;
+                }
+              }, 3000);
+            } catch {
+              window.location.href = loginUrl;
+            }
             setIsAuthorized(false);
           }
           // If restored, the isAuthenticated state change will re-trigger this effect
@@ -102,7 +115,17 @@ export function AuthGuard({
       } else if (restoreAttemptedRef.current && !isRestoringSession) {
         // Restore was already attempted and failed — redirect to login
         const returnUrl = encodeURIComponent(pathname);
-        router.replace(`/auth/login?returnUrl=${returnUrl}`);
+        const loginUrl = `/auth/login?returnUrl=${returnUrl}`;
+        try {
+          router.replace(loginUrl);
+          setTimeout(() => {
+            if (window.location.pathname !== '/auth/login') {
+              window.location.href = loginUrl;
+            }
+          }, 3000);
+        } catch {
+          window.location.href = loginUrl;
+        }
         setIsAuthorized(false);
       }
       return;
