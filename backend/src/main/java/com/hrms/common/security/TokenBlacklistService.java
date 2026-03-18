@@ -45,7 +45,7 @@ public class TokenBlacklistService {
             redisTemplate.opsForValue().get("test");
             redisAvailable = true;
             log.info("Token blacklist service initialized with Redis backend");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             redisAvailable = false;
             log.warn("Redis unavailable for token blacklist, using in-memory fallback. " +
                     "This is acceptable for single-instance deployments but not recommended for production clusters.");
@@ -79,7 +79,7 @@ public class TokenBlacklistService {
                 String key = BLACKLIST_PREFIX + jti;
                 redisTemplate.opsForValue().set(key, "revoked", ttl);
                 log.debug("Token {} blacklisted in Redis with TTL {} seconds", jti, ttl.getSeconds());
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.error("Failed to blacklist token in Redis, falling back to in-memory", e);
                 blacklistInMemory(jti, expiration.getTime());
             }
@@ -104,7 +104,7 @@ public class TokenBlacklistService {
                 String key = BLACKLIST_PREFIX + jti;
                 Boolean exists = redisTemplate.hasKey(key);
                 return Boolean.TRUE.equals(exists);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.error("Failed to check blacklist in Redis, falling back to in-memory", e);
                 return isBlacklistedInMemory(jti);
             }
@@ -134,7 +134,7 @@ public class TokenBlacklistService {
             try {
                 redisTemplate.opsForValue().set(key, String.valueOf(timestamp.toEpochMilli()), ttl);
                 log.info("All tokens for user {} issued before {} are now revoked", userId, timestamp);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.error("Failed to set user token revocation time in Redis", e);
             }
         }
@@ -159,7 +159,7 @@ public class TokenBlacklistService {
                 long revokedBefore = Long.parseLong(revokedBeforeStr);
                 return issuedAt.getTime() < revokedBefore;
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to check user token revocation in Redis", e);
         }
         return false;

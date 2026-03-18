@@ -85,7 +85,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
             System.arraycopy(ciphertext, 0, blob, iv.length, ciphertext.length);
 
             return GCM_PREFIX + Base64.getEncoder().encodeToString(blob);
-        } catch (Exception e) {
+        } catch (java.security.GeneralSecurityException e) {
             throw new RuntimeException("Error encrypting sensitive attribute", e);
         }
     }
@@ -103,7 +103,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
             // Decrypt and return — the value will be re-encrypted in GCM on next write.
             log.warn("Decrypting legacy ECB-encrypted column value; schedule a data migration to re-encrypt.");
             return decryptLegacyEcb(dbData);
-        } catch (Exception e) {
+        } catch (java.security.GeneralSecurityException | IllegalArgumentException e) {
             // Do NOT return raw dbData — fail loudly so data issues surface immediately.
             throw new RuntimeException("Error decrypting sensitive attribute — check encryption key configuration", e);
         }

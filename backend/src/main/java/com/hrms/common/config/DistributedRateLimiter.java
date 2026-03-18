@@ -105,7 +105,7 @@ public class DistributedRateLimiter {
 
             return new RateLimitResult(allowed, remainingTokens, type.getWindowSeconds());
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // Redis unavailable - fail open to prevent complete service outage
             log.error("Redis rate limit error for key: {}, failing open", key, e);
             return new RateLimitResult(true, type.getLimit(), type.getWindowSeconds());
@@ -124,7 +124,7 @@ public class DistributedRateLimiter {
             }
             long current = Long.parseLong(value.toString());
             return Math.max(0, type.getLimit() - current);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.debug("Error getting remaining tokens for key: {}", key, e);
             return type.getLimit();
         }
@@ -138,7 +138,7 @@ public class DistributedRateLimiter {
         try {
             redisTemplate.delete(key);
             log.info("Rate limit reset for key: {}", key);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error resetting rate limit for key: {}", key, e);
         }
     }
@@ -152,7 +152,7 @@ public class DistributedRateLimiter {
             // Set counter way above limit with long TTL
             redisTemplate.opsForValue().set(key, type.getLimit() * 1000, durationMinutes, TimeUnit.MINUTES);
             log.warn("Client blocked for {} minutes: {}", durationMinutes, key);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error blocking client: {}", key, e);
         }
     }

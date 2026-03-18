@@ -401,7 +401,7 @@ public class JwtTokenProvider {
         try {
             Boolean isImpersonation = getClaims(token).get("isImpersonation", Boolean.class);
             return isImpersonation != null && isImpersonation;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }

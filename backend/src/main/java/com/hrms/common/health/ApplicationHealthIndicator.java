@@ -77,7 +77,7 @@ public class ApplicationHealthIndicator implements HealthIndicator {
 
             return builder.build();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Application health check failed", e);
             return Health.unknown()
                     .withDetail("error", e.getMessage())

@@ -1,6 +1,7 @@
 package com.hrms.common.websocket;
 
 import com.hrms.common.security.JwtTokenProvider;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -57,7 +58,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
 
                                 log.debug("WebSocket connection authenticated for user: {}", username);
                             }
-                        } catch (Exception e) {
+                        } catch (JwtException | IllegalArgumentException e) {
                             log.warn("WebSocket authentication failed: {}", e.getMessage());
                         }
                     }

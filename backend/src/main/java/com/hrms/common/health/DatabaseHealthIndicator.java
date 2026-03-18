@@ -45,7 +45,7 @@ public class DatabaseHealthIndicator implements HealthIndicator {
                         .withDetail("error", "Unexpected query result")
                         .build();
             }
-        } catch (Exception e) {
+        } catch (org.springframework.dao.DataAccessException e) {
             log.error("Database health check failed", e);
             return Health.down()
                     .withDetail("error", e.getMessage())

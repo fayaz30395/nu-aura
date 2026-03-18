@@ -91,7 +91,7 @@ public class JpaQueryConfig {
 
                 return result;
 
-            } catch (Exception e) {
+            } catch (RuntimeException e) { // Intentional broad catch — AOP around-advice must handle any JPA runtime error
                 long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
 
                 // Record failed query metrics

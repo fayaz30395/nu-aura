@@ -20,6 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.JwtException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -138,7 +141,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             username, appCode, roles, permissionScopes.keySet());
                 }
             }
-        } catch (Exception ex) {
+        } catch (JwtException | UsernameNotFoundException | IllegalArgumentException ex) {
             logger.error("Could not set user authentication in security context", ex);
         }
 

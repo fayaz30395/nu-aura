@@ -168,7 +168,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
                     redisResult.resetSeconds(),
                     "redis"
                 );
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 // Redis failed - mark as unavailable and fall back
                 log.warn("Redis rate limiting failed, falling back to in-memory: {}", e.getMessage());
                 redisAvailable.set(false);
@@ -214,7 +214,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
                 distributedRateLimiter.getRemainingTokens("health-check", DistributedRateLimiter.RateLimitType.API);
                 redisAvailable.set(true);
                 log.info("Redis rate limiting recovered - switching back from local fallback");
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.debug("Redis still unavailable for rate limiting");
             }
         }
@@ -334,7 +334,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             if (endQuote < 0) return null;
             String sub = payload.substring(startQuote + 1, endQuote);
             return sub.isEmpty() ? null : sub;
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             log.debug("Failed to extract subject from JWT for rate limiting", e);
             return null;
         }

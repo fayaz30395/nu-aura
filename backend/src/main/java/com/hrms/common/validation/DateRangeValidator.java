@@ -63,7 +63,7 @@ public class DateRangeValidator implements ConstraintValidator<DateRangeValid, O
                     startValue.getClass().getName(), endValue.getClass().getName());
             return true;
 
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             log.error("DateRangeValidator: Error validating date range", e);
             return true; // Fail open on reflection errors
         }

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionException;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.SimpleEvaluationContext;
@@ -177,7 +178,7 @@ public class WorkflowRule extends TenantAware {
             Boolean result = expression.getValue(evalContext, Boolean.class);
             return Boolean.TRUE.equals(result);
 
-        } catch (Exception e) {
+        } catch (ExpressionException | IllegalArgumentException e) {
             // Fail-closed: a malformed or un-evaluable expression never passes
             log.warn("WorkflowRule [{}] expression evaluation failed for expression [{}]: {}",
                     name, ruleExpression, e.getMessage());
