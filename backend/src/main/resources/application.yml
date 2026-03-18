@@ -424,6 +424,10 @@ spring:
       on-profile: prod
 
   datasource:
+    # Connection pool sizing for Neon cloud PostgreSQL:
+    # - Neon free tier: max 100 connections per endpoint
+    # - With N pods: each pod gets 20 connections = N*20 total
+    # - Safe for up to 5 pods; increase Neon plan for more
     hikari:
       maximum-pool-size: ${DB_POOL_MAX:20}
       minimum-idle: ${DB_POOL_MIN:5}
