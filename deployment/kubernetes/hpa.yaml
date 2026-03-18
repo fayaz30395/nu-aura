@@ -41,7 +41,7 @@ spec:
       stabilizationWindowSeconds: 60
       policies:
       - type: Percent
-        value: 100
+        value: 50
         periodSeconds: 30
       - type: Pods
         value: 2
@@ -63,7 +63,7 @@ spec:
     kind: Deployment
     name: hrms-frontend
   minReplicas: 2
-  maxReplicas: 8
+  maxReplicas: 10
   metrics:
   - type: Resource
     resource:
@@ -92,7 +92,7 @@ spec:
       stabilizationWindowSeconds: 60
       policies:
       - type: Percent
-        value: 100
+        value: 50
         periodSeconds: 30
       - type: Pods
         value: 2
