@@ -135,6 +135,28 @@ public class ShiftManagementService {
         log.info("Deleted shift: {}", shift.getShiftCode());
     }
 
+    @Transactional
+    public ShiftResponse activateShift(UUID shiftId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Shift shift = shiftRepository.findByIdAndTenantId(shiftId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found: " + shiftId));
+        shift.setIsActive(true);
+        shift = shiftRepository.save(shift);
+        log.info("Activated shift: {}", shift.getShiftCode());
+        return mapToShiftResponse(shift);
+    }
+
+    @Transactional
+    public ShiftResponse deactivateShift(UUID shiftId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Shift shift = shiftRepository.findByIdAndTenantId(shiftId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found: " + shiftId));
+        shift.setIsActive(false);
+        shift = shiftRepository.save(shift);
+        log.info("Deactivated shift: {}", shift.getShiftCode());
+        return mapToShiftResponse(shift);
+    }
+
     // ========== Shift Assignment ==========
 
     @Transactional

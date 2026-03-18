@@ -91,6 +91,22 @@ public class ShiftManagementController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{shiftId}/activate")
+    @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    public ResponseEntity<ShiftResponse> activateShift(@PathVariable UUID shiftId) {
+        log.info("Activating shift: {}", shiftId);
+        ShiftResponse response = shiftManagementService.activateShift(shiftId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{shiftId}/deactivate")
+    @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    public ResponseEntity<ShiftResponse> deactivateShift(@PathVariable UUID shiftId) {
+        log.info("Deactivating shift: {}", shiftId);
+        ShiftResponse response = shiftManagementService.deactivateShift(shiftId);
+        return ResponseEntity.ok(response);
+    }
+
     // ========== Shift Assignments ==========
 
     @PostMapping("/assignments")
