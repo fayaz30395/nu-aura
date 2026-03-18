@@ -50,14 +50,14 @@ public class Announcement extends TenantAware {
     @Builder.Default
     private TargetAudience targetAudience = TargetAudience.ALL_EMPLOYEES;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "announcement_target_departments",
                      joinColumns = @JoinColumn(name = "announcement_id"))
     @Column(name = "department_id")
     @Builder.Default
     private Set<UUID> targetDepartmentIds = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "announcement_target_employees",
                      joinColumns = @JoinColumn(name = "announcement_id"))
     @Column(name = "employee_id")

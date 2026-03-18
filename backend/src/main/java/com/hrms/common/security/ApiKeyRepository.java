@@ -1,5 +1,6 @@
 package com.hrms.common.security;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -65,6 +66,7 @@ public interface ApiKeyRepository extends JpaRepository<ApiKey, UUID> {
      * @param keyPrefix the first 8 characters of the raw API key
      * @return list of candidate keys matching the prefix
      */
+    @EntityGraph(attributePaths = {"scopes"})
     @Query("SELECT a FROM ApiKey a WHERE a.keyPrefix = :keyPrefix AND a.isActive = true AND " +
            "(a.expiresAt IS NULL OR a.expiresAt > CURRENT_TIMESTAMP)")
     List<ApiKey> findActiveByKeyPrefix(@Param("keyPrefix") String keyPrefix);
@@ -75,6 +77,7 @@ public interface ApiKeyRepository extends JpaRepository<ApiKey, UUID> {
      * <p><strong>SECURITY:</strong> This is used as a fallback when prefix matching
      * is not available. Returns only active, non-expired keys.</p>
      */
+    @EntityGraph(attributePaths = {"scopes"})
     @Query("SELECT a FROM ApiKey a WHERE a.keyHash = :keyHash AND a.isActive = true AND " +
            "(a.expiresAt IS NULL OR a.expiresAt > CURRENT_TIMESTAMP)")
     Optional<ApiKey> findValidByKeyHash(@Param("keyHash") String keyHash);

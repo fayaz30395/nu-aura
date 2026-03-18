@@ -1,6 +1,7 @@
 package com.hrms.infrastructure.platform.repository;
 
 import com.hrms.domain.platform.UserAppAccess;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +15,11 @@ import java.util.UUID;
 public interface UserAppAccessRepository extends JpaRepository<UserAppAccess, UUID> {
 
     /**
-     * Find user's access to a specific application
+     * Find user's access to a specific application.
+     * Fetches roles and directPermissions to prevent LazyInitializationException
+     * when role/permission data is accessed outside a transaction boundary.
      */
+    @EntityGraph(attributePaths = {"roles", "roles.permissions", "directPermissions"})
     Optional<UserAppAccess> findByUserIdAndApplicationId(UUID userId, UUID applicationId);
 
     /**

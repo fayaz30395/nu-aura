@@ -2,6 +2,7 @@ package com.hrms.infrastructure.webhook.repository;
 
 import com.hrms.domain.webhook.Webhook;
 import com.hrms.domain.webhook.WebhookStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,12 +20,16 @@ public interface WebhookRepository extends JpaRepository<Webhook, UUID> {
 
     /**
      * Find all active webhooks for a tenant.
+     * @EntityGraph ensures events collection is loaded in a single JOIN to avoid
+     * LazyInitializationException when subscribesTo() is called on returned webhooks.
      */
+    @EntityGraph(attributePaths = {"events"})
     List<Webhook> findByTenantIdAndStatus(UUID tenantId, WebhookStatus status);
 
     /**
      * Find all webhooks for a tenant.
      */
+    @EntityGraph(attributePaths = {"events"})
     List<Webhook> findByTenantId(UUID tenantId);
 
     /**
@@ -35,6 +40,7 @@ public interface WebhookRepository extends JpaRepository<Webhook, UUID> {
     /**
      * Find all active webhooks across all tenants (for batch processing).
      */
+    @EntityGraph(attributePaths = {"events"})
     @Query("SELECT w FROM Webhook w WHERE w.status = :status")
     List<Webhook> findAllByStatus(@Param("status") WebhookStatus status);
 

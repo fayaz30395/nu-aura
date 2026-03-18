@@ -77,7 +77,7 @@ public class UserAppAccess extends TenantAware {
     /**
      * Roles the user has in this application
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_app_roles",
         joinColumns = @JoinColumn(name = "user_app_access_id"),
@@ -93,7 +93,7 @@ public class UserAppAccess extends TenantAware {
     /**
      * Custom permissions directly assigned (beyond role permissions)
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_app_direct_permissions",
         joinColumns = @JoinColumn(name = "user_app_access_id"),
