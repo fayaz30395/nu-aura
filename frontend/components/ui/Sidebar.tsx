@@ -396,6 +396,7 @@ const SidebarMenuItem: React.FC<{
     </div>
   );
 });
+SidebarMenuItem.displayName = 'SidebarMenuItem';
 
 // Section divider with label - collapsible
 const SectionDivider: React.FC<{

@@ -31,7 +31,7 @@ const log = createLogger('ProfilePage');
 
 export default function MyProfilePage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [editData, setEditData] = useState<UpdateEmployeeRequest>({});
