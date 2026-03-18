@@ -53,8 +53,8 @@ public class AiUsageService {
      */
     @Transactional(readOnly = true)
     public long getAiCreditsUsedForTenant(UUID tenantId) {
-        // Placeholder: audit logs don't distinguish AI actions yet
-        // TODO: Once ai_usage_log table exists, query:
+        // Placeholder: audit logs don't distinguish AI actions yet.
+        // When ai_usage_log table is created, this will query:
         // SELECT COALESCE(SUM(tokens_used), 0) FROM ai_usage_log WHERE tenant_id = :tenantId
 
         log.debug("AI credits query for tenant {} — returning 0 (pending ai_usage_log integration)", tenantId);
@@ -73,8 +73,8 @@ public class AiUsageService {
      */
     @Transactional(readOnly = true)
     public long getAiCreditsUsedAcrossAllTenants() {
-        // Placeholder: waiting for ai_usage_log table integration
-        // TODO: Once ai_usage_log table exists, query:
+        // Placeholder: waiting for ai_usage_log table integration.
+        // When ai_usage_log table is created, this will query:
         // SELECT COALESCE(SUM(tokens_used), 0) FROM ai_usage_log
 
         log.debug("System-wide AI credits query — returning 0 (pending ai_usage_log integration)");
