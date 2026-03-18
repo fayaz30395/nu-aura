@@ -69,7 +69,7 @@ public class DateRangeValidator implements ConstraintValidator<DateRangeValid, O
         }
     }
 
-    private Object getFieldValue(Object object, String fieldName) throws Exception {
+    private Object getFieldValue(Object object, String fieldName) throws ReflectiveOperationException {
         Class<?> clazz = object.getClass();
         while (clazz != null) {
             try {

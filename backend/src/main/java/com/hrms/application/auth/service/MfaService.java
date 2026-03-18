@@ -244,7 +244,7 @@ public class MfaService {
      * @param timeStep the time step (30-second window)
      * @return 6-digit TOTP code
      */
-    private String generateTotp(byte[] key, long timeStep) throws Exception {
+    private String generateTotp(byte[] key, long timeStep) throws GeneralSecurityException {
         byte[] msg = ByteBuffer.allocate(8).putLong(timeStep).array();
         Mac mac = Mac.getInstance(TOTP_ALGORITHM);
         mac.init(new SecretKeySpec(key, TOTP_ALGORITHM));

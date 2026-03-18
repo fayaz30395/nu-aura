@@ -10,7 +10,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { SkillGapAnalysis } from '@/components/training/SkillGapAnalysis';
 import { Button, EmptyState, ConfirmDialog } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import type { TrainingProgram, TrainingEnrollmentRequest } from '@/lib/types/training';
+import type { TrainingProgram, TrainingEnrollmentRequest, TrainingProgramRequest } from '@/lib/types/training';
 import {
   TrainingCategory,
   DeliveryMode,
@@ -231,9 +231,10 @@ export default function TrainingPage() {
   };
 
   const onSubmitProgram = (data: TrainingProgramFormData) => {
+    const requestData = data as TrainingProgramRequest;
     if (editingProgram) {
       updateProgramMutation.mutate(
-        { programId: editingProgram.id, data },
+        { programId: editingProgram.id, data: requestData },
         {
           onSuccess: () => {
             showNotification('Program updated successfully', 'success');
@@ -242,7 +243,7 @@ export default function TrainingPage() {
         }
       );
     } else {
-      createProgramMutation.mutate(data, {
+      createProgramMutation.mutate(requestData, {
         onSuccess: () => {
           showNotification('Program created successfully', 'success');
           setIsModalOpen(false);

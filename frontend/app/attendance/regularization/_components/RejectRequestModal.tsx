@@ -17,7 +17,7 @@ interface RejectRequestModalProps {
   isPending: boolean;
   rejectReasonValue: string;
   onClose: () => void;
-  onSubmit: (data: RejectReasonData) => Promise<void>;
+  onSubmit: (data: RejectReasonData) => void | Promise<void>;
   handleSubmit: UseFormHandleSubmit<RejectReasonData>;
 }
 

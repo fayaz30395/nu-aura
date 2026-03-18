@@ -49,7 +49,7 @@ interface CreateRequestModalProps {
   onClose: () => void;
   onNext: () => void;
   onPrev: () => void;
-  onSubmit: (data: RegularizationFormData) => Promise<void>;
+  onSubmit: (data: RegularizationFormData) => void | Promise<void>;
   onQuickReason: (template: string) => void;
   handleSubmit: UseFormHandleSubmit<RegularizationFormData>;
 }
