@@ -38,13 +38,28 @@ spec:
       # Init container to wait for dependencies
       initContainers:
       - name: wait-for-db
-        image: busybox:1.36
-        command: ['sh', '-c', 'until nc -z ${DB_HOST} ${DB_PORT}; do echo waiting for database; sleep 2; done;']
+        image: postgres:17-alpine
+        command: ['sh', '-c', 'until pg_isready -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER}; do echo "Waiting for PostgreSQL..."; sleep 2; done;']
+        resources:
+          requests:
+            cpu: 50m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
         env:
         - name: DB_HOST
-          value: "REPLACE_DB_HOST"
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: DB_HOST
         - name: DB_PORT
           value: "5432"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: DB_USERNAME
 
       containers:
       - name: backend
