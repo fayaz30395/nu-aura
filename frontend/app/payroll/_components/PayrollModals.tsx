@@ -21,7 +21,7 @@ interface PayrollRunModalProps {
   onSubmit: (data: PayrollRunFormData) => void;
 }
 
-export function PayrollRunModal({
+export const PayrollRunModal = React.memo(function PayrollRunModal({
   isOpen,
   mode,
   formHook,
@@ -124,7 +124,7 @@ export function PayrollRunModal({
       </div>
     </div>
   );
-}
+});
 
 // ---- Payslip Modal ----
 interface PayslipModalProps {
@@ -136,7 +136,7 @@ interface PayslipModalProps {
   onSubmit: (data: PayslipFormData) => void;
 }
 
-export function PayslipModal({
+export const PayslipModal = React.memo(function PayslipModal({
   isOpen,
   mode,
   formHook,
@@ -272,7 +272,7 @@ export function PayslipModal({
       </div>
     </div>
   );
-}
+});
 
 // ---- Salary Structure Modal ----
 interface SalaryStructureModalProps {
@@ -290,7 +290,7 @@ interface SalaryStructureModalProps {
   onSubmit: (data: SalaryStructureFormData) => void;
 }
 
-export function SalaryStructureModal({
+export const SalaryStructureModal = React.memo(function SalaryStructureModal({
   isOpen,
   mode,
   formHook,
@@ -463,7 +463,7 @@ export function SalaryStructureModal({
       </div>
     </div>
   );
-}
+});
 
 // ---- Delete Confirm Modals ----
 interface DeleteConfirmModalProps {
@@ -475,7 +475,7 @@ interface DeleteConfirmModalProps {
   onConfirm: () => void;
 }
 
-export function DeleteConfirmModal({
+export const DeleteConfirmModal = React.memo(function DeleteConfirmModal({
   isOpen,
   title,
   message,
@@ -508,4 +508,4 @@ export function DeleteConfirmModal({
       </div>
     </div>
   );
-}
+});

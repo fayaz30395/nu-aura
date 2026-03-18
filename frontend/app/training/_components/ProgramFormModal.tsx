@@ -97,7 +97,7 @@ interface ProgramFormModalProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-export function ProgramFormModal({
+export const ProgramFormModal = React.memo(function ProgramFormModal({
   isOpen,
   editingProgram,
   register,
@@ -281,4 +281,4 @@ export function ProgramFormModal({
       </form>
     </Modal>
   );
-}
+});

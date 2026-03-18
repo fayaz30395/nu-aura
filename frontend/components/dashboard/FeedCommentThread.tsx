@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Heart, Send } from 'lucide-react';
 import { wallService } from '@/lib/services/wall.service';
 import type { CommentResponse } from '@/lib/services/wall.service';
@@ -35,7 +35,7 @@ export interface FeedCommentItemProps {
  * Supports up to MAX_REPLY_DEPTH (3) levels of nesting.
  * Replies are lazy-loaded on first expansion.
  */
-export function FeedCommentItem({
+export const FeedCommentItem = React.memo(function FeedCommentItem({
   comment,
   postId,
   depth,
@@ -212,4 +212,4 @@ export function FeedCommentItem({
       </div>
     </div>
   );
-}
+});
