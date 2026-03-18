@@ -1,6 +1,6 @@
 package com.hrms.domain.attendance;
 
-import com.hrms.common.entity.BaseEntity;
+import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class AttendanceTimeEntry extends BaseEntity {
+public class AttendanceTimeEntry extends TenantAware {
 
     @Column(name = "attendance_record_id", nullable = false)
     private UUID attendanceRecordId;
