@@ -191,7 +191,7 @@ public class SlackNotificationService {
 
             // Send message to user
             sendToChannel(userId, message, blocks);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error sending Slack DM to {}", userEmail, e);
         }
     }

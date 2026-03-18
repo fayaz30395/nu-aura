@@ -1,6 +1,7 @@
 package com.hrms.application.lms.service;
 
 import java.time.temporal.ChronoUnit;
+import JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.lms.dto.*;
@@ -104,7 +105,7 @@ public class QuizAssessmentService {
         // Store answers
         try {
             attempt.setAnswers(objectMapper.writeValueAsString(request.getAnswers()));
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Failed to serialize answers", e);
             attempt.setAnswers("{}");
         }
@@ -220,7 +221,7 @@ public class QuizAssessmentService {
                 correctAnswers.put(question.getId().toString(), selectedOptionId);
                 return points;
             }
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.warn("Error grading single choice question: {}", question.getId(), e);
         }
         return 0;
@@ -239,7 +240,7 @@ public class QuizAssessmentService {
                 correctAnswers.put(question.getId().toString(), correctBool.toString());
                 return points;
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Error grading true/false question: {}", question.getId(), e);
         }
         return 0;
@@ -285,7 +286,7 @@ public class QuizAssessmentService {
                 correctAnswers.put(question.getId().toString(), selectedOptionIds);
                 return points;
             }
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.warn("Error grading multiple choice question: {}", question.getId(), e);
         }
         return 0;
@@ -310,7 +311,7 @@ public class QuizAssessmentService {
                 correctAnswers.put(question.getId().toString(), studentAnswer);
                 return points;
             }
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.warn("Error grading fill-blank question: {}", question.getId(), e);
         }
         return 0;
@@ -430,7 +431,7 @@ public class QuizAssessmentService {
             try {
                 attemptAnswers = objectMapper.readValue(attempt.getAnswers(),
                         new TypeReference<Map<String, Object>>() {});
-            } catch (Exception e) {
+            } catch (JsonProcessingException e) {
                 log.warn("Failed to deserialize attempt answers", e);
                 attemptAnswers = new HashMap<>();
             }
@@ -467,7 +468,7 @@ public class QuizAssessmentService {
                         objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class));
                 // Remove isCorrect from options for student view
                 optionsList.forEach(opt -> opt.remove("isCorrect"));
-            } catch (Exception e) {
+            } catch (JsonProcessingException e) {
                 log.warn("Failed to parse options for question: {}", question.getId(), e);
                 optionsList = new ArrayList<>();
             }

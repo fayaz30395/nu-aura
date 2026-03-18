@@ -1,5 +1,6 @@
 package com.hrms.application.ai.service;
 
+import JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -121,7 +122,7 @@ public class LlmStreamingService {
                         if (!delta.isMissingNode() && !delta.isNull()) {
                             onToken.accept(delta.asText());
                         }
-                    } catch (Exception e) {
+                    } catch (JsonProcessingException e) {
                         log.trace("Skipping malformed SSE line: {}", line);
                     }
                 }
@@ -129,7 +130,8 @@ public class LlmStreamingService {
 
             onDone.run();
 
-        } catch (Exception e) {
+        } catch (java.io.IOException | InterruptedException e) {
+            // Intentional broad catch — LLM streaming involves network I/O and thread interruption
             log.error("Error streaming from LLM: {}", e.getMessage(), e);
             onError.accept("Streaming error: " + e.getMessage());
         } finally {

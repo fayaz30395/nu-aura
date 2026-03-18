@@ -95,7 +95,7 @@ public class EmailService {
             // Send email and return result
             return sendEmailInternal(saved);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             String errorMsg = "Failed to prepare email for " + recipientEmail + ": " + e.getMessage();
             log.error(errorMsg, e);
             return EmailSendResult.failure(errorMsg);

@@ -1,5 +1,6 @@
 package com.hrms.application.webhook.service;
 
+import JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.resilience.CircuitBreaker;
@@ -94,7 +95,7 @@ public class WebhookDeliveryService {
         String payloadJson;
         try {
             payloadJson = objectMapper.writeValueAsString(buildEventPayload(eventType, eventId, payload));
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Failed to serialize webhook payload for event {}: {}", eventType, e.getMessage());
             return;
         }
@@ -174,7 +175,8 @@ public class WebhookDeliveryService {
                 recordFailureMetric(webhook, statusCode);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // Intentional broad catch — external HTTP delivery; any transport error must be recorded
             errorMessage = e.getMessage();
             circuitBreaker.recordFailure(e);
             webhook.recordFailure(errorMessage);
@@ -224,7 +226,7 @@ public class WebhookDeliveryService {
                 Map<String, String> customHeaders = objectMapper.readValue(
                         webhook.getCustomHeaders(), Map.class);
                 customHeaders.forEach(headers::set);
-            } catch (Exception e) {
+            } catch (JsonProcessingException e) {
                 log.warn("Failed to parse custom headers for webhook {}: {}", webhook.getId(), e.getMessage());
             }
         }
@@ -243,7 +245,7 @@ public class WebhookDeliveryService {
             mac.init(secretKeySpec);
             byte[] hmacBytes = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             return bytesToHex(hmacBytes);
-        } catch (Exception e) {
+        } catch (java.security.GeneralSecurityException e) {
             log.error("Failed to compute HMAC signature: {}", e.getMessage());
             return "";
         }
