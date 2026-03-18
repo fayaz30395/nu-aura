@@ -3,64 +3,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  GraduationCap,
-  Plus,
-  Search,
-  Calendar,
-  Clock,
-  Users,
-  MapPin,
-  Edit,
-  Trash2,
-  Eye,
-  UserPlus,
-  DollarSign,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  PlayCircle,
-  FileText,
-  Award,
-  BookOpen,
-  Loader2,
-  Download,
-  Play,
-  Target,
-} from 'lucide-react';
+import { GraduationCap, AlertCircle, CheckCircle, Loader2, Plus } from 'lucide-react';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SkillGapAnalysis } from '@/components/training/SkillGapAnalysis';
-import {
-  Card,
-  CardContent,
-  Button,
-  Input,
-  Select,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Badge,
-  Textarea,
-  EmptyState,
-  ConfirmDialog,
-} from '@/components/ui';
+import { Button, EmptyState, ConfirmDialog } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import type {
-  TrainingProgram,
-  TrainingProgramRequest,
-  TrainingEnrollmentRequest,
-} from '@/lib/types/training';
+import type { TrainingProgram, TrainingEnrollmentRequest } from '@/lib/types/training';
 import {
   TrainingCategory,
   DeliveryMode,
   ProgramStatus,
   EnrollmentStatus,
 } from '@/lib/types/training';
-import { toBadgeVariant } from '@/lib/utils/type-guards';
 import {
   useAllPrograms,
   useEnrollmentsByEmployee,
@@ -71,115 +27,18 @@ import {
   useEnrollInTraining as useEnrollEmployee,
   useUpdateEnrollmentStatus,
 } from '@/lib/hooks/queries/useTraining';
-
-type TabType = 'my-trainings' | 'catalog' | 'growth-roadmap' | 'manage';
-
-// Zod schema for training program form validation
-const trainingProgramSchema = z.object({
-  programCode: z.string().min(1, 'Program code is required'),
-  programName: z.string().min(1, 'Program name is required'),
-  description: z.string().default(''),
-  category: z.enum([
-    TrainingCategory.TECHNICAL,
-    TrainingCategory.SOFT_SKILLS,
-    TrainingCategory.LEADERSHIP,
-    TrainingCategory.COMPLIANCE,
-    TrainingCategory.SAFETY,
-    TrainingCategory.PRODUCT,
-    TrainingCategory.SALES,
-    TrainingCategory.CUSTOMER_SERVICE,
-    TrainingCategory.OTHER,
-  ]),
-  deliveryMode: z.enum([
-    DeliveryMode.IN_PERSON,
-    DeliveryMode.VIRTUAL,
-    DeliveryMode.HYBRID,
-    DeliveryMode.SELF_PACED,
-    DeliveryMode.WORKSHOP,
-  ]),
-  status: z.enum([
-    ProgramStatus.DRAFT,
-    ProgramStatus.SCHEDULED,
-    ProgramStatus.IN_PROGRESS,
-    ProgramStatus.COMPLETED,
-    ProgramStatus.CANCELLED,
-  ]),
-  durationHours: z.number({ coerce: true }).default(0),
-  startDate: z.string().default(''),
-  endDate: z.string().default(''),
-  trainerName: z.string().default(''),
-  trainerEmail: z.string().email('Invalid email').default(''),
-  location: z.string().default(''),
-  maxParticipants: z.number({ coerce: true }).default(0),
-  costPerParticipant: z.number({ coerce: true }).default(0),
-  prerequisites: z.string().default(''),
-  learningObjectives: z.string().default(''),
-  isMandatory: z.boolean().default(false),
-});
-
-type TrainingProgramFormData = z.infer<typeof trainingProgramSchema>;
-
-const categoryOptions = [
-  { value: TrainingCategory.TECHNICAL, label: 'Technical' },
-  { value: TrainingCategory.SOFT_SKILLS, label: 'Soft Skills' },
-  { value: TrainingCategory.LEADERSHIP, label: 'Leadership' },
-  { value: TrainingCategory.COMPLIANCE, label: 'Compliance' },
-  { value: TrainingCategory.SAFETY, label: 'Safety' },
-  { value: TrainingCategory.PRODUCT, label: 'Product' },
-  { value: TrainingCategory.SALES, label: 'Sales' },
-  { value: TrainingCategory.CUSTOMER_SERVICE, label: 'Customer Service' },
-  { value: TrainingCategory.OTHER, label: 'Other' },
-];
-
-const deliveryModeOptions = [
-  { value: DeliveryMode.IN_PERSON, label: 'In-Person' },
-  { value: DeliveryMode.VIRTUAL, label: 'Virtual' },
-  { value: DeliveryMode.HYBRID, label: 'Hybrid' },
-  { value: DeliveryMode.SELF_PACED, label: 'Self-Paced' },
-  { value: DeliveryMode.WORKSHOP, label: 'Workshop' },
-];
-
-const statusOptions = [
-  { value: ProgramStatus.DRAFT, label: 'Draft' },
-  { value: ProgramStatus.SCHEDULED, label: 'Scheduled' },
-  { value: ProgramStatus.IN_PROGRESS, label: 'In Progress' },
-  { value: ProgramStatus.COMPLETED, label: 'Completed' },
-  { value: ProgramStatus.CANCELLED, label: 'Cancelled' },
-];
-
-const getStatusIcon = (status: ProgramStatus) => {
-  switch (status) {
-    case ProgramStatus.DRAFT:
-      return <FileText className="h-4 w-4" />;
-    case ProgramStatus.SCHEDULED:
-      return <Calendar className="h-4 w-4" />;
-    case ProgramStatus.IN_PROGRESS:
-      return <PlayCircle className="h-4 w-4" />;
-    case ProgramStatus.COMPLETED:
-      return <CheckCircle className="h-4 w-4" />;
-    case ProgramStatus.CANCELLED:
-      return <XCircle className="h-4 w-4" />;
-    default:
-      return <AlertCircle className="h-4 w-4" />;
-  }
-};
-
-const getCategoryColor = (category: TrainingCategory) => {
-  switch (category) {
-    case TrainingCategory.TECHNICAL:
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-    case TrainingCategory.SOFT_SKILLS:
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
-    case TrainingCategory.LEADERSHIP:
-      return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
-    case TrainingCategory.COMPLIANCE:
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-    case TrainingCategory.SAFETY:
-      return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
-    default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
-  }
-};
+import {
+  TrainingStatsCards,
+  TrainingTabs,
+  MyTrainingsTab,
+  CourseCatalogTab,
+  ManageProgramsTab,
+  ProgramFormModal,
+  ViewProgramModal,
+  EnrollEmployeeModal,
+  trainingProgramSchema,
+} from './_components';
+import type { TabType, TrainingProgramFormData } from './_components';
 
 export default function TrainingPage() {
   const { user, hasHydrated } = useAuth();
@@ -187,7 +46,9 @@ export default function TrainingPage() {
 
   // React Query hooks
   const { data: programsResponse, isLoading: programsLoading } = useAllPrograms();
-  const { data: enrollmentsResponse, isLoading: enrollmentsLoading } = useEnrollmentsByEmployee(user?.id || '');
+  const { data: enrollmentsResponse, isLoading: enrollmentsLoading } = useEnrollmentsByEmployee(
+    user?.id || ''
+  );
   const createProgramMutation = useCreateTrainingProgram();
   const updateProgramMutation = useUpdateTrainingProgram();
   const deleteProgramMutation = useDeleteTrainingProgram();
@@ -197,15 +58,22 @@ export default function TrainingPage() {
   const programs = programsResponse?.content || [];
   const myEnrollments = enrollmentsResponse || [];
   const loading = programsLoading || enrollmentsLoading;
+
+  // Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
+
+  // Notification state
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    },
+    []
+  );
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -217,7 +85,7 @@ export default function TrainingPage() {
   const [enrolling] = useState(false);
   const [deleteProgramId, setDeleteProgramId] = useState<string | null>(null);
 
-  // Fetch enrollments for the selected program via React Query (replaces imperative service call)
+  // Fetch enrollments for the selected program via React Query
   const { data: enrollments = [] } = useEnrollmentsByProgram(selectedProgramId);
 
   // Form state with React Hook Form
@@ -270,7 +138,6 @@ export default function TrainingPage() {
       setError(null);
     }, 5000);
   };
-
 
   const handleCreateProgram = () => {
     setEditingProgram(null);
@@ -342,8 +209,7 @@ export default function TrainingPage() {
       return;
     }
 
-    // Check if already enrolled
-    const alreadyEnrolled = myEnrollments.some(e => e.programId === program.id);
+    const alreadyEnrolled = myEnrollments.some((e) => e.programId === program.id);
     if (alreadyEnrolled) {
       showNotification('You are already enrolled in this program', 'error');
       return;
@@ -367,7 +233,7 @@ export default function TrainingPage() {
   const onSubmitProgram = (data: TrainingProgramFormData) => {
     if (editingProgram) {
       updateProgramMutation.mutate(
-        { programId: editingProgram.id, data: data as TrainingProgramRequest },
+        { programId: editingProgram.id, data },
         {
           onSuccess: () => {
             showNotification('Program updated successfully', 'success');
@@ -376,7 +242,7 @@ export default function TrainingPage() {
         }
       );
     } else {
-      createProgramMutation.mutate(data as TrainingProgramRequest, {
+      createProgramMutation.mutate(data, {
         onSuccess: () => {
           showNotification('Program created successfully', 'success');
           setIsModalOpen(false);
@@ -408,7 +274,6 @@ export default function TrainingPage() {
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
-  // Stats
   const stats = {
     total: programs.length,
     scheduled: programs.filter((p) => p.status === ProgramStatus.SCHEDULED).length,
@@ -419,7 +284,7 @@ export default function TrainingPage() {
     myCompleted: myEnrollments.filter((e) => e.status === EnrollmentStatus.COMPLETED).length,
   };
 
-  const isEnrolled = (programId: string) => myEnrollments.some(e => e.programId === programId);
+  const isEnrolled = (programId: string) => myEnrollments.some((e) => e.programId === programId);
 
   const breadcrumbs = [
     { label: 'Dashboard', href: '/dashboard' },
@@ -468,9 +333,7 @@ export default function TrainingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-              Training Programs
-            </h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Training Programs</h1>
             <p className="text-[var(--text-secondary)]">
               Enroll in courses and track your learning progress
             </p>
@@ -486,553 +349,62 @@ export default function TrainingPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
-                  <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-secondary)]">My Enrollments</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.myEnrolled}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
-                  <PlayCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-secondary)]">In Progress</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.myInProgress}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
-                  <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.myCompleted}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
-                  <GraduationCap className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Available Programs</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <TrainingStatsCards stats={stats} />
 
-        {/* Tabs */}
-        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm">
-          <div className="flex border-b border-[var(--border-main)]">
-            <button
-              onClick={() => setActiveTab('my-trainings')}
-              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'my-trainings'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                }`}
-            >
-              <BookOpen className="h-4 w-4 inline-block mr-2" />
-              My Trainings
-            </button>
-            <button
-              onClick={() => setActiveTab('catalog')}
-              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'catalog'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                }`}
-            >
-              <GraduationCap className="h-4 w-4 inline-block mr-2" />
-              Course Catalog
-            </button>
-            <button
-              onClick={() => setActiveTab('manage')}
-              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'manage'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                }`}
-            >
-              <Edit className="h-4 w-4 inline-block mr-2" />
-              Manage Programs
-            </button>
-            <button
-              onClick={() => setActiveTab('growth-roadmap')}
-              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'growth-roadmap'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                }`}
-            >
-              <Target className="h-4 w-4 inline-block mr-2" />
-              Growth Roadmap
-            </button>
-          </div>
-        </div>
+        {/* Tab Navigation */}
+        <TrainingTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Tab Content: My Trainings */}
+        {/* Tab: My Trainings */}
         {activeTab === 'my-trainings' && (
-          <div className="space-y-4">
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-              </div>
-            ) : myEnrollments.length === 0 ? (
-              <EmptyState
-                icon={<BookOpen className="h-8 w-8" />}
-                title="No Enrolled Trainings Yet"
-                description="Browse the course catalog to find programs and enroll in trainings"
-                action={{
-                  label: 'Browse Catalog',
-                  onClick: () => setActiveTab('catalog'),
-                }}
-                iconColor="indigo"
-              />
-            ) : (
-              myEnrollments.map((enrollment) => (
-                <Card key={enrollment.id}>
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-4 mb-2">
-                          <h3 className="font-semibold text-lg">{enrollment.programName || 'Training Program'}</h3>
-                          <Badge variant={toBadgeVariant(enrollment.status)}>
-                            {enrollment.status.replace('_', ' ')}
-                          </Badge>
-                          {enrollment.certificateIssued && (
-                            <Badge variant="success">
-                              <Award className="h-3 w-3 mr-1" />
-                              Certified
-                            </Badge>
-                          )}
-                        </div>
-
-                        {/* Progress Bar */}
-                        {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
-                          <div className="mb-3">
-                            <div className="flex justify-between text-sm text-[var(--text-secondary)] mb-1">
-                              <span>Progress</span>
-                              <span>{enrollment.attendancePercentage || 0}%</span>
-                            </div>
-                            <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
-                              <div
-                                className="bg-primary-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${enrollment.attendancePercentage || 0}%` }}
-                              />
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="text-[var(--text-secondary)]">Enrolled:</span>
-                            <p className="font-medium">
-                              {enrollment.enrollmentDate
-                                ? new Date(enrollment.enrollmentDate).toLocaleDateString()
-                                : 'N/A'}
-                            </p>
-                          </div>
-                          {enrollment.completedAt && (
-                            <div>
-                              <span className="text-[var(--text-secondary)]">Completed:</span>
-                              <p className="font-medium">
-                                {new Date(enrollment.completedAt).toLocaleDateString()}
-                              </p>
-                            </div>
-                          )}
-                          {enrollment.assessmentScore !== undefined && (
-                            <div>
-                              <span className="text-[var(--text-secondary)]">Score:</span>
-                              <p className="font-medium">{enrollment.assessmentScore}%</p>
-                            </div>
-                          )}
-                          {enrollment.attendancePercentage !== undefined && (
-                            <div>
-                              <span className="text-[var(--text-secondary)]">Attendance:</span>
-                              <p className="font-medium">{enrollment.attendancePercentage}%</p>
-                            </div>
-                          )}
-                        </div>
-
-                        {enrollment.feedback && (
-                          <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                            <span className="font-medium">Feedback:</span> {enrollment.feedback}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
-                          <Button size="sm" variant="outline">
-                            <Play className="h-4 w-4 mr-1" />
-                            Continue
-                          </Button>
-                        )}
-                        {enrollment.certificateUrl && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => window.open(enrollment.certificateUrl, '_blank')}
-                          >
-                            <Download className="h-4 w-4 mr-1" />
-                            Certificate
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+          <MyTrainingsTab
+            enrollments={myEnrollments}
+            loading={loading}
+            onNavigateToCatalog={() => setActiveTab('catalog')}
+          />
         )}
 
-        {/* Tab Content: Course Catalog */}
+        {/* Tab: Course Catalog */}
         {activeTab === 'catalog' && (
-          <div className="space-y-6">
-            {/* Filters */}
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
-                    <Input
-                      type="text"
-                      placeholder="Search programs..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <Select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="w-full sm:w-48"
-                  >
-                    <option value="">All Categories</option>
-                    {categoryOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Programs Grid */}
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-              </div>
-            ) : filteredPrograms.filter(p => p.status === ProgramStatus.SCHEDULED || p.status === ProgramStatus.IN_PROGRESS).length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <GraduationCap className="h-12 w-12 text-[var(--text-muted)]" />
-                  <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
-                    No courses available
-                  </p>
-                  <p className="text-[var(--text-secondary)]">
-                    Check back later for new training programs
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredPrograms
-                  .filter(p => p.status === ProgramStatus.SCHEDULED || p.status === ProgramStatus.IN_PROGRESS)
-                  .map((program) => {
-                    const enrolled = isEnrolled(program.id);
-                    return (
-                      <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                        <CardContent className="p-0">
-                          <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="text-sm opacity-80">{program.programCode}</p>
-                                <h3 className="text-lg font-semibold">{program.programName}</h3>
-                              </div>
-                              {enrolled && (
-                                <Badge variant="success" className="bg-white/20 text-white">
-                                  <CheckCircle className="h-3 w-3 mr-1" />
-                                  Enrolled
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                          <div className="p-4 space-y-4">
-                            <div className="flex flex-wrap gap-2">
-                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
-                                {program.category.replace('_', ' ')}
-                              </span>
-                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-200">
-                                {program.deliveryMode.replace('_', ' ')}
-                              </span>
-                              {program.isMandatory && (
-                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                                  Mandatory
-                                </span>
-                              )}
-                            </div>
-
-                            <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
-                              {program.description || 'No description provided'}
-                            </p>
-
-                            <div className="space-y-2 text-sm">
-                              {program.durationHours && (
-                                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                                  <Clock className="h-4 w-4" />
-                                  <span>{program.durationHours} hours</span>
-                                </div>
-                              )}
-                              {program.startDate && (
-                                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                                  <Calendar className="h-4 w-4" />
-                                  <span>Starts: {new Date(program.startDate).toLocaleDateString()}</span>
-                                </div>
-                              )}
-                              {program.location && (
-                                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                                  <MapPin className="h-4 w-4" />
-                                  <span>{program.location}</span>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="flex gap-2 pt-2 border-t border-[var(--border-main)]">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleViewProgram(program)}
-                                className="flex-1"
-                              >
-                                <Eye className="h-4 w-4 mr-1" />
-                                Details
-                              </Button>
-                              {!enrolled ? (
-                                <PermissionGate permission={Permissions.TRAINING_ENROLL}>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleSelfEnroll(program)}
-                                    disabled={enrolling}
-                                    className="flex-1"
-                                  >
-                                    {enrolling ? (
-                                      <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                      <>
-                                        <Plus className="h-4 w-4 mr-1" />
-                                        Enroll
-                                      </>
-                                    )}
-                                  </Button>
-                                </PermissionGate>
-                              ) : (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => setActiveTab('my-trainings')}
-                                  className="flex-1"
-                                >
-                                  <Play className="h-4 w-4 mr-1" />
-                                  Go to Course
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-              </div>
-            )}
-          </div>
+          <CourseCatalogTab
+            programs={filteredPrograms}
+            loading={loading}
+            searchQuery={searchQuery}
+            categoryFilter={categoryFilter}
+            isEnrolled={isEnrolled}
+            enrolling={enrolling}
+            onSearchChange={setSearchQuery}
+            onCategoryFilterChange={setCategoryFilter}
+            onViewProgram={handleViewProgram}
+            onSelfEnroll={handleSelfEnroll}
+            onNavigateToMyTrainings={() => setActiveTab('my-trainings')}
+          />
         )}
 
-        {/* Tab Content: Manage Programs */}
+        {/* Tab: Manage Programs */}
         {activeTab === 'manage' && (
-          <div className="space-y-6">
-            {/* Filters */}
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
-                    <Input
-                      type="text"
-                      placeholder="Search programs..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <Select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full sm:w-48"
-                  >
-                    <option value="">All Status</option>
-                    {statusOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                  <Select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="w-full sm:w-48"
-                  >
-                    <option value="">All Categories</option>
-                    {categoryOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Programs Grid */}
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-              </div>
-            ) : filteredPrograms.length === 0 ? (
-              <EmptyState
-                icon={<GraduationCap className="h-8 w-8" />}
-                title="No Training Programs Found"
-                description="Create your first training program to get started and offer learning opportunities"
-                action={{
-                  label: 'Create Program',
-                  onClick: handleCreateProgram,
-                }}
-                iconColor="violet"
-              />
-            ) : (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredPrograms.map((program) => (
-                  <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <CardContent className="p-0">
-                      <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm opacity-80">{program.programCode}</p>
-                            <h3 className="text-lg font-semibold">{program.programName}</h3>
-                          </div>
-                          <Badge variant={toBadgeVariant(program.status)} className="flex items-center gap-1">
-                            {getStatusIcon(program.status)}
-                            {program.status.replace('_', ' ')}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="p-4 space-y-4">
-                        <div className="flex flex-wrap gap-2">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
-                            {program.category.replace('_', ' ')}
-                          </span>
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-200">
-                            {program.deliveryMode.replace('_', ' ')}
-                          </span>
-                          {program.isMandatory && (
-                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                              Mandatory
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
-                          {program.description || 'No description provided'}
-                        </p>
-
-                        <div className="space-y-2 text-sm">
-                          {program.trainerName && (
-                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                              <Users className="h-4 w-4" />
-                              <span>Trainer: {program.trainerName}</span>
-                            </div>
-                          )}
-                          {program.durationHours && (
-                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                              <Clock className="h-4 w-4" />
-                              <span>{program.durationHours} hours</span>
-                            </div>
-                          )}
-                          {program.startDate && (
-                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                              <Calendar className="h-4 w-4" />
-                              <span>
-                                {new Date(program.startDate).toLocaleDateString()}
-                                {program.endDate && ` - ${new Date(program.endDate).toLocaleDateString()}`}
-                              </span>
-                            </div>
-                          )}
-                          {program.costPerParticipant && (
-                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                              <DollarSign className="h-4 w-4" />
-                              <span>${program.costPerParticipant} per participant</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex gap-2 pt-2 border-t border-[var(--border-main)]">
-                          <Button size="sm" variant="outline" onClick={() => handleViewProgram(program)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <PermissionGate permission={Permissions.TRAINING_ENROLL}>
-                            <Button size="sm" variant="outline" onClick={() => handleEnrollEmployee(program)}>
-                              <UserPlus className="h-4 w-4" />
-                            </Button>
-                          </PermissionGate>
-                          <PermissionGate permission={Permissions.TRAINING_EDIT}>
-                            <Button size="sm" variant="outline" onClick={() => handleEditProgram(program)}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </PermissionGate>
-                          <PermissionGate permission={Permissions.TRAINING_MANAGE}>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                              onClick={() => handleDeleteProgram(program.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </PermissionGate>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
+          <ManageProgramsTab
+            programs={filteredPrograms}
+            loading={loading}
+            searchQuery={searchQuery}
+            statusFilter={statusFilter}
+            categoryFilter={categoryFilter}
+            onSearchChange={setSearchQuery}
+            onStatusFilterChange={setStatusFilter}
+            onCategoryFilterChange={setCategoryFilter}
+            onCreateProgram={handleCreateProgram}
+            onViewProgram={handleViewProgram}
+            onEditProgram={handleEditProgram}
+            onEnrollEmployee={handleEnrollEmployee}
+            onDeleteProgram={handleDeleteProgram}
+          />
         )}
-        {/* Tab Content: Growth Roadmap */}
+
+        {/* Tab: Growth Roadmap */}
         {activeTab === 'growth-roadmap' && user?.employeeId && (
           <SkillGapAnalysis employeeId={user.employeeId} />
         )}
 
-        {/* Delete Program Confirmation Dialog */}
+        {/* Delete Confirmation Dialog */}
         <ConfirmDialog
           isOpen={deleteProgramId !== null}
           onClose={() => setDeleteProgramId(null)}
@@ -1051,351 +423,35 @@ export default function TrainingPage() {
         />
 
         {/* Create/Edit Program Modal */}
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
-          <form onSubmit={handleSubmit(onSubmitProgram)}>
-            <ModalHeader>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                {editingProgram ? 'Edit Training Program' : 'Create Training Program'}
-              </h2>
-            </ModalHeader>
-            <ModalBody>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Program Code *
-                  </label>
-                  <Input
-                    {...register('programCode')}
-                    placeholder="e.g., TRN-001"
-                  />
-                  {errors.programCode && (
-                    <p className="text-xs text-red-600 mt-1">{errors.programCode.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Program Name *
-                  </label>
-                  <Input
-                    {...register('programName')}
-                    placeholder="Enter program name"
-                  />
-                  {errors.programName && (
-                    <p className="text-xs text-red-600 mt-1">{errors.programName.message}</p>
-                  )}
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Description
-                  </label>
-                  <Textarea
-                    {...register('description')}
-                    placeholder="Enter program description"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Category *
-                  </label>
-                  <Select {...register('category')}>
-                    {categoryOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Delivery Mode *
-                  </label>
-                  <Select {...register('deliveryMode')}>
-                    {deliveryModeOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Status
-                  </label>
-                  <Select {...register('status')}>
-                    {statusOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Duration (Hours)
-                  </label>
-                  <Input
-                    type="number"
-                    {...register('durationHours', { valueAsNumber: true })}
-                    placeholder="Enter duration"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Start Date
-                  </label>
-                  <Input type="date" {...register('startDate')} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    End Date
-                  </label>
-                  <Input type="date" {...register('endDate')} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Trainer Name
-                  </label>
-                  <Input
-                    {...register('trainerName')}
-                    placeholder="Enter trainer name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Trainer Email
-                  </label>
-                  <Input
-                    type="email"
-                    {...register('trainerEmail')}
-                    placeholder="Enter trainer email"
-                  />
-                  {errors.trainerEmail && (
-                    <p className="text-xs text-red-600 mt-1">{errors.trainerEmail.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Location
-                  </label>
-                  <Input
-                    {...register('location')}
-                    placeholder="Enter location"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Max Participants
-                  </label>
-                  <Input
-                    type="number"
-                    {...register('maxParticipants', { valueAsNumber: true })}
-                    placeholder="Enter max participants"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Cost per Participant ($)
-                  </label>
-                  <Input
-                    type="number"
-                    {...register('costPerParticipant', { valueAsNumber: true })}
-                    placeholder="Enter cost"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Learning Objectives
-                  </label>
-                  <Textarea
-                    {...register('learningObjectives')}
-                    placeholder="Enter learning objectives"
-                    rows={2}
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      {...register('isMandatory')}
-                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
-                    />
-                    <span className="text-sm font-medium text-[var(--text-secondary)]">
-                      Mandatory Training
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">
-                {editingProgram ? 'Update Program' : 'Create Program'}
-              </Button>
-            </ModalFooter>
-          </form>
-        </Modal>
+        <ProgramFormModal
+          isOpen={isModalOpen}
+          editingProgram={editingProgram}
+          register={register}
+          errors={errors}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit(onSubmitProgram)}
+        />
 
         {/* View Program Modal */}
-        <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} size="lg">
-          <ModalHeader>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-              {selectedProgram?.programName}
-            </h2>
-          </ModalHeader>
-          <ModalBody>
-            {selectedProgram && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-[var(--text-muted)]">Program Code:</span>
-                    <p className="font-medium text-[var(--text-primary)]">{selectedProgram.programCode}</p>
-                  </div>
-                  <div>
-                    <span className="text-[var(--text-muted)]">Status:</span>
-                    <p>
-                      <Badge variant={toBadgeVariant(selectedProgram.status)}>
-                        {selectedProgram.status.replace('_', ' ')}
-                      </Badge>
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[var(--text-muted)]">Category:</span>
-                    <p className="font-medium text-[var(--text-primary)]">
-                      {selectedProgram.category.replace('_', ' ')}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[var(--text-muted)]">Delivery Mode:</span>
-                    <p className="font-medium text-[var(--text-primary)]">
-                      {selectedProgram.deliveryMode.replace('_', ' ')}
-                    </p>
-                  </div>
-                </div>
-
-                {selectedProgram.description && (
-                  <div>
-                    <h4 className="font-medium text-[var(--text-primary)] mb-2">Description</h4>
-                    <p className="text-sm text-[var(--text-secondary)]">
-                      {selectedProgram.description}
-                    </p>
-                  </div>
-                )}
-
-                {selectedProgram.learningObjectives && (
-                  <div>
-                    <h4 className="font-medium text-[var(--text-primary)] mb-2">Learning Objectives</h4>
-                    <p className="text-sm text-[var(--text-secondary)]">
-                      {selectedProgram.learningObjectives}
-                    </p>
-                  </div>
-                )}
-
-                <div>
-                  <h4 className="font-medium text-[var(--text-primary)] mb-2">
-                    Enrollments ({enrollments.length})
-                  </h4>
-                  {enrollments.length === 0 ? (
-                    <p className="text-sm text-[var(--text-muted)]">No enrollments yet</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {enrollments.map((enrollment) => (
-                        <div
-                          key={enrollment.id}
-                          className="flex items-center justify-between p-2 bg-[var(--bg-secondary)] rounded-lg"
-                        >
-                          <div>
-                            <p className="font-medium text-[var(--text-primary)]">
-                              {enrollment.employeeName || enrollment.employeeId}
-                            </p>
-                            <p className="text-xs text-[var(--text-muted)]">
-                              Enrolled: {new Date(enrollment.enrollmentDate || '').toLocaleDateString()}
-                            </p>
-                          </div>
-                          <Badge
-                            variant={
-                              enrollment.status === EnrollmentStatus.COMPLETED
-                                ? 'success'
-                                : enrollment.status === EnrollmentStatus.IN_PROGRESS
-                                  ? 'warning'
-                                  : 'default'
-                            }
-                          >
-                            {enrollment.status.replace('_', ' ')}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setIsViewModalOpen(false)}>
-              Close
-            </Button>
-            {selectedProgram && !isEnrolled(selectedProgram.id) && (
-              <Button onClick={() => handleSelfEnroll(selectedProgram)} disabled={enrolling}>
-                {enrolling ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Plus className="mr-2 h-4 w-4" />
-                )}
-                Enroll
-              </Button>
-            )}
-          </ModalFooter>
-        </Modal>
+        <ViewProgramModal
+          isOpen={isViewModalOpen}
+          program={selectedProgram}
+          enrollments={enrollments}
+          isEnrolled={isEnrolled}
+          enrolling={enrolling}
+          onClose={() => setIsViewModalOpen(false)}
+          onSelfEnroll={handleSelfEnroll}
+        />
 
         {/* Enroll Employee Modal */}
-        <Modal isOpen={isEnrollModalOpen} onClose={() => setIsEnrollModalOpen(false)}>
-          <ModalHeader>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-              Enroll Employee
-            </h2>
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Program
-                </label>
-                <Input value={selectedProgram?.programName || ''} disabled />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Employee ID *
-                </label>
-                <Input
-                  value={enrollFormData.employeeId}
-                  onChange={(e) => setEnrollFormData({ ...enrollFormData, employeeId: e.target.value })}
-                  placeholder="Enter employee ID"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Enrollment Date
-                </label>
-                <Input
-                  type="date"
-                  value={enrollFormData.enrollmentDate}
-                  onChange={(e) => setEnrollFormData({ ...enrollFormData, enrollmentDate: e.target.value })}
-                />
-              </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setIsEnrollModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmitEnrollment}>
-              Enroll
-            </Button>
-          </ModalFooter>
-        </Modal>
+        <EnrollEmployeeModal
+          isOpen={isEnrollModalOpen}
+          programName={selectedProgram?.programName || ''}
+          enrollFormData={enrollFormData}
+          onClose={() => setIsEnrollModalOpen(false)}
+          onEnrollFormChange={setEnrollFormData}
+          onSubmit={handleSubmitEnrollment}
+        />
       </div>
     </AppLayout>
   );
