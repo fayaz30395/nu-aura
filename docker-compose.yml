@@ -4,7 +4,6 @@
 
 services:
   # postgres service removed — using Neon DB (cloud-hosted PostgreSQL)
-  # Connection: ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb
 
   redis:
     image: redis:7-alpine
@@ -102,9 +101,9 @@ services:
         condition: service_started
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATASOURCE_URL: ${NEON_JDBC_URL:-jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require}
-      SPRING_DATASOURCE_USERNAME: ${NEON_DB_USERNAME:-neondb_owner}
-      SPRING_DATASOURCE_PASSWORD: ${NEON_DB_PASSWORD:-npg_p3Nnmrd9PvhB}
+      SPRING_DATASOURCE_URL: ${NEON_JDBC_URL:?Set NEON_JDBC_URL in .env}
+      SPRING_DATASOURCE_USERNAME: ${NEON_DB_USERNAME:?Set NEON_DB_USERNAME in .env}
+      SPRING_DATASOURCE_PASSWORD: ${NEON_DB_PASSWORD:?Set NEON_DB_PASSWORD in .env}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
