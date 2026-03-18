@@ -79,16 +79,18 @@ public class LeaveTypeController {
 
     @PatchMapping("/{id}/activate")
     @RequiresPermission(Permission.LEAVE_APPROVE)
-    public ResponseEntity<Void> activateLeaveType(@PathVariable UUID id) {
+    public ResponseEntity<LeaveTypeResponse> activateLeaveType(@PathVariable UUID id) {
         leaveTypeService.activateLeaveType(id);
-        return ResponseEntity.noContent().build();
+        LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
+        return ResponseEntity.ok(toResponse(leaveType));
     }
 
     @PatchMapping("/{id}/deactivate")
     @RequiresPermission(Permission.LEAVE_APPROVE)
-    public ResponseEntity<Void> deactivateLeaveType(@PathVariable UUID id) {
+    public ResponseEntity<LeaveTypeResponse> deactivateLeaveType(@PathVariable UUID id) {
         leaveTypeService.deactivateLeaveType(id);
-        return ResponseEntity.noContent().build();
+        LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
+        return ResponseEntity.ok(toResponse(leaveType));
     }
 
     @DeleteMapping("/{id}")
