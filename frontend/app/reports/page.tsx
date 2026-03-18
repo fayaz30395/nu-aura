@@ -18,7 +18,8 @@ import {
   Filter,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { reportService, ReportRequest } from '@/lib/services/report.service';
+import { ReportRequest, ReportType } from '@/lib/services/report.service';
+import { useReportDownload } from '@/lib/hooks/queries/useReportDownload';
 
 interface ReportConfig {
   id: string;
@@ -110,39 +111,31 @@ const reports: ReportConfig[] = [
 interface DownloadModalProps {
   report: ReportConfig;
   onClose: () => void;
-  onDownload: (format: 'EXCEL' | 'PDF' | 'CSV', request: ReportRequest) => Promise<void>;
+  onDownload: (type: ReportType, request: ReportRequest) => void;
+  isPending: boolean;
 }
 
-const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownload }) => {
+const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownload, isPending }) => {
   const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (report.requiresDateRange && (!startDate || !endDate)) {
       setError('Please select both start and end dates');
       return;
     }
 
-    setLoading(true);
     setError('');
 
-    try {
-      const request: ReportRequest = {
-        format,
-        startDate: startDate || undefined,
-        endDate: endDate || undefined,
-      };
+    const request: ReportRequest = {
+      format,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    };
 
-      await onDownload(format, request);
-      onClose();
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    onDownload(report.endpoint as ReportType, request);
   };
 
   return (
@@ -294,10 +287,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
           </button>
           <button
             onClick={handleDownload}
-            disabled={loading}
+            disabled={isPending}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Generating...
@@ -319,32 +312,21 @@ export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState<ReportConfig | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleDownload = async (format: 'EXCEL' | 'PDF' | 'CSV', request: ReportRequest) => {
+  const downloadMutation = useReportDownload();
+
+  const handleDownload = (type: ReportType, request: ReportRequest) => {
     if (!selectedReport) return;
 
-    switch (selectedReport.id) {
-      case 'employee':
-        await reportService.downloadEmployeeReport(request);
-        break;
-      case 'attendance':
-        await reportService.downloadAttendanceReport(request);
-        break;
-      case 'department':
-        await reportService.downloadDepartmentReport(request);
-        break;
-      case 'leave':
-        await reportService.downloadLeaveReport(request);
-        break;
-      case 'payroll':
-        await reportService.downloadPayrollReport(request);
-        break;
-      case 'performance':
-        await reportService.downloadPerformanceReport(request);
-        break;
-    }
-
-    setSuccessMessage(`${selectedReport.title} downloaded successfully!`);
-    setTimeout(() => setSuccessMessage(''), 3000);
+    downloadMutation.mutate(
+      { type, request },
+      {
+        onSuccess: () => {
+          setSuccessMessage(`${selectedReport.title} downloaded successfully!`);
+          setTimeout(() => setSuccessMessage(''), 3000);
+          setSelectedReport(null);
+        },
+      }
+    );
   };
 
   return (
@@ -460,6 +442,7 @@ export default function ReportsPage() {
             report={selectedReport}
             onClose={() => setSelectedReport(null)}
             onDownload={handleDownload}
+            isPending={downloadMutation.isPending}
           />
         )}
       </AnimatePresence>
