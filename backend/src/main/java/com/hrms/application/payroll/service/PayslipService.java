@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class PayslipService {
     // Injected lazily via setter to avoid circular-dependency with StatutoryDeductionService
     private StatutoryDeductionService statutoryDeductionService;
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Payslip createPayslip(Payslip payslip) {
         UUID tenantId = TenantContext.getCurrentTenant();
         payslip.setTenantId(tenantId);
@@ -42,7 +43,7 @@ public class PayslipService {
         return payslipRepository.save(payslip);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Payslip updatePayslip(UUID id, Payslip payslipData) {
         UUID tenantId = TenantContext.getCurrentTenant();
         
@@ -119,7 +120,7 @@ public class PayslipService {
         return payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, year);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deletePayslip(UUID id) {
         Payslip payslip = getPayslipById(id);
         payslipRepository.delete(payslip);
@@ -136,7 +137,7 @@ public class PayslipService {
      * @param state     Indian state for professional-tax lookup (e.g. "Karnataka")
      * @return the calculated {@link StatutoryDeductions} DTO
      */
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatutoryDeductions applyStatutoryDeductions(UUID payslipId, String state) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -47,7 +48,7 @@ public class LeaveBalanceService {
      * type is configured (legacy data). Monthly/quarterly types accrue over time
      * so their opening balance stays zero.</p>
      */
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public LeaveBalance getOrCreateBalance(UUID employeeId, UUID leaveTypeId, Integer year) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -94,6 +95,7 @@ public class LeaveBalanceService {
         return leaveBalanceRepository.findByEmployeeIdAndYear(employeeId, year, tenantId);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance accrueLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
         LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
@@ -101,6 +103,7 @@ public class LeaveBalanceService {
         return leaveBalanceRepository.save(balance);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance deductLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
         LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
@@ -108,6 +111,7 @@ public class LeaveBalanceService {
         return leaveBalanceRepository.save(balance);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance creditLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
         LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
@@ -125,7 +129,7 @@ public class LeaveBalanceService {
      * plain save — the newly inserted row is owned by this transaction so no concurrent
      * reader can race on it.</p>
      */
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     private LeaveBalance getOrCreateBalanceForUpdate(UUID employeeId, UUID leaveTypeId, int year) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

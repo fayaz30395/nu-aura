@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class PayrollRunService {
      * Uses pessimistic locking to prevent race conditions where two concurrent
      * requests both check existence and both create a run for the same period.
      */
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun createPayrollRun(PayrollRun payrollRun) {
         UUID tenantId = TenantContext.getCurrentTenant();
         payrollRun.setTenantId(tenantId);
@@ -45,7 +46,7 @@ public class PayrollRunService {
         return payrollRunRepository.save(payrollRun);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun updatePayrollRun(UUID id, PayrollRun payrollRunData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -104,7 +105,7 @@ public class PayrollRunService {
      * R2-011: State guard is enforced in {@link PayrollRun#process}
      * (throws IllegalStateException if not in DRAFT).
      */
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun processPayrollRun(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.process(processedBy);
@@ -117,7 +118,7 @@ public class PayrollRunService {
      * R2-011: State guard is enforced in {@link PayrollRun#approve}
      * (throws IllegalStateException if not in PROCESSED).
      */
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun approvePayrollRun(UUID id, UUID approvedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.approve(approvedBy);
@@ -133,7 +134,7 @@ public class PayrollRunService {
      * State guard is enforced in {@link PayrollRun#lock}
      * (throws IllegalStateException if not in APPROVED).
      */
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun lockPayrollRun(UUID id) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.lock();
@@ -152,7 +153,7 @@ public class PayrollRunService {
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deletePayrollRun(UUID id) {
         PayrollRun payrollRun = getPayrollRunById(id);
 
