@@ -111,7 +111,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
 
     // ─── Private helpers ──────────────────────────────────────────────────────
 
-    private String decryptGcm(String base64Blob) throws Exception {
+    private String decryptGcm(String base64Blob) throws java.security.GeneralSecurityException {
         byte[] blob = Base64.getDecoder().decode(base64Blob);
         byte[] iv   = Arrays.copyOfRange(blob, 0, GCM_IV_LENGTH);
         byte[] ct   = Arrays.copyOfRange(blob, GCM_IV_LENGTH, blob.length);
@@ -125,7 +125,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     }
 
     /** Legacy AES/ECB decryption — used only to read values written before the GCM migration. */
-    private String decryptLegacyEcb(String base64Data) throws Exception {
+    private String decryptLegacyEcb(String base64Data) throws java.security.GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(ECB_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"));
         return new String(cipher.doFinal(Base64.getDecoder().decode(base64Data)));
