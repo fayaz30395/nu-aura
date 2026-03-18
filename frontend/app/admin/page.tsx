@@ -1,6 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { notifications } from '@mantine/notifications';
 import { useAdminStats, useAdminUsers, useUpdateUserRole, useSystemHealth } from '@/lib/hooks/queries/useAdmin';
@@ -19,12 +22,30 @@ const ROLE_OPTIONS: { label: string; value: string }[] = [
   { label: 'Employee', value: Roles.EMPLOYEE },
 ];
 
+const roleAssignmentSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Must be a valid email'),
+  role: z.string().min(1, 'Role is required'),
+});
+
+type RoleAssignmentForm = z.infer<typeof roleAssignmentSchema>;
+
 export default function AdminDashboardPage() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [pendingSearch, setPendingSearch] = useState('');
-  const [roleEmail, setRoleEmail] = useState('');
-  const [selectedRole, setSelectedRole] = useState(ROLE_OPTIONS[0]?.value ?? Roles.SUPER_ADMIN);
+  const {
+    register: registerRole,
+    handleSubmit: handleRoleSubmit,
+    reset: resetRoleForm,
+    watch: watchRole,
+    formState: { errors: roleErrors },
+  } = useForm<RoleAssignmentForm>({
+    resolver: zodResolver(roleAssignmentSchema),
+    defaultValues: {
+      email: '',
+      role: ROLE_OPTIONS[0]?.value ?? Roles.SUPER_ADMIN,
+    },
+  });
   const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; email: string; role: string }>({
     isOpen: false,
     email: '',
@@ -41,44 +62,36 @@ export default function AdminDashboardPage() {
 
   const totalPages = usersPage ? usersPage.totalPages : 0;
 
+  const watchedEmail = watchRole('email');
+
   const filteredByEmail = useMemo(() => {
-    if (!roleEmail.trim()) return users;
-    const lowered = roleEmail.trim().toLowerCase();
+    if (!watchedEmail.trim()) return users;
+    const lowered = watchedEmail.trim().toLowerCase();
     return users.filter((u) => u.email.toLowerCase().includes(lowered));
-  }, [roleEmail, users]);
+  }, [watchedEmail, users]);
 
   const handleSearchApply = () => {
     setSearch(pendingSearch.trim());
     setPage(0);
   };
 
-  const handleAssignRole = async () => {
-    if (!roleEmail.trim() || !selectedRole) return;
-    const target = users.find((u) => u.email.toLowerCase() === roleEmail.trim().toLowerCase());
-    if (!target) {
-      notifications.show({
-        title: 'User not found',
-        message: `User not found with that email: ${roleEmail}`,
-        color: 'red',
-        autoClose: 5000,
-      });
+  const handleAssignRole = async (data: RoleAssignmentForm) => {
+    const matchedUser = users.find(
+      (u) => u.email.toLowerCase() === data.email.trim().toLowerCase(),
+    );
+    if (!matchedUser) {
+      notifications.show({ title: 'Error', message: 'User not found in the current list.', color: 'red' });
       return;
     }
-    // Show confirmation dialog for role assignment
-    setConfirmDialog({
-      isOpen: true,
-      email: target.email,
-      role: selectedRole,
-    });
+    setConfirmDialog({ isOpen: true, email: data.email, role: data.role });
   };
 
   const handleConfirmRoleAssignment = async () => {
-    const target = users.find((u) => u.email.toLowerCase() === roleEmail.trim().toLowerCase());
+    const target = users.find((u) => u.email.toLowerCase() === confirmDialog.email.trim().toLowerCase());
     if (!target) return;
     try {
-      await updateRoleMutation.mutateAsync({ userId: target.id, role: selectedRole });
-      setRoleEmail('');
-      setSelectedRole(ROLE_OPTIONS[0]?.value ?? Roles.SUPER_ADMIN);
+      await updateRoleMutation.mutateAsync({ userId: target.id, role: confirmDialog.role });
+      resetRoleForm();
       setConfirmDialog({ isOpen: false, email: '', role: '' });
     } catch (_error) {
       // Error is handled by React Query
@@ -266,7 +279,10 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Role Management Panel */}
-      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)] p-4 sm:p-6 space-y-4">
+      <form
+        onSubmit={handleRoleSubmit(handleAssignRole)}
+        className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)] p-4 sm:p-6 space-y-4"
+      >
         <div>
           <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
             Role Management
@@ -283,18 +299,19 @@ export default function AdminDashboardPage() {
             <input
               type="email"
               placeholder="user@example.com"
-              value={roleEmail}
-              onChange={(e) => setRoleEmail(e.target.value)}
+              {...registerRole('email')}
               className="w-full px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
+            {roleErrors.email && (
+              <p className="text-xs text-red-500 mt-1">{roleErrors.email.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-xs font-medium text-[var(--text-secondary)] dark:text-[var(--text-muted)] mb-1">
               Role
             </label>
             <select
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
+              {...registerRole('role')}
               className="w-full px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               {ROLE_OPTIONS.map((option) => (
@@ -303,19 +320,21 @@ export default function AdminDashboardPage() {
                 </option>
               ))}
             </select>
+            {roleErrors.role && (
+              <p className="text-xs text-red-500 mt-1">{roleErrors.role.message}</p>
+            )}
           </div>
         </div>
         <div className="flex justify-end">
           <button
-            type="button"
-            onClick={handleAssignRole}
+            type="submit"
             disabled={updateRoleMutation.isPending}
             className="px-4 py-2 text-sm font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 shadow-md shadow-primary-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {updateRoleMutation.isPending ? 'Updating...' : 'Assign / Update Role'}
           </button>
         </div>
-      </div>
+      </form>
 
       {/* Role Assignment Confirmation Dialog */}
       <ConfirmDialog
