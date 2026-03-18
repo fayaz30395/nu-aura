@@ -7,3 +7,9 @@ node_modules/
 coverage/
 out/
 dist/
+
+# Test files — linted by vitest, not Next.js build
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
