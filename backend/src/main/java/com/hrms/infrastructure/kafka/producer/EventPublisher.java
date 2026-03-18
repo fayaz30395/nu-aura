@@ -4,6 +4,7 @@ import com.hrms.infrastructure.kafka.KafkaTopics;
 import com.hrms.infrastructure.kafka.events.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.KafkaException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -278,7 +279,7 @@ public class EventPublisher {
                         log.debug("Event published to topic {} with key {}", topic, key);
                         return (Void) null;
                     });
-        } catch (Exception e) {
+        } catch (KafkaException e) {
             log.error("Error building Kafka message for topic {}: {}", topic, e.getMessage(), e);
             return CompletableFuture.failedFuture(e);
         }

@@ -79,7 +79,7 @@ public class WebhookEventListener {
                     webhookEventType,
                     event.getEventPayload()
             );
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // Log but don't rethrow - webhook failures shouldn't affect the main operation
             log.error("Failed to dispatch webhook for event {}: {}",
                     event.getEventId(), e.getMessage(), e);

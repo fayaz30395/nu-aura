@@ -1,5 +1,6 @@
 package com.hrms.application.recruitment.listener;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.application.esignature.event.SignatureCompletedEvent;
@@ -106,7 +107,7 @@ public class OfferLetterSignatureListener {
             if (candidateIdNode != null && !candidateIdNode.isNull()) {
                 return UUID.fromString(candidateIdNode.asText());
             }
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error parsing metadata JSON: {}", metadata, e);
         }
 

@@ -41,7 +41,7 @@ public class IdempotencyService {
             String key = PREFIX + eventId;
             Boolean exists = redisTemplate.hasKey(key);
             return exists != null && exists;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // If Redis is down, log but don't fail the consumer
             // This is a trade-off: allow potential duplicates over complete unavailability
             log.warn("Redis unavailable for idempotency check on event {}: {}. " +
@@ -63,7 +63,7 @@ public class IdempotencyService {
             String key = PREFIX + eventId;
             redisTemplate.opsForValue().set(key, "processed", TTL_HOURS, TimeUnit.HOURS);
             log.debug("Marked event {} as processed in Redis (TTL: {} hours)", eventId, TTL_HOURS);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // If Redis is down, log but don't fail the consumer
             // The event will still be processed, and duplicate detection relies on
             // application-level logic (database constraints, business logic, etc.)

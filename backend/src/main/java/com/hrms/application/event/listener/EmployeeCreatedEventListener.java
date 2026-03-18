@@ -78,7 +78,7 @@ public class EmployeeCreatedEventListener {
 
             log.info("EmployeeCreatedEvent processing completed successfully for employee: {}",
                     employeeId);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — best-effort after-commit event listener
             log.error("Error processing EmployeeCreatedEvent for employee {} ({}): {}",
                     employeeId, employee.getFullName(), e.getMessage(), e);
             // Log the error but don't propagate - the employee creation is already committed
@@ -123,7 +123,7 @@ public class EmployeeCreatedEventListener {
                 log.debug("Employee {} not eligible for PF (salary: ₹{} < threshold: ₹{})",
                         employee.getId(), monthlySalary, PF_THRESHOLD);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Could not enroll employee {} in PF: {}", employee.getId(), e.getMessage());
             // Don't fail the entire flow if PF enrollment fails
         }
@@ -165,7 +165,7 @@ public class EmployeeCreatedEventListener {
                 log.debug("Employee {} not eligible for ESI (salary: ₹{} > threshold: ₹{})",
                         employee.getId(), monthlySalary, ESI_THRESHOLD);
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.warn("Could not enroll employee {} in ESI: {}", employee.getId(), e.getMessage());
             // Don't fail the entire flow if ESI enrollment fails
         }
@@ -182,7 +182,7 @@ public class EmployeeCreatedEventListener {
             // Check if default salary structure assignment is available
             salaryStructureService.assignDefaultStructureIfAvailable(employee);
             log.debug("Default salary structure assignment attempted for employee {}", employee.getId());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.debug("Could not assign default salary structure for employee {}: {}",
                     employee.getId(), e.getMessage());
             // Don't fail the flow - manual assignment is acceptable
@@ -200,7 +200,7 @@ public class EmployeeCreatedEventListener {
         try {
             return salaryStructureService.getMonthlySalaryForEmployee(employee.getId())
                     .orElse(null);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.debug("Could not fetch salary for employee {}: {}", employee.getId(), e.getMessage());
             return null;
         }

@@ -143,7 +143,7 @@ public class KafkaDomainEventBridge {
                 }
             });
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — best-effort after-commit Kafka bridge
             log.error("KafkaDomainEventBridge: Unexpected error bridging ApprovalDecisionEvent " +
                     "for instance {}: {}", instanceId, e.getMessage(), e);
         } finally {
@@ -236,7 +236,7 @@ public class KafkaDomainEventBridge {
                 }
             });
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — best-effort after-commit Kafka bridge
             log.error("KafkaDomainEventBridge: Error bridging {} event for employee {}: {}",
                     lifecycleType, employeeId, e.getMessage(), e);
         } finally {

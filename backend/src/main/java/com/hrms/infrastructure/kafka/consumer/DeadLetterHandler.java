@@ -123,7 +123,7 @@ public class DeadLetterHandler {
             // Persist to DB (idempotent: skip duplicates on consumer restart)
             persistIfAbsent(topic, partition, offset, message);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DLT last resort
             log.error("[DLT] Unexpected error while handling dead letter from {}: {}", topic, e.getMessage(), e);
         } finally {
             // Always acknowledge — the DLT is the end of the retry road.

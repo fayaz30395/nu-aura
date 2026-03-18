@@ -75,13 +75,13 @@ public class CandidateHiredEventListener {
 
                 var onboardingResponse = onboardingService.createProcess(onboardingRequest);
                 log.info("Onboarding process created successfully for employee {}: {}", employeeId, onboardingResponse.getId());
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Could not create onboarding process for employee {}: {}", employeeId, e.getMessage());
                 // Don't fail the entire flow if onboarding creation fails
             }
 
             log.info("CandidateHiredEvent processing completed successfully for candidate: {}", event.getCandidateId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — best-effort after-commit event listener
             log.error("Error processing CandidateHiredEvent for candidate {} ({}): {}",
                     event.getCandidateId(), event.getCandidateName(), e.getMessage(), e);
             // Log the error but don't propagate - the candidate hire is already committed

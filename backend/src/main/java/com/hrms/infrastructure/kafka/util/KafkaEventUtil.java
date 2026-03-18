@@ -1,5 +1,6 @@
 package com.hrms.infrastructure.kafka.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.infrastructure.kafka.events.BaseKafkaEvent;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,7 @@ public class KafkaEventUtil {
     public String toJson(Object event) {
         try {
             return objectMapper.writeValueAsString(event);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Failed to serialize event: {}", e.getMessage(), e);
             throw new RuntimeException("Event serialization failed", e);
         }
@@ -100,7 +101,7 @@ public class KafkaEventUtil {
     public <T> T fromJson(String json, Class<T> eventClass) {
         try {
             return objectMapper.readValue(json, eventClass);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Failed to deserialize event: {}", e.getMessage(), e);
             throw new RuntimeException("Event deserialization failed", e);
         }

@@ -106,7 +106,7 @@ public class ApprovalNotificationListener {
             log.info("Approval task assignment notification sent to user {} for {} request",
                     assignedToUserId, entityType);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — best-effort after-commit notification listener
             log.error("Error processing ApprovalTaskAssignedEvent for task {} assigned to user {}",
                     event.getAggregateId(), event.getAssignedToUserId(), e);
             // Don't propagate exception - event is already committed
@@ -161,7 +161,7 @@ public class ApprovalNotificationListener {
             // Additional: Notify the approver's manager if they delegated
             // This is typically handled by a separate delegation notification service
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — best-effort after-commit notification listener
             log.error("Error processing ApprovalDecisionEvent for execution {}",
                     event.getInstanceId(), e);
             // Don't propagate exception - event is already committed

@@ -157,7 +157,7 @@ public class NotificationEventListener {
                         .read(false)
                         .build();
                 webSocketNotificationService.sendToUser(recipientUserId, wsMessage);
-            } catch (Exception wsEx) {
+            } catch (Exception wsEx) { // Intentional broad catch — WebSocket send may throw checked exceptions
                 log.warn("Failed to send WebSocket notification to user {}: {}",
                         recipientUserId, wsEx.getMessage());
                 // Non-fatal — the persisted notification will be picked up by REST polling
@@ -165,7 +165,7 @@ public class NotificationEventListener {
 
             log.debug("Notification created: id={} type={} recipient={}",
                     notification.getId(), type, recipientUserId);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             log.error("Failed to create notification for user {}: {}",
                     recipientUserId, ex.getMessage(), ex);
         } finally {
