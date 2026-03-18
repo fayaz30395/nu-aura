@@ -13,6 +13,7 @@ import {
 import { StatCard } from '@/components/ui/StatCard';
 import { usePsaProjectInvoices } from '@/lib/hooks/queries/usePsa';
 import { PSAInvoice } from '@/lib/types/psa';
+import { formatCurrency } from '@/lib/utils';
 
 interface InvoicesTabProps {
   projectId: string;
@@ -25,14 +26,6 @@ const formatDate = (value?: string | null) => {
   return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
-const formatCurrency = (value?: number | null) => {
-  if (value === null || value === undefined) return '—';
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 0,
-  }).format(value);
-};
 
 const STATUS_BADGE: Record<string, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
   DRAFT: { label: 'Draft', variant: 'secondary' },

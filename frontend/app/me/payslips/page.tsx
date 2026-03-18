@@ -19,6 +19,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { usePayslipsByEmployee, usePayslips, useDownloadPayslipPdf } from '@/lib/hooks/queries/usePayroll';
 import { Payslip } from '@/lib/types/payroll';
 import { createLogger } from '@/lib/utils/logger';
+import { formatCurrency } from '@/lib/utils';
 
 const log = createLogger('PayslipsPage');
 
@@ -72,14 +73,6 @@ export default function MyPayslipsPage() {
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {

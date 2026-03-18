@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Download, Calendar, DollarSign } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 interface PayslipCardProps {
   payslip: Payslip;
@@ -18,12 +19,6 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
   onDownload,
   loading = false,
 }) => {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value);
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

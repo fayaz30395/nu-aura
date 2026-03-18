@@ -3,6 +3,7 @@
 import React from 'react';
 import { Badge, Card, CardContent } from '@/components/ui';
 import { HrmsProject, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
+import { formatCurrency } from '@/lib/utils';
 
 interface OverviewTabProps {
   project: HrmsProject;
@@ -29,14 +30,6 @@ const formatDate = (value?: string | null) => {
   return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
-const formatCurrency = (value?: number | null) => {
-  if (value === null || value === undefined) return '—';
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 0,
-  }).format(value);
-};
 
 const getStatusBadge = (status?: ProjectStatus | null) => {
   if (status && STATUS_BADGE[status]) {

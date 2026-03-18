@@ -23,6 +23,7 @@ import {
   Download,
   Mail,
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 function OfferPortalLoading() {
   return (
@@ -124,14 +125,6 @@ function OfferPortalPage() {
     }
   };
 
-  const formatCurrency = (amount: number | undefined) => {
-    if (!amount) return '-';
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const formatDate = (date: string | undefined) => {
     if (!date) return '-';

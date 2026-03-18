@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { TravelStatus, TravelType, TransportMode } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { formatCurrency } from '@/lib/utils';
 import { useTravelRequests } from '@/lib/hooks/queries/useTravel';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
@@ -140,12 +141,6 @@ export default function TravelPage() {
     });
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-    }).format(amount);
-  };
 
   if (isLoading && travelRequests.length === 0) {
     return (

@@ -40,6 +40,7 @@ import {
   Info,
 } from 'lucide-react';
 import { createLogger } from '@/lib/utils/logger';
+import { formatCurrency } from '@/lib/utils';
 
 const log = createLogger('TravelPage');
 
@@ -198,12 +199,6 @@ export default function TravelRequestDetailsPage() {
     });
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-    }).format(amount);
-  };
 
   if (isLoading) {
     return (

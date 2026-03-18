@@ -53,6 +53,7 @@ import {
   useReturnAsset,
 } from '@/lib/hooks/queries';
 import { createLogger } from '@/lib/utils/logger';
+import { formatCurrency } from '@/lib/utils';
 
 const log = createLogger('AssetsPage');
 
@@ -151,15 +152,6 @@ const formatDate = (date: string | undefined) => {
   });
 };
 
-const formatCurrency = (amount: number | undefined) => {
-  if (amount === undefined || amount === null) return '-';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 export default function AssetManagementPage() {
   const [error, setError] = useState<string | null>(null);

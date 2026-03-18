@@ -4,6 +4,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { PayrollTrendData } from '@/lib/types/analytics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { formatCurrency } from '@/lib/utils';
 
 interface PayrollCostTrendChartProps {
   data: PayrollTrendData[];
@@ -13,14 +14,6 @@ interface PayrollCostTrendChartProps {
 export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ data, className = '' }) => {
   const hasData = data && data.length > 0;
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
 
   return (
     <Card className={className}>
