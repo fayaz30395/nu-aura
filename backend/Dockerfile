@@ -3,7 +3,7 @@
 # depends on a parent POM and sibling modules (modules/common, modules/pm).
 
 # ── Stage 1: Build ────────────────────────────────────────────────────────────
-FROM maven:3.9-eclipse-temurin-21-alpine AS build
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ RUN mvn clean package -DskipTests -B -pl backend -am
 # ── Stage 2: Development (used by docker-compose.override.yml) ────────────────
 # Full JDK + Maven for hot reload via spring-boot-devtools.
 # Source and target dirs are volume-mounted from the host.
-FROM maven:3.9-eclipse-temurin-21-alpine AS development
+FROM maven:3.9-eclipse-temurin-17-alpine AS development
 
 WORKDIR /app
 
@@ -52,7 +52,7 @@ WORKDIR /app/backend
 CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
 
 # ── Stage 3: Production Runtime ───────────────────────────────────────────────
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
