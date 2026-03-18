@@ -11,6 +11,7 @@ import {
   BookOpen,
   Lock,
   Check,
+  Loader2,
 } from 'lucide-react';
 import { APP_LIST, type NuApp } from '@/lib/config/apps';
 import { useActiveApp } from '@/lib/hooks/useActiveApp';
@@ -34,6 +35,7 @@ export default function AppSwitcher() {
   const router = useRouter();
   const { appCode, app, hasAppAccess, getAppEntryRoute } = useActiveApp();
   const [isOpen, setIsOpen] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close on click outside
@@ -58,7 +60,7 @@ export default function AppSwitcher() {
     }
   }, [isOpen]);
 
-  const handleAppClick = (targetApp: NuApp) => {
+  const handleAppClick = async (targetApp: NuApp) => {
     // Already on this app
     if (targetApp.code === appCode) {
       setIsOpen(false);
@@ -70,8 +72,30 @@ export default function AppSwitcher() {
       return;
     }
 
-    router.push(getAppEntryRoute(targetApp.code));
+    const targetRoute = getAppEntryRoute(targetApp.code);
     setIsOpen(false);
+    setIsNavigating(true);
+
+    // Use router.push with a URL-check fallback. router.push() resolves its
+    // promise when navigation *starts*, not when the page finishes compiling.
+    // So instead of relying on the promise, we check if the URL actually
+    // changed after a timeout. If not, fall back to hard navigation.
+    try {
+      router.push(targetRoute);
+    } catch {
+      // router.push threw synchronously — fall back immediately
+      window.location.href = targetRoute;
+      return;
+    }
+
+    // Check after 3s if the URL actually changed
+    setTimeout(() => {
+      const currentPath = window.location.pathname;
+      if (currentPath !== targetRoute && !currentPath.startsWith(targetRoute + '/')) {
+        window.location.href = targetRoute;
+      }
+      setIsNavigating(false);
+    }, 3000);
   };
 
   const CurrentIcon = getAppIcon(app.iconName);
@@ -228,9 +252,16 @@ export default function AppSwitcher() {
 
             {/* Footer */}
             <div className="px-5 py-3 bg-[var(--bg-surface)] border-t border-[var(--dropdown-divider)]">
-              <p className="text-xs text-[var(--text-muted)] text-center">
-                {APP_LIST.filter((a) => a.available).length} of {APP_LIST.length} apps available
-              </p>
+              {isNavigating ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-3.5 h-3.5 text-primary-500 animate-spin" />
+                  <p className="text-xs text-primary-500 font-medium">Switching app...</p>
+                </div>
+              ) : (
+                <p className="text-xs text-[var(--text-muted)] text-center">
+                  {APP_LIST.filter((a) => a.available).length} of {APP_LIST.length} apps available
+                </p>
+              )}
             </div>
           </motion.div>
         )}

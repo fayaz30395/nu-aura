@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
@@ -47,6 +47,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   onMenuItemClick,
 }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { logout, user } = useAuth();
   const { permissions, roles, hasPermission, isReady } = usePermissions();
   const isSuperAdmin = useMemo(
@@ -322,7 +323,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           style={{ backgroundColor: 'var(--bg-main)' }}
         >
           <AuthGuard>
-            <ErrorBoundary>
+            <ErrorBoundary resetKeys={[pathname]}>
               {/* Removed key={appCode} — it forced React to unmount/remount the entire
                   content tree on every app switch, defeating reconciliation and causing
                   a visible lag. The sidebar already updates per-app; content should

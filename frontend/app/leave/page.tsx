@@ -143,15 +143,32 @@ export default function LeavePage() {
     return (
       <AppLayout activeMenuItem="leave">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-[var(--text-secondary)]">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
-            >
-              Retry
-            </button>
+          <div className="flex flex-col items-center gap-4 max-w-md text-center">
+            <div className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
+              <AlertCircle className="h-8 w-8 text-danger-500" />
+            </div>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+              Unable to load leave data
+            </h2>
+            <p className="text-sm text-[var(--text-muted)]">
+              {error.includes('500')
+                ? 'The server encountered an error. Please try again in a moment.'
+                : error}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors text-sm font-medium"
+              >
+                Retry
+              </button>
+              <button
+                onClick={() => window.location.href = '/me/dashboard'}
+                className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors text-sm font-medium border border-[var(--border-main)]"
+              >
+                Go to Home
+              </button>
+            </div>
           </div>
         </div>
       </AppLayout>
