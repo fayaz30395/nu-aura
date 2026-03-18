@@ -54,6 +54,8 @@ public class CacheConfig implements CachingConfigurer {
     public static final String EMPLOYEES = "employees";
     public static final String EMPLOYEE_WITH_DETAILS = "employeeWithDetails";
     public static final String FEATURE_FLAGS = "featureFlags";
+    public static final String ANALYTICS_SUMMARY = "analyticsSummary";
+    public static final String DASHBOARD_METRICS = "dashboardMetrics";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -95,6 +97,10 @@ public class CacheConfig implements CachingConfigurer {
 
         // Feature flags - checked frequently, but changes are rare; invalidated on toggle
         cacheConfigurations.put(FEATURE_FLAGS, defaultConfig.entryTtl(Duration.ofHours(4)));
+
+        // Analytics caches - short-lived to reflect near-real-time data
+        cacheConfigurations.put(ANALYTICS_SUMMARY, defaultConfig.entryTtl(Duration.ofMinutes(5)));
+        cacheConfigurations.put(DASHBOARD_METRICS, defaultConfig.entryTtl(Duration.ofMinutes(5)));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)

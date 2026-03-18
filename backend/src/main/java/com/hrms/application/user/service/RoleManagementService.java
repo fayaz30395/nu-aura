@@ -13,11 +13,14 @@ import com.hrms.domain.user.*;
 import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.common.config.CacheConfig;
 import com.hrms.infrastructure.user.repository.CustomScopeTargetRepository;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +59,7 @@ public class RoleManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse createRole(CreateRoleRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -98,6 +102,7 @@ public class RoleManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse updateRole(UUID roleId, UpdateRoleRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -131,6 +136,7 @@ public class RoleManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public void deleteRole(UUID roleId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -158,6 +164,7 @@ public class RoleManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse assignPermissions(UUID roleId, AssignPermissionsRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -206,6 +213,7 @@ public class RoleManagementService {
      * Supports ALL, LOCATION, DEPARTMENT, TEAM, SELF, and CUSTOM scopes.
      */
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse assignPermissionsWithScope(UUID roleId, AssignPermissionsWithScopeRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -304,6 +312,7 @@ public class RoleManagementService {
      * Update scope for a single permission on a role.
      */
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse updatePermissionScope(UUID roleId, String permissionCode, RoleScope newScope,
                                                Set<PermissionScopeRequest.CustomTargetRequest> customTargets) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
@@ -349,6 +358,7 @@ public class RoleManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse addPermissions(UUID roleId, AssignPermissionsRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -382,6 +392,7 @@ public class RoleManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse removePermissions(UUID roleId, AssignPermissionsRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -421,6 +432,7 @@ public class RoleManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public UserResponse assignRolesToUser(UUID userId, AssignRolesRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
