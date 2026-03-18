@@ -1,106 +1,31 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Inbox,
-  Send,
-  Star,
-  Trash2,
-  Tag,
-  Search,
-  RefreshCw,
-  Paperclip,
-  ChevronLeft,
-  ChevronRight,
-  Mail,
-  AlertCircle,
-  User,
-  Calendar,
-  FileText,
-  MailOpen,
-  Reply,
-  ReplyAll,
-  Forward,
-  X,
-  Loader2,
-  Plus,
-  Download,
-  Archive,
-  Users,
-} from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
 import { employeeService } from '@/lib/services/employee.service';
 import { Employee } from '@/lib/types/employee';
-import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
 import { createLogger } from '@/lib/utils/logger';
 
+import {
+  MailSidebar,
+  EmailList,
+  EmailViewer,
+  ComposeModal,
+  OAuthPanel,
+  EmailMessage,
+  EmailLabel,
+  ComposeEmail,
+  EmailContact,
+  SendAsAddress,
+  EmailAttachment,
+} from './_components';
+
 const log = createLogger('NuMailPage');
-
-interface EmailAttachment {
-  id: string;
-  filename: string;
-  mimeType: string;
-  size: number;
-}
-
-interface SendAsAddress {
-  sendAsEmail: string;
-  displayName?: string;
-  signature?: string;
-  isPrimary?: boolean;
-  isDefault?: boolean;
-  treatAsAlias?: boolean;
-}
-
-interface EmailMessage {
-  id: string;
-  threadId: string;
-  snippet: string;
-  subject: string;
-  from: string;
-  fromEmail: string;
-  to: string;
-  cc?: string;
-  date: string;
-  isRead: boolean;
-  isStarred: boolean;
-  hasAttachments: boolean;
-  labels: string[];
-  body?: string;
-  bodyHtml?: string;
-  attachments?: EmailAttachment[];
-}
-
-interface EmailLabel {
-  id: string;
-  name: string;
-  type: string;
-  messagesTotal?: number;
-  messagesUnread?: number;
-}
-
-interface ComposeEmail {
-  to: string;
-  cc: string;
-  subject: string;
-  body: string;
-  replyToId?: string;
-  threadId?: string;
-}
-
-interface EmailContact {
-  email: string;
-  name: string;
-  designation?: string;
-  department?: string;
-}
 
 // Gmail scopes for compose/send
 const GMAIL_SCOPES = [
@@ -146,9 +71,6 @@ function MailContent() {
   const [filteredContacts, setFilteredContacts] = useState<EmailContact[]>([]);
   const [activeField, setActiveField] = useState<'to' | 'cc' | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const toInputRef = useRef<HTMLInputElement>(null);
-  const ccInputRef = useRef<HTMLInputElement>(null);
-  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Signature state
   const [emailSignature, setEmailSignature] = useState<string>('');
@@ -210,7 +132,6 @@ function MailContent() {
   // Load Gmail signature
   const loadSignature = async (token: string) => {
     try {
-      // Get send-as settings which contains the signature
       const response = await fetch(
         'https://www.googleapis.com/gmail/v1/users/me/settings/sendAs',
         { headers: { Authorization: `Bearer ${token}` } }
@@ -218,18 +139,12 @@ function MailContent() {
 
       if (response.ok) {
         const data = await response.json();
-        // Find the primary send-as address (usually the default)
         const primarySendAs = data.sendAs?.find((s: SendAsAddress) => s.isPrimary) || data.sendAs?.[0];
         if (primarySendAs?.signature) {
-          // Clean up the signature HTML
           let cleanedSignature = primarySendAs.signature;
-          // Remove problematic non-breaking space patterns that cause Â characters
           cleanedSignature = cleanedSignature.replace(/Â/g, '');
-          // Replace multiple &nbsp; with single space
           cleanedSignature = cleanedSignature.replace(/(&nbsp;)+/g, ' ');
-          // Store the cleaned HTML signature
           setEmailSignatureHtml(cleanedSignature);
-          // Also create plain text version for display reference
           const div = document.createElement('div');
           div.innerHTML = cleanedSignature;
           const plainTextSignature = div.textContent || div.innerText || '';
@@ -238,7 +153,6 @@ function MailContent() {
       }
     } catch (err) {
       log.error('Error loading signature:', err);
-      // Signature loading is optional, don't show error to user
     }
   };
 
@@ -250,7 +164,6 @@ function MailContent() {
       return;
     }
 
-    // Load contacts from HRMS
     loadContacts();
 
     const storedToken = getStoredToken();
@@ -269,17 +182,9 @@ function MailContent() {
 
   // Handle click outside to close suggestions
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        suggestionsRef.current &&
-        !suggestionsRef.current.contains(event.target as Node) &&
-        !toInputRef.current?.contains(event.target as Node) &&
-        !ccInputRef.current?.contains(event.target as Node)
-      ) {
-        setShowSuggestions(false);
-      }
+    const handleClickOutside = () => {
+      setShowSuggestions(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -288,7 +193,6 @@ function MailContent() {
   const filterContacts = useCallback((value: string, field: 'to' | 'cc') => {
     setActiveField(field);
 
-    // Get the last email being typed (after the last comma)
     const lastValue = value.split(',').pop()?.trim().toLowerCase() || '';
 
     if (lastValue.length < 1) {
@@ -296,7 +200,6 @@ function MailContent() {
       return;
     }
 
-    // Get already entered emails to exclude
     const existingEmails = value
       .split(',')
       .slice(0, -1)
@@ -313,7 +216,7 @@ function MailContent() {
       return !isAlreadyAdded && matchesSearch;
     });
 
-    setFilteredContacts(filtered.slice(0, 8)); // Limit to 8 suggestions
+    setFilteredContacts(filtered.slice(0, 8));
     setShowSuggestions(filtered.length > 0);
   }, [contacts]);
 
@@ -321,7 +224,7 @@ function MailContent() {
   const selectContact = (contact: EmailContact, field: 'to' | 'cc') => {
     const currentValue = field === 'to' ? composeEmail.to : composeEmail.cc;
     const parts = currentValue.split(',');
-    parts.pop(); // Remove the partial entry
+    parts.pop();
     parts.push(contact.email);
 
     const newValue = parts.filter(p => p.trim()).join(', ') + ', ';
@@ -332,24 +235,13 @@ function MailContent() {
     });
 
     setShowSuggestions(false);
-
-    // Focus back on the input
-    if (field === 'to') {
-      toInputRef.current?.focus();
-    } else {
-      ccInputRef.current?.focus();
-    }
   };
 
   const loadLabels = async (token: string) => {
     try {
       const response = await fetch(
         'https://www.googleapis.com/gmail/v1/users/me/labels',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (!response.ok) {
@@ -369,7 +261,6 @@ function MailContent() {
 
       setLabels(filteredLabels);
 
-      // Get unread count for inbox
       const inboxLabel = data.labels?.find((l: EmailLabel) => l.id === 'INBOX');
       if (inboxLabel) {
         const labelResponse = await fetch(
@@ -415,7 +306,6 @@ function MailContent() {
         return;
       }
 
-      // Fetch details for each message
       const emailDetails = await Promise.all(
         data.messages.slice(0, 20).map(async (msg: { id: string }) => {
           const msgResponse = await fetch(
@@ -479,7 +369,6 @@ function MailContent() {
 
       const data = await response.json();
 
-      // Extract email body
       let bodyText = '';
       let bodyHtml = '';
       const attachments: EmailAttachment[] = [];
@@ -514,7 +403,6 @@ function MailContent() {
 
       extractBody(data.payload);
 
-      // Get headers
       const headers = data.payload?.headers || [];
       const getHeader = (name: string) =>
         headers.find((h: { name: string; value: string }) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
@@ -543,7 +431,6 @@ function MailContent() {
 
       setSelectedEmail(fullEmail);
 
-      // Mark as read if unread
       if (data.labelIds?.includes('UNREAD')) {
         await markAsRead(emailId);
       }
@@ -568,18 +455,14 @@ function MailContent() {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            removeLabelIds: ['UNREAD'],
-          }),
+          body: JSON.stringify({ removeLabelIds: ['UNREAD'] }),
         }
       );
 
-      // Update local state
       setEmails(emails.map(e =>
         e.id === emailId ? { ...e, isRead: true } : e
       ));
 
-      // Refresh unread count
       if (unreadCount > 0) {
         setUnreadCount(unreadCount - 1);
       }
@@ -609,7 +492,6 @@ function MailContent() {
         }
       );
 
-      // Update local state
       setEmails(emails.map(e =>
         e.id === emailId ? { ...e, isStarred: !isStarred } : e
       ));
@@ -635,13 +517,10 @@ function MailContent() {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            removeLabelIds: ['INBOX'],
-          }),
+          body: JSON.stringify({ removeLabelIds: ['INBOX'] }),
         }
       );
 
-      // Remove from list and go back
       setEmails(emails.filter(e => e.id !== emailId));
       setSelectedEmail(null);
     } catch (err) {
@@ -658,13 +537,10 @@ function MailContent() {
         `https://www.googleapis.com/gmail/v1/users/me/messages/${emailId}/trash`,
         {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
 
-      // Remove from list and go back
       setEmails(emails.filter(e => e.id !== emailId));
       setSelectedEmail(null);
     } catch (err) {
@@ -687,7 +563,6 @@ function MailContent() {
       const data = await response.json();
       const decoded = atob(data.data.replace(/-/g, '+').replace(/_/g, '/'));
 
-      // Create blob and download
       const bytes = new Uint8Array(decoded.length);
       for (let i = 0; i < decoded.length; i++) {
         bytes[i] = decoded.charCodeAt(i);
@@ -715,15 +590,8 @@ function MailContent() {
     setSendSuccess(false);
     setShowSuggestions(false);
 
-    // Don't include signature in textarea body - it will be added as HTML when sending
-    // Show a placeholder message to indicate signature will be added
     if (mode === 'new') {
-      setComposeEmail({
-        to: '',
-        cc: '',
-        subject: '',
-        body: '',
-      });
+      setComposeEmail({ to: '', cc: '', subject: '', body: '' });
     } else if (selectedEmail) {
       const originalSubject = selectedEmail.subject;
       const replySubject = originalSubject.startsWith('Re:') ? originalSubject : `Re: ${originalSubject}`;
@@ -741,12 +609,10 @@ function MailContent() {
           threadId: selectedEmail.threadId,
         });
       } else if (mode === 'replyAll') {
-        // Get all recipients except current user
         const allRecipients = [selectedEmail.fromEmail];
         if (selectedEmail.cc) {
           allRecipients.push(...selectedEmail.cc.split(',').map(e => e.trim()));
         }
-        // Filter out current user's email
         const filteredRecipients = allRecipients.filter(e => !e.includes(user?.email || ''));
 
         setComposeEmail({
@@ -778,18 +644,14 @@ function MailContent() {
     setSendError(null);
 
     try {
-      // Build the email in RFC 2822 format with HTML support
-      // Convert plain text body to HTML (preserve line breaks and basic formatting)
       let htmlBody = composeEmail.body
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/\n/g, '<br>');
 
-      // Wrap body in div
       htmlBody = `<div>${htmlBody}</div>`;
 
-      // Append HTML signature if available
       if (emailSignatureHtml) {
         htmlBody += `<br><div>--</div>${emailSignatureHtml}`;
       }
@@ -805,7 +667,6 @@ function MailContent() {
       emailContent += `\r\n`;
       emailContent += htmlBody;
 
-      // Base64 encode the email
       const encodedEmail = btoa(unescape(encodeURIComponent(emailContent)))
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
@@ -834,11 +695,9 @@ function MailContent() {
 
       setSendSuccess(true);
 
-      // Close compose after a brief delay
       setTimeout(() => {
         setShowCompose(false);
         setSendSuccess(false);
-        // Refresh emails if we're in sent folder or if it was a reply
         if (selectedLabel === 'SENT' || composeEmail.threadId) {
           loadEmails(accessToken, selectedLabel);
         }
@@ -904,27 +763,11 @@ function MailContent() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const getLabelIcon = (labelId: string) => {
-    switch (labelId) {
-      case 'INBOX': return <Inbox className="h-4 w-4" />;
-      case 'SENT': return <Send className="h-4 w-4" />;
-      case 'STARRED': return <Star className="h-4 w-4" />;
-      case 'DRAFT': return <FileText className="h-4 w-4" />;
-      case 'TRASH': return <Trash2 className="h-4 w-4" />;
-      case 'SPAM': return <AlertCircle className="h-4 w-4" />;
-      default: return <Tag className="h-4 w-4" />;
-    }
-  };
-
   const filteredEmails = emails.filter(email =>
     email.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
     email.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
     email.snippet.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleConnectClick = () => {
-    googleLogin();
-  };
 
   if (isLoading && !accessToken) {
     return (
@@ -943,626 +786,83 @@ function MailContent() {
       breadcrumbs={[{ label: 'Nu-Mail', href: '/nu-mail' }]}
     >
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-              <Mail className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">Nu-Mail</h1>
-              <p className="text-sm text-[var(--text-muted)]">Your organization&apos;s Gmail inbox</p>
-            </div>
-          </div>
-          {!accessToken ? (
-            <Button
-              variant="primary"
-              onClick={handleConnectClick}
-              leftIcon={<Mail className="h-4 w-4" />}
-            >
-              Connect Gmail
-            </Button>
-          ) : (
-            <div className="flex items-center gap-2">
-              {unreadCount > 0 && (
-                <span className="px-2 py-1 bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-full text-sm font-medium">
-                  {unreadCount} unread
-                </span>
-              )}
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => openCompose('new')}
-                leftIcon={<Plus className="h-4 w-4" />}
-              >
-                Compose
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshEmails}
-                leftIcon={<RefreshCw className="h-4 w-4" />}
-              >
-                Refresh
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearToken}
-                className="text-[var(--text-muted)] hover:text-red-600"
-              >
-                Disconnect
-              </Button>
-            </div>
-          )}
-        </div>
+        {/* Header + OAuth Panel */}
+        <OAuthPanel
+          isConnected={!!accessToken}
+          unreadCount={unreadCount}
+          error={error}
+          onConnect={() => googleLogin()}
+          onCompose={() => openCompose('new')}
+          onRefresh={refreshEmails}
+          onDisconnect={clearToken}
+        />
 
-        {/* Error State */}
-        {error && (
-          <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30">
-            <CardContent className="py-4">
-              <div className="flex items-center gap-4 text-red-600 dark:text-red-400">
-                <AlertCircle className="h-5 w-5" />
-                <span>{error}</span>
-                <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
-                  Try Again
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {!accessToken ? (
-          /* Connect Card */
-          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
-            <CardContent className="py-16">
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-6">
-                  <Mail className="h-10 w-10 text-red-600 dark:text-red-400" />
-                </div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                  Connect to Gmail
-                </h2>
-                <p className="text-[var(--text-muted)] mb-6 max-w-md mx-auto">
-                  Access your organization&apos;s Gmail directly within NuLogic.
-                  Read, send, and manage your emails all in one place.
-                </p>
-                <Button
-                  variant="primary"
-                  size="lg"
-                  onClick={handleConnectClick}
-                  leftIcon={<Mail className="h-5 w-5" />}
-                >
-                  Connect Gmail
-                </Button>
-                <p className="text-xs text-[var(--text-muted)] mt-4">
-                  You&apos;ll be asked to grant access to read and send emails.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
+        {accessToken && (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Sidebar */}
-            <Card className="lg:col-span-1">
-              <CardContent className="p-2">
-                <Button
-                  variant="primary"
-                  className="w-full mb-3"
-                  onClick={() => openCompose('new')}
-                  leftIcon={<Plus className="h-4 w-4" />}
-                >
-                  Compose
-                </Button>
-                <nav className="space-y-1">
-                  {labels.map((label) => (
-                    <button
-                      key={label.id}
-                      onClick={() => handleLabelSelect(label.id)}
-                      className={`w-full flex items-center justify-between gap-4 px-3 py-2 rounded-lg text-sm transition-colors ${
-                        selectedLabel === label.id
-                          ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        {getLabelIcon(label.id)}
-                        <span>{label.name}</span>
-                      </div>
-                      {label.id === 'INBOX' && unreadCount > 0 && (
-                        <span className="px-2 py-0.5 bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-full text-xs font-medium">
-                          {unreadCount}
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </nav>
-              </CardContent>
-            </Card>
+            <MailSidebar
+              labels={labels}
+              selectedLabel={selectedLabel}
+              unreadCount={unreadCount}
+              onLabelSelect={handleLabelSelect}
+              onCompose={() => openCompose('new')}
+            />
 
-            {/* Email List */}
+            {/* Email List / Viewer */}
             <Card className="lg:col-span-3">
-              {/* Toolbar */}
-              <div className="border-b border-[var(--border-main)] p-4">
-                <div className="flex items-center gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
-                    <Input
-                      placeholder="Search emails..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handlePrevPage}
-                      disabled={prevPageTokens.length === 0}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleNextPage}
-                      disabled={!pageToken}
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Loading State */}
-              {isLoading ? (
-                <div className="flex items-center justify-center py-16">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-                    <p className="text-[var(--text-muted)]">Loading emails...</p>
-                  </div>
-                </div>
-              ) : selectedEmail ? (
-                /* Email Detail View */
-                <div className="p-6">
-                  {isLoadingEmail ? (
-                    <div className="flex items-center justify-center py-16">
-                      <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="w-10 h-10 text-primary-500 animate-spin" />
-                        <p className="text-[var(--text-muted)]">Loading email content...</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Back button and actions */}
-                      <div className="flex items-center justify-between mb-4">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedEmail(null)}
-                          leftIcon={<ChevronLeft className="h-4 w-4" />}
-                        >
-                          Back to list
-                        </Button>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openCompose('reply')}
-                            title="Reply"
-                          >
-                            <Reply className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openCompose('replyAll')}
-                            title="Reply All"
-                          >
-                            <ReplyAll className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openCompose('forward')}
-                            title="Forward"
-                          >
-                            <Forward className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => archiveEmail(selectedEmail.id)}
-                            title="Archive"
-                          >
-                            <Archive className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteEmail(selectedEmail.id)}
-                            title="Delete"
-                            className="text-red-500 hover:text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Email header */}
-                      <div className="space-y-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                            {selectedEmail.subject}
-                          </h2>
-                          <button
-                            onClick={() => toggleStar(selectedEmail.id, selectedEmail.isStarred)}
-                            className={selectedEmail.isStarred ? 'text-yellow-500' : 'text-[var(--text-muted)] hover:text-yellow-500'}
-                          >
-                            <Star className={`h-5 w-5 ${selectedEmail.isStarred ? 'fill-current' : ''}`} />
-                          </button>
-                        </div>
-
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
-                            <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-[var(--text-primary)]">
-                                {selectedEmail.from}
-                              </span>
-                              <span className="text-sm text-[var(--text-muted)]">
-                                &lt;{selectedEmail.fromEmail}&gt;
-                              </span>
-                            </div>
-                            <p className="text-sm text-[var(--text-muted)]">to {selectedEmail.to}</p>
-                            {selectedEmail.cc && (
-                              <p className="text-sm text-[var(--text-muted)]">cc: {selectedEmail.cc}</p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                            <Calendar className="h-4 w-4" />
-                            {new Date(selectedEmail.date).toLocaleString()}
-                          </div>
-                        </div>
-
-                        {/* Email body */}
-                        <div className="border-t border-[var(--border-main)] pt-4">
-                          {selectedEmail.bodyHtml ? (
-                            <div
-                              className="prose dark:prose-invert max-w-none email-content"
-                              dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(selectedEmail.bodyHtml) }}
-                            />
-                          ) : selectedEmail.body ? (
-                            <pre className="text-[var(--text-secondary)] whitespace-pre-wrap font-sans text-sm">
-                              {selectedEmail.body}
-                            </pre>
-                          ) : (
-                            <p className="text-[var(--text-muted)] italic">
-                              {selectedEmail.snippet}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Attachments */}
-                        {selectedEmail.attachments && selectedEmail.attachments.length > 0 && (
-                          <div className="border-t border-[var(--border-main)] pt-4">
-                            <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-2">
-                              <Paperclip className="h-4 w-4" />
-                              Attachments ({selectedEmail.attachments.length})
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                              {selectedEmail.attachments.map((attachment) => (
-                                <button
-                                  key={attachment.id}
-                                  onClick={() => downloadAttachment(selectedEmail.id, attachment.id, attachment.filename)}
-                                  className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
-                                >
-                                  <FileText className="h-4 w-4 text-[var(--text-muted)]" />
-                                  <span className="text-sm text-[var(--text-secondary)]">
-                                    {attachment.filename}
-                                  </span>
-                                  <span className="text-xs text-[var(--text-muted)]">
-                                    ({formatFileSize(attachment.size)})
-                                  </span>
-                                  <Download className="h-3 w-3 text-[var(--text-muted)]" />
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Action buttons */}
-                        <div className="border-t border-[var(--border-main)] pt-4 flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            onClick={() => openCompose('reply')}
-                            leftIcon={<Reply className="h-4 w-4" />}
-                          >
-                            Reply
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => openCompose('forward')}
-                            leftIcon={<Forward className="h-4 w-4" />}
-                          >
-                            Forward
-                          </Button>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ) : filteredEmails.length === 0 ? (
-                /* Empty State */
-                <div className="py-16">
-                  <div className="text-center">
-                    <MailOpen className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
-                      {searchQuery ? 'No emails found' : 'No emails here'}
-                    </h3>
-                    <p className="text-[var(--text-muted)]">
-                      {searchQuery
-                        ? 'Try adjusting your search query'
-                        : `Your ${selectedLabel.toLowerCase()} is empty`}
-                    </p>
-                  </div>
-                </div>
+              {selectedEmail ? (
+                <EmailViewer
+                  email={selectedEmail}
+                  isLoadingEmail={isLoadingEmail}
+                  onBack={() => setSelectedEmail(null)}
+                  onReply={() => openCompose('reply')}
+                  onReplyAll={() => openCompose('replyAll')}
+                  onForward={() => openCompose('forward')}
+                  onArchive={archiveEmail}
+                  onDelete={deleteEmail}
+                  onToggleStar={toggleStar}
+                  onDownloadAttachment={downloadAttachment}
+                  formatFileSize={formatFileSize}
+                />
               ) : (
-                /* Email List */
-                <div className="divide-y divide-surface-100 dark:divide-surface-800">
-                  {filteredEmails.map((email) => (
-                    <div
-                      key={email.id}
-                      onClick={() => loadEmailContent(email.id)}
-                      className={`flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors ${
-                        !email.isRead ? 'bg-blue-50/50 dark:bg-blue-950/20' : ''
-                      }`}
-                    >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleStar(email.id, email.isStarred);
-                        }}
-                        className={`flex-shrink-0 ${
-                          email.isStarred
-                            ? 'text-yellow-500'
-                            : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-yellow-500'
-                        }`}
-                      >
-                        <Star className={`h-5 w-5 ${email.isStarred ? 'fill-current' : ''}`} />
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-sm truncate ${
-                            !email.isRead
-                              ? 'font-semibold text-[var(--text-primary)]'
-                              : 'font-medium text-[var(--text-secondary)]'
-                          }`}>
-                            {email.from}
-                          </span>
-                          {email.hasAttachments && (
-                            <Paperclip className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={`text-sm truncate ${
-                            !email.isRead
-                              ? 'font-medium text-[var(--text-primary)]'
-                              : 'text-[var(--text-secondary)]'
-                          }`}>
-                            {email.subject}
-                          </span>
-                          <span className="text-sm text-[var(--text-muted)] truncate hidden sm:inline">
-                            - {email.snippet}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex-shrink-0 text-xs text-[var(--text-muted)]">
-                        {formatDate(email.date)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <EmailList
+                  emails={filteredEmails}
+                  searchQuery={searchQuery}
+                  isLoading={isLoading}
+                  selectedLabel={selectedLabel}
+                  pageToken={pageToken}
+                  prevPageTokens={prevPageTokens}
+                  onSearchChange={setSearchQuery}
+                  onEmailClick={loadEmailContent}
+                  onToggleStar={toggleStar}
+                  onNextPage={handleNextPage}
+                  onPrevPage={handlePrevPage}
+                  formatDate={formatDate}
+                />
               )}
             </Card>
           </div>
         )}
 
         {/* Compose Modal */}
-        {showCompose && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
-                <h3 className="font-semibold text-[var(--text-primary)]">
-                  {composeMode === 'new' ? 'New Message' :
-                   composeMode === 'reply' ? 'Reply' :
-                   composeMode === 'replyAll' ? 'Reply All' : 'Forward'}
-                </h3>
-                <button
-                  onClick={() => setShowCompose(false)}
-                  className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {sendError && (
-                  <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg">
-                    <AlertCircle className="h-4 w-4" />
-                    <span className="text-sm">{sendError}</span>
-                  </div>
-                )}
-
-                {sendSuccess && (
-                  <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg">
-                    <Send className="h-4 w-4" />
-                    <span className="text-sm">Email sent successfully!</span>
-                  </div>
-                )}
-
-                {/* To field with auto-complete */}
-                <div className="relative">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    To
-                  </label>
-                  <div className="relative">
-                    <Input
-                      ref={toInputRef}
-                      value={composeEmail.to}
-                      onChange={(e) => {
-                        setComposeEmail({ ...composeEmail, to: e.target.value });
-                        filterContacts(e.target.value, 'to');
-                      }}
-                      onFocus={() => filterContacts(composeEmail.to, 'to')}
-                      placeholder="Start typing to search employees..."
-                      className="pr-10"
-                    />
-                    <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
-                  </div>
-                  {/* Suggestions dropdown for To */}
-                  {showSuggestions && activeField === 'to' && filteredContacts.length > 0 && (
-                    <div
-                      ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
-                    >
-                      {filteredContacts.map((contact, _index) => (
-                        <button
-                          key={contact.email}
-                          onClick={() => selectContact(contact, 'to')}
-                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4 transition-colors"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
-                            <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                              {contact.name}
-                            </p>
-                            <p className="text-xs text-[var(--text-muted)] truncate">
-                              {contact.email}
-                              {contact.designation && ` • ${contact.designation}`}
-                              {contact.department && ` • ${contact.department}`}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Cc field with auto-complete */}
-                <div className="relative">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Cc
-                  </label>
-                  <div className="relative">
-                    <Input
-                      ref={ccInputRef}
-                      value={composeEmail.cc}
-                      onChange={(e) => {
-                        setComposeEmail({ ...composeEmail, cc: e.target.value });
-                        filterContacts(e.target.value, 'cc');
-                      }}
-                      onFocus={() => filterContacts(composeEmail.cc, 'cc')}
-                      placeholder="Start typing to search employees..."
-                      className="pr-10"
-                    />
-                    <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
-                  </div>
-                  {/* Suggestions dropdown for Cc */}
-                  {showSuggestions && activeField === 'cc' && filteredContacts.length > 0 && (
-                    <div
-                      ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
-                    >
-                      {filteredContacts.map((contact, _index) => (
-                        <button
-                          key={contact.email}
-                          onClick={() => selectContact(contact, 'cc')}
-                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4 transition-colors"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
-                            <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                              {contact.name}
-                            </p>
-                            <p className="text-xs text-[var(--text-muted)] truncate">
-                              {contact.email}
-                              {contact.designation && ` • ${contact.designation}`}
-                              {contact.department && ` • ${contact.department}`}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Subject
-                  </label>
-                  <Input
-                    value={composeEmail.subject}
-                    onChange={(e) => setComposeEmail({ ...composeEmail, subject: e.target.value })}
-                    placeholder="Email subject"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Message
-                  </label>
-                  <textarea
-                    value={composeEmail.body}
-                    onChange={(e) => setComposeEmail({ ...composeEmail, body: e.target.value })}
-                    placeholder="Write your message..."
-                    rows={8}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-t-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 dark:placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                  />
-                  {/* Signature Preview */}
-                  {emailSignatureHtml && (
-                    <div className="border border-t-0 border-[var(--border-main)] dark:border-[var(--border-main)] rounded-b-lg bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50 p-4">
-                      <p className="text-xs text-[var(--text-muted)] mb-2">-- Signature --</p>
-                      <div
-                        className="signature-preview text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]"
-                        dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailSignatureHtml) }}
-                      />
-                    </div>
-                  )}
-                  {!emailSignatureHtml && emailSignature && (
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
-                      Your Gmail signature will be added when sending.
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-4 border-t border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowCompose(false)}
-                >
-                  Discard
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={sendEmail}
-                  disabled={isSending || !composeEmail.to || sendSuccess}
-                  leftIcon={isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                >
-                  {isSending ? 'Sending...' : 'Send'}
-                </Button>
-              </div>
-            </Card>
-          </div>
-        )}
+        <ComposeModal
+          opened={showCompose}
+          composeMode={composeMode}
+          composeEmail={composeEmail}
+          isSending={isSending}
+          sendError={sendError}
+          sendSuccess={sendSuccess}
+          emailSignatureHtml={emailSignatureHtml}
+          emailSignature={emailSignature}
+          filteredContacts={filteredContacts}
+          showSuggestions={showSuggestions}
+          activeField={activeField}
+          onClose={() => setShowCompose(false)}
+          onSend={sendEmail}
+          onComposeChange={setComposeEmail}
+          onFilterContacts={filterContacts}
+          onSelectContact={selectContact}
+        />
       </div>
 
       {/* Email content styles */}
@@ -1585,7 +885,6 @@ function MailContent() {
           margin-left: 0;
           color: #6b7280;
         }
-        /* Signature preview styles */
         .signature-preview {
           font-size: 13px;
           line-height: 1.5;
