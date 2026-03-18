@@ -53,7 +53,7 @@ public class FailedKafkaEvent extends BaseEntity {
     private int partition;
 
     /** Offset of the message in the dead-letter topic. */
-    @Column(nullable = false)
+    @Column(name = "\"offset\"", nullable = false)
     private long offset;
 
     /**
