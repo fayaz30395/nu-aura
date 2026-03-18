@@ -36,6 +36,7 @@ public class Asset {
     private BigDecimal purchaseCost;
     @Column(name = "current_value", precision = 10, scale = 2)
     private BigDecimal currentValue;
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private AssetStatus status = AssetStatus.AVAILABLE;
@@ -53,6 +54,7 @@ public class Asset {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Builder.Default
     @Version
     private Long version = 0L;
 

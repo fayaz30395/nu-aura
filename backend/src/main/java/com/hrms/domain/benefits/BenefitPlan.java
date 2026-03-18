@@ -38,6 +38,7 @@ public class BenefitPlan {
     private LocalDate effectiveDate;
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
+    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
     @Column(name = "eligibility_criteria", columnDefinition = "TEXT")
@@ -48,6 +49,7 @@ public class BenefitPlan {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Builder.Default
     @Version
     private Long version = 0L;
 

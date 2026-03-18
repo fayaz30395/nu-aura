@@ -28,6 +28,7 @@ public class DocumentApprovalWorkflow extends TenantAware {
     @Column
     private UUID workflowDefId;
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private WorkflowStatus status = WorkflowStatus.PENDING;
@@ -38,9 +39,11 @@ public class DocumentApprovalWorkflow extends TenantAware {
     @Column
     private UUID currentApproverId;
 
+    @Builder.Default
     @Column
     private Integer approvalLevel = 1;
 
+    @Builder.Default
     @Column
     private Integer totalApprovalLevels = 1;
 

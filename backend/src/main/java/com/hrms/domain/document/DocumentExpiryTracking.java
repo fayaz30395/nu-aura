@@ -29,15 +29,18 @@ public class DocumentExpiryTracking extends TenantAware {
     @Column(nullable = false)
     private LocalDate expiryDate;
 
+    @Builder.Default
     @Column
     private Integer reminderDaysBefore = 30;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isNotified = false;
 
     @Column
     private LocalDateTime notifiedAt;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean expiryNotificationSent = false;
 

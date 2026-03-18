@@ -76,6 +76,9 @@ public class AuthService {
     @Autowired
     private MetricsService metricsService;
 
+    @Autowired
+    private PasswordPolicyService passwordPolicyService;
+
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
 
@@ -464,6 +467,18 @@ public class AuthService {
             throw new AuthenticationException("Current password is incorrect");
         }
 
+        // Validate new password against policy (P0 security hardening)
+        passwordPolicyService.validatePassword(
+                request.getNewPassword(),
+                user.getEmail(),
+                user.getFullName()
+        );
+
+        // Ensure new password is different from current
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+            throw new ValidationException("New password must be different from current password");
+        }
+
         // Hash and update new password
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordChangedAt(LocalDateTime.now());
@@ -690,6 +705,13 @@ public class AuthService {
                 user.getPasswordResetTokenExpiry().isBefore(LocalDateTime.now())) {
             throw new AuthenticationException("Password reset token has expired");
         }
+
+        // Validate new password against policy (P0 security hardening)
+        passwordPolicyService.validatePassword(
+                request.getNewPassword(),
+                user.getEmail(),
+                user.getFullName()
+        );
 
         // Update password and clear reset token
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));

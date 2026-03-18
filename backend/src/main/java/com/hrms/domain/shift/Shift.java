@@ -41,27 +41,34 @@ public class Shift {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
+    @Builder.Default
     @Column(name = "grace_period_in_minutes")
     private Integer gracePeriodInMinutes = 0;
 
+    @Builder.Default
     @Column(name = "late_mark_after_minutes")
     private Integer lateMarkAfterMinutes = 15;
 
+    @Builder.Default
     @Column(name = "half_day_after_minutes")
     private Integer halfDayAfterMinutes = 240;
 
+    @Builder.Default
     @Column(name = "full_day_hours", precision = 4, scale = 2)
     private BigDecimal fullDayHours = new BigDecimal("8.00");
 
+    @Builder.Default
     @Column(name = "break_duration_minutes")
     private Integer breakDurationMinutes = 60;
 
+    @Builder.Default
     @Column(name = "is_night_shift")
     private Boolean isNightShift = false;
 
     @Column(name = "working_days", nullable = false, length = 50)
     private String workingDays; // e.g., "MON,TUE,WED,THU,FRI"
 
+    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
@@ -79,6 +86,7 @@ public class Shift {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
+    @Builder.Default
     @Version
     @Column(name = "version")
     private Long version = 0L;
@@ -90,9 +98,11 @@ public class Shift {
     @Column(name = "color_code", length = 7)
     private String colorCode; // For UI calendar display
 
+    @Builder.Default
     @Column(name = "allows_overtime")
     private Boolean allowsOvertime = true;
 
+    @Builder.Default
     @Column(name = "overtime_multiplier", precision = 3, scale = 2)
     private BigDecimal overtimeMultiplier = new BigDecimal("1.50"); // 1.5x for regular overtime
 

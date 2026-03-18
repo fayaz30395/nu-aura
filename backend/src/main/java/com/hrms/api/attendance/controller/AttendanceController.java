@@ -11,6 +11,11 @@ import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.domain.employee.Employee;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -30,9 +35,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for attendance management.
+ * Handles check-in/out, time tracking, regularization, and bulk imports.
+ */
 @RestController
 @RequestMapping("/api/v1/attendance")
 @RequiredArgsConstructor
+@Tag(name = "Attendance", description = "Attendance management endpoints for time tracking, check-in/out, and regularization")
 public class AttendanceController {
 
     private final AttendanceRecordService attendanceService;
@@ -44,6 +54,12 @@ public class AttendanceController {
 
     @PostMapping("/check-in")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
+    @Operation(summary = "Check in", description = "Record employee check-in for the day")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Check-in recorded successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid request or already checked in"),
+        @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
+    })
     public ResponseEntity<AttendanceResponse> checkIn(@Valid @RequestBody CheckInRequest request) {
         LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
@@ -60,6 +76,12 @@ public class AttendanceController {
 
     @PostMapping("/check-out")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
+    @Operation(summary = "Check out", description = "Record employee check-out for the day")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Check-out recorded successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid request or not checked in"),
+        @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
+    })
     public ResponseEntity<AttendanceResponse> checkOut(@Valid @RequestBody CheckOutRequest request) {
         LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
                 : LocalDateTime.now();
@@ -80,9 +102,11 @@ public class AttendanceController {
 
     @GetMapping("/my-attendance")
     @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
+    @Operation(summary = "Get my attendance", description = "Retrieve authenticated user's attendance records for a date range")
+    @ApiResponse(responseCode = "200", description = "Attendance records retrieved successfully")
     public ResponseEntity<List<AttendanceResponse>> getMyAttendance(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @Parameter(description = "Start date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "End date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         UUID employeeId = requireCurrentEmployeeId();
         List<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate);
         return ResponseEntity.ok(records.stream().map(this::toResponse).toList());
@@ -90,8 +114,10 @@ public class AttendanceController {
 
     @GetMapping("/my-time-entries")
     @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
+    @Operation(summary = "Get my time entries", description = "Retrieve authenticated user's time entries for a specific date")
+    @ApiResponse(responseCode = "200", description = "Time entries retrieved successfully")
     public ResponseEntity<List<TimeEntryResponse>> getMyTimeEntries(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @Parameter(description = "Date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         UUID employeeId = requireCurrentEmployeeId();
         List<AttendanceTimeEntry> entries = attendanceService.getTimeEntriesForDate(employeeId, date);
         return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
@@ -251,9 +277,15 @@ public class AttendanceController {
 
     @PostMapping("/{id}/request-regularization")
     @RequiresPermission(Permission.ATTENDANCE_REGULARIZE)
+    @Operation(summary = "Request regularization", description = "Request approval to regularize an attendance record")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Regularization request submitted"),
+        @ApiResponse(responseCode = "404", description = "Attendance record not found"),
+        @ApiResponse(responseCode = "409", description = "Record already has pending regularization")
+    })
     public ResponseEntity<AttendanceResponse> requestRegularization(
-            @PathVariable UUID id,
-            @RequestParam String reason) {
+            @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
+            @Parameter(description = "Reason for regularization") @RequestParam String reason) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
         validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_REGULARIZE);
         AttendanceRecord updated = attendanceService.requestRegularization(id, reason);
@@ -262,8 +294,14 @@ public class AttendanceController {
 
     @PostMapping("/{id}/approve-regularization")
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    @Operation(summary = "Approve regularization", description = "Approve a pending attendance regularization request")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Regularization approved"),
+        @ApiResponse(responseCode = "404", description = "Attendance record not found"),
+        @ApiResponse(responseCode = "409", description = "Record is not pending regularization")
+    })
     public ResponseEntity<AttendanceResponse> approveRegularization(
-            @PathVariable UUID id) {
+            @Parameter(description = "Attendance record UUID") @PathVariable UUID id) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
         validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
         UUID approverId = requireCurrentEmployeeId();
@@ -273,9 +311,15 @@ public class AttendanceController {
 
     @PostMapping("/{id}/reject-regularization")
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    @Operation(summary = "Reject regularization", description = "Reject a pending attendance regularization request")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Regularization rejected"),
+        @ApiResponse(responseCode = "404", description = "Attendance record not found"),
+        @ApiResponse(responseCode = "409", description = "Record is not pending regularization")
+    })
     public ResponseEntity<AttendanceResponse> rejectRegularization(
-            @PathVariable UUID id,
-            @RequestParam(required = false, defaultValue = "") String reason) {
+            @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
+            @Parameter(description = "Rejection reason (optional)") @RequestParam(required = false, defaultValue = "") String reason) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
         validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
         UUID rejectorId = requireCurrentEmployeeId();
@@ -297,8 +341,13 @@ public class AttendanceController {
 
     @PostMapping("/import")
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    @Operation(summary = "Import attendance", description = "Bulk import attendance records from Excel file")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Import completed (check response for individual errors)"),
+        @ApiResponse(responseCode = "400", description = "Invalid file format or empty file")
+    })
     public ResponseEntity<BulkAttendanceImportResponse> importAttendance(
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @Parameter(description = "Excel file (.xlsx or .xls)") @RequestParam("file") MultipartFile file) throws IOException {
 
         // Validate file
         if (file.isEmpty()) {

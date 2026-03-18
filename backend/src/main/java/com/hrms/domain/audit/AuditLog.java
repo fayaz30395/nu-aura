@@ -63,6 +63,11 @@ public class AuditLog extends TenantAware {
         LOGOUT,
         PASSWORD_CHANGE,
         STATUS_CHANGE,
-        PERMISSION_CHANGE
+        PERMISSION_CHANGE,
+        APPROVE,
+        REJECT,
+        CREDIT_LEAVE,
+        IMPORT,
+        EXPORT
     }
 }

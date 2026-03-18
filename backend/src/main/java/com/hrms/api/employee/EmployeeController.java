@@ -77,10 +77,12 @@ public class EmployeeController {
         Permission.EMPLOYEE_VIEW_TEAM,
         Permission.EMPLOYEE_VIEW_SELF
     })
+    @Operation(summary = "Search employees", description = "Search employees by name, email, or employee code")
+    @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
     public ResponseEntity<Page<EmployeeResponse>> searchEmployees(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+            @Parameter(description = "Search query string") @RequestParam String query,
+            @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<EmployeeResponse> employees = employeeService.searchEmployees(query, pageable);
@@ -127,7 +129,13 @@ public class EmployeeController {
         Permission.EMPLOYEE_VIEW_DEPARTMENT,
         Permission.EMPLOYEE_VIEW_TEAM
     })
-    public ResponseEntity<EmployeeResponse> getEmployeeHierarchy(@PathVariable UUID id) {
+    @Operation(summary = "Get employee hierarchy", description = "Returns the employee with their full reporting hierarchy")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Employee hierarchy retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Employee not found")
+    })
+    public ResponseEntity<EmployeeResponse> getEmployeeHierarchy(
+            @Parameter(description = "Employee UUID") @PathVariable UUID id) {
         EmployeeResponse response = employeeService.getEmployeeHierarchy(id);
         return ResponseEntity.ok(response);
     }
@@ -138,7 +146,10 @@ public class EmployeeController {
         Permission.EMPLOYEE_VIEW_DEPARTMENT,
         Permission.EMPLOYEE_VIEW_TEAM
     })
-    public ResponseEntity<List<EmployeeResponse>> getSubordinates(@PathVariable UUID id) {
+    @Operation(summary = "Get subordinates", description = "Returns direct reports of the specified employee")
+    @ApiResponse(responseCode = "200", description = "Subordinates retrieved successfully")
+    public ResponseEntity<List<EmployeeResponse>> getSubordinates(
+            @Parameter(description = "Manager UUID") @PathVariable UUID id) {
         List<EmployeeResponse> subordinates = employeeService.getSubordinates(id);
         return ResponseEntity.ok(subordinates);
     }
@@ -178,8 +189,14 @@ public class EmployeeController {
 
     @PutMapping("/{id}")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
+    @Operation(summary = "Update employee", description = "Update an existing employee's information")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Employee updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid request data"),
+        @ApiResponse(responseCode = "404", description = "Employee not found")
+    })
     public ResponseEntity<EmployeeResponse> updateEmployee(
-            @PathVariable UUID id,
+            @Parameter(description = "Employee UUID") @PathVariable UUID id,
             @Valid @RequestBody UpdateEmployeeRequest request
     ) {
         EmployeeResponse response = employeeService.updateEmployee(id, request);
@@ -188,7 +205,13 @@ public class EmployeeController {
 
     @DeleteMapping("/{id}")
     @RequiresPermission(Permission.EMPLOYEE_DELETE)
-    public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id) {
+    @Operation(summary = "Delete employee", description = "Soft-delete an employee record")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Employee deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Employee not found")
+    })
+    public ResponseEntity<Void> deleteEmployee(
+            @Parameter(description = "Employee UUID") @PathVariable UUID id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
     }

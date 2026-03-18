@@ -43,12 +43,15 @@ public class DocumentTemplate extends TenantAware {
     @Column(name = "thumbnail_url", length = 500)
     private String thumbnailUrl;
 
+    @Builder.Default
     @Column(name = "usage_count", nullable = false)
     private Integer usageCount = 0;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
+    @Builder.Default
     @Column(name = "is_featured", nullable = false)
     private Boolean isFeatured = false;
 

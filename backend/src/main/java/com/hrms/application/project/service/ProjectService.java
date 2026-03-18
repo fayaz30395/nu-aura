@@ -10,6 +10,7 @@ import com.hrms.domain.project.ProjectEmployee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.ProjectEmployeeRepository;
 import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProjectService {
 
         @Autowired

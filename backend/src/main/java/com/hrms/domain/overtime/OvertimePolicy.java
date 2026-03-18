@@ -37,16 +37,20 @@ public class OvertimePolicy {
     @Column(name = "department_id")
     private UUID departmentId;
 
+    @Builder.Default
     @Column(name = "is_default")
     private Boolean isDefault = false;
 
+    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
     // Daily overtime settings
+    @Builder.Default
     @Column(name = "daily_threshold_hours", precision = 5, scale = 2)
     private BigDecimal dailyThresholdHours = new BigDecimal("8.00");
 
+    @Builder.Default
     @Column(name = "daily_ot_multiplier", precision = 3, scale = 2)
     private BigDecimal dailyOtMultiplier = new BigDecimal("1.50");
 
@@ -54,9 +58,11 @@ public class OvertimePolicy {
     private BigDecimal dailyMaxOtHours;
 
     // Weekly overtime settings
+    @Builder.Default
     @Column(name = "weekly_threshold_hours", precision = 5, scale = 2)
     private BigDecimal weeklyThresholdHours = new BigDecimal("40.00");
 
+    @Builder.Default
     @Column(name = "weekly_ot_multiplier", precision = 3, scale = 2)
     private BigDecimal weeklyOtMultiplier = new BigDecimal("1.50");
 
@@ -64,18 +70,22 @@ public class OvertimePolicy {
     private BigDecimal weeklyMaxOtHours;
 
     // Weekend overtime
+    @Builder.Default
     @Column(name = "weekend_ot_multiplier", precision = 3, scale = 2)
     private BigDecimal weekendOtMultiplier = new BigDecimal("2.00");
 
     // Holiday overtime
+    @Builder.Default
     @Column(name = "holiday_ot_multiplier", precision = 3, scale = 2)
     private BigDecimal holidayOtMultiplier = new BigDecimal("2.50");
 
     // Night shift overtime
+    @Builder.Default
     @Column(name = "night_shift_ot_multiplier", precision = 3, scale = 2)
     private BigDecimal nightShiftOtMultiplier = new BigDecimal("1.75");
 
     // Approval settings
+    @Builder.Default
     @Column(name = "requires_pre_approval")
     private Boolean requiresPreApproval = true;
 
@@ -83,19 +93,24 @@ public class OvertimePolicy {
     private BigDecimal autoApproveLimitHours;
 
     // Calculation settings
+    @Builder.Default
     @Column(name = "round_to_nearest_minutes")
     private Integer roundToNearestMinutes = 15;
 
+    @Builder.Default
     @Column(name = "minimum_ot_minutes")
     private Integer minimumOtMinutes = 30;
 
+    @Builder.Default
     @Column(name = "count_break_time")
     private Boolean countBreakTime = false;
 
     // Comp time settings
+    @Builder.Default
     @Column(name = "comp_time_allowed")
     private Boolean compTimeAllowed = false;
 
+    @Builder.Default
     @Column(name = "comp_time_multiplier", precision = 3, scale = 2)
     private BigDecimal compTimeMultiplier = new BigDecimal("1.50");
 
@@ -109,6 +124,7 @@ public class OvertimePolicy {
     @Column(name = "double_time_threshold_hours", precision = 5, scale = 2)
     private BigDecimal doubleTimeThresholdHours; // e.g., after 12 hours
 
+    @Builder.Default
     @Column(name = "double_time_multiplier", precision = 3, scale = 2)
     private BigDecimal doubleTimeMultiplier = new BigDecimal("2.00");
 
@@ -132,6 +148,7 @@ public class OvertimePolicy {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
+    @Builder.Default
     @Version
     @Column(name = "version")
     private Long version = 0L;

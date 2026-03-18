@@ -49,6 +49,7 @@ public class DocumentAccess extends TenantAware {
     @Column
     private LocalDateTime expiresAt;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isActive = true;
 

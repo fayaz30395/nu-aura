@@ -1,8 +1,11 @@
 package com.hrms.application.attendance.service;
 
 import com.hrms.api.attendance.dto.BulkAttendanceImportResponse;
+import com.hrms.api.attendance.dto.BulkAttendanceImportResponse.ImportErrorCode;
+import com.hrms.common.logging.Audited;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -109,17 +112,35 @@ public class AttendanceImportService {
         }
     }
 
+    private static final long MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+    private static final Set<String> VALID_CONTENT_TYPES = Set.of(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel"
+    );
+
     /**
-     * Import attendance records from Excel file
+     * Import attendance records from Excel file.
+     * Validates file type and size before processing.
      */
     @Transactional
+    @Audited(action = AuditAction.IMPORT, entityType = "ATTENDANCE_RECORD", description = "Bulk attendance import")
     public BulkAttendanceImportResponse importFromExcel(MultipartFile file) throws IOException {
         UUID tenantId = TenantContext.getCurrentTenant();
+        String importBatchId = "imp_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
         BulkAttendanceImportResponse response = BulkAttendanceImportResponse.builder()
                 .errors(new ArrayList<>())
                 .successes(new ArrayList<>())
+                .importBatchId(importBatchId)
                 .build();
+
+        // Validate file before processing
+        if (!validateFile(file, response)) {
+            response.setPartialSuccess(false);
+            return response;
+        }
+
+        log.info("Starting attendance import batch {} for tenant {}", importBatchId, tenantId);
 
         try (InputStream inputStream = file.getInputStream();
              Workbook workbook = WorkbookFactory.create(inputStream)) {
@@ -141,16 +162,21 @@ public class AttendanceImportService {
                 totalRows++;
 
                 try {
-                    processRow(row, rowIndex + 1, tenantId, response);
+                    boolean isUpdate = processRow(row, rowIndex + 1, tenantId, response);
                     successCount++;
                 } catch (Exception e) {
                     failureCount++;
                     log.error("Error processing row {}: {}", rowIndex + 1, e.getMessage());
+                    addError(response, rowIndex + 1, null, ImportErrorCode.UNKNOWN_ERROR,
+                            "Unexpected error: " + e.getMessage(), "Contact support if this persists");
                 }
 
                 // Limit to 1000 rows per import
                 if (totalRows >= 1000) {
-                    log.warn("Import limit reached. Maximum 1000 rows allowed.");
+                    log.warn("Import limit reached for batch {}. Maximum 1000 rows allowed.", importBatchId);
+                    addError(response, totalRows + 1, null, ImportErrorCode.ROW_LIMIT_EXCEEDED,
+                            "Import stopped at row " + (totalRows + 1) + ". Maximum 1000 rows allowed per import.",
+                            "Split your data into multiple files of 1000 rows or fewer");
                     break;
                 }
             }
@@ -159,40 +185,84 @@ public class AttendanceImportService {
             response.setSuccessCount(successCount);
             response.setFailureCount(failureCount);
             response.setSkippedCount(skippedCount);
+            response.setPartialSuccess(successCount > 0 && failureCount > 0);
+
+            log.info("Completed attendance import batch {}: {} success, {} failed, {} skipped",
+                    importBatchId, successCount, failureCount, skippedCount);
         }
 
         return response;
     }
 
-    private void processRow(Row row, int rowNumber, UUID tenantId, BulkAttendanceImportResponse response) {
+    /**
+     * Validates the uploaded file before processing.
+     */
+    private boolean validateFile(MultipartFile file, BulkAttendanceImportResponse response) {
+        // Check file size
+        if (file.getSize() > MAX_FILE_SIZE_BYTES) {
+            addError(response, 0, null, ImportErrorCode.FILE_TOO_LARGE,
+                    "File size (" + (file.getSize() / 1024 / 1024) + "MB) exceeds maximum allowed (5MB)",
+                    "Reduce file size or split into multiple smaller files");
+            return false;
+        }
+
+        // Check file type
+        String contentType = file.getContentType();
+        String filename = file.getOriginalFilename();
+        boolean isValidType = contentType != null && VALID_CONTENT_TYPES.contains(contentType);
+        boolean isValidExtension = filename != null && (filename.endsWith(".xlsx") || filename.endsWith(".xls"));
+
+        if (!isValidType && !isValidExtension) {
+            addError(response, 0, null, ImportErrorCode.INVALID_FILE_TYPE,
+                    "Invalid file type: " + contentType,
+                    "Upload an Excel file with .xlsx or .xls extension");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Process a single row from the Excel file.
+     * @return true if this was an update to an existing record, false if new record
+     */
+    private boolean processRow(Row row, int rowNumber, UUID tenantId, BulkAttendanceImportResponse response) {
         // Get employee code (required)
         String employeeCode = getCellValueAsString(row.getCell(0));
         if (employeeCode == null || employeeCode.trim().isEmpty()) {
-            addError(response, rowNumber, employeeCode, "Employee code is required");
-            return;
+            addError(response, rowNumber, employeeCode, ImportErrorCode.MISSING_EMPLOYEE_CODE,
+                    "Employee code is required in column A",
+                    "Enter the employee code (e.g., EMP001) in the first column");
+            throw new IllegalArgumentException("Missing employee code");
         }
         employeeCode = employeeCode.trim();
 
         // Get date (required)
         String dateStr = getCellValueAsString(row.getCell(1));
         if (dateStr == null || dateStr.trim().isEmpty()) {
-            addError(response, rowNumber, employeeCode, "Date is required");
-            return;
+            addError(response, rowNumber, employeeCode, ImportErrorCode.MISSING_DATE,
+                    "Date is required in column B",
+                    "Enter the attendance date in YYYY-MM-DD format (e.g., 2024-03-15)");
+            throw new IllegalArgumentException("Missing date");
         }
 
         LocalDate attendanceDate;
         try {
             attendanceDate = LocalDate.parse(dateStr.trim(), DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            addError(response, rowNumber, employeeCode, "Invalid date format. Use YYYY-MM-DD");
-            return;
+            addError(response, rowNumber, employeeCode, ImportErrorCode.INVALID_DATE_FORMAT,
+                    "Invalid date format: '" + dateStr + "'",
+                    "Use format YYYY-MM-DD (e.g., 2024-03-15). Current value: " + dateStr);
+            throw new IllegalArgumentException("Invalid date format");
         }
 
         // Find employee
         Optional<Employee> employeeOpt = employeeRepository.findByEmployeeCodeAndTenantId(employeeCode, tenantId);
         if (employeeOpt.isEmpty()) {
-            addError(response, rowNumber, employeeCode, "Employee not found with code: " + employeeCode);
-            return;
+            addError(response, rowNumber, employeeCode, ImportErrorCode.EMPLOYEE_NOT_FOUND,
+                    "Employee not found with code: " + employeeCode,
+                    "Verify the employee code is correct and the employee exists in the system");
+            throw new IllegalArgumentException("Employee not found");
         }
         Employee employee = employeeOpt.get();
 
@@ -204,8 +274,10 @@ public class AttendanceImportService {
                 LocalTime time = LocalTime.parse(checkInStr.trim(), TIME_FORMATTER);
                 checkInTime = LocalDateTime.of(attendanceDate, time);
             } catch (DateTimeParseException e) {
-                addError(response, rowNumber, employeeCode, "Invalid check-in time format. Use HH:MM");
-                return;
+                addError(response, rowNumber, employeeCode, ImportErrorCode.INVALID_TIME_FORMAT,
+                        "Invalid check-in time format: '" + checkInStr + "'",
+                        "Use 24-hour format HH:MM (e.g., 09:00 or 14:30)");
+                throw new IllegalArgumentException("Invalid check-in time format");
             }
         }
 
@@ -217,8 +289,10 @@ public class AttendanceImportService {
                 LocalTime time = LocalTime.parse(checkOutStr.trim(), TIME_FORMATTER);
                 checkOutTime = LocalDateTime.of(attendanceDate, time);
             } catch (DateTimeParseException e) {
-                addError(response, rowNumber, employeeCode, "Invalid check-out time format. Use HH:MM");
-                return;
+                addError(response, rowNumber, employeeCode, ImportErrorCode.INVALID_TIME_FORMAT,
+                        "Invalid check-out time format: '" + checkOutStr + "'",
+                        "Use 24-hour format HH:MM (e.g., 18:00 or 17:30)");
+                throw new IllegalArgumentException("Invalid check-out time format");
             }
         }
 
@@ -229,8 +303,10 @@ public class AttendanceImportService {
             try {
                 status = AttendanceRecord.AttendanceStatus.valueOf(statusStr.trim().toUpperCase());
             } catch (IllegalArgumentException e) {
-                addError(response, rowNumber, employeeCode, "Invalid status. Valid values: PRESENT, ABSENT, HALF_DAY, ON_LEAVE, WEEKLY_OFF, HOLIDAY");
-                return;
+                addError(response, rowNumber, employeeCode, ImportErrorCode.INVALID_STATUS,
+                        "Invalid status: '" + statusStr + "'",
+                        "Valid values: PRESENT, ABSENT, HALF_DAY, ON_LEAVE, WEEKLY_OFF, HOLIDAY");
+                throw new IllegalArgumentException("Invalid status");
             }
         } else {
             status = checkInTime != null ? AttendanceRecord.AttendanceStatus.PRESENT : AttendanceRecord.AttendanceStatus.ABSENT;
@@ -244,7 +320,9 @@ public class AttendanceImportService {
                 .findByEmployeeIdAndAttendanceDateAndTenantId(employee.getId(), attendanceDate, tenantId);
 
         AttendanceRecord record;
-        if (existingRecord.isPresent()) {
+        boolean isUpdate = existingRecord.isPresent();
+
+        if (isUpdate) {
             // Update existing record
             record = existingRecord.get();
             record.setCheckInTime(checkInTime);
@@ -283,7 +361,10 @@ public class AttendanceImportService {
                 .employeeCode(employeeCode)
                 .attendanceDate(attendanceDate.toString())
                 .status(status.name())
+                .updated(isUpdate)
                 .build());
+
+        return isUpdate;
     }
 
     private boolean isRowEmpty(Row row) {
@@ -342,11 +423,14 @@ public class AttendanceImportService {
         }
     }
 
-    private void addError(BulkAttendanceImportResponse response, int rowNumber, String employeeCode, String message) {
+    private void addError(BulkAttendanceImportResponse response, int rowNumber, String employeeCode,
+                          ImportErrorCode errorCode, String message, String suggestion) {
         response.getErrors().add(BulkAttendanceImportResponse.ImportError.builder()
                 .rowNumber(rowNumber)
                 .employeeCode(employeeCode)
+                .errorCode(errorCode)
                 .errorMessage(message)
+                .suggestion(suggestion)
                 .build());
     }
 }

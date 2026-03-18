@@ -7,6 +7,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.leave.LeaveType;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class LeaveTypeService {
 

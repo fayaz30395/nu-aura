@@ -43,6 +43,7 @@ public class WikiSpace extends TenantAware {
     @Column(name = "order_index")
     private Integer orderIndex;
 
+    @Builder.Default
     @Column(name = "is_archived", nullable = false)
     private Boolean isArchived = false;
 

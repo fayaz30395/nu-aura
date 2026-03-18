@@ -1,6 +1,7 @@
 package com.hrms.application.lms.service;
 
 import java.time.temporal.ChronoUnit;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.lms.dto.*;
 import com.hrms.domain.lms.*;
@@ -254,8 +255,12 @@ public class QuizAssessmentService {
                     objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class));
 
             List<String> selectedOptionIds = new ArrayList<>();
-            if (studentAnswer instanceof List) {
-                selectedOptionIds = (List<String>) studentAnswer;
+            if (studentAnswer instanceof List<?> answerList) {
+                for (Object item : answerList) {
+                    if (item != null) {
+                        selectedOptionIds.add(item.toString());
+                    }
+                }
             }
 
             Set<String> correctIds = new HashSet<>();
@@ -423,7 +428,8 @@ public class QuizAssessmentService {
         Map<String, Object> attemptAnswers = null;
         if (answers == null && attempt.getAnswers() != null) {
             try {
-                attemptAnswers = objectMapper.readValue(attempt.getAnswers(), Map.class);
+                attemptAnswers = objectMapper.readValue(attempt.getAnswers(),
+                        new TypeReference<Map<String, Object>>() {});
             } catch (Exception e) {
                 log.warn("Failed to deserialize attempt answers", e);
                 attemptAnswers = new HashMap<>();

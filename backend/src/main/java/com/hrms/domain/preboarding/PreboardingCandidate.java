@@ -63,10 +63,12 @@ public class PreboardingCandidate {
     private LocalDateTime tokenExpiresAt;
 
     // Status tracking
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private PreboardingStatus status = PreboardingStatus.INVITED;
 
+    @Builder.Default
     @Column
     private Integer completionPercentage = 0;
 
@@ -109,18 +111,23 @@ public class PreboardingCandidate {
     private String taxId;
 
     // Documents uploaded
+    @Builder.Default
     @Column
     private Boolean photoUploaded = false;
 
+    @Builder.Default
     @Column
     private Boolean idProofUploaded = false;
 
+    @Builder.Default
     @Column
     private Boolean addressProofUploaded = false;
 
+    @Builder.Default
     @Column
     private Boolean educationDocsUploaded = false;
 
+    @Builder.Default
     @Column
     private Boolean offerLetterSigned = false;
 
@@ -136,6 +143,7 @@ public class PreboardingCandidate {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @Version
     private Long version = 0L;
 

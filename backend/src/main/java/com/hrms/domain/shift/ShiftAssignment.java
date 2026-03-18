@@ -51,10 +51,12 @@ public class ShiftAssignment {
     @Column(name = "assignment_type", nullable = false, length = 20)
     private AssignmentType assignmentType;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private AssignmentStatus status = AssignmentStatus.ACTIVE;
 
+    @Builder.Default
     @Column(name = "is_recurring")
     private Boolean isRecurring = false;
 
@@ -81,6 +83,7 @@ public class ShiftAssignment {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
+    @Builder.Default
     @Version
     @Column(name = "version")
     private Long version = 0L;

@@ -63,6 +63,7 @@ public class SecurityContext {
      * Set current tenant ID. Delegates to TenantContext for single source of truth.
      * @deprecated Use TenantContext.setCurrentTenant() directly
      */
+    @Deprecated(forRemoval = true)
     public static void setCurrentTenantId(UUID tenantId) {
         TenantContext.setCurrentTenant(tenantId);
     }

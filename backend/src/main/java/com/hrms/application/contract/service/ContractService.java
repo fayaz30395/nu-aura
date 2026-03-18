@@ -2,6 +2,7 @@ package com.hrms.application.contract.service;
 
 import com.hrms.api.contract.dto.*;
 import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.contract.*;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,6 +37,7 @@ public class ContractService {
     private final ContractSignatureRepository signatureRepository;
     private final ContractReminderRepository reminderRepository;
     private final EmployeeService employeeService;
+    private final MetricsService metricsService;
 
     // ===================== CRUD Operations =====================
 
@@ -42,6 +46,7 @@ public class ContractService {
      */
     @Transactional
     public ContractDto createContract(CreateContractRequest request) {
+        Instant start = Instant.now();
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
 
@@ -70,6 +75,10 @@ public class ContractService {
         // Create initial version
         createVersion(contract.getId(), 1, request.getTerms(), "Initial version");
 
+        // Record metrics
+        metricsService.recordContractLifecycle(
+                tenantId, "create", contract.getType().name(), Duration.between(start, Instant.now()));
+
         return toDto(contract);
     }
 
@@ -78,11 +87,14 @@ public class ContractService {
      */
     @Transactional
     public ContractDto updateContract(UUID contractId, UpdateContractRequest request) {
+        Instant start = Instant.now();
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
 
         Contract contract = contractRepository.findByIdAndTenantId(contractId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contract not found"));
+
+        ContractStatus previousStatus = contract.getStatus();
 
         // Update fields
         if (request.getTitle() != null) contract.setTitle(request.getTitle());
@@ -110,6 +122,14 @@ public class ContractService {
         }
 
         log.info("Contract updated: {} ({})", contract.getId(), contract.getTitle());
+
+        // Record metrics
+        metricsService.recordContractLifecycle(
+                tenantId, "update", contract.getType().name(), Duration.between(start, Instant.now()));
+        if (request.getStatus() != null && request.getStatus() != previousStatus) {
+            metricsService.recordContractStatusChange(tenantId, previousStatus.name(), request.getStatus().name());
+        }
+
         return toDto(contract);
     }
 
@@ -182,8 +202,12 @@ public class ContractService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         Contract contract = contractRepository.findByIdAndTenantId(contractId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contract not found"));
+        String contractType = contract.getType().name();
         contractRepository.delete(contract);
         log.info("Contract deleted: {}", contractId);
+
+        // Record metrics
+        metricsService.recordContractLifecycle(tenantId, "delete", contractType);
     }
 
     // ===================== Status Transitions =====================
@@ -216,33 +240,55 @@ public class ContractService {
     @Transactional
     public ContractDto markAsActive(UUID contractId) {
         Contract contract = getContractEntity(contractId);
+        ContractStatus previousStatus = contract.getStatus();
         contract.markAsActive();
         contractRepository.save(contract);
+
+        // Record metrics
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        metricsService.recordContractLifecycle(tenantId, "activate", contract.getType().name());
+        metricsService.recordContractStatusChange(tenantId, previousStatus.name(), ContractStatus.ACTIVE.name());
+
         return toDto(contract);
     }
 
     /**
      * Mark contract as terminated
      */
+    @Transactional
     public ContractDto terminateContract(UUID contractId) {
         Contract contract = getContractEntity(contractId);
+        ContractStatus previousStatus = contract.getStatus();
         contract.markAsTerminated();
         contractRepository.save(contract);
         log.info("Contract terminated: {}", contractId);
+
+        // Record metrics
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        metricsService.recordContractLifecycle(tenantId, "terminate", contract.getType().name());
+        metricsService.recordContractStatusChange(tenantId, previousStatus.name(), ContractStatus.TERMINATED.name());
+
         return toDto(contract);
     }
 
     /**
      * Renew contract
      */
+    @Transactional
     public ContractDto renewContract(UUID contractId) {
         Contract contract = getContractEntity(contractId);
+        ContractStatus previousStatus = contract.getStatus();
         if (contract.getEndDate() != null && contract.getRenewalPeriodDays() != null) {
             LocalDate newEndDate = contract.getEndDate().plusDays(contract.getRenewalPeriodDays());
             contract.setEndDate(newEndDate);
             contract.setStatus(ContractStatus.RENEWED);
             contractRepository.save(contract);
             log.info("Contract renewed: {} (new end date: {})", contractId, newEndDate);
+
+            // Record metrics
+            UUID tenantId = SecurityContext.getCurrentTenantId();
+            metricsService.recordContractLifecycle(tenantId, "renew", contract.getType().name());
+            metricsService.recordContractStatusChange(tenantId, previousStatus.name(), ContractStatus.RENEWED.name());
         }
         return toDto(contract);
     }

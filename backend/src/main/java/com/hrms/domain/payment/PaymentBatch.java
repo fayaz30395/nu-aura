@@ -34,9 +34,11 @@ public class PaymentBatch extends TenantAware {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal totalAmount;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer transactionCount = 0;
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private BatchStatus status = BatchStatus.INITIATED;
@@ -53,9 +55,11 @@ public class PaymentBatch extends TenantAware {
     @Column
     private LocalDateTime completedAt;
 
+    @Builder.Default
     @Column
     private Integer failedCount = 0;
 
+    @Builder.Default
     @Column
     private Integer successCount = 0;
 

@@ -51,6 +51,7 @@ public class CacheConfig implements CachingConfigurer {
     public static final String LEAVE_BALANCES = "leaveBalances";
     public static final String EMPLOYEES = "employees";
     public static final String EMPLOYEE_WITH_DETAILS = "employeeWithDetails";
+    public static final String FEATURE_FLAGS = "featureFlags";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -89,6 +90,9 @@ public class CacheConfig implements CachingConfigurer {
         // Webhook caches - medium TTL since webhooks don't change frequently
         cacheConfigurations.put(WEBHOOKS, defaultConfig.entryTtl(Duration.ofHours(1)));
         cacheConfigurations.put(ACTIVE_WEBHOOKS, defaultConfig.entryTtl(Duration.ofMinutes(30)));
+
+        // Feature flags - checked frequently, but changes are rare; invalidated on toggle
+        cacheConfigurations.put(FEATURE_FLAGS, defaultConfig.entryTtl(Duration.ofHours(4)));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)

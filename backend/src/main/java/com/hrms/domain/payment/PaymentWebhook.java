@@ -40,12 +40,14 @@ public class PaymentWebhook {
     @Column(nullable = false, columnDefinition = "JSONB")
     private String payload;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean processed = false;
 
     @Column
     private LocalDateTime processedAt;
 
+    @Builder.Default
     @Column(nullable = false, length = 50)
     private String status = "RECEIVED";
 

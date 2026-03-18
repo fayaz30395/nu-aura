@@ -1,10 +1,17 @@
 package com.hrms.api.organization.controller;
 
+import com.hrms.api.organization.dto.NineBoxDataResponse;
+import com.hrms.api.organization.dto.SuccessionAnalyticsResponse;
 import com.hrms.application.organization.service.OrganizationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.organization.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,12 +20,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
+/**
+ * REST controller for organization structure, positions, succession planning, and talent pools.
+ */
 @RestController
 @RequestMapping("/api/v1/organization")
 @RequiredArgsConstructor
+@Tag(name = "Organization", description = "Organization structure, succession planning, and talent management")
 public class OrganizationController {
 
     private final OrganizationService organizationService;
@@ -196,15 +206,29 @@ public class OrganizationController {
 
     // ==================== Analytics Endpoints ====================
 
+    @Operation(summary = "Get succession planning analytics",
+            description = "Retrieves comprehensive analytics for succession planning including " +
+                    "active plans, high-risk positions, readiness distribution, and talent pool statistics.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Analytics retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient permissions")
+    })
     @GetMapping("/analytics")
     @RequiresPermission(Permission.ANALYTICS_VIEW)
-    public ResponseEntity<Map<String, Object>> getSuccessionAnalytics() {
+    public ResponseEntity<SuccessionAnalyticsResponse> getSuccessionAnalytics() {
         return ResponseEntity.ok(organizationService.getSuccessionAnalytics());
     }
 
+    @Operation(summary = "Get Nine-Box talent grid data",
+            description = "Retrieves the distribution of succession candidates across the Nine-Box grid, " +
+                    "which plots employees by performance (X-axis) and potential (Y-axis).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Nine-Box data retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient permissions")
+    })
     @GetMapping("/analytics/nine-box")
     @RequiresPermission(Permission.ANALYTICS_VIEW)
-    public ResponseEntity<Map<String, Object>> getNineBoxData() {
+    public ResponseEntity<NineBoxDataResponse> getNineBoxData() {
         return ResponseEntity.ok(organizationService.getNineBoxData());
     }
 }

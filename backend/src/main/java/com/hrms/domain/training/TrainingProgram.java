@@ -79,9 +79,11 @@ public class TrainingProgram {
     @Column(name = "learning_objectives", columnDefinition = "TEXT")
     private String learningObjectives;
 
+    @Builder.Default
     @Column(name = "is_mandatory")
     private Boolean isMandatory = false;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private ProgramStatus status = ProgramStatus.DRAFT;
@@ -106,6 +108,7 @@ public class TrainingProgram {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
+    @Builder.Default
     @Version
     private Long version = 0L;
 

@@ -36,6 +36,7 @@ public class TrainingEnrollment {
     @Column(name = "completion_date")
     private LocalDate completionDate;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private EnrollmentStatus status = EnrollmentStatus.ENROLLED;
@@ -64,6 +65,7 @@ public class TrainingEnrollment {
     @Column(name = "assessment_score")
     private Integer assessmentScore;
 
+    @Builder.Default
     @Column(name = "certificate_issued")
     private Boolean certificateIssued = false;
 
@@ -75,6 +77,7 @@ public class TrainingEnrollment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @Version
     private Long version = 0L;
 

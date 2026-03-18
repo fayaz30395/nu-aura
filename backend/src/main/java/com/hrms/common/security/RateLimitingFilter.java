@@ -1,5 +1,6 @@
 package com.hrms.common.security;
 
+import com.hrms.common.config.DistributedRateLimiter;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
@@ -8,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,16 +19,25 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Rate limiting filter using Bucket4j token buckets.
+ * Rate limiting filter using Redis-backed distributed rate limiting with in-memory fallback.
  *
  * <p>Each client (authenticated user, API-key holder, or anonymous IP) gets an
- * independent {@link Bucket} capped to a configurable number of requests per minute.
+ * independent rate limit bucket shared across all application instances via Redis.
+ *
+ * <h3>Distributed Rate Limiting</h3>
+ * <ol>
+ *   <li><b>Primary:</b> Uses Redis via {@link DistributedRateLimiter} for consistent
+ *       rate limiting across multiple instances (horizontal scaling).</li>
+ *   <li><b>Fallback:</b> When Redis is unavailable, falls back to in-memory Bucket4j
+ *       buckets (per-instance rate limiting).</li>
+ * </ol>
  *
  * <h3>Memory safety</h3>
- * The internal bucket map is guarded against unbounded growth by two mechanisms:
+ * The fallback bucket map is guarded against unbounded growth by two mechanisms:
  * <ol>
  *   <li><b>Hard limit:</b> when the map reaches {@value #MAX_BUCKETS} entries a
  *       synchronised eviction sweep removes all buckets whose last-access timestamp
@@ -53,6 +64,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     /** Background cleanup interval in milliseconds (every 5 minutes). */
     private static final long CLEANUP_INTERVAL_MS = 5 * 60 * 1_000L;
 
+    /** Fallback in-memory buckets used when Redis is unavailable */
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     /**
@@ -62,11 +74,20 @@ public class RateLimitingFilter extends OncePerRequestFilter {
      */
     private final Map<String, Long> lastAccess = new ConcurrentHashMap<>();
 
+    /** Tracks whether we're using Redis (true) or fallback mode (false) */
+    private final AtomicBoolean redisAvailable = new AtomicBoolean(true);
+
+    @Autowired(required = false)
+    private DistributedRateLimiter distributedRateLimiter;
+
     @Value("${app.rate-limit.requests-per-minute:60}")
     private int requestsPerMinute;
 
     @Value("${app.rate-limit.enabled:true}")
     private boolean rateLimitEnabled;
+
+    @Value("${app.rate-limit.use-redis:true}")
+    private boolean useRedis;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Filter logic
@@ -90,21 +111,117 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
 
         String clientId = resolveClientId(request);
-        Bucket bucket = getOrCreateBucket(clientId);
+        DistributedRateLimiter.RateLimitType rateLimitType = determineRateLimitType(requestUri);
 
-        if (bucket.tryConsume(1)) {
-            response.addHeader("X-Rate-Limit-Remaining", String.valueOf(bucket.getAvailableTokens()));
+        // Try distributed (Redis) rate limiting first, fall back to in-memory
+        RateLimitCheckResult result = checkRateLimit(clientId, rateLimitType);
+
+        if (result.allowed()) {
+            response.addHeader("X-Rate-Limit-Remaining", String.valueOf(result.remainingTokens()));
+            response.addHeader("X-Rate-Limit-Mode", result.mode());
             filterChain.doFilter(request, response);
         } else {
-            log.warn("Rate limit exceeded for client: {}", clientId);
+            log.warn("Rate limit exceeded for client: {} (mode: {})", clientId, result.mode());
             response.setStatus(429); // Too Many Requests
             response.setContentType("application/json");
             response.addHeader("X-Rate-Limit-Remaining", "0");
-            response.addHeader("Retry-After", "60");
+            response.addHeader("X-Rate-Limit-Mode", result.mode());
+            response.addHeader("Retry-After", String.valueOf(result.retryAfterSeconds()));
             response.getWriter().write(
                     "{\"error\":\"Rate limit exceeded\",\"message\":\"Too many requests. Please try again later.\"}");
         }
     }
+
+    /**
+     * Determines the rate limit type based on the request URI.
+     */
+    private DistributedRateLimiter.RateLimitType determineRateLimitType(String uri) {
+        if (uri.startsWith("/api/v1/auth")) {
+            return DistributedRateLimiter.RateLimitType.AUTH;
+        }
+        if (uri.contains("/export") || uri.contains("/report") || uri.contains("/download")) {
+            return DistributedRateLimiter.RateLimitType.EXPORT;
+        }
+        if (uri.startsWith("/api/v1/wall") || uri.startsWith("/api/v1/social")) {
+            return DistributedRateLimiter.RateLimitType.WALL;
+        }
+        if (uri.contains("/upload") || uri.contains("/import")) {
+            return DistributedRateLimiter.RateLimitType.UPLOAD;
+        }
+        if (uri.startsWith("/api/v1/webhook")) {
+            return DistributedRateLimiter.RateLimitType.WEBHOOK;
+        }
+        return DistributedRateLimiter.RateLimitType.API;
+    }
+
+    /**
+     * Checks rate limit using Redis if available, otherwise falls back to in-memory.
+     */
+    private RateLimitCheckResult checkRateLimit(String clientId, DistributedRateLimiter.RateLimitType type) {
+        // Try Redis-backed distributed rate limiting
+        if (useRedis && distributedRateLimiter != null && redisAvailable.get()) {
+            try {
+                DistributedRateLimiter.RateLimitResult redisResult = distributedRateLimiter.tryAcquire(clientId, type);
+                return new RateLimitCheckResult(
+                    redisResult.allowed(),
+                    redisResult.remainingTokens(),
+                    redisResult.resetSeconds(),
+                    "redis"
+                );
+            } catch (Exception e) {
+                // Redis failed - mark as unavailable and fall back
+                log.warn("Redis rate limiting failed, falling back to in-memory: {}", e.getMessage());
+                redisAvailable.set(false);
+                // Schedule a retry to check if Redis is back
+                scheduleRedisRetry();
+            }
+        }
+
+        // Fallback to in-memory Bucket4j
+        Bucket bucket = getOrCreateBucket(clientId);
+        boolean allowed = bucket.tryConsume(1);
+        long remaining = bucket.getAvailableTokens();
+
+        return new RateLimitCheckResult(allowed, remaining, 60, "local");
+    }
+
+    /**
+     * Schedules a check to see if Redis is available again.
+     * Simple implementation: check on next request after 30 seconds.
+     */
+    private volatile long lastRedisRetryTime = 0;
+    private static final long REDIS_RETRY_INTERVAL_MS = 30_000; // 30 seconds
+
+    private void scheduleRedisRetry() {
+        long now = System.currentTimeMillis();
+        if (now - lastRedisRetryTime > REDIS_RETRY_INTERVAL_MS) {
+            lastRedisRetryTime = now;
+            // Will retry on next request - simple approach without additional threads
+        }
+    }
+
+    /**
+     * Periodically check if Redis is back online.
+     */
+    @Scheduled(fixedRate = 30000) // Every 30 seconds
+    public void checkRedisHealth() {
+        if (!useRedis || distributedRateLimiter == null) {
+            return;
+        }
+        if (!redisAvailable.get()) {
+            try {
+                // Try a simple operation to check if Redis is back
+                distributedRateLimiter.getRemainingTokens("health-check", DistributedRateLimiter.RateLimitType.API);
+                redisAvailable.set(true);
+                log.info("Redis rate limiting recovered - switching back from local fallback");
+            } catch (Exception e) {
+                log.debug("Redis still unavailable for rate limiting");
+            }
+        }
+    }
+
+    /** Result of a rate limit check */
+    private record RateLimitCheckResult(boolean allowed, long remainingTokens, int retryAfterSeconds, String mode) {}
 
     // ─────────────────────────────────────────────────────────────────────────
     // Bucket management (memory-safe)
