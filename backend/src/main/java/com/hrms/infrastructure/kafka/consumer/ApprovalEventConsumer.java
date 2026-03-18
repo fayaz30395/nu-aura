@@ -92,7 +92,7 @@ public class ApprovalEventConsumer {
 
             log.info("Successfully processed approval event: {}", eventId);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing approval event {}: {}", eventId, e.getMessage(), e);
             // Don't acknowledge; let Kafka retry or move to DLT based on config
             throw e;
@@ -153,7 +153,7 @@ public class ApprovalEventConsumer {
             leaveBalanceService.deductLeave(employeeId, leaveTypeId, BigDecimal.valueOf(days));
 
             log.info("Successfully deducted leave balance for request {}", leaveRequestId);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to deduct leave balance for request {}: {}", leaveRequestId, e.getMessage(), e);
             throw new RuntimeException("Leave deduction failed", e);
         }
@@ -185,7 +185,7 @@ public class ApprovalEventConsumer {
             expenseClaimService.approveExpenseClaim(expenseClaimId);
 
             log.info("Successfully updated expense claim status: {}", expenseClaimId);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to update expense claim {}: {}", expenseClaimId, e.getMessage(), e);
             throw new RuntimeException("Expense approval failed", e);
         }
@@ -217,7 +217,7 @@ public class ApprovalEventConsumer {
             assetManagementService.assignAsset(assetId, employeeId);
 
             log.info("Successfully activated asset assignment");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to activate asset assignment: {}", e.getMessage(), e);
             throw new RuntimeException("Asset approval failed", e);
         }
@@ -249,7 +249,7 @@ public class ApprovalEventConsumer {
             wikiPageService.publishPage(pageId);
 
             log.info("Successfully published wiki page: {}", pageId);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to publish wiki page {}: {}", pageId, e.getMessage(), e);
             throw new RuntimeException("Wiki page approval failed", e);
         }

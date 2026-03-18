@@ -87,7 +87,7 @@ public class NotificationEventConsumer {
 
             log.info("Successfully processed notification event: {}", eventId);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing notification event {}: {}", eventId, e.getMessage(), e);
 
             // Handle retry logic
@@ -122,7 +122,7 @@ public class NotificationEventConsumer {
                 emailService.sendEmail(recipientIdStr, recipientIdStr, null, vars);
                 log.info("Email notification sent with plain text");
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to send email to {}: {}", event.getRecipientId(), e.getMessage(), e);
             throw new RuntimeException("Email send failed", e);
         }
@@ -143,7 +143,7 @@ public class NotificationEventConsumer {
             log.warn("Push notifications not yet configured for user: {}", event.getRecipientId());
 
             log.info("Push notification queued (not yet sent) to user: {}", event.getRecipientId());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to send push notification to {}: {}", event.getRecipientId(), e.getMessage(), e);
             throw new RuntimeException("Push send failed", e);
         }
@@ -174,7 +174,7 @@ public class NotificationEventConsumer {
             );
 
             log.info("In-app notification created for user: {}", event.getRecipientId());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to create in-app notification for {}: {}", event.getRecipientId(), e.getMessage(), e);
             throw new RuntimeException("In-app notification creation failed", e);
         }
@@ -193,7 +193,7 @@ public class NotificationEventConsumer {
             log.warn("SMS service not yet configured for user: {}", event.getRecipientId());
 
             log.info("SMS notification queued (not yet sent) to user: {}", event.getRecipientId());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to send SMS to {}: {}", event.getRecipientId(), e.getMessage(), e);
             throw new RuntimeException("SMS send failed", e);
         }

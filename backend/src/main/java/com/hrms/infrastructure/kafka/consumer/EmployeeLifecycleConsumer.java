@@ -102,7 +102,7 @@ public class EmployeeLifecycleConsumer {
 
             log.info("Successfully processed employee lifecycle event: {}", eventId);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing employee lifecycle event {}: {}", eventId, e.getMessage(), e);
             // Don't acknowledge; let Kafka retry
             throw e;
@@ -127,7 +127,7 @@ public class EmployeeLifecycleConsumer {
 
             log.info("Successfully marked employee as hired: {}", employeeId);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to process HIRED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("HIRED event processing failed", e);
         }
@@ -153,7 +153,7 @@ public class EmployeeLifecycleConsumer {
                 // This is a simplified approach; in production, fetch actual leave types from config
                 leaveBalanceService.accrueLeave(employeeId, UUID.fromString("00000000-0000-0000-0000-000000000001"), new BigDecimal(20)); // Annual
                 log.debug("Created default leave balances for employee: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to create default leave balances for employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue with onboarding
             }
@@ -170,7 +170,7 @@ public class EmployeeLifecycleConsumer {
             try {
                 // Create onboarding process with default template
                 log.debug("Created onboarding tasks for employee: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to create onboarding tasks for employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue with welcome notification
             }
@@ -181,7 +181,7 @@ public class EmployeeLifecycleConsumer {
 
             log.info("Successfully processed ONBOARDED event for employee: {}", employeeId);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to process ONBOARDED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("ONBOARDED event processing failed", e);
         }
@@ -209,7 +209,7 @@ public class EmployeeLifecycleConsumer {
                 try {
                     // In production, would update salary via compensationService
                     log.debug("Updated salary for promoted employee: {}", employeeId);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.warn("Failed to update compensation for promoted employee {}: {}", employeeId, e.getMessage());
                     // Don't throw; continue with review cycle
                 }
@@ -218,14 +218,14 @@ public class EmployeeLifecycleConsumer {
             // Create performance review cycle via PerformanceReviewService
             try {
                 log.debug("Created performance review cycle for promoted employee: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to create performance review cycle for promoted employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue
             }
 
             log.info("Successfully processed PROMOTED event for employee: {}", employeeId);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to process PROMOTED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("PROMOTED event processing failed", e);
         }
@@ -256,7 +256,7 @@ public class EmployeeLifecycleConsumer {
             try {
                 // In production, would call employeeService.updateDepartmentAndLocation()
                 log.debug("Updated organizational assignments for transferred employee: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to update organizational assignments for transferred employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue with notifications
             }
@@ -264,14 +264,14 @@ public class EmployeeLifecycleConsumer {
             // Notify stakeholders (old and new managers, employee)
             try {
                 log.debug("Notified stakeholders of employee transfer: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to notify stakeholders of employee transfer {}: {}", employeeId, e.getMessage());
                 // Don't throw; transfer is already recorded
             }
 
             log.info("Successfully processed TRANSFERRED event for employee: {}", employeeId);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to process TRANSFERRED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("TRANSFERRED event processing failed", e);
         }
@@ -297,7 +297,7 @@ public class EmployeeLifecycleConsumer {
             try {
                 // In production, would call accessControlService.disableEmployeeAccess()
                 log.debug("Disabled access for offboarded employee: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to disable access for offboarded employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue with asset revocation
             }
@@ -306,7 +306,7 @@ public class EmployeeLifecycleConsumer {
             try {
                 // In production, would call assetService.revokeAssignments()
                 log.debug("Revoked asset assignments for offboarded employee: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to revoke asset assignments for employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue with approval chain removal
             }
@@ -315,7 +315,7 @@ public class EmployeeLifecycleConsumer {
             try {
                 // In production, would call approvalService.removeFromChains()
                 log.debug("Removed from approval chains: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to remove from approval chains for employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue with exit document collection
             }
@@ -324,7 +324,7 @@ public class EmployeeLifecycleConsumer {
             try {
                 // In production, would call documentService.initiateExitCollection()
                 log.debug("Initiated exit document collection: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to initiate exit document collection for employee {}: {}", employeeId, e.getMessage());
                 // Don't throw; continue with notifications
             }
@@ -334,14 +334,14 @@ public class EmployeeLifecycleConsumer {
             try {
                 // In production, would call notificationService.notifyOffboarding()
                 log.debug("Notified team of employee offboarding: {}", employeeId);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.warn("Failed to notify team of employee offboarding {}: {}", employeeId, e.getMessage());
                 // Don't throw; offboarding is already recorded
             }
 
             log.info("Successfully processed OFFBOARDED event for employee: {}", employeeId);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to process OFFBOARDED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("OFFBOARDED event processing failed", e);
         }

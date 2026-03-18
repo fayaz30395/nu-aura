@@ -7,6 +7,7 @@ import com.hrms.infrastructure.audit.repository.AuditLogRepository;
 import com.hrms.domain.audit.AuditLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -98,7 +99,7 @@ public class AuditEventConsumer {
             // Always acknowledge (even if persistence fails, we don't retry)
             acknowledgment.acknowledge();
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             // Log error but don't throw; audit events should never block business operations
             log.error("Error processing audit event {}: {}", eventId, e.getMessage(), e);
             // Still acknowledge to move forward
@@ -139,7 +140,7 @@ public class AuditEventConsumer {
 
             log.debug("Successfully persisted {} audit events", batch.size());
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             // Log error but don't throw
             log.error("Failed to persist audit batch (size={}): {}", batch.size(), e.getMessage(), e);
             // In production, you might want to:
@@ -160,7 +161,7 @@ public class AuditEventConsumer {
                 try {
                     persistAuditBatch(eventBatch);
                     eventBatch.clear();
-                } catch (Exception e) {
+                } catch (DataAccessException e) {
                     log.error("Failed to flush pending audit events: {}", e.getMessage(), e);
                 }
             }
