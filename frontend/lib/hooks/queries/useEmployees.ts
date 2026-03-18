@@ -75,6 +75,16 @@ export function useEmployee(id: string, enabled: boolean = true) {
   });
 }
 
+// Get current authenticated user's own employee profile
+export function useMyEmployee(enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...employeeKeys.all, 'me'],
+    queryFn: () => employeeService.getMyProfile(),
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 // Get employee hierarchy
 export function useEmployeeHierarchy(id: string, enabled: boolean = true) {
   return useQuery({

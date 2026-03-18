@@ -6,6 +6,7 @@ import com.hrms.api.employee.dto.UpdateEmployeeRequest;
 import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -84,6 +85,22 @@ public class EmployeeController {
         Pageable pageable = PageRequest.of(page, size);
         Page<EmployeeResponse> employees = employeeService.searchEmployees(query, pageable);
         return ResponseEntity.ok(employees);
+    }
+
+    /**
+     * Self-service: returns the authenticated user's own employee profile without
+     * requiring the caller to know their own UUID. Avoids a second round-trip to
+     * discover the ID and ensures the backend always resolves the correct record.
+     */
+    @GetMapping("/me")
+    @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
+    @Operation(summary = "Get current user's own employee profile")
+    public ResponseEntity<EmployeeResponse> getMyEmployee() {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(employeeService.getEmployee(employeeId));
     }
 
     @GetMapping("/{id}")

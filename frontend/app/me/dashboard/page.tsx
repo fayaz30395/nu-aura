@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { format, differenceInSeconds, parseISO } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { format, parseISO } from 'date-fns';
 import { User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
@@ -30,9 +30,7 @@ export default function MyDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
-  const [_elapsedSeconds, setElapsedSeconds] = useState(0);
   const [checkInTime, setCheckInTime] = useState<Date | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Use React Query hook
   const { data: dashboardData, isLoading: queryLoading } = useSelfServiceDashboard(
@@ -58,37 +56,6 @@ export default function MyDashboardPage() {
       setIsLoading(false);
     }
   }, [dashboardData]);
-
-  // Real-time timer effect
-  useEffect(() => {
-    if (checkInTime && isCheckedIn) {
-      // Calculate initial elapsed time
-      const updateElapsed = () => {
-        const now = new Date();
-        const elapsed = differenceInSeconds(now, checkInTime);
-        setElapsedSeconds(Math.max(0, elapsed));
-      };
-
-      // Update immediately
-      updateElapsed();
-
-      // Update every second
-      timerRef.current = setInterval(updateElapsed, 1000);
-
-      return () => {
-        if (timerRef.current) {
-          clearInterval(timerRef.current);
-          timerRef.current = null;
-        }
-      };
-    } else {
-      setElapsedSeconds(0);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    }
-  }, [checkInTime, isCheckedIn]);
 
   const loadDashboard = async () => {
     if (!user?.employeeId || !dashboardData) return;
