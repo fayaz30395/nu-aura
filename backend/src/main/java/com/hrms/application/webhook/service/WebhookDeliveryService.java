@@ -1,6 +1,6 @@
 package com.hrms.application.webhook.service;
 
-import JsonProcessingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.resilience.CircuitBreaker;
