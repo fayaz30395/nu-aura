@@ -406,7 +406,8 @@ public class WallService {
                     .map(this::mapToReactorInfo)
                     .collect(Collectors.toList());
             response.setRecentReactors(recentReactors);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // Intentional broad catch — reactor enrichment must not break the wall feed
             response.setRecentReactors(Collections.emptyList());
         }
         response.setTotalReactorCount(post.getLikesCount());

@@ -8,6 +8,7 @@ import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
+import JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -292,7 +293,7 @@ public class InterviewGenerationService {
             }
 
             return builder.build();
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error parsing interview questions response: {}", e.getMessage());
             return InterviewQuestionsResponse.builder()
                     .success(false)
@@ -322,7 +323,7 @@ public class InterviewGenerationService {
                     .recommendedNextStep(dto.getRecommendedNextStep())
                     .aiModelVersion(AI_MODEL_VERSION)
                     .build();
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error parsing feedback synthesis response: {}", e.getMessage());
             return FeedbackSynthesisResponse.builder()
                     .candidateId(candidate.getId())

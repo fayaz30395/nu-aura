@@ -51,6 +51,7 @@ public class SmsNotificationService {
                 initialized = true;
                 log.info("Twilio SMS service initialized successfully");
             } catch (Exception e) {
+                // Intentional broad catch — Twilio.init() can throw checked and unchecked exceptions; fallback to mock
                 log.error("Failed to initialize Twilio: {}. Falling back to mock mode.", e.getMessage());
             }
         } else if (twilioConfig.isMockMode()) {
@@ -159,7 +160,7 @@ public class SmsNotificationService {
 
             return SmsResult.success(twilioMessage.getSid(), twilioMessage.getStatus().toString());
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Failed to send SMS to {}: {}", toPhoneNumber, e.getMessage());
             return SmsResult.failure("Failed to send SMS: " + e.getMessage());
         }

@@ -73,7 +73,7 @@ class AIRecruitmentHelper {
             }
 
             return "";
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error calling OpenAI API: {}", e.getMessage());
             return getMockResponse(prompt);
         }

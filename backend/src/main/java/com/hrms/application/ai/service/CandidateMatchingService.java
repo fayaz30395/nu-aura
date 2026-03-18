@@ -8,6 +8,7 @@ import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.infrastructure.ai.repository.CandidateMatchScoreRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
+import JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +102,7 @@ public class CandidateMatchingService {
             try {
                 CandidateMatchResponse match = calculateMatchScore(candidate.getId(), jobOpeningId);
                 rankedCandidates.add(match);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.error("Error calculating match for candidate {}: {}", candidate.getId(), e.getMessage());
             }
         }
@@ -307,7 +308,7 @@ public class CandidateMatchingService {
                     .interviewFocus(dto.getInterviewFocus())
                     .aiModelVersion(AI_MODEL_VERSION)
                     .build();
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error parsing match response: {}", e.getMessage());
             return CandidateMatchResponse.builder()
                     .candidateId(candidate.getId())
@@ -342,7 +343,7 @@ public class CandidateMatchingService {
                     .summary(dto.getSummary())
                     .aiModelVersion(AI_MODEL_VERSION)
                     .build();
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error parsing screening summary response: {}", e.getMessage());
             return CandidateScreeningSummaryResponse.builder()
                     .candidateId(candidate.getId())
@@ -373,7 +374,7 @@ public class CandidateMatchingService {
                     .benefits(dto.getBenefits())
                     .fullDescription(dto.getFullDescription())
                     .build();
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error parsing job description response: {}", e.getMessage());
             return JobDescriptionResponse.builder()
                     .success(false)
@@ -410,7 +411,7 @@ public class CandidateMatchingService {
 
         try {
             score.setRecommendation(CandidateMatchScore.Recommendation.valueOf(response.getRecommendation()));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             score.setRecommendation(CandidateMatchScore.Recommendation.CONSIDER);
         }
 

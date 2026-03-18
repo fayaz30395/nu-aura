@@ -1,6 +1,7 @@
 package com.hrms.application.ai.service;
 
 import com.hrms.api.recruitment.dto.ai.*;
+import JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -121,7 +122,7 @@ public class ResumeParserService {
                     .success(false)
                     .message("Failed to extract text from document: " + e.getMessage())
                     .build();
-        } catch (Exception e) {
+        } catch (java.io.IOException e) {
             log.error("Failed to fetch or parse resume from URL {}: {}", resumeUrl, e.getMessage());
             return ResumeParseResponse.builder()
                     .success(false)
@@ -165,7 +166,7 @@ public class ResumeParserService {
                     .success(false)
                     .message("Failed to read file: " + e.getMessage())
                     .build();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Unexpected error parsing file {}: {}", fileName, e.getMessage());
             return ResumeParseResponse.builder()
                     .success(false)
@@ -195,7 +196,7 @@ public class ResumeParserService {
                     .success(false)
                     .message("Invalid base64 encoding: " + e.getMessage())
                     .build();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error parsing base64 file {}: {}", fileName, e.getMessage());
             return ResumeParseResponse.builder()
                     .success(false)
@@ -303,7 +304,7 @@ public class ResumeParserService {
             }
 
             return builder.build();
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error("Error parsing AI response: {}", e.getMessage());
             return ResumeParseResponse.builder()
                     .success(false)

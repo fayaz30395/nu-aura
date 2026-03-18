@@ -58,11 +58,13 @@ public class ScheduledNotificationService {
             tenantRepository.findAll().forEach(tenant -> {
                 try {
                     sendBirthdayNotificationsForTenant(tenant.getId());
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
+                    // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending birthday notifications for tenant {}: {}", tenant.getId(), e.getMessage());
                 }
             });
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // Intentional broad catch — scheduler job must not propagate exceptions to Quartz
             log.error("Error in birthday notification job: {}", e.getMessage(), e);
         }
 
@@ -126,7 +128,7 @@ public class ScheduledNotificationService {
                 try {
                     notificationService.sendNotification(request);
                     log.info("Sent birthday notification for {} to {} recipients", fullName, recipients.size());
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.error("Failed to send birthday notification for {}: {}", fullName, e.getMessage());
                 }
             }
@@ -150,7 +152,7 @@ public class ScheduledNotificationService {
 
                 try {
                     notificationService.sendNotification(personalWish);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.error("Failed to send personal birthday wish to {}: {}", fullName, e.getMessage());
                 }
             }
@@ -171,12 +173,14 @@ public class ScheduledNotificationService {
             tenantRepository.findAll().forEach(tenant -> {
                 try {
                     sendAnniversaryNotificationsForTenant(tenant.getId());
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
+                    // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending anniversary notifications for tenant {}: {}", tenant.getId(),
                             e.getMessage());
                 }
             });
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // Intentional broad catch — scheduler job must not propagate exceptions to Quartz
             log.error("Error in anniversary notification job: {}", e.getMessage(), e);
         }
 
@@ -248,7 +252,7 @@ public class ScheduledNotificationService {
                     notificationService.sendNotification(request);
                     log.info("Sent anniversary notification for {} ({}) to {} recipients", fullName, yearText,
                             recipients.size());
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.error("Failed to send anniversary notification for {}: {}", fullName, e.getMessage());
                 }
             }
@@ -274,7 +278,7 @@ public class ScheduledNotificationService {
 
                 try {
                     notificationService.sendNotification(personalCongrats);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.error("Failed to send personal anniversary message to {}: {}", fullName, e.getMessage());
                 }
             }
@@ -295,11 +299,13 @@ public class ScheduledNotificationService {
             tenantRepository.findAll().forEach(tenant -> {
                 try {
                     sendAttendanceRemindersForTenant(tenant.getId());
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
+                    // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending attendance reminders for tenant {}: {}", tenant.getId(), e.getMessage());
                 }
             });
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // Intentional broad catch — scheduler job must not propagate exceptions to Quartz
             log.error("Error in attendance reminder job: {}", e.getMessage(), e);
         }
 
@@ -318,11 +324,13 @@ public class ScheduledNotificationService {
             tenantRepository.findAll().forEach(tenant -> {
                 try {
                     sendCheckoutRemindersForTenant(tenant.getId());
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
+                    // Intentional broad catch — one tenant failure must not stop processing for other tenants
                     log.error("Error sending checkout reminders for tenant {}: {}", tenant.getId(), e.getMessage());
                 }
             });
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // Intentional broad catch — scheduler job must not propagate exceptions to Quartz
             log.error("Error in checkout reminder job: {}", e.getMessage(), e);
         }
 
@@ -379,7 +387,7 @@ public class ScheduledNotificationService {
 
             try {
                 notificationService.sendNotification(reminder);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.error("Failed to send attendance reminder to {}: {}", getFullName(employee), e.getMessage());
             }
         }
@@ -430,7 +438,7 @@ public class ScheduledNotificationService {
 
             try {
                 notificationService.sendNotification(reminder);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.error("Failed to send checkout reminder to {}: {}", getFullName(employee), e.getMessage());
             }
         }

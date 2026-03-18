@@ -304,7 +304,8 @@ public class MultiChannelNotificationService {
             }
 
             notificationRepository.save(notification);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            // Intentional broad catch — dispatching across multiple external channels; each may throw different types
             log.error("Failed to process notification {}: {}", notification.getId(), e.getMessage());
             notification.setStatus(NotificationStatus.FAILED);
             notification.setErrorMessage(e.getMessage());
