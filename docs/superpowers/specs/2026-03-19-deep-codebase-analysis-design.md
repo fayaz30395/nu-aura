@@ -8,7 +8,7 @@
 
 ## Overview
 
-Deep analysis of the NU-AURA codebase (1,432 Java files, 1,093 TS/TSX files, 39 Flyway migrations, 13 K8s manifests) identified 30 actionable items across three categories. Work is decomposed into three independent specs executed as: **A (now) → B + C (parallel)**.
+Deep analysis of the NU-AURA codebase (1,432 Java files, 1,093 TS/TSX files, 40 Flyway migrations V0-V39, 13 K8s manifests) identified 28 actionable items across three categories. Work is decomposed into three independent specs executed as: **A (now) → B + C (parallel)**.
 
 ### Codebase Grades
 
@@ -22,19 +22,18 @@ Deep analysis of the NU-AURA codebase (1,432 Java files, 1,093 TS/TSX files, 39 
 
 ## Spec A: Security & Critical Fixes
 
-**Priority**: Execute immediately. 8 items. Must resolve before production deployment.
+**Priority**: Execute immediately. 7 items. Must resolve before production deployment.
 
-### A1 — Regenerate Google OAuth Secret (P0)
+### A1 — Rotate Google OAuth Secret (P1)
 
-`client_secret_*.json` is committed to the repo with plaintext OAuth credentials. The secret `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` is compromised.
+`client_secret_*.json` exists as an untracked local file (NOT committed to git history). `.gitignore` already covers `**/client_secret*.json`. However, the secret may have been shared or exposed outside git. Rotate as a precaution.
 
 **Actions**:
 - Regenerate OAuth client secret in Google Cloud Console
-- Delete the committed file from the repo
-- Scrub from git history using `git filter-repo`
-- Add `client_secret*.json` pattern to `.gitignore`
+- Delete the local untracked file
+- Verify `.gitignore` pattern `**/client_secret*.json` is adequate (it is)
 
-**Files**: Root directory, `.gitignore`
+**Files**: Root directory (local cleanup only)
 
 ### A2 — Align Java Version to 17 (P0)
 
@@ -47,23 +46,27 @@ Root `Dockerfile` and `backend/Dockerfile` reference Java 21 (`maven:3.9-eclipse
 
 **Files**: `Dockerfile`, `backend/Dockerfile`, `.github/workflows/ci.yml`
 
-### A3 — Externalize docker-compose Credentials (P1)
+### A3 — Remove Real Credentials from docker-compose Defaults (P1)
 
-`docker-compose.yml` contains hardcoded DB password, JWT secret, MinIO creds, and encryption key in plaintext.
+`docker-compose.yml` already uses `${VAR:-default}` interpolation, but the default fallback values contain real Neon DB credentials (e.g., `npg_p3Nnmrd9PvhB`) and the JDBC URL contains the actual Neon endpoint. These should not be in version control even as defaults.
 
 **Actions**:
-- Replace all credential values with `${VAR}` interpolation
-- Update `.env.example` with placeholder values and documentation
-- Verify `.env` is in `.gitignore` (already is)
+- Remove real Neon DB password from default fallback (force explicit `.env`)
+- Remove real Neon JDBC URL from default fallback
+- Keep innocuous defaults for local-only services (Redis, MinIO)
+- Update `.env.example` with clear placeholder values and setup instructions
+- Also check `application-dev.yml` for embedded Neon credentials
 
-**Files**: `docker-compose.yml`, `.env.example`
+**Files**: `docker-compose.yml`, `.env.example`, `application-dev.yml`
 
 ### A4 — Restrict K8s Network Policy (P1)
 
-Network policy allows ingress from `0.0.0.0/0` on port 8080, effectively disabling the security policy.
+Network policy allows ingress from `0.0.0.0/0` on port 8080. The existing comment explains this is required for GKE GCE ingress (bypasses in-cluster controllers, connects directly to node IPs). However, Cloud Armor should be the enforcement layer.
 
 **Actions**:
-- Replace with GCP LB health check ranges: `130.211.0.0/22`, `35.191.0.0/16`
+- Verify Cloud Armor `hrms-security-policy` is configured in GCP before tightening
+- If Cloud Armor is active: restrict ingress to GCP LB health check ranges (`130.211.0.0/22`, `35.191.0.0/16`)
+- If Cloud Armor is not yet configured: document this as a prerequisite and defer tightening
 - Restrict SMTP egress to specific relay IPs
 - Tighten HTTPS egress namespace selector
 
@@ -91,18 +94,7 @@ Init container uses `nc -z` (netcat) which only checks port reachability, not da
 
 **Files**: `deployment/kubernetes/ingress.yaml`
 
-### A7 — Environment-Driven CORS Origins (P2)
-
-CORS allowed origins are hardcoded to `localhost` ports in `SecurityConfig.java`.
-
-**Actions**:
-- Externalize to `app.cors.allowed-origins` config property
-- Set via ConfigMap in K8s, environment variable in docker-compose
-- Remove hardcoded localhost values from SecurityConfig
-
-**Files**: `SecurityConfig.java`, `configmap.yaml`, `application.yml`
-
-### A8 — Clean Up Untracked Sensitive Files (P2)
+### A7 — Clean Up Untracked Sensitive Files (P2)
 
 Binary documents (`NU-AURA_System_Forensics_Report.docx`, `march-19.docx`) and config files (`.mcp.json`) shouldn't be in the repo.
 
@@ -116,7 +108,12 @@ Binary documents (`NU-AURA_System_Forensics_Report.docx`, `march-19.docx`) and c
 ### Spec A Risks
 
 - A1: Google login breaks until new secret is deployed. Coordinate with active users.
+- A4: Tightening network policy without Cloud Armor can break production ingress. Verify Cloud Armor first.
 - A6: CSP tightening may break inline scripts. Requires frontend testing.
+
+### Removed Items (from original analysis)
+
+- **~~A7 (old) — Environment-Driven CORS Origins~~**: Already implemented. `SecurityConfig.java` uses `@Value("${app.cors.allowed-origins:...}")` with localhost as default fallback. Production overrides via environment variable. No action needed.
 
 ---
 
@@ -126,14 +123,15 @@ Binary documents (`NU-AURA_System_Forensics_Report.docx`, `march-19.docx`) and c
 
 ### B1 — Convert EAGER JPA Relationships to LAZY (P1)
 
-22 JPA relationships use `FetchType.EAGER`, loading all roles/permissions on every user query. Risk of N+1 queries at scale.
+7 JPA relationships across 5 entities use `FetchType.EAGER` (`AppRole`, `UserAppAccess`, `Announcement`, `RolePermission`, `Webhook`), loading related data on every query. The auth-related ones (`AppRole`, `UserAppAccess`, `RolePermission`) are highest risk — they load all roles/permissions on every user query.
 
 **Actions**:
-- Convert all `EAGER` to `LAZY` in `UserAppAccess`, `AppRole`, `RolePermission`, and ~12 other entities
+- Convert all 7 `EAGER` to `LAZY` in the 5 affected entities
 - Add `@EntityGraph` annotations for explicit fetch joins where relationships are needed
-- Test all auth/permission flows thoroughly
+- Test all auth/permission flows thoroughly — this is the critical path
+- Execute this item first within Spec B to allow maximum testing time
 
-**Files**: ~15 entity files in `domain/`
+**Files**: 5 entity files in `domain/`
 
 **Risk**: Highest-risk item. Changing fetch strategy can break code that assumes relationships are loaded. Auth flows are critical path.
 
@@ -143,7 +141,7 @@ Production HikariCP `max-pool-size: 50`. With 10 pods = 500 connections to Neon,
 
 **Actions**:
 - Reduce to `max-pool-size: 20`
-- Document formula: `pool = (core_count * 2) + disk_spindles`
+- Justify based on Neon's connection limits (not the HikariCP spinning-disk formula which is irrelevant for cloud SSDs)
 - Make configurable via ConfigMap
 
 **Files**: `application.yml`, `configmap.yaml`
@@ -171,27 +169,28 @@ Scale-up doubles capacity (100%) every 30s — overshoot risk. Scale-down stabil
 
 **Files**: `deployment/kubernetes/hpa.yaml`
 
-### B5 — Kafka Resilience (P2)
+### B5 — Kafka Consumer Retry Configuration (P2)
 
-No DLQ or retry policy. Failed events stored in `FailedKafkaEvent` table but not automatically retried.
-
-**Actions**:
-- Add exponential backoff retry (3 attempts, 1s/5s/30s)
-- Configure DLQ topic for permanently failed events
-- Add monitoring for DLQ depth
-
-**Files**: New `KafkaRetryConfig.java`, Kafka consumer configs
-
-### B6 — Cache Invalidation Audit (P2)
-
-`CacheConfig.java` sets TTLs but no explicit `@CacheEvict` on entity mutations observed.
+DLQ infrastructure already exists (`DeadLetterHandler.java`, `FailedKafkaEvent` entity, `KafkaAdminController` with replay endpoint). What's missing is a `DefaultErrorHandler` with `BackOff` in the Kafka consumer factory — failed messages go straight to the dead letter handler without retry attempts.
 
 **Actions**:
-- Audit all service methods with `@Cacheable` counterparts
-- Add `@CacheEvict` to corresponding `update()`, `delete()` methods
-- Verify tenant-scoped cache keys are properly evicted
+- Add `DefaultErrorHandler` with exponential `BackOff` (3 attempts: 1s/5s/30s) to `KafkaConfig.java` consumer factory
+- Add monitoring/alerting for DLQ depth (FailedKafkaEvent count)
+- Verify existing replay endpoint works end-to-end
 
-**Files**: Service files paired with `@Cacheable` usage
+**Files**: `KafkaConfig.java` (consumer factory configuration)
+
+### B6 — Cache Invalidation Completeness Audit (P2)
+
+35 `@CacheEvict` annotations exist across 8 files, and 20 `@Cacheable` annotations across 12 files. Eviction exists but may not cover all mutation paths (e.g., bulk updates, admin overrides, cascade deletes).
+
+**Actions**:
+- Audit all 12 files with `@Cacheable` to verify corresponding `@CacheEvict` coverage
+- Identify mutation paths that bypass eviction (bulk operations, direct repository calls)
+- Verify tenant-scoped cache keys are properly evicted on tenant-specific mutations
+- Document cache strategy per entity type
+
+**Files**: Service files paired with `@Cacheable` usage (~12 files)
 
 ### B7 — Query Optimization for Large Tables (P2)
 
@@ -250,16 +249,18 @@ Tests exist but need verification that tenant_id and security context propagate 
 
 ### C1 — Break Large Backend Services (P1)
 
-Three services exceed 1,000 LOC: `AIRecruitmentService` (1,513), `ResourceManagementService` (1,137), `RecruitmentManagementService` (1,121).
+Three services exceed 1,000 LOC: `AIRecruitmentService` (1,513), `ResourceManagementService` (1,137), `RecruitmentManagementService` (1,121). Note: `ResourceConflictService` already exists as an extracted sub-service — verify what extraction has already been done before prescribing further splits.
 
 **Actions**:
+- Audit existing sub-services for `ResourceManagementService` (e.g., `ResourceConflictService` already exists)
 - Extract `AIRecruitmentService` → `ResumeParsingService`, `CandidateMatchingService`, `AIScoreService`
-- Extract `ResourceManagementService` → `ResourceAllocationService`, `ResourceConflictService`
+- Extract remaining `ResourceManagementService` responsibilities → `ResourceAllocationService` (if not already done)
 - Extract `RecruitmentManagementService` → `CandidatePipelineService`, `OfferManagementService`
 - Use Facade pattern: original class delegates to sub-services
-- Update all unit tests
+- Each service refactor = 1 PR (3 separate PRs)
+- Update all unit tests per PR
 
-**Files**: 3 service files → ~9 smaller files + updated tests
+**Files**: 2-3 service files → ~6-8 smaller files + updated tests
 
 ### C2 — Break Large Frontend Pages (P1)
 
@@ -274,14 +275,15 @@ Six pages exceed 1,400 LOC: `nu-mail` (1,639), `nu-drive` (1,616), `recruitment/
 
 ### C3 — Replace Broad Exception Catches (P1)
 
-93 instances of `catch(Exception e)` across ~40 service files.
+~297 instances of `catch(Exception e)` across ~96 service files. Scope is significantly larger than initially estimated — must be split into multiple PRs.
 
 **Actions**:
 - Replace with specific exceptions: `DataAccessException`, `EntityNotFoundException`, `BusinessException`, `ValidationException`
 - Prioritize services with `@Transactional` methods (transaction rollback behavior changes with exception type)
-- Group by module for systematic replacement
+- Split into 4 PRs by layer: (1) core services, (2) Kafka/event handlers, (3) integration services, (4) infrastructure/config
+- Group by module within each PR for systematic replacement
 
-**Files**: ~40 service files
+**Files**: ~96 service files across 4 PRs
 
 ### C4 — Break Large Frontend Components (P2)
 
@@ -308,34 +310,35 @@ No code coverage metrics tracked. CLAUDE.md requires all endpoints covered by te
 
 ### C6 — Add Frontend Code Splitting (P2)
 
-Only 8 `dynamic()` imports and 4 `<Suspense>` boundaries across 194 pages.
+14 `dynamic()` imports across 10 files and 4 `<Suspense>` boundaries across 194 pages. Baseline is better than initially estimated but still has room for improvement on heavy pages.
 
 **Actions**:
-- Add `dynamic()` for TipTap editor, report builder, payroll wizard
+- Add `dynamic()` for report builder, payroll wizard, and other heavy modal components
 - Add `<Suspense>` boundaries on dashboard, recruitment, payroll pages
 - Measure bundle size before/after
 
-**Files**: ~10 page files
+**Files**: ~8 page files
 
 ### C7 — Resolve TODO/FIXME Comments (P2)
 
-4 TODOs in production code: `AiUsageService` (table dependency), `StorageMetricsService` (MinIO integration), `MobileService` (avatar field), 1 other.
+4 TODOs across 3 files: `AiUsageService` (2 TODOs — table dependency), `StorageMetricsService` (MinIO integration), `MobileService` (avatar field).
 
 **Actions**:
 - Implement if straightforward, or convert to tracked backlog items
 - Remove TODO comments from code in either case
 
-**Files**: 4 service files
+**Files**: 3 service files
 
-### C8 — Remove Unused Liquibase Dependency (P3)
+### C8 — Remove Unused Liquibase Dependency and Legacy Directory (P3)
 
-`liquibase-core` v4.31.1 in `pom.xml` is unused. Flyway is the migration tool.
+`liquibase-core` v4.31.1 in `pom.xml` is unused (Flyway is the migration tool). Additionally, `backend/src/main/resources/db/changelog/` is a legacy Liquibase directory marked "DO NOT USE" in CLAUDE.md but still exists.
 
 **Actions**:
 - Remove `liquibase-core` from `pom.xml`
-- Verify build succeeds without it
+- Delete `backend/src/main/resources/db/changelog/` directory
+- Verify build succeeds without either
 
-**Files**: `pom.xml`
+**Files**: `pom.xml`, `backend/src/main/resources/db/changelog/`
 
 ### C9 — Refactor Admin Permissions Page (P3)
 
@@ -347,16 +350,9 @@ Only 8 `dynamic()` imports and 4 `<Suspense>` boundaries across 194 pages.
 
 **Files**: 1 page file
 
-### C10 — Migrate Chat Fetch to Axios (P3)
+### C10 — ~~Migrate Chat Fetch to Axios~~ REMOVED
 
-`fluence-chat.service.ts` uses raw `fetch()` for streaming.
-
-**Actions**:
-- Migrate to axios with `responseType: 'stream'`
-- Maintain streaming behavior
-- Use existing `apiClient` instance
-
-**Files**: 1 service file
+**Reason**: `fluence-chat.service.ts` uses `fetch()` for SSE/streaming chat. Axios `responseType: 'stream'` works in Node.js but NOT in browsers. For browser-based SSE streaming, `fetch()` with `ReadableStream` is the correct approach. Migrating to axios would introduce a regression. No action needed.
 
 ### C11 — Add Strategic React.memo (P3)
 
@@ -391,11 +387,26 @@ Only 1 explicit `React.memo` across 107 components.
 ## Execution Plan
 
 ```
-Week 1:  Spec A (all 8 items) — security is non-negotiable
-Week 2+: Spec B + Spec C in parallel
-         - B and C touch different files (domain entities vs page components)
-         - Shared touchpoint: pom.xml (B: none, C: JaCoCo + Liquibase removal)
+Week 1-1.5: Spec A (7 items) — security is non-negotiable
+            A1 requires GCP Console access; A2 requires CI pipeline changes
+Week 2+:    Spec B + Spec C in parallel
+            - B and C touch different files (domain entities vs page components)
+            - Shared touchpoint: pom.xml (B: none, C: JaCoCo + Liquibase removal)
 ```
+
+### Recommended Order Within Each Spec
+
+**Spec B** (execute in this order):
+1. B1 (EAGER→LAZY) — highest risk, do first for maximum testing time
+2. B2 (connection pool) — quick win
+3. B3 (RLS benchmarking) — needs seed script
+4. B5-B10 in priority order
+
+**Spec C** (execute in this order):
+1. C3 (exception catches) — highest value, 4 PRs
+2. C1 (service refactoring) — 3 PRs
+3. C2, C4 (page/component splitting) — low risk
+4. C5-C12 in priority order
 
 ### Dependencies Between Specs
 
@@ -406,5 +417,12 @@ Week 2+: Spec B + Spec C in parallel
 ### Coordination Rules
 
 - All changes on feature branches, merged via PR
-- Each spec item = 1 PR (small, reviewable)
+- Most spec items = 1 PR, except: C1 (3 PRs), C3 (4 PRs)
 - B1 (EAGER→LAZY) gets its own integration test suite before merge
+
+### Items Removed After Review
+
+| Item | Reason |
+|------|--------|
+| A7 (old — CORS externalization) | Already implemented via `@Value` with env override |
+| C10 (chat fetch migration) | Axios streaming doesn't work in browsers; `fetch()` is correct for SSE |
