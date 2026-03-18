@@ -25,8 +25,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -108,16 +110,14 @@ class OnboardingManagementControllerTest {
         taskResponse = OnboardingTaskResponse.builder()
                 .id(taskId)
                 .processId(processId)
-                .title("Complete HR Documentation")
+                .taskName("Complete HR Documentation")
                 .status(OnboardingTask.TaskStatus.PENDING)
-                .createdAt(LocalDateTime.now())
                 .build();
 
         templateResponse = OnboardingChecklistTemplateResponse.builder()
                 .id(templateId)
                 .name("Standard Onboarding Template")
                 .description("Standard onboarding checklist for new employees")
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -128,11 +128,11 @@ class OnboardingManagementControllerTest {
         @Test
         @DisplayName("Should create onboarding process successfully")
         void shouldCreateProcessSuccessfully() throws Exception {
-            OnboardingProcessRequest request = OnboardingProcessRequest.builder()
-                    .employeeId(employeeId)
-                    .templateId(templateId)
-                    .buddyId(buddyId)
-                    .build();
+            OnboardingProcessRequest request = new OnboardingProcessRequest();
+            request.setEmployeeId(employeeId);
+            request.setTemplateId(templateId);
+            request.setAssignedBuddyId(buddyId);
+            request.setProcessType(OnboardingProcess.ProcessType.ONBOARDING);
 
             when(onboardingService.createProcess(any(OnboardingProcessRequest.class)))
                     .thenReturn(processResponse);
@@ -167,14 +167,18 @@ class OnboardingManagementControllerTest {
         @Test
         @DisplayName("Should update onboarding process successfully")
         void shouldUpdateProcessSuccessfully() throws Exception {
-            OnboardingProcessRequest request = OnboardingProcessRequest.builder()
-                    .employeeId(employeeId)
-                    .templateId(templateId)
-                    .buddyId(buddyId)
-                    .build();
+            OnboardingProcessRequest request = new OnboardingProcessRequest();
+            request.setEmployeeId(employeeId);
+            request.setTemplateId(templateId);
+            request.setAssignedBuddyId(buddyId);
+            request.setProcessType(OnboardingProcess.ProcessType.ONBOARDING);
 
-            OnboardingProcessResponse updatedResponse = processResponse.toBuilder()
+            OnboardingProcessResponse updatedResponse = OnboardingProcessResponse.builder()
+                    .id(processId)
+                    .employeeId(employeeId)
                     .status(OnboardingProcess.ProcessStatus.IN_PROGRESS)
+                    .completionPercentage(25)
+                    .createdAt(processResponse.getCreatedAt())
                     .build();
 
             when(onboardingService.updateProcess(eq(processId), any(OnboardingProcessRequest.class)))
@@ -192,9 +196,12 @@ class OnboardingManagementControllerTest {
         @Test
         @DisplayName("Should update process status")
         void shouldUpdateProcessStatus() throws Exception {
-            OnboardingProcessResponse completedResponse = processResponse.toBuilder()
+            OnboardingProcessResponse completedResponse = OnboardingProcessResponse.builder()
+                    .id(processId)
+                    .employeeId(employeeId)
                     .status(OnboardingProcess.ProcessStatus.COMPLETED)
                     .completionPercentage(100)
+                    .createdAt(processResponse.getCreatedAt())
                     .build();
 
             when(onboardingService.updateStatus(eq(processId), any(OnboardingProcess.ProcessStatus.class)))
@@ -212,8 +219,12 @@ class OnboardingManagementControllerTest {
         @Test
         @DisplayName("Should update process progress")
         void shouldUpdateProcessProgress() throws Exception {
-            OnboardingProcessResponse progressResponse = processResponse.toBuilder()
+            OnboardingProcessResponse progressResponse = OnboardingProcessResponse.builder()
+                    .id(processId)
+                    .employeeId(employeeId)
+                    .status(OnboardingProcess.ProcessStatus.IN_PROGRESS)
                     .completionPercentage(50)
+                    .createdAt(processResponse.getCreatedAt())
                     .build();
 
             when(onboardingService.updateProgress(eq(processId), eq(50)))
@@ -373,7 +384,8 @@ class OnboardingManagementControllerTest {
                     .description("Updated description")
                     .build();
 
-            OnboardingChecklistTemplateResponse updatedResponse = templateResponse.toBuilder()
+            OnboardingChecklistTemplateResponse updatedResponse = OnboardingChecklistTemplateResponse.builder()
+                    .id(templateId)
                     .name("Updated Template")
                     .description("Updated description")
                     .build();
@@ -410,16 +422,14 @@ class OnboardingManagementControllerTest {
         @DisplayName("Should add template task successfully")
         void shouldAddTemplateTaskSuccessfully() throws Exception {
             OnboardingTemplateTaskRequest request = OnboardingTemplateTaskRequest.builder()
-                    .title("Complete HR Documentation")
+                    .taskName("Complete HR Documentation")
                     .description("Fill out all required HR forms")
-                    .assignee("hr-manager")
-                    .dueDate(LocalDateTime.now().plusDays(1))
                     .build();
 
             OnboardingTemplateTaskResponse response = OnboardingTemplateTaskResponse.builder()
                     .id(taskId)
                     .templateId(templateId)
-                    .title("Complete HR Documentation")
+                    .taskName("Complete HR Documentation")
                     .build();
 
             when(onboardingService.addTemplateTask(eq(templateId), any(OnboardingTemplateTaskRequest.class)))
@@ -453,7 +463,10 @@ class OnboardingManagementControllerTest {
         @Test
         @DisplayName("Should update task status")
         void shouldUpdateTaskStatus() throws Exception {
-            OnboardingTaskResponse completedTask = taskResponse.toBuilder()
+            OnboardingTaskResponse completedTask = OnboardingTaskResponse.builder()
+                    .id(taskId)
+                    .processId(processId)
+                    .taskName("Complete HR Documentation")
                     .status(OnboardingTask.TaskStatus.COMPLETED)
                     .build();
 
@@ -472,7 +485,10 @@ class OnboardingManagementControllerTest {
         @Test
         @DisplayName("Should update task status without remarks")
         void shouldUpdateTaskStatusWithoutRemarks() throws Exception {
-            OnboardingTaskResponse inProgressTask = taskResponse.toBuilder()
+            OnboardingTaskResponse inProgressTask = OnboardingTaskResponse.builder()
+                    .id(taskId)
+                    .processId(processId)
+                    .taskName("Complete HR Documentation")
                     .status(OnboardingTask.TaskStatus.IN_PROGRESS)
                     .build();
 
@@ -493,7 +509,7 @@ class OnboardingManagementControllerTest {
             OnboardingTemplateTaskResponse templateTask = OnboardingTemplateTaskResponse.builder()
                     .id(taskId)
                     .templateId(templateId)
-                    .title("Complete HR Documentation")
+                    .taskName("Complete HR Documentation")
                     .build();
 
             List<OnboardingTemplateTaskResponse> tasks = Collections.singletonList(templateTask);
@@ -512,14 +528,14 @@ class OnboardingManagementControllerTest {
         @DisplayName("Should update template task")
         void shouldUpdateTemplateTask() throws Exception {
             OnboardingTemplateTaskRequest request = OnboardingTemplateTaskRequest.builder()
-                    .title("Updated Task Title")
+                    .taskName("Updated Task Title")
                     .description("Updated description")
                     .build();
 
             OnboardingTemplateTaskResponse response = OnboardingTemplateTaskResponse.builder()
                     .id(taskId)
                     .templateId(templateId)
-                    .title("Updated Task Title")
+                    .taskName("Updated Task Title")
                     .build();
 
             when(onboardingService.updateTemplateTask(eq(templateId), eq(taskId), any(OnboardingTemplateTaskRequest.class)))
@@ -529,7 +545,7 @@ class OnboardingManagementControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.title").value("Updated Task Title"));
+                    .andExpect(jsonPath("$.taskName").value("Updated Task Title"));
 
             verify(onboardingService).updateTemplateTask(eq(templateId), eq(taskId), any(OnboardingTemplateTaskRequest.class));
         }
