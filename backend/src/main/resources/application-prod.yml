@@ -69,15 +69,20 @@ management:
         # Kubernetes liveness probe
         liveness:
           include: ping,diskSpace
-        # Kubernetes readiness probe (includes database and Redis)
+        # Kubernetes readiness probe (includes database, Redis, and Kafka)
         readiness:
-          include: ping,db,redis
+          include: ping,db,redis,kafka
     prometheus:
       enabled: true
   health:
     db:
       enabled: true
     redis:
+      enabled: true
+    # Kafka health indicator — ensures Kafka broker connectivity is monitored.
+    # If Kafka goes down, the readiness probe will fail and K8s will stop routing
+    # traffic, preventing silent event publishing failures.
+    kafka:
       enabled: true
     diskSpace:
       enabled: true

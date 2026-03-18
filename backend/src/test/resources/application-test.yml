@@ -65,6 +65,10 @@ management:
         enabled: false
 
 app:
+  # Disable RLS transaction manager in tests — H2 doesn't support SET LOCAL
+  rls:
+    transaction-manager:
+      enabled: false
   security:
     encryption:
       key: test-encryption-key-32-bytes-xx!

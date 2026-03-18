@@ -119,7 +119,7 @@ export function useApprovalInboxCount() {
     queryFn: () => workflowService.getInboxCounts(),
     staleTime: 60 * 1000,          // data considered fresh for 60s
     gcTime: 5 * 60 * 1000,         // keep cache for 5 min after unmount
-    refetchInterval: 30 * 1000,    // still poll every 30s when mounted
+    refetchInterval: 60 * 1000,    // poll every 60s (was 30s — halves background requests)
     refetchOnMount: false,         // don't refetch if cache exists
     placeholderData: keepPreviousData,
     retry: false,

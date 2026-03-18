@@ -58,7 +58,15 @@ export function AuthGuard({
   // Note: Middleware handles the primary 401 → login redirect via cookie inspection
   const isSuperAdmin = roles.includes('SUPER_ADMIN');
 
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  // Optimistic initialization: if the user is already authenticated and stores are
+  // hydrated, start as `true` instead of `null`. This prevents the full-screen
+  // loader from flashing on every navigation (AppLayout remounts per page).
+  // The useEffect below still runs asynchronously and will set `false` if the
+  // route requires permissions the user doesn't hold.
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(() => {
+    if (hasHydrated && isReady && isAuthenticated) return true;
+    return null;
+  });
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const restoreAttemptedRef = useRef(false);
 

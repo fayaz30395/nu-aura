@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { DarkModeProvider } from '@/components/layout/DarkModeProvider';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Careers | NU-AURA',
@@ -11,23 +12,39 @@ export const metadata: Metadata = {
   },
 };
 
-/**
- * Careers Layout — Server Component
- *
- * Public-facing layout for careers pages. Does NOT include the authenticated
- * app shell (sidebar/top nav). Rendered as a Server Component so that
- * metadata can be exported; inner DarkModeProvider is a Client Component.
- */
 export default function CareersLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <DarkModeProvider>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-        {children}
-      </div>
-    </DarkModeProvider>
+    <div className="min-h-screen bg-white">
+      {/* Public Navbar */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/careers" className="flex items-center gap-3">
+            <Image
+              src="/images/logo.png"
+              alt="NuLogic"
+              width={120}
+              height={32}
+              className="h-8 w-auto object-contain"
+              priority
+            />
+            <span className="text-sm font-medium text-gray-500 border-l border-gray-300 pl-3">
+              Careers
+            </span>
+          </Link>
+          <a
+            href="mailto:careers@nulogic.io"
+            className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+          >
+            Contact HR
+          </a>
+        </div>
+      </header>
+
+      {children}
+    </div>
   );
 }

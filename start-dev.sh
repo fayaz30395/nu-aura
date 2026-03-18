@@ -13,16 +13,16 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # Check if Docker services are running
-echo "📦 Checking Docker services..."
-if ! docker ps | grep -q "hrms-postgres"; then
-    echo "⚠️  PostgreSQL not running. Starting Docker services..."
-    cd "$PROJECT_ROOT"
-    docker-compose up -d postgres redis kafka zookeeper
-    echo "⏳ Waiting 10 seconds for services to initialize..."
-    sleep 10
-else
-    echo "✅ Docker services are running"
-fi
+# echo "📦 Checking Docker services..."
+# if ! docker ps | grep -q "hrms-postgres"; then
+#     echo "⚠️  PostgreSQL not running. Starting Docker services..."
+#     cd "$PROJECT_ROOT"
+#     docker-compose up -d postgres redis kafka zookeeper
+#     echo "⏳ Waiting 10 seconds for services to initialize..."
+#     sleep 10
+# else
+#     echo "✅ Docker services are running"
+# fi
 
 echo ""
 echo "🔧 Starting Backend and Frontend..."
