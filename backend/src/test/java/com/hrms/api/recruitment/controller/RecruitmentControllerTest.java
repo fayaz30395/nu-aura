@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.recruitment.dto.*;
 import com.hrms.application.recruitment.service.RecruitmentManagementService;
 import com.hrms.common.security.*;
+import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.JobOpening;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +25,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -91,11 +93,10 @@ class RecruitmentControllerTest {
 
         jobOpeningResponse = JobOpeningResponse.builder()
                 .id(jobOpeningId)
-                .title("Software Engineer")
-                .department("Engineering")
-                .description("Senior software engineer position")
+                .jobTitle("Software Engineer")
+                .departmentName("Engineering")
+                .jobDescription("Senior software engineer position")
                 .status(JobOpening.JobStatus.OPEN)
-                .createdAt(LocalDateTime.now())
                 .build();
 
         candidateResponse = CandidateResponse.builder()
@@ -104,7 +105,6 @@ class RecruitmentControllerTest {
                 .email("john@example.com")
                 .phone("+1234567890")
                 .jobOpeningId(jobOpeningId)
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -115,11 +115,9 @@ class RecruitmentControllerTest {
         @Test
         @DisplayName("Should create job opening successfully")
         void shouldCreateJobOpeningSuccessfully() throws Exception {
-            JobOpeningRequest request = JobOpeningRequest.builder()
-                    .title("Software Engineer")
-                    .department("Engineering")
-                    .description("Senior software engineer position")
-                    .build();
+            JobOpeningRequest request = new JobOpeningRequest();
+            request.setJobTitle("Software Engineer");
+            request.setJobDescription("Senior software engineer position");
 
             when(recruitmentManagementService.createJobOpening(any(JobOpeningRequest.class)))
                     .thenReturn(jobOpeningResponse);
@@ -129,7 +127,7 @@ class RecruitmentControllerTest {
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").exists())
-                    .andExpect(jsonPath("$.title").value("Software Engineer"))
+                    .andExpect(jsonPath("$.jobTitle").value("Software Engineer"))
                     .andExpect(jsonPath("$.status").value("OPEN"));
 
             verify(recruitmentManagementService).createJobOpening(any(JobOpeningRequest.class));
@@ -150,14 +148,16 @@ class RecruitmentControllerTest {
         @Test
         @DisplayName("Should update job opening successfully")
         void shouldUpdateJobOpeningSuccessfully() throws Exception {
-            JobOpeningRequest request = JobOpeningRequest.builder()
-                    .title("Senior Software Engineer")
-                    .department("Engineering")
-                    .description("Updated job description")
-                    .build();
+            JobOpeningRequest request = new JobOpeningRequest();
+            request.setJobTitle("Senior Software Engineer");
+            request.setJobDescription("Updated job description");
 
-            JobOpeningResponse updatedResponse = jobOpeningResponse.toBuilder()
-                    .title("Senior Software Engineer")
+            JobOpeningResponse updatedResponse = JobOpeningResponse.builder()
+                    .id(jobOpeningId)
+                    .jobTitle("Senior Software Engineer")
+                    .departmentName("Engineering")
+                    .jobDescription("Updated job description")
+                    .status(JobOpening.JobStatus.OPEN)
                     .build();
 
             when(recruitmentManagementService.updateJobOpening(eq(jobOpeningId), any(JobOpeningRequest.class)))
@@ -167,7 +167,7 @@ class RecruitmentControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.title").value("Senior Software Engineer"));
+                    .andExpect(jsonPath("$.jobTitle").value("Senior Software Engineer"));
 
             verify(recruitmentManagementService).updateJobOpening(eq(jobOpeningId), any(JobOpeningRequest.class));
         }
@@ -181,7 +181,7 @@ class RecruitmentControllerTest {
             mockMvc.perform(get("/api/v1/recruitment/job-openings/{id}", jobOpeningId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(jobOpeningId.toString()))
-                    .andExpect(jsonPath("$.title").value("Software Engineer"));
+                    .andExpect(jsonPath("$.jobTitle").value("Software Engineer"));
 
             verify(recruitmentManagementService).getJobOpeningById(jobOpeningId);
         }
@@ -203,7 +203,7 @@ class RecruitmentControllerTest {
                     .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(1)))
-                    .andExpect(jsonPath("$.content[0].title").value("Software Engineer"));
+                    .andExpect(jsonPath("$.content[0].jobTitle").value("Software Engineer"));
 
             verify(recruitmentManagementService).getAllJobOpenings(any(Pageable.class));
         }
@@ -250,12 +250,12 @@ class RecruitmentControllerTest {
         @Test
         @DisplayName("Should create candidate successfully")
         void shouldCreateCandidateSuccessfully() throws Exception {
-            CandidateRequest request = CandidateRequest.builder()
-                    .fullName("John Doe")
-                    .email("john@example.com")
-                    .phone("+1234567890")
-                    .jobOpeningId(jobOpeningId)
-                    .build();
+            CandidateRequest request = new CandidateRequest();
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setEmail("john@example.com");
+            request.setPhone("+1234567890");
+            request.setJobOpeningId(jobOpeningId);
 
             when(recruitmentManagementService.createCandidate(any(CandidateRequest.class)))
                     .thenReturn(candidateResponse);
@@ -273,16 +273,19 @@ class RecruitmentControllerTest {
         @Test
         @DisplayName("Should update candidate successfully")
         void shouldUpdateCandidateSuccessfully() throws Exception {
-            CandidateRequest request = CandidateRequest.builder()
+            CandidateRequest request = new CandidateRequest();
+            request.setFirstName("John");
+            request.setLastName("Doe Updated");
+            request.setEmail("john.updated@example.com");
+            request.setPhone("+1234567890");
+            request.setJobOpeningId(jobOpeningId);
+
+            CandidateResponse updatedResponse = CandidateResponse.builder()
+                    .id(candidateId)
                     .fullName("John Doe Updated")
                     .email("john.updated@example.com")
                     .phone("+1234567890")
                     .jobOpeningId(jobOpeningId)
-                    .build();
-
-            CandidateResponse updatedResponse = candidateResponse.toBuilder()
-                    .fullName("John Doe Updated")
-                    .email("john.updated@example.com")
                     .build();
 
             when(recruitmentManagementService.updateCandidate(eq(candidateId), any(CandidateRequest.class)))
@@ -358,14 +361,20 @@ class RecruitmentControllerTest {
         @DisplayName("Should move candidate to next stage")
         void shouldMoveCandidateStage() throws Exception {
             MoveStageRequest request = MoveStageRequest.builder()
-                    .stage("INTERVIEW")
+                    .stage(Candidate.RecruitmentStage.INTERVIEW)
                     .notes("Passed initial screening")
                     .build();
 
-            CandidateResponse movedResponse = candidateResponse.toBuilder()
+            CandidateResponse movedResponse = CandidateResponse.builder()
+                    .id(candidateId)
+                    .fullName("John Doe")
+                    .email("john@example.com")
+                    .phone("+1234567890")
+                    .jobOpeningId(jobOpeningId)
                     .build();
 
-            when(recruitmentManagementService.moveCandidateStage(eq(candidateId), anyString(), anyString()))
+            when(recruitmentManagementService.moveCandidateStage(
+                    eq(candidateId), any(Candidate.RecruitmentStage.class), any()))
                     .thenReturn(movedResponse);
 
             mockMvc.perform(put("/api/v1/recruitment/candidates/{id}/stage", candidateId)
@@ -373,15 +382,16 @@ class RecruitmentControllerTest {
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
-            verify(recruitmentManagementService).moveCandidateStage(eq(candidateId), anyString(), anyString());
+            verify(recruitmentManagementService).moveCandidateStage(
+                    eq(candidateId), any(Candidate.RecruitmentStage.class), any());
         }
 
         @Test
         @DisplayName("Should create offer for candidate")
         void shouldCreateOfferForCandidate() throws Exception {
             CreateOfferRequest request = CreateOfferRequest.builder()
-                    .position("Software Engineer")
-                    .salary(100000.0)
+                    .positionTitle("Software Engineer")
+                    .offeredSalary(new java.math.BigDecimal("100000.0"))
                     .build();
 
             when(recruitmentManagementService.createOffer(eq(candidateId), any(CreateOfferRequest.class)))
@@ -445,12 +455,11 @@ class RecruitmentControllerTest {
         @DisplayName("Should schedule interview successfully")
         void shouldScheduleInterviewSuccessfully() throws Exception {
             UUID interviewId = UUID.randomUUID();
-            InterviewRequest request = InterviewRequest.builder()
-                    .candidateId(candidateId)
-                    .jobOpeningId(jobOpeningId)
-                    .interviewerId(UUID.randomUUID())
-                    .scheduledTime(LocalDateTime.now().plusDays(1))
-                    .build();
+            InterviewRequest request = new InterviewRequest();
+            request.setCandidateId(candidateId);
+            request.setJobOpeningId(jobOpeningId);
+            request.setInterviewerId(UUID.randomUUID());
+            request.setScheduledAt(LocalDateTime.now().plusDays(1));
 
             InterviewResponse response = InterviewResponse.builder()
                     .id(interviewId)
