@@ -42,6 +42,38 @@ import {
   getCategoryLabel,
   CreateAnnouncementRequest,
 } from '@/lib/services/announcement.service';
+
+/** Maps each announcement category to a background class for the icon container. */
+const categoryIconBgColors: Record<AnnouncementCategory, string> = {
+  GENERAL: 'bg-blue-100 dark:bg-blue-900/30',
+  POLICY_UPDATE: 'bg-purple-100 dark:bg-purple-900/30',
+  EVENT: 'bg-green-100 dark:bg-green-900/30',
+  HOLIDAY: 'bg-yellow-100 dark:bg-yellow-900/30',
+  ACHIEVEMENT: 'bg-pink-100 dark:bg-pink-900/30',
+  URGENT: 'bg-red-100 dark:bg-red-900/30',
+  BENEFIT: 'bg-indigo-100 dark:bg-indigo-900/30',
+  TRAINING: 'bg-cyan-100 dark:bg-cyan-900/30',
+  SOCIAL: 'bg-orange-100 dark:bg-orange-900/30',
+  IT_MAINTENANCE: 'bg-gray-100 dark:bg-gray-900/30',
+  HEALTH_SAFETY: 'bg-emerald-100 dark:bg-emerald-900/30',
+  OTHER: 'bg-slate-100 dark:bg-slate-900/30',
+};
+
+/** Maps each announcement category to a text color class for the icon. */
+const categoryIconTextColors: Record<AnnouncementCategory, string> = {
+  GENERAL: 'text-blue-800 dark:text-blue-400',
+  POLICY_UPDATE: 'text-purple-800 dark:text-purple-400',
+  EVENT: 'text-green-800 dark:text-green-400',
+  HOLIDAY: 'text-yellow-800 dark:text-yellow-400',
+  ACHIEVEMENT: 'text-pink-800 dark:text-pink-400',
+  URGENT: 'text-red-800 dark:text-red-400',
+  BENEFIT: 'text-indigo-800 dark:text-indigo-400',
+  TRAINING: 'text-cyan-800 dark:text-cyan-400',
+  SOCIAL: 'text-orange-800 dark:text-orange-400',
+  IT_MAINTENANCE: 'text-gray-800 dark:text-gray-400',
+  HEALTH_SAFETY: 'text-emerald-800 dark:text-emerald-400',
+  OTHER: 'text-slate-800 dark:text-slate-400',
+};
 import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -388,8 +420,8 @@ export default function AnnouncementsPage() {
                     }`}
                   >
                     <div className="flex items-start gap-4">
-                      <div className={`p-4 rounded-lg ${getCategoryColor(announcement.category).replace('text-', 'bg-').replace('-800', '-100').replace('-100', '-100')}`}>
-                        <Icon className={`w-6 h-6 ${getCategoryColor(announcement.category).split(' ')[1]}`} />
+                      <div className={`p-4 rounded-lg ${categoryIconBgColors[announcement.category] || categoryIconBgColors.OTHER}`}>
+                        <Icon className={`w-6 h-6 ${categoryIconTextColors[announcement.category] || categoryIconTextColors.OTHER}`} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">

@@ -43,7 +43,6 @@ export default function SecuritySettingsPage() {
   const [showDisableForm, setShowDisableForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  // BUG-007 FIX: store timer ref so we can clear it on unmount (prevents setState on unmounted component)
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
     if (successTimerRef.current) clearTimeout(successTimerRef.current);

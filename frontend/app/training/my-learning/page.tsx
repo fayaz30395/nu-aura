@@ -75,7 +75,6 @@ export default function MyLearningPage() {
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
   const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
     if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
