@@ -54,7 +54,7 @@ If you prefer manual control:
 
 ### 1. Start Infrastructure
 ```bash
-docker-compose up -d postgres redis kafka zookeeper
+docker-compose up -d redis kafka zookeeper
 ```
 
 ### 2. Start Backend
@@ -94,7 +94,7 @@ npm run dev
 lsof -i :8080
 
 # Check Docker services
-docker-compose ps
+# docker-compose ps
 
 # View backend logs
 cd backend
@@ -115,10 +115,10 @@ npm run dev
 ### Database connection issues
 ```bash
 # Restart PostgreSQL
-docker-compose restart postgres
+# docker-compose restart postgres
 
 # Check connection
-psql -h localhost -U hrms_user -d hrms_dev
+# psql -h localhost -U hrms_user -d hrms_dev
 ```
 
 ---
@@ -176,7 +176,7 @@ ps aux | grep HrmsApplication
 ps aux | grep next-server
 
 # Docker services
-docker-compose ps
+# docker-compose ps
 ```
 
 ### View Logs
@@ -187,14 +187,14 @@ tail -f backend/logs/application.log
 # Frontend logs (shown in terminal)
 
 # Docker logs
-docker-compose logs -f postgres
+# docker-compose logs -f postgres
 docker-compose logs -f kafka
 ```
 
 ### Database Management
 ```bash
 # Connect to PostgreSQL
-docker exec -it hrms-postgres psql -U hrms_user -d hrms_dev
+# docker exec -it hrms-postgres psql -U hrms_user -d hrms_dev
 
 # View tables
 \dt

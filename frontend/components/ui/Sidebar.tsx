@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { ChevronRight, ChevronDown, Sparkles, PanelLeftClose, PanelLeft, X } from 'lucide-react';
 
@@ -110,7 +109,7 @@ const ChildrenFlyover: React.FC<{
         className={cn(
           'fixed z-50 w-64 bg-[var(--bg-elevated)]',
           'rounded-lg shadow-xl',
-          'transform transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          'transform transition-all duration-100 ease-out',
           isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95 pointer-events-none'
         )}
         style={{
@@ -218,7 +217,7 @@ const ChildrenFlyover: React.FC<{
   );
 };
 
-// Individual menu item
+// Individual menu item — memoized to prevent re-renders when unrelated sidebar state changes
 const SidebarMenuItem: React.FC<{
   item: SidebarItem;
   isActive: boolean;
@@ -227,7 +226,7 @@ const SidebarMenuItem: React.FC<{
   activeId?: string;
   openFlyoverId: string | null;
   onToggleFlyover: (itemId: string, rect: DOMRect | null) => void;
-}> = ({ item, isActive, isCollapsed, onItemClick, activeId: _activeId, openFlyoverId, onToggleFlyover }) => {
+}> = memo(({ item, isActive, isCollapsed, onItemClick, activeId: _activeId, openFlyoverId, onToggleFlyover }) => {
   const elementRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
   const hasChildren = item.children && item.children.length > 0;
   const isFlyoverOpen = openFlyoverId === item.id;
@@ -251,7 +250,7 @@ const SidebarMenuItem: React.FC<{
 
   const commonClasses = cn(
     'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium',
-    'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+    'transition-colors duration-100',
     isActive || isFlyoverOpen
       ? 'font-semibold shadow-sm border-l-[3px]'
       : '',
@@ -357,7 +356,7 @@ const SidebarMenuItem: React.FC<{
       </button>
     </div>
   );
-};
+});
 
 // Section divider with label - collapsible
 const SectionDivider: React.FC<{
@@ -526,7 +525,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           data-sidebar
           className={cn(
             'flex flex-col border-r relative h-screen overflow-hidden',
-            'transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
+            'transition-[width] duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
             'will-change-[width]',
             className
           )}
@@ -645,31 +644,24 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                     </button>
                   )}
 
-                  {/* Collapsible items container */}
-                  <AnimatePresence initial={false}>
-                    {isSectionExpanded && (
-                      <motion.div
-                        className="space-y-0.5 overflow-hidden"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
-                      >
-                        {section.items.map((item) => (
-                          <SidebarMenuItem
-                            key={item.id}
-                            item={item}
-                            isActive={activeId === item.id || (item.children?.some(c => c.id === activeId) ?? false)}
-                            isCollapsed={isCollapsed}
-                            onItemClick={onItemClick}
-                            activeId={activeId}
-                            openFlyoverId={openFlyoverId}
-                            onToggleFlyover={handleToggleFlyover}
-                          />
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Collapsible items container — CSS-only, no Framer Motion overhead */}
+                  <div
+                    className="space-y-0.5 overflow-hidden transition-all duration-150 ease-out"
+                    style={isSectionExpanded ? {} : { height: 0, opacity: 0, pointerEvents: 'none' }}
+                  >
+                    {section.items.map((item) => (
+                      <SidebarMenuItem
+                        key={item.id}
+                        item={item}
+                        isActive={activeId === item.id || (item.children?.some(c => c.id === activeId) ?? false)}
+                        isCollapsed={isCollapsed}
+                        onItemClick={onItemClick}
+                        activeId={activeId}
+                        openFlyoverId={openFlyoverId}
+                        onToggleFlyover={handleToggleFlyover}
+                      />
+                    ))}
+                  </div>
                 </div>
               );
             })}

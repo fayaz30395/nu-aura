@@ -525,32 +525,32 @@ export default function CareersPage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gradient-to-br from-indigo-700 via-indigo-600 to-violet-700 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-block mb-4 px-4 py-2 rounded-full bg-primary-600/10 border border-primary-600/20">
-            <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+          <div className="inline-block mb-4 px-4 py-2 rounded-full bg-white/10 border border-white/20">
+            <span className="text-sm font-medium text-white">
               We&apos;re Hiring
             </span>
           </div>
-          <h1 className="text-5xl sm:text-6xl font-bold text-slate-50 mb-6">
+          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6">
             Join Our Talented Team
           </h1>
-          <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
             Explore exciting career opportunities and be part of something great. Help us build the future of HR management.
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-12">
+          <div className="max-w-2xl mx-auto mb-4">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search job titles or keywords..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
               />
             </div>
           </div>
@@ -558,16 +558,16 @@ export default function CareersPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
-            <div className="bg-slate-800 dark:bg-slate-800/50 rounded-lg p-6 sticky top-6">
-              <h3 className="text-lg font-semibold text-slate-50 mb-6">Filters</h3>
+            <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-24 shadow-sm">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-5">Filters</h3>
 
               {/* Department Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-3">
+              <div className="mb-5">
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                   Department
                 </label>
                 <select
@@ -576,7 +576,7 @@ export default function CareersPage() {
                     setSelectedDepartment(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="">All Departments</option>
                   {departments.map((dept) => (
@@ -588,8 +588,8 @@ export default function CareersPage() {
               </div>
 
               {/* Location Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-3">
+              <div className="mb-5">
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                   Location
                 </label>
                 <select
@@ -598,7 +598,7 @@ export default function CareersPage() {
                     setSelectedLocation(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="">All Locations</option>
                   {locations.map((loc) => (
@@ -610,8 +610,8 @@ export default function CareersPage() {
               </div>
 
               {/* Employment Type Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-3">
+              <div className="mb-5">
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                   Employment Type
                 </label>
                 <select
@@ -620,7 +620,7 @@ export default function CareersPage() {
                     setSelectedType(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="">All Types</option>
                   {types.map((type) => (
@@ -632,8 +632,8 @@ export default function CareersPage() {
               </div>
 
               {/* Experience Level Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-3">
+              <div className="mb-5">
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                   Experience Level
                 </label>
                 <select
@@ -642,7 +642,7 @@ export default function CareersPage() {
                     setSelectedExperience(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="">All Levels</option>
                   {experiences.map((exp) => (
@@ -682,12 +682,12 @@ export default function CareersPage() {
                 ))}
               </div>
             ) : paginatedJobs.length === 0 ? (
-              <div className="text-center py-20">
-                <Briefcase className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-slate-50 mb-2">
+              <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
+                <Briefcase className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   No jobs found
                 </h3>
-                <p className="text-slate-400 mb-6">
+                <p className="text-gray-500 mb-6">
                   Try adjusting your filters or search query
                 </p>
                 <Button
@@ -759,7 +759,7 @@ export default function CareersPage() {
                 )}
 
                 {/* Results Info */}
-                <div className="text-center mt-8 text-sm text-slate-400">
+                <div className="text-center mt-8 text-sm text-gray-500">
                   Showing {(currentPage - 1) * jobsPerPage + 1} to{' '}
                   {Math.min(currentPage * jobsPerPage, jobs.length)} of {jobs.length} positions
                 </div>

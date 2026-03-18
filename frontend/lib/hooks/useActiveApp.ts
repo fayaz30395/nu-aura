@@ -39,6 +39,18 @@ export function useActiveApp(): ActiveAppState {
   const appCode = useMemo(() => getAppForRoute(pathname), [pathname]);
   const app = useMemo(() => PLATFORM_APPS[appCode], [appCode]);
 
+  // Pre-compute a Set of module-prefix strings extracted from permission strings
+  // (the part before the first dot). This turns the O(n×m) nested .some() loop
+  // into a single O(m) build + O(1) Set.has() lookup per app.
+  const permissionModules = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of permissions) {
+      const dot = p.indexOf('.');
+      if (dot !== -1) set.add(p.substring(0, dot));
+    }
+    return set;
+  }, [permissions]);
+
   const hasAppAccess = useMemo(() => {
     return (code: AppCode): boolean => {
       // SuperAdmin has access to everything
@@ -51,11 +63,9 @@ export function useActiveApp(): ActiveAppState {
       // Check if user has at least one permission matching the app's prefixes
       if (!user || permissions.length === 0) return true; // Fallback: allow if no permissions loaded
 
-      return targetApp.permissionPrefixes.some((prefix) =>
-        permissions.some((p) => p.startsWith(prefix + '.'))
-      );
+      return targetApp.permissionPrefixes.some((prefix) => permissionModules.has(prefix));
     };
-  }, [isSuperAdmin, user, permissions]);
+  }, [isSuperAdmin, user, permissions.length, permissionModules]);
 
   const getAppEntryRoute = useMemo(() => {
     return (code: AppCode): string => {

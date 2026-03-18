@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -19,6 +20,50 @@ public class JwtTokenProvider {
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
+
+    /**
+     * Validate JWT secret entropy at startup to prevent token forgery.
+     *
+     * <p><strong>SEC-001:</strong> A weak JWT secret allows attackers to forge tokens
+     * and impersonate any user, including SuperAdmin. This check fails the application
+     * startup if the secret does not meet minimum security requirements.</p>
+     *
+     * <p>Requirements: minimum 32 bytes (256 bits) for HMAC-SHA256, must not be a
+     * commonly used placeholder value.</p>
+     */
+    @PostConstruct
+    void validateJwtSecret() {
+        if (jwtSecret == null || jwtSecret.isBlank()) {
+            throw new IllegalStateException(
+                "JWT_SECRET is not configured. Set the JWT_SECRET environment variable " +
+                "with a cryptographically random string of at least 32 bytes."
+            );
+        }
+
+        int byteLength = jwtSecret.getBytes(StandardCharsets.UTF_8).length;
+        if (byteLength < 32) {
+            throw new IllegalStateException(
+                String.format(
+                    "JWT_SECRET is too short (%d bytes). HMAC-SHA256 requires at least 32 bytes (256 bits). " +
+                    "Generate a secure secret with: openssl rand -base64 48", byteLength
+                )
+            );
+        }
+
+        // Reject well-known placeholder secrets that might be copy-pasted from docs/tutorials
+        Set<String> knownWeakSecrets = Set.of(
+            "secret", "mysecret", "jwt-secret", "changeme", "password",
+            "your-secret-key", "my-secret-key", "test-secret", "development-secret",
+            "your-256-bit-secret", "super-secret-key"
+        );
+
+        if (knownWeakSecrets.contains(jwtSecret.toLowerCase().trim())) {
+            throw new IllegalStateException(
+                "JWT_SECRET is a known weak/placeholder value. " +
+                "Generate a secure secret with: openssl rand -base64 48"
+            );
+        }
+    }
 
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;

@@ -170,10 +170,10 @@ export const APP_SIDEBAR_SECTIONS: Record<AppCode, string[]> = {
     'projects-workspace', 'reports-analytics', 'admin',
   ],
   HIRE: [
-    'home', 'hire-hub',
+    'hire-hub',
   ],
   GROW: [
-    'home', 'grow-hub',
+    'grow-hub',
   ],
   FLUENCE: [
     'fluence-hub',
