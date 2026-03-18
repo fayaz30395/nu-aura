@@ -23,7 +23,7 @@ export interface UserMenuProps {
  * The parent (Header) controls open/close state so it can manage the
  * click-outside listener centrally alongside the notification dropdown.
  */
-export function UserMenu({
+export const UserMenu = React.memo(function UserMenu({
   isOpen,
   onToggle,
   onClose,
@@ -126,4 +126,4 @@ export function UserMenu({
       )}
     </div>
   );
-}
+});

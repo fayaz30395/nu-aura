@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Info, Send } from 'lucide-react';
 import { UseFormRegister, FieldErrors, UseFormHandleSubmit } from 'react-hook-form';
@@ -54,7 +55,7 @@ interface CreateRequestModalProps {
   handleSubmit: UseFormHandleSubmit<RegularizationFormData>;
 }
 
-export function CreateRequestModal({
+export const CreateRequestModal = React.memo(function CreateRequestModal({
   open,
   formStep,
   register,
@@ -382,4 +383,4 @@ export function CreateRequestModal({
       )}
     </AnimatePresence>
   );
-}
+});

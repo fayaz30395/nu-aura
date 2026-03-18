@@ -30,7 +30,7 @@ interface NewFolderModalProps {
   onCreate: () => void;
 }
 
-export function NewFolderModal({
+export const NewFolderModal = React.memo(function NewFolderModal({
   opened,
   newFolderName,
   creatingFolder,
@@ -81,7 +81,7 @@ export function NewFolderModal({
       </Card>
     </div>
   );
-}
+});
 
 // ---- Share Modal ----
 interface ShareModalProps {
@@ -101,7 +101,7 @@ interface ShareModalProps {
   onCopyLink: () => void;
 }
 
-export function ShareModal({
+export const ShareModal = React.memo(function ShareModal({
   opened,
   file,
   shareEmail,
@@ -204,7 +204,7 @@ export function ShareModal({
       </Card>
     </div>
   );
-}
+});
 
 // ---- Rename Modal ----
 interface RenameModalProps {
@@ -217,7 +217,7 @@ interface RenameModalProps {
   onRename: () => void;
 }
 
-export function RenameModal({
+export const RenameModal = React.memo(function RenameModal({
   opened,
   file,
   renameValue,
@@ -269,7 +269,7 @@ export function RenameModal({
       </Card>
     </div>
   );
-}
+});
 
 // ---- File Preview Modal ----
 interface FilePreviewModalProps {
@@ -284,7 +284,7 @@ interface FilePreviewModalProps {
   onImgError: () => void;
 }
 
-export function FilePreviewModal({
+export const FilePreviewModal = React.memo(function FilePreviewModal({
   opened,
   file,
   previewLoading,
@@ -397,7 +397,7 @@ export function FilePreviewModal({
       </div>
     </div>
   );
-}
+});
 
 // ---- Delete Confirm ----
 interface DeleteConfirmProps {
@@ -406,7 +406,7 @@ interface DeleteConfirmProps {
   onConfirm: () => void;
 }
 
-export function DeleteConfirm({ isOpen, onClose, onConfirm }: DeleteConfirmProps) {
+export const DeleteConfirm = React.memo(function DeleteConfirm({ isOpen, onClose, onConfirm }: DeleteConfirmProps) {
   return (
     <ConfirmDialog
       isOpen={isOpen}
@@ -419,4 +419,4 @@ export function DeleteConfirm({ isOpen, onClose, onConfirm }: DeleteConfirmProps
       type="danger"
     />
   );
-}
+});

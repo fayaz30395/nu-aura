@@ -34,7 +34,7 @@ interface ComposeModalProps {
   onSelectContact: (contact: EmailContact, field: 'to' | 'cc') => void;
 }
 
-export function ComposeModal({
+export const ComposeModal = React.memo(function ComposeModal({
   opened,
   composeMode,
   composeEmail,
@@ -250,4 +250,4 @@ export function ComposeModal({
       </Card>
     </div>
   );
-}
+});
