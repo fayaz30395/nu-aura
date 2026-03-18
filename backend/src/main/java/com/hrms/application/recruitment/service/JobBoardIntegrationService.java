@@ -66,6 +66,7 @@ public class JobBoardIntegrationService {
     private final JobBoardPostingRepository jobBoardPostingRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final RestTemplate restTemplate;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     // ========== Post a job to one or more boards ==========
 
@@ -146,15 +147,22 @@ public class JobBoardIntegrationService {
     @Transactional
     public void syncApplicationCounts() {
         log.info("Syncing job board application counts");
-        List<JobBoardPosting> activePostings = jobBoardPostingRepository
-                .findAllExpiredPostings(LocalDateTime.now().plusYears(10)); // all active (not expired yet)
-        // Refresh stats for each posting
-        for (JobBoardPosting posting : activePostings) {
+        List<UUID> tenantIds = fetchActiveTenantIds();
+        for (UUID tenantId : tenantIds) {
+            TenantContext.setCurrentTenant(tenantId);
             try {
-                syncPostingStats(posting);
-                jobBoardPostingRepository.save(posting);
-            } catch (Exception e) {
-                log.warn("Failed to sync stats for posting {}: {}", posting.getId(), e.getMessage());
+                List<JobBoardPosting> activePostings = jobBoardPostingRepository
+                        .findAllExpiredPostings(LocalDateTime.now().plusYears(10)); // all active (not expired yet)
+                for (JobBoardPosting posting : activePostings) {
+                    try {
+                        syncPostingStats(posting);
+                        jobBoardPostingRepository.save(posting);
+                    } catch (Exception e) {
+                        log.warn("Failed to sync stats for posting {}: {}", posting.getId(), e.getMessage());
+                    }
+                }
+            } finally {
+                TenantContext.clear();
             }
         }
     }
@@ -165,14 +173,34 @@ public class JobBoardIntegrationService {
     @Scheduled(cron = "0 0 2 * * *")
     @Transactional
     public void expireOldPostings() {
-        List<JobBoardPosting> expired = jobBoardPostingRepository
-                .findAllExpiredPostings(LocalDateTime.now());
-        expired.forEach(p -> {
-            p.setStatus(JobBoardPosting.PostingStatus.EXPIRED);
-            jobBoardPostingRepository.save(p);
-        });
-        if (!expired.isEmpty()) {
-            log.info("Expired {} job board postings", expired.size());
+        List<UUID> tenantIds = fetchActiveTenantIds();
+        int totalExpired = 0;
+        for (UUID tenantId : tenantIds) {
+            TenantContext.setCurrentTenant(tenantId);
+            try {
+                List<JobBoardPosting> expired = jobBoardPostingRepository
+                        .findAllExpiredPostings(LocalDateTime.now());
+                expired.forEach(p -> {
+                    p.setStatus(JobBoardPosting.PostingStatus.EXPIRED);
+                    jobBoardPostingRepository.save(p);
+                });
+                totalExpired += expired.size();
+            } finally {
+                TenantContext.clear();
+            }
+        }
+        if (totalExpired > 0) {
+            log.info("Expired {} job board postings across {} tenants", totalExpired, tenantIds.size());
+        }
+    }
+
+    private List<UUID> fetchActiveTenantIds() {
+        try {
+            return jdbcTemplate.queryForList(
+                    "SELECT id FROM tenants WHERE is_active = true", UUID.class);
+        } catch (Exception e) {
+            log.warn("Could not fetch active tenants for job board sync: {}", e.getMessage());
+            return List.of();
         }
     }
 

@@ -9,8 +9,8 @@ export const analyticsService = {
   },
 
   // Get dashboard analytics
-  getDashboardAnalytics: async (): Promise<DashboardAnalytics> => {
-    const response = await apiClient.get<DashboardAnalytics>('/analytics/dashboard');
+  getDashboardAnalytics: async (params?: { startDate?: string; endDate?: string }): Promise<DashboardAnalytics> => {
+    const response = await apiClient.get<DashboardAnalytics>('/analytics/dashboard', { params });
     return response.data;
   },
 

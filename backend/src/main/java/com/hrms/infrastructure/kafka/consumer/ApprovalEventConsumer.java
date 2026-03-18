@@ -1,5 +1,6 @@
 package com.hrms.infrastructure.kafka.consumer;
 
+import com.hrms.common.security.TenantContext;
 import com.hrms.infrastructure.kafka.KafkaTopics;
 import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.events.ApprovalEvent;
@@ -64,6 +65,9 @@ public class ApprovalEventConsumer {
         String approvalType = event.getApprovalType();
         String status = event.getStatus();
 
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
         try {
             // Check idempotency: skip if already processed (distributed via Redis)
             if (idempotencyService.isProcessed(eventId)) {
@@ -96,6 +100,8 @@ public class ApprovalEventConsumer {
             log.error("Error processing approval event {}: {}", eventId, e.getMessage(), e);
             // Don't acknowledge; let Kafka retry or move to DLT based on config
             throw e;
+        } finally {
+            TenantContext.clear();
         }
     }
 

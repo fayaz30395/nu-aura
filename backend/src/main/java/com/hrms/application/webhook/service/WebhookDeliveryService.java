@@ -281,22 +281,29 @@ public class WebhookDeliveryService {
         List<WebhookDelivery> readyForRetry = deliveryRepository.findReadyForRetry(LocalDateTime.now());
 
         for (WebhookDelivery delivery : readyForRetry) {
-            webhookRepository.findById(delivery.getWebhookId()).ifPresent(webhook -> {
-                if (webhook.getStatus() == WebhookStatus.ACTIVE) {
-                    log.info("Retrying webhook delivery {} (attempt {})", delivery.getId(), delivery.getAttempts() + 1);
+            UUID tenantId = delivery.getTenantId();
+            if (tenantId != null) {
+                TenantContext.setCurrentTenant(tenantId);
+            }
+            try {
+                webhookRepository.findById(delivery.getWebhookId()).ifPresent(webhook -> {
+                    if (webhook.getStatus() == WebhookStatus.ACTIVE) {
+                        log.info("Retrying webhook delivery {} (attempt {})", delivery.getId(), delivery.getAttempts() + 1);
 
-                    // Record retry metrics
-                    UUID tenantId = delivery.getTenantId();
-                    if (tenantId != null) {
-                        metricsService.recordWebhookRetry(
-                                tenantId,
-                                delivery.getEventType().name(),
-                                delivery.getAttempts() + 1);
+                        // Record retry metrics
+                        if (tenantId != null) {
+                            metricsService.recordWebhookRetry(
+                                    tenantId,
+                                    delivery.getEventType().name(),
+                                    delivery.getAttempts() + 1);
+                        }
+
+                        deliverWebhook(webhook, delivery);
                     }
-
-                    deliverWebhook(webhook, delivery);
-                }
-            });
+                });
+            } finally {
+                TenantContext.clear();
+            }
         }
     }
 

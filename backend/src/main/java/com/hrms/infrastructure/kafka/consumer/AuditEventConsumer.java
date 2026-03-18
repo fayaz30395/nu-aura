@@ -1,5 +1,6 @@
 package com.hrms.infrastructure.kafka.consumer;
 
+import com.hrms.common.security.TenantContext;
 import com.hrms.infrastructure.kafka.KafkaTopics;
 import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.events.AuditEvent;
@@ -71,6 +72,9 @@ public class AuditEventConsumer {
 
         String eventId = event.getEventId();
 
+        if (event.getTenantId() != null) {
+            TenantContext.setCurrentTenant(event.getTenantId());
+        }
         try {
             // Check idempotency (distributed via Redis)
             if (idempotencyService.isProcessed(eventId)) {
@@ -104,6 +108,8 @@ public class AuditEventConsumer {
             log.error("Error processing audit event {}: {}", eventId, e.getMessage(), e);
             // Still acknowledge to move forward
             acknowledgment.acknowledge();
+        } finally {
+            TenantContext.clear();
         }
     }
 

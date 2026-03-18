@@ -8,7 +8,10 @@ import type { AnalyticsSummary, OrganizationHealth } from '@/lib/types/analytics
 export const analyticsKeys = {
   all: ['analytics'] as const,
   summary: () => [...analyticsKeys.all, 'summary'] as const,
-  dashboard: () => [...analyticsKeys.all, 'dashboard'] as const,
+  dashboard: (startDate?: string, endDate?: string) =>
+    startDate && endDate
+      ? [...analyticsKeys.all, 'dashboard', startDate, endDate]
+      : ([...analyticsKeys.all, 'dashboard'] as const),
   orgHealth: () => [...analyticsKeys.all, 'orgHealth'] as const,
 };
 
@@ -28,13 +31,19 @@ export function useAnalyticsSummary(enabled: boolean = true) {
   });
 }
 
+export interface DashboardAnalyticsParams {
+  startDate?: string;
+  endDate?: string;
+}
+
 /**
  * Hook to fetch role-based dashboard analytics.
+ * Accepts optional startDate / endDate (ISO date strings: YYYY-MM-DD) for custom range filtering.
  */
-export function useDashboardAnalytics(enabled: boolean = true) {
+export function useDashboardAnalytics(enabled: boolean = true, params?: DashboardAnalyticsParams) {
   return useQuery({
-    queryKey: analyticsKeys.dashboard(),
-    queryFn: () => analyticsService.getDashboardAnalytics(),
+    queryKey: analyticsKeys.dashboard(params?.startDate, params?.endDate),
+    queryFn: () => analyticsService.getDashboardAnalytics(params),
     enabled,
     staleTime: 5 * 60 * 1000,
   });

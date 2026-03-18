@@ -1,5 +1,6 @@
 package com.hrms.infrastructure.kafka.consumer;
 
+import com.hrms.common.security.TenantContext;
 import com.hrms.infrastructure.kafka.KafkaTopics;
 import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.events.EmployeeLifecycleEvent;
@@ -70,6 +71,9 @@ public class EmployeeLifecycleConsumer {
         String eventTypeEnum = event.getEventTypeEnum();
         UUID tenantId = event.getTenantId();
 
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
         try {
             // Check idempotency (distributed via Redis)
             if (idempotencyService.isProcessed(eventId)) {
@@ -106,6 +110,8 @@ public class EmployeeLifecycleConsumer {
             log.error("Error processing employee lifecycle event {}: {}", eventId, e.getMessage(), e);
             // Don't acknowledge; let Kafka retry
             throw e;
+        } finally {
+            TenantContext.clear();
         }
     }
 
