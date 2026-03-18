@@ -227,6 +227,372 @@ describe('usePermissions', () => {
 
       expect(result.current.isManager).toBe(true);
     });
+
+    it('should bypass all permission checks', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.SYSTEM_ADMIN)).toBe(true);
+      expect(result.current.hasPermission(Permissions.EMPLOYEE_READ)).toBe(true);
+      expect(result.current.hasPermission(Permissions.PAYROLL_PROCESS)).toBe(true);
+      expect(result.current.hasPermission('ANY_RANDOM_PERMISSION')).toBe(true);
+    });
+
+    it('should bypass all hasAnyPermission checks', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAnyPermission(
+        Permissions.PAYROLL_PROCESS,
+        Permissions.PAYROLL_APPROVE
+      )).toBe(true);
+    });
+
+    it('should bypass all hasAllPermissions checks', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAllPermissions(
+        Permissions.PAYROLL_PROCESS,
+        Permissions.PAYROLL_APPROVE,
+        Permissions.PAYROLL_VIEW
+      )).toBe(true);
+    });
+  });
+
+  describe('permission hierarchy - MANAGE implies all actions', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
+          roles: [
+            {
+              code: Roles.HR_ADMIN,
+              name: 'HR Admin',
+              permissions: [
+                { code: Permissions.EMPLOYEE_MANAGE },
+                { code: Permissions.LEAVE_MANAGE },
+              ],
+            },
+          ],
+        },
+        hasHydrated: true,
+      });
+    });
+
+    it('EMPLOYEE:MANAGE should grant access to EMPLOYEE:READ', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.EMPLOYEE_READ)).toBe(true);
+    });
+
+    it('EMPLOYEE:MANAGE should grant access to EMPLOYEE:CREATE', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.EMPLOYEE_CREATE)).toBe(true);
+    });
+
+    it('EMPLOYEE:MANAGE should grant access to EMPLOYEE:UPDATE', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.EMPLOYEE_UPDATE)).toBe(true);
+    });
+
+    it('EMPLOYEE:MANAGE should grant access to EMPLOYEE:DELETE', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.EMPLOYEE_DELETE)).toBe(true);
+    });
+
+    it('LEAVE:MANAGE should grant access to LEAVE:APPROVE', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.LEAVE_APPROVE)).toBe(true);
+    });
+
+    it('LEAVE:MANAGE should grant access to LEAVE:REJECT', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.LEAVE_REJECT)).toBe(true);
+    });
+  });
+
+  describe('app-prefixed permissions normalization (3-part format)', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
+          roles: [
+            {
+              code: Roles.HR_MANAGER,
+              name: 'HR Manager',
+              permissions: [
+                { code: 'HRMS:EMPLOYEE:READ' },
+                { code: 'HRMS:LEAVE:MANAGE' },
+              ],
+            },
+          ],
+        },
+        hasHydrated: true,
+      });
+    });
+
+    it('should normalize HRMS:EMPLOYEE:READ to EMPLOYEE:READ', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.permissions).toContain('EMPLOYEE:READ');
+    });
+
+    it('should keep original 3-part format in permissions list', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.permissions).toContain('HRMS:EMPLOYEE:READ');
+    });
+
+    it('normalized permission should match hasPermission check', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission('EMPLOYEE:READ')).toBe(true);
+    });
+
+    it('should apply hierarchy to normalized 3-part permissions', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission('LEAVE:APPROVE')).toBe(true);
+    });
+  });
+
+  describe('tenant admin privileges', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'tenant-admin-1',
+          email: 'admin@tenant.com',
+          roles: [
+            {
+              code: Roles.TENANT_ADMIN,
+              name: 'Tenant Admin',
+              permissions: [
+                { code: Permissions.TENANT_MANAGE },
+              ],
+            },
+          ],
+        },
+        hasHydrated: true,
+      });
+    });
+
+    it('should be identified as admin', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.isAdmin).toBe(true);
+    });
+
+    it('should be identified as HR', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.isHR).toBe(true);
+    });
+
+    it('should be identified as manager', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.isManager).toBe(true);
+    });
+  });
+
+  describe('multiple roles aggregation', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
+          roles: [
+            {
+              code: Roles.EMPLOYEE,
+              name: 'Employee',
+              permissions: [
+                { code: Permissions.LEAVE_APPLY },
+                { code: Permissions.LEAVE_VIEW_SELF },
+              ],
+            },
+            {
+              code: Roles.MANAGER,
+              name: 'Manager',
+              permissions: [
+                { code: Permissions.LEAVE_APPROVE },
+                { code: Permissions.EMPLOYEE_VIEW_TEAM },
+              ],
+            },
+            {
+              code: Roles.RECRUITER,
+              name: 'Recruiter',
+              permissions: [
+                { code: Permissions.RECRUITMENT_VIEW },
+                { code: Permissions.CANDIDATE_VIEW },
+              ],
+            },
+          ],
+        },
+        hasHydrated: true,
+      });
+    });
+
+    it('should aggregate permissions from all roles', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.permissions).toContain(Permissions.LEAVE_APPLY);
+      expect(result.current.permissions).toContain(Permissions.LEAVE_APPROVE);
+      expect(result.current.permissions).toContain(Permissions.EMPLOYEE_VIEW_TEAM);
+      expect(result.current.permissions).toContain(Permissions.RECRUITMENT_VIEW);
+    });
+
+    it('should extract all role codes', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.roles).toContain(Roles.EMPLOYEE);
+      expect(result.current.roles).toContain(Roles.MANAGER);
+      expect(result.current.roles).toContain(Roles.RECRUITER);
+    });
+
+    it('should correctly identify as manager', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.isManager).toBe(true);
+    });
+
+    it('should not be identified as HR', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.isHR).toBe(false);
+    });
+  });
+
+  describe('empty permission sets', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
+          roles: [
+            {
+              code: Roles.EMPLOYEE,
+              name: 'Employee',
+              permissions: [],
+            },
+          ],
+        },
+        hasHydrated: true,
+      });
+    });
+
+    it('should handle role with no permissions', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.permissions).toEqual([]);
+      expect(result.current.roles).toContain(Roles.EMPLOYEE);
+    });
+
+    it('should return false for any permission check', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasPermission(Permissions.EMPLOYEE_READ)).toBe(false);
+      expect(result.current.hasAnyPermission(Permissions.EMPLOYEE_READ)).toBe(false);
+    });
+  });
+
+  describe('hasAnyPermission edge cases', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
+          roles: [
+            {
+              code: Roles.EMPLOYEE,
+              name: 'Employee',
+              permissions: [
+                { code: Permissions.EMPLOYEE_READ },
+              ],
+            },
+          ],
+        },
+        hasHydrated: true,
+      });
+    });
+
+    it('should return true with single matching permission', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAnyPermission(Permissions.EMPLOYEE_READ)).toBe(true);
+    });
+
+    it('should return true with multiple permissions where one matches', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAnyPermission(
+        Permissions.EMPLOYEE_READ,
+        Permissions.SYSTEM_ADMIN,
+        Permissions.PAYROLL_VIEW
+      )).toBe(true);
+    });
+
+    it('should return false with no matching permissions', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAnyPermission(
+        Permissions.SYSTEM_ADMIN,
+        Permissions.PAYROLL_VIEW
+      )).toBe(false);
+    });
+  });
+
+  describe('hasAllPermissions edge cases', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
+          roles: [
+            {
+              code: Roles.HR_ADMIN,
+              name: 'HR Admin',
+              permissions: [
+                { code: Permissions.EMPLOYEE_READ },
+                { code: Permissions.EMPLOYEE_CREATE },
+                { code: Permissions.EMPLOYEE_UPDATE },
+              ],
+            },
+          ],
+        },
+        hasHydrated: true,
+      });
+    });
+
+    it('should return true when user has all requested permissions', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAllPermissions(
+        Permissions.EMPLOYEE_READ,
+        Permissions.EMPLOYEE_CREATE,
+        Permissions.EMPLOYEE_UPDATE
+      )).toBe(true);
+    });
+
+    it('should return false when user is missing one permission', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAllPermissions(
+        Permissions.EMPLOYEE_READ,
+        Permissions.EMPLOYEE_CREATE,
+        Permissions.PAYROLL_VIEW
+      )).toBe(false);
+    });
+
+    it('should return true with single permission', () => {
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.hasAllPermissions(Permissions.EMPLOYEE_READ)).toBe(true);
+    });
   });
 
   describe('isReady state', () => {
@@ -250,6 +616,21 @@ describe('usePermissions', () => {
       const { result } = renderHook(() => usePermissions());
 
       expect(result.current.isReady).toBe(true);
+    });
+
+    it('should return false when user exists but not hydrated', () => {
+      mockUseAuth.mockReturnValue({
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
+          roles: [],
+        },
+        hasHydrated: false,
+      });
+
+      const { result } = renderHook(() => usePermissions());
+
+      expect(result.current.isReady).toBe(false);
     });
   });
 

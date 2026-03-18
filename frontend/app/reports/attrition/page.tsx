@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
 import { Download, RefreshCw, AlertTriangle, TrendingDown, Shield, Zap } from 'lucide-react';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 interface AttritionPrediction {
   id: string;
@@ -115,9 +117,11 @@ export default function AttritionReportPage() {
             <button onClick={load} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50">
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
             </button>
-            <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
-              <Download className="h-4 w-4" /> Export CSV
-            </button>
+            <PermissionGate permission={Permissions.ANALYTICS_EXPORT}>
+              <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
+                <Download className="h-4 w-4" /> Export CSV
+              </button>
+            </PermissionGate>
           </div>
         </div>
 

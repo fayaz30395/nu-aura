@@ -32,6 +32,8 @@ import {
 import { feedback360Service } from '@/lib/services/feedback360.service';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { createLogger } from '@/lib/utils/logger';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 const log = createLogger('FeedbackPage');
 
@@ -278,16 +280,18 @@ export default function Feedback360Page() {
           </p>
         </div>
         {activeTab === 'cycles' && (
-          <button
-            onClick={() => {
-              resetCycleForm();
-              setShowCycleModal(true);
-            }}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            New Cycle
-          </button>
+          <PermissionGate permission={Permissions.FEEDBACK_360_CREATE}>
+            <button
+              onClick={() => {
+                resetCycleForm();
+                setShowCycleModal(true);
+              }}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              New Cycle
+            </button>
+          </PermissionGate>
         )}
       </div>
 
@@ -411,30 +415,36 @@ export default function Feedback360Page() {
                   <div className="flex justify-end gap-2 pt-3 border-t border-[var(--border-subtle)]">
                     {cycle.status === 'DRAFT' && (
                       <>
-                        <button
-                          onClick={() => setActivateConfirm(cycle.id)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded"
-                          title="Activate"
-                        >
-                          <Play className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirm(cycle.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded"
-                          title="Delete"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
+                        <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
+                          <button
+                            onClick={() => setActivateConfirm(cycle.id)}
+                            className="p-2 text-green-600 hover:bg-green-50 rounded"
+                            title="Activate"
+                          >
+                            <Play className="h-5 w-5" />
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
+                          <button
+                            onClick={() => setDeleteConfirm(cycle.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded"
+                            title="Delete"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </button>
+                        </PermissionGate>
                       </>
                     )}
                     {(cycle.status === 'ACTIVE' || cycle.status === 'IN_PROGRESS') && (
-                      <button
-                        onClick={() => setCloseConfirm(cycle.id)}
-                        className="p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] rounded"
-                        title="Close"
-                      >
-                        <Square className="h-5 w-5" />
-                      </button>
+                      <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
+                        <button
+                          onClick={() => setCloseConfirm(cycle.id)}
+                          className="p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] rounded"
+                          title="Close"
+                        >
+                          <Square className="h-5 w-5" />
+                        </button>
+                      </PermissionGate>
                     )}
                   </div>
                 </div>
@@ -501,13 +511,15 @@ export default function Feedback360Page() {
                           {new Date(request.createdAt).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <button
-                            onClick={() => openResponseModal(request)}
-                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded text-white bg-blue-600 hover:bg-blue-700"
-                          >
-                            <Pencil className="h-4 w-4 mr-1" />
-                            Provide Feedback
-                          </button>
+                          <PermissionGate permission={Permissions.FEEDBACK_360_SUBMIT}>
+                            <button
+                              onClick={() => openResponseModal(request)}
+                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded text-white bg-blue-600 hover:bg-blue-700"
+                            >
+                              <Pencil className="h-4 w-4 mr-1" />
+                              Provide Feedback
+                            </button>
+                          </PermissionGate>
                         </td>
                       </tr>
                     ))}
@@ -678,13 +690,15 @@ export default function Feedback360Page() {
                       View Details
                     </button>
                     {!summary.sharedWithEmployee && (
-                      <button
-                        onClick={() => setShareConfirm(summary.id)}
-                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
-                      >
-                        <Share2 className="h-4 w-4 mr-1" />
-                        Share
-                      </button>
+                      <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
+                        <button
+                          onClick={() => setShareConfirm(summary.id)}
+                          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
+                        >
+                          <Share2 className="h-4 w-4 mr-1" />
+                          Share
+                        </button>
+                      </PermissionGate>
                     )}
                   </div>
                 </div>
@@ -912,13 +926,15 @@ export default function Feedback360Page() {
               >
                 Cancel
               </button>
-              <button
-                onClick={handleCreateCycle}
-                disabled={!cycleForm.name || !cycleForm.startDate || !cycleForm.endDate}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                Create Cycle
-              </button>
+              <PermissionGate permission={Permissions.FEEDBACK_360_CREATE}>
+                <button
+                  onClick={handleCreateCycle}
+                  disabled={!cycleForm.name || !cycleForm.startDate || !cycleForm.endDate}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                >
+                  Create Cycle
+                </button>
+              </PermissionGate>
             </div>
           </div>
         </div>
@@ -1049,19 +1065,23 @@ export default function Feedback360Page() {
                 Cancel
               </button>
               <div className="flex gap-2">
-                <button
-                  onClick={() => handleSubmitResponse(true)}
-                  className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
-                >
-                  Save Draft
-                </button>
-                <button
-                  onClick={() => handleSubmitResponse(false)}
-                  disabled={!responseForm.overallRating}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-                >
-                  Submit Feedback
-                </button>
+                <PermissionGate permission={Permissions.FEEDBACK_360_SUBMIT}>
+                  <button
+                    onClick={() => handleSubmitResponse(true)}
+                    className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+                  >
+                    Save Draft
+                  </button>
+                </PermissionGate>
+                <PermissionGate permission={Permissions.FEEDBACK_360_SUBMIT}>
+                  <button
+                    onClick={() => handleSubmitResponse(false)}
+                    disabled={!responseForm.overallRating}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    Submit Feedback
+                  </button>
+                </PermissionGate>
               </div>
             </div>
           </div>

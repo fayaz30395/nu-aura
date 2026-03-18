@@ -29,6 +29,8 @@ import {
   Play,
   Target,
 } from 'lucide-react';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SkillGapAnalysis } from '@/components/training/SkillGapAnalysis';
 import {
@@ -475,10 +477,12 @@ export default function TrainingPage() {
             </p>
           </div>
           {activeTab === 'manage' && (
-            <Button onClick={handleCreateProgram}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Program
-            </Button>
+            <PermissionGate permission={Permissions.TRAINING_CREATE}>
+              <Button onClick={handleCreateProgram}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Program
+              </Button>
+            </PermissionGate>
           )}
         </div>
 
@@ -825,21 +829,23 @@ export default function TrainingPage() {
                                 Details
                               </Button>
                               {!enrolled ? (
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleSelfEnroll(program)}
-                                  disabled={enrolling}
-                                  className="flex-1"
-                                >
-                                  {enrolling ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <>
-                                      <Plus className="h-4 w-4 mr-1" />
-                                      Enroll
-                                    </>
-                                  )}
-                                </Button>
+                                <PermissionGate permission={Permissions.TRAINING_ENROLL}>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleSelfEnroll(program)}
+                                    disabled={enrolling}
+                                    className="flex-1"
+                                  >
+                                    {enrolling ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <>
+                                        <Plus className="h-4 w-4 mr-1" />
+                                        Enroll
+                                      </>
+                                    )}
+                                  </Button>
+                                </PermissionGate>
                               ) : (
                                 <Button
                                   size="sm"
@@ -993,20 +999,26 @@ export default function TrainingPage() {
                           <Button size="sm" variant="outline" onClick={() => handleViewProgram(program)}>
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button size="sm" variant="outline" onClick={() => handleEnrollEmployee(program)}>
-                            <UserPlus className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => handleEditProgram(program)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                            onClick={() => handleDeleteProgram(program.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <PermissionGate permission={Permissions.TRAINING_ENROLL}>
+                            <Button size="sm" variant="outline" onClick={() => handleEnrollEmployee(program)}>
+                              <UserPlus className="h-4 w-4" />
+                            </Button>
+                          </PermissionGate>
+                          <PermissionGate permission={Permissions.TRAINING_EDIT}>
+                            <Button size="sm" variant="outline" onClick={() => handleEditProgram(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </PermissionGate>
+                          <PermissionGate permission={Permissions.TRAINING_MANAGE}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              onClick={() => handleDeleteProgram(program.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </PermissionGate>
                         </div>
                       </div>
                     </CardContent>

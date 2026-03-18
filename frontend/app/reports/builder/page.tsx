@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -360,13 +362,15 @@ export default function ReportBuilderPage() {
                 onChange={e => setTemplateName(e.target.value)}
                 className="w-full text-sm border border-[var(--border-strong)] rounded px-3 py-1.5 mb-2"
               />
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full bg-[var(--bg-surface)] hover:bg-gray-200 text-[var(--text-primary)] text-sm font-medium py-1.5 rounded border border-[var(--border-strong)] disabled:opacity-50"
-              >
-                {saving ? 'Saving…' : 'Save Template'}
-              </button>
+              <PermissionGate permission={Permissions.REPORT_CREATE}>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="w-full bg-[var(--bg-surface)] hover:bg-gray-200 text-[var(--text-primary)] text-sm font-medium py-1.5 rounded border border-[var(--border-strong)] disabled:opacity-50"
+                >
+                  {saving ? 'Saving…' : 'Save Template'}
+                </button>
+              </PermissionGate>
             </div>
           </div>
 
@@ -375,20 +379,24 @@ export default function ReportBuilderPage() {
             <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Actions</h2>
               <div className="space-y-2">
-                <button
-                  onClick={handlePreview}
-                  disabled={loading || selectedCols.length === 0}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded disabled:opacity-50"
-                >
-                  {loading ? 'Loading…' : 'Preview Results'}
-                </button>
-                <button
-                  onClick={handleExport}
-                  disabled={loading || selectedCols.length === 0}
-                  className="w-full bg-white hover:bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium py-2 rounded border border-[var(--border-strong)] disabled:opacity-50"
-                >
-                  Export CSV
-                </button>
+                <PermissionGate permission={Permissions.REPORT_VIEW}>
+                  <button
+                    onClick={handlePreview}
+                    disabled={loading || selectedCols.length === 0}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded disabled:opacity-50"
+                  >
+                    {loading ? 'Loading…' : 'Preview Results'}
+                  </button>
+                </PermissionGate>
+                <PermissionGate permission={Permissions.ANALYTICS_EXPORT}>
+                  <button
+                    onClick={handleExport}
+                    disabled={loading || selectedCols.length === 0}
+                    className="w-full bg-white hover:bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium py-2 rounded border border-[var(--border-strong)] disabled:opacity-50"
+                  >
+                    Export CSV
+                  </button>
+                </PermissionGate>
               </div>
             </div>
           </div>

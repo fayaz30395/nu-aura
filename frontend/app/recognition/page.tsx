@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Award,
   Heart,
@@ -213,10 +215,12 @@ export default function RecognitionPage() {
               Celebrate achievements and recognize your colleagues
             </p>
           </div>
-          <Button onClick={handleGiveRecognition}>
-            <Sparkles className="mr-2 h-4 w-4" />
-            Give Recognition
-          </Button>
+          <PermissionGate permission={Permissions.RECOGNITION_CREATE}>
+            <Button onClick={handleGiveRecognition}>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Give Recognition
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats Cards */}
@@ -331,10 +335,12 @@ export default function RecognitionPage() {
                   <p className="text-[var(--text-secondary)]">
                     Be the first to recognize a colleague!
                   </p>
-                  <Button onClick={handleGiveRecognition} className="mt-4">
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Give Recognition
-                  </Button>
+                  <PermissionGate permission={Permissions.RECOGNITION_CREATE}>
+                    <Button onClick={handleGiveRecognition} className="mt-4">
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Give Recognition
+                    </Button>
+                  </PermissionGate>
                 </CardContent>
               </Card>
             ) : (
@@ -474,17 +480,18 @@ export default function RecognitionPage() {
                   {recognitionTypeOptions.slice(0, 4).map((type) => {
                     const Icon = type.icon;
                     return (
-                      <button
-                        key={type.value}
-                        onClick={() => {
-                          reset({ ...watch(), type: type.value });
-                          setIsModalOpen(true);
-                        }}
-                        className="flex flex-col items-center gap-2 p-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
-                      >
-                        <Icon className="h-6 w-6 text-primary-500" />
-                        <span className="text-xs text-[var(--text-secondary)]">{type.label}</span>
-                      </button>
+                      <PermissionGate key={type.value} permission={Permissions.RECOGNITION_CREATE}>
+                        <button
+                          onClick={() => {
+                            reset({ ...watch(), type: type.value });
+                            setIsModalOpen(true);
+                          }}
+                          className="flex flex-col items-center gap-2 p-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                        >
+                          <Icon className="h-6 w-6 text-primary-500" />
+                          <span className="text-xs text-[var(--text-secondary)]">{type.label}</span>
+                        </button>
+                      </PermissionGate>
                     );
                   })}
                 </div>

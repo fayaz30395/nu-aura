@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { reportService, ReportRequest } from '@/lib/services/report.service';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 export default function LeaveReportsPage() {
   const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
@@ -184,23 +186,25 @@ export default function LeaveReportsPage() {
               )}
 
               {/* Download Button */}
-              <button
-                onClick={handleDownload}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    Generating Report...
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-5 w-5" />
-                    Download Leave Report
-                  </>
-                )}
-              </button>
+              <PermissionGate permission={Permissions.REPORT_VIEW}>
+                <button
+                  onClick={handleDownload}
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Generating Report...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-5 w-5" />
+                      Download Leave Report
+                    </>
+                  )}
+                </button>
+              </PermissionGate>
             </CardContent>
           </Card>
         </motion.div>

@@ -19,6 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { typography } from '@/lib/design-system';
 import { useBlogPosts, useBlogCategories } from '@/lib/hooks/queries/useFluence';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 interface BlogPost {
   id: string;
@@ -110,13 +112,15 @@ export default function BlogsPage() {
               Read and share insights with your team
             </p>
           </div>
-          <Button
-            onClick={handleNewPost}
-            className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            New Post
-          </Button>
+          <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
+            <Button
+              onClick={handleNewPost}
+              className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              New Post
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Search and Filter Section */}
@@ -241,13 +245,15 @@ export default function BlogsPage() {
                 <p className="text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">
                   Start building your knowledge base by creating your first blog post
                 </p>
-                <Button
-                  onClick={handleNewPost}
-                  className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  Create First Post
-                </Button>
+                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
+                  <Button
+                    onClick={handleNewPost}
+                    className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create First Post
+                  </Button>
+                </PermissionGate>
               </CardContent>
             </Card>
           </motion.div>

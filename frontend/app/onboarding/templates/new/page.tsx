@@ -16,6 +16,8 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { onboardingService } from '@/lib/services/onboarding.service';
 import { createLogger } from '@/lib/utils/logger';
 
@@ -110,15 +112,17 @@ export default function NewTemplatePage() {
                                 </div>
 
                                 <div className="pt-6 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 flex justify-end">
-                                    <Button
-                                        type="submit"
-                                        isLoading={isSubmitting}
-                                        disabled={isSubmitting}
-                                        className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
-                                        leftIcon={<Save className="h-4 w-4" />}
-                                    >
-                                        Create & Configure Tasks
-                                    </Button>
+                                    <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                                        <Button
+                                            type="submit"
+                                            isLoading={isSubmitting}
+                                            disabled={isSubmitting}
+                                            className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
+                                            leftIcon={<Save className="h-4 w-4" />}
+                                        >
+                                            Create & Configure Tasks
+                                        </Button>
+                                    </PermissionGate>
                                 </div>
                             </form>
                         </CardContent>

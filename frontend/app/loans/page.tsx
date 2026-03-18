@@ -6,6 +6,8 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { loanService } from '@/lib/services/loan.service';
 import { LoanStatus } from '@/lib/types/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import { useEmployeeLoans } from '@/lib/hooks/queries/useLoans';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
@@ -140,13 +142,15 @@ export default function LoansPage() {
               Manage your loan applications and repayments
             </p>
           </div>
-          <button
-            onClick={() => router.push('/loans/new')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
-          >
-            <Plus className="h-5 w-5" />
-            Apply for Loan
-          </button>
+          <PermissionGate permission={Permissions.LOAN_CREATE}>
+            <button
+              onClick={() => router.push('/loans/new')}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+            >
+              <Plus className="h-5 w-5" />
+              Apply for Loan
+            </button>
+          </PermissionGate>
         </div>
 
         {/* Summary Cards */}
@@ -325,10 +329,11 @@ export default function LoansPage() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            onClick={() => router.push('/loans/new')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
-          >
+          <PermissionGate permission={Permissions.LOAN_CREATE}>
+            <button
+              onClick={() => router.push('/loans/new')}
+              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
@@ -341,7 +346,8 @@ export default function LoansPage() {
             <p className="text-sm text-[var(--text-muted)]">
               Submit a new loan application
             </p>
-          </button>
+            </button>
+          </PermissionGate>
 
           <button
             onClick={() => router.push('/loans?filter=active')}

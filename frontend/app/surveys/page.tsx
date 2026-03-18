@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   ClipboardList,
   Plus,
@@ -263,10 +265,12 @@ export default function SurveysPage() {
               Create and manage employee surveys and feedback collection
             </p>
           </div>
-          <Button onClick={handleCreateSurvey}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Survey
-          </Button>
+          <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+            <Button onClick={handleCreateSurvey}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Survey
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats Cards */}
@@ -395,10 +399,12 @@ export default function SurveysPage() {
               <p className="text-[var(--text-secondary)]">
                 Create your first survey to collect employee feedback
               </p>
-              <Button onClick={handleCreateSurvey} className="mt-4">
-                <Plus className="mr-2 h-4 w-4" />
-                Create Survey
-              </Button>
+              <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                <Button onClick={handleCreateSurvey} className="mt-4">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Survey
+                </Button>
+              </PermissionGate>
             </CardContent>
           </Card>
         ) : (
@@ -458,36 +464,48 @@ export default function SurveysPage() {
                         <Eye className="h-4 w-4" />
                       </Button>
                       {survey.status === SurveyStatus.DRAFT && (
-                        <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
-                          <Send className="h-4 w-4" />
-                        </Button>
+                        <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                          <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
+                            <Send className="h-4 w-4" />
+                          </Button>
+                        </PermissionGate>
                       )}
                       {survey.status === SurveyStatus.ACTIVE && (
                         <>
-                          <Button size="sm" variant="outline" onClick={() => handlePauseSurvey(survey.id)}>
-                            <Pause className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => handleCompleteSurvey(survey.id)}>
-                            <CheckCircle className="h-4 w-4" />
-                          </Button>
+                          <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                            <Button size="sm" variant="outline" onClick={() => handlePauseSurvey(survey.id)}>
+                              <Pause className="h-4 w-4" />
+                            </Button>
+                          </PermissionGate>
+                          <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                            <Button size="sm" variant="outline" onClick={() => handleCompleteSurvey(survey.id)}>
+                              <CheckCircle className="h-4 w-4" />
+                            </Button>
+                          </PermissionGate>
                         </>
                       )}
                       {survey.status === SurveyStatus.PAUSED && (
-                        <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
-                          <Play className="h-4 w-4" />
-                        </Button>
+                        <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                          <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
+                            <Play className="h-4 w-4" />
+                          </Button>
+                        </PermissionGate>
                       )}
-                      <Button size="sm" variant="outline" onClick={() => handleEditSurvey(survey)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                        onClick={() => handleDeleteSurvey(survey.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                        <Button size="sm" variant="outline" onClick={() => handleEditSurvey(survey)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </PermissionGate>
+                      <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          onClick={() => handleDeleteSurvey(survey.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </PermissionGate>
                     </div>
                   </div>
                 </CardContent>
@@ -740,13 +758,15 @@ export default function SurveysPage() {
               Close
             </Button>
             {selectedSurvey?.status === SurveyStatus.DRAFT && (
-              <Button onClick={() => {
-                handleLaunchSurvey(selectedSurvey.id);
-                setIsViewModalOpen(false);
-              }}>
-                <Send className="mr-2 h-4 w-4" />
-                Launch Survey
-              </Button>
+              <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                <Button onClick={() => {
+                  handleLaunchSurvey(selectedSurvey.id);
+                  setIsViewModalOpen(false);
+                }}>
+                  <Send className="mr-2 h-4 w-4" />
+                  Launch Survey
+                </Button>
+              </PermissionGate>
             )}
           </ModalFooter>
         </Modal>

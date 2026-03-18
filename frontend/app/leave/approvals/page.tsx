@@ -7,6 +7,8 @@ import { AlertCircle, RefreshCw, CheckCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { useLeaveRequestsByStatus, useActiveLeaveTypes, useApproveLeaveRequest, useRejectLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
@@ -211,20 +213,24 @@ export default function LeaveApprovalsPage() {
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="flex gap-2">
-                          <button
-                            onClick={() => handleApproveClick(request.id)}
-                            disabled={isProcessing}
-                            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-xs font-medium"
-                          >
-                            {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
-                          </button>
-                          <button
-                            onClick={() => handleRejectClick(request.id)}
-                            disabled={isProcessing}
-                            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 text-xs font-medium"
-                          >
-                            Reject
-                          </button>
+                          <PermissionGate permission={Permissions.LEAVE_APPROVE}>
+                            <button
+                              onClick={() => handleApproveClick(request.id)}
+                              disabled={isProcessing}
+                              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-xs font-medium"
+                            >
+                              {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
+                            </button>
+                          </PermissionGate>
+                          <PermissionGate permission={Permissions.LEAVE_APPROVE}>
+                            <button
+                              onClick={() => handleRejectClick(request.id)}
+                              disabled={isProcessing}
+                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 text-xs font-medium"
+                            >
+                              Reject
+                            </button>
+                          </PermissionGate>
                         </div>
                       </td>
                     </tr>

@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Megaphone,
   Pin,
@@ -225,7 +227,7 @@ export default function AnnouncementsPage() {
                 Stay updated with company news and important updates
               </p>
             </div>
-            {isAdmin(user?.roles) && (
+            <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors font-medium shadow-sm"
@@ -233,7 +235,7 @@ export default function AnnouncementsPage() {
                 <Plus className="w-5 h-5" />
                 New Announcement
               </button>
-            )}
+            </PermissionGate>
           </div>
         </motion.div>
 
@@ -432,23 +434,27 @@ export default function AnnouncementsPage() {
                         )}
                         {canEditAnnouncement(announcement) && (
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={(e) => handleEditAnnouncement(announcement, e)}
-                              className="p-1.5 text-[var(--text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
-                              title="Edit"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setShowDeleteConfirm(announcement.id);
-                              }}
-                              className="p-1.5 text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                              <button
+                                onClick={(e) => handleEditAnnouncement(announcement, e)}
+                                className="p-1.5 text-[var(--text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                title="Edit"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                            </PermissionGate>
+                            <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setShowDeleteConfirm(announcement.id);
+                                }}
+                                className="p-1.5 text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </PermissionGate>
                           </div>
                         )}
                         <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-purple-600 transition-colors" />
@@ -582,26 +588,30 @@ export default function AnnouncementsPage() {
                   <div className="flex items-center gap-2">
                     {canEditAnnouncement(selectedAnnouncement) && (
                       <>
-                        <button
-                          onClick={() => {
-                            setEditingAnnouncement(selectedAnnouncement);
-                            setSelectedAnnouncement(null);
-                            setShowCreateModal(true);
-                          }}
-                          className="flex items-center gap-2 px-4 py-2 text-blue-600 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => {
-                            setShowDeleteConfirm(selectedAnnouncement.id);
-                          }}
-                          className="flex items-center gap-2 px-4 py-2 text-red-600 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-colors font-medium"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
-                        </button>
+                        <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                          <button
+                            onClick={() => {
+                              setEditingAnnouncement(selectedAnnouncement);
+                              setSelectedAnnouncement(null);
+                              setShowCreateModal(true);
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 text-blue-600 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                            Edit
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                          <button
+                            onClick={() => {
+                              setShowDeleteConfirm(selectedAnnouncement.id);
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 text-red-600 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-colors font-medium"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Delete
+                          </button>
+                        </PermissionGate>
                       </>
                     )}
                     <button

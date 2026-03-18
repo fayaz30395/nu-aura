@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Heart,
   Plus,
@@ -153,10 +155,12 @@ export default function WellnessPage() {
               Track your health, join challenges, and earn rewards
             </p>
           </div>
-          <Button onClick={() => setIsLogModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Log Health Metric
-          </Button>
+          <PermissionGate permission={Permissions.WELLNESS_CREATE}>
+            <Button onClick={() => setIsLogModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Log Health Metric
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats Cards */}
@@ -370,13 +374,15 @@ export default function WellnessPage() {
                           )}
                         </div>
                         {!challenge.isJoined && (
-                          <Button
-                            size="sm"
-                            className="mt-4"
-                            onClick={() => handleJoinChallenge(challenge.id)}
-                          >
-                            Join Challenge
-                          </Button>
+                          <PermissionGate permission={Permissions.WELLNESS_CREATE}>
+                            <Button
+                              size="sm"
+                              className="mt-4"
+                              onClick={() => handleJoinChallenge(challenge.id)}
+                            >
+                              Join Challenge
+                            </Button>
+                          </PermissionGate>
                         )}
                       </CardContent>
                     </Card>

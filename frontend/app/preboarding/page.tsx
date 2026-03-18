@@ -12,6 +12,8 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { Skeleton } from '@/components/ui/Skeleton';
 import {
   usePreboardingCandidates,
@@ -158,13 +160,15 @@ export default function PreboardingPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Pre-boarding Portal</h1>
             <p className="text-sm text-[var(--text-muted)] mt-1">Manage new hire paperwork before joining</p>
           </div>
-          <Button
-            variant="primary"
-            leftIcon={<UserPlus className="h-4 w-4" />}
-            onClick={() => setShowInviteModal(true)}
-          >
-            Invite Candidate
-          </Button>
+          <PermissionGate permission={Permissions.PREBOARDING_CREATE}>
+            <Button
+              variant="primary"
+              leftIcon={<UserPlus className="h-4 w-4" />}
+              onClick={() => setShowInviteModal(true)}
+            >
+              Invite Candidate
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats Cards */}
@@ -299,15 +303,17 @@ export default function PreboardingPage() {
                         </span>
 
                         {candidate.status === 'INVITED' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleResendInvitation(candidate.id)}
-                            title="Resend Invitation"
-                            disabled={resendInvitationMutation.isPending}
-                          >
-                            <RefreshCw className="h-4 w-4" />
-                          </Button>
+                          <PermissionGate permission={Permissions.PREBOARDING_CREATE}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleResendInvitation(candidate.id)}
+                              title="Resend Invitation"
+                              disabled={resendInvitationMutation.isPending}
+                            >
+                              <RefreshCw className="h-4 w-4" />
+                            </Button>
+                          </PermissionGate>
                         )}
                       </div>
                     </div>

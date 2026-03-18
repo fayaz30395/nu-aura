@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Title, Text, Container, Tabs, Card, Table, Group, Badge, Button, Grid, ThemeIcon, Select, Loader, Alert } from '@mantine/core';
 import { IconBuildingBank, IconFirstAidKit, IconReceiptTax, IconSettings, IconCalendar, IconDownload, IconInfoCircle } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import { useActivePFConfigs, useActiveESIConfigs, usePTSlabsByState, useMonthlyStatutoryContributions } from '@/lib/hooks/queries/useStatutory';
 
 const MONTHS = [
@@ -217,14 +219,16 @@ export default function StatutoryPage() {
                         <Group justify="space-between" mb="md" align="flex-end">
                             <Title order={4}>Monthly Statutory Contributions</Title>
                             {reportFetched && contributions.length > 0 && (
-                                <Button
-                                    variant="light"
-                                    size="xs"
-                                    leftSection={<IconDownload size={14} />}
-                                    onClick={exportContributionsCSV}
-                                >
-                                    Export CSV
-                                </Button>
+                                <PermissionGate permission={Permissions.STATUTORY_VIEW}>
+                                    <Button
+                                        variant="light"
+                                        size="xs"
+                                        leftSection={<IconDownload size={14} />}
+                                        onClick={exportContributionsCSV}
+                                    >
+                                        Export CSV
+                                    </Button>
+                                </PermissionGate>
                             )}
                         </Group>
 
@@ -246,14 +250,16 @@ export default function StatutoryPage() {
                                 onChange={v => setReportYear(v ?? reportYear)}
                                 w={110}
                             />
-                            <Button
-                                mt={24}
-                                onClick={fetchMonthlyReport}
-                                loading={reportLoading}
-                                leftSection={<IconCalendar size={14} />}
-                            >
-                                Load Report
-                            </Button>
+                            <PermissionGate permission={Permissions.STATUTORY_VIEW}>
+                                <Button
+                                    mt={24}
+                                    onClick={fetchMonthlyReport}
+                                    loading={reportLoading}
+                                    leftSection={<IconCalendar size={14} />}
+                                >
+                                    Load Report
+                                </Button>
+                            </PermissionGate>
                         </Group>
 
                         {reportError && (

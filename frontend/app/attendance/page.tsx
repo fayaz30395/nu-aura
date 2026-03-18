@@ -10,6 +10,8 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { AttendanceRecord, Holiday } from '@/lib/types/attendance';
 import { getLocalDateString, getDateOffsetString, getMonthStartString } from '@/lib/utils/dateUtils';
 import { getLocalDateTimeString } from '@/lib/utils/dateUtils';
@@ -277,23 +279,27 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       </div>
                     </div>
                   ) : !isCheckedIn ? (
-                    <Button
-                      onClick={onCheckIn}
-                      isLoading={checkInPending}
-                      className="h-14 px-8 text-base font-semibold bg-white text-primary-600 hover:bg-gray-50 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
-                    >
-                      <LogIn className="h-5 w-5 mr-2" />
-                      Check In
-                    </Button>
+                    <PermissionGate permission={Permissions.ATTENDANCE_MARK}>
+                      <Button
+                        onClick={onCheckIn}
+                        isLoading={checkInPending}
+                        className="h-14 px-8 text-base font-semibold bg-white text-primary-600 hover:bg-gray-50 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                      >
+                        <LogIn className="h-5 w-5 mr-2" />
+                        Check In
+                      </Button>
+                    </PermissionGate>
                   ) : (
-                    <Button
-                      onClick={onCheckOutRequest}
-                      isLoading={checkOutPending}
-                      className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
-                    >
-                      <LogOut className="h-5 w-5 mr-2" />
-                      Check Out
-                    </Button>
+                    <PermissionGate permission={Permissions.ATTENDANCE_MARK}>
+                      <Button
+                        onClick={onCheckOutRequest}
+                        isLoading={checkOutPending}
+                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                      >
+                        <LogOut className="h-5 w-5 mr-2" />
+                        Check Out
+                      </Button>
+                    </PermissionGate>
                   )}
                 </div>
               </div>

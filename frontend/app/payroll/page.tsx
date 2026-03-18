@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { Banknote, FileText, Layers } from 'lucide-react';
 import { EmptyState } from '@/components/ui';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import {
   usePayrollRuns,
   usePayslips,
@@ -510,12 +511,14 @@ export default function PayrollPage() {
                   </select>
                 </div>
               </div>
-              <button
-                onClick={handleCreatePayrollRun}
-                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-              >
-                Create Payroll Run
-              </button>
+              <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                <button
+                  onClick={handleCreatePayrollRun}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                >
+                  Create Payroll Run
+                </button>
+              </PermissionGate>
             </div>
 
             {loading ? (
@@ -579,38 +582,46 @@ export default function PayrollPage() {
                         <td className="px-6 py-4 text-sm">
                           <div className="flex gap-2">
                             {run.status === 'DRAFT' && (
-                              <button
-                                onClick={() => handleProcessPayrollRun(run)}
-                                disabled={loading}
-                                className="px-2 py-1 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded text-xs hover:bg-primary-100 disabled:opacity-50"
-                              >
-                                Process
-                              </button>
+                              <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                                <button
+                                  onClick={() => handleProcessPayrollRun(run)}
+                                  disabled={loading}
+                                  className="px-2 py-1 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded text-xs hover:bg-primary-100 disabled:opacity-50"
+                                >
+                                  Process
+                                </button>
+                              </PermissionGate>
                             )}
                             {run.status === 'PROCESSED' && (
-                              <button
-                                onClick={() => handleApprovePayrollRun(run)}
-                                disabled={loading}
-                                className="px-2 py-1 bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded text-xs hover:bg-green-100 dark:hover:bg-green-900/60 disabled:opacity-50"
-                              >
-                                Approve
-                              </button>
+                              <PermissionGate permission={Permissions.PAYROLL_APPROVE}>
+                                <button
+                                  onClick={() => handleApprovePayrollRun(run)}
+                                  disabled={loading}
+                                  className="px-2 py-1 bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded text-xs hover:bg-green-100 dark:hover:bg-green-900/60 disabled:opacity-50"
+                                >
+                                  Approve
+                                </button>
+                              </PermissionGate>
                             )}
-                            <button
-                              onClick={() => handleEditPayrollRun(run)}
-                              className="px-2 py-1 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded text-xs hover:bg-primary-100"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedPayrollRun(run);
-                                setShowRunDeleteConfirm(true);
-                              }}
-                              className="px-2 py-1 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded text-xs hover:bg-red-100 dark:hover:bg-red-900/60"
-                            >
-                              Delete
-                            </button>
+                            <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                              <button
+                                onClick={() => handleEditPayrollRun(run)}
+                                className="px-2 py-1 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded text-xs hover:bg-primary-100"
+                              >
+                                Edit
+                              </button>
+                            </PermissionGate>
+                            <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                              <button
+                                onClick={() => {
+                                  setSelectedPayrollRun(run);
+                                  setShowRunDeleteConfirm(true);
+                                }}
+                                className="px-2 py-1 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded text-xs hover:bg-red-100 dark:hover:bg-red-900/60"
+                              >
+                                Delete
+                              </button>
+                            </PermissionGate>
                           </div>
                         </td>
                       </tr>
@@ -649,12 +660,14 @@ export default function PayrollPage() {
                   />
                 </div>
               </div>
-              <button
-                onClick={handleCreatePayslip}
-                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-              >
-                Create Payslip
-              </button>
+              <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                <button
+                  onClick={handleCreatePayslip}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                >
+                  Create Payslip
+                </button>
+              </PermissionGate>
             </div>
 
             {loading ? (
@@ -722,21 +735,25 @@ export default function PayrollPage() {
                     </div>
 
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditPayslip(payslip)}
-                        className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedPayslip(payslip);
-                          setShowPayslipDeleteConfirm(true);
-                        }}
-                        className="flex-1 px-3 py-2 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/60 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
+                      <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                        <button
+                          onClick={() => handleEditPayslip(payslip)}
+                          className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                        >
+                          Edit
+                        </button>
+                      </PermissionGate>
+                      <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                        <button
+                          onClick={() => {
+                            setSelectedPayslip(payslip);
+                            setShowPayslipDeleteConfirm(true);
+                          }}
+                          className="flex-1 px-3 py-2 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/60 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      </PermissionGate>
                     </div>
                   </div>
                 ))}
@@ -766,12 +783,14 @@ export default function PayrollPage() {
                   </select>
                 </div>
               </div>
-              <button
-                onClick={handleCreateStructure}
-                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-              >
-                Create Structure
-              </button>
+              <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                <button
+                  onClick={handleCreateStructure}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                >
+                  Create Structure
+                </button>
+              </PermissionGate>
             </div>
 
             {loading ? (
@@ -857,21 +876,25 @@ export default function PayrollPage() {
                     )}
 
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditStructure(structure)}
-                        className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedStructure(structure);
-                          setShowStructureDeleteConfirm(true);
-                        }}
-                        className="flex-1 px-3 py-2 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/60 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
+                      <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                        <button
+                          onClick={() => handleEditStructure(structure)}
+                          className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                        >
+                          Edit
+                        </button>
+                      </PermissionGate>
+                      <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
+                        <button
+                          onClick={() => {
+                            setSelectedStructure(structure);
+                            setShowStructureDeleteConfirm(true);
+                          }}
+                          className="flex-1 px-3 py-2 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/60 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      </PermissionGate>
                     </div>
                   </div>
                 ))}

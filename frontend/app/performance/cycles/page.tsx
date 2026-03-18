@@ -34,6 +34,8 @@ import {
 } from '@/lib/hooks/queries/usePerformance';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { useActiveOfficeLocations } from '@/lib/hooks/queries/useOfficeLocations';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 export default function ReviewCyclesPage() {
   // React Query hooks
@@ -236,15 +238,17 @@ export default function ReviewCyclesPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Review Cycles</h1>
-          <button
-            onClick={() => {
-              resetFormHandler();
-              setShowModal(true);
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-          >
-            Create Cycle
-          </button>
+          <PermissionGate permission={Permissions.REVIEW_CREATE}>
+            <button
+              onClick={() => {
+                resetFormHandler();
+                setShowModal(true);
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            >
+              Create Cycle
+            </button>
+          </PermissionGate>
         </div>
 
         <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
@@ -294,15 +298,17 @@ export default function ReviewCyclesPage() {
         ) : filteredCycles.length === 0 ? (
           <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">No review cycles found</div>
-            <button
-              onClick={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-            >
-              Create Your First Cycle
-            </button>
+            <PermissionGate permission={Permissions.REVIEW_CREATE}>
+              <button
+                onClick={() => {
+                  resetFormHandler();
+                  setShowModal(true);
+                }}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              >
+                Create Your First Cycle
+              </button>
+            </PermissionGate>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -357,26 +363,32 @@ export default function ReviewCyclesPage() {
 
                 <div className="flex gap-2">
                   {cycle.status === 'PLANNING' && (
-                    <button
-                      onClick={() => openActivateModal(cycle)}
-                      className="flex-1 px-3 py-2 tint-success text-green-600 dark:text-green-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
-                    >
-                      <Play className="h-4 w-4" />
-                      Activate
-                    </button>
+                    <PermissionGate permission={Permissions.REVIEW_UPDATE}>
+                      <button
+                        onClick={() => openActivateModal(cycle)}
+                        className="flex-1 px-3 py-2 tint-success text-green-600 dark:text-green-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
+                      >
+                        <Play className="h-4 w-4" />
+                        Activate
+                      </button>
+                    </PermissionGate>
                   )}
-                  <button
-                    onClick={() => openEditModal(cycle)}
-                    className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => openDeleteConfirm(cycle)}
-                    className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
-                  >
-                    Delete
-                  </button>
+                  <PermissionGate permission={Permissions.REVIEW_UPDATE}>
+                    <button
+                      onClick={() => openEditModal(cycle)}
+                      className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
+                    >
+                      Edit
+                    </button>
+                  </PermissionGate>
+                  <PermissionGate permission={Permissions.REVIEW_DELETE}>
+                    <button
+                      onClick={() => openDeleteConfirm(cycle)}
+                      className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
+                    >
+                      Delete
+                    </button>
+                  </PermissionGate>
                 </div>
               </div>
             ))}
@@ -534,13 +546,15 @@ export default function ReviewCyclesPage() {
                     >
                       Cancel
                     </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
-                    >
-                      {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
-                    </button>
+                    <PermissionGate permission={selectedCycle ? Permissions.REVIEW_UPDATE : Permissions.REVIEW_CREATE}>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                      >
+                        {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
+                      </button>
+                    </PermissionGate>
                   </div>
                 </form>
               </div>
@@ -565,13 +579,15 @@ export default function ReviewCyclesPage() {
                 >
                   Cancel
                 </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={loading}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
-                >
-                  {loading ? 'Deleting...' : 'Delete'}
-                </button>
+                <PermissionGate permission={Permissions.REVIEW_DELETE}>
+                  <button
+                    onClick={handleDelete}
+                    disabled={loading}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {loading ? 'Deleting...' : 'Delete'}
+                  </button>
+                </PermissionGate>
               </div>
             </div>
           </div>

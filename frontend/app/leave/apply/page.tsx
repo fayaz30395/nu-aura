@@ -7,6 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { useActiveLeaveTypes, useEmployeeBalancesForYear, useCreateLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import { HalfDayPeriod } from '@/lib/types/leave';
 import { useToast } from '@/components/notifications/ToastProvider';
@@ -234,13 +236,15 @@ export default function ApplyLeavePage() {
 
           {/* Actions */}
           <div className="flex gap-4 mt-6">
-            <button
-              type="submit"
-              disabled={createLeaveRequest.isPending || isSubmitting || !leaveTypeId}
-              className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 font-semibold"
-            >
-              {createLeaveRequest.isPending || isSubmitting ? 'Submitting...' : 'Submit Leave Request'}
-            </button>
+            <PermissionGate permission={Permissions.LEAVE_REQUEST}>
+              <button
+                type="submit"
+                disabled={createLeaveRequest.isPending || isSubmitting || !leaveTypeId}
+                className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 font-semibold"
+              >
+                {createLeaveRequest.isPending || isSubmitting ? 'Submitting...' : 'Submit Leave Request'}
+              </button>
+            </PermissionGate>
             <button
               type="button"
               onClick={() => router.back()}

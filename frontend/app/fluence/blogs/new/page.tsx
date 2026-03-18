@@ -11,6 +11,8 @@ import { AppLayout } from '@/components/layout';
 import { useCreateBlogPost, useBlogCategories } from '@/lib/hooks/queries/useFluence';
 import { notifications } from '@mantine/notifications';
 import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay, Skeleton } from '@mantine/core';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(
@@ -296,13 +298,15 @@ export default function CreateBlogPost() {
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-amber-600 hover:bg-amber-700"
-            >
-              {isSubmitting ? 'Creating...' : 'Create Post'}
-            </Button>
+            <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-amber-600 hover:bg-amber-700"
+              >
+                {isSubmitting ? 'Creating...' : 'Create Post'}
+              </Button>
+            </PermissionGate>
           </div>
         </form>
 

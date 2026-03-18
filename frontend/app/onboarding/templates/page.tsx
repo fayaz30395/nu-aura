@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { useOnboardingTemplates } from '@/lib/hooks/queries/useOnboarding';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function TemplatesPage() {
@@ -54,14 +56,16 @@ export default function TemplatesPage() {
                         </p>
                     </div>
 
-                    <Button
-                        variant="primary"
-                        className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
-                        leftIcon={<Plus className="h-4 w-4" />}
-                        onClick={() => router.push('/onboarding/templates/new')}
-                    >
-                        Create Template
-                    </Button>
+                    <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                        <Button
+                            variant="primary"
+                            className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
+                            leftIcon={<Plus className="h-4 w-4" />}
+                            onClick={() => router.push('/onboarding/templates/new')}
+                        >
+                            Create Template
+                        </Button>
+                    </PermissionGate>
                 </div>
 
                 {/* Templates Grid */}
@@ -133,12 +137,16 @@ export default function TemplatesPage() {
                                                             <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Reusable</span>
                                                         </div>
                                                         <div className="flex gap-2">
-                                                            <Button size="sm" variant="outline" className="h-8 w-8 p-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
-                                                                <Edit3 className="h-3.5 w-3.5" />
-                                                            </Button>
-                                                            <Button size="sm" variant="outline" className="h-8 w-8 p-0 rounded-xl text-danger-500 border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all">
-                                                                <Trash2 className="h-3.5 w-3.5" />
-                                                            </Button>
+                                                            <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                                                                <Button size="sm" variant="outline" className="h-8 w-8 p-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
+                                                                    <Edit3 className="h-3.5 w-3.5" />
+                                                                </Button>
+                                                            </PermissionGate>
+                                                            <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+                                                                <Button size="sm" variant="outline" className="h-8 w-8 p-0 rounded-xl text-danger-500 border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all">
+                                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                                </Button>
+                                                            </PermissionGate>
                                                         </div>
                                                     </div>
                                                 </CardContent>
