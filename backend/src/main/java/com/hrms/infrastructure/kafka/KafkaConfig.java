@@ -18,6 +18,8 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.util.backoff.ExponentialBackOff;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
@@ -341,7 +343,17 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(3);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
-        // Commit logging removed - incompatible with Spring Kafka 3.x API
+
+        // Retry with exponential backoff: 1s, 5s, 30s (3 attempts before DLT)
+        ExponentialBackOff backOff = new ExponentialBackOff();
+        backOff.setInitialInterval(1000L);   // 1 second
+        backOff.setMultiplier(5.0);          // 1s → 5s → 25s (capped at 30s)
+        backOff.setMaxInterval(30000L);      // Cap at 30 seconds
+        backOff.setMaxElapsedTime(36000L);   // Stop retrying after ~36s total
+
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(backOff);
+        factory.setCommonErrorHandler(errorHandler);
+
         return factory;
     }
 
