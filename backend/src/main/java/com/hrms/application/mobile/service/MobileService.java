@@ -74,7 +74,7 @@ public class MobileService {
                 .employeeName(employee.getFullName())
                 .designation(employee.getDesignation())
                 .department(employee.getDepartmentId() != null ? employee.getDepartmentId().toString() : "N/A")
-                .avatarUrl(null) // avatarUrl not available on Employee entity; future enhancement
+                .avatarUrl(employee.getAvatarUrl())
                 .attendanceStatus("NOT_CHECKED_IN") // Will be populated with actual attendance status
                 .leaveBalance(leaveBalance)
                 .pendingApprovalsCount(pendingCount)
