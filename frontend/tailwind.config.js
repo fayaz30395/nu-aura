@@ -42,8 +42,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        display: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        sans: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Inter', 'sans-serif'],
+        display: ['var(--font-sans)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         mono: ['SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', 'Courier New', 'monospace'],
         outfit: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
@@ -99,12 +99,12 @@ module.exports = {
           divider: 'var(--dropdown-divider)',
         },
 
-        // AURA Midnight - Deep neutral palette (Zinc-based)
+        // AURA Midnight - Deep navy palette (cool blue undertone)
         midnight: {
-          deep: '#09090b',
-          obsidian: '#111113',
-          card: '#141416',
-          elevated: '#1a1a1d',
+          deep: '#06070d',
+          obsidian: '#0d0f18',
+          card: '#0f1119',
+          elevated: '#161a28',
         },
         // Semantic Tokens for Stable Theming
         brand: {
@@ -225,6 +225,9 @@ module.exports = {
         // Page transitions
         'page-enter': 'pageEnter 0.3s ease-out',
         'page-exit': 'pageExit 0.2s ease-in',
+
+        // Micro-interaction: urgent badge pulse
+        'badge-pulse': 'badgePulse 2s ease-in-out infinite',
       },
       keyframes: {
         // Loading keyframes
@@ -342,6 +345,12 @@ module.exports = {
           '0%': { opacity: '1', transform: 'translateY(0)' },
           '100%': { opacity: '0', transform: 'translateY(-10px)' },
         },
+
+        // Micro-interaction: Status badge urgent pulse
+        badgePulse: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.75', transform: 'scale(1.04)' },
+        },
       },
       // Enhanced Transitions
       transitionDuration: {
@@ -382,19 +391,22 @@ module.exports = {
       // Glass morphism utility
       addUtilities({
         '.glass': {
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(10px)',
+          background: 'rgba(255, 255, 255, 0.06)',
+          backdropFilter: 'blur(12px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(12px) saturate(1.4)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
         },
         '.glass-dark': {
-          background: 'rgba(0, 0, 0, 0.2)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
+          background: 'rgba(6, 7, 13, 0.6)',
+          backdropFilter: 'blur(16px) saturate(1.5)',
+          WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
+          border: '1px solid rgba(133, 119, 211, 0.08)',
         },
         '.glass-strong': {
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          background: 'rgba(255, 255, 255, 0.12)',
+          backdropFilter: 'blur(24px) saturate(1.6)',
+          WebkitBackdropFilter: 'blur(24px) saturate(1.6)',
+          border: '1px solid rgba(255, 255, 255, 0.18)',
         },
       });
 
@@ -410,20 +422,26 @@ module.exports = {
           background: `linear-gradient(135deg, ${grass.grass8} 0%, ${grass.grass10} 100%)`,
         },
         '.gradient-mesh': {
-          background: `radial-gradient(at 0% 0%, rgba(99, 88, 168, 0.14) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(133, 119, 211, 0.14) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(90, 200, 197, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(99, 88, 168, 0.12) 0px, transparent 50%)`,
+          background: `radial-gradient(at 0% 0%, rgba(99, 88, 168, 0.16) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(133, 119, 211, 0.14) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(90, 200, 197, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(99, 88, 168, 0.10) 0px, transparent 50%)`,
+        },
+        '.gradient-brand': {
+          background: 'linear-gradient(135deg, #6358A8 0%, #8577D3 50%, #5AC8C5 100%)',
         },
       });
 
       // Shadow utilities
       addUtilities({
         '.shadow-glow-primary': {
-          boxShadow: '0 0 20px rgba(99, 88, 168, 0.3)',
+          boxShadow: '0 0 24px rgba(99, 88, 168, 0.25), 0 0 8px rgba(133, 119, 211, 0.15)',
         },
         '.shadow-glow-success': {
-          boxShadow: '0 0 20px rgba(70, 167, 88, 0.3)',
+          boxShadow: '0 0 24px rgba(16, 185, 129, 0.25), 0 0 8px rgba(52, 211, 153, 0.15)',
         },
         '.shadow-glow-error': {
-          boxShadow: '0 0 20px rgba(229, 77, 46, 0.3)',
+          boxShadow: '0 0 24px rgba(239, 68, 68, 0.25), 0 0 8px rgba(248, 113, 113, 0.15)',
+        },
+        '.shadow-glow-teal': {
+          boxShadow: '0 0 24px rgba(90, 200, 197, 0.25), 0 0 8px rgba(90, 200, 197, 0.15)',
         },
       });
     },

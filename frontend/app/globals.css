@@ -3,63 +3,62 @@
 @tailwind utilities;
 
 /* ================================================================
-   NU-AURA THEME — Keka-Inspired HR SaaS Palette
-   Reference: Keka HRMS design system (actual interface colors)
+   NU-AURA THEME — Premium Enterprise SaaS
    Brand: Deep Purple primary (#6358A8) — professional, modern
    Accent: Vibrant Purple (#8577D3), Teal (#5AC8C5)
-   Neutrals: Dark navy backgrounds, clean slate grays
+   Style: Glassmorphism-ready, cool-toned surfaces, brand-tinted shadows
    ================================================================ */
 
 @layer base {
   :root {
-    /* ── Surface Hierarchy (Keka light theme - white/light backgrounds) ─────────── */
-    --bg-main: #f8f9fc;
-    --bg-surface: #eef1f6;
+    /* ── Surface Hierarchy (cool-toned whites with subtle blue undertone) ── */
+    --bg-main: #f5f7fb;
+    --bg-surface: #ebeef5;
     --bg-elevated: #ffffff;
     --bg-card: #ffffff;
-    --bg-card-hover: #f3f5f9;
-    --bg-page: #f8f9fc;
+    --bg-card-hover: #f0f2f8;
+    --bg-page: #f5f7fb;
     --bg-input: #ffffff;
-    --bg-sidebar: #1E2838;
-    --bg-overlay: rgba(0, 0, 0, 0.5);
+    --bg-sidebar: #151929;
+    --bg-overlay: rgba(15, 15, 30, 0.55);
 
-    /* ── Ambient Background (very subtle purple glow) ────────── */
-    --bg-radial-1: radial-gradient(1000px circle at 10% -8%, rgba(99, 88, 168, 0.02), transparent 50%);
-    --bg-radial-2: radial-gradient(700px circle at 92% 5%, rgba(133, 119, 211, 0.015), transparent 45%);
+    /* ── Ambient Background (visible purple + teal mesh gradient) ────── */
+    --bg-radial-1: radial-gradient(1200px circle at 5% -12%, rgba(99, 88, 168, 0.06), transparent 55%);
+    --bg-radial-2: radial-gradient(800px circle at 95% 0%, rgba(90, 200, 197, 0.04), transparent 50%);
     --bg-linear: none;
 
-    /* ── Text Hierarchy (dark text for light bg - Keka style) ───────────────────────────── */
-    --text-primary: #111827;
-    --text-secondary: #4b5563;
-    --text-muted: #9ca3af;
+    /* ── Text Hierarchy ──────────────────────────────── */
+    --text-primary: #0f1729;
+    --text-secondary: #3d4663;
+    --text-muted: #8891a5;
     --text-inverse: #ffffff;
 
-    /* ── Border & Divider ─────────────────────────── */
-    --border-main: #e5e7eb;
-    --border-subtle: #f3f4f6;
-    --border-strong: #d1d5db;
+    /* ── Border & Divider (cool gray with faint purple tint) ─── */
+    --border-main: #dde1ed;
+    --border-subtle: #eef0f7;
+    --border-strong: #c5cad9;
     --border-focus: #6358A8;
 
     /* ── Sidebar Active State ──────────────────────── */
-    --sidebar-active-bg: rgba(133, 119, 211, 0.15);
+    --sidebar-active-bg: rgba(133, 119, 211, 0.18);
     --sidebar-active-border: #8577D3;
-    --sidebar-hover-bg: rgba(133, 119, 211, 0.08);
+    --sidebar-hover-bg: rgba(133, 119, 211, 0.10);
 
     /* ── Sidebar Text (dark sidebar in light mode) ── */
-    --sidebar-text: rgba(255, 255, 255, 0.7);
+    --sidebar-text: rgba(255, 255, 255, 0.72);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.4);
-    --sidebar-border: rgba(255, 255, 255, 0.1);
-    --sidebar-section-text: rgba(255, 255, 255, 0.45);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.38);
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --sidebar-section-text: rgba(255, 255, 255, 0.42);
 
-    /* ── Shadows (crisp, modern) ─────────────────── */
-    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
-    --shadow-card-hover: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
-    --shadow-elevated: 0 12px 28px -6px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
-    --shadow-dropdown: 0 16px 36px -8px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.06);
+    /* ── Shadows (brand-tinted, layered for depth) ──── */
+    --shadow-card: 0 1px 3px 0 rgba(99, 88, 168, 0.04), 0 0 0 1px rgba(99, 88, 168, 0.03);
+    --shadow-card-hover: 0 8px 24px -6px rgba(99, 88, 168, 0.10), 0 0 0 1px rgba(99, 88, 168, 0.06);
+    --shadow-elevated: 0 16px 36px -8px rgba(99, 88, 168, 0.12), 0 0 0 1px rgba(99, 88, 168, 0.05);
+    --shadow-dropdown: 0 20px 48px -12px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(99, 88, 168, 0.08);
 
     /* ── Ring / Focus ─────────────────────────────── */
-    --ring-primary: rgba(99, 88, 168, 0.3);
+    --ring-primary: rgba(99, 88, 168, 0.35);
     --ring-danger: rgba(239, 68, 68, 0.3);
     --ring-success: rgba(16, 185, 129, 0.3);
 
@@ -71,11 +70,11 @@
     --chart-danger: #ef4444;
     --chart-info: #5AC8C5;
     --chart-accent: #D0B8F0;
-    --chart-muted: #9ca3af;
-    --chart-grid: #e5e7eb;
+    --chart-muted: #8891a5;
+    --chart-grid: #e4e7f0;
     --chart-tooltip-bg: #ffffff;
-    --chart-tooltip-border: #e5e7eb;
-    --chart-tooltip-text: #111827;
+    --chart-tooltip-border: #dde1ed;
+    --chart-tooltip-text: #0f1729;
 
     /* ── Status Colors (for badges, indicators, tinted backgrounds) ── */
     --status-success-bg: #ecfdf5;
@@ -87,13 +86,13 @@
     --status-warning-bg: #fffbeb;
     --status-warning-text: #92400e;
     --status-warning-border: #fde68a;
-    --status-info-bg: #eff6ff;
+    --status-info-bg: #eef3ff;
     --status-info-text: #1e40af;
     --status-info-border: #bfdbfe;
-    --status-neutral-bg: #f3f4f6;
+    --status-neutral-bg: #f0f2f7;
     --status-neutral-text: #374151;
-    --status-neutral-border: #d1d5db;
-    --status-purple-bg: #f5f3ff;
+    --status-neutral-border: #c5cad9;
+    --status-purple-bg: #f4f1ff;
     --status-purple-text: #5b21b6;
     --status-purple-border: #c4b5fd;
     --status-pink-bg: #fdf2f8;
@@ -103,118 +102,118 @@
     --status-orange-text: #9a3412;
     --status-orange-border: #fed7aa;
 
-    /* ── Header/Dropdown (Keka style - purple header, white dropdowns) ─── */
-    --header-bg: #6358A8;
-    --header-border: #534A8C;
-    --dropdown-bg: #ffffff;
-    --dropdown-border: #e5e7eb;
-    --dropdown-hover: #f3f4f6;
-    --dropdown-text: #111827;
-    --dropdown-text-secondary: #6b7280;
-    --dropdown-divider: #e5e7eb;
+    /* ── Header/Dropdown (frosted glass-ready) ─────────── */
+    --header-bg: rgba(245, 247, 251, 0.82);
+    --header-border: rgba(99, 88, 168, 0.10);
+    --dropdown-bg: rgba(255, 255, 255, 0.92);
+    --dropdown-border: rgba(99, 88, 168, 0.08);
+    --dropdown-hover: #f0f2f8;
+    --dropdown-text: #0f1729;
+    --dropdown-text-secondary: #3d4663;
+    --dropdown-divider: #dde1ed;
   }
 
   .dark {
-    /* ── Surface Hierarchy (Solid dark, no transparency) ── */
-    --bg-main: #09090b;
-    --bg-surface: #111113;
-    --bg-elevated: #1a1a1d;
-    --bg-card: #141416;
-    --bg-card-hover: #1e1e21;
-    --bg-page: #09090b;
-    --bg-input: #141416;
-    --bg-sidebar: #0c0c0e;
-    --bg-overlay: rgba(0, 0, 0, 0.75);
+    /* ── Surface Hierarchy (deep navy-black with blue undertone) ── */
+    --bg-main: #06070d;
+    --bg-surface: #0d0f18;
+    --bg-elevated: #161a28;
+    --bg-card: #0f1119;
+    --bg-card-hover: #181c2a;
+    --bg-page: #06070d;
+    --bg-input: #0f1119;
+    --bg-sidebar: #080910;
+    --bg-overlay: rgba(4, 4, 12, 0.80);
 
-    /* ── Ambient Background (dark, minimal) ──────── */
-    --bg-radial-1: radial-gradient(900px circle at 8% -10%, rgba(99, 88, 168, 0.06), transparent 50%);
-    --bg-radial-2: radial-gradient(600px circle at 92% 8%, rgba(133, 119, 211, 0.04), transparent 45%);
+    /* ── Ambient Background (rich purple + teal mesh on dark) ──── */
+    --bg-radial-1: radial-gradient(1000px circle at 5% -15%, rgba(99, 88, 168, 0.10), transparent 55%);
+    --bg-radial-2: radial-gradient(700px circle at 95% 5%, rgba(90, 200, 197, 0.06), transparent 50%);
     --bg-linear: none;
 
-    /* ── Text Hierarchy (solid, no rgba) ──────────── */
-    --text-primary: #f4f4f5;
-    --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
-    --text-inverse: #09090b;
+    /* ── Text Hierarchy ──────────────────────────────── */
+    --text-primary: #ecedf2;
+    --text-secondary: #9398ad;
+    --text-muted: #5c6178;
+    --text-inverse: #06070d;
 
-    /* ── Border & Divider (solid, no rgba) ────────── */
-    --border-main: #27272a;
-    --border-subtle: #1c1c1f;
-    --border-strong: #3f3f46;
+    /* ── Border & Divider (subtle cool blue-gray) ──── */
+    --border-main: #1e2236;
+    --border-subtle: #141724;
+    --border-strong: #2c3148;
     --border-focus: #8577D3;
 
-    /* ── Sidebar Active State (dark — blended, not contrasting) ── */
-    --sidebar-active-bg: rgba(133, 119, 211, 0.15);
-    --sidebar-active-border: #8577D3;
-    --sidebar-hover-bg: rgba(133, 119, 211, 0.08);
+    /* ── Sidebar Active State (dark — luminous purple glow) ── */
+    --sidebar-active-bg: rgba(133, 119, 211, 0.16);
+    --sidebar-active-border: #9B8FE0;
+    --sidebar-hover-bg: rgba(133, 119, 211, 0.09);
 
     /* ── Sidebar Text (dark mode — blended with bg) ── */
-    --sidebar-text: #a1a1aa;
-    --sidebar-text-active: #f4f4f5;
-    --sidebar-text-muted: #71717a;
-    --sidebar-border: #27272a;
-    --sidebar-section-text: #71717a;
+    --sidebar-text: #8891a5;
+    --sidebar-text-active: #ecedf2;
+    --sidebar-text-muted: #5c6178;
+    --sidebar-border: #1e2236;
+    --sidebar-section-text: #5c6178;
 
-    /* ── Shadows (deep) ──────────────────────────── */
-    --shadow-card: 0 0 0 1px #27272a;
-    --shadow-card-hover: 0 4px 16px -4px rgba(0, 0, 0, 0.4), 0 0 0 1px #3f3f46;
-    --shadow-elevated: 0 16px 36px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px #3f3f46;
-    --shadow-dropdown: 0 20px 44px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px #3f3f46;
+    /* ── Shadows (deep with purple glow accent) ─────── */
+    --shadow-card: 0 0 0 1px #1e2236, 0 2px 4px 0 rgba(4, 4, 12, 0.3);
+    --shadow-card-hover: 0 8px 24px -6px rgba(99, 88, 168, 0.12), 0 0 0 1px #2c3148;
+    --shadow-elevated: 0 20px 44px -8px rgba(4, 4, 12, 0.55), 0 0 0 1px #2c3148;
+    --shadow-dropdown: 0 24px 56px -12px rgba(4, 4, 12, 0.65), 0 0 0 1px rgba(133, 119, 211, 0.10);
 
     /* ── Ring / Focus ─────────────────────────────── */
-    --ring-primary: rgba(133, 119, 211, 0.35);
+    --ring-primary: rgba(155, 143, 224, 0.35);
     --ring-danger: rgba(248, 113, 113, 0.3);
     --ring-success: rgba(52, 211, 153, 0.3);
 
-    /* ── Chart Colors (dark — adjusted for dark backgrounds) ── */
-    --chart-primary: #8577D3;
-    --chart-secondary: #a78bfa;
-    --chart-success: #34d399;
+    /* ── Chart Colors (dark — vivid for contrast on dark surfaces) ── */
+    --chart-primary: #9B8FE0;
+    --chart-secondary: #b8aeef;
+    --chart-success: #3ee8b0;
     --chart-warning: #fbbf24;
     --chart-danger: #f87171;
-    --chart-info: #5AC8C5;
+    --chart-info: #6DD8D5;
     --chart-accent: #D0B8F0;
-    --chart-muted: #71717a;
-    --chart-grid: #27272a;
-    --chart-tooltip-bg: #18181b;
-    --chart-tooltip-border: #3f3f46;
-    --chart-tooltip-text: #f4f4f5;
+    --chart-muted: #5c6178;
+    --chart-grid: #1e2236;
+    --chart-tooltip-bg: #0f1119;
+    --chart-tooltip-border: #2c3148;
+    --chart-tooltip-text: #ecedf2;
 
-    /* ── Status Colors (dark mode — inverted, high contrast) ── */
-    --status-success-bg: #052e16;
+    /* ── Status Colors (dark mode — richer, more saturated) ── */
+    --status-success-bg: rgba(16, 185, 129, 0.10);
     --status-success-text: #6ee7b7;
-    --status-success-border: #064e3b;
-    --status-danger-bg: #450a0a;
+    --status-success-border: rgba(16, 185, 129, 0.20);
+    --status-danger-bg: rgba(239, 68, 68, 0.10);
     --status-danger-text: #fca5a5;
-    --status-danger-border: #7f1d1d;
-    --status-warning-bg: #451a03;
+    --status-danger-border: rgba(239, 68, 68, 0.20);
+    --status-warning-bg: rgba(245, 158, 11, 0.10);
     --status-warning-text: #fcd34d;
-    --status-warning-border: #78350f;
-    --status-info-bg: #0c1a33;
+    --status-warning-border: rgba(245, 158, 11, 0.20);
+    --status-info-bg: rgba(59, 130, 246, 0.10);
     --status-info-text: #93c5fd;
-    --status-info-border: #1e3a5f;
-    --status-neutral-bg: #1f1f23;
+    --status-info-border: rgba(59, 130, 246, 0.20);
+    --status-neutral-bg: rgba(148, 163, 184, 0.08);
     --status-neutral-text: #d4d4d8;
-    --status-neutral-border: #3f3f46;
-    --status-purple-bg: #1e1033;
+    --status-neutral-border: rgba(148, 163, 184, 0.15);
+    --status-purple-bg: rgba(133, 119, 211, 0.10);
     --status-purple-text: #c4b5fd;
-    --status-purple-border: #3b2668;
-    --status-pink-bg: #31081f;
+    --status-purple-border: rgba(133, 119, 211, 0.20);
+    --status-pink-bg: rgba(236, 72, 153, 0.10);
     --status-pink-text: #f9a8d4;
-    --status-pink-border: #6b1544;
-    --status-orange-bg: #331a05;
+    --status-pink-border: rgba(236, 72, 153, 0.20);
+    --status-orange-bg: rgba(249, 115, 22, 0.10);
     --status-orange-text: #fdba74;
-    --status-orange-border: #6b3010;
+    --status-orange-border: rgba(249, 115, 22, 0.20);
 
-    /* ── Header/Dropdown (dark solid) ─────────────── */
-    --header-bg: #534A8C;
-    --header-border: #423B70;
-    --dropdown-bg: #18181b;
-    --dropdown-border: #27272a;
-    --dropdown-hover: #27272a;
-    --dropdown-text: #f4f4f5;
-    --dropdown-text-secondary: #a1a1aa;
-    --dropdown-divider: #27272a;
+    /* ── Header/Dropdown (dark frosted glass) ──────── */
+    --header-bg: rgba(6, 7, 13, 0.78);
+    --header-border: rgba(133, 119, 211, 0.10);
+    --dropdown-bg: rgba(15, 17, 25, 0.92);
+    --dropdown-border: rgba(133, 119, 211, 0.10);
+    --dropdown-hover: #181c2a;
+    --dropdown-text: #ecedf2;
+    --dropdown-text-secondary: #9398ad;
+    --dropdown-divider: #1e2236;
   }
 
   /* ── Theme Transition ──────────────────────────── */
@@ -246,14 +245,26 @@
     background-image: var(--bg-radial-1), var(--bg-radial-2);
     background-attachment: fixed;
     color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
     color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     letter-spacing: -0.02em;
+  }
+
+  /* ── Cursor: all interactive controls get pointer by default ── */
+  button,
+  [role="button"],
+  a[role="button"],
+  input[type="submit"],
+  input[type="button"],
+  select,
+  summary {
+    cursor: pointer;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -292,28 +303,32 @@
     background-color: var(--bg-card);
     border-color: var(--border-main);
     box-shadow: var(--shadow-card);
-    transition: transform 150ms ease-out, box-shadow 150ms ease-out, border-color 150ms ease-out;
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease-out, border-color 200ms ease-out;
   }
 
   .card-interactive:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-card-hover);
-    border-color: var(--border-strong);
+    border-color: rgba(99, 88, 168, 0.18);
   }
 
-  /* ── Glass (solid background — no blur to prevent gradient bleed) ─── */
+  /* ── Glass (frosted glass with backdrop blur) ────────────── */
   .glass-aura {
     @apply border;
     background-color: var(--header-bg);
     border-color: var(--header-border);
     box-shadow: var(--shadow-card);
+    -webkit-backdrop-filter: blur(16px) saturate(1.5);
+    backdrop-filter: blur(16px) saturate(1.5);
   }
 
-  /* ── Dropdown (adaptive — no hardcoded white/black) */
+  /* ── Dropdown (frosted glass with depth) ─────────────── */
   .glass-midnight {
     background-color: var(--dropdown-bg);
     border: 1px solid var(--dropdown-border);
     box-shadow: var(--shadow-dropdown);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
   }
 
   .transition-aura {
@@ -329,7 +344,9 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    background-color: var(--bg-card);
+    background-color: rgba(255, 255, 255, 0.85);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
   .table-aura thead th {
@@ -359,7 +376,7 @@
   }
 
   .table-aura tbody tr:hover {
-    background-color: var(--bg-card-hover);
+    background-color: rgba(99, 88, 168, 0.04);
   }
 
   .table-aura tbody tr:last-child td {
@@ -374,6 +391,51 @@
   .table-aura thead th[data-sortable]:hover {
     color: var(--text-primary);
     background-color: var(--bg-card-hover);
+  }
+
+  /* Dark mode overrides for table thead and row hover */
+  .dark .table-aura thead {
+    background-color: rgba(15, 17, 25, 0.85);
+  }
+
+  .dark .table-aura tbody tr:hover {
+    background-color: rgba(133, 119, 211, 0.06);
+  }
+
+  /* ── Inline action reveal ─────────────────────────── */
+  .table-row-actions {
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  tr:hover .table-row-actions {
+    opacity: 1;
+  }
+
+  /* ── Striped table variant ────────────────────────── */
+  .table-aura-striped tbody tr:nth-child(even) {
+    background-color: var(--bg-surface);
+  }
+
+  /* ── Empty state ──────────────────────────────────── */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-16 px-4 text-center;
+    color: var(--text-muted);
+  }
+
+  .empty-state-icon {
+    @apply w-16 h-16 mb-4 opacity-30;
+    color: var(--text-muted);
+  }
+
+  .empty-state-title {
+    @apply text-base font-medium mb-1;
+    color: var(--text-secondary);
+  }
+
+  .empty-state-description {
+    @apply text-sm max-w-sm;
+    color: var(--text-muted);
   }
 
   /* ── Focus Ring (apply to ALL interactive elements) ─ */
@@ -519,6 +581,7 @@
     background-color: var(--bg-input);
     border: 1px solid var(--border-main);
     color: var(--text-primary);
+    transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
   }
   .input-aura:focus {
     border-color: var(--border-focus);
@@ -574,6 +637,89 @@
   .sidebar-menu-item:hover {
     background-color: var(--sidebar-hover-bg) !important;
   }
+
+  /* ── Utility: Button Press (composable tactile scale class) ── */
+  .btn-press:active:not(:disabled) {
+    transform: scale(0.98);
+    transition: transform 100ms ease-out;
+  }
+
+  /* ── Micro-Interaction: Button Press (tactile scale feedback) ── */
+  button:active:not(:disabled),
+  [role="button"]:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* ── Micro-Interaction: Card Stagger Entrance Animations ────── */
+  /* Apply .stagger-base to a card container, then .stagger-N to each child */
+  .stagger-base {
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+
+  .stagger-1 { animation-delay: 50ms; }
+  .stagger-2 { animation-delay: 100ms; }
+  .stagger-3 { animation-delay: 150ms; }
+  .stagger-4 { animation-delay: 200ms; }
+  .stagger-5 { animation-delay: 250ms; }
+  .stagger-6 { animation-delay: 300ms; }
+  .stagger-7 { animation-delay: 350ms; }
+  .stagger-8 { animation-delay: 400ms; }
+
+  /* ── Micro-Interaction: Sidebar Hover Slide-in from Left ─────── */
+  /* Overrides the existing hover rule with a pseudo-element slide-in */
+  .sidebar-menu-item {
+    position: relative;
+    overflow: hidden;
+    transition: transform 200ms ease-out;
+  }
+
+  .sidebar-menu-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--sidebar-hover-bg);
+    transform: translateX(-100%);
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .sidebar-menu-item:hover::before {
+    transform: translateX(0);
+  }
+
+  /* ── Micro-Interaction: Status Badge Urgent Pulse ────────────── */
+  .badge-status[data-urgent] {
+    animation: badgePulse 2s ease-in-out infinite;
+  }
+
+  /* ── Reduced Motion: Disable all new micro-interaction animations ── */
+  @media (prefers-reduced-motion: reduce) {
+    button:active:not(:disabled),
+    [role="button"]:active:not(:disabled) {
+      transform: none;
+    }
+
+    .stagger-base {
+      opacity: 1;
+      animation: none;
+    }
+
+    .stagger-1, .stagger-2, .stagger-3, .stagger-4,
+    .stagger-5, .stagger-6, .stagger-7, .stagger-8 {
+      animation-delay: 0ms;
+    }
+
+    .sidebar-menu-item::before {
+      transition: none;
+    }
+
+    .badge-status[data-urgent] {
+      animation: none;
+    }
+  }
 }
 
 /* ================================================================
@@ -591,19 +737,19 @@
 
 ::-webkit-scrollbar-thumb {
   @apply rounded-full;
-  background: #d1d5db;
+  background: #c5cad9;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #2c3148;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #8891a5;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #3d4466;
 }
 
 @keyframes pageEnter {

@@ -3,9 +3,13 @@
 # Start Backend with all required environment variables
 export JWT_SECRET="EIpKw+jjwEbzx1iJ9twBAlSrBDwbQxIePd9eFGFIopMWMVfSMXA/mPfYBnuyzJfMOFcFElTghR27sQ0mslFdNA=="
 export SPRING_PROFILES_ACTIVE=dev
-export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/hrms_dev
-export SPRING_DATASOURCE_USERNAME=hrms
-export SPRING_DATASOURCE_PASSWORD=hrms_dev_password
+export SPRING_DATASOURCE_URL=jdbc:postgresql://ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
+export SPRING_DATASOURCE_USERNAME=neondb_owner
+export SPRING_DATASOURCE_PASSWORD=npg_p3Nnmrd9PvhB
+# Flyway uses direct (non-pooler) endpoint for migrations
+export SPRING_FLYWAY_URL=jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
+export SPRING_FLYWAY_USER=neondb_owner
+export SPRING_FLYWAY_PASSWORD=npg_p3Nnmrd9PvhB
 export SPRING_REDIS_HOST=localhost
 export SPRING_REDIS_PORT=6379
 export FRONTEND_URL=http://localhost:3000
