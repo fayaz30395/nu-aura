@@ -1,0 +1,590 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import {
+  Award,
+  Plus,
+  Heart,
+  ThumbsUp,
+  Trophy,
+  Star,
+  Users,
+  TrendingUp,
+  Gift,
+  MessageCircle,
+  Send,
+  Crown,
+  Medal,
+  Sparkles,
+} from 'lucide-react';
+import { AppLayout } from '@/components/layout/AppLayout';
+import {
+  Card,
+  CardContent,
+  Button,
+  Input,
+  Select,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Badge,
+  Textarea,
+} from '@/components/ui';
+import { recognitionService } from '@/lib/services/recognition.service';
+import type { Recognition, RecognitionRequest, EmployeePoints } from '@/lib/types/recognition';
+import { RecognitionType, RecognitionCategory } from '@/lib/types/recognition';
+
+const recognitionTypeOptions = [
+  { value: RecognitionType.KUDOS, label: 'Kudos', icon: ThumbsUp },
+  { value: RecognitionType.APPRECIATION, label: 'Appreciation', icon: Heart },
+  { value: RecognitionType.ACHIEVEMENT, label: 'Achievement', icon: Trophy },
+  { value: RecognitionType.SPOT_AWARD, label: 'Spot Award', icon: Star },
+  { value: RecognitionType.PEER_NOMINATION, label: 'Peer Nomination', icon: Users },
+  { value: RecognitionType.MANAGER_RECOGNITION, label: 'Manager Recognition', icon: Crown },
+  { value: RecognitionType.TEAM_RECOGNITION, label: 'Team Recognition', icon: Users },
+];
+
+const categoryOptions = [
+  { value: RecognitionCategory.TEAMWORK, label: 'Teamwork' },
+  { value: RecognitionCategory.INNOVATION, label: 'Innovation' },
+  { value: RecognitionCategory.CUSTOMER_FOCUS, label: 'Customer Focus' },
+  { value: RecognitionCategory.LEADERSHIP, label: 'Leadership' },
+  { value: RecognitionCategory.PROBLEM_SOLVING, label: 'Problem Solving' },
+  { value: RecognitionCategory.GOING_EXTRA_MILE, label: 'Going Extra Mile' },
+  { value: RecognitionCategory.MENTORSHIP, label: 'Mentorship' },
+  { value: RecognitionCategory.QUALITY, label: 'Quality' },
+  { value: RecognitionCategory.INITIATIVE, label: 'Initiative' },
+  { value: RecognitionCategory.COLLABORATION, label: 'Collaboration' },
+  { value: RecognitionCategory.COMMUNICATION, label: 'Communication' },
+  { value: RecognitionCategory.OTHER, label: 'Other' },
+];
+
+const getTypeIcon = (type: RecognitionType) => {
+  switch (type) {
+    case RecognitionType.KUDOS:
+      return <ThumbsUp className="h-5 w-5" />;
+    case RecognitionType.APPRECIATION:
+      return <Heart className="h-5 w-5" />;
+    case RecognitionType.ACHIEVEMENT:
+      return <Trophy className="h-5 w-5" />;
+    case RecognitionType.SPOT_AWARD:
+      return <Star className="h-5 w-5" />;
+    default:
+      return <Award className="h-5 w-5" />;
+  }
+};
+
+const getTypeColor = (type: RecognitionType) => {
+  switch (type) {
+    case RecognitionType.KUDOS:
+      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+    case RecognitionType.APPRECIATION:
+      return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
+    case RecognitionType.ACHIEVEMENT:
+      return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
+    case RecognitionType.SPOT_AWARD:
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+    case RecognitionType.PEER_NOMINATION:
+      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+  }
+};
+
+export default function RecognitionPage() {
+  const [recognitions, setRecognitions] = useState<Recognition[]>([]);
+  const [leaderboard, setLeaderboard] = useState<EmployeePoints[]>([]);
+  const [myPoints, setMyPoints] = useState<EmployeePoints | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'feed' | 'received' | 'given'>('feed');
+
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState<Partial<RecognitionRequest>>({
+    receiverId: '',
+    type: RecognitionType.KUDOS,
+    category: RecognitionCategory.TEAMWORK,
+    title: '',
+    message: '',
+    pointsAwarded: 10,
+    isPublic: true,
+    isAnonymous: false,
+  });
+
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      let recognitionResponse;
+
+      switch (activeTab) {
+        case 'received':
+          recognitionResponse = await recognitionService.getMyReceivedRecognitions();
+          break;
+        case 'given':
+          recognitionResponse = await recognitionService.getMyGivenRecognitions();
+          break;
+        default:
+          recognitionResponse = await recognitionService.getPublicFeed();
+      }
+
+      setRecognitions(recognitionResponse.content || []);
+
+      // Fetch leaderboard and points
+      const [leaderboardData, pointsData] = await Promise.all([
+        recognitionService.getLeaderboard(5),
+        recognitionService.getMyPoints().catch(() => null),
+      ]);
+
+      setLeaderboard(leaderboardData);
+      setMyPoints(pointsData);
+    } catch (error) {
+      console.error('Error fetching recognition data:', error);
+      setRecognitions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGiveRecognition = () => {
+    setFormData({
+      receiverId: '',
+      type: RecognitionType.KUDOS,
+      category: RecognitionCategory.TEAMWORK,
+      title: '',
+      message: '',
+      pointsAwarded: 10,
+      isPublic: true,
+      isAnonymous: false,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSubmitRecognition = async () => {
+    try {
+      await recognitionService.giveRecognition(formData as RecognitionRequest);
+      setIsModalOpen(false);
+      fetchData();
+    } catch (error) {
+      console.error('Error giving recognition:', error);
+    }
+  };
+
+  // Stats
+  const stats = {
+    totalRecognitions: recognitions.length,
+    myPoints: myPoints?.totalPointsEarned || 0,
+    recognitionsReceived: myPoints?.recognitionsReceived || 0,
+    recognitionsGiven: myPoints?.recognitionsGiven || 0,
+  };
+
+  const breadcrumbs = [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Recognition' },
+  ];
+
+  return (
+    <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="recognition">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+              Employee Recognition
+            </h1>
+            <p className="text-surface-600 dark:text-surface-400">
+              Celebrate achievements and recognize your colleagues
+            </p>
+          </div>
+          <Button onClick={handleGiveRecognition}>
+            <Sparkles className="mr-2 h-4 w-4" />
+            Give Recognition
+          </Button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card className="bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 border-yellow-200 dark:border-yellow-800">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-yellow-500 p-3">
+                  <Trophy className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300">My Points</p>
+                  <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-100">{stats.myPoints}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+                  <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-600 dark:text-surface-400">Received</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.recognitionsReceived}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+                  <Gift className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-600 dark:text-surface-400">Given</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.recognitionsGiven}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+                  <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Activity</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.totalRecognitions}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Main Feed */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Tabs */}
+            <div className="flex gap-2">
+              <Button
+                variant={activeTab === 'feed' ? 'primary' : 'outline'}
+                size="sm"
+                onClick={() => setActiveTab('feed')}
+              >
+                Public Feed
+              </Button>
+              <Button
+                variant={activeTab === 'received' ? 'primary' : 'outline'}
+                size="sm"
+                onClick={() => setActiveTab('received')}
+              >
+                Received
+              </Button>
+              <Button
+                variant={activeTab === 'given' ? 'primary' : 'outline'}
+                size="sm"
+                onClick={() => setActiveTab('given')}
+              >
+                Given
+              </Button>
+            </div>
+
+            {/* Recognition Feed */}
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
+              </div>
+            ) : recognitions.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Award className="h-12 w-12 text-surface-400" />
+                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                    No recognitions yet
+                  </p>
+                  <p className="text-surface-600 dark:text-surface-400">
+                    Be the first to recognize a colleague!
+                  </p>
+                  <Button onClick={handleGiveRecognition} className="mt-4">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Give Recognition
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {recognitions.map((recognition) => (
+                  <Card key={recognition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-4">
+                        <div className={`rounded-full p-3 ${getTypeColor(recognition.type)}`}>
+                          {getTypeIcon(recognition.type)}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h3 className="font-semibold text-surface-900 dark:text-white">
+                                {recognition.title}
+                              </h3>
+                              <p className="text-sm text-surface-600 dark:text-surface-400">
+                                {recognition.isAnonymous ? 'Someone' : recognition.giverName || 'A colleague'} recognized{' '}
+                                <span className="font-medium text-primary-600 dark:text-primary-400">
+                                  {recognition.receiverName || 'a team member'}
+                                </span>
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(recognition.type)}`}>
+                                {recognition.type.replace('_', ' ')}
+                              </span>
+                              {recognition.pointsAwarded > 0 && (
+                                <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                  <Star className="h-3 w-3" />
+                                  {recognition.pointsAwarded}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {recognition.message && (
+                            <p className="mt-2 text-surface-700 dark:text-surface-300">
+                              {recognition.message}
+                            </p>
+                          )}
+
+                          {recognition.category && (
+                            <div className="mt-2">
+                              <Badge variant="default" className="text-xs">
+                                {recognition.category.replace('_', ' ')}
+                              </Badge>
+                            </div>
+                          )}
+
+                          <div className="mt-3 flex items-center gap-4 text-sm text-surface-500">
+                            <button className="flex items-center gap-1 hover:text-red-500 transition-colors">
+                              <Heart className="h-4 w-4" />
+                              {recognition.likesCount}
+                            </button>
+                            <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+                              <MessageCircle className="h-4 w-4" />
+                              {recognition.commentsCount}
+                            </button>
+                            <span className="text-xs">
+                              {new Date(recognition.recognizedAt || recognition.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Leaderboard Sidebar */}
+          <div className="space-y-4">
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="flex items-center gap-2 text-lg font-semibold text-surface-900 dark:text-white mb-4">
+                  <Crown className="h-5 w-5 text-yellow-500" />
+                  Top Contributors
+                </h3>
+                {leaderboard.length === 0 ? (
+                  <p className="text-sm text-surface-500">No data yet</p>
+                ) : (
+                  <div className="space-y-3">
+                    {leaderboard.map((employee, index) => (
+                      <div
+                        key={employee.id}
+                        className="flex items-center gap-3 p-2 rounded-lg bg-surface-50 dark:bg-surface-800"
+                      >
+                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                          index === 0 ? 'bg-yellow-500 text-white' :
+                          index === 1 ? 'bg-gray-400 text-white' :
+                          index === 2 ? 'bg-amber-600 text-white' :
+                          'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
+                        }`}>
+                          {index === 0 ? <Crown className="h-4 w-4" /> :
+                           index === 1 ? <Medal className="h-4 w-4" /> :
+                           index === 2 ? <Medal className="h-4 w-4" /> :
+                           <span className="text-sm font-medium">{index + 1}</span>}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-surface-900 dark:text-white text-sm">
+                            {employee.employeeName || `Employee ${index + 1}`}
+                          </p>
+                          <p className="text-xs text-surface-500">
+                            {employee.recognitionsReceived} recognitions
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-yellow-600 dark:text-yellow-400">
+                            {employee.totalPointsEarned}
+                          </p>
+                          <p className="text-xs text-surface-500">pts</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">
+                  Quick Recognize
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {recognitionTypeOptions.slice(0, 4).map((type) => {
+                    const Icon = type.icon;
+                    return (
+                      <button
+                        key={type.value}
+                        onClick={() => {
+                          setFormData({ ...formData, type: type.value });
+                          setIsModalOpen(true);
+                        }}
+                        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+                      >
+                        <Icon className="h-6 w-6 text-primary-500" />
+                        <span className="text-xs text-surface-700 dark:text-surface-300">{type.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Give Recognition Modal */}
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
+          <ModalHeader>
+            <h2 className="text-xl font-semibold text-surface-900 dark:text-white flex items-center gap-2">
+              <Sparkles className="h-6 w-6 text-yellow-500" />
+              Give Recognition
+            </h2>
+          </ModalHeader>
+          <ModalBody>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Employee ID *
+                </label>
+                <Input
+                  value={formData.receiverId}
+                  onChange={(e) => setFormData({ ...formData, receiverId: e.target.value })}
+                  placeholder="Enter employee ID to recognize"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Recognition Type *
+                  </label>
+                  <Select
+                    value={formData.type}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value as RecognitionType })}
+                  >
+                    {recognitionTypeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Category
+                  </label>
+                  <Select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as RecognitionCategory })}
+                  >
+                    {categoryOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Title *
+                </label>
+                <Input
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="e.g., Great job on the project!"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Message
+                </label>
+                <Textarea
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  placeholder="Share more details about why you're recognizing this person..."
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Points to Award
+                  </label>
+                  <Input
+                    type="number"
+                    value={formData.pointsAwarded}
+                    onChange={(e) => setFormData({ ...formData, pointsAwarded: parseInt(e.target.value) || 0 })}
+                    min={0}
+                    max={100}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 justify-end">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.isPublic}
+                      onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                      className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-surface-700 dark:text-surface-300">
+                      Make public
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.isAnonymous}
+                      onChange={(e) => setFormData({ ...formData, isAnonymous: e.target.checked })}
+                      className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-surface-700 dark:text-surface-300">
+                      Send anonymously
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmitRecognition}>
+              <Send className="mr-2 h-4 w-4" />
+              Send Recognition
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </div>
+    </AppLayout>
+  );
+}

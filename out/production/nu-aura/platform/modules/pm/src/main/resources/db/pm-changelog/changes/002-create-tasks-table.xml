@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="002-create-tasks-table" author="system">
+        <createTable tableName="project_tasks" schemaName="pm">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="task_code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="TODO">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="VARCHAR(20)" defaultValue="MEDIUM">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(20)" defaultValue="TASK"/>
+            <column name="assignee_id" type="UUID"/>
+            <column name="assignee_name" type="VARCHAR(200)"/>
+            <column name="reporter_id" type="UUID"/>
+            <column name="reporter_name" type="VARCHAR(200)"/>
+            <column name="parent_task_id" type="UUID"/>
+            <column name="milestone_id" type="UUID"/>
+            <column name="start_date" type="DATE"/>
+            <column name="due_date" type="DATE"/>
+            <column name="completed_date" type="DATE"/>
+            <column name="estimated_hours" type="INTEGER"/>
+            <column name="actual_hours" type="INTEGER"/>
+            <column name="progress_percentage" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="story_points" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="sprint_name" type="VARCHAR(100)"/>
+            <column name="sort_order" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="tags" type="VARCHAR(500)"/>
+            <column name="color" type="VARCHAR(20)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="last_modified_by" type="UUID"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0"/>
+        </createTable>
+
+        <createIndex tableName="project_tasks" indexName="idx_pm_task_tenant" schemaName="pm">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="idx_pm_task_project" schemaName="pm">
+            <column name="project_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="idx_pm_task_assignee" schemaName="pm">
+            <column name="assignee_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="idx_pm_task_parent" schemaName="pm">
+            <column name="parent_task_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="idx_pm_task_status" schemaName="pm">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="idx_pm_task_milestone" schemaName="pm">
+            <column name="milestone_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="idx_pm_task_code_tenant" unique="true" schemaName="pm">
+            <column name="task_code"/>
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="project_tasks" baseColumnNames="project_id"
+                                 baseTableSchemaName="pm"
+                                 constraintName="fk_pm_task_project"
+                                 referencedTableName="projects" referencedColumnNames="id"
+                                 referencedTableSchemaName="pm"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="project_tasks" baseColumnNames="parent_task_id"
+                                 baseTableSchemaName="pm"
+                                 constraintName="fk_pm_task_parent"
+                                 referencedTableName="project_tasks" referencedColumnNames="id"
+                                 referencedTableSchemaName="pm"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+
+</databaseChangeLog>

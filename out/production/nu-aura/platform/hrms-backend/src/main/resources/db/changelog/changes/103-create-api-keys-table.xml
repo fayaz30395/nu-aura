@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="103-1" author="hrms">
+        <comment>Create api_keys table for external integration authentication</comment>
+        <createTable tableName="api_keys">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="key_hash" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="key_prefix" type="varchar(10)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_active" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="timestamp"/>
+            <column name="last_used_at" type="timestamp"/>
+            <column name="last_used_ip" type="varchar(50)"/>
+            <column name="rate_limit" type="integer" defaultValueNumeric="1000"/>
+            <column name="rate_limit_window_seconds" type="integer" defaultValueNumeric="3600"/>
+            <column name="created_by" type="uuid"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_by" type="uuid"/>
+            <column name="deleted_at" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="103-2" author="hrms">
+        <comment>Create api_key_scopes table for storing key permissions</comment>
+        <createTable tableName="api_key_scopes">
+            <column name="api_key_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scope" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="api_key_scopes"
+                baseColumnNames="api_key_id"
+                constraintName="fk_api_key_scopes_api_key"
+                referencedTableName="api_keys"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="103-3" author="hrms">
+        <comment>Create indexes for api_keys table</comment>
+        <createIndex indexName="idx_api_keys_tenant" tableName="api_keys">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex indexName="idx_api_keys_key_hash" tableName="api_keys" unique="true">
+            <column name="key_hash"/>
+        </createIndex>
+        <createIndex indexName="idx_api_keys_active" tableName="api_keys">
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="103-4" author="hrms">
+        <comment>Add foreign key to tenants table</comment>
+        <addForeignKeyConstraint
+                baseTableName="api_keys"
+                baseColumnNames="tenant_id"
+                constraintName="fk_api_keys_tenant"
+                referencedTableName="tenants"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

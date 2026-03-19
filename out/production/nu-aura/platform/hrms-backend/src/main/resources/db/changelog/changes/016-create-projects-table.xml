@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="016-create-projects-table" author="system">
+        <createTable tableName="projects">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE"/>
+            <column name="expected_end_date" type="DATE"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_manager_id" type="uuid"/>
+            <column name="client_name" type="VARCHAR(200)"/>
+            <column name="budget" type="DECIMAL(15, 2)"/>
+            <column name="currency" type="VARCHAR(3)" defaultValue="USD"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="version" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="projects" indexName="idx_project_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="projects" indexName="idx_project_code_tenant" unique="true">
+            <column name="project_code"/>
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="projects" indexName="idx_project_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="projects" indexName="idx_project_manager">
+            <column name="project_manager_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

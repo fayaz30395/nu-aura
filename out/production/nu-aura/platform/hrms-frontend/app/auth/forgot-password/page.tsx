@@ -1,0 +1,207 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import {
+  Building2,
+  Mail,
+  ArrowLeft,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
+import { apiClient } from '@/lib/api/client';
+
+const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
+});
+
+type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
+
+export default function ForgotPasswordPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm<ForgotPasswordData>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
+
+  const onSubmit = async (data: ForgotPasswordData) => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await apiClient.post('/auth/forgot-password', { email: data.email });
+      setIsSubmitted(true);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send reset email. Please try again.';
+      const axiosError = err as { response?: { data?: { message?: string } } };
+      setError(axiosError.response?.data?.message || errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl mb-4 shadow-lg shadow-primary-500/25">
+              <Building2 className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
+              NU-HRMS
+            </h1>
+          </div>
+
+          <Card className="backdrop-blur-sm bg-white/90 dark:bg-surface-900/90 border-surface-200 dark:border-surface-700 shadow-xl">
+            <CardContent className="pt-8 pb-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+              </div>
+              <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-2">
+                Check Your Email
+              </h2>
+              <p className="text-surface-600 dark:text-surface-400 mb-6">
+                We've sent a password reset link to{' '}
+                <span className="font-medium text-surface-900 dark:text-surface-100">
+                  {getValues('email')}
+                </span>
+              </p>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
+                Didn't receive the email? Check your spam folder or{' '}
+                <button
+                  onClick={() => setIsSubmitted(false)}
+                  className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
+                >
+                  try again
+                </button>
+              </p>
+              <Link href="/auth/login">
+                <Button variant="primary" className="w-full">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Sign In
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        {/* Logo and Title */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl mb-4 shadow-lg shadow-primary-500/25">
+            <Building2 className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
+            NU-HRMS
+          </h1>
+          <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+            Reset your password
+          </p>
+        </div>
+
+        {/* Forgot Password Card */}
+        <Card className="backdrop-blur-sm bg-white/90 dark:bg-surface-900/90 border-surface-200 dark:border-surface-700 shadow-xl">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">Forgot Password</CardTitle>
+            <CardDescription>
+              Enter your email address and we'll send you a link to reset your password.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Error Alert */}
+              {error && (
+                <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm text-red-700 dark:text-red-400">
+                      {error}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Email Input */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-surface-400" />
+                  </div>
+                  <input
+                    {...register('email')}
+                    type="email"
+                    autoComplete="email"
+                    disabled={isLoading}
+                    placeholder="Enter your email"
+                    className={`block w-full pl-10 pr-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      errors.email
+                        ? 'border-red-500 dark:border-red-500'
+                        : 'border-surface-200 dark:border-surface-700'
+                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-full py-3"
+                isLoading={isLoading}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Sending...' : 'Send Reset Link'}
+              </Button>
+
+              {/* Back to Login */}
+              <div className="text-center">
+                <Link
+                  href="/auth/login"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Sign In
+                </Link>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <p className="mt-6 text-center text-xs text-surface-400 dark:text-surface-500">
+          NU-HRMS v1.0 &copy; {new Date().getFullYear()}
+        </p>
+      </div>
+    </div>
+  );
+}
