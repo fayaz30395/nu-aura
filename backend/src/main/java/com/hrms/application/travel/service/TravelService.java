@@ -2,10 +2,14 @@ package com.hrms.application.travel.service;
 
 import com.hrms.api.travel.dto.CreateTravelRequest;
 import com.hrms.api.travel.dto.TravelRequestDto;
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.travel.TravelRequest;
 import com.hrms.domain.travel.TravelRequest.TravelStatus;
+import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.travel.repository.TravelRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class TravelService {
+public class TravelService implements ApprovalCallbackHandler {
 
     private final TravelRequestRepository travelRequestRepository;
+    private final WorkflowService workflowService;
 
     @Transactional
     public TravelRequestDto createRequest(CreateTravelRequest request) {
@@ -121,6 +126,10 @@ public class TravelService {
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request submitted: {}", saved.getRequestNumber());
+
+        // Start approval workflow
+        startTravelApprovalWorkflow(saved, tenantId);
+
         return TravelRequestDto.fromEntity(saved);
     }
 
@@ -231,6 +240,76 @@ public class TravelService {
         return travelRequestRepository.findByTenantIdAndDepartureDateBetweenAndStatus(
                 tenantId, today, nextMonth, TravelStatus.APPROVED
         ).stream().map(TravelRequestDto::fromEntity).collect(Collectors.toList());
+    }
+
+    // ======================== ApprovalCallbackHandler ========================
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.TRAVEL_REQUEST;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Travel request {} approved via workflow by {}", entityId, approvedBy);
+
+        TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (travelRequest == null) {
+            log.warn("Travel request {} not found for approval callback", entityId);
+            return;
+        }
+
+        if (travelRequest.getStatus() != TravelStatus.SUBMITTED && travelRequest.getStatus() != TravelStatus.PENDING_APPROVAL) {
+            log.warn("Travel request {} already in status {}, skipping approval", entityId, travelRequest.getStatus());
+            return;
+        }
+
+        travelRequest.setStatus(TravelStatus.APPROVED);
+        travelRequest.setApprovedBy(approvedBy);
+        travelRequest.setApprovedDate(LocalDate.now());
+        travelRequest.setAdvanceApproved(travelRequest.getAdvanceRequired());
+        travelRequestRepository.save(travelRequest);
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Travel request {} rejected via workflow by {}", entityId, rejectedBy);
+
+        TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (travelRequest == null) {
+            log.warn("Travel request {} not found for rejection callback", entityId);
+            return;
+        }
+
+        if (travelRequest.getStatus() != TravelStatus.SUBMITTED && travelRequest.getStatus() != TravelStatus.PENDING_APPROVAL) {
+            log.warn("Travel request {} already in status {}, skipping rejection", entityId, travelRequest.getStatus());
+            return;
+        }
+
+        travelRequest.setStatus(TravelStatus.REJECTED);
+        travelRequest.setApprovedBy(rejectedBy);
+        travelRequest.setApprovedDate(LocalDate.now());
+        travelRequest.setRejectionReason(reason);
+        travelRequestRepository.save(travelRequest);
+    }
+
+    private void startTravelApprovalWorkflow(TravelRequest travelRequest, UUID tenantId) {
+        try {
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.TRAVEL_REQUEST);
+            workflowRequest.setEntityId(travelRequest.getId());
+            workflowRequest.setTitle("Travel Approval: " + travelRequest.getRequestNumber()
+                    + " (" + travelRequest.getOriginCity() + " -> " + travelRequest.getDestinationCity() + ")");
+            workflowRequest.setAmount(travelRequest.getEstimatedCost());
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for travel request: {}", travelRequest.getRequestNumber());
+        } catch (Exception e) {
+            log.warn("Could not start approval workflow for travel request {}: {}",
+                    travelRequest.getRequestNumber(), e.getMessage());
+        }
     }
 
     private String generateRequestNumber() {
