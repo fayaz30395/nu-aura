@@ -38,6 +38,9 @@ public class KnowledgeAttachment extends TenantAware {
     @Column(name = "mime_type", length = 100)
     private String mimeType;
 
+    @Column(name = "object_name", length = 1000)
+    private String objectName;
+
     @Column(name = "storage_path", nullable = false, length = 1000)
     private String storagePath;
 
@@ -46,6 +49,9 @@ public class KnowledgeAttachment extends TenantAware {
 
     @Column(name = "uploaded_by")
     private UUID uploadedBy;
+
+    @Column(name = "content_type_enum", length = 20)
+    private String contentTypeEnum;
 
     public enum ContentType {
         WIKI_PAGE, BLOG_POST, TEMPLATE

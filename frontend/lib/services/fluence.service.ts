@@ -9,7 +9,9 @@ import {
   FluenceSearchResponse,
   FluenceFavorite,
   FluenceAttachment,
+  FluenceActivity,
   ContentViewRecord,
+  EditLockResponse,
   Page,
   CreateWikiPageRequest,
   UpdateWikiPageRequest,
@@ -434,6 +436,35 @@ class FluenceService {
     );
     return response.data;
   }
+  // ─── Activity Feed ──────────────────────────────────────────────────────────
+
+  async getActivityFeed(
+    page: number = 0,
+    size: number = 20,
+    contentType?: string
+  ): Promise<Page<FluenceActivity>> {
+    const params: Record<string, unknown> = { page, size };
+    if (contentType) {
+      params.contentType = contentType;
+    }
+    const response = await apiClient.get<Page<FluenceActivity>>(
+      '/fluence/activities',
+      { params }
+    );
+    return response.data;
+  }
+
+  async getMyActivity(
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<FluenceActivity>> {
+    const response = await apiClient.get<Page<FluenceActivity>>(
+      '/fluence/activities/me',
+      { params: { page, size } }
+    );
+    return response.data;
+  }
+
   // ─── Attachments ──────────────────────────────────────────────────────────
 
   async uploadAttachment(
@@ -477,6 +508,38 @@ class FluenceService {
       `/fluence/attachments/${id}/download`
     );
     return response.data.downloadUrl;
+  }
+
+  // ─── Edit Locks ──────────────────────────────────────────────────────────
+
+  async acquireEditLock(contentType: string, contentId: string): Promise<EditLockResponse> {
+    const response = await apiClient.post<EditLockResponse>(
+      `/fluence/edit-lock/${contentType}/${contentId}`,
+      {}
+    );
+    return response.data;
+  }
+
+  async releaseEditLock(contentType: string, contentId: string): Promise<EditLockResponse> {
+    const response = await apiClient.delete<EditLockResponse>(
+      `/fluence/edit-lock/${contentType}/${contentId}`
+    );
+    return response.data;
+  }
+
+  async checkEditLock(contentType: string, contentId: string): Promise<EditLockResponse> {
+    const response = await apiClient.get<EditLockResponse>(
+      `/fluence/edit-lock/${contentType}/${contentId}`
+    );
+    return response.data;
+  }
+
+  async refreshEditLock(contentType: string, contentId: string): Promise<EditLockResponse> {
+    const response = await apiClient.put<EditLockResponse>(
+      `/fluence/edit-lock/${contentType}/${contentId}/heartbeat`,
+      {}
+    );
+    return response.data;
   }
 }
 

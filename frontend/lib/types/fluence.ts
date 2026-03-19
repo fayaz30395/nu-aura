@@ -325,6 +325,19 @@ export interface ContentActivity {
   createdAt: string;
 }
 
+export interface FluenceActivity {
+  id: string;
+  actorId: string;
+  actorName: string;
+  action: 'CREATED' | 'UPDATED' | 'PUBLISHED' | 'COMMENTED' | 'LIKED';
+  contentType: 'WIKI' | 'BLOG' | 'TEMPLATE';
+  contentId: string;
+  contentTitle: string;
+  contentExcerpt: string;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+}
+
 // ─── Favorites Types ───────────────────────────────────────────────────────
 
 export type FavoriteContentType = 'WIKI_PAGE' | 'BLOG_POST' | 'WIKI_SPACE';
@@ -360,6 +373,16 @@ export interface FluenceAttachment {
   downloadUrl: string;
   createdAt: string;
   createdBy: string;
+}
+
+// ─── Edit Lock Types ───────────────────────────────────────────────────────
+
+export interface EditLockResponse {
+  locked: boolean;
+  lockedByUserId: string | null;
+  lockedByUserName: string | null;
+  lockedAt: string | null;
+  isOwnLock: boolean;
 }
 
 // ─── My Content Filters ────────────────────────────────────────────────────

@@ -25,6 +25,8 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
                 .connectedTo(elasticsearchUris.replace("http://", "").replace("https://", ""))
+                .withConnectTimeout(java.time.Duration.ofSeconds(5))
+                .withSocketTimeout(java.time.Duration.ofSeconds(60))
                 .build();
     }
 }

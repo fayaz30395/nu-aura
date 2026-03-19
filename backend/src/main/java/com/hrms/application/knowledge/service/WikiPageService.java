@@ -4,10 +4,13 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.WikiPage;
 import com.hrms.domain.knowledge.WikiPageVersion;
+import com.hrms.infrastructure.kafka.events.FluenceContentEvent;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.hrms.infrastructure.knowledge.repository.WikiPageRepository;
 import com.hrms.infrastructure.knowledge.repository.WikiPageVersionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,11 @@ public class WikiPageService {
 
     private final WikiPageRepository wikiPageRepository;
     private final WikiPageVersionRepository wikiPageVersionRepository;
+    private final FluenceNotificationService fluenceNotificationService;
+    private final FluenceActivityService fluenceActivityService;
+
+    @Autowired(required = false)
+    private EventPublisher eventPublisher;
 
     @Transactional
     public WikiPage createPage(WikiPage page) {
@@ -42,6 +50,8 @@ public class WikiPageService {
         createPageVersion(saved, "Initial version", tenantId, page.getCreatedBy());
 
         log.info("Created wiki page: {} in space: {}", saved.getId(), page.getSpace().getId());
+        publishFluenceEvent(saved.getId(), tenantId, FluenceContentEvent.ACTION_CREATED);
+        recordActivity(tenantId, page.getCreatedBy(), "CREATED", saved);
         return saved;
     }
 
@@ -65,6 +75,13 @@ public class WikiPageService {
 
         WikiPage updated = wikiPageRepository.save(page);
         log.info("Updated wiki page: {}", pageId);
+        publishFluenceEvent(pageId, tenantId, FluenceContentEvent.ACTION_UPDATED);
+        recordActivity(tenantId, SecurityContext.getCurrentUserId(), "UPDATED", updated);
+
+        // Notify watchers about the update
+        fluenceNotificationService.notifyWatchers(
+                tenantId, pageId, SecurityContext.getCurrentUserId(), "updated", updated.getTitle());
+
         return updated;
     }
 
@@ -137,6 +154,13 @@ public class WikiPageService {
 
         WikiPage updated = wikiPageRepository.save(page);
         log.info("Published wiki page: {}", pageId);
+        publishFluenceEvent(pageId, tenantId, FluenceContentEvent.ACTION_PUBLISHED);
+        recordActivity(tenantId, userId, "PUBLISHED", updated);
+
+        // Notify watchers about the publish
+        fluenceNotificationService.notifyWatchers(
+                tenantId, pageId, userId, "published", updated.getTitle());
+
         return updated;
     }
 
@@ -185,6 +209,7 @@ public class WikiPageService {
 
         wikiPageRepository.delete(page);
         log.info("Deleted wiki page: {}", pageId);
+        publishFluenceEvent(pageId, tenantId, FluenceContentEvent.ACTION_DELETED);
     }
 
     @Transactional(readOnly = true)
@@ -198,6 +223,36 @@ public class WikiPageService {
         UUID tenantId = TenantContext.getCurrentTenant();
         return wikiPageVersionRepository.findByTenantIdAndPageIdAndVersionNumber(tenantId, pageId, versionNumber)
             .orElseThrow(() -> new IllegalArgumentException("Version not found"));
+    }
+
+    private void publishFluenceEvent(UUID pageId, UUID tenantId, String action) {
+        if (eventPublisher != null) {
+            try {
+                eventPublisher.publishFluenceContent("wiki", pageId, action, tenantId);
+            } catch (Exception e) {
+                log.warn("Failed to publish fluence content event for wiki page {}: {}", pageId, e.getMessage());
+            }
+        }
+    }
+
+    private void recordActivity(UUID tenantId, UUID actorId, String action, WikiPage page) {
+        try {
+            String excerpt = extractExcerpt(page.getContent());
+            fluenceActivityService.recordActivity(tenantId, actorId, action, "WIKI", page.getId(), page.getTitle(), excerpt);
+        } catch (Exception e) {
+            log.warn("Failed to record activity for wiki page: {}", e.getMessage());
+        }
+    }
+
+    private String extractExcerpt(String content) {
+        if (content == null || content.isBlank()) return null;
+        String plain = content.replaceAll("<[^>]*>", " ")
+                .replaceAll("\\{[^}]*}", " ")
+                .replaceAll("\\[[^]]*]", " ")
+                .replaceAll("\"[a-zA-Z]+\":", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        return plain.length() > 200 ? plain.substring(0, 200) : plain;
     }
 
     private void createPageVersion(WikiPage page, String changeSummary, UUID tenantId, UUID userId) {

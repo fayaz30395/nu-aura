@@ -24,11 +24,16 @@ public final class KafkaTopics {
     public static final String EMPLOYEE_LIFECYCLE = "nu-aura.employee-lifecycle";
     public static final String EMPLOYEE_LIFECYCLE_DLT = EMPLOYEE_LIFECYCLE + ".dlt";
 
+    // Fluence content events (indexing for search)
+    public static final String FLUENCE_CONTENT = "nu-aura.fluence-content";
+    public static final String FLUENCE_CONTENT_DLT = FLUENCE_CONTENT + ".dlt";
+
     // Consumer group identifiers
     public static final String GROUP_APPROVALS_CONSUMER = "nu-aura-approvals-service";
     public static final String GROUP_NOTIFICATIONS_CONSUMER = "nu-aura-notifications-service";
     public static final String GROUP_AUDIT_CONSUMER = "nu-aura-audit-service";
     public static final String GROUP_EMPLOYEE_LIFECYCLE_CONSUMER = "nu-aura-employee-lifecycle-service";
+    public static final String GROUP_FLUENCE_SEARCH = "nu-aura-fluence-search-service";
     public static final String GROUP_DLT_HANDLER = "nu-aura-dlt-handler";
 
     private KafkaTopics() {

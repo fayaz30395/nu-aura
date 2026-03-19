@@ -82,10 +82,10 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\\|yellow\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - hrms_network
 
