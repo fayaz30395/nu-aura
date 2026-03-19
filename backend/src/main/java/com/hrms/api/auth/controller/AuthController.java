@@ -171,10 +171,13 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    @Operation(summary = "Request password reset", description = "Request a password reset link via email")
+    @Operation(summary = "Request password reset", description = "Request a password reset link via email. Returns authProvider=GOOGLE if user uses SSO.")
     public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        authService.requestPasswordReset(request.getEmail());
-        return ResponseEntity.ok(Map.of("message", "If an account exists with this email, a password reset link has been sent."));
+        String authProvider = authService.requestPasswordReset(request.getEmail());
+        return ResponseEntity.ok(Map.of(
+                "message", "If an account exists with this email, a password reset link has been sent.",
+                "authProvider", authProvider
+        ));
     }
 
     @PostMapping("/reset-password")

@@ -59,6 +59,11 @@ public class User extends TenantAware {
     @Column(length = 500)
     private String profilePictureUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", nullable = false, length = 20)
+    @Builder.Default
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
     // MFA Fields
     @Column(nullable = false)
     @Builder.Default
