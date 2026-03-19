@@ -1,0 +1,3 @@
+[   92372ms] [ERROR] [ApiClient] Error: POST /auth/login undefined Network Error @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[   92500ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8080/api/v1/auth/login:0
+[  100500ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favicon.ico:0
