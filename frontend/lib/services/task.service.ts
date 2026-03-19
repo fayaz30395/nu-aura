@@ -14,6 +14,10 @@ import {
   TaskPriority,
 } from '@/lib/types/task';
 
+// STUB: Backend endpoint not implemented — do not call.
+// No TaskController exists at /pm/tasks in the backend. The modules/pm/ directory
+// exists but is not wired to the Spring Boot application. These methods will return 404.
+// When the backend endpoint is implemented, remove this comment.
 const BASE_URL = '/pm/tasks';
 const SERVICE_NAME = 'TaskService';
 

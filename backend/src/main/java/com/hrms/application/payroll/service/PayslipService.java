@@ -1,7 +1,9 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.application.payroll.dto.StatutoryDeductions;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.payroll.Payslip;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class PayslipService {
 
     private final PayslipRepository payslipRepository;
+    private final AuditLogService auditLogService;
     // Injected lazily via setter to avoid circular-dependency with StatutoryDeductionService
     private StatutoryDeductionService statutoryDeductionService;
 
@@ -123,7 +126,19 @@ public class PayslipService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deletePayslip(UUID id) {
         Payslip payslip = getPayslipById(id);
-        payslipRepository.delete(payslip);
+        payslip.softDelete();
+        payslipRepository.save(payslip);
+
+        auditLogService.logAction(
+                "PAYSLIP",
+                payslip.getId(),
+                AuditAction.DELETE,
+                java.util.Map.of("employeeId", payslip.getEmployeeId(),
+                        "period", payslip.getPayPeriodYear() + "-" + payslip.getPayPeriodMonth()),
+                null,
+                "Payslip soft-deleted for employee " + payslip.getEmployeeId() +
+                " period " + payslip.getPayPeriodYear() + "/" + payslip.getPayPeriodMonth()
+        );
     }
 
     /**

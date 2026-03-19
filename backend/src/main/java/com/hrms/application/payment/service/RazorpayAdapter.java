@@ -94,14 +94,12 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
 
     @Override
     public boolean verifyWebhookSignature(String payload, String signature) {
-        try {
-            // Integration point: Verify webhook signature using Razorpay's verification method
-            // Example: RazorpayClient.verifyPaymentLink(payload, signature)
-            return true; // Stub implementation
-        } catch (Exception e) {
-            log.error("Razorpay webhook signature verification failed", e);
-            return false;
-        }
+        // TODO: Implement real Razorpay webhook signature verification using HmacSHA256.
+        // Until a real implementation is wired in, REJECT all signatures to prevent
+        // unverified webhook payloads from mutating payment state.
+        // Reference: https://razorpay.com/docs/webhooks/validate-test/
+        log.warn("Razorpay webhook signature verification is not implemented — rejecting webhook");
+        return false;
     }
 
     @Override

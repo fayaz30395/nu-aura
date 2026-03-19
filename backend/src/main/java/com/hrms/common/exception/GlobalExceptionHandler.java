@@ -317,6 +317,23 @@ public class GlobalExceptionHandler {
         return jsonResponse(status, errorResponse);
     }
 
+    @ExceptionHandler(FeatureDisabledException.class)
+    public ResponseEntity<ErrorResponse> handleFeatureDisabledException(
+            FeatureDisabledException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+
+        logError("feature", "feature_disabled", ex, status, path);
+        recordErrorMetric("feature", "feature_disabled", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Feature Disabled",
+                ex.getMessage(), path);
+        errorResponse.setErrorCode("FEATURE_DISABLED");
+
+        return jsonResponse(status, errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {

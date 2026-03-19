@@ -195,7 +195,7 @@ public class ContractService {
     }
 
     /**
-     * Delete contract
+     * Soft-delete contract. The record is preserved for audit trail purposes.
      */
     @Transactional
     public void deleteContract(UUID contractId) {
@@ -203,8 +203,9 @@ public class ContractService {
         Contract contract = contractRepository.findByIdAndTenantId(contractId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contract not found"));
         String contractType = contract.getType().name();
-        contractRepository.delete(contract);
-        log.info("Contract deleted: {}", contractId);
+        contract.softDelete();
+        contractRepository.save(contract);
+        log.info("Contract soft-deleted: {}", contractId);
 
         // Record metrics
         metricsService.recordContractLifecycle(tenantId, "delete", contractType);

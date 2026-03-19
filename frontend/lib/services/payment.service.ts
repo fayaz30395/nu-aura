@@ -7,7 +7,6 @@ import {
   PaymentConfig,
   SavePaymentConfigRequest,
   TestConnectionRequest,
-  TestConnectionResponse,
   PaymentRefund,
   PaymentRefundListItem,
   ProcessRefundRequest,
@@ -39,6 +38,8 @@ class PaymentService {
     return response.data;
   }
 
+  // STUB: Backend endpoint not implemented — do not call.
+  // No PUT /payments/{id} endpoint exists in PaymentController.
   async updatePayment(id: string, data: UpdatePaymentTransactionRequest): Promise<PaymentTransaction> {
     const response = await apiClient.put<PaymentTransaction>(`/payments/${id}`, data);
     return response.data;
@@ -51,6 +52,9 @@ class PaymentService {
     return response.data;
   }
 
+  // STUB: Backend endpoints not implemented — do not call.
+  // No /payments/status/{status}, /payments/type/{type}, or /payments/provider/{provider}
+  // endpoints exist in PaymentController.
   async getPaymentsByStatus(
     status: PaymentStatus,
     page: number = 0,
@@ -86,11 +90,17 @@ class PaymentService {
 
   // ===================== Refund Management =====================
 
-  async processRefund(data: ProcessRefundRequest): Promise<PaymentRefund> {
-    const response = await apiClient.post<PaymentRefund>('/payments/refunds', data);
+  async processRefund(data: ProcessRefundRequest): Promise<string> {
+    const response = await apiClient.post<string>(
+      `/payments/${data.transactionId}/refund`,
+      null,
+      { params: { reason: data.reason || 'Refund requested' } }
+    );
     return response.data;
   }
 
+  // STUB: Backend endpoints not implemented — do not call.
+  // No GET /payments/refunds or /payments/refunds/{id} endpoints exist in PaymentController.
   async getRefund(refundId: string): Promise<PaymentRefund> {
     const response = await apiClient.get<PaymentRefund>(`/payments/refunds/${refundId}`);
     return response.data;
@@ -117,11 +127,15 @@ class PaymentService {
 
   // ===================== Payment Config =====================
 
+  // STUB: Backend endpoint not implemented — do not call.
+  // No GET /payments/config/{provider} endpoint exists in PaymentConfigController.
   async getConfig(provider: PaymentProvider): Promise<PaymentConfig> {
     const response = await apiClient.get<PaymentConfig>(`/payments/config/${provider}`);
     return response.data;
   }
 
+  // STUB: Backend endpoint not implemented — do not call.
+  // No GET /payments/config endpoint exists in PaymentConfigController.
   async getAllConfigs(): Promise<PaymentConfig[]> {
     const response = await apiClient.get<PaymentConfig[]>('/payments/config');
     return response.data;
@@ -132,11 +146,13 @@ class PaymentService {
     return response.data;
   }
 
-  async testConnection(data: TestConnectionRequest): Promise<TestConnectionResponse> {
-    const response = await apiClient.post<TestConnectionResponse>('/payments/config/test', data);
+  async testConnection(data: TestConnectionRequest): Promise<string> {
+    const response = await apiClient.post<string>('/payments/config/test-connection', data);
     return response.data;
   }
 
+  // STUB: Backend endpoint not implemented — do not call.
+  // No PATCH /payments/config/{provider}/toggle endpoint exists in PaymentConfigController.
   async toggleConfigActive(provider: PaymentProvider, isActive: boolean): Promise<PaymentConfig> {
     const response = await apiClient.patch<PaymentConfig>(`/payments/config/${provider}/toggle`, {
       isActive,
@@ -145,6 +161,8 @@ class PaymentService {
   }
 
   // ===================== Statistics =====================
+  // STUB: Backend endpoints not implemented — do not call.
+  // No /payments/stats endpoints exist in PaymentController.
 
   async getStats(): Promise<PaymentStats> {
     const response = await apiClient.get<PaymentStats>('/payments/stats');

@@ -1,12 +1,16 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { Settings, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
+
+// Phase 2 stabilization: payments module gated behind feature flag
+const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
 import { useAllPaymentConfigs, useSavePaymentConfig, useTestConnection, useToggleConfigActive } from '@/lib/hooks/queries/usePayments';
 import { paymentService } from '@/lib/services/payment.service';
 import { PaymentProvider, SavePaymentConfigRequest } from '@/lib/types/payment';
@@ -22,7 +26,18 @@ const configFormSchema = z.object({
 type ConfigFormData = z.infer<typeof configFormSchema>;
 
 export default function PaymentConfigPage() {
+  const router = useRouter();
   const { hasHydrated } = useAuth();
+
+  useEffect(() => {
+    if (!PAYMENTS_ENABLED) {
+      router.replace('/dashboard');
+    }
+  }, [router]);
+
+  if (!PAYMENTS_ENABLED) {
+    return null;
+  }
   const { data: configs = [] } = useAllPaymentConfigs();
   const saveConfigMutation = useSavePaymentConfig();
   const testConnectionMutation = useTestConnection();

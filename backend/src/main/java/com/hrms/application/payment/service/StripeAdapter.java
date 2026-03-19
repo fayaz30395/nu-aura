@@ -94,14 +94,12 @@ public class StripeAdapter implements PaymentGatewayAdapter {
 
     @Override
     public boolean verifyWebhookSignature(String payload, String signature) {
-        try {
-            // Integration point: Verify webhook signature using Stripe's method
-            // Example: Webhook.constructEvent(payload, signature, endpointSecret)
-            return true; // Stub implementation
-        } catch (Exception e) {
-            log.error("Stripe webhook signature verification failed", e);
-            return false;
-        }
+        // TODO: Implement real Stripe webhook signature verification using Webhook.constructEvent().
+        // Until a real implementation is wired in, REJECT all signatures to prevent
+        // unverified webhook payloads from mutating payment state.
+        // Reference: https://stripe.com/docs/webhooks/signatures
+        log.warn("Stripe webhook signature verification is not implemented — rejecting webhook");
+        return false;
     }
 
     @Override

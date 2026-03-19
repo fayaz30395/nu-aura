@@ -393,20 +393,9 @@ export function useUpdateSalaryStructure() {
   });
 }
 
-/**
- * Approve salary structure mutation
- */
-export function useApproveSalaryStructure() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => payrollService.approveSalaryStructure(id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structures() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structuresById(id) });
-    },
-  });
-}
+// STUB: useApproveSalaryStructure removed — no POST /payroll/salary-structures/{id}/approve
+// endpoint exists in PayrollController. If this workflow is needed, a backend endpoint
+// must be implemented first.
 
 /**
  * Deactivate salary structure mutation

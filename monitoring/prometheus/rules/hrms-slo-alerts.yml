@@ -1,0 +1,373 @@
+# SLO Alert Rules for HRMS Critical Pipelines
+# Phase 6: Reliability, Observability, and Operational Readiness
+#
+# These alerts complement the existing hrms-alerts.yml with SLO-driven
+# alerting for business-critical pipelines and background job monitoring.
+
+groups:
+  # ─────────────────────────────────────────────────────────────────────
+  # 1. Payroll Run SLO
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_payroll_slo
+    interval: 30s
+    rules:
+      # Alert if any single payroll run exceeds 5 minutes (300s)
+      - alert: PayrollRunDurationExceeded
+        expr: payroll_processing_duration_seconds_max > 300
+        for: 1m
+        labels:
+          severity: critical
+          component: payroll
+          slo: payroll_duration
+        annotations:
+          summary: "Payroll run exceeded 5-minute SLO"
+          description: >-
+            Payroll processing for tenant {{ $labels.tenant_id }} took
+            {{ $value | humanizeDuration }} which exceeds the 5-minute SLO.
+            Investigate slow queries, lock contention, or unusually large
+            employee counts.
+
+      # Alert if payroll run fails (counter increments with success=false)
+      - alert: PayrollRunFailed
+        expr: increase(scheduled_jobs_total{name="payroll_run", success="false"}[1h]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: payroll
+          slo: payroll_reliability
+        annotations:
+          summary: "Payroll run failed"
+          description: >-
+            A payroll run failed in the last hour. Check application logs
+            for exceptions. Runbook: docs/runbooks/payroll-correction.md
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 2. Leave Approval SLO
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_leave_approval_slo
+    interval: 30s
+    rules:
+      # Alert if leave approval processing (workflow execution) exceeds 30s
+      - alert: LeaveApprovalLatencyExceeded
+        expr: >-
+          histogram_quantile(0.95,
+            rate(workflow_execution_duration_seconds_bucket{type="LEAVE_APPROVAL"}[10m])
+          ) > 30
+        for: 5m
+        labels:
+          severity: warning
+          component: leave
+          slo: leave_approval_latency
+        annotations:
+          summary: "Leave approval processing exceeds 30-second SLO (p95)"
+          description: >-
+            95th percentile leave approval processing time is {{ $value }}s,
+            exceeding the 30-second SLO. Check workflow engine performance,
+            notification delivery, and DB query times.
+
+      # Alert if leave approval failure rate spikes
+      - alert: LeaveApprovalFailureRate
+        expr: >-
+          rate(workflow_executions_total{type="LEAVE_APPROVAL", status="FAILED"}[15m])
+          / rate(workflow_executions_total{type="LEAVE_APPROVAL"}[15m]) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+          component: leave
+          slo: leave_approval_reliability
+        annotations:
+          summary: "Leave approval failure rate exceeds 5%"
+          description: >-
+            {{ $value | humanizePercentage }} of leave approvals are failing.
+            Check workflow engine logs and approval service health.
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 3. Attendance Ingestion SLO
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_attendance_slo
+    interval: 30s
+    rules:
+      # Alert if attendance ingestion failure rate exceeds 5%
+      - alert: AttendanceIngestionFailureRate
+        expr: >-
+          (
+            rate(attendance_events_total{event_type="check_in_failed"}[15m])
+            + rate(attendance_events_total{event_type="check_out_failed"}[15m])
+          )
+          / rate(attendance_events_total[15m]) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+          component: attendance
+          slo: attendance_ingestion
+        annotations:
+          summary: "Attendance ingestion failure rate exceeds 5%"
+          description: >-
+            {{ $value | humanizePercentage }} of attendance events are failing.
+            Check biometric integration, API availability, and DB write performance.
+
+      # Alert if no attendance events arrive during business hours (potential system failure)
+      - alert: AttendanceIngestionStopped
+        expr: >-
+          rate(attendance_events_total[30m]) == 0
+          and ON() hour() >= 3 and ON() hour() <= 14
+        for: 30m
+        labels:
+          severity: critical
+          component: attendance
+          slo: attendance_availability
+        annotations:
+          summary: "No attendance events received for 30+ minutes during business hours"
+          description: >-
+            Attendance ingestion has stopped during expected business hours (UTC 03:00-14:00).
+            Check attendance service, biometric device connectivity, and API gateway health.
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 4. Notification Delivery SLO
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_notification_slo
+    interval: 30s
+    rules:
+      # Alert if notification delivery failure rate exceeds 10%
+      - alert: NotificationDeliveryFailureRate
+        expr: >-
+          rate(notification_delivery_total{success="false"}[15m])
+          / rate(notification_delivery_total[15m]) > 0.10
+        for: 10m
+        labels:
+          severity: warning
+          component: notification
+          slo: notification_delivery
+        annotations:
+          summary: "Notification delivery failure rate exceeds 10%"
+          description: >-
+            {{ $value | humanizePercentage }} of notifications are failing to deliver
+            on channel {{ $labels.channel }}. Check email/SMS provider connectivity,
+            rate limits, and credential validity.
+
+      # Alert if email delivery specifically is failing
+      - alert: EmailDeliveryFailureRate
+        expr: >-
+          rate(email_sent_total{success="false"}[15m])
+          / rate(email_sent_total[15m]) > 0.10
+        for: 10m
+        labels:
+          severity: warning
+          component: notification
+          slo: email_delivery
+        annotations:
+          summary: "Email delivery failure rate exceeds 10%"
+          description: >-
+            {{ $value | humanizePercentage }} of emails are failing to send.
+            Check SMTP configuration, credentials, and sending quotas.
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 5. Kafka Consumer Lag
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_kafka_slo
+    interval: 30s
+    rules:
+      # Alert if consumer lag on any topic exceeds 1000 messages
+      - alert: KafkaConsumerLagHigh
+        expr: >-
+          kafka_consumer_lag_max > 1000
+        for: 5m
+        labels:
+          severity: warning
+          component: kafka
+          slo: kafka_consumer_lag
+        annotations:
+          summary: "Kafka consumer lag exceeds 1000 on {{ $labels.topic }}"
+          description: >-
+            Consumer group {{ $labels.group }} has a lag of {{ $value }}
+            on topic {{ $labels.topic }}. Check consumer health, processing
+            throughput, and whether consumers are running.
+
+      # Also alert on Spring Kafka's built-in lag metric if available
+      - alert: KafkaConsumerLagHighSpring
+        expr: >-
+          spring_kafka_listener_seconds_count == 0
+          and kafka_consumer_records_lag_max > 1000
+        for: 5m
+        labels:
+          severity: warning
+          component: kafka
+          slo: kafka_consumer_lag
+        annotations:
+          summary: "Kafka consumer lag exceeds 1000 (Spring metric)"
+          description: >-
+            Consumer lag of {{ $value }} detected via Spring Kafka metrics.
+            The consumer may have stopped processing or is processing too slowly.
+
+      # Alert if DLT messages arrive (any dead-lettered event is worth investigating)
+      - alert: KafkaDeadLetterReceived
+        expr: increase(kafka_dlt_messages_total[15m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: kafka
+          slo: kafka_reliability
+        annotations:
+          summary: "Dead letter event received on {{ $labels.topic }}"
+          description: >-
+            {{ $value }} message(s) landed in the dead letter topic {{ $labels.topic }}
+            in the last 15 minutes. Review via Admin > Kafka DLQ panel or
+            GET /api/v1/admin/kafka/failed-events.
+            Runbook: docs/runbooks/kafka-dead-letter.md
+
+      # Alert if DLT messages are accumulating (multiple in a short window)
+      - alert: KafkaDeadLetterAccumulating
+        expr: increase(kafka_dlt_messages_total[1h]) > 10
+        for: 0m
+        labels:
+          severity: critical
+          component: kafka
+          slo: kafka_reliability
+        annotations:
+          summary: "Multiple dead letter events accumulating on {{ $labels.topic }}"
+          description: >-
+            {{ $value }} messages landed in {{ $labels.topic }} in the last hour.
+            This suggests a systemic issue — possibly a poison pill pattern, a
+            downstream service outage, or a schema mismatch.
+            Runbook: docs/runbooks/kafka-dead-letter.md
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 6. Background Job Monitoring
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_background_jobs
+    interval: 60s
+    rules:
+      # Generic: Alert if any scheduled job fails
+      - alert: ScheduledJobFailed
+        expr: increase(scheduled_jobs_total{success="false"}[2h]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: scheduler
+        annotations:
+          summary: "Scheduled job '{{ $labels.name }}' failed"
+          description: >-
+            The scheduled job '{{ $labels.name }}' has recorded {{ $value }}
+            failure(s) in the last 2 hours. Check application logs for the
+            root cause exception.
+
+      # Alert if attendance auto-regularization hasn't run in 48h (expected daily)
+      - alert: AttendanceRegularizationNotRunning
+        expr: >-
+          time() - scheduled_job_duration_seconds_max{name="attendance_regularization"} > 172800
+          or absent(scheduled_jobs_total{name="attendance_regularization"})
+        for: 30m
+        labels:
+          severity: warning
+          component: scheduler
+        annotations:
+          summary: "Attendance auto-regularization job has not run for >48 hours"
+          description: >-
+            The attendance auto-regularization job (expected daily at 01:00 IST)
+            has not executed in over 48 hours. Check if the scheduler is enabled,
+            the application is running, and there are no thread pool exhaustion issues.
+
+      # Alert if contract lifecycle job hasn't run in 48h (expected daily)
+      - alert: ContractLifecycleNotRunning
+        expr: >-
+          time() - scheduled_job_duration_seconds_max{name="contract_lifecycle"} > 172800
+          or absent(scheduled_jobs_total{name="contract_lifecycle"})
+        for: 30m
+        labels:
+          severity: warning
+          component: scheduler
+        annotations:
+          summary: "Contract lifecycle job has not run for >48 hours"
+          description: >-
+            The contract lifecycle job (expected daily at 02:30 UTC) has not
+            executed in over 48 hours. Check if app.contract.lifecycle.enabled=true
+            and the application is running.
+
+      # Alert if workflow escalation hasn't run in 3h (expected hourly)
+      - alert: WorkflowEscalationNotRunning
+        expr: >-
+          time() - scheduled_job_duration_seconds_max{name="workflow_escalation"} > 10800
+          or absent(scheduled_jobs_total{name="workflow_escalation"})
+        for: 30m
+        labels:
+          severity: warning
+          component: scheduler
+        annotations:
+          summary: "Workflow escalation job has not run for >3 hours"
+          description: >-
+            The workflow escalation job (expected hourly at :15) has not
+            executed in over 3 hours. Overdue approvals may not be escalated.
+            Check if app.workflow.escalation.enabled=true and the scheduler thread pool.
+
+      # Alert if scheduled job duration is anomalously high
+      - alert: ScheduledJobDurationAnomaly
+        expr: >-
+          scheduled_job_duration_seconds_max > 600
+        for: 5m
+        labels:
+          severity: warning
+          component: scheduler
+        annotations:
+          summary: "Scheduled job '{{ $labels.name }}' running for >10 minutes"
+          description: >-
+            The job '{{ $labels.name }}' has been running for {{ $value | humanizeDuration }}.
+            This may indicate a performance regression, a stuck transaction, or
+            an unusually large batch size. Investigate thread dumps and DB locks.
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 7. Webhook Delivery SLO
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_webhook_slo
+    interval: 30s
+    rules:
+      # Alert if webhook delivery failure rate exceeds 20%
+      - alert: WebhookDeliveryFailureRate
+        expr: >-
+          rate(webhook_deliveries_total{success="false"}[15m])
+          / rate(webhook_deliveries_total[15m]) > 0.20
+        for: 10m
+        labels:
+          severity: warning
+          component: webhook
+          slo: webhook_delivery
+        annotations:
+          summary: "Webhook delivery failure rate exceeds 20%"
+          description: >-
+            {{ $value | humanizePercentage }} of webhook deliveries are failing
+            for event type {{ $labels.event_type }}. Check target endpoint
+            availability and circuit breaker state.
+
+      # Alert if any webhook circuit breaker opens
+      - alert: WebhookCircuitBreakerOpen
+        expr: >-
+          increase(webhook_circuit_breaker_total{state="OPEN"}[15m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: webhook
+        annotations:
+          summary: "Webhook circuit breaker opened for {{ $labels.webhook_id }}"
+          description: >-
+            The circuit breaker for webhook {{ $labels.webhook_id }} has transitioned
+            to OPEN state, meaning deliveries to the target URL are being blocked.
+            Investigate the target endpoint health and recent delivery failures.
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 8. Contract Lifecycle SLO
+  # ─────────────────────────────────────────────────────────────────────
+  - name: hrms_contract_slo
+    interval: 60s
+    rules:
+      # Alert if contracts are expiring and no auto-action was taken
+      - alert: ContractsExpiringUnhandled
+        expr: contracts_expiring > 10
+        for: 24h
+        labels:
+          severity: warning
+          component: contract
+        annotations:
+          summary: "{{ $value }} contracts expiring for tenant {{ $labels.tenant_id }}"
+          description: >-
+            More than 10 contracts are approaching expiry for tenant
+            {{ $labels.tenant_id }} without being renewed or addressed.
+            Review the contract lifecycle scheduler output and pending reminders.

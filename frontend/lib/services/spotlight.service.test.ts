@@ -77,7 +77,7 @@ describe('spotlightService', () => {
 
       const result = await spotlightService.getActiveSpotlights();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/spotlights/active');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/spotlights/active');
       expect(result).toEqual(mockData);
       expect(result).toHaveLength(2);
     });
@@ -122,7 +122,7 @@ describe('spotlightService', () => {
 
       const result = await spotlightService.getAllSpotlights();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/spotlights', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/spotlights', {
         params: { page: 0, size: 10 },
       });
       expect(result).toEqual(mockData);
@@ -150,7 +150,7 @@ describe('spotlightService', () => {
 
       const result = await spotlightService.getAllSpotlights(1, 10);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/spotlights', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/spotlights', {
         params: { page: 1, size: 10 },
       });
       expect(result.content).toHaveLength(1);
@@ -176,7 +176,7 @@ describe('spotlightService', () => {
 
       const result = await spotlightService.getAllSpotlights(0, 50);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/spotlights', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/spotlights', {
         params: { page: 0, size: 50 },
       });
       expect(result.content).toHaveLength(50);
@@ -219,7 +219,7 @@ describe('spotlightService', () => {
 
       const result = await spotlightService.createSpotlight(createData);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/spotlights', createData);
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/spotlights', createData);
       expect(result).toEqual(mockResponse);
       expect(result.id).toBe('spotlight-new-1');
     });
@@ -244,7 +244,7 @@ describe('spotlightService', () => {
 
       const result = await spotlightService.createSpotlight(createData);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/spotlights', createData);
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/spotlights', createData);
       expect(result.isActive).toBe(true);
       expect(result.displayOrder).toBe(5);
     });

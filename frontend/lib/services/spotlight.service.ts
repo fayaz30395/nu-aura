@@ -16,12 +16,16 @@ export interface PagedResponse<T> {
   number: number;
 }
 
+// STUB: Backend endpoint not implemented — do not call.
+// No SpotlightController exists in the backend. These methods will return 404.
+// When the backend endpoint is implemented, remove this comment and the path
+// should be `/spotlights` (apiClient baseURL already includes /api/v1).
 class SpotlightService {
   /**
    * Get only active spotlights, sorted by displayOrder
    */
   async getActiveSpotlights(): Promise<Spotlight[]> {
-    const response = await apiClient.get<Spotlight[]>('/api/spotlights/active');
+    const response = await apiClient.get<Spotlight[]>('/spotlights/active');
     return response.data;
   }
 
@@ -29,7 +33,7 @@ class SpotlightService {
    * Get all spotlights with pagination
    */
   async getAllSpotlights(page: number = 0, size: number = 10): Promise<PagedResponse<Spotlight>> {
-    const response = await apiClient.get<PagedResponse<Spotlight>>('/api/spotlights', {
+    const response = await apiClient.get<PagedResponse<Spotlight>>('/spotlights', {
       params: { page, size },
     });
     return response.data;
@@ -39,7 +43,7 @@ class SpotlightService {
    * Create a new spotlight slide
    */
   async createSpotlight(data: CreateSpotlightRequest): Promise<Spotlight> {
-    const response = await apiClient.post<Spotlight>('/api/spotlights', data);
+    const response = await apiClient.post<Spotlight>('/spotlights', data);
     return response.data;
   }
 
@@ -47,7 +51,7 @@ class SpotlightService {
    * Update an existing spotlight slide
    */
   async updateSpotlight(id: string, data: UpdateSpotlightRequest): Promise<Spotlight> {
-    const response = await apiClient.put<Spotlight>(`/api/spotlights/${id}`, data);
+    const response = await apiClient.put<Spotlight>(`/spotlights/${id}`, data);
     return response.data;
   }
 
@@ -55,7 +59,7 @@ class SpotlightService {
    * Delete a spotlight slide
    */
   async deleteSpotlight(id: string): Promise<void> {
-    await apiClient.delete(`/api/spotlights/${id}`);
+    await apiClient.delete(`/spotlights/${id}`);
   }
 }
 

@@ -73,4 +73,25 @@ public interface ContractRepository extends JpaRepository<Contract, UUID> {
     @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.autoRenew = true " +
             "AND c.status = 'ACTIVE' AND c.endDate IS NOT NULL AND c.endDate <= CURRENT_DATE")
     List<Contract> findAutoRenewalEligibleContracts(@Param("tenantId") UUID tenantId);
+
+    // ===================== Scheduler Queries =====================
+
+    /**
+     * Find active contracts with an end date within the given window, scoped to a tenant.
+     * Used by the contract lifecycle scheduler to detect approaching expiry.
+     */
+    @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.status = 'ACTIVE' " +
+            "AND c.endDate IS NOT NULL AND c.endDate BETWEEN CURRENT_DATE AND :windowEnd")
+    List<Contract> findActiveContractsExpiringBefore(
+            @Param("tenantId") UUID tenantId,
+            @Param("windowEnd") LocalDate windowEnd
+    );
+
+    /**
+     * Find active contracts past their end date that have NOT yet been marked expired.
+     * Used by the scheduler to auto-expire stale contracts.
+     */
+    @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.status = 'ACTIVE' " +
+            "AND c.endDate IS NOT NULL AND c.endDate < CURRENT_DATE")
+    List<Contract> findActiveContractsPastEndDate(@Param("tenantId") UUID tenantId);
 }

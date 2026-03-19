@@ -619,33 +619,7 @@ describe('PayrollService', () => {
       });
     });
 
-    describe('approveSalaryStructure', () => {
-      it('should approve a salary structure', async () => {
-        const mockStructure: SalaryStructure = {
-          id: 'ss-123',
-          employeeId: 'emp-123',
-          baseSalary: 50000,
-          allowances: 10000,
-          deductions: 5000,
-          status: 'APPROVED',
-        };
-
-        mockApiClient.post.mockResolvedValue({ data: mockStructure });
-
-        const result = await payrollService.approveSalaryStructure('ss-123');
-
-        expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/salary-structures/ss-123/approve');
-        expect(result.status).toBe('APPROVED');
-      });
-
-      it('should handle approval errors', async () => {
-        mockApiClient.post.mockRejectedValue(new Error('Approval failed'));
-
-        await expect(payrollService.approveSalaryStructure('ss-123')).rejects.toThrow(
-          'Approval failed'
-        );
-      });
-    });
+    // approveSalaryStructure removed — no backend endpoint exists
 
     describe('deactivateSalaryStructure', () => {
       it('should deactivate a salary structure', async () => {
@@ -658,18 +632,18 @@ describe('PayrollService', () => {
           status: 'INACTIVE',
         };
 
-        mockApiClient.patch.mockResolvedValue({ data: mockStructure });
+        mockApiClient.post.mockResolvedValue({ data: mockStructure });
 
         const result = await payrollService.deactivateSalaryStructure('ss-123');
 
-        expect(mockApiClient.patch).toHaveBeenCalledWith(
+        expect(mockApiClient.post).toHaveBeenCalledWith(
           '/payroll/salary-structures/ss-123/deactivate'
         );
         expect(result.status).toBe('INACTIVE');
       });
 
       it('should handle deactivation errors', async () => {
-        mockApiClient.patch.mockRejectedValue(new Error('Deactivation failed'));
+        mockApiClient.post.mockRejectedValue(new Error('Deactivation failed'));
 
         await expect(payrollService.deactivateSalaryStructure('ss-123')).rejects.toThrow(
           'Deactivation failed'

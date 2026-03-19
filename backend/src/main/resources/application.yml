@@ -285,6 +285,10 @@ app:
     TRAVEL: true
     CALENDAR: true
 
+  # Payment module kill-switch (static config-level, complements DB feature flags)
+  payments:
+    enabled: ${PAYMENTS_ENABLED:false}
+
   tenant:
     resolution-strategy: ${TENANT_RESOLUTION_STRATEGY:header}
     header-name: X-Tenant-ID

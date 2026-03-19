@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "payment_transactions", indexes = {
@@ -103,7 +103,32 @@ public class PaymentTransaction extends TenantAware {
         FAILED,
         REFUNDED,
         PARTIAL_REFUND,
-        REVERSED
+        REVERSED;
+
+        /**
+         * Valid state transitions for the payment state machine.
+         * Prevents invalid transitions (e.g., FAILED → COMPLETED).
+         */
+        private static final Map<PaymentStatus, Set<PaymentStatus>> VALID_TRANSITIONS;
+
+        static {
+            VALID_TRANSITIONS = new EnumMap<>(PaymentStatus.class);
+            VALID_TRANSITIONS.put(INITIATED, EnumSet.of(PROCESSING, FAILED));
+            VALID_TRANSITIONS.put(PROCESSING, EnumSet.of(COMPLETED, FAILED));
+            VALID_TRANSITIONS.put(COMPLETED, EnumSet.of(REFUNDED, PARTIAL_REFUND, REVERSED));
+            VALID_TRANSITIONS.put(FAILED, EnumSet.noneOf(PaymentStatus.class)); // terminal
+            VALID_TRANSITIONS.put(REFUNDED, EnumSet.noneOf(PaymentStatus.class)); // terminal
+            VALID_TRANSITIONS.put(PARTIAL_REFUND, EnumSet.of(REFUNDED)); // can fully refund later
+            VALID_TRANSITIONS.put(REVERSED, EnumSet.noneOf(PaymentStatus.class)); // terminal
+        }
+
+        /**
+         * Check whether transitioning from this status to the target is valid.
+         */
+        public boolean canTransitionTo(PaymentStatus target) {
+            Set<PaymentStatus> allowed = VALID_TRANSITIONS.get(this);
+            return allowed != null && allowed.contains(target);
+        }
     }
 
     public enum PaymentProvider {

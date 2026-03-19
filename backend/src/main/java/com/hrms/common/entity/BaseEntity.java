@@ -58,6 +58,27 @@ public abstract class BaseEntity implements Serializable {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    /**
+     * Marks this entity as soft-deleted by setting {@code isDeleted = true}
+     * and recording the deletion timestamp. Use this instead of
+     * {@code repository.delete(entity)} to preserve audit trails.
+     */
+    public void softDelete() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Restores a soft-deleted entity by clearing the deletion flag and timestamp.
+     */
+    public void restore() {
+        this.isDeleted = false;
+        this.deletedAt = null;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -112,5 +133,13 @@ public abstract class BaseEntity implements Serializable {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

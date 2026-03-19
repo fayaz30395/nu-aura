@@ -1,7 +1,10 @@
 package com.hrms.api.payment.controller;
 
 import com.hrms.application.payment.service.PaymentService;
+import com.hrms.common.security.PaymentFeatureGuard;
+import com.hrms.common.security.RequiresFeature;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.domain.featureflag.FeatureFlag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,16 +13,25 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 /**
- * Webhook endpoint for payment provider callbacks
- * No authentication required - signature verification is handled by the service
+ * Webhook endpoint for payment provider callbacks.
+ * Gated behind the ENABLE_PAYMENTS feature flag — when payments are disabled,
+ * all webhook endpoints return 403 (AccessDenied via FeatureFlagAspect).
+ *
+ * TODO: When enabling for production:
+ * 1. Move webhook endpoints to permitAll in SecurityConfig (they are provider-initiated)
+ * 2. Implement real signature verification in RazorpayAdapter and StripeAdapter
+ * 3. Add idempotency check using externalEventId to prevent duplicate processing
+ * 4. Add rate limiting to prevent webhook flood attacks
  */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/payments/webhooks")
 @RequiredArgsConstructor
+@RequiresFeature(FeatureFlag.ENABLE_PAYMENTS)
 public class PaymentWebhookController {
 
     private final PaymentService paymentService;
+    private final PaymentFeatureGuard paymentFeatureGuard;
 
     /**
      * Handle payment provider webhook callbacks
@@ -33,6 +45,7 @@ public class PaymentWebhookController {
             @RequestHeader(value = "X-Razorpay-Signature", required = false) String razorpaySignature,
             @RequestHeader(value = "Stripe-Signature", required = false) String stripeSignature) {
 
+        paymentFeatureGuard.requirePaymentsEnabled();
         try {
             String actualSignature = signature != null ? signature :
                                     (razorpaySignature != null ? razorpaySignature : stripeSignature);
@@ -80,6 +93,7 @@ public class PaymentWebhookController {
      */
     @GetMapping("/health")
     public ResponseEntity<String> webhookHealth() {
+        paymentFeatureGuard.requirePaymentsEnabled();
         return ResponseEntity.ok("Webhook endpoint is active");
     }
 }

@@ -1,173 +1,166 @@
-# NU-AURA HRMS Platform
+# NU-AURA Platform
 
-Enterprise-grade, multi-tenant Human Resource Management System with integrated Project Management.
+Enterprise-grade, multi-tenant SaaS bundle app platform for HR operations, recruitment, performance management, and knowledge collaboration.
 
-## Overview
+**Status:** ~90% Complete | Stabilization Phase 7 Complete | Go-Live Gate Pending
 
-NU-AURA is a comprehensive HRMS platform that streamlines HR operations, enhances employee engagement, and provides robust project tracking for organizations of all sizes.
+## Platform Architecture
 
-**Status:** 90% Complete | Production Ready | 140+ E2E Tests
+NU-AURA is a **bundle app platform** containing 4 sub-applications, accessed via a unified login and app switcher:
+
+| Sub-App | Domain | Status |
+|---------|--------|--------|
+| **NU-HRMS** | Core HR (employees, attendance, leave, payroll, benefits, assets) | ~95% |
+| **NU-Hire** | Recruitment & onboarding (ATS, pipeline, job boards) | ~92% |
+| **NU-Grow** | Performance, learning & engagement (reviews, OKRs, 360, LMS) | ~90% |
+| **NU-Fluence** | Knowledge management & collaboration (wiki, blogs) | Phase 2 (~85%) |
 
 ## Technology Stack
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Backend | Spring Boot | 3.4.1 |
-| Frontend | Next.js | 14.2.35 |
-| Database | PostgreSQL | 14+ |
-| Cache | Redis | 6+ |
-| Container | Docker/Kubernetes | Latest |
-| Testing | Playwright | 1.57.0 |
+| Language | Java | 17 |
+| Frontend | Next.js (App Router) | 14.2.35 |
+| UI Library | Mantine | 8.3.14 |
+| Styling | Tailwind CSS | 3.4 |
+| Database | PostgreSQL (Neon cloud dev) | 14+ |
+| Cache | Redis | 7 |
+| Event Streaming | Kafka (Confluent) | 7.6 |
+| File Storage | MinIO | 8.6 |
+| Testing | Playwright (E2E) + JUnit 5 | 1.57 |
+| Monitoring | Prometheus + Grafana + AlertManager | Latest |
 
 ## Repository Structure
 
 ```
 nu-aura/
-├── hrms-backend/        # Spring Boot REST API (Java 17)
-├── hrms-frontend/       # Next.js 14 Web Application
-├── pm-frontend/         # Project Management Frontend
-├── modules/             # Shared backend modules
-│   ├── common/          # Common utilities
-│   └── pm/              # Project Management module
-├── apps/                # Alternative backend (Java 21)
-├── deployment/          # Docker, Kubernetes, GCP configs
-│   ├── docker/          # Dockerfiles
-│   ├── kubernetes/      # K8s manifests
-│   └── cloudbuild.yaml  # CI/CD pipeline
-├── monitoring/          # Prometheus, Grafana, AlertManager
-├── docs/                # All documentation
-│   ├── project/         # Project status & tracking
-│   ├── architecture/    # System design docs
-│   ├── api/             # API specifications
-│   ├── operations/      # Deployment & testing
-│   └── development/     # Developer guides
-├── config/              # Environment configurations
-├── tools/               # Utility scripts
-├── pom.xml              # Maven parent POM
-├── Dockerfile           # Main Dockerfile
-└── README.md            # This file
+├── backend/                    # Spring Boot monolith (Java 17, Maven)
+│   ├── src/main/java/com/hrms/
+│   │   ├── api/                # 71 controller packages (REST endpoints)
+│   │   ├── application/        # 188 service classes (business logic)
+│   │   ├── domain/             # 304 JPA entities
+│   │   ├── infrastructure/     # 254 repositories + Kafka + WebSocket
+│   │   └── common/             # Config, security, validation, exceptions
+│   └── src/main/resources/
+│       ├── application.yml     # Spring Boot config
+│       └── db/migration/       # 49 Flyway migrations (V0–V52)
+├── frontend/                   # Next.js 14 App Router
+│   ├── app/                    # 196 pages
+│   ├── components/             # 129 TSX components
+│   ├── lib/                    # Services, hooks, types, validations
+│   ├── e2e/                    # 36 Playwright E2E specs
+│   └── middleware.ts           # Edge route protection + OWASP headers
+├── modules/                    # Shared backend modules
+│   ├── common/                 # TenantAwareAsyncTask, base classes
+│   └── pm/                     # Project management sub-system
+├── monitoring/                 # Observability stack
+│   ├── prometheus/             # Scrape config + 28 alert rules (2 groups)
+│   ├── grafana/                # 4 dashboards + provisioning
+│   └── alertmanager/           # Routing, receivers, inhibition
+├── deployment/
+│   └── kubernetes/             # 10 active K8s manifests (GCP GKE)
+├── docs/                       # Architecture, ADRs, runbooks, execution logs
+├── scripts/                    # DB export/import, migration tools
+├── docker-compose.yml          # Dev: Redis, Kafka, MinIO, Prometheus
+├── docker-compose.prod.yml     # Production config
+└── docker-compose.override.yml # Dev hot-reload
 ```
-
-## Core Modules
-
-| Module | Features |
-|--------|----------|
-| **Employee Management** | CRUD, directory, hierarchy, documents, bulk import |
-| **Attendance** | Check-in/out, geofencing, shifts, regularization |
-| **Leave Management** | Policies, balances, approvals, calendar |
-| **Payroll** | Salary structures, payslips, statutory compliance |
-| **Performance** | OKRs, 360 feedback, reviews, 9-box grid |
-| **Recruitment** | Job postings, ATS pipeline, interviews |
-| **Projects** | Gantt charts, Kanban, tasks, time tracking |
-| **Benefits** | Plans, enrollments, claims, wellness |
-| **Training/LMS** | Courses, enrollments, certificates |
-| **Expenses** | Claims, approvals, reimbursements |
 
 ## Quick Start
 
 ### Prerequisites
 
-- Java 17+ (backend)
-- Node.js 18+ (frontend)
-- PostgreSQL 14+
-- Redis 6+
-- Docker (optional)
+- Java 17
+- Node.js 18+
+- Docker & Docker Compose
+- Neon PostgreSQL credentials (or any PostgreSQL 14+ instance)
 
-### Backend Setup
-
-```bash
-cd hrms-backend
-cp .env.example .env  # Configure database & secrets
-mvn clean install -DskipTests
-mvn spring-boot:run
-```
-
-### Frontend Setup
+### 1. Start Infrastructure
 
 ```bash
-cd hrms-frontend
-cp .env.example .env.local  # Configure API URL
-npm install
-npm run dev
-```
-
-### Docker Setup
-
-```bash
+# Start Redis, Kafka, MinIO, Prometheus
 docker-compose up -d
 ```
 
+> **Note:** PostgreSQL is hosted on Neon cloud (not in docker-compose). Set `NEON_JDBC_URL`, `NEON_DB_USERNAME`, `NEON_DB_PASSWORD` in a `.env` file at the repo root.
+
+### 2. Start Backend
+
+```bash
+cd backend
+./start-backend.sh
+# Runs on http://localhost:8080
+```
+
+### 3. Start Frontend
+
+```bash
+cd frontend
+npm install   # first time only
+npm run dev
+# Runs on http://localhost:3000
+```
+
+### Environment Variables
+
+**Backend** (set in `.env` or `application.yml`):
+- `NEON_JDBC_URL` — PostgreSQL JDBC connection string
+- `NEON_DB_USERNAME` / `NEON_DB_PASSWORD` — DB credentials
+- `JWT_SECRET` — JWT signing key (64+ chars)
+- `APP_SECURITY_ENCRYPTION_KEY` — Encryption key for sensitive data
+- `PAYMENTS_ENABLED` — Payment gateway kill-switch (default: `false`)
+
+**Frontend** (set in `frontend/.env.local`):
+- `NEXT_PUBLIC_API_URL` — Backend URL (default: `http://localhost:8080/api/v1`)
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` — Google OAuth client ID
+- `NEXT_PUBLIC_DEMO_MODE` — Enable demo mode
+- `NEXT_PUBLIC_PAYMENTS_ENABLED` — Payment UI visibility (default: `false`)
+
+## Key Architecture Decisions
+
+- **Multi-tenancy:** Shared DB, shared schema. `tenant_id` UUID on every table. PostgreSQL RLS enforces isolation.
+- **Authentication:** JWT in HttpOnly cookies. Access token 1h, refresh token 24h. Google SSO via OIDC/PKCE.
+- **Authorization:** RBAC with ~300 `module.action` permission strings. 9 roles. SuperAdmin bypasses all checks.
+- **Events:** Kafka 4 topics (`approval-events`, `audit-events`, `employee-lifecycle-events`, `notification-events`) + dead letter queues.
+- **Payroll:** SpEL formula engine with DAG-ordered component evaluation, always transactional.
+- **Migrations:** Flyway only (V0–V52). Legacy Liquibase in `db/changelog/` is deprecated.
+
+## Monitoring & Observability
+
+| Tool | URL | Purpose |
+|------|-----|---------|
+| Swagger UI | `http://localhost:8080/swagger-ui.html` | API documentation |
+| Prometheus | `http://localhost:9090` | Metrics scraping (5 targets) |
+| Grafana | Import dashboards from `monitoring/grafana/` | 4 dashboards: Overview, API, Business, Webhooks |
+| AlertManager | Configure via `monitoring/alertmanager/` | Severity-routed alerting |
+| MinIO Console | `http://localhost:9001` | File storage management |
+
+Alert rules: 9 application alerts + 19 SLO alerts in `monitoring/prometheus/rules/`.
+
+Operational runbooks: `docs/runbooks/` (incident response, payroll correction, data correction, Kafka DLQ).
+
 ## Documentation
 
-All documentation is in the [docs/](docs/) folder:
+Detailed documentation is in [docs/](docs/):
 
-| Document | Description |
-|----------|-------------|
-| [Setup Guide](docs/operations/SETUP_GUIDE.md) | Development environment setup |
-| [Technical Architecture](docs/architecture/TECHNICAL_ARCHITECTURE.md) | System design |
-| [API Specifications](docs/api/API_SPECIFICATIONS.md) | REST API reference |
-| [Database Schema](docs/api/DATABASE_SCHEMA.md) | Data models |
-| [Security](docs/architecture/SECURITY_REQUIREMENTS.md) | Security standards |
-| [Deployment](docs/operations/DEPLOYMENT_GUIDE.md) | Deployment procedures |
-| [Testing](docs/operations/TESTING_REQUIREMENTS.md) | Testing strategy |
+- Architecture: `docs/architecture-diagrams/`, `docs/adr/`
+- Operations: `docs/runbooks/`
+- Stabilization: `docs/execution/phase-{0..7}.md`
+- Technical baseline: `docs/technical-baseline.md`
 
-## Key Features
+## Deployment
 
-- **Multi-tenant Architecture** - Row-level tenant isolation
-- **300+ Permission Nodes** - Fine-grained RBAC with scopes
-- **Real-time Updates** - WebSocket notifications
-- **Google SSO** - OIDC with PKCE authentication
-- **Responsive UI** - Desktop, tablet, and mobile support
-- **Dark Mode** - Full dark theme support
-- **140+ E2E Tests** - Comprehensive Playwright test suite
-
-## API Documentation
-
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **OpenAPI Spec**: `http://localhost:8080/v3/api-docs`
-
-## Environment Variables
-
-See [config/.env.example](config/.env.example) for all required variables.
-
-Key variables:
-- `SPRING_DATASOURCE_URL` - PostgreSQL connection
-- `JWT_SECRET` - JWT signing key (64+ chars)
-- `GOOGLE_CLIENT_ID` - Google OAuth client ID
-- `NEXT_PUBLIC_API_URL` - Backend API URL
-
-## Deployment Options
-
-| Platform | Config File |
-|----------|-------------|
-| Kubernetes | `deployment/kubernetes/` |
-| Google Cloud | `deployment/cloudbuild.yaml` |
-| Railway | `railway.json` |
-| Render | `render.yaml` |
-| Docker | `docker-compose.yml` |
-
-## Project Status
-
-| Component | Status | Completion |
-|-----------|--------|------------|
-| Backend API | Production Ready | 95% |
-| Frontend UI | In Progress | 85% |
-| Infrastructure | Complete | 100% |
-| Security (RBAC) | Complete | 100% |
-| Testing | Complete | 95% |
-
-See [docs/project/BACKLOG.md](docs/project/BACKLOG.md) for remaining work.
-
-## Contributing
-
-1. Check [docs/project/BACKLOG.md](docs/project/BACKLOG.md) for tasks
-2. Follow [docs/development/DEVELOPER_GUIDE.md](docs/development/DEVELOPER_GUIDE.md)
-3. Ensure tests pass before submitting PRs
+| Platform | Config |
+|----------|--------|
+| Kubernetes (GCP GKE) | `deployment/kubernetes/` (10 manifests) |
+| Docker Compose | `docker-compose.yml` / `docker-compose.prod.yml` |
+| Google Cloud Build | `deployment/cloudbuild.yaml` |
 
 ## License
 
-Proprietary - NuLogic Technologies
+Proprietary — NuLogic Technologies
 
 ---
 
-*Last Updated: January 2026*
+*Last Updated: March 2026*

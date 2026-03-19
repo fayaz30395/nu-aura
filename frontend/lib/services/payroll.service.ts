@@ -106,7 +106,7 @@ class PayrollService {
     size: number = 20
   ): Promise<Page<Payslip>> {
     const response = await apiClient.get<Page<Payslip>>(
-      `/payroll/payslips/run/${payrollRunId}`,
+      `/payroll/payslips/run/${payrollRunId}/paged`,
       {
         params: { page, size },
       }
@@ -114,6 +114,38 @@ class PayrollService {
     return response.data;
   }
 
+  async getPayslipsByPayrollRunList(payrollRunId: string): Promise<Payslip[]> {
+    const response = await apiClient.get<Payslip[]>(
+      `/payroll/payslips/run/${payrollRunId}`
+    );
+    return response.data;
+  }
+
+  async getPayslipByEmployeeAndPeriod(
+    employeeId: string,
+    year: number,
+    month: number
+  ): Promise<Payslip> {
+    const response = await apiClient.get<Payslip>(
+      `/payroll/payslips/employee/${employeeId}/period`,
+      { params: { year, month } }
+    );
+    return response.data;
+  }
+
+  async getPayslipsByEmployeeAndYear(
+    employeeId: string,
+    year: number
+  ): Promise<Payslip[]> {
+    const response = await apiClient.get<Payslip[]>(
+      `/payroll/payslips/employee/${employeeId}/year/${year}`
+    );
+    return response.data;
+  }
+
+  // STUB: Backend endpoint not implemented — do not call.
+  // No GET /payroll/payslips/period endpoint exists in PayrollController.
+  // Consider using getPayslipByEmployeeAndPeriod() or getPayslipsByPayrollRun() instead.
   async getPayslipsByPeriod(
     startDate: string,
     endDate: string,
@@ -179,16 +211,25 @@ class PayrollService {
     return response.data;
   }
 
-  async approveSalaryStructure(id: string): Promise<SalaryStructure> {
+  async deactivateSalaryStructure(id: string): Promise<SalaryStructure> {
     const response = await apiClient.post<SalaryStructure>(
-      `/payroll/salary-structures/${id}/approve`
+      `/payroll/salary-structures/${id}/deactivate`
     );
     return response.data;
   }
 
-  async deactivateSalaryStructure(id: string): Promise<SalaryStructure> {
-    const response = await apiClient.patch<SalaryStructure>(
-      `/payroll/salary-structures/${id}/deactivate`
+  async getActiveSalaryStructure(employeeId: string, date?: string): Promise<SalaryStructure> {
+    const response = await apiClient.get<SalaryStructure>(
+      `/payroll/salary-structures/employee/${employeeId}/active`,
+      { params: date ? { date } : undefined }
+    );
+    return response.data;
+  }
+
+  async getActiveSalaryStructures(page: number = 0, size: number = 20): Promise<Page<SalaryStructure>> {
+    const response = await apiClient.get<Page<SalaryStructure>>(
+      '/payroll/salary-structures/active',
+      { params: { page, size } }
     );
     return response.data;
   }
@@ -197,7 +238,8 @@ class PayrollService {
     await apiClient.delete(`/payroll/salary-structures/${id}`);
   }
 
-  // Bulk Processing
+  // STUB: Backend endpoints for bulk processing not implemented — do not call.
+  // No /payroll/bulk-process endpoint exists in PayrollController.
   async bulkProcessPayroll(data: {
     employeeIds: string[];
     payrollPeriodStart: string;

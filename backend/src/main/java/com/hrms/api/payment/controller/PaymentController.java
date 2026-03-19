@@ -2,8 +2,11 @@ package com.hrms.api.payment.controller;
 
 import com.hrms.api.payment.dto.PaymentTransactionDto;
 import com.hrms.application.payment.service.PaymentService;
+import com.hrms.common.security.PaymentFeatureGuard;
 import com.hrms.common.security.Permission;
+import com.hrms.common.security.RequiresFeature;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.domain.featureflag.FeatureFlag;
 import com.hrms.domain.payment.PaymentTransaction;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -24,9 +27,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
 @Validated
+@RequiresFeature(FeatureFlag.ENABLE_PAYMENTS)
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentFeatureGuard paymentFeatureGuard;
 
     /**
      * Initiate a single payment
@@ -36,6 +41,7 @@ public class PaymentController {
     public ResponseEntity<PaymentTransactionDto> initiatePayment(
             @Valid @RequestBody PaymentTransactionDto request) {
 
+        paymentFeatureGuard.requirePaymentsEnabled();
         PaymentTransaction transaction = request.toEntity();
         PaymentTransaction result = paymentService.initiatePayment(transaction);
 
@@ -49,6 +55,7 @@ public class PaymentController {
     @GetMapping("/{paymentId}/status")
     @RequiresPermission(Permission.PAYMENT_VIEW)
     public ResponseEntity<PaymentTransactionDto> checkPaymentStatus(@PathVariable UUID paymentId) {
+        paymentFeatureGuard.requirePaymentsEnabled();
         PaymentTransaction transaction = paymentService.checkPaymentStatus(paymentId);
         return ResponseEntity.ok(PaymentTransactionDto.fromEntity(transaction));
     }
@@ -59,6 +66,7 @@ public class PaymentController {
     @GetMapping("/{paymentId}")
     @RequiresPermission(Permission.PAYMENT_VIEW)
     public ResponseEntity<PaymentTransactionDto> getPaymentDetails(@PathVariable UUID paymentId) {
+        paymentFeatureGuard.requirePaymentsEnabled();
         PaymentTransaction transaction = paymentService.getPaymentTransaction(paymentId);
         return ResponseEntity.ok(PaymentTransactionDto.fromEntity(transaction));
     }
@@ -69,6 +77,7 @@ public class PaymentController {
     @GetMapping
     @RequiresPermission(Permission.PAYMENT_VIEW)
     public ResponseEntity<Page<PaymentTransactionDto>> listPayments(Pageable pageable) {
+        paymentFeatureGuard.requirePaymentsEnabled();
         Page<PaymentTransaction> transactions = paymentService.listPaymentTransactions(pageable);
         Page<PaymentTransactionDto> dtos = new PageImpl<>(
             transactions.getContent().stream()
@@ -89,6 +98,7 @@ public class PaymentController {
             @PathVariable UUID paymentId,
             @NotBlank @Size(max = 1000) @RequestParam String reason) {
 
+        paymentFeatureGuard.requirePaymentsEnabled();
         paymentService.processRefund(paymentId, reason);
         return ResponseEntity.ok("Refund initiated successfully");
     }

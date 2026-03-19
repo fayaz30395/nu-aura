@@ -13,6 +13,9 @@ export interface PagedResponse<T> {
   number: number;
 }
 
+// STUB: Backend endpoint not implemented — do not call.
+// No LinkedInPostController exists in the backend. These methods will return 404.
+// When the backend endpoint is implemented, remove this comment.
 const BASE_URL = '/api/v1/linkedin-posts';
 
 class LinkedInService {
