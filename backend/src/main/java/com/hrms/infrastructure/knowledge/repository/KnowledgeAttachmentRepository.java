@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -20,7 +21,16 @@ public interface KnowledgeAttachmentRepository extends JpaRepository<KnowledgeAt
     List<KnowledgeAttachment> findByTenantIdAndContentTypeAndContentId(
             UUID tenantId, KnowledgeAttachment.ContentType contentType, UUID contentId);
 
+    List<KnowledgeAttachment> findByTenantIdAndContentIdAndContentType(
+            UUID tenantId, UUID contentId, KnowledgeAttachment.ContentType contentType);
+
+    Optional<KnowledgeAttachment> findByTenantIdAndId(UUID tenantId, UUID id);
+
     Page<KnowledgeAttachment> findByTenantId(UUID tenantId, Pageable pageable);
 
     long countByTenantIdAndContentTypeAndContentId(UUID tenantId, KnowledgeAttachment.ContentType contentType, UUID contentId);
+
+    long countByTenantIdAndContentIdAndContentType(UUID tenantId, UUID contentId, KnowledgeAttachment.ContentType contentType);
+
+    List<KnowledgeAttachment> findByTenantIdAndIsDeletedFalseOrderByCreatedAtDesc(UUID tenantId);
 }
