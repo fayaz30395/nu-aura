@@ -1,8 +1,12 @@
 package com.hrms.application.onboarding.service;
 
 import com.hrms.api.onboarding.dto.*;
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.onboarding.*;
+import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.onboarding.repository.*;
 import com.hrms.common.security.TenantContext;
@@ -22,13 +26,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class OnboardingManagementService {
+public class OnboardingManagementService implements ApprovalCallbackHandler {
 
     private final OnboardingProcessRepository onboardingRepository;
     private final EmployeeRepository employeeRepository;
     private final OnboardingChecklistTemplateRepository templateRepository;
     private final OnboardingTemplateTaskRepository templateTaskRepository;
     private final OnboardingTaskRepository taskRepository;
+    private final WorkflowService workflowService;
 
     @Transactional
     public OnboardingProcessResponse createProcess(OnboardingProcessRequest request) {
@@ -62,6 +67,9 @@ public class OnboardingManagementService {
         if (request.getTemplateId() != null) {
             generateTasksFromTemplate(savedProcess, request.getTemplateId());
         }
+
+        // Start approval workflow (HR -> Department Head)
+        startOnboardingApprovalWorkflow(savedProcess, tenantId);
 
         return mapToResponse(savedProcess);
     }
@@ -424,5 +432,65 @@ public class OnboardingManagementService {
                 .orderSequence(task.getOrderSequence())
                 .remarks(task.getRemarks())
                 .build();
+    }
+
+    // ======================== ApprovalCallbackHandler ========================
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.ONBOARDING;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Onboarding process {} approved via workflow by {}", entityId, approvedBy);
+
+        onboardingRepository.findByIdAndTenantId(entityId, tenantId).ifPresent(process -> {
+            if (process.getStatus() == OnboardingProcess.ProcessStatus.NOT_STARTED) {
+                process.setStatus(OnboardingProcess.ProcessStatus.IN_PROGRESS);
+                onboardingRepository.save(process);
+                log.info("Onboarding process {} transitioned to IN_PROGRESS after approval", entityId);
+            }
+        });
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Onboarding process {} rejected via workflow by {}: {}", entityId, rejectedBy, reason);
+
+        onboardingRepository.findByIdAndTenantId(entityId, tenantId).ifPresent(process -> {
+            if (process.getStatus() == OnboardingProcess.ProcessStatus.NOT_STARTED) {
+                process.setStatus(OnboardingProcess.ProcessStatus.CANCELLED);
+                process.setNotes(reason != null ? "Rejected: " + reason : "Rejected via workflow");
+                onboardingRepository.save(process);
+                log.info("Onboarding process {} cancelled after rejection", entityId);
+            }
+        });
+    }
+
+    private void startOnboardingApprovalWorkflow(OnboardingProcess process, UUID tenantId) {
+        try {
+            String employeeName = employeeRepository.findByIdAndTenantId(process.getEmployeeId(), tenantId)
+                    .map(emp -> emp.getFirstName() + " " + emp.getLastName())
+                    .orElse("Employee");
+
+            Employee employee = employeeRepository.findByIdAndTenantId(process.getEmployeeId(), tenantId).orElse(null);
+
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.ONBOARDING);
+            workflowRequest.setEntityId(process.getId());
+            workflowRequest.setTitle("Onboarding Approval: " + employeeName);
+            if (employee != null && employee.getDepartmentId() != null) {
+                workflowRequest.setDepartmentId(employee.getDepartmentId());
+            }
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for onboarding process: {}", process.getId());
+        } catch (Exception e) {
+            log.warn("Could not start approval workflow for onboarding process {}: {}",
+                    process.getId(), e.getMessage());
+        }
     }
 }
