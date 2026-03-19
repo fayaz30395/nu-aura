@@ -2,6 +2,8 @@ package com.hrms.api.knowledge.dto;
 
 import lombok.*;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,4 +17,6 @@ public class CreateWikiSpaceRequest {
     private String visibility;
     private String color;
     private Integer orderIndex;
+    private Boolean approvalEnabled;
+    private UUID approverEmployeeId;
 }

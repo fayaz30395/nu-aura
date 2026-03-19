@@ -44,6 +44,8 @@ public class WikiSpaceController {
                 .visibility(WikiSpace.VisibilityLevel.valueOf(request.getVisibility()))
                 .color(request.getColor())
                 .orderIndex(request.getOrderIndex())
+                .approvalEnabled(request.getApprovalEnabled() != null ? request.getApprovalEnabled() : false)
+                .approverEmployeeId(request.getApproverEmployeeId())
                 .build();
 
         WikiSpace created = wikiSpaceService.createSpace(space);
@@ -96,6 +98,8 @@ public class WikiSpaceController {
                 .visibility(WikiSpace.VisibilityLevel.valueOf(request.getVisibility()))
                 .color(request.getColor())
                 .orderIndex(request.getOrderIndex())
+                .approvalEnabled(request.getApprovalEnabled() != null ? request.getApprovalEnabled() : false)
+                .approverEmployeeId(request.getApproverEmployeeId())
                 .build();
 
         WikiSpace updated = wikiSpaceService.updateSpace(spaceId, spaceData);

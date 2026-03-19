@@ -51,6 +51,8 @@ public class WikiSpaceService {
         space.setVisibility(spaceData.getVisibility());
         space.setColor(spaceData.getColor());
         space.setOrderIndex(spaceData.getOrderIndex());
+        space.setApprovalEnabled(spaceData.getApprovalEnabled() != null ? spaceData.getApprovalEnabled() : false);
+        space.setApproverEmployeeId(spaceData.getApproverEmployeeId());
 
         WikiSpace updated = wikiSpaceRepository.save(space);
         log.info("Updated wiki space: {}", spaceId);

@@ -25,6 +25,8 @@ public class WikiSpaceDto {
     private Boolean isArchived;
     private LocalDateTime archivedAt;
     private UUID archivedBy;
+    private Boolean approvalEnabled;
+    private UUID approverEmployeeId;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -49,6 +51,8 @@ public class WikiSpaceDto {
                 .isArchived(entity.getIsArchived())
                 .archivedAt(entity.getArchivedAt())
                 .archivedBy(entity.getArchivedBy())
+                .approvalEnabled(entity.getApprovalEnabled())
+                .approverEmployeeId(entity.getApproverEmployeeId())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .createdBy(entity.getCreatedBy())
@@ -70,6 +74,8 @@ public class WikiSpaceDto {
                 .isArchived(this.isArchived)
                 .archivedAt(this.archivedAt)
                 .archivedBy(this.archivedBy)
+                .approvalEnabled(this.approvalEnabled)
+                .approverEmployeeId(this.approverEmployeeId)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .createdBy(this.createdBy)
