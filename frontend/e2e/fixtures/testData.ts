@@ -3,58 +3,204 @@
  * Contains mock data for testing various features
  */
 
+/** Shared password for all NuLogic demo accounts */
+export const DEMO_PASSWORD = 'Welcome@123';
+
 /**
- * Mock Users for E2E Testing
- * These credentials match the seeded mock data in 100-seed-mock-data.xml
+ * Demo user role types matching the backend RBAC model
+ */
+export type DemoRole =
+  | 'SUPER_ADMIN'
+  | 'MANAGER'
+  | 'TEAM_LEAD'
+  | 'HR_MANAGER'
+  | 'RECRUITMENT_ADMIN'
+  | 'EMPLOYEE';
+
+/**
+ * Represents a demo user in the NuLogic tenant hierarchy
+ */
+export interface DemoUser {
+  email: string;
+  password: string;
+  role: DemoRole;
+  name: string;
+  department: string;
+  reportsTo: string | null;
+}
+
+/**
+ * NuLogic Demo Tenant — Full Approval Hierarchy
+ *
+ * These accounts are seeded by Flyway V8 (demo profile) and match
+ * the demo account buttons on the login page.
+ *
+ *   CEO: Fayaz M (SUPER_ADMIN)
+ *   ├── Sumit Kumar (MANAGER, Engineering) ── reports to Fayaz
+ *   │   ├── Mani S (TEAM_LEAD) ── reports to Sumit
+ *   │   │   ├── Raj V (EMPLOYEE) ── reports to Mani
+ *   │   │   └── Gokul R (TEAM_LEAD) ── reports to Mani
+ *   │   │       └── Anshuman P (EMPLOYEE) ── reports to Gokul
+ *   │   └── Saran V (EMPLOYEE) ── reports to Sumit
+ *   └── Jagadeesh N (HR_MANAGER) ── reports to Fayaz
+ *       ├── Suresh M (RECRUITMENT_ADMIN) ── reports to Jagadeesh
+ *       │   ├── Arun K (EMPLOYEE) ── reports to Suresh
+ *       │   └── Bharath S (EMPLOYEE) ── reports to Suresh
+ *       └── Dhanush A (TEAM_LEAD, HR) ── reports to Jagadeesh
+ *           ├── Chitra D (EMPLOYEE) ── reports to Dhanush
+ *           └── Deepak R (EMPLOYEE) ── reports to Dhanush
+ *   Sarankarthick Maran (SUPER_ADMIN) ── no reports-to
+ */
+export const demoUsers = {
+  // ── SUPER_ADMIN ────────────────────────────────────────────
+  superAdmin: {
+    email: 'fayaz.m@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'SUPER_ADMIN' as DemoRole,
+    name: 'Fayaz M',
+    department: 'Executive',
+    reportsTo: null,
+  },
+  superAdmin2: {
+    email: 'sarankarthick.maran@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'SUPER_ADMIN' as DemoRole,
+    name: 'Sarankarthick Maran',
+    department: 'Executive',
+    reportsTo: null,
+  },
+
+  // ── ENGINEERING CHAIN ──────────────────────────────────────
+  managerEng: {
+    email: 'sumit@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'MANAGER' as DemoRole,
+    name: 'Sumit Kumar',
+    department: 'Engineering',
+    reportsTo: 'fayaz.m@nulogic.io',
+  },
+  teamLeadEng: {
+    email: 'mani@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'TEAM_LEAD' as DemoRole,
+    name: 'Mani S',
+    department: 'Engineering',
+    reportsTo: 'sumit@nulogic.io',
+  },
+  teamLeadEng2: {
+    email: 'gokul@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'TEAM_LEAD' as DemoRole,
+    name: 'Gokul R',
+    department: 'Engineering',
+    reportsTo: 'mani@nulogic.io',
+  },
+  employeeSaran: {
+    email: 'saran@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'EMPLOYEE' as DemoRole,
+    name: 'Saran V',
+    department: 'Engineering',
+    reportsTo: 'sumit@nulogic.io',
+  },
+  employeeRaj: {
+    email: 'raj@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'EMPLOYEE' as DemoRole,
+    name: 'Raj V',
+    department: 'Engineering',
+    reportsTo: 'mani@nulogic.io',
+  },
+  employeeAnshuman: {
+    email: 'anshuman@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'EMPLOYEE' as DemoRole,
+    name: 'Anshuman P',
+    department: 'Engineering',
+    reportsTo: 'gokul@nulogic.io',
+  },
+
+  // ── HR CHAIN ───────────────────────────────────────────────
+  hrManager: {
+    email: 'jagadeesh@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'HR_MANAGER' as DemoRole,
+    name: 'Jagadeesh N',
+    department: 'HR',
+    reportsTo: 'fayaz.m@nulogic.io',
+  },
+  recruitmentAdmin: {
+    email: 'suresh@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'RECRUITMENT_ADMIN' as DemoRole,
+    name: 'Suresh M',
+    department: 'Recruitment',
+    reportsTo: 'jagadeesh@nulogic.io',
+  },
+  teamLeadHR: {
+    email: 'dhanush@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'TEAM_LEAD' as DemoRole,
+    name: 'Dhanush A',
+    department: 'HR',
+    reportsTo: 'jagadeesh@nulogic.io',
+  },
+  employeeArun: {
+    email: 'arun@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'EMPLOYEE' as DemoRole,
+    name: 'Arun K',
+    department: 'Recruitment',
+    reportsTo: 'suresh@nulogic.io',
+  },
+  employeeBharath: {
+    email: 'bharath@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'EMPLOYEE' as DemoRole,
+    name: 'Bharath S',
+    department: 'Recruitment',
+    reportsTo: 'suresh@nulogic.io',
+  },
+  employeeChitra: {
+    email: 'chitra@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'EMPLOYEE' as DemoRole,
+    name: 'Chitra D',
+    department: 'HR',
+    reportsTo: 'dhanush@nulogic.io',
+  },
+  employeeDeepak: {
+    email: 'deepak@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'EMPLOYEE' as DemoRole,
+    name: 'Deepak R',
+    department: 'HR',
+    reportsTo: 'dhanush@nulogic.io',
+  },
+};
+
+/** Flat array of all demo users for iteration */
+export const allDemoUsers: DemoUser[] = Object.values(demoUsers);
+
+/**
+ * Find the reporting manager for a given demo user email.
+ * Returns the DemoUser object of the direct manager, or null if top-level.
+ */
+export function getManagerOf(email: string): DemoUser | null {
+  const user = allDemoUsers.find((u) => u.email === email);
+  if (!user?.reportsTo) return null;
+  return allDemoUsers.find((u) => u.email === user.reportsTo) ?? null;
+}
+
+/**
+ * Legacy testUsers — mapped to real demo accounts for backward compatibility.
+ * New tests should use `demoUsers` directly.
  */
 export const testUsers = {
-  admin: {
-    email: 'admin@nulogic.io',
-    password: 'password',
-    role: 'Admin',
-    name: 'Admin User',
-  },
-  hrManager: {
-    email: 'priya.sharma@nulogic.io',
-    password: 'password',
-    role: 'HR Manager',
-    name: 'Priya Sharma',
-  },
-  hrStaff: [
-    { email: 'neha.gupta@nulogic.io', password: 'password', role: 'HR Staff', name: 'Neha Gupta' },
-    { email: 'amit.kumar@nulogic.io', password: 'password', role: 'HR Staff', name: 'Amit Kumar' },
-    { email: 'sneha.reddy@nulogic.io', password: 'password', role: 'HR Staff', name: 'Sneha Reddy' },
-    { email: 'rahul.verma@nulogic.io', password: 'password', role: 'HR Staff', name: 'Rahul Verma' },
-  ],
-  managers: [
-    { email: 'rajesh.kumar@nulogic.io', password: 'password', role: 'Manager', name: 'Rajesh Kumar', project: 'NuAura HRMS' },
-    { email: 'sunita.patel@nulogic.io', password: 'password', role: 'Manager', name: 'Sunita Patel', project: 'E-Commerce Platform' },
-    { email: 'vikram.singh@nulogic.io', password: 'password', role: 'Manager', name: 'Vikram Singh', project: 'Mobile Banking App' },
-  ],
-  developers: [
-    { email: 'ankit.sharma@nulogic.io', password: 'password', role: 'Developer', name: 'Ankit Sharma' },
-    { email: 'meera.nair@nulogic.io', password: 'password', role: 'Developer', name: 'Meera Nair' },
-    { email: 'sanjay.gupta@nulogic.io', password: 'password', role: 'Developer', name: 'Sanjay Gupta' },
-    { email: 'kavitha.menon@nulogic.io', password: 'password', role: 'Developer', name: 'Kavitha Menon' },
-    { email: 'arun.krishnan@nulogic.io', password: 'password', role: 'Developer', name: 'Arun Krishnan' },
-    { email: 'divya.iyer@nulogic.io', password: 'password', role: 'Developer', name: 'Divya Iyer' },
-    { email: 'karthik.rajan@nulogic.io', password: 'password', role: 'Developer', name: 'Karthik Rajan' },
-    { email: 'pooja.hegde@nulogic.io', password: 'password', role: 'Developer', name: 'Pooja Hegde' },
-    { email: 'manoj.pillai@nulogic.io', password: 'password', role: 'Developer', name: 'Manoj Pillai' },
-    { email: 'lakshmi.nambiar@nulogic.io', password: 'password', role: 'Developer', name: 'Lakshmi Nambiar' },
-  ],
-  manager: {
-    email: 'rajesh.kumar@nulogic.io',
-    password: 'password',
-    role: 'Manager',
-    name: 'Rajesh Kumar',
-  },
-  employee: {
-    email: 'ankit.sharma@nulogic.io',
-    password: 'password',
-    role: 'Employee',
-    name: 'Ankit Sharma',
-  },
+  admin: demoUsers.superAdmin,
+  hrManager: demoUsers.hrManager,
+  manager: demoUsers.managerEng,
+  employee: demoUsers.employeeSaran,
 };
 
 export const mockProjects = [
