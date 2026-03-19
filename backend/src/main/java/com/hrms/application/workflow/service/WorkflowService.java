@@ -9,13 +9,17 @@ import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.workflow.repository.*;
+import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.domain.event.workflow.ApprovalDecisionEvent;
 import com.hrms.domain.event.workflow.ApprovalTaskAssignedEvent;
 import com.hrms.domain.audit.AuditLog.AuditAction;
-import lombok.RequiredArgsConstructor;
+import com.hrms.domain.leave.LeaveRequest;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,10 +29,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class WorkflowService {
@@ -44,6 +48,50 @@ public class WorkflowService {
     private final UserRepository userRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
+    private final LeaveRequestRepository leaveRequestRepository;
+
+    /** Callback handlers indexed by entity type — populated at startup. */
+    private Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> callbackHandlerMap = Collections.emptyMap();
+
+    @Autowired
+    public WorkflowService(
+            WorkflowDefinitionRepository workflowDefinitionRepository,
+            ApprovalStepRepository approvalStepRepository,
+            WorkflowExecutionRepository workflowExecutionRepository,
+            StepExecutionRepository stepExecutionRepository,
+            ApprovalDelegateRepository approvalDelegateRepository,
+            WorkflowRuleRepository workflowRuleRepository,
+            EmployeeRepository employeeRepository,
+            DepartmentRepository departmentRepository,
+            UserRepository userRepository,
+            DomainEventPublisher domainEventPublisher,
+            AuditLogService auditLogService,
+            LeaveRequestRepository leaveRequestRepository,
+            @Autowired(required = false) List<ApprovalCallbackHandler> callbackHandlers) {
+        this.workflowDefinitionRepository = workflowDefinitionRepository;
+        this.approvalStepRepository = approvalStepRepository;
+        this.workflowExecutionRepository = workflowExecutionRepository;
+        this.stepExecutionRepository = stepExecutionRepository;
+        this.approvalDelegateRepository = approvalDelegateRepository;
+        this.workflowRuleRepository = workflowRuleRepository;
+        this.employeeRepository = employeeRepository;
+        this.departmentRepository = departmentRepository;
+        this.userRepository = userRepository;
+        this.domainEventPublisher = domainEventPublisher;
+        this.auditLogService = auditLogService;
+        this.leaveRequestRepository = leaveRequestRepository;
+        if (callbackHandlers != null && !callbackHandlers.isEmpty()) {
+            this.callbackHandlerMap = callbackHandlers.stream()
+                    .collect(Collectors.toMap(
+                            ApprovalCallbackHandler::getEntityType,
+                            Function.identity(),
+                            (a, b) -> {
+                                log.warn("Duplicate ApprovalCallbackHandler for entity type {}; keeping first", a.getEntityType());
+                                return a;
+                            }));
+            log.info("Registered {} approval callback handlers: {}", callbackHandlerMap.size(), callbackHandlerMap.keySet());
+        }
+    }
 
     /**
      * Get user name from employee repository, falling back to UUID prefix if not found.
@@ -617,7 +665,38 @@ public class WorkflowService {
                     ApprovalDecisionEvent.of(this, tenantId, saved, currentStep, eventAction, currentUser, request.getComments()));
         }
 
+        // Invoke module callback when workflow reaches terminal state
+        if (saved.isCompleted()) {
+            invokeCallback(saved, currentUser, request.getComments());
+        }
+
         return WorkflowExecutionResponse.from(saved);
+    }
+
+    /**
+     * Invokes the registered {@link ApprovalCallbackHandler} for the entity type
+     * of the completed workflow execution, if one exists.
+     * Wrapped in try-catch to prevent callback failures from breaking the approval flow.
+     */
+    private void invokeCallback(WorkflowExecution execution, UUID actingUser, String comments) {
+        ApprovalCallbackHandler handler = callbackHandlerMap.get(execution.getEntityType());
+        if (handler == null) {
+            log.debug("No callback handler registered for entity type: {}", execution.getEntityType());
+            return;
+        }
+
+        try {
+            if (execution.getStatus() == WorkflowExecution.ExecutionStatus.APPROVED) {
+                handler.onApproved(execution.getTenantId(), execution.getEntityId(), actingUser);
+                log.info("Callback onApproved invoked for {} entity {}", execution.getEntityType(), execution.getEntityId());
+            } else if (execution.getStatus() == WorkflowExecution.ExecutionStatus.REJECTED) {
+                handler.onRejected(execution.getTenantId(), execution.getEntityId(), actingUser, comments);
+                log.info("Callback onRejected invoked for {} entity {}", execution.getEntityType(), execution.getEntityId());
+            }
+        } catch (Exception e) {
+            log.error("Approval callback failed for {} entity {}: {}",
+                    execution.getEntityType(), execution.getEntityId(), e.getMessage(), e);
+        }
     }
 
     private void advanceToNextStep(WorkflowExecution execution, StepExecution completedStep) {
