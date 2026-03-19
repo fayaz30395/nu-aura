@@ -29,7 +29,6 @@ import {
   Baby,
   Briefcase,
   HelpCircle,
-  Loader2,
 } from 'lucide-react';
 
 export default function LeavePage() {

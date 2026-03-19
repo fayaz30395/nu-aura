@@ -214,7 +214,18 @@
       "Bash(PGPASSWORD=npg_p3Nnmrd9PvhB psql \"postgresql://neondb_owner@ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require\" -c \"SELECT tablename FROM pg_tables WHERE schemaname = ''public'' AND tablename LIKE ''approval%'' OR tablename LIKE ''workflow%'';\")",
       "Bash(source ../backend/start-backend.sh)",
       "Bash(PGPASSWORD=npg_p3Nnmrd9PvhB psql \"postgresql://neondb_owner@ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require\" -c \"SELECT tablename FROM pg_tables WHERE schemaname = ''public'' ORDER BY tablename;\")",
-      "Bash(PGPASSWORD=npg_p3Nnmrd9PvhB psql \"postgresql://neondb_owner@ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require\" <<'SQL':*)"
+      "Bash(PGPASSWORD=npg_p3Nnmrd9PvhB psql \"postgresql://neondb_owner@ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require\" <<'SQL':*)",
+      "Bash(cp -r backend/src/main/java/com/hrms/application/contract/scheduler/ /Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/application/contract/scheduler/)",
+      "Bash(cp -r backend/src/test/java/com/hrms/application/contract/scheduler/ /Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/contract/scheduler/)",
+      "Bash(cp backend/src/main/java/com/hrms/common/entity/BaseEntity.java /Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/common/entity/BaseEntity.java)",
+      "Bash(cp backend/src/main/java/com/hrms/application/attendance/service/HolidayService.java /Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/application/attendance/service/HolidayService.java)",
+      "Bash(cp backend/src/main/java/com/hrms/application/contract/service/ContractService.java /Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/application/contract/service/ContractService.java)",
+      "Bash(cp backend/src/main/java/com/hrms/application/employee/service/DepartmentService.java /Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/application/employee/service/DepartmentService.java)",
+      "Bash(cp backend/src/main/java/com/hrms/application/leave/service/LeaveTypeService.java /Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/application/leave/service/LeaveTypeService.java)",
+      "Skill(code-review:code-review)",
+      "Skill(code-review:code-review:*)",
+      "Bash(mv V49__add_deleted_at_column.sql V51__add_deleted_at_column.sql)",
+      "Bash(mv V50__contract_lifecycle_automation.sql V52__contract_lifecycle_automation.sql)"
     ],
     "additionalDirectories": [
       "/tmp"
