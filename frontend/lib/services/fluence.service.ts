@@ -8,6 +8,7 @@ import {
   FluenceComment,
   FluenceSearchResponse,
   FluenceFavorite,
+  FluenceAttachment,
   ContentViewRecord,
   Page,
   CreateWikiPageRequest,
@@ -432,6 +433,50 @@ class FluenceService {
       { editorIds }
     );
     return response.data;
+  }
+  // ─── Attachments ──────────────────────────────────────────────────────────
+
+  async uploadAttachment(
+    contentType: string,
+    contentId: string,
+    file: File
+  ): Promise<FluenceAttachment> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post<FluenceAttachment>(
+      `/fluence/attachments/${contentType}/${contentId}`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return response.data;
+  }
+
+  async getAttachments(
+    contentType: string,
+    contentId: string
+  ): Promise<FluenceAttachment[]> {
+    const response = await apiClient.get<FluenceAttachment[]>(
+      `/fluence/attachments/${contentType}/${contentId}`
+    );
+    return response.data;
+  }
+
+  async deleteAttachment(id: string): Promise<void> {
+    await apiClient.delete(`/fluence/attachments/${id}`);
+  }
+
+  async getRecentAttachments(): Promise<FluenceAttachment[]> {
+    const response = await apiClient.get<FluenceAttachment[]>(
+      '/fluence/attachments/recent'
+    );
+    return response.data;
+  }
+
+  async getAttachmentDownloadUrl(id: string): Promise<string> {
+    const response = await apiClient.get<{ downloadUrl: string }>(
+      `/fluence/attachments/${id}/download`
+    );
+    return response.data.downloadUrl;
   }
 }
 
