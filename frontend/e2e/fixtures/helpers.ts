@@ -194,6 +194,17 @@ export function getDemoUser(email: string): DemoUser | undefined {
 }
 
 /**
+ * Navigate to a path relative to the base URL and wait for network idle.
+ *
+ * @param page - Playwright Page instance
+ * @param path - Relative path (e.g., '/leave', '/me/dashboard')
+ */
+export async function navigateTo(page: Page, path: string): Promise<void> {
+  await page.goto(path);
+  await page.waitForLoadState('networkidle');
+}
+
+/**
  * Quick-access demo user aliases for common test scenarios.
  */
 export const users = {
@@ -204,4 +215,28 @@ export const users = {
   recruitmentAdmin: demoUsers.recruitmentAdmin,
   hrLead: demoUsers.teamLeadHR,
   employee: demoUsers.employeeSaran,
+  employeeRaj: demoUsers.employeeRaj,
+} as const;
+
+/**
+ * Approval chain test personas — grouped by the approval hierarchy they
+ * participate in. Use these in approval flow E2E tests.
+ *
+ * Engineering leave chain:  raj (submit) → mani (TL approve) → sumit (Mgr approve) → fayaz (CEO)
+ * Engineering alt chain:    saran (submit) → sumit (Mgr approve) → fayaz (CEO)
+ * HR leave chain:           arun/bharath (submit) → suresh (Recruitment Admin) → jagadeesh (HR Mgr) → fayaz (CEO)
+ */
+export const approvalChain = {
+  /** Employee who submits requests — reports to Mani (Team Lead) */
+  submitterRaj: demoUsers.employeeRaj,
+  /** Employee who submits requests — reports to Sumit (Manager) */
+  submitterSaran: demoUsers.employeeSaran,
+  /** Team Lead who approves first-level — reports to Sumit */
+  teamLead: demoUsers.teamLeadEng,
+  /** Engineering Manager who approves second-level — reports to Fayaz */
+  engineeringManager: demoUsers.managerEng,
+  /** HR Manager who approves HR-related requests */
+  hrManager: demoUsers.hrManager,
+  /** CEO / SuperAdmin — final approver */
+  ceo: demoUsers.superAdmin,
 } as const;
