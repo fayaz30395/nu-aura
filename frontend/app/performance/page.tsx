@@ -200,7 +200,13 @@ export default function PerformancePage() {
       <AppLayout activeMenuItem="performance">
         <PageErrorFallback
           title="Failed to load performance data"
-          error={new Error('Unable to fetch performance metrics')}
+          error={new Error('Unable to fetch performance metrics. Please check your connection and try again.')}
+          onReset={() => {
+            goalsQuery.refetch();
+            cyclesQuery.refetch();
+            okrQuery.refetch();
+            pending360Query.refetch();
+          }}
         />
       </AppLayout>
     );

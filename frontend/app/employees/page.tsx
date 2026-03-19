@@ -81,7 +81,15 @@ export default function EmployeesPage() {
   const loading = employeesLoading || managersLoading || departmentsLoading;
   const error = employeesError
     ? employeesError instanceof Error
-      ? employeesError.message
+      ? employeesError.message.includes('403')
+        ? 'You do not have permission to view employees. Contact your administrator.'
+        : employeesError.message.includes('401')
+          ? 'Your session has expired. Please log in again.'
+          : employeesError.message.includes('500')
+            ? 'The server encountered an error. Please try again in a moment.'
+            : employeesError.message.includes('Network Error')
+              ? 'Unable to reach the server. Please check your connection.'
+              : employeesError.message
       : 'Failed to load employees'
     : null;
 

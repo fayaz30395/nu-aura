@@ -11,8 +11,6 @@ import {
   Sun,
   Mail,
   Lock,
-  Eye,
-  EyeOff,
   Save,
   Check,
   AlertCircle,
@@ -31,7 +29,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useDarkMode } from '@/components/layout/DarkModeProvider';
-import { authApi } from '@/lib/api/auth';
+// authApi removed — Google SSO only, no password change endpoint needed
 import { notificationsApi } from '@/lib/api/notifications';
 
 
@@ -39,8 +37,6 @@ export default function SettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const { isDark, toggleDarkMode } = useDarkMode();
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -68,10 +64,7 @@ export default function SettingsPage() {
 
   const [_preferencesLoaded, setPreferencesLoaded] = useState(false);
 
-  // Password Change
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  // Password Change removed — Google SSO handles auth for @nulogic.io domain
 
   React.useEffect(() => {
     // Wait for hydration before checking authentication
@@ -116,45 +109,7 @@ export default function SettingsPage() {
     loadPreferences();
   }, [isAuthenticated, hasHydrated]);
 
-  const handlePasswordChange = async () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('Please fill in all password fields');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError('New passwords do not match');
-      return;
-    }
-
-    if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters long');
-      return;
-    }
-
-    try {
-      setIsSaving(true);
-      setError(null);
-
-      await authApi.changePassword({
-        currentPassword,
-        newPassword,
-        confirmPassword,
-      });
-
-      setSuccess(true);
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      if (successTimerRef.current) clearTimeout(successTimerRef.current);
-      successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
-    } catch (err: unknown) {
-      logger.error('Failed to change password:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to change password');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  // handlePasswordChange removed — Google SSO only
 
   const handleNotificationSave = async () => {
     try {
@@ -326,105 +281,40 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Password Change */}
+          {/* Authentication Info — Google SSO */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Lock className="h-5 w-5" />
-                Change Password
+                <Shield className="h-5 w-5" />
+                Authentication
               </CardTitle>
-              <CardDescription>Update your password to keep your account secure</CardDescription>
+              <CardDescription>Your account authentication method</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    Current Password
-                  </label>
-                  <div className="relative mt-1">
-                    <input
-                      type={showCurrentPassword ? 'text' : 'password'}
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]"
-                      placeholder="Enter current password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                    >
-                      {showCurrentPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
+            <CardContent>
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
+                <div className="h-10 w-10 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                  <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    New Password
-                  </label>
-                  <div className="relative mt-1">
-                    <input
-                      type={showNewPassword ? 'text' : 'password'}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]"
-                      placeholder="Enter new password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                    >
-                      {showNewPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
+                <div className="flex-1">
+                  <p className="font-medium text-[var(--text-primary)]">Google SSO (Single Sign-On)</p>
+                  <p className="text-sm text-[var(--text-muted)]">
+                    Your account is authenticated via Google Workspace for <span className="font-medium text-[var(--text-secondary)]">@nulogic.io</span>.
+                    Password management is handled through your Google account.
+                  </p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]"
-                    placeholder="Confirm new password"
-                  />
-                </div>
-              </div>
-              {/* Inline password validation error */}
-              {error && (error.toLowerCase().includes('password') || error.toLowerCase().includes('match') || error.toLowerCase().includes('fill in all')) && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm">
-                  <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
-                  <p className="text-red-800 dark:text-red-200">{error}</p>
-                </div>
-              )}
-              <div className="flex justify-end">
-                <button
-                  onClick={handlePasswordChange}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+                <a
+                  href="https://myaccount.google.com/security"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
-                  {isSaving ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Updating...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      Update Password
-                    </>
-                  )}
-                </button>
+                  Manage Google Account
+                </a>
               </div>
             </CardContent>
           </Card>
