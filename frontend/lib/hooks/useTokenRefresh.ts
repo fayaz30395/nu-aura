@@ -26,32 +26,31 @@ const MIN_REFRESH_GAP_MS = 5 * 60 * 1000;   // 5 minutes minimum between refresh
 
 export function useTokenRefresh(isAuthenticated: boolean) {
   const lastRefreshRef = useRef<number>(Date.now());
+  const refreshingRef = useRef<boolean>(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const doRefresh = useCallback(async () => {
-    // Don't refresh if not authenticated
     if (!isAuthenticated) return;
-
-    // Don't refresh if on login page
     if (typeof window !== 'undefined' && window.location.pathname.includes('/auth/login')) return;
 
-    // Don't refresh too frequently
+    // Synchronous guard: prevent concurrent refreshes and enforce gap
     const now = Date.now();
-    if (now - lastRefreshRef.current < MIN_REFRESH_GAP_MS) return;
+    if (refreshingRef.current || now - lastRefreshRef.current < MIN_REFRESH_GAP_MS) return;
+    refreshingRef.current = true;
 
     try {
       await authApi.refresh();
       lastRefreshRef.current = Date.now();
       logger.debug('[TokenRefresh] Proactive token refresh succeeded');
     } catch (error) {
-      // Refresh failed — token might be invalid, let the 401 interceptor handle it
       logger.warn('[TokenRefresh] Proactive token refresh failed:', error);
+    } finally {
+      refreshingRef.current = false;
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      // Clear interval when not authenticated
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -59,22 +58,17 @@ export function useTokenRefresh(isAuthenticated: boolean) {
       return;
     }
 
-    // Set up periodic refresh
+    // Periodic refresh
     intervalRef.current = setInterval(doRefresh, REFRESH_INTERVAL_MS);
 
-    // Refresh on window focus (user comes back from another tab)
-    const handleFocus = () => {
-      doRefresh();
-    };
-
-    // Refresh on visibility change (user returns from minimized/switched app)
+    // Single visibility listener covers tab switches — no 'focus' listener needed
+    // ('focus' + 'visibilitychange' both fire on tab switch, causing double calls)
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         doRefresh();
       }
     };
 
-    window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
@@ -82,7 +76,6 @@ export function useTokenRefresh(isAuthenticated: boolean) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isAuthenticated, doRefresh]);

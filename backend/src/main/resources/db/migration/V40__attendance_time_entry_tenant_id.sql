@@ -15,7 +15,7 @@ WHERE ate.attendance_record_id = ar.id
 ALTER TABLE attendance_time_entries ALTER COLUMN tenant_id SET NOT NULL;
 
 -- Step 4: Add index for tenant-scoped queries
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_attendance_time_entries_tenant
+CREATE INDEX IF NOT EXISTS idx_attendance_time_entries_tenant
   ON attendance_time_entries (tenant_id);
 
 -- Step 5: Enable RLS

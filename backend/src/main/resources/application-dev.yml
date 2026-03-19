@@ -7,6 +7,9 @@ spring:
     activate:
       on-profile: dev
 
+  main:
+    lazy-initialization: true
+
   datasource:
     # Use environment variables for database credentials
     url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms}
@@ -25,9 +28,9 @@ spring:
     password: ${MAIL_PASSWORD:}
 
   jpa:
-    # Allow automatic schema updates in development
+    # Flyway manages schema — skip Hibernate's slow remote introspection
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     # Enable SQL logging for debugging
     show-sql: false
     properties:
@@ -99,7 +102,7 @@ management:
         liveness:
           include: ping,diskSpace
         readiness:
-          include: ping,db,redis
+          include: ping
 
 server:
   error:

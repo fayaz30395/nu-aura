@@ -46,8 +46,8 @@ export const UserMenu = React.memo(function UserMenu({
         onClick={onToggle}
         className={cn(
           'flex items-center gap-2 rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 transition-all',
-          'hover:bg-surface-100 dark:hover:bg-surface-800',
-          isOpen && 'bg-surface-100 dark:bg-surface-800'
+          'hover:bg-[var(--header-hover-bg)]',
+          isOpen && 'bg-[var(--header-hover-bg)]'
         )}
       >
         {userAvatar ? (
@@ -56,7 +56,7 @@ export const UserMenu = React.memo(function UserMenu({
             alt={userName}
             width={36}
             height={36}
-            className="h-9 w-9 rounded-xl object-cover ring-2 ring-surface-200 dark:ring-surface-700"
+            className="h-9 w-9 rounded-xl object-cover ring-2 ring-[var(--border-main)]"
           />
         ) : (
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-primary-200 dark:ring-primary-800">
@@ -64,16 +64,16 @@ export const UserMenu = React.memo(function UserMenu({
           </div>
         )}
         <div className="hidden sm:flex flex-col items-start">
-          <span className="text-sm font-semibold text-surface-900 dark:text-surface-50">
+          <span className="text-sm font-semibold text-[var(--header-text)]">
             {userName}
           </span>
-          <span className="text-xs text-surface-500 dark:text-surface-300">
+          <span className="text-xs text-[var(--header-text-muted)]">
             {userRole}
           </span>
         </div>
         <ChevronDown
           className={cn(
-            'hidden sm:block h-4 w-4 text-surface-400 transition-transform duration-200',
+            'hidden sm:block h-4 w-4 text-[var(--header-text-muted)] transition-transform duration-200',
             isOpen && 'rotate-180'
           )}
         />

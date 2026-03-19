@@ -259,31 +259,9 @@ CREATE POLICY contracts_tenant_rls ON contracts
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY contract_versions_tenant_rls ON contract_versions
-    AS RESTRICTIVE FOR ALL
-    USING (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    )
-    WITH CHECK (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    );
-
-CREATE POLICY contract_signatures_tenant_rls ON contract_signatures
-    AS RESTRICTIVE FOR ALL
-    USING (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    )
-    WITH CHECK (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    );
+-- contract_versions and contract_signatures do NOT have tenant_id columns.
+-- RLS policies skipped for these tables. Tenant isolation is enforced
+-- via the parent contracts table FK (CASCADE delete).
 
 CREATE POLICY contract_templates_tenant_rls ON contract_templates
     AS RESTRICTIVE FOR ALL

@@ -154,51 +154,35 @@ ALTER TABLE assets VALIDATE CONSTRAINT fk_assets_assigned_to;
 -- ---------------------------------------------------------------------------
 
 -- document_versions → documents (CASCADE — add a named constraint if missing)
+-- Guard with EXECUTE to avoid parse-time error when documents table does not exist
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint c
-    JOIN pg_class t ON t.oid = c.conrelid
-    JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(c.conkey)
-    WHERE t.relname = 'document_versions'
-      AND c.contype = 'f'
-      AND a.attname = 'document_id'
-  ) THEN
-    ALTER TABLE document_versions
-      ADD CONSTRAINT fk_document_versions_document
-      FOREIGN KEY (document_id) REFERENCES documents(id)
-      ON DELETE CASCADE
-      NOT VALID;
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'documents' AND table_schema = 'public')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'document_versions' AND table_schema = 'public')
+     AND NOT EXISTS (
+       SELECT 1 FROM pg_constraint c
+       JOIN pg_class t ON t.oid = c.conrelid
+       JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(c.conkey)
+       WHERE t.relname = 'document_versions' AND c.contype = 'f' AND a.attname = 'document_id'
+     )
+  THEN
+    EXECUTE 'ALTER TABLE document_versions ADD CONSTRAINT fk_document_versions_document FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE NOT VALID';
   END IF;
-END $$;
--- Only validate if the named constraint exists (it may have been added above or already existed)
-DO $$
-BEGIN
   IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_document_versions_document') THEN
-    ALTER TABLE document_versions VALIDATE CONSTRAINT fk_document_versions_document;
+    EXECUTE 'ALTER TABLE document_versions VALIDATE CONSTRAINT fk_document_versions_document';
   END IF;
 END $$;
 
 -- documents.uploaded_by → users (SET NULL — guard on table + column existence)
 DO $$
 BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'documents' AND column_name = 'uploaded_by'
-  ) AND NOT EXISTS (
-    SELECT 1 FROM pg_constraint WHERE conname = 'fk_documents_uploaded_by'
-  ) THEN
-    ALTER TABLE documents
-      ADD CONSTRAINT fk_documents_uploaded_by
-      FOREIGN KEY (uploaded_by) REFERENCES users(id)
-      ON DELETE SET NULL
-      NOT VALID;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'documents' AND column_name = 'uploaded_by')
+     AND NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_documents_uploaded_by')
+  THEN
+    EXECUTE 'ALTER TABLE documents ADD CONSTRAINT fk_documents_uploaded_by FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL NOT VALID';
   END IF;
-END $$;
-DO $$
-BEGIN
   IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_documents_uploaded_by') THEN
-    ALTER TABLE documents VALIDATE CONSTRAINT fk_documents_uploaded_by;
+    EXECUTE 'ALTER TABLE documents VALIDATE CONSTRAINT fk_documents_uploaded_by';
   END IF;
 END $$;
 

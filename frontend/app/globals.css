@@ -105,6 +105,10 @@
     /* ── Header/Dropdown (frosted glass-ready) ─────────── */
     --header-bg: rgba(245, 247, 251, 0.82);
     --header-border: rgba(99, 88, 168, 0.10);
+    --header-text: #1e293b;
+    --header-text-muted: rgba(30, 41, 59, 0.60);
+    --header-hover-bg: rgba(30, 41, 59, 0.08);
+    --header-divider: rgba(30, 41, 59, 0.12);
     --dropdown-bg: rgba(255, 255, 255, 0.92);
     --dropdown-border: rgba(99, 88, 168, 0.08);
     --dropdown-hover: #f0f2f8;
@@ -208,6 +212,10 @@
     /* ── Header/Dropdown (dark frosted glass) ──────── */
     --header-bg: rgba(6, 7, 13, 0.78);
     --header-border: rgba(133, 119, 211, 0.10);
+    --header-text: #ecedf2;
+    --header-text-muted: rgba(236, 237, 242, 0.60);
+    --header-hover-bg: rgba(255, 255, 255, 0.08);
+    --header-divider: rgba(255, 255, 255, 0.10);
     --dropdown-bg: rgba(15, 17, 25, 0.92);
     --dropdown-border: rgba(133, 119, 211, 0.10);
     --dropdown-hover: #181c2a;
