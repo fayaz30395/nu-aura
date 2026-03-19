@@ -87,6 +87,11 @@ export const fluenceKeys = {
     [...fluenceKeys.all, 'my-wiki-pages', { page, size, status }] as const,
   myBlogPosts: (page?: number, size?: number, status?: string) =>
     [...fluenceKeys.all, 'my-blog-posts', { page, size, status }] as const,
+  // Attachments
+  attachments: () => [...fluenceKeys.all, 'attachments'] as const,
+  attachmentList: (contentType: string, contentId: string) =>
+    [...fluenceKeys.attachments(), contentType, contentId] as const,
+  recentAttachments: () => [...fluenceKeys.attachments(), 'recent'] as const,
 };
 
 // ─── Wiki Page Queries ──────────────────────────────────────────────────────
@@ -792,6 +797,65 @@ export function useUpdateBlogPostEditors() {
       fluenceService.updateBlogPostEditors(postId, editorIds),
     onSuccess: (_data, { postId }) => {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPostDetail(postId) });
+    },
+  });
+}
+
+// ─── Attachment Queries & Mutations ────────────────────────────────────────
+
+export function useAttachments(
+  contentType: string,
+  contentId: string,
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: fluenceKeys.attachmentList(contentType, contentId),
+    queryFn: () => fluenceService.getAttachments(contentType, contentId),
+    enabled: enabled && !!contentType && !!contentId,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useRecentAttachments(enabled: boolean = true) {
+  return useQuery({
+    queryKey: fluenceKeys.recentAttachments(),
+    queryFn: () => fluenceService.getRecentAttachments(),
+    enabled,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useUploadAttachment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      contentType,
+      contentId,
+      file,
+    }: {
+      contentType: string;
+      contentId: string;
+      file: File;
+    }) => fluenceService.uploadAttachment(contentType, contentId, file),
+    onSuccess: (_data, { contentType, contentId }) => {
+      queryClient.invalidateQueries({
+        queryKey: fluenceKeys.attachmentList(contentType, contentId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: fluenceKeys.recentAttachments(),
+      });
+    },
+  });
+}
+
+export function useDeleteAttachment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.deleteAttachment(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.attachments() });
     },
   });
 }

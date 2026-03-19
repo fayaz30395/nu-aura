@@ -350,6 +350,18 @@ export interface ContentViewRecord {
   viewedAt: string;
 }
 
+// ─── Attachment Types ──────────────────────────────────────────────────────
+
+export interface FluenceAttachment {
+  id: string;
+  fileName: string;
+  fileSize: number;
+  contentType: string;
+  downloadUrl: string;
+  createdAt: string;
+  createdBy: string;
+}
+
 // ─── My Content Filters ────────────────────────────────────────────────────
 
 export interface MyContentFilters {
