@@ -14,8 +14,36 @@ import {
   Zap,
   Globe,
   ArrowRight,
+  Users,
+  ChevronDown,
+  ChevronUp,
+  LogIn,
 } from 'lucide-react';
 import { createLogger } from '@/lib/utils/logger';
+
+const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+
+interface DemoAccount {
+  name: string;
+  email: string;
+  role: string;
+  department: string;
+  level: string;
+  color: string;
+}
+
+const DEMO_ACCOUNTS: DemoAccount[] = [
+  { name: 'Fayaz M', email: 'fayaz.m@nulogic.io', role: 'SUPER_ADMIN', department: 'Executive', level: 'CEO', color: 'from-red-500 to-rose-600' },
+  { name: 'Sumit Kumar', email: 'sumit@nulogic.io', role: 'MANAGER', department: 'Engineering', level: 'Manager', color: 'from-blue-500 to-indigo-600' },
+  { name: 'Mani S', email: 'mani@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Team Lead', color: 'from-cyan-500 to-blue-600' },
+  { name: 'Gokul R', email: 'gokul@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Lead', color: 'from-teal-500 to-cyan-600' },
+  { name: 'Saran V', email: 'saran@nulogic.io', role: 'EMPLOYEE', department: 'Engineering', level: 'Employee', color: 'from-slate-500 to-gray-600' },
+  { name: 'Jagadeesh N', email: 'jagadeesh@nulogic.io', role: 'HR_MANAGER', department: 'HR', level: 'HR Manager', color: 'from-purple-500 to-violet-600' },
+  { name: 'Suresh M', email: 'suresh@nulogic.io', role: 'RECRUITMENT_ADMIN', department: 'Recruitment', level: 'Lead', color: 'from-amber-500 to-orange-600' },
+  { name: 'Dhanush A', email: 'dhanush@nulogic.io', role: 'TEAM_LEAD', department: 'HR', level: 'HR Lead', color: 'from-pink-500 to-rose-600' },
+];
+
+const DEMO_PASSWORD = 'Welcome@123';
 
 const log = createLogger('LoginPage');
 
@@ -121,11 +149,90 @@ export default function LoginPageWrapper() {
   );
 }
 
+// ─── Demo Login Panel ────────────────────────────────────────────────
+function DemoLoginPanel({
+  onLogin,
+  isLoading,
+}: {
+  onLogin: (email: string) => void;
+  isLoading: boolean;
+}) {
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [loadingEmail, setLoadingEmail] = useState<string | null>(null);
+
+  const handleClick = (email: string) => {
+    setLoadingEmail(email);
+    onLogin(email);
+  };
+
+  return (
+    <div className="mt-6">
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-300 text-sm font-medium transition-colors hover:bg-amber-100 dark:hover:bg-amber-900/30"
+      >
+        <div className="flex items-center gap-2">
+          <Users className="w-4 h-4" />
+          <span>Demo Accounts</span>
+          <span className="text-xs px-1.5 py-0.5 rounded bg-amber-200/60 dark:bg-amber-800/40 text-amber-800 dark:text-amber-200">
+            {DEMO_ACCOUNTS.length} roles
+          </span>
+        </div>
+        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+      </button>
+
+      {isExpanded && (
+        <div
+          className="mt-3 space-y-2 max-h-[320px] overflow-y-auto pr-1"
+          style={{ animation: 'fadeSlideUp 0.3s ease-out' }}
+        >
+          {DEMO_ACCOUNTS.map((account) => (
+            <button
+              key={account.email}
+              type="button"
+              disabled={isLoading}
+              onClick={() => handleClick(account.email)}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 group text-left"
+            >
+              <div
+                className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm`}
+              >
+                {account.name.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-[var(--text-primary)] truncate">
+                    {account.name}
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium flex-shrink-0">
+                    {account.role.replace(/_/g, ' ')}
+                  </span>
+                </div>
+                <div className="text-xs text-[var(--text-muted)] truncate">
+                  {account.department} &middot; {account.level}
+                </div>
+              </div>
+              <LogIn className="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              {isLoading && loadingEmail === account.email && (
+                <div className="w-4 h-4 border-2 border-primary-300 border-t-primary-600 rounded-full animate-spin flex-shrink-0" />
+              )}
+            </button>
+          ))}
+          <p className="text-[10px] text-[var(--text-muted)] text-center pt-1">
+            Password for all accounts: <code className="px-1 py-0.5 bg-[var(--bg-elevated)] rounded text-[var(--text-secondary)]">Welcome@123</code>
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Login Page ─────────────────────────────────────────────────
 function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { googleLogin, user, isAuthenticated, hasHydrated, setUser } = useAuth();
+  const { login, googleLogin, user, isAuthenticated, hasHydrated, setUser } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
   const [mfaRequired, setMfaRequired] = useState(false);
@@ -135,6 +242,7 @@ function LoginPage() {
   const [, setLoginAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [didFreshLogin, setDidFreshLogin] = useState(false);
 
@@ -215,6 +323,23 @@ function LoginPage() {
     setMfaRequired(false);
     setMfaUserId(null);
     setError(null);
+  };
+
+  // Demo account quick-login
+  const handleDemoLogin = async (email: string) => {
+    setIsDemoLoading(true);
+    setError(null);
+    try {
+      await login({ email, password: DEMO_PASSWORD });
+      setDidFreshLogin(true);
+      router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+        || 'Demo login failed. Is the backend running?';
+      setError(message);
+    } finally {
+      setIsDemoLoading(false);
+    }
   };
 
   // Google SSO (primary auth path)
@@ -475,6 +600,11 @@ function LoginPage() {
                 <br />
                 <span className="text-[var(--text-muted)]">Includes NU-Drive and NU-Mail access.</span>
               </p>
+
+              {/* Demo Login Panel — only shown when NEXT_PUBLIC_DEMO_MODE=true */}
+              {IS_DEMO_MODE && (
+                <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading} />
+              )}
 
               {/* Divider */}
               <div className="relative my-6">

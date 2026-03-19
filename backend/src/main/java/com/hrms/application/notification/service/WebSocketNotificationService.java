@@ -2,9 +2,9 @@ package com.hrms.application.notification.service;
 
 import com.hrms.application.notification.dto.NotificationMessage;
 import com.hrms.common.security.TenantContext;
+import com.hrms.infrastructure.websocket.RedisWebSocketRelay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,13 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
  * Service for sending real-time notifications via WebSocket.
  * Complements NotificationService which handles database persistence.
  * This service pushes notifications to connected WebSocket clients in real-time.
+ *
+ * <p>Messages are published through {@link RedisWebSocketRelay} so that all pods
+ * in a horizontally scaled deployment receive and deliver them to their local
+ * WebSocket sessions.</p>
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class WebSocketNotificationService {
 
-    private final SimpMessagingTemplate messagingTemplate;
+    private final RedisWebSocketRelay redisWebSocketRelay;
 
     /**
      * Send notification to a specific user.
@@ -32,7 +36,7 @@ public class WebSocketNotificationService {
         notification.setTimestamp(LocalDateTime.now());
         notification.setId(UUID.randomUUID());
 
-        messagingTemplate.convertAndSendToUser(
+        redisWebSocketRelay.convertAndSendToUser(
                 userId.toString(),
                 destination,
                 notification
@@ -50,7 +54,7 @@ public class WebSocketNotificationService {
         notification.setTimestamp(LocalDateTime.now());
         notification.setId(UUID.randomUUID());
 
-        messagingTemplate.convertAndSend(destination, notification);
+        redisWebSocketRelay.convertAndSend(destination, notification);
 
         log.debug("Sent tenant notification to {}: {}", tenantId, notification.getTitle());
     }
@@ -75,7 +79,7 @@ public class WebSocketNotificationService {
         notification.setTimestamp(LocalDateTime.now());
         notification.setId(UUID.randomUUID());
 
-        messagingTemplate.convertAndSend(destination, notification);
+        redisWebSocketRelay.convertAndSend(destination, notification);
 
         log.debug("Sent department notification to {}: {}", departmentId, notification.getTitle());
     }
@@ -88,7 +92,7 @@ public class WebSocketNotificationService {
         notification.setTimestamp(LocalDateTime.now());
         notification.setId(UUID.randomUUID());
 
-        messagingTemplate.convertAndSend(destination, notification);
+        redisWebSocketRelay.convertAndSend(destination, notification);
 
         log.debug("Broadcast notification: {}", notification.getTitle());
     }

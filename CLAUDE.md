@@ -216,6 +216,8 @@ Code locations:
 - API hooks: `frontend/lib/` (React Query hooks + Axios calls)
 - Backend controllers: `backend/src/main/java/**/controller/`
 - Backend services: `backend/src/main/java/**/service/`
+- Security config: `backend/src/main/java/com/hrms/common/config/SecurityConfig.java`
+- Backend package root: `com.hrms` → `api/`, `application/`, `domain/`, `common/`, `infrastructure/`
 
 Provide deployment diagrams when designing services.
 
@@ -279,6 +281,9 @@ These decisions have been made. Do not re-evaluate unless explicitly asked.
 - **Approval Flows:** Generic `approval_service` engine. Workflows are data-driven, not hardcoded. `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`.
 - **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
 - **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
+- **Flyway Status:** V0–V47 active (48 total). Next migration = **V49**. Legacy Liquibase in `db/changelog/` — DO NOT USE.
+- **Kafka Topics:** `approval-events`, `audit-events`, `employee-lifecycle-events`, `notification-events` — 4 consumers + 1 EventPublisher + DLQ via FailedKafkaEvent table.
+- **Dev Database:** Neon cloud PostgreSQL (docker-compose.yml has NO local postgres service). Prod uses PostgreSQL 16.
 - **Parallel Build Strategy:** When implementing large features, split into independent vertical slices (Agent A: Auth, Agent B: Employees, etc.) each working in their own `app/<module>/` directory to avoid conflicts.
 - **NU-AURA Platform Architecture (Locked In):**
   - NU-AURA is a **bundle app platform**, NOT just an HRMS. It contains 4 sub-apps accessed via a Google-style waffle grid app switcher in the header:

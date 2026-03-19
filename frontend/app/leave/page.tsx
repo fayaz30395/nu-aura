@@ -13,6 +13,7 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth';
 import { motion } from 'framer-motion';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { NuAuraLoader } from '@/components/ui/Loading';
 import {
   Calendar,
   Plus,
@@ -62,7 +63,7 @@ export default function LeavePage() {
   const balances = balancesData;
   const leaveTypes = leaveTypesData;
   const recentRequests = requestsData?.content || [];
-  const loading = isBalancesLoading || isTypesLoading || isRequestsLoading;
+  // Derive error first so we can short-circuit the loading state when an error exists
   const error =
     balancesError instanceof Error
       ? balancesError.message
@@ -71,6 +72,8 @@ export default function LeavePage() {
         : !employeeId
           ? 'Employee ID not found'
           : null;
+  // Only show loading when there is NO error — prevents infinite spinner during retries
+  const loading = !error && (isBalancesLoading || isTypesLoading || isRequestsLoading);
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -131,12 +134,7 @@ export default function LeavePage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="leave">
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-[var(--text-secondary)]">Loading leave data...</p>
-          </div>
-        </div>
+        <NuAuraLoader message="Loading leave data..." />
       </AppLayout>
     );
   }

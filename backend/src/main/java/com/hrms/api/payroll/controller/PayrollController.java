@@ -1,5 +1,6 @@
 package com.hrms.api.payroll.controller;
 
+import com.hrms.application.payroll.service.PayrollComponentService;
 import com.hrms.application.payroll.service.PayrollRunService;
 import com.hrms.application.payroll.service.PayslipPdfService;
 import com.hrms.application.payroll.service.PayslipService;
@@ -8,6 +9,8 @@ import com.lowagie.text.DocumentException;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.domain.payroll.PayrollComponent;
+import com.hrms.domain.payroll.PayrollComponent.ComponentType;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.PayrollRun.PayrollStatus;
 import com.hrms.domain.payroll.Payslip;
@@ -20,8 +23,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +34,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PayrollController {
 
+    private final PayrollComponentService payrollComponentService;
     private final PayrollRunService payrollRunService;
     private final PayslipService payslipService;
     private final PayslipPdfService payslipPdfService;
@@ -294,6 +300,83 @@ public class PayrollController {
     @RequiresPermission(Permission.PAYROLL_PROCESS)
     public ResponseEntity<Void> deleteSalaryStructure(@PathVariable UUID id) {
         salaryStructureService.deleteSalaryStructure(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ===== Payroll Component Endpoints =====
+
+    @PostMapping("/components")
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    public ResponseEntity<PayrollComponent> createComponent(
+            @Valid @RequestBody PayrollComponent component) {
+        PayrollComponent created = payrollComponentService.createComponent(component);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping("/components/{id}")
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    public ResponseEntity<PayrollComponent> updateComponent(
+            @PathVariable UUID id,
+            @Valid @RequestBody PayrollComponent component) {
+        PayrollComponent updated = payrollComponentService.updateComponent(id, component);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/components/{id}")
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    public ResponseEntity<PayrollComponent> getComponent(@PathVariable UUID id) {
+        PayrollComponent component = payrollComponentService.getComponentById(id);
+        return ResponseEntity.ok(component);
+    }
+
+    @GetMapping("/components")
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    public ResponseEntity<Page<PayrollComponent>> getAllComponents(Pageable pageable) {
+        Page<PayrollComponent> components = payrollComponentService.getAllComponents(pageable);
+        return ResponseEntity.ok(components);
+    }
+
+    @GetMapping("/components/active")
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    public ResponseEntity<List<PayrollComponent>> getActiveComponents() {
+        List<PayrollComponent> components = payrollComponentService.getActiveComponentsInOrder();
+        return ResponseEntity.ok(components);
+    }
+
+    @GetMapping("/components/active/type/{type}")
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    public ResponseEntity<List<PayrollComponent>> getActiveComponentsByType(
+            @PathVariable ComponentType type) {
+        List<PayrollComponent> components = payrollComponentService.getActiveComponentsByType(type);
+        return ResponseEntity.ok(components);
+    }
+
+    @GetMapping("/components/code/{code}")
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    public ResponseEntity<PayrollComponent> getComponentByCode(@PathVariable String code) {
+        PayrollComponent component = payrollComponentService.getComponentByCode(code);
+        return ResponseEntity.ok(component);
+    }
+
+    @DeleteMapping("/components/{id}")
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    public ResponseEntity<Void> deleteComponent(@PathVariable UUID id) {
+        payrollComponentService.deleteComponent(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/components/evaluate")
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    public ResponseEntity<Map<String, BigDecimal>> evaluateComponents(
+            @RequestBody Map<String, BigDecimal> inputValues) {
+        Map<String, BigDecimal> results = payrollComponentService.evaluateComponents(inputValues);
+        return ResponseEntity.ok(results);
+    }
+
+    @PostMapping("/components/recompute-order")
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    public ResponseEntity<Void> recomputeEvaluationOrder() {
+        payrollComponentService.recomputeEvaluationOrder();
         return ResponseEntity.noContent().build();
     }
 }

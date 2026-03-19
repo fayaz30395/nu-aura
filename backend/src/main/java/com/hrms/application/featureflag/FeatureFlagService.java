@@ -28,6 +28,7 @@ public class FeatureFlagService {
     /**
      * Check if a feature is enabled for the current tenant
      */
+    @Transactional(readOnly = true)
     @Cacheable(value = CacheConfig.FEATURE_FLAGS, key = "#featureKey + '_' + T(com.hrms.common.security.SecurityContext).getCurrentTenantId()")
     public boolean isFeatureEnabled(String featureKey) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
@@ -43,6 +44,7 @@ public class FeatureFlagService {
     /**
      * Check if a feature is enabled for a specific tenant
      */
+    @Transactional(readOnly = true)
     @Cacheable(value = CacheConfig.FEATURE_FLAGS, key = "#featureKey + '_' + #tenantId")
     public boolean isFeatureEnabled(String featureKey, UUID tenantId) {
         return featureFlagRepository.isFeatureEnabled(tenantId, featureKey)
