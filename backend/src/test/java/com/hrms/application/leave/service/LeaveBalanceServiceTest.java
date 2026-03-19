@@ -107,7 +107,7 @@ class LeaveBalanceServiceTest {
             // Arrange
             LeaveType leaveType = LeaveType.builder()
                     .id(leaveTypeId)
-                    .name("Annual Leave")
+                    .leaveName("Annual Leave")
                     .accrualType(LeaveType.AccrualType.YEARLY)
                     .annualQuota(new BigDecimal("25"))
                     .build();
@@ -152,7 +152,7 @@ class LeaveBalanceServiceTest {
             // Arrange
             LeaveType leaveType = LeaveType.builder()
                     .id(leaveTypeId)
-                    .name("Sick Leave")
+                    .leaveName("Sick Leave")
                     .accrualType(LeaveType.AccrualType.NONE)
                     .annualQuota(new BigDecimal("10"))
                     .build();
@@ -185,7 +185,7 @@ class LeaveBalanceServiceTest {
             // Arrange
             LeaveType leaveType = LeaveType.builder()
                     .id(leaveTypeId)
-                    .name("Casual Leave")
+                    .leaveName("Casual Leave")
                     .accrualType(LeaveType.AccrualType.MONTHLY)
                     .annualQuota(new BigDecimal("12"))
                     .build();
@@ -218,7 +218,7 @@ class LeaveBalanceServiceTest {
             // Arrange
             LeaveType leaveType = LeaveType.builder()
                     .id(leaveTypeId)
-                    .name("Special Leave")
+                    .leaveName("Special Leave")
                     .accrualType(LeaveType.AccrualType.QUARTERLY)
                     .annualQuota(new BigDecimal("8"))
                     .build();
@@ -279,7 +279,7 @@ class LeaveBalanceServiceTest {
             // Arrange
             LeaveType leaveType = LeaveType.builder()
                     .id(leaveTypeId)
-                    .name("Legacy Leave")
+                    .leaveName("Legacy Leave")
                     .accrualType(null) // Legacy data
                     .annualQuota(new BigDecimal("15"))
                     .build();
@@ -335,7 +335,7 @@ class LeaveBalanceServiceTest {
             // Arrange
             LeaveType leaveType = LeaveType.builder()
                     .id(leaveTypeId)
-                    .name("Annual Leave")
+                    .leaveName("Annual Leave")
                     .accrualType(LeaveType.AccrualType.YEARLY)
                     .annualQuota(new BigDecimal("20"))
                     .build();

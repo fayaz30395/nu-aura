@@ -284,9 +284,6 @@ function LoginPage() {
         }
         @keyframes fadeIn {
           from { opacity: 0; }
-import { createLogger } from '@/lib/utils/logger';
-
-const log = createLogger('LoginPage');
           to { opacity: 1; }
         }
         @keyframes shimmer {

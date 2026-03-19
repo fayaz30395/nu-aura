@@ -203,7 +203,12 @@
       "Bash(docker stop:*)",
       "Bash(while ps:*)",
       "Bash(do sleep:*)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \"SELECT pg_advisory_unlock_all\\(\\);\")",
+      "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \"SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 5;\")",
+      "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \"SELECT indexname FROM pg_indexes WHERE indexname = ''idx_attendance_records_tenant_employee_date'';\")",
+      "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \":*)"
     ],
     "additionalDirectories": [
       "/tmp"

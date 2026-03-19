@@ -1,9 +1,15 @@
 import type { Metadata, Viewport } from 'next';
-import { Space_Grotesk, Fraunces } from 'next/font/google';
+import { Inter, Space_Grotesk, Fraunces } from 'next/font/google';
 import { ColorSchemeScript } from '@mantine/core';
 import { getThemeScript } from '@/lib/theme/theme-script';
 import './globals.css';
 import { Providers } from './providers';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -39,7 +45,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
         <ColorSchemeScript defaultColorScheme="auto" />
       </head>
-      <body className={`${spaceGrotesk.variable} ${fraunces.variable} font-sans`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${fraunces.variable} font-sans`}>
         <Providers>{children}</Providers>
       </body>
     </html>
