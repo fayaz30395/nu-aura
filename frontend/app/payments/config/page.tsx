@@ -132,7 +132,9 @@ export default function PaymentConfigPage() {
         credentials,
         testMode: formData.testMode,
       });
-      setTestResult(result);
+      setTestResult(typeof result === 'string'
+        ? { success: true, message: result }
+        : result as { success: boolean; message: string });
     } catch (error) {
       setTestResult({
         success: false,
