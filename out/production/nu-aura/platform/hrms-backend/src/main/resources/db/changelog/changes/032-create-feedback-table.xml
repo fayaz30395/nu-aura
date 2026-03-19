@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="032-create-feedback-table" author="hrms">
+        <sql>
+            CREATE TABLE feedback (
+                id UUID PRIMARY KEY,
+                tenant_id UUID NOT NULL,
+                recipient_id UUID NOT NULL,
+                giver_id UUID NOT NULL,
+                feedback_type VARCHAR(50),
+                category VARCHAR(100),
+                feedback_text TEXT NOT NULL,
+                is_anonymous BOOLEAN DEFAULT false,
+                is_public BOOLEAN DEFAULT false,
+                related_review_id UUID,
+                created_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP NOT NULL,
+                version BIGINT
+            );
+
+            CREATE INDEX idx_feedback_tenant ON feedback(tenant_id);
+            CREATE INDEX idx_feedback_recipient ON feedback(recipient_id);
+            CREATE INDEX idx_feedback_giver ON feedback(giver_id);
+
+            ALTER TABLE feedback ADD CONSTRAINT fk_feedback_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE;
+            ALTER TABLE feedback ADD CONSTRAINT fk_feedback_recipient FOREIGN KEY (recipient_id) REFERENCES employees(id) ON DELETE CASCADE;
+            ALTER TABLE feedback ADD CONSTRAINT fk_feedback_giver FOREIGN KEY (giver_id) REFERENCES employees(id) ON DELETE CASCADE;
+            ALTER TABLE feedback ADD CONSTRAINT fk_feedback_review FOREIGN KEY (related_review_id) REFERENCES performance_reviews(id) ON DELETE SET NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

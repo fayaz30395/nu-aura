@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="064-create-exit-processes-table" author="system">
+        <createTable tableName="exit_processes">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exit_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resignation_date" type="DATE"/>
+            <column name="last_working_date" type="DATE"/>
+            <column name="notice_period_days" type="INTEGER"/>
+            <column name="notice_period_served" type="INTEGER"/>
+            <column name="buyout_amount" type="DECIMAL(15,2)"/>
+            <column name="reason_for_leaving" type="TEXT"/>
+            <column name="new_company" type="VARCHAR(200)"/>
+            <column name="new_designation" type="VARCHAR(200)"/>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rehire_eligible" type="BOOLEAN"/>
+            <column name="exit_interview_scheduled" type="BOOLEAN"/>
+            <column name="exit_interview_date" type="DATE"/>
+            <column name="exit_interview_feedback" type="TEXT"/>
+            <column name="final_settlement_amount" type="DECIMAL(15,2)"/>
+            <column name="settlement_date" type="DATE"/>
+            <column name="manager_id" type="UUID"/>
+            <column name="hr_spoc_id" type="UUID"/>
+            <column name="notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex indexName="idx_exit_processes_tenant_id" tableName="exit_processes">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex indexName="idx_exit_processes_employee_id" tableName="exit_processes">
+            <column name="employee_id"/>
+        </createIndex>
+        <createIndex indexName="idx_exit_processes_status" tableName="exit_processes">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="064-create-exit-clearances-table" author="system">
+        <createTable tableName="exit_clearances">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exit_process_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="department" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approver_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requested_date" type="DATE"/>
+            <column name="approved_date" type="DATE"/>
+            <column name="comments" type="TEXT"/>
+            <column name="checklist_items" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex indexName="idx_exit_clearances_tenant_id" tableName="exit_clearances">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex indexName="idx_exit_clearances_exit_process_id" tableName="exit_clearances">
+            <column name="exit_process_id"/>
+        </createIndex>
+        <createIndex indexName="idx_exit_clearances_status" tableName="exit_clearances">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

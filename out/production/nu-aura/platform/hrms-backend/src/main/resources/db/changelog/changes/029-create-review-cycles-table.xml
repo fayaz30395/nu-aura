@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="029-create-review-cycles-table" author="hrms">
+        <sql>
+            CREATE TABLE review_cycles (
+                id UUID PRIMARY KEY,
+                tenant_id UUID NOT NULL,
+                cycle_name VARCHAR(200) NOT NULL,
+                cycle_type VARCHAR(50),
+                start_date DATE,
+                end_date DATE,
+                self_review_deadline DATE,
+                manager_review_deadline DATE,
+                status VARCHAR(50) DEFAULT 'PLANNING',
+                description TEXT,
+                created_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP NOT NULL,
+                version BIGINT
+            );
+
+            CREATE INDEX idx_review_cycles_tenant ON review_cycles(tenant_id);
+            CREATE INDEX idx_review_cycles_status ON review_cycles(status);
+
+            ALTER TABLE review_cycles ADD CONSTRAINT fk_review_cycles_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

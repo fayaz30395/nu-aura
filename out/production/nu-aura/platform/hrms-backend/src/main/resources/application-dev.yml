@@ -1,0 +1,46 @@
+# Development profile configuration
+# Uses shared Neon cloud database for team development
+
+spring:
+  datasource:
+    url: jdbc:postgresql://ep-little-darkness-ad7czn2x-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require
+    username: neondb_owner
+    password: npg_xwHjDEtfb4o2
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  jwt:
+    # Development-only JWT secret - MUST be replaced in production
+    secret: dev-secret-key-for-local-development-only-change-in-production-256-bits
+    expiration: 3600000
+    refresh-expiration: 86400000
+
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket: hrms-files
+
+  frontend:
+    url: http://localhost:3000
+
+logging:
+  level:
+    com.hrms: DEBUG
+    org.springframework.security: DEBUG

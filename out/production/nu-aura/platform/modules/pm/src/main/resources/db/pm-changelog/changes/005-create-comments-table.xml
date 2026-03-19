@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="005-create-comments-table" author="system">
+        <createTable tableName="project_comments" schemaName="pm">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="task_id" type="UUID"/>
+            <column name="milestone_id" type="UUID"/>
+            <column name="author_id" type="UUID"/>
+            <column name="author_name" type="VARCHAR(200)"/>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_comment_id" type="UUID"/>
+            <column name="type" type="VARCHAR(20)" defaultValue="COMMENT"/>
+            <column name="is_edited" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="mentions" type="VARCHAR(500)"/>
+            <column name="attachments" type="VARCHAR(500)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="last_modified_by" type="UUID"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0"/>
+        </createTable>
+
+        <createIndex tableName="project_comments" indexName="idx_pm_comment_tenant" schemaName="pm">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_comments" indexName="idx_pm_comment_project" schemaName="pm">
+            <column name="project_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_comments" indexName="idx_pm_comment_task" schemaName="pm">
+            <column name="task_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_comments" indexName="idx_pm_comment_author" schemaName="pm">
+            <column name="author_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_comments" indexName="idx_pm_comment_parent" schemaName="pm">
+            <column name="parent_comment_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="project_comments" baseColumnNames="project_id"
+                                 baseTableSchemaName="pm"
+                                 constraintName="fk_pm_comment_project"
+                                 referencedTableName="projects" referencedColumnNames="id"
+                                 referencedTableSchemaName="pm"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="project_comments" baseColumnNames="task_id"
+                                 baseTableSchemaName="pm"
+                                 constraintName="fk_pm_comment_task"
+                                 referencedTableName="project_tasks" referencedColumnNames="id"
+                                 referencedTableSchemaName="pm"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="project_comments" baseColumnNames="milestone_id"
+                                 baseTableSchemaName="pm"
+                                 constraintName="fk_pm_comment_milestone"
+                                 referencedTableName="project_milestones" referencedColumnNames="id"
+                                 referencedTableSchemaName="pm"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="project_comments" baseColumnNames="parent_comment_id"
+                                 baseTableSchemaName="pm"
+                                 constraintName="fk_pm_comment_parent"
+                                 referencedTableName="project_comments" referencedColumnNames="id"
+                                 referencedTableSchemaName="pm"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

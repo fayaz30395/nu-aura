@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="080-01" author="system">
+        <comment>Create lms_courses table</comment>
+        <createTable tableName="lms_courses">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(100)"/>
+            <column name="description" type="TEXT"/>
+            <column name="short_description" type="VARCHAR(500)"/>
+            <column name="category_id" type="UUID"/>
+            <column name="thumbnail_url" type="VARCHAR(500)"/>
+            <column name="preview_video_url" type="VARCHAR(500)"/>
+            <column name="status" type="VARCHAR(30)" defaultValue="DRAFT"/>
+            <column name="difficulty_level" type="VARCHAR(20)" defaultValue="BEGINNER"/>
+            <column name="duration_hours" type="DECIMAL(5,2)"/>
+            <column name="passing_score" type="INTEGER" defaultValue="70"/>
+            <column name="max_attempts" type="INTEGER" defaultValue="3"/>
+            <column name="is_mandatory" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="is_self_paced" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="enrollment_deadline" type="DATE"/>
+            <column name="completion_deadline" type="DATE"/>
+            <column name="instructor_id" type="UUID"/>
+            <column name="instructor_name" type="VARCHAR(200)"/>
+            <column name="prerequisites" type="TEXT"/>
+            <column name="skills_covered" type="TEXT"/>
+            <column name="tags" type="VARCHAR(500)"/>
+            <column name="certificate_template_id" type="UUID"/>
+            <column name="is_certificate_enabled" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="total_enrollments" type="INTEGER" defaultValue="0"/>
+            <column name="avg_rating" type="DECIMAL(3,2)"/>
+            <column name="total_ratings" type="INTEGER" defaultValue="0"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="080-02" author="system">
+        <comment>Create lms_course_modules table</comment>
+        <createTable tableName="lms_course_modules">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="order_index" type="INTEGER" defaultValue="0"/>
+            <column name="duration_minutes" type="INTEGER"/>
+            <column name="is_mandatory" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="unlock_after_days" type="INTEGER"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="080-03" author="system">
+        <comment>Create lms_module_contents table</comment>
+        <createTable tableName="lms_module_contents">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="module_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_index" type="INTEGER" defaultValue="0"/>
+            <column name="duration_minutes" type="INTEGER"/>
+            <column name="video_url" type="VARCHAR(1000)"/>
+            <column name="video_provider" type="VARCHAR(50)"/>
+            <column name="document_url" type="VARCHAR(1000)"/>
+            <column name="document_type" type="VARCHAR(20)"/>
+            <column name="text_content" type="TEXT"/>
+            <column name="external_url" type="VARCHAR(1000)"/>
+            <column name="scorm_package_url" type="VARCHAR(1000)"/>
+            <column name="quiz_id" type="UUID"/>
+            <column name="assignment_instructions" type="TEXT"/>
+            <column name="is_mandatory" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="completion_required" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="080-04" author="system">
+        <comment>Create lms_quizzes table</comment>
+        <createTable tableName="lms_quizzes">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="UUID"/>
+            <column name="module_id" type="UUID"/>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="instructions" type="TEXT"/>
+            <column name="time_limit_minutes" type="INTEGER"/>
+            <column name="passing_score" type="INTEGER" defaultValue="70"/>
+            <column name="max_attempts" type="INTEGER" defaultValue="3"/>
+            <column name="shuffle_questions" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="shuffle_options" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="show_correct_answers" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="show_score_immediately" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="questions_per_attempt" type="INTEGER"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="080-05" author="system">
+        <comment>Create lms_quiz_questions table</comment>
+        <createTable tableName="lms_quiz_questions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quiz_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_image_url" type="VARCHAR(500)"/>
+            <column name="options" type="TEXT"/>
+            <column name="correct_answer" type="BOOLEAN"/>
+            <column name="correct_answers" type="TEXT"/>
+            <column name="keywords" type="TEXT"/>
+            <column name="explanation" type="TEXT"/>
+            <column name="points" type="INTEGER" defaultValue="1"/>
+            <column name="order_index" type="INTEGER" defaultValue="0"/>
+            <column name="is_mandatory" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="080-06" author="system">
+        <comment>Create lms_course_enrollments table</comment>
+        <createTable tableName="lms_course_enrollments">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)" defaultValue="ENROLLED"/>
+            <column name="enrolled_at" type="TIMESTAMP"/>
+            <column name="started_at" type="TIMESTAMP"/>
+            <column name="completed_at" type="TIMESTAMP"/>
+            <column name="progress_percentage" type="DECIMAL(5,2)" defaultValue="0"/>
+            <column name="last_accessed_at" type="TIMESTAMP"/>
+            <column name="last_module_id" type="UUID"/>
+            <column name="last_content_id" type="UUID"/>
+            <column name="total_time_spent_minutes" type="INTEGER" defaultValue="0"/>
+            <column name="quiz_score" type="DECIMAL(5,2)"/>
+            <column name="quiz_attempts" type="INTEGER" defaultValue="0"/>
+            <column name="quiz_passed" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="certificate_id" type="UUID"/>
+            <column name="certificate_issued_at" type="TIMESTAMP"/>
+            <column name="rating" type="DECIMAL(3,2)"/>
+            <column name="feedback" type="TEXT"/>
+            <column name="enrolled_by" type="UUID"/>
+            <column name="due_date" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="lms_course_enrollments"
+                             columnNames="course_id,employee_id,tenant_id"
+                             constraintName="uk_enrollment_course_employee"/>
+    </changeSet>
+
+    <changeSet id="080-07" author="system">
+        <comment>Create lms_content_progress table</comment>
+        <createTable tableName="lms_content_progress">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enrollment_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="module_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)" defaultValue="NOT_STARTED"/>
+            <column name="progress_percentage" type="DECIMAL(5,2)" defaultValue="0"/>
+            <column name="started_at" type="TIMESTAMP"/>
+            <column name="completed_at" type="TIMESTAMP"/>
+            <column name="time_spent_seconds" type="INTEGER" defaultValue="0"/>
+            <column name="video_position_seconds" type="INTEGER"/>
+            <column name="current_page" type="INTEGER"/>
+            <column name="total_pages" type="INTEGER"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="080-08" author="system">
+        <comment>Create lms_certificates table</comment>
+        <createTable tableName="lms_certificates">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="certificate_number" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="course_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enrollment_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_title" type="VARCHAR(255)"/>
+            <column name="employee_name" type="VARCHAR(200)"/>
+            <column name="issued_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiry_date" type="DATE"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="score_achieved" type="INTEGER"/>
+            <column name="completion_date" type="DATE"/>
+            <column name="certificate_url" type="VARCHAR(1000)"/>
+            <column name="verification_url" type="VARCHAR(1000)"/>
+            <column name="template_id" type="UUID"/>
+            <column name="issued_by" type="UUID"/>
+            <column name="issuer_name" type="VARCHAR(200)"/>
+            <column name="additional_info" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

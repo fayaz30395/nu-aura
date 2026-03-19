@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="060-create-onboarding-processes-table" author="hrms">
+        <createTable tableName="onboarding_processes">
+            <column name="id" type="uuid"><constraints primaryKey="true"/></column>
+            <column name="tenant_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="employee_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="process_type" type="varchar(20)"/>
+            <column name="start_date" type="date"/>
+            <column name="expected_completion_date" type="date"/>
+            <column name="actual_completion_date" type="date"/>
+            <column name="status" type="varchar(20)" defaultValue="NOT_STARTED"/>
+            <column name="assigned_buddy_id" type="uuid"/>
+            <column name="completion_percentage" type="integer" defaultValue="0"/>
+            <column name="notes" type="text"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="version" type="bigint" defaultValue="0"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="onboarding_processes" baseColumnNames="employee_id"
+                                 constraintName="fk_onboarding_employee" referencedTableName="employees"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <createIndex tableName="onboarding_processes" indexName="idx_onboarding_employee"><column name="employee_id"/></createIndex>
+    </changeSet>
+</databaseChangeLog>

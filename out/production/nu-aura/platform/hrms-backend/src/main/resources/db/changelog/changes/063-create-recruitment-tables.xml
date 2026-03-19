@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="063-create-job-openings-table" author="system">
+        <createTable tableName="job_openings">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="job_title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="department_id" type="UUID"/>
+            <column name="location" type="VARCHAR(200)"/>
+            <column name="employment_type" type="VARCHAR(50)"/>
+            <column name="experience_required" type="VARCHAR(100)"/>
+            <column name="min_salary" type="DECIMAL(15,2)"/>
+            <column name="max_salary" type="DECIMAL(15,2)"/>
+            <column name="number_of_openings" type="INTEGER"/>
+            <column name="job_description" type="TEXT"/>
+            <column name="requirements" type="TEXT"/>
+            <column name="skills_required" type="TEXT"/>
+            <column name="hiring_manager_id" type="UUID"/>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="posted_date" type="DATE"/>
+            <column name="closing_date" type="DATE"/>
+            <column name="priority" type="VARCHAR(20)"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex indexName="idx_job_openings_tenant_id" tableName="job_openings">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex indexName="idx_job_openings_status" tableName="job_openings">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="063-create-candidates-table" author="system">
+        <createTable tableName="candidates">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="candidate_code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="job_opening_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(20)"/>
+            <column name="current_location" type="VARCHAR(200)"/>
+            <column name="current_company" type="VARCHAR(200)"/>
+            <column name="current_designation" type="VARCHAR(200)"/>
+            <column name="total_experience" type="DECIMAL(5,2)"/>
+            <column name="current_ctc" type="DECIMAL(15,2)"/>
+            <column name="expected_ctc" type="DECIMAL(15,2)"/>
+            <column name="notice_period_days" type="INTEGER"/>
+            <column name="resume_url" type="VARCHAR(500)"/>
+            <column name="source" type="VARCHAR(100)"/>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_stage" type="VARCHAR(50)"/>
+            <column name="applied_date" type="DATE"/>
+            <column name="notes" type="TEXT"/>
+            <column name="assigned_recruiter_id" type="UUID"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex indexName="idx_candidates_tenant_id" tableName="candidates">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex indexName="idx_candidates_job_opening_id" tableName="candidates">
+            <column name="job_opening_id"/>
+        </createIndex>
+        <createIndex indexName="idx_candidates_status" tableName="candidates">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="063-create-interviews-table" author="system">
+        <createTable tableName="interviews">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="candidate_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_opening_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="interview_round" type="VARCHAR(50)"/>
+            <column name="interview_type" type="VARCHAR(30)"/>
+            <column name="scheduled_at" type="TIMESTAMP"/>
+            <column name="duration_minutes" type="INTEGER"/>
+            <column name="interviewer_id" type="UUID"/>
+            <column name="location" type="VARCHAR(500)"/>
+            <column name="meeting_link" type="VARCHAR(500)"/>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="feedback" type="TEXT"/>
+            <column name="rating" type="INTEGER"/>
+            <column name="result" type="VARCHAR(30)"/>
+            <column name="notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex indexName="idx_interviews_tenant_id" tableName="interviews">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex indexName="idx_interviews_candidate_id" tableName="interviews">
+            <column name="candidate_id"/>
+        </createIndex>
+        <createIndex indexName="idx_interviews_status" tableName="interviews">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
