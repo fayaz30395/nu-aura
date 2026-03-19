@@ -40,13 +40,21 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_compliance_audit_entity
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_leave_balances_tenant_emp_type
     ON leave_balances (tenant_id, employee_id, leave_type_id);
 
--- approval_tasks: queried by assignee and status
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_approval_tasks_assignee_status
-    ON approval_tasks (tenant_id, assignee_id, status);
+-- approval_tasks: queried by assignee and status (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'approval_tasks') THEN
+        EXECUTE 'CREATE INDEX IF NOT EXISTS idx_approval_tasks_assignee_status ON approval_tasks (tenant_id, assignee_id, status)';
+    END IF;
+END $$;
 
--- approval_instances: queried by entity reference
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_approval_instances_entity
-    ON approval_instances (tenant_id, entity_type, entity_id);
+-- approval_instances: queried by entity reference (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'approval_instances') THEN
+        EXECUTE 'CREATE INDEX IF NOT EXISTS idx_approval_instances_entity ON approval_instances (tenant_id, entity_type, entity_id)';
+    END IF;
+END $$;
 
 -- ---------------------------------------------------------------------------
 -- DB-005: Add tenant_id to Junction Tables
