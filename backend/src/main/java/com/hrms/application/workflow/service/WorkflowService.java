@@ -524,14 +524,94 @@ public class WorkflowService {
     private UUID checkDelegation(UUID originalApprover, UUID tenantId, LocalDate date) {
         if (originalApprover == null) return null;
 
+        // 1. Explicit manual delegation always wins
         List<ApprovalDelegate> delegations = approvalDelegateRepository
                 .findActiveDelegations(tenantId, originalApprover, date);
 
         if (!delegations.isEmpty()) {
-            return delegations.get(0).getDelegateId();
+            UUID delegate = delegations.get(0).getDelegateId();
+            log.debug("Explicit delegation found: {} -> {}", originalApprover, delegate);
+            return delegate;
         }
 
-        return originalApprover;
+        // 2. Auto-delegation: if approver is on leave, walk up reporting chain
+        return autoDelegateIfOnLeave(originalApprover, tenantId, date);
+    }
+
+    /**
+     * Auto-delegation: when the designated approver is on approved leave, walk up
+     * the reporting chain (max 5 levels) to find the first available manager.
+     * Falls back to any SUPER_ADMIN user if the chain is exhausted.
+     */
+    private UUID autoDelegateIfOnLeave(UUID approverId, UUID tenantId, LocalDate date) {
+        // Quick check: if approver is NOT on leave, return them immediately
+        if (!isUserOnLeave(approverId, tenantId, date)) {
+            return approverId;
+        }
+
+        log.info("Approver {} is on leave on {}; walking up reporting chain", approverId, date);
+
+        UUID currentId = approverId;
+        int maxLevels = 5;
+        Set<UUID> visited = new HashSet<>();
+        visited.add(currentId);
+
+        for (int level = 0; level < maxLevels; level++) {
+            UUID managerId = findReportingManager(currentId, tenantId);
+            if (managerId == null || visited.contains(managerId)) {
+                break; // chain exhausted or cycle detected
+            }
+
+            visited.add(managerId);
+
+            // Check if this manager also has an explicit delegation
+            List<ApprovalDelegate> managerDelegations = approvalDelegateRepository
+                    .findActiveDelegations(tenantId, managerId, date);
+            if (!managerDelegations.isEmpty()) {
+                UUID delegate = managerDelegations.get(0).getDelegateId();
+                log.debug("Manager {} has explicit delegation to {}", managerId, delegate);
+                return delegate;
+            }
+
+            // Check if this manager is available (not on leave)
+            if (!isUserOnLeave(managerId, tenantId, date)) {
+                log.info("Auto-delegated from {} to {} (level {})", approverId, managerId, level + 1);
+                return managerId;
+            }
+
+            currentId = managerId;
+        }
+
+        // 3. Chain exhausted: fall back to any SUPER_ADMIN user
+        UUID superAdmin = findUserByRoleCode("SUPER_ADMIN", tenantId);
+        if (superAdmin != null) {
+            log.info("Reporting chain exhausted; falling back to SUPER_ADMIN {} for approver {}", superAdmin, approverId);
+            return superAdmin;
+        }
+
+        // Ultimate fallback: return original approver (better than null)
+        log.warn("No available delegate or SUPER_ADMIN found for approver {}; using original", approverId);
+        return approverId;
+    }
+
+    /**
+     * Checks whether a user (identified by their employee/user ID) has an active
+     * approved leave covering the given date. Resolves the employee ID from the
+     * user ID first, then checks the leave repository.
+     */
+    private boolean isUserOnLeave(UUID userId, UUID tenantId, LocalDate date) {
+        try {
+            // The userId in the workflow context could be either a user ID or an employee ID.
+            // Try employee lookup by userId (most common for managers stored as employee IDs).
+            UUID employeeId = userId;
+
+            // If the user-employee mapping is via a separate User entity, resolve it.
+            // However, in this codebase managerId stores the employee ID directly.
+            return leaveRequestRepository.isEmployeeOnLeave(tenantId, employeeId, date);
+        } catch (Exception e) {
+            log.warn("Failed to check leave status for user {}: {}", userId, e.getMessage());
+            return false; // assume available on error
+        }
     }
 
     @Transactional
