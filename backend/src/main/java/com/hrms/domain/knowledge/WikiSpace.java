@@ -53,6 +53,13 @@ public class WikiSpace extends TenantAware {
     @Column(name = "archived_by")
     private UUID archivedBy;
 
+    @Builder.Default
+    @Column(name = "approval_enabled", nullable = false)
+    private Boolean approvalEnabled = false;
+
+    @Column(name = "approver_employee_id")
+    private UUID approverEmployeeId;
+
     public enum VisibilityLevel {
         PUBLIC, ORGANIZATION, TEAM, PRIVATE, RESTRICTED
     }
