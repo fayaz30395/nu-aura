@@ -18,6 +18,8 @@ public interface WikiPageCommentRepository extends JpaRepository<WikiPageComment
 
     Page<WikiPageComment> findByTenantIdAndPageIdAndParentCommentIsNull(UUID tenantId, UUID pageId, Pageable pageable);
 
+    Page<WikiPageComment> findByTenantIdAndPageIdAndParentCommentIsNullOrderByCreatedAtDesc(UUID tenantId, UUID pageId, Pageable pageable);
+
     List<WikiPageComment> findByTenantIdAndParentCommentId(UUID tenantId, UUID parentCommentId);
 
     @Query("SELECT wc FROM WikiPageComment wc WHERE wc.tenantId = :tenantId AND wc.page.id = :pageId " +
@@ -25,4 +27,7 @@ public interface WikiPageCommentRepository extends JpaRepository<WikiPageComment
     List<WikiPageComment> findPinnedCommentsByPage(@Param("tenantId") UUID tenantId, @Param("pageId") UUID pageId);
 
     long countByTenantIdAndPageId(UUID tenantId, UUID pageId);
+
+    @Query("SELECT COUNT(wc) FROM WikiPageComment wc WHERE wc.tenantId = :tenantId AND wc.page.id = :pageId")
+    long countByTenantIdAndWikiPageId(@Param("tenantId") UUID tenantId, @Param("pageId") UUID pageId);
 }
