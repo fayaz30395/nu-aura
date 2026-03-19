@@ -1,10 +1,14 @@
 package com.hrms.application.project.service;
 
 import com.hrms.api.project.dto.*;
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
 import com.hrms.application.project.validation.TimeEntryValidator;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.project.*;
+import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +29,13 @@ import java.util.stream.Collectors;
 @Service("projectTimesheetService")
 @RequiredArgsConstructor
 @Transactional
-public class ProjectTimesheetService {
+public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
     private final ProjectTimeEntryRepository timeEntryRepository;
     private final HrmsProjectMemberRepository projectMemberRepository;
     private final EmployeeRepository employeeRepository;
     private final TimeEntryValidator timeEntryValidator;
+    private final WorkflowService workflowService;
 
     // ==================== Time Entry Operations ====================
 
@@ -156,6 +161,10 @@ public class ProjectTimesheetService {
         timeEntry.setSubmittedAt(LocalDateTime.now());
 
         TimeEntry updatedEntry = timeEntryRepository.save(timeEntry);
+
+        // Start workflow for this time entry's project
+        startTimesheetApprovalWorkflow(updatedEntry, tenantId);
+
         return mapToTimeEntryResponse(updatedEntry);
     }
 
@@ -370,6 +379,82 @@ public class ProjectTimesheetService {
         ProjectMember member = projectMemberRepository.findByIdAndTenantId(memberId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Project member not found"));
         projectMemberRepository.delete(member);
+    }
+
+    // ==================== ApprovalCallbackHandler ====================
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.TIMESHEET;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Timesheet entry {} approved via workflow by {}", entityId, approvedBy);
+
+        TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (timeEntry == null) {
+            log.warn("Time entry {} not found for approval callback", entityId);
+            return;
+        }
+
+        if (timeEntry.getStatus() != TimeEntry.TimeEntryStatus.SUBMITTED) {
+            log.warn("Time entry {} already in status {}, skipping approval", entityId, timeEntry.getStatus());
+            return;
+        }
+
+        timeEntry.setStatus(TimeEntry.TimeEntryStatus.APPROVED);
+        timeEntry.setApprovedBy(approvedBy);
+        timeEntry.setApprovedAt(LocalDateTime.now());
+        timeEntryRepository.save(timeEntry);
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Timesheet entry {} rejected via workflow by {}", entityId, rejectedBy);
+
+        TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (timeEntry == null) {
+            log.warn("Time entry {} not found for rejection callback", entityId);
+            return;
+        }
+
+        if (timeEntry.getStatus() != TimeEntry.TimeEntryStatus.SUBMITTED) {
+            log.warn("Time entry {} already in status {}, skipping rejection", entityId, timeEntry.getStatus());
+            return;
+        }
+
+        timeEntry.setStatus(TimeEntry.TimeEntryStatus.REJECTED);
+        timeEntry.setApprovedBy(rejectedBy);
+        timeEntry.setApprovedAt(LocalDateTime.now());
+        timeEntry.setRejectedReason(reason);
+        timeEntryRepository.save(timeEntry);
+    }
+
+    /**
+     * Starts a timesheet approval workflow for a single time entry.
+     * Each time entry is submitted per-project; the workflow engine resolves
+     * the approver (typically the project manager or reporting manager).
+     */
+    private void startTimesheetApprovalWorkflow(TimeEntry timeEntry, UUID tenantId) {
+        try {
+            String employeeName = employeeRepository.findById(timeEntry.getEmployeeId())
+                    .map(Employee::getFullName).orElse("Employee");
+
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.TIMESHEET);
+            workflowRequest.setEntityId(timeEntry.getId());
+            workflowRequest.setTitle("Timesheet Approval: " + employeeName
+                    + " - " + timeEntry.getWorkDate() + " (" + timeEntry.getHoursWorked() + "h)");
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for timesheet entry: {}", timeEntry.getId());
+        } catch (Exception e) {
+            log.warn("Could not start approval workflow for timesheet entry {}: {}",
+                    timeEntry.getId(), e.getMessage());
+        }
     }
 
     // ==================== Helper Methods ====================
