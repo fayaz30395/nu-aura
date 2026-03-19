@@ -134,7 +134,9 @@ export default function PaymentConfigPage() {
       });
       setTestResult(typeof result === 'string'
         ? { success: true, message: result }
-        : result as { success: boolean; message: string });
+        : (result && typeof result === 'object' && 'success' in result && 'message' in result)
+          ? result as { success: boolean; message: string }
+          : { success: true, message: String(result) });
     } catch (error) {
       setTestResult({
         success: false,
