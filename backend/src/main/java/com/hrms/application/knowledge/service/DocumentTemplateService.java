@@ -2,10 +2,13 @@ package com.hrms.application.knowledge.service;
 
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.DocumentTemplate;
+import com.hrms.infrastructure.kafka.events.FluenceContentEvent;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.hrms.infrastructure.knowledge.repository.DocumentTemplateRepository;
 import com.hrms.infrastructure.knowledge.repository.TemplateInstantiationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,10 @@ public class DocumentTemplateService {
 
     private final DocumentTemplateRepository documentTemplateRepository;
     private final TemplateInstantiationRepository templateInstantiationRepository;
+    private final FluenceActivityService fluenceActivityService;
+
+    @Autowired(required = false)
+    private EventPublisher eventPublisher;
 
     @Transactional
     public DocumentTemplate createTemplate(DocumentTemplate template) {
@@ -33,6 +40,8 @@ public class DocumentTemplateService {
 
         DocumentTemplate saved = documentTemplateRepository.save(template);
         log.info("Created document template: {}", saved.getId());
+        publishFluenceEvent(saved.getId(), tenantId, FluenceContentEvent.ACTION_CREATED);
+        recordActivity(tenantId, template.getCreatedBy(), "CREATED", saved);
         return saved;
     }
 
@@ -56,6 +65,8 @@ public class DocumentTemplateService {
 
         DocumentTemplate updated = documentTemplateRepository.save(template);
         log.info("Updated document template: {}", templateId);
+        publishFluenceEvent(templateId, tenantId, FluenceContentEvent.ACTION_UPDATED);
+        recordActivity(tenantId, com.hrms.common.security.SecurityContext.getCurrentUserId(), "UPDATED", updated);
         return updated;
     }
 
@@ -145,6 +156,26 @@ public class DocumentTemplateService {
 
         documentTemplateRepository.delete(template);
         log.info("Deleted document template: {}", templateId);
+        publishFluenceEvent(templateId, tenantId, FluenceContentEvent.ACTION_DELETED);
+    }
+
+    private void publishFluenceEvent(UUID templateId, UUID tenantId, String action) {
+        if (eventPublisher != null) {
+            try {
+                eventPublisher.publishFluenceContent("template", templateId, action, tenantId);
+            } catch (Exception e) {
+                log.warn("Failed to publish fluence content event for template {}: {}", templateId, e.getMessage());
+            }
+        }
+    }
+
+    private void recordActivity(UUID tenantId, UUID actorId, String action, DocumentTemplate template) {
+        try {
+            fluenceActivityService.recordActivity(tenantId, actorId, action, "TEMPLATE",
+                    template.getId(), template.getName(), template.getDescription());
+        } catch (Exception e) {
+            log.warn("Failed to record activity for template: {}", e.getMessage());
+        }
     }
 
     @Transactional(readOnly = true)

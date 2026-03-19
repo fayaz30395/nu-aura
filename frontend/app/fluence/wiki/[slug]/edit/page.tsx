@@ -13,12 +13,14 @@ import {
   useWikiPage,
   useUpdateWikiPage,
   useWikiSpaces,
+  useEditLock,
 } from '@/lib/hooks/queries/useFluence';
 import { notifications } from '@mantine/notifications';
 import { TextInput, Select, LoadingOverlay, Skeleton, MultiSelect } from '@mantine/core';
 import { ArrowLeft, Save, RefreshCw } from 'lucide-react';
 import { isAxiosError } from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
+import EditLockWarning from '@/components/fluence/EditLockWarning';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 
 const FluenceEditor = dynamic(
@@ -50,6 +52,7 @@ export default function EditWikiPage() {
   const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
   const { mutate: updateWikiPage } = useUpdateWikiPage();
   const { data: _spacesData } = useWikiSpaces(0, 100);
+  const { isLockedByOther, lockedByName, forceAcquireLock } = useEditLock('WIKI', pageId, !!pageId);
   const { data: editorSearchData } = useEmployeeSearch(editorSearchQuery, 0, 20, editorSearchQuery.length > 1);
 
   const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);
@@ -172,6 +175,14 @@ export default function EditWikiPage() {
             </p>
           </div>
         </div>
+
+        {/* Edit Lock Warning */}
+        {isLockedByOther && lockedByName && (
+          <EditLockWarning
+            lockedByName={lockedByName}
+            onForceEdit={forceAcquireLock}
+          />
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

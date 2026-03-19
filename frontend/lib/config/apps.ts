@@ -128,6 +128,8 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       '/fluence/drive',
       '/fluence/search',
       '/fluence/my-content',
+      '/fluence/wall',
+      '/fluence/dashboard',
     ],
     available: true,
     order: 4,

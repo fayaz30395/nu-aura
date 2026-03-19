@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public class BlogCommentService {
 
     private final BlogCommentRepository commentRepository;
     private final BlogPostRepository blogPostRepository;
+    private final FluenceNotificationService fluenceNotificationService;
 
     @Transactional
     public WikiCommentDto createComment(UUID postId, CreateCommentRequest request) {
@@ -59,6 +61,16 @@ public class BlogCommentService {
         blogPostRepository.save(post);
 
         log.info("Created blog comment {} on post {} by user {}", saved.getId(), postId, userId);
+
+        // Send notifications for mentions, content owner, and watchers
+        if (request.getMentions() != null && !request.getMentions().isEmpty()) {
+            fluenceNotificationService.notifyMentionedUsers(
+                    tenantId, new HashSet<>(request.getMentions()), userId,
+                    "BLOG_POST", postId, post.getTitle());
+        }
+        fluenceNotificationService.notifyCommentOnOwnContent(
+                tenantId, post.getCreatedBy(), userId, "BLOG_POST", postId, post.getTitle());
+
         return toBlogCommentDto(saved);
     }
 

@@ -1,10 +1,12 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { fluenceService } from '@/lib/services/fluence.service';
 import {
   WikiPage,
   DocumentTemplate,
+  EditLockResponse,
   CreateWikiPageRequest,
   UpdateWikiPageRequest,
   CreateWikiSpaceRequest,
@@ -87,11 +89,20 @@ export const fluenceKeys = {
     [...fluenceKeys.all, 'my-wiki-pages', { page, size, status }] as const,
   myBlogPosts: (page?: number, size?: number, status?: string) =>
     [...fluenceKeys.all, 'my-blog-posts', { page, size, status }] as const,
+  // Activity feed
+  activities: () => [...fluenceKeys.all, 'activities'] as const,
+  activityFeed: (page?: number, size?: number, contentType?: string) =>
+    [...fluenceKeys.activities(), { page, size, contentType }] as const,
+  myActivity: (page?: number, size?: number) =>
+    [...fluenceKeys.activities(), 'me', { page, size }] as const,
   // Attachments
   attachments: () => [...fluenceKeys.all, 'attachments'] as const,
   attachmentList: (contentType: string, contentId: string) =>
     [...fluenceKeys.attachments(), contentType, contentId] as const,
   recentAttachments: () => [...fluenceKeys.attachments(), 'recent'] as const,
+  // Edit locks
+  editLock: (contentType: string, contentId: string) =>
+    [...fluenceKeys.all, 'edit-lock', contentType, contentId] as const,
 };
 
 // ─── Wiki Page Queries ──────────────────────────────────────────────────────
@@ -860,6 +871,35 @@ export function useDeleteAttachment() {
   });
 }
 
+// ─── Activity Feed ──────────────────────────────────────────────────────────
+
+export function useActivityFeed(
+  page: number = 0,
+  size: number = 20,
+  contentType?: string,
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: fluenceKeys.activityFeed(page, size, contentType),
+    queryFn: () => fluenceService.getActivityFeed(page, size, contentType),
+    enabled,
+    staleTime: 1 * 60 * 1000,
+  });
+}
+
+export function useMyActivity(
+  page: number = 0,
+  size: number = 20,
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: fluenceKeys.myActivity(page, size),
+    queryFn: () => fluenceService.getMyActivity(page, size),
+    enabled,
+    staleTime: 1 * 60 * 1000,
+  });
+}
+
 // ─── Restore Wiki Page Revision ────────────────────────────────────────────
 
 export function useRestoreWikiPageRevision() {
@@ -874,4 +914,81 @@ export function useRestoreWikiPageRevision() {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
     },
   });
+}
+
+// ─── Edit Lock Hook ────────────────────────────────────────────────────────
+
+const HEARTBEAT_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
+
+/**
+ * Hook to manage edit locks for Fluence content.
+ * Acquires a lock on mount, sends heartbeats every 2 minutes, and releases on unmount.
+ */
+export function useEditLock(contentType: string, contentId: string, enabled: boolean = true) {
+  const [lockInfo, setLockInfo] = useState<EditLockResponse | null>(null);
+  const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const contentTypeRef = useRef(contentType);
+  const contentIdRef = useRef(contentId);
+
+  contentTypeRef.current = contentType;
+  contentIdRef.current = contentId;
+
+  const acquireLock = useCallback(async () => {
+    if (!enabled || !contentId) return;
+    try {
+      const response = await fluenceService.acquireEditLock(contentType, contentId);
+      setLockInfo(response);
+    } catch (error) {
+      // Lock service unavailable — allow editing without lock
+      setLockInfo(null);
+    }
+  }, [contentType, contentId, enabled]);
+
+  const forceAcquireLock = useCallback(async () => {
+    if (!contentId) return;
+    try {
+      const response = await fluenceService.acquireEditLock(contentType, contentId);
+      setLockInfo(response);
+    } catch {
+      setLockInfo(null);
+    }
+  }, [contentType, contentId]);
+
+  useEffect(() => {
+    if (!enabled || !contentId) return;
+
+    // Acquire lock on mount
+    acquireLock();
+
+    // Start heartbeat interval
+    heartbeatRef.current = setInterval(async () => {
+      try {
+        await fluenceService.refreshEditLock(contentTypeRef.current, contentIdRef.current);
+      } catch {
+        // Heartbeat failed — lock may have expired
+      }
+    }, HEARTBEAT_INTERVAL_MS);
+
+    // Cleanup: release lock and stop heartbeat
+    return () => {
+      if (heartbeatRef.current) {
+        clearInterval(heartbeatRef.current);
+        heartbeatRef.current = null;
+      }
+      // Fire-and-forget release
+      fluenceService.releaseEditLock(contentTypeRef.current, contentIdRef.current).catch(() => {
+        // Best effort release
+      });
+    };
+  }, [contentId, enabled, acquireLock]);
+
+  const isLockedByOther = lockInfo?.locked === true && lockInfo?.isOwnLock === false;
+  const lockedByName = isLockedByOther ? lockInfo?.lockedByUserName ?? 'Another user' : null;
+
+  return {
+    lockInfo,
+    isLockedByOther,
+    lockedByName,
+    forceAcquireLock,
+  };
 }

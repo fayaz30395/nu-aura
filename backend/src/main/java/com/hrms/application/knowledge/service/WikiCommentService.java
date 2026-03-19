@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public class WikiCommentService {
 
     private final WikiPageCommentRepository commentRepository;
     private final WikiPageRepository wikiPageRepository;
+    private final FluenceNotificationService fluenceNotificationService;
 
     @Transactional
     public WikiCommentDto createComment(UUID pageId, CreateCommentRequest request) {
@@ -59,6 +61,18 @@ public class WikiCommentService {
         wikiPageRepository.save(page);
 
         log.info("Created wiki comment {} on page {} by user {}", saved.getId(), pageId, userId);
+
+        // Send notifications for mentions, content owner, and watchers
+        if (request.getMentions() != null && !request.getMentions().isEmpty()) {
+            fluenceNotificationService.notifyMentionedUsers(
+                    tenantId, new HashSet<>(request.getMentions()), userId,
+                    "WIKI_PAGE", pageId, page.getTitle());
+        }
+        fluenceNotificationService.notifyCommentOnOwnContent(
+                tenantId, page.getCreatedBy(), userId, "WIKI_PAGE", pageId, page.getTitle());
+        fluenceNotificationService.notifyWatchers(
+                tenantId, pageId, userId, "commented on", page.getTitle());
+
         return WikiCommentDto.fromEntity(saved);
     }
 

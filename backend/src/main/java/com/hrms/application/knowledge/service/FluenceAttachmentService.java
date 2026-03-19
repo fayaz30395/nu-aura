@@ -54,6 +54,8 @@ public class FluenceAttachmentService {
                 .fileType(getFileExtension(file.getOriginalFilename()))
                 .mimeType(file.getContentType())
                 .storagePath(result.getObjectName())
+                .objectName(result.getObjectName())
+                .contentTypeEnum(contentType.name())
                 .build();
 
         KnowledgeAttachment saved = attachmentRepository.save(attachment);
@@ -68,7 +70,7 @@ public class FluenceAttachmentService {
     @Transactional(readOnly = true)
     public List<KnowledgeAttachment> getAttachments(UUID tenantId, UUID contentId,
                                                      KnowledgeAttachment.ContentType contentType) {
-        return attachmentRepository.findByTenantIdAndContentIdAndContentType(
+        return attachmentRepository.findByTenantIdAndContentIdAndContentTypeAndIsDeletedFalse(
                 tenantId, contentId, contentType);
     }
 
@@ -77,22 +79,23 @@ public class FluenceAttachmentService {
      */
     @Transactional(readOnly = true)
     public String getDownloadUrl(UUID tenantId, UUID attachmentId) {
-        KnowledgeAttachment attachment = attachmentRepository.findByTenantIdAndId(tenantId, attachmentId)
+        KnowledgeAttachment attachment = attachmentRepository.findByTenantIdAndIdAndIsDeletedFalse(tenantId, attachmentId)
                 .orElseThrow(() -> new BusinessException("Attachment not found"));
         return fileStorageService.getDownloadUrl(attachment.getStoragePath());
     }
 
     /**
-     * Delete an attachment from MinIO and the database.
+     * Soft-delete an attachment from DB and delete from MinIO.
      */
     @Transactional
     public void deleteAttachment(UUID tenantId, UUID attachmentId) {
-        KnowledgeAttachment attachment = attachmentRepository.findByTenantIdAndId(tenantId, attachmentId)
+        KnowledgeAttachment attachment = attachmentRepository.findByTenantIdAndIdAndIsDeletedFalse(tenantId, attachmentId)
                 .orElseThrow(() -> new BusinessException("Attachment not found"));
 
         fileStorageService.deleteFile(attachment.getStoragePath());
-        attachmentRepository.delete(attachment);
-        log.info("Deleted fluence attachment: {}", attachmentId);
+        attachment.softDelete();
+        attachmentRepository.save(attachment);
+        log.info("Soft-deleted fluence attachment: {}", attachmentId);
     }
 
     /**

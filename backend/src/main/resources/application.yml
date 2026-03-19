@@ -291,6 +291,8 @@ app:
   # Elasticsearch for NU-Fluence full-text search (default: disabled)
   elasticsearch:
     enabled: ${ELASTICSEARCH_ENABLED:false}
+    host: ${ELASTICSEARCH_HOST:localhost}
+    port: ${ELASTICSEARCH_PORT:9200}
 
   # Payment module kill-switch (static config-level, complements DB feature flags)
   payments:

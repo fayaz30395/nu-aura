@@ -13,12 +13,14 @@ import {
   useBlogPost,
   useUpdateBlogPost,
   useBlogCategories,
+  useEditLock,
 } from '@/lib/hooks/queries/useFluence';
 import { notifications } from '@mantine/notifications';
 import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay, Skeleton } from '@mantine/core';
 import { ArrowLeft, Save, RefreshCw } from 'lucide-react';
 import { isAxiosError } from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
+import EditLockWarning from '@/components/fluence/EditLockWarning';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
@@ -56,6 +58,7 @@ export default function EditBlogPost() {
   const { data: post, isLoading } = useBlogPost(postId, !!postId);
   const { mutate: updateBlogPost } = useUpdateBlogPost();
   const { data: categoriesData, isLoading: categoriesLoading } = useBlogCategories();
+  const { isLockedByOther, lockedByName, forceAcquireLock } = useEditLock('BLOG', postId, !!postId);
   const { data: editorSearchData } = useEmployeeSearch(editorSearchQuery, 0, 20, editorSearchQuery.length > 1);
 
   const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);
@@ -191,6 +194,14 @@ export default function EditBlogPost() {
             </p>
           </div>
         </div>
+
+        {/* Edit Lock Warning */}
+        {isLockedByOther && lockedByName && (
+          <EditLockWarning
+            lockedByName={lockedByName}
+            onForceEdit={forceAcquireLock}
+          />
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

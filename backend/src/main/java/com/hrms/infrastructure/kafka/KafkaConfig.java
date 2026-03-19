@@ -311,6 +311,49 @@ public class KafkaConfig {
                 .build();
     }
 
+    /**
+     * Consumer factory for FluenceContentEvent.
+     */
+    @Bean
+    public ConsumerFactory<String, com.hrms.infrastructure.kafka.events.FluenceContentEvent> fluenceContentEventConsumerFactory() {
+        return createConsumerFactory(com.hrms.infrastructure.kafka.events.FluenceContentEvent.class, KafkaTopics.GROUP_FLUENCE_SEARCH);
+    }
+
+    /**
+     * Container factory for FluenceContentEvent listeners.
+     */
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, com.hrms.infrastructure.kafka.events.FluenceContentEvent>> fluenceContentEventListenerContainerFactory() {
+        return createListenerContainerFactory(fluenceContentEventConsumerFactory());
+    }
+
+    /**
+     * Create fluence content events topic.
+     */
+    @Bean
+    public NewTopic fluenceContentTopic() {
+        return TopicBuilder.name(KafkaTopics.FLUENCE_CONTENT)
+                .partitions(3)
+                .replicas(1)
+                .config("retention.ms", "86400000") // 24 hours
+                .config("compression.type", "snappy")
+                .config("cleanup.policy", "delete")
+                .build();
+    }
+
+    /**
+     * Create dead letter topic for fluence content events.
+     */
+    @Bean
+    public NewTopic fluenceContentDeadLetterTopic() {
+        return TopicBuilder.name(KafkaTopics.FLUENCE_CONTENT_DLT)
+                .partitions(1)
+                .replicas(1)
+                .config("retention.ms", "604800000") // 7 days
+                .config("cleanup.policy", "delete")
+                .build();
+    }
+
     // ============ HELPER METHODS ============
 
     /**

@@ -241,6 +241,34 @@ public class EventPublisher {
         return sendEvent(KafkaTopics.EMPLOYEE_LIFECYCLE, event.getEventId(), event);
     }
 
+    /**
+     * Publish a fluence content event (CREATED, UPDATED, PUBLISHED, or DELETED).
+     *
+     * @param contentType Content type: "wiki", "blog", or "template"
+     * @param contentId   UUID of the content entity
+     * @param action      Action performed (CREATED, UPDATED, PUBLISHED, DELETED)
+     * @param tenantId    Multi-tenant context
+     */
+    public CompletableFuture<Void> publishFluenceContent(
+            String contentType,
+            UUID contentId,
+            String action,
+            UUID tenantId) {
+
+        FluenceContentEvent event = FluenceContentEvent.builder()
+                .eventId(UUID.randomUUID().toString())
+                .eventType("FLUENCE_" + action)
+                .tenantId(tenantId)
+                .timestamp(LocalDateTime.now())
+                .source("fluence-service")
+                .contentType(contentType)
+                .contentId(contentId)
+                .action(action)
+                .build();
+
+        return sendEvent(KafkaTopics.FLUENCE_CONTENT, event.getEventId(), event);
+    }
+
     // ============ PRIVATE HELPERS ============
 
     /**

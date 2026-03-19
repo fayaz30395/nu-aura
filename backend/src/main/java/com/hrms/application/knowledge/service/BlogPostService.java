@@ -3,9 +3,12 @@ package com.hrms.application.knowledge.service;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.BlogPost;
+import com.hrms.infrastructure.kafka.events.FluenceContentEvent;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,10 @@ import java.util.UUID;
 public class BlogPostService {
 
     private final BlogPostRepository blogPostRepository;
+    private final FluenceActivityService fluenceActivityService;
+
+    @Autowired(required = false)
+    private EventPublisher eventPublisher;
 
     @Transactional
     public BlogPost createPost(BlogPost post) {
@@ -35,6 +42,8 @@ public class BlogPostService {
 
         BlogPost saved = blogPostRepository.save(post);
         log.info("Created blog post: {}", saved.getId());
+        publishFluenceEvent(saved.getId(), tenantId, FluenceContentEvent.ACTION_CREATED);
+        recordActivity(tenantId, saved.getCreatedBy(), "CREATED", saved);
         return saved;
     }
 
@@ -64,6 +73,8 @@ public class BlogPostService {
 
         BlogPost updated = blogPostRepository.save(post);
         log.info("Updated blog post: {}", postId);
+        publishFluenceEvent(postId, tenantId, FluenceContentEvent.ACTION_UPDATED);
+        recordActivity(tenantId, SecurityContext.getCurrentUserId(), "UPDATED", updated);
         return updated;
     }
 
@@ -142,6 +153,8 @@ public class BlogPostService {
 
         BlogPost updated = blogPostRepository.save(post);
         log.info("Published blog post: {}", postId);
+        publishFluenceEvent(postId, tenantId, FluenceContentEvent.ACTION_PUBLISHED);
+        recordActivity(tenantId, userId, "PUBLISHED", updated);
         return updated;
     }
 
@@ -183,5 +196,36 @@ public class BlogPostService {
 
         blogPostRepository.delete(post);
         log.info("Deleted blog post: {}", postId);
+        publishFluenceEvent(postId, tenantId, FluenceContentEvent.ACTION_DELETED);
+    }
+
+    private void publishFluenceEvent(UUID postId, UUID tenantId, String action) {
+        if (eventPublisher != null) {
+            try {
+                eventPublisher.publishFluenceContent("blog", postId, action, tenantId);
+            } catch (Exception e) {
+                log.warn("Failed to publish fluence content event for blog post {}: {}", postId, e.getMessage());
+            }
+        }
+    }
+
+    private void recordActivity(UUID tenantId, UUID actorId, String action, BlogPost post) {
+        try {
+            String excerpt = extractExcerpt(post.getContent());
+            fluenceActivityService.recordActivity(tenantId, actorId, action, "BLOG", post.getId(), post.getTitle(), excerpt);
+        } catch (Exception e) {
+            log.warn("Failed to record activity for blog post: {}", e.getMessage());
+        }
+    }
+
+    private String extractExcerpt(String content) {
+        if (content == null || content.isBlank()) return null;
+        String plain = content.replaceAll("<[^>]*>", " ")
+                .replaceAll("\\{[^}]*}", " ")
+                .replaceAll("\\[[^]]*]", " ")
+                .replaceAll("\"[a-zA-Z]+\":", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        return plain.length() > 200 ? plain.substring(0, 200) : plain;
     }
 }
