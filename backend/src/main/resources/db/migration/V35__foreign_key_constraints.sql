@@ -46,9 +46,15 @@ ALTER TABLE employees VALIDATE CONSTRAINT fk_employees_manager;
 -- employees → users (RESTRICT: cannot delete user while employee record exists)
 -- ---------------------------------------------------------------------------
 DO $$
+DECLARE
+  orphan_count INTEGER;
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_employees_user') THEN
-    -- Delete employees whose user_id no longer exists (orphaned)
+    -- Must DELETE (not SET NULL) because FK uses ON DELETE RESTRICT
+    SELECT COUNT(*) INTO orphan_count FROM employees WHERE user_id IS NOT NULL AND user_id NOT IN (SELECT id FROM users);
+    IF orphan_count > 0 THEN
+      RAISE NOTICE 'V35: Removing % employee(s) with orphaned user_id (RESTRICT FK requires DELETE)', orphan_count;
+    END IF;
     DELETE FROM employees WHERE user_id IS NOT NULL AND user_id NOT IN (SELECT id FROM users);
     ALTER TABLE employees
       ADD CONSTRAINT fk_employees_user
