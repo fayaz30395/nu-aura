@@ -1,24 +1,61 @@
 import { Page, expect, TestInfo } from '@playwright/test';
-import { testUsers } from '../fixtures/testData';
+import { testUsers, allDemoUsers, DEMO_PASSWORD } from '../fixtures/testData';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 
 /**
  * Authentication Helper
- * Provides reusable authentication utilities
+ * Provides reusable authentication utilities.
+ *
+ * Updated for the SSO + demo-button login page. The login page no longer has
+ * email/password form inputs. Authentication is done either via:
+ * 1. Demo account button click (UI flow)
+ * 2. Direct API call to /api/v1/auth/login (fast path for non-auth tests)
  */
 export class AuthHelper {
   /**
-   * Login with credentials
+   * Login via backend API (fast path — no UI interaction needed).
+   * Sets httpOnly cookies automatically via Playwright's request context.
+   * Then navigates to dashboard to initialize frontend state.
    */
   static async login(page: Page, email: string, password: string) {
-    await page.goto('/auth/login');
-    await page.locator('input[type="email"]').fill(email);
-    await page.locator('input[type="password"]').fill(password);
-    await page.locator('button[type="submit"]').click();
+    const response = await page.request.post(`${API_BASE}/auth/login`, {
+      data: { email, password },
+      failOnStatusCode: false,
+    });
+
+    if (!response.ok()) {
+      throw new Error(`AuthHelper.login(${email}) failed: HTTP ${response.status()}`);
+    }
+
+    // Navigate to dashboard to bootstrap the frontend Zustand store
+    await page.goto('/me/dashboard');
     await page.waitForLoadState('networkidle');
   }
 
   /**
-   * Login as admin
+   * Login via demo account button on the login page UI.
+   * Use when you need to test the actual login flow.
+   */
+  static async loginViaUI(page: Page, email: string) {
+    const user = allDemoUsers.find((u) => u.email === email);
+    if (!user) {
+      throw new Error(`loginViaUI: user ${email} not found in demo accounts`);
+    }
+
+    await page.goto('/auth/login');
+    await page.waitForLoadState('networkidle');
+
+    const demoButton = page.locator('button').filter({ hasText: user.name });
+    await expect(demoButton).toBeVisible({ timeout: 10000 });
+    await demoButton.click();
+
+    await page.waitForURL('**/dashboard', { timeout: 45000 });
+    await page.waitForLoadState('networkidle');
+  }
+
+  /**
+   * Login as admin (SUPER_ADMIN)
    */
   static async loginAsAdmin(page: Page) {
     await this.login(page, testUsers.admin.email, testUsers.admin.password);
@@ -46,19 +83,21 @@ export class AuthHelper {
   }
 
   /**
-   * Logout
+   * Logout — clears cookies and storage, navigates to login page
    */
   static async logout(page: Page) {
-    // Click on user menu/profile icon
-    const userMenu = page.locator('[aria-label*="user menu"], button:has-text("Logout")').first();
-    if (await userMenu.isVisible()) {
-      await userMenu.click();
-      const logoutButton = page.locator('button:has-text("Logout"), a:has-text("Logout")');
-      if (await logoutButton.isVisible()) {
-        await logoutButton.click();
-        await page.waitForURL('**/auth/login');
+    await page.context().clearCookies();
+    await page.evaluate(() => {
+      try {
+        sessionStorage.removeItem('auth-storage');
+        sessionStorage.removeItem('user');
+        localStorage.removeItem('tenantId');
+      } catch {
+        // Ignore
       }
-    }
+    });
+    await page.goto('/auth/login');
+    await page.waitForLoadState('networkidle');
   }
 
   /**
