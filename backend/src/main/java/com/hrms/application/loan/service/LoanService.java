@@ -2,10 +2,14 @@ package com.hrms.application.loan.service;
 
 import com.hrms.api.loan.dto.CreateLoanRequest;
 import com.hrms.api.loan.dto.EmployeeLoanDto;
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.loan.EmployeeLoan;
 import com.hrms.domain.loan.EmployeeLoan.LoanStatus;
+import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.loan.repository.EmployeeLoanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +28,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class LoanService {
+public class LoanService implements ApprovalCallbackHandler {
 
     private final EmployeeLoanRepository loanRepository;
+    private final WorkflowService workflowService;
 
     @Transactional
     public EmployeeLoanDto applyForLoan(CreateLoanRequest request) {
@@ -54,6 +59,10 @@ public class LoanService {
 
         EmployeeLoan saved = loanRepository.save(loan);
         log.info("Loan application created: {}", saved.getLoanNumber());
+
+        // Start approval workflow (Manager -> Finance Head)
+        startLoanApprovalWorkflow(saved, tenantId);
+
         return EmployeeLoanDto.fromEntity(saved);
     }
 
@@ -227,6 +236,75 @@ public class LoanService {
                 tenantId,
                 List.of(LoanStatus.ACTIVE, LoanStatus.DISBURSED)
         ).stream().map(EmployeeLoanDto::fromEntity).collect(Collectors.toList());
+    }
+
+    // ======================== ApprovalCallbackHandler ========================
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.LOAN_REQUEST;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Loan {} approved via workflow by {}", entityId, approvedBy);
+
+        EmployeeLoan loan = loanRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (loan == null) {
+            log.warn("Loan {} not found for approval callback", entityId);
+            return;
+        }
+
+        if (loan.getStatus() != LoanStatus.PENDING) {
+            log.warn("Loan {} already in status {}, skipping approval", entityId, loan.getStatus());
+            return;
+        }
+
+        loan.setStatus(LoanStatus.APPROVED);
+        loan.setApprovedBy(approvedBy);
+        loan.setApprovedDate(LocalDate.now());
+        loanRepository.save(loan);
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Loan {} rejected via workflow by {}", entityId, rejectedBy);
+
+        EmployeeLoan loan = loanRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (loan == null) {
+            log.warn("Loan {} not found for rejection callback", entityId);
+            return;
+        }
+
+        if (loan.getStatus() != LoanStatus.PENDING) {
+            log.warn("Loan {} already in status {}, skipping rejection", entityId, loan.getStatus());
+            return;
+        }
+
+        loan.setStatus(LoanStatus.REJECTED);
+        loan.setApprovedBy(rejectedBy);
+        loan.setApprovedDate(LocalDate.now());
+        loan.setRejectedReason(reason);
+        loanRepository.save(loan);
+    }
+
+    private void startLoanApprovalWorkflow(EmployeeLoan loan, UUID tenantId) {
+        try {
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.LOAN_REQUEST);
+            workflowRequest.setEntityId(loan.getId());
+            workflowRequest.setTitle("Loan Approval: " + loan.getLoanNumber()
+                    + " - " + loan.getLoanType() + " (" + loan.getPrincipalAmount() + ")");
+            workflowRequest.setAmount(loan.getPrincipalAmount());
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for loan: {}", loan.getLoanNumber());
+        } catch (Exception e) {
+            log.warn("Could not start approval workflow for loan {}: {}",
+                    loan.getLoanNumber(), e.getMessage());
+        }
     }
 
     private String generateLoanNumber() {
