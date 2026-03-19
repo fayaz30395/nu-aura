@@ -22,3 +22,5 @@
 -- tenant_id is added by V34. RLS policy skipped here.
 -- Tenant isolation enforced via V38 dynamic loop (runs after V34 adds the column)
 -- and via parent table FK (roles.tenant_id).
+
+SELECT 1; -- Intentionally empty: RLS coverage delegated to V38
