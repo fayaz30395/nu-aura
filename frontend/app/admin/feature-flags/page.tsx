@@ -20,7 +20,7 @@ import {
 import { Search, ToggleLeft, Filter, Plus, Info } from 'lucide-react';
 import { useFeatureFlags, useToggleFeatureFlag, useSetFeatureFlag } from '@/lib/hooks/queries/useFeatureFlags';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { SkeletonCard } from '@/components/ui/Loading';
 import type { FeatureFlag } from '@/lib/types/feature-flag';
 
 const CATEGORIES = [
@@ -79,7 +79,7 @@ export default function FeatureFlagsPage() {
     setNewFlag({ featureKey: '', name: '', description: '', category: 'HRMS', enabled: false });
   };
 
-  if (isLoading) return <Skeleton count={8} />;
+  if (isLoading) return <div className="space-y-4 p-6">{Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
 
   return (
     <div className="space-y-6">
