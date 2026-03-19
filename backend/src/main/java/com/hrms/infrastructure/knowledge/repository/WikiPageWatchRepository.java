@@ -22,4 +22,8 @@ public interface WikiPageWatchRepository extends JpaRepository<WikiPageWatch, UU
     List<WikiPageWatch> findWatchesByUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId);
 
     boolean existsByPageIdAndUserId(UUID pageId, UUID userId);
+
+    Optional<WikiPageWatch> findByTenantIdAndPageIdAndUserId(UUID tenantId, UUID pageId, UUID userId);
+
+    boolean existsByTenantIdAndPageIdAndUserId(UUID tenantId, UUID pageId, UUID userId);
 }

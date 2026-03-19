@@ -18,4 +18,8 @@ public interface BlogLikeRepository extends JpaRepository<BlogLike, UUID> {
     long countByTenantIdAndPostId(@Param("tenantId") UUID tenantId, @Param("postId") UUID postId);
 
     boolean existsByPostIdAndUserId(UUID postId, UUID userId);
+
+    Optional<BlogLike> findByTenantIdAndPostIdAndUserId(UUID tenantId, UUID postId, UUID userId);
+
+    boolean existsByTenantIdAndPostIdAndUserId(UUID tenantId, UUID postId, UUID userId);
 }
