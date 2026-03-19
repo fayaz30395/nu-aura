@@ -208,7 +208,13 @@
       "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \"SELECT pg_advisory_unlock_all\\(\\);\")",
       "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \"SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 5;\")",
       "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \"SELECT indexname FROM pg_indexes WHERE indexname = ''idx_attendance_records_tenant_employee_date'';\")",
-      "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \":*)"
+      "Bash(PGPASSWORD=hrms_dev_password psql -h localhost -U hrms -d hrms_dev -c \":*)",
+      "Bash(redis-cli ping:*)",
+      "Bash(bash ../backend/start-backend.sh)",
+      "Bash(PGPASSWORD=npg_p3Nnmrd9PvhB psql \"postgresql://neondb_owner@ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require\" -c \"SELECT tablename FROM pg_tables WHERE schemaname = ''public'' AND tablename LIKE ''approval%'' OR tablename LIKE ''workflow%'';\")",
+      "Bash(source ../backend/start-backend.sh)",
+      "Bash(PGPASSWORD=npg_p3Nnmrd9PvhB psql \"postgresql://neondb_owner@ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require\" -c \"SELECT tablename FROM pg_tables WHERE schemaname = ''public'' ORDER BY tablename;\")",
+      "Bash(PGPASSWORD=npg_p3Nnmrd9PvhB psql \"postgresql://neondb_owner@ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require\" <<'SQL':*)"
     ],
     "additionalDirectories": [
       "/tmp"
