@@ -70,6 +70,25 @@ services:
     networks:
       - hrms_network
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: hrms-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - hrms_network
+
   minio:
     image: minio/minio:latest
     container_name: hrms-minio
@@ -99,6 +118,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+      elasticsearch:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: ${NEON_JDBC_URL:?Set NEON_JDBC_URL in .env}
@@ -155,6 +176,7 @@ volumes:
   zookeeper_data:
   zookeeper_logs:
   kafka_data:
+  elasticsearch_data:
 
 networks:
   hrms_network:
