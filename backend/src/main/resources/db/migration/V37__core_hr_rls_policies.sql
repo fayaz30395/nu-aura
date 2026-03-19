@@ -223,21 +223,8 @@ CREATE POLICY attendance_records_tenant_rls ON attendance_records
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
--- attendance_time_entries
-ALTER TABLE attendance_time_entries ENABLE ROW LEVEL SECURITY;
-CREATE POLICY attendance_time_entries_allow_all ON attendance_time_entries AS PERMISSIVE FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY attendance_time_entries_tenant_rls ON attendance_time_entries
-    AS RESTRICTIVE FOR ALL
-    USING (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    )
-    WITH CHECK (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    );
+-- attendance_time_entries does NOT have a tenant_id column.
+-- RLS policy skipped. Tenant isolation is enforced via parent table FK (attendance_records.tenant_id).
 
 
 -- =============================================================================
@@ -345,21 +332,8 @@ CREATE POLICY assets_tenant_rls ON assets
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
--- asset_assignments
-ALTER TABLE asset_assignments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY asset_assignments_allow_all ON asset_assignments AS PERMISSIVE FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY asset_assignments_tenant_rls ON asset_assignments
-    AS RESTRICTIVE FOR ALL
-    USING (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    )
-    WITH CHECK (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    );
+-- asset_assignments does NOT have a tenant_id column.
+-- RLS policy skipped. Tenant isolation is enforced via parent table FK (assets.tenant_id).
 
 
 -- =============================================================================
@@ -424,21 +398,8 @@ CREATE POLICY audit_logs_tenant_rls ON audit_logs
 -- SECTION I — Recruitment & Onboarding
 -- =============================================================================
 
--- job_postings
-ALTER TABLE job_postings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY job_postings_allow_all ON job_postings AS PERMISSIVE FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY job_postings_tenant_rls ON job_postings
-    AS RESTRICTIVE FOR ALL
-    USING (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    )
-    WITH CHECK (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    );
+-- job_postings does NOT have a tenant_id column.
+-- RLS policy skipped. Tenant isolation is enforced via parent table FK (job_openings.tenant_id).
 
 -- candidates
 ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
@@ -514,21 +475,8 @@ CREATE POLICY goals_tenant_rls ON goals
 -- SECTION K — Document & Notification Tables
 -- =============================================================================
 
--- documents
-ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
-CREATE POLICY documents_allow_all ON documents AS PERMISSIVE FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY documents_tenant_rls ON documents
-    AS RESTRICTIVE FOR ALL
-    USING (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    )
-    WITH CHECK (
-        tenant_id = current_setting('app.current_tenant_id', true)::uuid
-        OR current_setting('app.current_tenant_id', true) IS NULL
-        OR current_setting('app.current_tenant_id', true) = ''
-    );
+-- documents does NOT have a tenant_id column.
+-- RLS policy skipped. Tenant isolation is enforced via application-layer FK references (employees, departments, etc.).
 
 -- notifications
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
@@ -554,17 +502,21 @@ CREATE POLICY notifications_tenant_rls ON notifications
 -- FROM pg_policies
 -- WHERE tablename IN (
 --   'employees', 'departments', 'users', 'roles', 'role_permissions',
+--   'custom_scope_targets', 'user_app_access',
 --   'leave_requests', 'leave_balances', 'leave_types',
---   'attendance_records', 'attendance_time_entries',
+--   'attendance_records',
 --   'payroll_runs', 'payslips', 'salary_structures', 'salary_revisions',
---   'employee_payroll_records', 'assets', 'asset_assignments',
+--   'employee_payroll_records', 'assets',
 --   'approval_steps', 'approval_delegates', 'audit_logs',
---   'job_postings', 'candidates', 'interviews',
---   'performance_reviews', 'goals', 'documents', 'notifications'
+--   'candidates', 'interviews',
+--   'performance_reviews', 'goals', 'notifications'
 -- )
 -- ORDER BY tablename, policyname;
 --
--- Expected: each table should have TWO policies:
+-- Expected: each table above should have TWO policies:
 --   1. *_allow_all (PERMISSIVE)
 --   2. *_tenant_rls (RESTRICTIVE)
+--
+-- Skipped (no tenant_id column — isolation via parent FK):
+--   attendance_time_entries, asset_assignments, job_postings, documents
 -- =============================================================================

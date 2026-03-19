@@ -80,8 +80,8 @@ export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
         onClick={cycle}
         className={cn(
           'p-2 rounded-xl transition-all duration-200',
-          'text-white/80 hover:text-white',
-          'hover:bg-white/10',
+          'text-[var(--header-text-muted)] hover:text-[var(--header-text)]',
+          'hover:bg-[var(--header-hover-bg)]',
           className,
         )}
         aria-label={`Theme: ${theme}. Click to cycle.`}
@@ -100,8 +100,8 @@ export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
         onClick={() => setOpen((v) => !v)}
         className={cn(
           'flex items-center gap-1.5 px-2.5 py-2 rounded-xl',
-          'text-white/80 hover:text-white',
-          'hover:bg-white/10 transition-all duration-200',
+          'text-[var(--header-text-muted)] hover:text-[var(--header-text)]',
+          'hover:bg-[var(--header-hover-bg)] transition-all duration-200',
         )}
         aria-label="Toggle theme"
         aria-expanded={open}

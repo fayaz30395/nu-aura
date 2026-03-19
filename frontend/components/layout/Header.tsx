@@ -78,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({
     <header
       className={cn(
         'sticky top-0 z-40 flex-shrink-0 glass-aura border-b transition-all duration-300',
-        'h-16 text-white',
+        'h-16',
         className
       )}
     >
@@ -89,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({
           {showMenuButton && (
             <button
               onClick={onMenuClick}
-              className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all md:hidden min-w-[40px] min-h-[40px] flex items-center justify-center"
+              className="p-2 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all md:hidden min-w-[40px] min-h-[40px] flex items-center justify-center"
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
@@ -103,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({
               alt="NuLogic"
               width={120}
               height={32}
-              className="h-7 w-auto object-contain dark:brightness-0 dark:invert"
+              className="h-7 w-auto object-contain"
               priority
             />
           </div>
@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="lg:hidden p-2.5 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Search"
           >
             <Search className="h-5 w-5" />
@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({
         {/* Right Side - Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Help */}
-          <button className="hidden sm:flex p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all" aria-label="Help">
+          <button className="hidden sm:flex p-2.5 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all" aria-label="Help">
             <HelpCircle className="h-5 w-5" />
           </button>
 
@@ -143,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
+              className="notification-btn relative p-2.5 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />
@@ -164,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Divider */}
-          <div className="hidden sm:block w-px h-8 bg-surface-200 dark:bg-surface-700 mx-2" />
+          <div className="hidden sm:block w-px h-8 mx-2" style={{ backgroundColor: 'var(--header-divider)' }} />
 
           {/* User Dropdown */}
           <UserMenu
