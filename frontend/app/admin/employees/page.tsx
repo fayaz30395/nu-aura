@@ -198,6 +198,9 @@ function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: 
           <button
             key={role.value}
             type="button"
+            role="checkbox"
+            aria-checked={selectedRoles.includes(role.value)}
+            aria-label={`Assign ${role.label} role`}
             onClick={() => toggleRole(role.value)}
             className={`flex items-center gap-2 p-2 rounded-lg border text-left text-xs transition-all ${
               selectedRoles.includes(role.value)
@@ -441,7 +444,7 @@ export default function AdminEmployeesPage() {
                             </span>
                           </td>
                           <td className="text-right">
-                            <Button variant="ghost" size="icon-sm" onClick={() => setEditingRoleForEmployee(emp)} title="Edit roles">
+                            <Button variant="ghost" size="icon-sm" onClick={() => setEditingRoleForEmployee(emp)} title="Edit roles" aria-label={`Edit roles for ${emp.fullName || emp.firstName}`}>
                               <Pencil className="h-3.5 w-3.5" />
                             </Button>
                           </td>
@@ -613,6 +616,9 @@ export default function AdminEmployeesPage() {
                           <button
                             key={role.value}
                             type="button"
+                            role="checkbox"
+                            aria-checked={isSelected}
+                            aria-label={`${role.label}: ${role.description}`}
                             onClick={() => {
                               const next = isSelected
                                 ? field.value.filter((r: string) => r !== role.value)
