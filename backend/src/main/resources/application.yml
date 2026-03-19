@@ -89,6 +89,9 @@ spring:
           max-idle: 8
           min-idle: 2
 
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+
   cache:
     type: redis
     redis:
@@ -284,6 +287,10 @@ app:
     WELLNESS: true
     TRAVEL: true
     CALENDAR: true
+
+  # Elasticsearch for NU-Fluence full-text search (default: disabled)
+  elasticsearch:
+    enabled: ${ELASTICSEARCH_ENABLED:false}
 
   # Payment module kill-switch (static config-level, complements DB feature flags)
   payments:
