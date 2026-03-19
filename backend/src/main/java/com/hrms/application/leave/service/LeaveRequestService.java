@@ -1,7 +1,10 @@
 package com.hrms.application.leave.service;
 
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
@@ -10,6 +13,7 @@ import com.hrms.domain.event.leave.LeaveRejectedEvent;
 import com.hrms.domain.event.leave.LeaveRequestedEvent;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.leave.LeaveType;
+import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
@@ -27,7 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class LeaveRequestService {
+public class LeaveRequestService implements ApprovalCallbackHandler {
 
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveBalanceService leaveBalanceService;
@@ -35,6 +39,7 @@ public class LeaveRequestService {
     private final EmployeeRepository employeeRepository;
     private final LeaveTypeRepository leaveTypeRepository;
     private final DomainEventPublisher domainEventPublisher;
+    private final WorkflowService workflowService;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
@@ -69,6 +74,9 @@ public class LeaveRequestService {
 
         // Publish domain event for downstream consumers (notifications, analytics, audit)
         publishLeaveRequestedEvent(saved, tenantId);
+
+        // Start approval workflow
+        startLeaveApprovalWorkflow(saved, tenantId);
 
         return saved;
     }
@@ -241,6 +249,98 @@ public class LeaveRequestService {
     public Page<LeaveRequest> getLeaveRequestsByStatus(LeaveRequest.LeaveRequestStatus status, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return leaveRequestRepository.findAllByTenantIdAndStatus(tenantId, status, pageable);
+    }
+
+    // ======================== ApprovalCallbackHandler ========================
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.LEAVE_REQUEST;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Leave request {} approved via workflow by {}", entityId, approvedBy);
+
+        LeaveRequest request = leaveRequestRepository.findById(entityId)
+                .filter(lr -> lr.getTenantId().equals(tenantId))
+                .orElse(null);
+
+        if (request == null) {
+            log.warn("Leave request {} not found for approval callback", entityId);
+            return;
+        }
+
+        if (request.getStatus() != LeaveRequest.LeaveRequestStatus.PENDING) {
+            log.warn("Leave request {} already in status {}, skipping approval", entityId, request.getStatus());
+            return;
+        }
+
+        request.approve(approvedBy);
+        LeaveRequest saved = leaveRequestRepository.save(request);
+
+        // Deduct leave balance
+        java.math.BigDecimal daysToDeduct = Boolean.TRUE.equals(saved.getIsHalfDay())
+                ? new java.math.BigDecimal("0.5")
+                : saved.getTotalDays();
+
+        leaveBalanceService.deductLeave(saved.getEmployeeId(), saved.getLeaveTypeId(), daysToDeduct);
+
+        notifyLeaveApproved(saved);
+        publishLeaveApprovedEvent(saved, tenantId, approvedBy, daysToDeduct);
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Leave request {} rejected via workflow by {}", entityId, rejectedBy);
+
+        LeaveRequest request = leaveRequestRepository.findById(entityId)
+                .filter(lr -> lr.getTenantId().equals(tenantId))
+                .orElse(null);
+
+        if (request == null) {
+            log.warn("Leave request {} not found for rejection callback", entityId);
+            return;
+        }
+
+        if (request.getStatus() != LeaveRequest.LeaveRequestStatus.PENDING) {
+            log.warn("Leave request {} already in status {}, skipping rejection", entityId, request.getStatus());
+            return;
+        }
+
+        request.reject(rejectedBy, reason);
+        leaveRequestRepository.save(request);
+
+        notifyLeaveRejected(request, reason);
+        publishLeaveRejectedEvent(request, tenantId, rejectedBy, reason);
+    }
+
+    // ======================== Workflow Start Helper ========================
+
+    private void startLeaveApprovalWorkflow(LeaveRequest leaveRequest, UUID tenantId) {
+        try {
+            Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findById(leaveRequest.getLeaveTypeId()).orElse(null);
+
+            String employeeName = employee != null ? employee.getFirstName() + " " + employee.getLastName() : "Employee";
+            String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
+
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.LEAVE_REQUEST);
+            workflowRequest.setEntityId(leaveRequest.getId());
+            workflowRequest.setTitle("Leave Approval: " + employeeName + " - " + leaveTypeName);
+            if (employee != null && employee.getDepartmentId() != null) {
+                workflowRequest.setDepartmentId(employee.getDepartmentId());
+            }
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for leave request: {}", leaveRequest.getId());
+        } catch (Exception e) {
+            log.warn("Could not start approval workflow for leave request {}: {}",
+                    leaveRequest.getId(), e.getMessage());
+        }
     }
 
     // ======================== Domain Event Publishing Helpers ========================
