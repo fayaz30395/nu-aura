@@ -2,8 +2,12 @@ package com.hrms.application.asset.service;
 
 import com.hrms.api.asset.dto.AssetRequest;
 import com.hrms.api.asset.dto.AssetResponse;
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.domain.asset.Asset;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.asset.repository.AssetRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.common.security.TenantContext;
@@ -25,10 +29,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AssetManagementService {
+public class AssetManagementService implements ApprovalCallbackHandler {
 
     private final AssetRepository assetRepository;
     private final EmployeeRepository employeeRepository;
+    private final WorkflowService workflowService;
 
     @Transactional
     public AssetResponse createAsset(AssetRequest request) {
@@ -179,6 +184,95 @@ public class AssetManagementService {
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
         assetRepository.delete(asset);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ApprovalCallbackHandler
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.ASSET_REQUEST;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Asset request {} approved via workflow by {}", entityId, approvedBy);
+
+        Asset asset = assetRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (asset == null) {
+            log.warn("Asset {} not found for approval callback", entityId);
+            return;
+        }
+
+        // Mark asset as assigned if it was pending assignment
+        if (asset.getStatus() == Asset.AssetStatus.AVAILABLE && asset.getAssignedTo() != null) {
+            asset.setStatus(Asset.AssetStatus.ASSIGNED);
+            assetRepository.save(asset);
+            log.info("Asset {} assigned to {} after approval", entityId, asset.getAssignedTo());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Asset request {} rejected via workflow by {}: {}", entityId, rejectedBy, reason);
+
+        Asset asset = assetRepository.findByIdAndTenantId(entityId, tenantId).orElse(null);
+        if (asset == null) {
+            log.warn("Asset {} not found for rejection callback", entityId);
+            return;
+        }
+
+        // Clear the pending assignment
+        if (asset.getAssignedTo() != null && asset.getStatus() == Asset.AssetStatus.AVAILABLE) {
+            asset.setAssignedTo(null);
+            assetRepository.save(asset);
+            log.info("Asset {} assignment cleared after rejection", entityId);
+        }
+    }
+
+    /**
+     * Request asset assignment via approval workflow.
+     * Sets assignedTo but keeps status as AVAILABLE until approved.
+     */
+    @Transactional
+    public AssetResponse requestAssetAssignment(UUID assetId, UUID employeeId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
+
+        if (asset.getStatus() != Asset.AssetStatus.AVAILABLE) {
+            throw new IllegalArgumentException("Asset is not available for assignment");
+        }
+
+        employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+
+        // Set pending assignment (status stays AVAILABLE until workflow approves)
+        asset.setAssignedTo(employeeId);
+        Asset saved = assetRepository.save(asset);
+
+        // Start workflow
+        try {
+            String employeeName = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                    .map(Employee::getFullName).orElse("Employee");
+
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.ASSET_REQUEST);
+            workflowRequest.setEntityId(assetId);
+            workflowRequest.setTitle("Asset Request: " + asset.getAssetName() + " for " + employeeName);
+            workflowRequest.setAmount(asset.getPurchaseCost());
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for asset request: {} -> {}", assetId, employeeId);
+        } catch (Exception e) {
+            log.warn("Could not start approval workflow for asset request {}: {}", assetId, e.getMessage());
+        }
+
+        return mapToAssetResponse(saved);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
