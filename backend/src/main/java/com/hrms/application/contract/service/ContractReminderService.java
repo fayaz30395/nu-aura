@@ -8,12 +8,8 @@ import com.hrms.infrastructure.contract.repository.ContractReminderRepository;
 import com.hrms.infrastructure.contract.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.hrms.domain.tenant.Tenant;
-import com.hrms.infrastructure.tenant.repository.TenantRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,7 +28,6 @@ public class ContractReminderService {
 
     private final ContractReminderRepository reminderRepository;
     private final ContractRepository contractRepository;
-    private final TenantRepository tenantRepository;
 
     /**
      * Create or update expiry reminder for contract
@@ -152,58 +147,8 @@ public class ContractReminderService {
         return reminderRepository.findRemindersInDateRange(startDate, endDate);
     }
 
-    /**
-     * Scheduled task to auto-create reminders for expiring contracts.
-     * Runs daily at 2 AM.
-     *
-     * <p>SEC-FIX: Iterates over all ACTIVE tenants and sets TenantContext per
-     * iteration so that contract queries are properly scoped. Without tenant
-     * context, queries would either fail or return cross-tenant data.</p>
-     */
-    @Scheduled(cron = "0 0 2 * * *")
-    public void autoCreateExpiryReminders() {
-        log.info("Running scheduled task to auto-create expiry reminders");
-
-        List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
-        for (Tenant tenant : activeTenants) {
-            TenantContext.setCurrentTenant(tenant.getId());
-            try {
-                // TODO: Get active contracts expiring within reminder window and create reminders
-                log.debug("Checked expiry reminders for tenant {}", tenant.getId());
-            } catch (Exception e) {
-                log.error("Error creating expiry reminders for tenant {}: {}", tenant.getId(), e.getMessage());
-            } finally {
-                TenantContext.clear();
-            }
-        }
-
-        log.info("Expiry reminder job completed for {} tenant(s)", activeTenants.size());
-    }
-
-    /**
-     * Scheduled task to auto-create renewal reminders for auto-renewable contracts.
-     * Runs daily at 3 AM.
-     *
-     * <p>SEC-FIX: Iterates over all ACTIVE tenants and sets TenantContext per
-     * iteration so that contract queries are properly scoped.</p>
-     */
-    @Scheduled(cron = "0 0 3 * * *")
-    public void autoCreateRenewalReminders() {
-        log.info("Running scheduled task to auto-create renewal reminders");
-
-        List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
-        for (Tenant tenant : activeTenants) {
-            TenantContext.setCurrentTenant(tenant.getId());
-            try {
-                // TODO: Get active contracts with auto-renewal and create reminders
-                log.debug("Checked renewal reminders for tenant {}", tenant.getId());
-            } catch (Exception e) {
-                log.error("Error creating renewal reminders for tenant {}: {}", tenant.getId(), e.getMessage());
-            } finally {
-                TenantContext.clear();
-            }
-        }
-
-        log.info("Renewal reminder job completed for {} tenant(s)", activeTenants.size());
-    }
+    // NOTE: Scheduled reminder creation and expiry detection have been moved to
+    // ContractLifecycleScheduler (com.hrms.application.contract.scheduler)
+    // which handles all contract lifecycle automation in a single daily job
+    // with per-tenant isolation, idempotency, and observability.
 }

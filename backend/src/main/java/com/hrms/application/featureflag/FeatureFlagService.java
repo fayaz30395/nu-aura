@@ -139,7 +139,8 @@ public class FeatureFlagService {
                 createDefaultFlag(tenantId, createdBy, FeatureFlag.ENABLE_LMS, "Learning Management", "Enable training/LMS features", "HRMS", false),
                 createDefaultFlag(tenantId, createdBy, FeatureFlag.ENABLE_PAYROLL, "Payroll", "Enable payroll processing", "HRMS", true),
                 createDefaultFlag(tenantId, createdBy, FeatureFlag.ENABLE_PERFORMANCE, "Performance", "Enable performance management", "HRMS", true),
-                createDefaultFlag(tenantId, createdBy, FeatureFlag.ENABLE_HELPDESK, "Helpdesk", "Enable helpdesk/support tickets", "HRMS", false)
+                createDefaultFlag(tenantId, createdBy, FeatureFlag.ENABLE_HELPDESK, "Helpdesk", "Enable helpdesk/support tickets", "HRMS", false),
+                createDefaultFlag(tenantId, createdBy, FeatureFlag.ENABLE_PAYMENTS, "Payments", "Enable payment gateway integration (Razorpay, Stripe, etc.)", "HRMS", false)
         );
 
         for (FeatureFlag flag : defaultFlags) {

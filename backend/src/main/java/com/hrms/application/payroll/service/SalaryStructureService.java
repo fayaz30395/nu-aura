@@ -142,16 +142,17 @@ public class SalaryStructureService {
     public void deleteSalaryStructure(UUID id) {
         SalaryStructure salaryStructure = getSalaryStructureById(id);
 
+        salaryStructure.softDelete();
+        salaryStructureRepository.save(salaryStructure);
+
         auditLogService.logAction(
                 "SALARY_STRUCTURE",
                 id,
                 AuditAction.DELETE,
                 Map.of("employeeId", salaryStructure.getEmployeeId(), "basicSalary", salaryStructure.getBasicSalary()),
                 null,
-                "Salary structure deleted for employee " + salaryStructure.getEmployeeId()
+                "Salary structure soft-deleted for employee " + salaryStructure.getEmployeeId()
         );
-
-        salaryStructureRepository.delete(salaryStructure);
     }
 
     public SalaryStructure deactivateSalaryStructure(UUID id) {

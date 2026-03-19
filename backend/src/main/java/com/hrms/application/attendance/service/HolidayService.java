@@ -1,8 +1,10 @@
 package com.hrms.application.attendance.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.Holiday;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.infrastructure.attendance.repository.HolidayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class HolidayService {
 
     private final HolidayRepository holidayRepository;
+    private final AuditLogService auditLogService;
 
     @CacheEvict(value = CacheConfig.HOLIDAYS, allEntries = true)
     @Transactional
@@ -90,6 +93,16 @@ public class HolidayService {
     @Transactional
     public void deleteHoliday(UUID id) {
         Holiday holiday = getHolidayById(id);
-        holidayRepository.delete(holiday);
+        holiday.softDelete();
+        holidayRepository.save(holiday);
+
+        auditLogService.logAction(
+                "HOLIDAY",
+                holiday.getId(),
+                AuditAction.DELETE,
+                holiday.getHolidayName(),
+                null,
+                "Holiday soft-deleted: " + holiday.getHolidayName() + " (" + holiday.getHolidayDate() + ")"
+        );
     }
 }

@@ -1,9 +1,11 @@
 package com.hrms.application.leave.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.config.CacheConfig;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.leave.LeaveType;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class LeaveTypeService {
 
     private final LeaveTypeRepository leaveTypeRepository;
+    private final AuditLogService auditLogService;
 
     @CacheEvict(value = CacheConfig.LEAVE_TYPES, allEntries = true)
     @Transactional
@@ -108,6 +111,16 @@ public class LeaveTypeService {
     @Transactional
     public void deleteLeaveType(UUID id) {
         LeaveType leaveType = getLeaveTypeById(id);
-        leaveTypeRepository.delete(leaveType);
+        leaveType.softDelete();
+        leaveTypeRepository.save(leaveType);
+
+        auditLogService.logAction(
+                "LEAVE_TYPE",
+                leaveType.getId(),
+                AuditAction.DELETE,
+                leaveType.getLeaveName(),
+                null,
+                "Leave type soft-deleted: " + leaveType.getLeaveCode() + " (" + leaveType.getLeaveName() + ")"
+        );
     }
 }

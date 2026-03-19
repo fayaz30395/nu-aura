@@ -3,10 +3,12 @@ package com.hrms.application.employee.service;
 import com.hrms.api.employee.dto.DepartmentRequest;
 import com.hrms.api.employee.dto.DepartmentResponse;
 import com.hrms.common.config.CacheConfig;
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.employee.Department;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -32,6 +34,9 @@ public class DepartmentService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private AuditLogService auditLogService;
 
     @Transactional
     @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
@@ -180,7 +185,17 @@ public class DepartmentService {
             throw new BusinessException("Cannot delete department with sub-departments.");
         }
 
-        departmentRepository.delete(department);
+        department.softDelete();
+        departmentRepository.save(department);
+
+        auditLogService.logAction(
+                "DEPARTMENT",
+                department.getId(),
+                AuditAction.DELETE,
+                department.getName(),
+                null,
+                "Department soft-deleted: " + department.getCode() + " (" + department.getName() + ")"
+        );
     }
 
     @Transactional

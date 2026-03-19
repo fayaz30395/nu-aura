@@ -78,4 +78,5 @@ public class FeatureFlag {
     public static final String ENABLE_PAYROLL = "enable_payroll";
     public static final String ENABLE_PERFORMANCE = "enable_performance";
     public static final String ENABLE_HELPDESK = "enable_helpdesk";
+    public static final String ENABLE_PAYMENTS = "enable_payments";
 }

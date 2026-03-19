@@ -333,7 +333,10 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         { id: 'compensation', label: 'Compensation', icon: icon.trendingUp, href: '/compensation', requiredPermission: Permissions.COMPENSATION_VIEW },
         { id: 'benefits', label: 'Benefits', icon: icon.gift, href: '/benefits', requiredPermission: Permissions.BENEFIT_VIEW },
         { id: 'expenses', label: 'Expenses', icon: icon.receipt, href: '/expenses', requiredPermission: Permissions.EXPENSE_VIEW },
-        { id: 'payments', label: 'Payments', icon: icon.creditCard, href: '/payments', requiredPermission: Permissions.PAYMENT_VIEW },
+        // Payments module is gated behind NEXT_PUBLIC_PAYMENTS_ENABLED env var (Phase 2 stabilization)
+        ...(process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true'
+          ? [{ id: 'payments', label: 'Payments', icon: icon.creditCard, href: '/payments', requiredPermission: Permissions.PAYMENT_VIEW }]
+          : []),
         {
           id: 'loans', label: 'Loans', icon: icon.banknote, href: '/loans', requiredPermission: Permissions.LOAN_VIEW,
           children: [

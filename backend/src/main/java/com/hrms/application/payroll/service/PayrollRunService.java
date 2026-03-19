@@ -1,7 +1,9 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.PayrollRun.PayrollStatus;
 import com.hrms.infrastructure.payroll.repository.PayrollRunRepository;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class PayrollRunService {
 
     private final PayrollRunRepository payrollRunRepository;
+    private final AuditLogService auditLogService;
 
     /**
      * Create a new payroll run for a given period.
@@ -161,6 +164,17 @@ public class PayrollRunService {
             throw new IllegalStateException("Cannot delete locked payroll run");
         }
 
-        payrollRunRepository.delete(payrollRun);
+        payrollRun.softDelete();
+        payrollRunRepository.save(payrollRun);
+
+        auditLogService.logAction(
+                "PAYROLL_RUN",
+                payrollRun.getId(),
+                AuditAction.DELETE,
+                java.util.Map.of("period", payrollRun.getPayPeriodYear() + "-" + payrollRun.getPayPeriodMonth(),
+                        "status", payrollRun.getStatus().name()),
+                null,
+                "Payroll run soft-deleted for period " + payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth()
+        );
     }
 }
