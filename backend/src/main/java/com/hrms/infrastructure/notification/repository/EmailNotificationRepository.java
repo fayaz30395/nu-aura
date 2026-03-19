@@ -27,6 +27,13 @@ public interface EmailNotificationRepository extends JpaRepository<EmailNotifica
     @Query("SELECT e FROM EmailNotification e WHERE e.status = 'PENDING' OR (e.status = 'FAILED' AND e.retryCount < 3)")
     List<EmailNotification> findPendingOrRetryableEmails();
 
+    /**
+     * Tenant-scoped version of {@link #findPendingOrRetryableEmails()}.
+     * Use this in scheduled jobs to avoid cross-tenant data leakage.
+     */
+    @Query("SELECT e FROM EmailNotification e WHERE e.tenantId = :tenantId AND (e.status = 'PENDING' OR (e.status = 'FAILED' AND e.retryCount < 3))")
+    List<EmailNotification> findPendingOrRetryableEmailsByTenantId(@Param("tenantId") UUID tenantId);
+
     Long countByTenantIdAndStatus(UUID tenantId, EmailNotification.EmailStatus status);
 
     List<EmailNotification> findAllByTenantIdAndRecipientEmailAndEmailType(

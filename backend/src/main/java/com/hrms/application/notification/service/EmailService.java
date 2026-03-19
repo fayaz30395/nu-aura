@@ -144,13 +144,40 @@ public class EmailService {
     }
 
     /**
-     * Retry failed emails (called by scheduled task)
+     * Retry failed emails (called by scheduled task).
+     *
+     * @deprecated Use {@link #retryFailedEmailsForTenant(UUID)} instead. This method
+     *             uses a cross-tenant query and should not be called from scheduled jobs.
      */
+    @Deprecated
     @Transactional
     public void retryFailedEmails() {
         List<EmailNotification> failedEmails = emailRepository.findPendingOrRetryableEmails();
 
         log.info("Retrying {} failed emails", failedEmails.size());
+
+        for (EmailNotification email : failedEmails) {
+            if (email.getRetryCount() < 3) {
+                sendEmailInternal(email);
+            }
+        }
+    }
+
+    /**
+     * Retry failed emails for a specific tenant (called by scheduled task).
+     *
+     * <p>SEC-FIX: Tenant-scoped version that prevents cross-tenant data leakage.
+     * The caller must set TenantContext before invoking this method.</p>
+     */
+    @Transactional
+    public void retryFailedEmailsForTenant(UUID tenantId) {
+        List<EmailNotification> failedEmails = emailRepository.findPendingOrRetryableEmailsByTenantId(tenantId);
+
+        if (failedEmails.isEmpty()) {
+            return;
+        }
+
+        log.info("Retrying {} failed emails for tenant {}", failedEmails.size(), tenantId);
 
         for (EmailNotification email : failedEmails) {
             if (email.getRetryCount() < 3) {

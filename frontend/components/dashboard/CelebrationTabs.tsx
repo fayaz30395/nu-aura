@@ -118,7 +118,15 @@ export function CelebrationTabs() {
           {state.isLoading ? (
             <SkeletonLoader />
           ) : state.error ? (
-            <div className="py-4 text-center text-xs text-[var(--text-muted)]">{state.error}</div>
+            <div className="py-4 flex flex-col items-center gap-2 text-center">
+              <p className="text-xs text-[var(--text-muted)]">{state.error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="text-xs text-primary-500 hover:text-primary-400 font-medium transition-colors"
+              >
+                Try again
+              </button>
+            </div>
           ) : (
             <>
               {activeTab === 'birthdays' && birthdayCount > 0 && (

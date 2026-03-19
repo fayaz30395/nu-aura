@@ -124,30 +124,56 @@ public class EmailSchedulerService {
 
     /**
      * Retry failed emails every hour.
+     *
+     * <p>SEC-FIX: Iterates over all ACTIVE tenants and sets TenantContext per
+     * iteration so that failed email retries are properly scoped to each tenant.
+     * Previously called emailService.retryFailedEmails() without tenant context,
+     * which used a cross-tenant query (no tenant_id filter) — a data isolation risk.</p>
      */
     @Scheduled(cron = "0 0 * * * *")
     public void retryFailedEmails() {
         log.info("Starting failed email retry job");
-        try {
-            emailService.retryFailedEmails();
-        } catch (Exception e) {
-            log.error("Error in retry failed emails job: {}", e.getMessage());
+
+        List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
+        for (Tenant tenant : activeTenants) {
+            TenantContext.setCurrentTenant(tenant.getId());
+            try {
+                emailService.retryFailedEmailsForTenant(tenant.getId());
+            } catch (Exception e) {
+                log.error("Error retrying failed emails for tenant {}: {}", tenant.getCode(), e.getMessage());
+            } finally {
+                TenantContext.clear();
+            }
         }
-        log.info("Failed email retry job completed");
+
+        log.info("Failed email retry job completed for {} tenant(s)", activeTenants.size());
     }
 
     /**
      * Send scheduled emails every 15 minutes.
+     *
+     * <p>SEC-FIX: Iterates over all ACTIVE tenants and sets TenantContext per
+     * iteration so that scheduled email queries are properly scoped. Previously
+     * called emailService.sendScheduledEmails() without tenant context, passing
+     * null to the tenant-scoped query — resulting in no emails being sent.</p>
      */
     @Scheduled(cron = "0 */15 * * * *")
     @Transactional
     public void sendScheduledEmails() {
         log.info("Starting scheduled email job");
-        try {
-            emailService.sendScheduledEmails();
-        } catch (Exception e) {
-            log.error("Error in scheduled emails job: {}", e.getMessage());
+
+        List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
+        for (Tenant tenant : activeTenants) {
+            TenantContext.setCurrentTenant(tenant.getId());
+            try {
+                emailService.sendScheduledEmails();
+            } catch (Exception e) {
+                log.error("Error sending scheduled emails for tenant {}: {}", tenant.getCode(), e.getMessage());
+            } finally {
+                TenantContext.clear();
+            }
         }
-        log.info("Scheduled email job completed");
+
+        log.info("Scheduled email job completed for {} tenant(s)", activeTenants.size());
     }
 }

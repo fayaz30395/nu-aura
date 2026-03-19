@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.support.DefaultTransactionStatus;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -71,6 +70,7 @@ import java.util.UUID;
 public class TenantRlsTransactionManager extends JpaTransactionManager {
 
     private static final String SET_TENANT_SQL = "SET LOCAL app.current_tenant_id = '%s'";
+    private static final String RESET_TENANT_SQL = "RESET app.current_tenant_id";
 
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
@@ -83,15 +83,39 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
             return;
         }
 
+        setTenantOnConnection(tenantId);
+    }
+
+    /**
+     * Resets the PostgreSQL session variable after the transaction completes
+     * (commit or rollback). Although {@code SET LOCAL} is automatically scoped
+     * to the transaction, this explicit reset provides defense-in-depth:
+     * <ul>
+     *   <li>Guards against any code path that might use {@code SET} (without
+     *       {@code LOCAL}), which would persist the value on the connection.</li>
+     *   <li>Ensures the connection is returned to the pool in a clean state,
+     *       preventing tenant ID leakage if the connection is reused for a
+     *       request without tenant context (e.g., health checks).</li>
+     * </ul>
+     */
+    @Override
+    protected void doCleanupAfterCompletion(Object transaction) {
+        resetTenantOnConnection();
+        super.doCleanupAfterCompletion(transaction);
+    }
+
+    /**
+     * Sets {@code app.current_tenant_id} on the current transaction's connection.
+     */
+    private void setTenantOnConnection(UUID tenantId) {
         DataSource ds = getDataSource();
         if (ds == null) {
             log.warn("TenantRlsTransactionManager: DataSource is null, cannot set app.current_tenant_id");
             return;
         }
 
-        Connection conn = null;
         try {
-            conn = DataSourceUtils.getConnection(ds);
+            Connection conn = DataSourceUtils.getConnection(ds);
             try (Statement stmt = conn.createStatement()) {
                 // SET LOCAL scopes the variable to this transaction only.
                 // Using string interpolation here is intentional: tenantId is a
@@ -111,9 +135,33 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
                 "RLS enforcement degraded to application layer only. Error: {}",
                 tenantId, e.getMessage()
             );
-        } finally {
-            // Do NOT close or release the connection — the transaction manager owns it.
-            // DataSourceUtils.releaseConnection() is intentionally NOT called here.
+        }
+    }
+
+    /**
+     * Resets the session variable on the connection before it is returned to the pool.
+     * Uses {@code RESET} which reverts the variable to its session default (empty string,
+     * as set by HikariCP's {@code connectionInitSql}).
+     */
+    private void resetTenantOnConnection() {
+        DataSource ds = getDataSource();
+        if (ds == null) {
+            return;
+        }
+
+        try {
+            Connection conn = DataSourceUtils.getConnection(ds);
+            // Only reset if connection is still valid and not already closed
+            if (conn != null && !conn.isClosed()) {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(RESET_TENANT_SQL);
+                    log.trace("RLS: RESET app.current_tenant_id on transaction cleanup");
+                }
+            }
+        } catch (SQLException e) {
+            // Best-effort cleanup — don't fail the transaction for this
+            log.debug("TenantRlsTransactionManager: Failed to reset app.current_tenant_id on cleanup: {}",
+                    e.getMessage());
         }
     }
 }
