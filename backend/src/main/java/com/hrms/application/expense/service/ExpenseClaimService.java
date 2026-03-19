@@ -2,6 +2,9 @@ package com.hrms.application.expense.service;
 
 import com.hrms.api.expense.dto.ExpenseClaimRequest;
 import com.hrms.api.expense.dto.ExpenseClaimResponse;
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
@@ -9,6 +12,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,11 +34,12 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ExpenseClaimService {
+public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     private final ExpenseClaimRepository expenseClaimRepository;
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
+    private final WorkflowService workflowService;
 
     @Transactional
     public ExpenseClaimResponse createExpenseClaim(UUID employeeId, ExpenseClaimRequest request) {
@@ -103,6 +108,9 @@ public class ExpenseClaimService {
         claim.submit();
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Submitted expense claim: {}", saved.getClaimNumber());
+
+        // Start approval workflow
+        startExpenseApprovalWorkflow(saved, tenantId);
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
@@ -307,6 +315,81 @@ public class ExpenseClaimService {
 
         return summary;
     }
+
+    // ======================== ApprovalCallbackHandler ========================
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.EXPENSE_CLAIM;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Expense claim {} approved via workflow by {}", entityId, approvedBy);
+
+        ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(entityId, tenantId)
+                .orElse(null);
+
+        if (claim == null) {
+            log.warn("Expense claim {} not found for approval callback", entityId);
+            return;
+        }
+
+        if (claim.getStatus() != ExpenseClaim.ExpenseStatus.SUBMITTED &&
+            claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
+            log.warn("Expense claim {} already in status {}, skipping approval", entityId, claim.getStatus());
+            return;
+        }
+
+        claim.approve(approvedBy);
+        expenseClaimRepository.save(claim);
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Expense claim {} rejected via workflow by {}", entityId, rejectedBy);
+
+        ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(entityId, tenantId)
+                .orElse(null);
+
+        if (claim == null) {
+            log.warn("Expense claim {} not found for rejection callback", entityId);
+            return;
+        }
+
+        if (claim.getStatus() != ExpenseClaim.ExpenseStatus.SUBMITTED &&
+            claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
+            log.warn("Expense claim {} already in status {}, skipping rejection", entityId, claim.getStatus());
+            return;
+        }
+
+        claim.reject(rejectedBy, reason);
+        expenseClaimRepository.save(claim);
+    }
+
+    private void startExpenseApprovalWorkflow(ExpenseClaim claim, UUID tenantId) {
+        try {
+            String employeeName = employeeRepository.findByIdAndTenantId(claim.getEmployeeId(), tenantId)
+                    .map(emp -> emp.getFirstName() + " " + emp.getLastName())
+                    .orElse("Employee");
+
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.EXPENSE_CLAIM);
+            workflowRequest.setEntityId(claim.getId());
+            workflowRequest.setTitle("Expense Approval: " + employeeName + " - " + claim.getClaimNumber());
+            workflowRequest.setAmount(claim.getAmount());
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for expense claim: {}", claim.getClaimNumber());
+        } catch (Exception e) {
+            log.warn("Could not start approval workflow for expense claim {}: {}",
+                    claim.getClaimNumber(), e.getMessage());
+        }
+    }
+
+    // ======================== Claim Number Generation ========================
 
     private String generateClaimNumber(UUID tenantId) {
         String prefix = "EXP-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "-";
