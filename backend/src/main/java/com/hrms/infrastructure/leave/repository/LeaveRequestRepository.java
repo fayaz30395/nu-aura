@@ -107,6 +107,18 @@ public interface LeaveRequestRepository
                      @Param("startDate") LocalDate startDate,
                      @Param("endDate") LocalDate endDate);
 
+       /**
+        * Checks if an employee has an active approved leave covering a given date.
+        * Used by auto-delegation in WorkflowService.
+        */
+       @Query("SELECT COUNT(lr) > 0 FROM LeaveRequest lr WHERE lr.tenantId = :tenantId " +
+                     "AND lr.employeeId = :employeeId AND lr.status = 'APPROVED' " +
+                     "AND :date BETWEEN lr.startDate AND lr.endDate")
+       boolean isEmployeeOnLeave(
+                     @Param("tenantId") UUID tenantId,
+                     @Param("employeeId") UUID employeeId,
+                     @Param("date") LocalDate date);
+
        // Count with status after a certain date
        @Query("SELECT COUNT(lr) FROM LeaveRequest lr WHERE lr.tenantId = :tenantId " +
                      "AND lr.status = :status AND lr.employeeId = :employeeId AND lr.startDate >= :startDate")
