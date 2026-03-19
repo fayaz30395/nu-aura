@@ -21,9 +21,10 @@ import { NuAuraLoader } from '@/components/ui/Loading';
 import { useEmployees, useCreateEmployee, useManagers } from '@/lib/hooks/queries/useEmployees';
 import { useAllDepartments } from '@/lib/hooks/queries/useDepartments';
 import { useRoles, usePermissions as usePermissionsList, useAssignRolesToUser } from '@/lib/hooks/queries/useRoles';
-import { useUpdateUserRole } from '@/lib/hooks/queries/useAdmin';
-import { Permissions, Roles } from '@/lib/hooks/usePermissions';
+// useUpdateUserRole removed — using usersApi.assignRoles for multi-role support
+import { Permissions, Roles, usePermissions } from '@/lib/hooks/usePermissions';
 import { Employee, CreateEmployeeRequest } from '@/lib/types/employee';
+import { usersApi } from '@/lib/api/users';
 import { Role, Permission } from '@/lib/types/roles';
 
 // ──────────────────────────────────────────────
@@ -228,11 +229,27 @@ function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: 
 // Main Page
 // ──────────────────────────────────────────────
 export default function AdminEmployeesPage() {
+  const { hasPermission, isAdmin, isReady } = usePermissions();
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formStep, setFormStep] = useState<'details' | 'role'>('details');
   const [editingRoleForEmployee, setEditingRoleForEmployee] = useState<Employee | null>(null);
+
+  // RBAC guard — only SuperAdmin, HR Admin, or users with EMPLOYEE:MANAGE can access
+  if (isReady && !isAdmin && !hasPermission(Permissions.EMPLOYEE_MANAGE)) {
+    return (
+      <AdminPageContent className="p-8 flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-4">
+          <div className="h-16 w-16 mx-auto rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+            <Shield className="h-8 w-8 text-red-500" />
+          </div>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Access Denied</h2>
+          <p className="text-sm text-[var(--text-muted)]">You need HR Admin or Employee Management permission to access this page.</p>
+        </div>
+      </AdminPageContent>
+    );
+  }
 
   // Queries
   const { data: employeesPage, isLoading: employeesLoading, error: employeesError } = useEmployees(page, PAGE_SIZE);
@@ -242,7 +259,7 @@ export default function AdminEmployeesPage() {
 
   // Mutations
   const createEmployeeMutation = useCreateEmployee();
-  const updateRoleMutation = useUpdateUserRole();
+
 
   const employees = employeesPage?.content ?? [];
   const totalPages = employeesPage?.totalPages ?? 0;
@@ -284,12 +301,10 @@ export default function AdminEmployeesPage() {
 
       const newEmployee = await createEmployeeMutation.mutateAsync(employeePayload);
 
-      // Assign roles (supports multiple)
+      // Assign ALL selected roles via PUT /users/{id}/roles
       if (data.roleCodes.length > 0 && newEmployee.userId) {
         try {
-          await updateRoleMutation.mutateAsync({ userId: newEmployee.userId, role: data.roleCodes[0] });
-          // Note: For multi-role, the useAssignRolesToUser hook supports full array
-          // but we use updateUserRole for the primary role here for compatibility
+          await usersApi.assignRoles(newEmployee.userId, data.roleCodes);
         } catch {
           notifications.show({
             title: 'Partial Success', color: 'yellow', icon: <AlertCircle className="h-4 w-4" />,

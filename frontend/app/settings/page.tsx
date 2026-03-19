@@ -401,7 +401,7 @@ export default function SettingsPage() {
                 </div>
               </div>
               {/* Inline password validation error */}
-              {error && (error.includes('password') || error.includes('Password') || error.includes('fill in all')) && (
+              {error && (error.toLowerCase().includes('password') || error.toLowerCase().includes('match') || error.toLowerCase().includes('fill in all')) && (
                 <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm">
                   <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
                   <p className="text-red-800 dark:text-red-200">{error}</p>
