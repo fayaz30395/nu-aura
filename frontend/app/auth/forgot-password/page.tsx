@@ -13,6 +13,8 @@ import {
   ArrowLeft,
   CheckCircle,
   AlertCircle,
+  ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { apiClient } from '@/lib/api/client';
 
@@ -28,6 +30,7 @@ type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSsoUser, setIsSsoUser] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -42,9 +45,18 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data: ForgotPasswordData) => {
     setError(null);
     setIsLoading(true);
+    setIsSsoUser(false);
 
     try {
-      await apiClient.post('/auth/forgot-password', { email: data.email });
+      const response = await apiClient.post<{ message: string; authProvider: string }>(
+        '/auth/forgot-password',
+        { email: data.email }
+      );
+
+      if (response.data.authProvider === 'GOOGLE') {
+        setIsSsoUser(true);
+      }
+
       setIsSubmitted(true);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send reset email. Please try again.';
@@ -71,33 +83,94 @@ export default function ForgotPasswordPage() {
 
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
-              </div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                Check Your Email
-              </h2>
-              <p className="text-[var(--text-secondary)] mb-6">
-                We&apos;ve sent a password reset link to{' '}
-                <span className="font-medium text-[var(--text-primary)]">
-                  {getValues('email')}
-                </span>
-              </p>
-              <p className="text-sm text-[var(--text-muted)] mb-6">
-                Didn&apos;t receive the email? Check your spam folder or{' '}
-                <button
-                  onClick={() => setIsSubmitted(false)}
-                  className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
-                >
-                  try again
-                </button>
-              </p>
-              <Link href="/auth/login">
-                <Button variant="primary" className="w-full">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Sign In
-                </Button>
-              </Link>
+              {isSsoUser ? (
+                <>
+                  {/* Google SSO user — redirect to Google account */}
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full mb-4">
+                    <ShieldCheck className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                    Google Sign-In Account
+                  </h2>
+                  <p className="text-[var(--text-secondary)] mb-2">
+                    The account for{' '}
+                    <span className="font-medium text-[var(--text-primary)]">
+                      {getValues('email')}
+                    </span>{' '}
+                    uses Google Sign-In.
+                  </p>
+                  <p className="text-sm text-[var(--text-muted)] mb-6">
+                    Please manage your password through your Google account settings.
+                  </p>
+                  <a
+                    href="https://myaccount.google.com/security"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center w-full gap-2 px-4 py-3 mb-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      />
+                    </svg>
+                    Go to Google Account Security
+                    <ExternalLink className="w-4 h-4 text-[var(--text-muted)]" />
+                  </a>
+                  <Link href="/auth/login">
+                    <Button variant="primary" className="w-full">
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back to Sign In
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  {/* Local user — check email */}
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                    <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                    Check Your Email
+                  </h2>
+                  <p className="text-[var(--text-secondary)] mb-6">
+                    We&apos;ve sent a password reset link to{' '}
+                    <span className="font-medium text-[var(--text-primary)]">
+                      {getValues('email')}
+                    </span>
+                  </p>
+                  <p className="text-sm text-[var(--text-muted)] mb-6">
+                    Didn&apos;t receive the email? Check your spam folder or{' '}
+                    <button
+                      onClick={() => {
+                        setIsSubmitted(false);
+                        setIsSsoUser(false);
+                      }}
+                      className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
+                    >
+                      try again
+                    </button>
+                  </p>
+                  <Link href="/auth/login">
+                    <Button variant="primary" className="w-full">
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back to Sign In
+                    </Button>
+                  </Link>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>

@@ -271,6 +271,12 @@ public class AuthService {
                 log.info("Updated profile picture for user {} from Google SSO", email);
             }
 
+            // Ensure auth_provider is set to GOOGLE for SSO users
+            if (user.getAuthProvider() != com.hrms.domain.user.AuthProvider.GOOGLE) {
+                user.setAuthProvider(com.hrms.domain.user.AuthProvider.GOOGLE);
+                log.info("Updated auth_provider to GOOGLE for user {}", email);
+            }
+
             user.recordSuccessfulLogin();
             userRepository.save(user);
 
@@ -663,14 +669,23 @@ public class AuthService {
     /**
      * Request a password reset for the given email.
      * For security, always returns success even if email doesn't exist.
+     *
+     * @return "LOCAL" if reset email was sent, "GOOGLE" if user uses SSO,
+     *         or "LOCAL" for non-existent emails (to prevent user enumeration).
      */
     @Transactional
-    public void requestPasswordReset(String email) {
+    public String requestPasswordReset(String email) {
         // Search across all tenants for the user by email
         Optional<User> userOpt = userRepository.findByEmail(email);
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+
+            // If user authenticates via Google SSO, don't send a reset email
+            if (user.getAuthProvider() == com.hrms.domain.user.AuthProvider.GOOGLE) {
+                log.info("Password reset requested for Google SSO user: {} — redirecting to Google", email);
+                return "GOOGLE";
+            }
 
             // Generate reset token (valid for 1 hour)
             String resetToken = UUID.randomUUID().toString();
@@ -683,9 +698,11 @@ public class AuthService {
             // Send password reset email
             String userName = user.getFullName() != null ? user.getFullName() : email;
             emailNotificationService.sendPasswordResetEmail(email, userName, resetToken);
+            return "LOCAL";
         } else {
             // Log but don't reveal that user doesn't exist (security best practice)
             log.info("Password reset requested for non-existent email: {}", email);
+            return "LOCAL";
         }
     }
 
