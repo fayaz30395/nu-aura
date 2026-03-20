@@ -941,28 +941,47 @@ public class WorkflowService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
 
-        long pending = stepExecutionRepository.countPendingForUser(tenantId, currentUser);
+        Map<String, Long> counts = new HashMap<>();
 
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        List<Object[]> todayActions = stepExecutionRepository.countTodayActionsByUser(tenantId, currentUser, startOfDay,
-                java.util.List.of(StepExecution.ApprovalAction.APPROVE, StepExecution.ApprovalAction.REJECT));
-
-        long approvedToday = 0;
-        long rejectedToday = 0;
-        for (Object[] row : todayActions) {
-            StepExecution.ApprovalAction action = (StepExecution.ApprovalAction) row[0];
-            long count = (Long) row[1];
-            if (action == StepExecution.ApprovalAction.APPROVE) {
-                approvedToday = count;
-            } else if (action == StepExecution.ApprovalAction.REJECT) {
-                rejectedToday = count;
-            }
+        // Guard: if tenant or user context is unavailable, return zeros
+        if (tenantId == null || currentUser == null) {
+            counts.put("pending", 0L);
+            counts.put("approvedToday", 0L);
+            counts.put("rejectedToday", 0L);
+            return counts;
         }
 
-        Map<String, Long> counts = new HashMap<>();
-        counts.put("pending", pending);
-        counts.put("approvedToday", approvedToday);
-        counts.put("rejectedToday", rejectedToday);
+        try {
+            long pending = stepExecutionRepository.countPendingForUser(tenantId, currentUser);
+            counts.put("pending", pending);
+
+            LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+            List<Object[]> todayActions = stepExecutionRepository.countTodayActionsByUser(tenantId, currentUser, startOfDay,
+                    java.util.List.of(StepExecution.ApprovalAction.APPROVE, StepExecution.ApprovalAction.REJECT));
+
+            long approvedToday = 0;
+            long rejectedToday = 0;
+            if (todayActions != null) {
+                for (Object[] row : todayActions) {
+                    if (row == null || row.length < 2 || row[0] == null || row[1] == null) continue;
+                    StepExecution.ApprovalAction action = (StepExecution.ApprovalAction) row[0];
+                    long count = ((Number) row[1]).longValue();
+                    if (action == StepExecution.ApprovalAction.APPROVE) {
+                        approvedToday = count;
+                    } else if (action == StepExecution.ApprovalAction.REJECT) {
+                        rejectedToday = count;
+                    }
+                }
+            }
+            counts.put("approvedToday", approvedToday);
+            counts.put("rejectedToday", rejectedToday);
+        } catch (Exception e) {
+            log.warn("Error getting inbox counts for user {}: {}", currentUser, e.getMessage());
+            counts.putIfAbsent("pending", 0L);
+            counts.putIfAbsent("approvedToday", 0L);
+            counts.putIfAbsent("rejectedToday", 0L);
+        }
+
         return counts;
     }
 

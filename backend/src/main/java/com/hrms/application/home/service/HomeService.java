@@ -159,7 +159,9 @@ public class HomeService {
         LocalDate today = LocalDate.now();
         LocalDate startDate = today.minusDays(days);
 
-        List<Employee> employees = employeeRepository.findByTenantId(tenantId);
+        // Use date-filtered query instead of loading all employees (fixes NEW-011 O(n) memory issue)
+        List<Employee> employees = employeeRepository.findByTenantIdAndJoiningDateBetweenAndStatus(
+                tenantId, startDate, today, Employee.EmployeeStatus.ACTIVE);
 
         // Get all department IDs and fetch them in one query
         Set<UUID> departmentIds = employees.stream()
@@ -169,10 +171,7 @@ public class HomeService {
         Map<UUID, Department> departmentMap = getDepartmentMap(tenantId, departmentIds);
 
         return employees.stream()
-                .filter(e -> e.getJoiningDate() != null &&
-                             !e.getJoiningDate().isBefore(startDate) &&
-                             !e.getJoiningDate().isAfter(today) &&
-                             e.getStatus() == Employee.EmployeeStatus.ACTIVE)
+                .filter(e -> e.getJoiningDate() != null)
                 .map(e -> {
                     long daysSinceJoining = ChronoUnit.DAYS.between(e.getJoiningDate(), today);
 
@@ -185,9 +184,9 @@ public class HomeService {
                     return NewJoineeResponse.builder()
                             .employeeId(e.getId())
                             .employeeName(e.getFullName())
-                            .avatarUrl(null) // Employee entity doesn't have profile pic
+                            .avatarUrl(null)
                             .department(departmentName)
-                            .designation(e.getDesignation()) // designation is a String field
+                            .designation(e.getDesignation())
                             .joiningDate(e.getJoiningDate())
                             .daysSinceJoining((int) daysSinceJoining)
                             .build();
@@ -265,6 +264,67 @@ public class HomeService {
                             .startDate(leave.getStartDate())
                             .endDate(leave.getEndDate())
                             .reason(leave.getReason())
+                            .build();
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get employees working remotely today (checked in with REMOTE/WFH source)
+     */
+    @Transactional(readOnly = true)
+    public List<RemoteWorkerResponse> getRemoteWorkersToday() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+
+        List<AttendanceRecord> todayRecords = attendanceRecordRepository.findByTenantIdAndAttendanceDate(tenantId, today);
+
+        // Filter for remote/WFH check-ins
+        List<AttendanceRecord> remoteRecords = todayRecords.stream()
+                .filter(r -> r.getCheckInSource() != null &&
+                        (r.getCheckInSource().equalsIgnoreCase("REMOTE") ||
+                         r.getCheckInSource().equalsIgnoreCase("WFH") ||
+                         r.getCheckInSource().equalsIgnoreCase("HOME")))
+                .collect(Collectors.toList());
+
+        if (remoteRecords.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Batch fetch employees
+        Set<UUID> employeeIds = remoteRecords.stream()
+                .map(AttendanceRecord::getEmployeeId)
+                .collect(Collectors.toSet());
+        Map<UUID, Employee> employeeMap = employeeRepository.findAllById(employeeIds).stream()
+                .collect(Collectors.toMap(Employee::getId, Function.identity()));
+
+        // Get department info
+        Set<UUID> departmentIds = employeeMap.values().stream()
+                .filter(e -> e.getDepartmentId() != null)
+                .map(Employee::getDepartmentId)
+                .collect(Collectors.toSet());
+        Map<UUID, Department> departmentMap = getDepartmentMap(tenantId, departmentIds);
+
+        return remoteRecords.stream()
+                .map(record -> {
+                    Employee employee = employeeMap.get(record.getEmployeeId());
+                    if (employee == null) return null;
+
+                    String departmentName = null;
+                    if (employee.getDepartmentId() != null) {
+                        Department dept = departmentMap.get(employee.getDepartmentId());
+                        departmentName = dept != null ? dept.getName() : null;
+                    }
+
+                    return RemoteWorkerResponse.builder()
+                            .employeeId(employee.getId())
+                            .employeeName(employee.getFullName())
+                            .avatarUrl(null)
+                            .department(departmentName)
+                            .designation(employee.getDesignation())
+                            .checkInTime(record.getCheckInTime())
+                            .checkInLocation(record.getCheckInLocation())
                             .build();
                 })
                 .filter(Objects::nonNull)

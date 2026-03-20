@@ -118,6 +118,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     Long countByTenantIdAndJoiningDateBetween(UUID tenantId, LocalDate startDate, LocalDate endDate);
 
+    @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.joiningDate >= :startDate AND e.joiningDate <= :endDate AND e.status = :status")
+    List<Employee> findByTenantIdAndJoiningDateBetweenAndStatus(@Param("tenantId") UUID tenantId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") Employee.EmployeeStatus status);
+
     @Query("SELECT COUNT(e) FROM Employee e WHERE e.tenantId = :tenantId AND e.status = 'TERMINATED' AND e.exitDate >= :afterDate")
     Long countTerminatedAfterDate(@Param("tenantId") UUID tenantId, @Param("afterDate") LocalDate afterDate);
 
@@ -136,6 +139,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     @Query(value = "SELECT e.* FROM employees e " +
             "WHERE e.tenant_id = :tenantId AND e.date_of_birth IS NOT NULL " +
+            "AND e.status = 'ACTIVE' AND e.is_deleted = false " +
             "AND ( " +
             "  (EXTRACT(MONTH FROM CAST(:startDate AS DATE)) = EXTRACT(MONTH FROM CAST(:endDate AS DATE)) " +
             "   AND EXTRACT(MONTH FROM e.date_of_birth) = EXTRACT(MONTH FROM CAST(:startDate AS DATE)) " +
@@ -155,6 +159,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     @Query(value = "SELECT e.* FROM employees e " +
             "WHERE e.tenant_id = :tenantId AND e.joining_date IS NOT NULL " +
+            "AND e.status = 'ACTIVE' AND e.is_deleted = false " +
             "AND ( " +
             "  (EXTRACT(MONTH FROM CAST(:startDate AS DATE)) = EXTRACT(MONTH FROM CAST(:endDate AS DATE)) " +
             "   AND EXTRACT(MONTH FROM e.joining_date) = EXTRACT(MONTH FROM CAST(:startDate AS DATE)) " +

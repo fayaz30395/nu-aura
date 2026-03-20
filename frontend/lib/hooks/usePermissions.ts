@@ -590,6 +590,16 @@ export function usePermissions(): UsePermissionsReturn {
         for (const perm of role.permissions) {
           const code = perm.code;
           permSet.add(code);
+
+          // Normalize dot-separated lowercase format from backend (e.g. "employee.read" → "EMPLOYEE:READ")
+          // V19 seeds permissions as resource.action (dots, lowercase) but frontend Permissions constants use MODULE:ACTION (colons, uppercase)
+          if (code.includes('.')) {
+            const dotParts = code.split('.');
+            if (dotParts.length === 2) {
+              permSet.add(dotParts[0].toUpperCase() + ':' + dotParts[1].toUpperCase());
+            }
+          }
+
           // Also add normalized version: strip app prefix if 3-part code (APP:MODULE:ACTION)
           const parts = code.split(':');
           if (parts.length === 3) {
@@ -611,7 +621,8 @@ export function usePermissions(): UsePermissionsReturn {
   const isSystemAdmin = useMemo(
     () =>
       permissions.includes(Permissions.SYSTEM_ADMIN) ||
-      permissions.includes('HRMS:SYSTEM:ADMIN'),
+      permissions.includes('HRMS:SYSTEM:ADMIN') ||
+      permissions.includes('system.admin'),
     [permissions]
   );
 
