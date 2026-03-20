@@ -236,7 +236,7 @@ public class SecurityContext {
     /**
      * Check if user has a specific permission.
      * Supports both new format (HRMS:EMPLOYEE:READ) and legacy format
-     * (EMPLOYEE:READ).
+     * (EMPLOYEE:READ) and DB format (employee.read).
      * Also checks for system admin permission and permission hierarchy.
      *
      * Permission hierarchy: MANAGE implies all actions (MARK, READ, VIEW_ALL, VIEW_TEAM, etc.)
@@ -257,6 +257,23 @@ public class SecurityContext {
 
         // Direct permission check
         if (permissions.contains(permission)) {
+            return true;
+        }
+
+        // BUG-012 FIX: Normalize format for comparison — handle DB format (employee.read)
+        // vs code format (EMPLOYEE:READ). The JwtAuthenticationFilter normalizes at load time,
+        // but this provides a safety net for any code path that might bypass the filter.
+        String normalizedPermission = permission.contains(".")
+                ? permission.replace('.', ':').toUpperCase()
+                : permission;
+        if (!normalizedPermission.equals(permission) && permissions.contains(normalizedPermission)) {
+            return true;
+        }
+        // Also try the reverse: if permission is UPPERCASE:COLON, check for lowercase.dot
+        String dotFormat = permission.contains(":") && !permission.contains("SYSTEM")
+                ? permission.replace(':', '.').toLowerCase()
+                : null;
+        if (dotFormat != null && permissions.contains(dotFormat)) {
             return true;
         }
 

@@ -34,6 +34,8 @@ export function useSystemHealth() {
     queryKey: adminKeys.health(),
     queryFn: () => adminService.getSystemHealth(),
     refetchInterval: 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
   });
 }
 

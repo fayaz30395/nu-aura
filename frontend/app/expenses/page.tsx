@@ -797,9 +797,26 @@ export default function ExpenseClaims() {
             </div>
           )}
 
-          {(myClaimsQuery.isLoading || pendingClaimsQuery.isLoading || allClaimsQuery.isLoading) ? (
+          {((activeTab === 'my-claims' && myClaimsQuery.isLoading) || (activeTab === 'pending' && pendingClaimsQuery.isLoading) || (activeTab === 'all' && allClaimsQuery.isLoading)) ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+            </div>
+          ) : myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error ? (
+            <div className="flex flex-col items-center justify-center h-64">
+              <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+              <p className="text-center text-[var(--text-secondary)] max-w-md">
+                {myClaimsQuery.error?.message || pendingClaimsQuery.error?.message || allClaimsQuery.error?.message || 'Failed to load expense claims. Please try again.'}
+              </p>
+              <button
+                onClick={() => {
+                  if (activeTab === 'my-claims') myClaimsQuery.refetch();
+                  else if (activeTab === 'pending') pendingClaimsQuery.refetch();
+                  else if (activeTab === 'all') allClaimsQuery.refetch();
+                }}
+                className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+              >
+                Retry
+              </button>
             </div>
           ) : filteredClaims.length === 0 ? (
             <EmptyState

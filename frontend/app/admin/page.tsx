@@ -54,7 +54,7 @@ export default function AdminDashboardPage() {
 
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   const { data: usersPage, isLoading: usersLoading } = useAdminUsers(page, PAGE_SIZE, search);
-  const { data: health, isLoading: healthLoading } = useSystemHealth();
+  const { data: health, isLoading: healthLoading, refetch: refetchHealth } = useSystemHealth();
   const updateRoleMutation = useUpdateUserRole();
 
   // Stable reference: wrap in useMemo so downstream useMemo hooks don't re-run on every render.
@@ -148,7 +148,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* System Health Card */}
-      <SystemHealthCard isLoading={healthLoading} health={health} />
+      <SystemHealthCard isLoading={healthLoading} health={health} onRefresh={refetchHealth} />
 
       {/* All employees table */}
       <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)]">
@@ -218,7 +218,7 @@ export default function AdminDashboardPage() {
                     className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
-                      {user.name}
+                      {user.name || user.email?.split('@')[0] || '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                       {user.email}
@@ -227,7 +227,7 @@ export default function AdminDashboardPage() {
                       {user.tenantName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
-                      {user.departmentName ?? '—'}
+                      {user.departmentName?.trim() ? user.departmentName : '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
@@ -243,7 +243,9 @@ export default function AdminDashboardPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
-                      {user.roles.join(', ')}
+                      {Array.isArray(user.roles) && user.roles.length > 0
+                        ? user.roles.join(', ')
+                        : '—'}
                     </td>
                   </tr>
                 ))
@@ -370,8 +372,8 @@ function StatCard(props: { title: string; value: number | string; description?: 
   );
 }
 
-function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | undefined }) {
-  const { isLoading, health } = props;
+function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | undefined; onRefresh: () => void }) {
+  const { isLoading, health, onRefresh } = props;
 
   const getStatusColors = (status?: string) => {
     switch (status?.toUpperCase()) {
@@ -422,25 +424,37 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
           </p>
         </div>
 
-        {/* Overall Status Badge */}
-        {isLoading ? (
-          <div className={`${statusColor} px-4 py-2 rounded-full inline-block w-fit`}>
-            <span className="text-sm font-medium text-[var(--text-secondary)]">
-              Checking...
-            </span>
-          </div>
-        ) : (
-          <motion.div
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className={`${statusColor} px-4 py-2 rounded-full inline-block w-fit`}
+        <div className="flex items-center gap-3">
+          {/* Refresh Button */}
+          <button
+            onClick={() => onRefresh()}
+            disabled={isLoading}
+            className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Refresh health status"
           >
-            <div className="flex items-center gap-2">
-              <div className={`w-2.5 h-2.5 rounded-full ${statusBadgeColor}`} />
-              <span className={`text-sm font-medium ${statusTextColor}`}>{statusText}</span>
+            <svg className={`w-4 h-4 text-[var(--text-secondary)] ${isLoading ? 'animate-spin' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          </button>
+
+          {/* Overall Status Badge */}
+          {isLoading ? (
+            <div className={`${statusColor} px-4 py-2 rounded-full inline-block w-fit`}>
+              <span className="text-sm font-medium text-[var(--text-secondary)]">
+                Checking...
+              </span>
             </div>
-          </motion.div>
-        )}
+          ) : (
+            <motion.div
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className={`${statusColor} px-4 py-2 rounded-full inline-block w-fit`}
+            >
+              <div className="flex items-center gap-2">
+                <div className={`w-2.5 h-2.5 rounded-full ${statusBadgeColor}`} />
+                <span className={`text-sm font-medium ${statusTextColor}`}>{statusText}</span>
+              </div>
+            </motion.div>
+          )}
+        </div>
       </div>
 
       {/* Component Status Grid */}
@@ -507,6 +521,15 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
             );
           })}
         </motion.div>
+      )}
+
+      {/* Helper message for unavailable services */}
+      {!isLoading && health?.status === 'DEGRADED' && (
+        <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+          <p className="text-sm text-amber-800 dark:text-amber-300">
+            <span className="font-medium">⚠️ System Degraded:</span> Some services may be temporarily unavailable. Try refreshing the status or contact your system administrator if the issue persists.
+          </p>
+        </div>
       )}
     </motion.div>
   );

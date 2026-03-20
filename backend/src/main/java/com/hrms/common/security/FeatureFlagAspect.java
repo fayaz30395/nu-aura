@@ -25,6 +25,15 @@ public class FeatureFlagAspect {
 
     @Around("@annotation(com.hrms.common.security.RequiresFeature) || @within(com.hrms.common.security.RequiresFeature)")
     public Object checkFeature(ProceedingJoinPoint joinPoint) throws Throwable {
+        // BUG-011 FIX: SuperAdmin bypass — skip feature flag checks entirely.
+        // Per CLAUDE.md: "SuperAdmin Role automatically bypasses ALL RBAC permission checks."
+        // Feature flags are an extension of access control, so SuperAdmin should bypass them too.
+        if (SecurityContext.isSuperAdmin()) {
+            log.debug("SuperAdmin bypass — skipping @RequiresFeature check for method: {}",
+                    ((MethodSignature) joinPoint.getSignature()).getMethod().getName());
+            return joinPoint.proceed();
+        }
+
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 

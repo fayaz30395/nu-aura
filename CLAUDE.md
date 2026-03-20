@@ -276,12 +276,13 @@ Before considering any system complete verify:
 These decisions have been made. Do not re-evaluate unless explicitly asked.
 
 - **Multi-tenancy:** Shared database, shared schema. All tenant-specific tables have a `tenant_id` UUID column. PostgreSQL RLS enforces isolation.
-- **RBAC:** JWT-based with permissions as `module.action` strings (e.g., `employee.read`). Stored in `role_permission` junction table. Frontend hides UI elements based on `permissions[]` in Zustand auth store.
-- **SuperAdmin Role:** Automatically bypasses ALL RBAC permission checks in Spring Security filter chain and Next.js middleware. Can see and edit data across all tenants, users, and modules.
+- **RBAC:** JWT contains roles only (CRIT-001: permissions removed from JWT to keep cookie < 4096 bytes). Permissions loaded from DB via `SecurityService.getCachedPermissions()` in `JwtAuthenticationFilter`. DB stores `module.action` format (e.g., `employee.read`), code uses `MODULE:ACTION` format (e.g., `EMPLOYEE:READ`) — normalized at load time. Frontend hides UI elements based on `permissions[]` in Zustand auth store.
+- **SuperAdmin Role:** Automatically bypasses ALL access control — `@RequiresPermission` (PermissionAspect), `@RequiresFeature` (FeatureFlagAspect), and frontend `usePermissions`. Can see and edit data across all tenants, users, and modules.
+- **Every User Is an Employee:** Roles are additive. HR Managers, CEOs, Team Leads all see the base employee self-service pages (My Dashboard, My Profile, My Payslips, etc.) plus their admin pages. Sidebar MY SPACE items must NEVER have `requiredPermission`.
 - **Approval Flows:** Generic `approval_service` engine. Workflows are data-driven, not hardcoded. `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`.
 - **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
 - **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
-- **Flyway Status:** V0–V47 active (48 total). Next migration = **V49**. Legacy Liquibase in `db/changelog/` — DO NOT USE.
+- **Flyway Status:** V0–V62 active (63 total). Next migration = **V63**. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for recent migration details.
 - **Kafka Topics:** `approval-events`, `audit-events`, `employee-lifecycle-events`, `notification-events` — 4 consumers + 1 EventPublisher + DLQ via FailedKafkaEvent table.
 - **Dev Database:** Neon cloud PostgreSQL (docker-compose.yml has NO local postgres service). Prod uses PostgreSQL 16.
 - **Parallel Build Strategy:** When implementing large features, split into independent vertical slices (Agent A: Auth, Agent B: Employees, etc.) each working in their own `app/<module>/` directory to avoid conflicts.

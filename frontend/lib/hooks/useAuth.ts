@@ -190,7 +190,9 @@ export const useAuth = create<AuthState>()(
           apiClient.setTenantId(response.tenantId);
           apiClient.resetRedirectFlag();
 
-          const { roles: roleStrings, permissions: permissionStrings } = decodeJwt(response.accessToken);
+          // CRIT-001: Read roles/permissions from response body (preferred) or fall back to JWT decode
+          const roleStrings = response.roles?.length ? response.roles : decodeJwt(response.accessToken).roles;
+          const permissionStrings = response.permissions?.length ? response.permissions : decodeJwt(response.accessToken).permissions;
           const roles = convertRolesToObjects(roleStrings, permissionStrings);
 
           const user: User = {

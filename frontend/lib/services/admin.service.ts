@@ -41,17 +41,19 @@ class AdminService {
       // It accepts absolute URLs — the URL normalizer only strips `/api/v1` from relative paths.
       const response = await publicApiClient.get<HealthResponse>(healthUrl);
       return response.data;
-    } catch (_error) {
+    } catch (error) {
       // If the health endpoint is not available or times out, return a graceful response
       // Mark components as UNAVAILABLE instead of DOWN to indicate connectivity issues
+      // Log the error for debugging purposes
+      console.error('Failed to fetch system health:', error);
       return {
         status: 'DEGRADED',
         components: {
-          db: { status: 'UNAVAILABLE', details: { message: 'Database service unavailable' } },
-          redis: { status: 'UNAVAILABLE', details: { message: 'Redis cache unavailable' } },
-          kafka: { status: 'UNAVAILABLE', details: { message: 'Kafka messaging unavailable' } },
-          livenessState: { status: 'UP' },
-          readinessState: { status: 'UNAVAILABLE' },
+          db: { status: 'UNAVAILABLE', details: { message: 'Database connectivity unavailable' } },
+          redis: { status: 'UNAVAILABLE', details: { message: 'Redis cache service unavailable' } },
+          kafka: { status: 'UNAVAILABLE', details: { message: 'Kafka messaging service unavailable' } },
+          livenessState: { status: 'UP', details: { message: 'Application is running' } },
+          readinessState: { status: 'UNAVAILABLE', details: { message: 'Service dependencies unavailable' } },
         },
       };
     }
