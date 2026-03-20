@@ -84,7 +84,7 @@ export function AuthGuard({
 
     // Not authenticated — try restoring session from httpOnly cookie first.
     // This prevents redirect loops when Zustand state is cleared but cookies
-    // are still valid (e.g. after the login page's "clear stale auth" logic runs).
+    // are still valid (e.g. after a page refresh).
     if (!isAuthenticated) {
       if (!restoreAttemptedRef.current && !isRestoringSession) {
         restoreAttemptedRef.current = true;
@@ -93,13 +93,15 @@ export function AuthGuard({
           setIsRestoringSession(false);
           if (!restored) {
             // Cookie is truly expired/invalid — redirect to login.
-            // Use window.location.href as fallback to avoid infinite RSC fetch
-            // loops when the backend is down and router.replace hangs.
+            // Use window.location.href to avoid infinite RSC fetch loops
+            // when the backend is down and router.replace hangs.
+            // NOTE: The login page will NOT clear valid sessions — if the user
+            // still has a valid access_token cookie, the middleware will redirect
+            // them back here, and Zustand will have rehydrated by then.
             const returnUrl = encodeURIComponent(pathname);
             const loginUrl = `/auth/login?returnUrl=${returnUrl}`;
             try {
               router.replace(loginUrl);
-              // Fallback: if router.replace doesn't complete in 3s, hard navigate
               setTimeout(() => {
                 if (window.location.pathname !== '/auth/login') {
                   window.location.href = loginUrl;

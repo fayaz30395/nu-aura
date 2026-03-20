@@ -80,6 +80,7 @@ public class HrmsRoleInitializer {
                 createRoleIfNotExists(app, tenantId, "HR_MANAGER", "HR Manager",
                                 "Complete HR management access", 80, false, false,
                                 Set.of(
+                                                HrmsPermissionInitializer.EMPLOYEE_VIEW_SELF,
                                                 HrmsPermissionInitializer.EMPLOYEE_READ,
                                                 HrmsPermissionInitializer.EMPLOYEE_CREATE,
                                                 HrmsPermissionInitializer.EMPLOYEE_UPDATE,
@@ -114,6 +115,7 @@ public class HrmsRoleInitializer {
                 createRoleIfNotExists(app, tenantId, "DEPARTMENT_MANAGER", "Department Manager",
                                 "Department management access", 60, false, false,
                                 Set.of(
+                                                HrmsPermissionInitializer.EMPLOYEE_VIEW_SELF,
                                                 HrmsPermissionInitializer.EMPLOYEE_READ,
                                                 HrmsPermissionInitializer.EMPLOYEE_VIEW_DEPARTMENT,
                                                 HrmsPermissionInitializer.ATTENDANCE_READ,
@@ -132,6 +134,7 @@ public class HrmsRoleInitializer {
                 createRoleIfNotExists(app, tenantId, "TEAM_LEAD", "Team Lead",
                                 "Team management access", 40, false, false,
                                 Set.of(
+                                                HrmsPermissionInitializer.EMPLOYEE_VIEW_SELF,
                                                 HrmsPermissionInitializer.EMPLOYEE_READ,
                                                 HrmsPermissionInitializer.EMPLOYEE_VIEW_TEAM,
                                                 HrmsPermissionInitializer.ATTENDANCE_READ,
@@ -159,6 +162,7 @@ public class HrmsRoleInitializer {
                 createRoleIfNotExists(app, tenantId, "CEO", "Chief Executive Officer",
                                 "Executive level access with full visibility", 90, false, false,
                                 Set.of(
+                                                HrmsPermissionInitializer.EMPLOYEE_VIEW_SELF,
                                                 HrmsPermissionInitializer.EMPLOYEE_READ,
                                                 HrmsPermissionInitializer.EMPLOYEE_VIEW_ALL,
                                                 HrmsPermissionInitializer.ATTENDANCE_READ,
