@@ -143,14 +143,20 @@ public class AuthService {
             // Record successful login metric
             metricsService.recordLoginSuccess("password");
 
+            // Find employee context first (needed by implicit role/permission merge)
+            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
+
             // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
-                    HrmsPermissionInitializer.APP_CODE);
-            Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
+            // Single query — result shared by both permission and role loading to avoid duplicate DB hit
+            Optional<UserAppAccess> appAccess = userAppAccessRepository
+                    .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
+                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+            Set<String> appRoles = loadAppRolesFromAccess(
+                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
             Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-            // Find employee context using optimized query to prevent N+1
-            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
             UUID employeeId = empOpt.map(Employee::getId).orElse(null);
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
@@ -182,6 +188,9 @@ public class AuthService {
                     .email(user.getEmail())
                     .fullName(user.getFullName())
                     .profilePictureUrl(user.getProfilePictureUrl())
+                    // CRIT-001: permissions in response body (not JWT) to keep cookie under 4KB
+                    .roles(new ArrayList<>(appRoles))
+                    .permissions(new ArrayList<>(appPermissions.keySet()))
                     .build();
         } catch (AuthenticationException | ResourceNotFoundException e) {
             // Record failed login metric
@@ -288,14 +297,20 @@ public class AuthService {
                     userPrincipal, null, userPrincipal.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            // Find employee context first (needed by implicit role/permission merge)
+            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
+
             // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
-                    HrmsPermissionInitializer.APP_CODE);
-            Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
+            // Single query — result shared by both permission and role loading to avoid duplicate DB hit
+            Optional<UserAppAccess> appAccess = userAppAccessRepository
+                    .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
+                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+            Set<String> appRoles = loadAppRolesFromAccess(
+                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
             Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-            // Find employee context using optimized query to prevent N+1
-            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
             UUID employeeId = empOpt.map(Employee::getId).orElse(null);
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
@@ -327,6 +342,8 @@ public class AuthService {
                     .email(user.getEmail())
                     .fullName(user.getFullName())
                     .profilePictureUrl(user.getProfilePictureUrl())
+                    .roles(new ArrayList<>(appRoles))
+                    .permissions(new ArrayList<>(appPermissions.keySet()))
                     .build();
         } catch (AuthenticationException e) {
             throw e;
@@ -404,17 +421,25 @@ public class AuthService {
             String email = tokenProvider.getUsernameFromToken(refreshToken);
             UUID tenantId = tokenProvider.getTenantIdFromToken(refreshToken);
 
+            // Set tenant context so RLS and implicit role queries work correctly
+            com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
+
             User user = userRepository.findByEmailAndTenantId(email, tenantId)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
+            // Find employee context first (needed by implicit role/permission merge)
+            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
+
             // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
-                    HrmsPermissionInitializer.APP_CODE);
-            Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
+            Optional<UserAppAccess> appAccess = userAppAccessRepository
+                    .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
+                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+            Set<String> appRoles = loadAppRolesFromAccess(
+                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
             Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-            // Find employee context using optimized query to prevent N+1
-            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
             UUID employeeId = empOpt.map(Employee::getId).orElse(null);
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
@@ -500,12 +525,12 @@ public class AuthService {
     // ==================== NU Platform RBAC Helper Methods ====================
 
     /**
-     * Load permissions for a user in a specific application from the NU Platform.
+     * Load permissions for a user using a pre-fetched UserAppAccess.
+     * Accepts the already-loaded employee to avoid redundant DB lookups.
      * Falls back to legacy role-based permissions if no UserAppAccess exists.
      */
-    private Map<String, com.hrms.domain.user.RoleScope> loadAppPermissions(UUID userId, String appCode) {
-        Optional<UserAppAccess> access = userAppAccessRepository
-                .findByUserIdAndAppCodeWithPermissions(userId, appCode);
+    private Map<String, com.hrms.domain.user.RoleScope> loadAppPermissionsFromAccess(
+            UUID userId, String appCode, Optional<UserAppAccess> access, Employee employee) {
 
         Map<String, com.hrms.domain.user.RoleScope> permissionScopes = new HashMap<>();
 
@@ -517,8 +542,6 @@ public class AuthService {
             userAccess.getRoles().forEach(appRole -> {
                 appRole.getPermissions().forEach(appPerm -> {
                     String code = appPerm.getCode();
-                    // Default to ALL scope for NU Platform permissions (admin-level)
-                    // In future, AppPermission could have its own scope field
                     com.hrms.domain.user.RoleScope newScope = com.hrms.domain.user.RoleScope.ALL;
                     com.hrms.domain.user.RoleScope existingScope = permissionScopes.get(code);
                     if (existingScope == null || newScope.isMorePermissiveThan(existingScope)) {
@@ -546,13 +569,12 @@ public class AuthService {
             }
 
             log.debug("Loaded {} permissions from UserAppAccess for user {}", permissionScopes.size(), userId);
-            mergeImplicitPermissions(userId, appCode, permissionScopes);
+            mergeImplicitPermissions(employee, appCode, permissionScopes);
             return permissionScopes;
         }
 
         // Fallback: Load from legacy User->Role->RolePermission structure (Matrix RBAC)
         log.debug("No UserAppAccess found for user {}, falling back to legacy role permissions", userId);
-        // Use the new method that eagerly fetches roles and permissions
         User user = userRepository.findByIdWithRolesAndPermissions(userId).orElse(null);
         if (user != null) {
             log.debug("User {} has {} roles", userId, user.getRoles().size());
@@ -560,8 +582,6 @@ public class AuthService {
                 log.debug("Processing role: {} with {} permissions", role.getCode(), role.getPermissions().size());
                 role.getPermissions().forEach(rp -> {
                     String code = rp.getPermission().getCode();
-                    // Normalize: strip app prefix if present (e.g., "HRMS:EMPLOYEE:READ" -> "EMPLOYEE:READ")
-                    // to be consistent with NU Platform RBAC path which stores MODULE:ACTION format
                     if (code.startsWith(appCode + ":")) {
                         code = code.substring(appCode.length() + 1);
                     }
@@ -578,7 +598,6 @@ public class AuthService {
         }
 
         // If still empty after legacy fallback, derive permissions from RoleHierarchy defaults.
-        // This handles cases where role_permission join table is empty but user has assigned roles.
         if (permissionScopes.isEmpty() && user != null && !user.getRoles().isEmpty()) {
             log.warn("No permissions found in role_permission table for user {}. Deriving from RoleHierarchy defaults.", userId);
             user.getRoles().forEach(role -> {
@@ -589,28 +608,26 @@ public class AuthService {
         }
 
         log.info("Loaded permissions for user {}: {} permissions", userId, permissionScopes.size());
-        mergeImplicitPermissions(userId, appCode, permissionScopes);
+        mergeImplicitPermissions(employee, appCode, permissionScopes);
         return permissionScopes;
     }
 
     private boolean isHigherScope(com.hrms.domain.user.RoleScope newScope,
             com.hrms.domain.user.RoleScope existingScope) {
-        // Use the new RoleScope.isMorePermissiveThan method
-        // Scope hierarchy: ALL(100) > LOCATION(80) > DEPARTMENT(60) > TEAM(40) > SELF(20) > CUSTOM(10)
         return newScope.isMorePermissiveThan(existingScope);
     }
 
     /**
-     * Load roles for a user in a specific application from the NU Platform.
+     * Load roles for a user using a pre-fetched UserAppAccess.
+     * Accepts the already-loaded employee to avoid redundant DB lookups.
      * Falls back to legacy role codes if no UserAppAccess exists.
      */
-    private Set<String> loadAppRoles(UUID userId, String appCode) {
-        Optional<UserAppAccess> access = userAppAccessRepository
-                .findByUserIdAndAppCodeWithPermissions(userId, appCode);
+    private Set<String> loadAppRolesFromAccess(
+            UUID userId, String appCode, Optional<UserAppAccess> access, Employee employee) {
 
         if (access.isPresent()) {
             Set<String> roles = new HashSet<>(access.get().getRoleCodes());
-            mergeImplicitRoles(userId, roles);
+            mergeImplicitRoles(employee, roles);
             return roles;
         }
 
@@ -620,48 +637,57 @@ public class AuthService {
             Set<String> roles = user.getRoles().stream()
                     .map(role -> role.getCode())
                     .collect(Collectors.toSet());
-            mergeImplicitRoles(userId, roles);
+            mergeImplicitRoles(employee, roles);
             return roles;
         }
         Set<String> implicitOnlyRoles = new HashSet<>();
-        mergeImplicitRoles(userId, implicitOnlyRoles);
+        mergeImplicitRoles(employee, implicitOnlyRoles);
         return implicitOnlyRoles;
     }
 
     /**
-     * Load all applications a user has access to.
+     * Load all application codes a user has access to.
+     * Uses a JPQL projection to fetch only the app codes, avoiding entity hydration overhead.
      */
     private Set<String> loadAccessibleApps(UUID userId) {
-        List<UserAppAccess> accessList = userAppAccessRepository.findUserApplications(userId);
-        return accessList.stream()
-                .map(access -> access.getApplication().getCode())
-                .collect(Collectors.toSet());
+        return new HashSet<>(userAppAccessRepository.findActiveApplicationCodesByUserId(userId));
     }
 
-    private void mergeImplicitRoles(UUID userId, Set<String> roles) {
+    /**
+     * Merge implicit roles (REPORTING_MANAGER, SKIP_LEVEL_MANAGER) using the already-loaded employee.
+     * Eliminates redundant employeeRepository.findByUserIdAndTenantId() calls.
+     */
+    private void mergeImplicitRoles(Employee employee, Set<String> roles) {
+        if (employee == null) {
+            return;
+        }
         UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
         if (tenantId == null) {
             return;
         }
-        employeeRepository.findByUserIdAndTenantId(userId, tenantId)
-                .ifPresent(emp -> roles.addAll(implicitRoleService.getImplicitRoles(emp.getId(), tenantId)));
+        roles.addAll(implicitRoleService.getImplicitRoles(employee.getId(), tenantId));
     }
 
+    /**
+     * Merge implicit permissions using the already-loaded employee.
+     * Eliminates redundant employeeRepository.findByUserIdAndTenantId() calls.
+     */
     private void mergeImplicitPermissions(
-            UUID userId,
+            Employee employee,
             String appCode,
             Map<String, com.hrms.domain.user.RoleScope> permissionScopes) {
+        if (employee == null) {
+            return;
+        }
         UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
         if (tenantId == null) {
             return;
         }
-        employeeRepository.findByUserIdAndTenantId(userId, tenantId).ifPresent(emp -> {
-            Set<String> implicitPermissions = implicitRoleService.getImplicitPermissions(emp.getId(), tenantId);
-            for (String permission : implicitPermissions) {
-                String code = permission.startsWith(appCode + ":") ? permission : appCode + ":" + permission;
-                permissionScopes.putIfAbsent(code, com.hrms.domain.user.RoleScope.ALL);
-            }
-        });
+        Set<String> implicitPermissions = implicitRoleService.getImplicitPermissions(employee.getId(), tenantId);
+        for (String permission : implicitPermissions) {
+            String code = permission.startsWith(appCode + ":") ? permission : appCode + ":" + permission;
+            permissionScopes.putIfAbsent(code, com.hrms.domain.user.RoleScope.ALL);
+        }
     }
 
     // ==================== Password Reset ====================
@@ -851,14 +877,19 @@ public class AuthService {
         user.recordSuccessfulLogin();
         userRepository.save(user);
 
+        // Find employee context first (needed by implicit role/permission merge)
+        Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
+
         // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
-                HrmsPermissionInitializer.APP_CODE);
-        Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
+        Optional<UserAppAccess> appAccess = userAppAccessRepository
+                .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+
+        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
+                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+        Set<String> appRoles = loadAppRolesFromAccess(
+                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
         Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-        // Find employee context using optimized query to prevent N+1
-        Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
         UUID employeeId = empOpt.map(Employee::getId).orElse(null);
         UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
         UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);

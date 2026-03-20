@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -23,4 +24,9 @@ public class AuthResponse {
     private String email;
     private String fullName;
     private String profilePictureUrl;
+
+    // CRIT-001: Permissions moved from JWT to response body to keep cookie under 4KB.
+    // Frontend reads these from the response instead of decoding the JWT.
+    private List<String> roles;
+    private List<String> permissions;
 }

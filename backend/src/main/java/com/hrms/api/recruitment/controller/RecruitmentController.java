@@ -9,6 +9,7 @@ import com.hrms.domain.recruitment.JobOpening;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class RecruitmentController {
     @PostMapping("/job-openings")
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
     public ResponseEntity<JobOpeningResponse> createJobOpening(@Valid @RequestBody JobOpeningRequest request) {
-        return ResponseEntity.ok(recruitmentManagementService.createJobOpening(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(recruitmentManagementService.createJobOpening(request));
     }
 
     @PutMapping("/job-openings/{id}")
@@ -73,7 +74,7 @@ public class RecruitmentController {
     @PostMapping("/candidates")
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
     public ResponseEntity<CandidateResponse> createCandidate(@Valid @RequestBody CandidateRequest request) {
-        return ResponseEntity.ok(recruitmentManagementService.createCandidate(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(recruitmentManagementService.createCandidate(request));
     }
 
     @PutMapping("/candidates/{id}")
@@ -114,7 +115,7 @@ public class RecruitmentController {
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> createOffer(@PathVariable UUID id,
             @Valid @RequestBody CreateOfferRequest request) {
-        return ResponseEntity.ok(recruitmentManagementService.createOffer(id, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(recruitmentManagementService.createOffer(id, request));
     }
 
     @PostMapping("/candidates/{id}/accept-offer")

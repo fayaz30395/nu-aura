@@ -103,6 +103,21 @@ public class LeaveBalanceService {
         return leaveBalanceRepository.save(balance);
     }
 
+    /**
+     * BIZ-003: Get available balance for a leave type (remaining days).
+     * Returns null if no balance record exists yet (will be treated as unlimited).
+     */
+    @Transactional(readOnly = true)
+    public BigDecimal getAvailableBalance(UUID employeeId, UUID leaveTypeId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return leaveBalanceRepository.findByEmployeeIdAndYear(employeeId, Year.now().getValue(), tenantId)
+                .stream()
+                .filter(b -> b.getLeaveTypeId().equals(leaveTypeId))
+                .findFirst()
+                .map(LeaveBalance::getAvailable)
+                .orElse(null);
+    }
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance deductLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
@@ -129,6 +144,63 @@ public class LeaveBalanceService {
      * plain save — the newly inserted row is owned by this transaction so no concurrent
      * reader can race on it.</p>
      */
+    /**
+     * BIZ-012: Carry forward unused leave balances from the previous year.
+     *
+     * <p>For each employee balance in {@code fromYear}, if the leave type allows
+     * carry-forward ({@code isCarryForwardAllowed}), the remaining balance (capped
+     * by {@code maxCarryForwardDays}) is added to the opening balance of the new year.</p>
+     *
+     * <p>Intended to be called by a year-end scheduled job or admin action.</p>
+     *
+     * @param fromYear the year to carry forward from (e.g., 2025)
+     * @return number of balances carried forward
+     */
+    @Transactional
+    @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
+    public int carryForwardBalances(int fromYear) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        int toYear = fromYear + 1;
+        int count = 0;
+
+        List<LeaveBalance> allBalances = leaveBalanceRepository.findAllByTenantIdAndYear(tenantId, fromYear);
+
+        for (LeaveBalance oldBalance : allBalances) {
+            LeaveType leaveType = leaveTypeRepository.findById(oldBalance.getLeaveTypeId()).orElse(null);
+            if (leaveType == null || !Boolean.TRUE.equals(leaveType.getIsCarryForwardAllowed())) {
+                continue;
+            }
+
+            BigDecimal available = oldBalance.getAvailable();
+            if (available == null || available.compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+
+            // Cap carry-forward at maxCarryForwardDays
+            BigDecimal carryAmount = available;
+            if (leaveType.getMaxCarryForwardDays() != null
+                    && carryAmount.compareTo(leaveType.getMaxCarryForwardDays()) > 0) {
+                carryAmount = leaveType.getMaxCarryForwardDays();
+            }
+
+            // Create or update next year's balance with carry-forward as opening
+            LeaveBalance newBalance = getOrCreateBalanceForUpdate(
+                    oldBalance.getEmployeeId(), oldBalance.getLeaveTypeId(), toYear);
+            BigDecimal newOpening = newBalance.getOpeningBalance().add(carryAmount);
+            newBalance.setOpeningBalance(newOpening);
+            newBalance.calculateAvailable();
+            leaveBalanceRepository.save(newBalance);
+
+            log.info("Carried forward {} days of {} for employee {} from {} to {}",
+                    carryAmount, leaveType.getLeaveName(), oldBalance.getEmployeeId(), fromYear, toYear);
+            count++;
+        }
+
+        log.info("Leave carry-forward complete: {} balances carried from {} to {} for tenant {}",
+                count, fromYear, toYear, tenantId);
+        return count;
+    }
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     private LeaveBalance getOrCreateBalanceForUpdate(UUID employeeId, UUID leaveTypeId, int year) {
         UUID tenantId = TenantContext.getCurrentTenant();

@@ -301,13 +301,13 @@ export default function RolesPage() {
         />
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 dark:bg-blue-500 dark:hover:bg-primary-500"
+          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500"
         >
           Create Role
         </button>
       </div>
 
-      <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-hidden">
+      <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-x-auto">
         <table className="min-w-full divide-y divide-[var(--border-main)]">
           <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]900">
             <tr>
@@ -332,6 +332,14 @@ export default function RolesPage() {
             </tr>
           </thead>
           <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
+            {filteredRoles.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-6 py-12 text-center">
+                  <p className="text-[var(--text-muted)] text-sm">No roles found</p>
+                  <p className="text-[var(--text-muted)] text-xs mt-1">Try adjusting your search or create a new role.</p>
+                </td>
+              </tr>
+            )}
             {filteredRoles.map((role) => (
               <tr key={role.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
@@ -348,11 +356,11 @@ export default function RolesPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {role.isSystemRole ? (
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[var(--bg-muted)] text-[var(--text-secondary)]">
                       System
                     </span>
                   ) : (
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[var(--bg-success)] text-[var(--text-success)]">
                       Custom
                     </span>
                   )}
@@ -611,7 +619,7 @@ export default function RolesPage() {
                 <button
                   type="submit"
                   disabled={editForm.formState.isSubmitting || updateRoleMutation.isPending}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-primary-500"
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 dark:bg-primary-600 dark:hover:bg-primary-500"
                 >
                   {editForm.formState.isSubmitting || updateRoleMutation.isPending ? 'Updating...' : 'Update'}
                 </button>
@@ -749,7 +757,7 @@ export default function RolesPage() {
                     className={`px-4 py-2 rounded-lg ${
                       hasInvalidCustomScopes
                         ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                        : 'bg-primary-500 text-white hover:bg-primary-600 dark:bg-blue-500 dark:hover:bg-primary-500'
+                        : 'bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500'
                     }`}
                   >
                     Save Permissions

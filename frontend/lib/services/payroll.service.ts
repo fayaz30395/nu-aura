@@ -143,19 +143,18 @@ class PayrollService {
     return response.data;
   }
 
-  // STUB: Backend endpoint not implemented — do not call.
-  // No GET /payroll/payslips/period endpoint exists in PayrollController.
-  // Consider using getPayslipByEmployeeAndPeriod() or getPayslipsByPayrollRun() instead.
+  // CRIT-003: Backend endpoint not implemented. Guarded to prevent silent 404.
+  // Use getPayslipByEmployeeAndPeriod() or getPayslipsByPayrollRun() instead.
   async getPayslipsByPeriod(
-    startDate: string,
-    endDate: string,
-    page: number = 0,
-    size: number = 20
+    _startDate: string,
+    _endDate: string,
+    _page: number = 0,
+    _size: number = 20
   ): Promise<Page<Payslip>> {
-    const response = await apiClient.get<Page<Payslip>>('/payroll/payslips/period', {
-      params: { startDate, endDate, page, size },
-    });
-    return response.data;
+    throw new Error(
+      'getPayslipsByPeriod is not yet implemented on the backend. ' +
+      'Use getPayslipByEmployeeAndPeriod() or getPayslipsByPayrollRun() instead.'
+    );
   }
 
   async deletePayslip(id: string): Promise<void> {
@@ -238,35 +237,28 @@ class PayrollService {
     await apiClient.delete(`/payroll/salary-structures/${id}`);
   }
 
-  // STUB: Backend endpoints for bulk processing not implemented — do not call.
-  // No /payroll/bulk-process endpoint exists in PayrollController.
-  async bulkProcessPayroll(data: {
+  // CRIT-008: Backend endpoints for bulk processing not implemented.
+  // Guarded to prevent silent 404 crashes.
+  async bulkProcessPayroll(_data: {
     employeeIds: string[];
     payrollPeriodStart: string;
     payrollPeriodEnd: string;
     paymentDate: string;
     runName?: string;
   }): Promise<{ payrollRunId: string; processedCount: number; failedCount: number }> {
-    const response = await apiClient.post<{ payrollRunId: string; processedCount: number; failedCount: number }>('/payroll/bulk-process', data);
-    return response.data;
+    throw new Error('Bulk payroll processing is not yet available. This feature is under development.');
   }
 
-  async getBulkProcessingStatus(payrollRunId: string): Promise<{
+  async getBulkProcessingStatus(_payrollRunId: string): Promise<{
     status: string;
     processedCount: number;
     totalCount: number;
     errors?: Array<{ employeeId: string; error: string }>;
   }> {
-    const response = await apiClient.get<{
-      status: string;
-      processedCount: number;
-      totalCount: number;
-      errors?: Array<{ employeeId: string; error: string }>;
-    }>(`/payroll/bulk-process/${payrollRunId}/status`);
-    return response.data;
+    throw new Error('Bulk processing status is not yet available. This feature is under development.');
   }
 
-  async previewBulkProcessing(data: {
+  async previewBulkProcessing(_data: {
     employeeIds: string[];
     payrollPeriodStart: string;
     payrollPeriodEnd: string;
@@ -279,16 +271,7 @@ class PayrollService {
     grossAmount: number;
     netAmount: number;
   }>> {
-    const response = await apiClient.post<Array<{
-      employeeId: string;
-      employeeName: string;
-      baseSalary: number;
-      totalAllowances: number;
-      totalDeductions: number;
-      grossAmount: number;
-      netAmount: number;
-    }>>('/payroll/bulk-process/preview', data);
-    return response.data;
+    throw new Error('Bulk processing preview is not yet available. This feature is under development.');
   }
 }
 

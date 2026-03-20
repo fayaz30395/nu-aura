@@ -81,9 +81,9 @@ class RecruitmentService {
     await apiClient.delete(`/recruitment/candidates/${id}`);
   }
 
+  /** @deprecated Use getCandidatesByJobOpening instead (API-003: consolidated duplicate methods) */
   async getCandidatesByJob(jobId: string): Promise<Candidate[]> {
-    const response = await apiClient.get<Page<Candidate>>(`/recruitment/candidates/job-opening/${jobId}`);
-    return response.data.content;
+    return this.getCandidatesByJobOpening(jobId);
   }
 
   async moveCandidateStage(candidateId: string, data: MoveStageRequest): Promise<Candidate> {

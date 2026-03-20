@@ -110,6 +110,14 @@ const SKIP_PATTERNS = [
 /**
  * Decode JWT token and extract payload information.
  * This runs only in middleware (edge/runtime) and never on the client.
+ *
+ * SECURITY NOTE (CRIT-007): This performs base64 decode WITHOUT signature
+ * verification. Edge Middleware cannot access the JWT secret (which lives in
+ * the Java backend). This is intentionally a "coarse" auth check — the
+ * backend JwtAuthenticationFilter verifies the signature on every API call.
+ * The middleware only uses the decoded payload for routing decisions (e.g.,
+ * redirect unauthenticated users, SUPER_ADMIN bypass). A forged JWT would
+ * pass middleware but fail on the first backend API call, so no data leaks.
  */
 function decodeJwt(token: string): {
   role?: string;
@@ -197,8 +205,10 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   // Control referrer information
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   
-  // Enable HSTS (Strict-Transport-Security) for HTTPS
-  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  // Enable HSTS only in production (SEC-004: HSTS on localhost causes HTTPS redirect loop)
+  if (process.env.NODE_ENV === 'production') {
+    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
 
   // Allow OAuth popups (required for Google sign-in)
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
@@ -257,19 +267,12 @@ export function middleware(request: NextRequest) {
 
   // Allow public routes
   if (isPublicRoute(pathname)) {
-    // If a valid (non-expired) token exists and user hits the login page, send them to
-    // the dashboard directly. We check expiry to avoid a redirect loop where an expired
-    // cookie keeps bouncing between middleware→dashboard→AuthGuard→login→middleware.
-    if (pathname === '/auth/login' || pathname === '/auth/register') {
-      const accessTokenCookie = request.cookies.get(ACCESS_TOKEN_COOKIE);
-      const token = accessTokenCookie?.value;
-      if (token) {
-        const { isExpired } = decodeJwt(token);
-        if (!isExpired) {
-          return NextResponse.redirect(new URL('/me/dashboard', request.url));
-        }
-      }
-    }
+    // NOTE: We intentionally do NOT redirect authenticated users from /auth/login
+    // to /me/dashboard here. That redirect creates an infinite loop when the
+    // access_token cookie is valid but the client-side session (Zustand/sessionStorage)
+    // is stale or empty — AuthGuard's restoreSession fails → redirects to login →
+    // middleware redirects back to dashboard → loop forever.
+    // The login page handles already-authenticated users client-side instead.
     const response = NextResponse.next();
     return addSecurityHeaders(response);
   }

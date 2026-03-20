@@ -43,7 +43,8 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
   { name: 'Dhanush A', email: 'dhanush@nulogic.io', role: 'TEAM_LEAD', department: 'HR', level: 'HR Lead', color: 'from-pink-500 to-rose-600' },
 ];
 
-const DEMO_PASSWORD = 'Welcome@123';
+// SEC-007: Demo password only used when NEXT_PUBLIC_DEMO_MODE=true (never in production)
+const DEMO_PASSWORD = IS_DEMO_MODE ? 'Welcome@123' : '';
 
 const log = createLogger('LoginPage');
 
@@ -268,7 +269,9 @@ function LoginPage() {
     }
   }, []);
 
-  // Clear stale auth on mount
+  // Clear stale auth on mount — if Zustand rehydrates with isAuthenticated=true
+  // from a previous session but cookies are expired, we need to reset client state
+  // so the user can log in fresh.
   useEffect(() => {
     if (!hasHydrated) return;
     if (isAuthenticated && user && !didFreshLogin) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
@@ -99,7 +100,9 @@ public class TenantAwareDataSourceConfig implements BeanPostProcessor {
      */
     static class TenantAwareDataSource extends DelegatingDataSource {
 
-        private static final String SET_TENANT_SQL = "SET app.current_tenant_id = '%s'";
+        // Use set_config() with bind parameter to prevent SQL injection (CRIT-002).
+        // Third param 'false' = session-scoped (not transaction-local).
+        private static final String SET_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, false)";
 
         TenantAwareDataSource(DataSource targetDataSource) {
             super(targetDataSource);
@@ -119,28 +122,15 @@ public class TenantAwareDataSourceConfig implements BeanPostProcessor {
             return conn;
         }
 
-        /**
-         * Sets the tenant session variable if a tenant is present in the
-         * current thread's {@link TenantContext}.
-         *
-         * <p>Uses session-level {@code SET} (not {@code SET LOCAL}) because
-         * this method may be called outside of a transaction context. The
-         * variable persists on the connection until overridden by
-         * {@code SET LOCAL} in a transaction or reset by
-         * {@link TenantRlsTransactionManager#doCleanupAfterCompletion}.</p>
-         *
-         * <p>The tenant ID is a validated UUID (checked by {@code TenantFilter}
-         * on ingress), so string formatting is safe from SQL injection.</p>
-         */
         private void setTenantIfPresent(Connection conn) {
             UUID tenantId = TenantContext.getCurrentTenant();
             if (tenantId == null) {
                 return;
             }
 
-            try (Statement stmt = conn.createStatement()) {
-                String sql = String.format(SET_TENANT_SQL, tenantId);
-                stmt.execute(sql);
+            try (PreparedStatement ps = conn.prepareStatement(SET_TENANT_SQL)) {
+                ps.setString(1, tenantId.toString());
+                ps.execute();
             } catch (SQLException e) {
                 // Best-effort: log and continue. Application-layer filtering
                 // (WHERE tenant_id = ?) still provides primary isolation.

@@ -106,8 +106,13 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Generate JWT token with NU Platform app-aware permissions.
-     * Includes app code, app-specific permissions, roles, and accessible apps.
+     * Generate JWT token with NU Platform app-aware identity claims.
+     *
+     * CRIT-001: Permissions and permissionScopes are NO LONGER embedded in the JWT
+     * to keep the cookie under the browser's 4096-byte limit. The frontend must
+     * fetch permissions from the /auth/me endpoint after login and store them in
+     * the Zustand auth store. The backend still enforces permissions via the
+     * SecurityContext (loaded from the database on each request).
      */
     public String generateTokenWithAppPermissions(User user, UUID tenantId, String appCode,
             Map<String, com.hrms.domain.user.RoleScope> permissions, Set<String> roles,
@@ -115,21 +120,14 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
-        // Combine roles with ROLE_ prefix for Spring Security
-        List<String> authorities = new ArrayList<>();
-        roles.forEach(role -> authorities.add("ROLE_" + role));
-        authorities.addAll(permissions.keySet());
-
         return Jwts.builder()
-                .id(generateJti()) // JTI for token revocation
+                .id(generateJti())
                 .subject(user.getEmail())
                 .claim("userId", user.getId().toString())
                 .claim("tenantId", tenantId.toString())
                 .claim("appCode", appCode)
                 .claim("roles", new ArrayList<>(roles))
-                .claim("permissions", new ArrayList<>(permissions.keySet()))
-                .claim("permissionScopes", permissions.entrySet().stream()
-                        .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().name())))
+                // CRIT-001: permissions moved to /auth/me endpoint — not in JWT
                 .claim("accessibleApps", new ArrayList<>(accessibleApps))
                 .claim("employeeId", employeeId != null ? employeeId.toString() : null)
                 .claim("locationId", locationId != null ? locationId.toString() : null)
@@ -369,24 +367,27 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Generate an impersonation token for SuperAdmin cross-tenant access
-     * SuperAdmin can use this token to act as if they are a member of the target tenant
+     * Generate an impersonation token for SuperAdmin cross-tenant access.
+     * CRIT-005: Short expiry (15 min), impersonator claim, and audit-friendly.
+     *
+     * @param impersonatorUserId the admin's real user ID (for audit trail)
+     * @param email              the admin's email
+     * @param targetTenantId     the tenant being impersonated
+     * @param roles              the admin's roles
      */
-    public String generateImpersonationToken(UUID userId, String email, UUID targetTenantId, Set<String> roles) {
+    public String generateImpersonationToken(UUID impersonatorUserId, String email, UUID targetTenantId, Set<String> roles) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpiration);
-
-        // Combine roles with ROLE_ prefix for Spring Security
-        List<String> authorities = new ArrayList<>();
-        roles.forEach(role -> authorities.add("ROLE_" + role));
+        // CRIT-005: 15-minute expiry for impersonation tokens (not standard jwtExpiration)
+        Date expiryDate = new Date(now.getTime() + 15 * 60 * 1000L);
 
         return Jwts.builder()
-                .id(generateJti()) // JTI for token revocation
+                .id(generateJti())
                 .subject(email)
-                .claim("userId", userId.toString())
+                .claim("userId", impersonatorUserId.toString())
+                .claim("impersonatorUserId", impersonatorUserId.toString()) // CRIT-005: audit trail
                 .claim("tenantId", targetTenantId.toString())
                 .claim("roles", new ArrayList<>(roles))
-                .claim("isImpersonation", true) // Flag to indicate this is an impersonation token
+                .claim("isImpersonation", true)
                 .claim("type", "access")
                 .issuedAt(now)
                 .expiration(expiryDate)

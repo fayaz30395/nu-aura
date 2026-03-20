@@ -151,18 +151,35 @@ public class RateLimitFilter extends OncePerRequestFilter {
         return "ip:" + clientIp;
     }
 
+    /**
+     * SEC-005: Use peer IP (getRemoteAddr) as the primary source.
+     * X-Forwarded-For is only trusted when the request comes from a known
+     * proxy (loopback or private network). An attacker sending a spoofed
+     * X-Forwarded-For header directly cannot bypass rate limits.
+     */
     private String getClientIP(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
+        String remoteAddr = request.getRemoteAddr();
+
+        // Only trust proxy headers when the immediate peer is a known proxy
+        if (isTrustedProxy(remoteAddr)) {
+            String xForwardedFor = request.getHeader("X-Forwarded-For");
+            if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+                return xForwardedFor.split(",")[0].trim();
+            }
+            String xRealIp = request.getHeader("X-Real-IP");
+            if (xRealIp != null && !xRealIp.isEmpty()) {
+                return xRealIp;
+            }
         }
 
-        String xRealIp = request.getHeader("X-Real-IP");
-        if (xRealIp != null && !xRealIp.isEmpty()) {
-            return xRealIp;
-        }
+        return remoteAddr;
+    }
 
-        return request.getRemoteAddr();
+    private boolean isTrustedProxy(String ip) {
+        return ip != null && (
+            ip.equals("127.0.0.1") || ip.equals("::1") ||
+            ip.startsWith("10.") || ip.startsWith("172.") || ip.startsWith("192.168.")
+        );
     }
 
     private boolean isAuthEndpoint(String path) {

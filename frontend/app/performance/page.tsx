@@ -151,7 +151,7 @@ const StatCard = ({
     <div className="flex items-start justify-between">
       <div>
         <p className="text-sm font-medium text-gray-500 dark:text-[var(--text-muted)]">{title}</p>
-        <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]50 mt-1">{value}</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1">{value}</p>
         {subtitle && <p className="text-xs text-gray-500 dark:text-[var(--text-muted)] mt-1">{subtitle}</p>}
       </div>
       <div className={`p-2 rounded-lg ${color}`}>
@@ -216,7 +216,7 @@ export default function PerformancePage() {
     <AppLayout activeMenuItem="performance">
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]50">Performance Management</h1>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">Performance Management</h1>
         <p className="text-sm text-gray-500 dark:text-[var(--text-muted)] mt-1">
           Track goals, conduct reviews, and manage employee performance
         </p>
@@ -295,8 +295,8 @@ export default function PerformancePage() {
       {/* Module Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {performanceModules.map((module) => (
+          <PermissionGate key={module.id} permission={Permissions.REVIEW_VIEW} fallback={null}>
           <Link
-            key={module.id}
             href={module.href}
             aria-label={`Go to ${module.title} management`}
             className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
@@ -307,7 +307,7 @@ export default function PerformancePage() {
                   <module.icon className={`h-6 w-6 ${module.textColor}`} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)]50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {module.title}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-[var(--text-muted)] mt-1">{module.description}</p>
@@ -316,12 +316,13 @@ export default function PerformancePage() {
             </div>
             <div className={`h-1 ${module.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`} />
           </Link>
+          </PermissionGate>
         ))}
       </div>
 
       {/* Getting Started Section */}
       <div className="mt-8 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)]50 mb-4">Getting Started</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />
