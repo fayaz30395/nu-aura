@@ -42,9 +42,20 @@ Two formats exist in the codebase. Both are supported:
 1. **Load time:** `JwtAuthenticationFilter.normalizePermissionCode()` converts `employee.read` → `EMPLOYEE:READ` when loading permissions from DB.
 2. **Check time:** `SecurityContext.hasPermission()` has a safety net that tries both formats during comparison — so even if a code path bypasses the filter, permission checks still work.
 
+### Permission Scale
+
+500+ granular permissions across 16 business modules. Documented in `docs/build-kit/04_RBAC_PERMISSION_MATRIX.md`.
+
+### Permission Hierarchy
+
+`SecurityContext.hasPermission()` supports implicit grants:
+- `MODULE:MANAGE` implies all actions for that module (`MODULE:READ`, `MODULE:MARK`, etc.)
+- `MODULE:READ` implies `MODULE:VIEW_*` actions
+- Scope hierarchy: `VIEW_ALL` > `VIEW_TEAM` > `VIEW_DEPARTMENT` > `VIEW_SELF` — higher scopes imply all lower scopes.
+
 ### Permission Loading Flow (CRIT-001)
 
-Permissions were removed from the JWT to keep the httpOnly cookie under the browser's 4096-byte limit. The current flow:
+Permissions were removed from the JWT to keep the httpOnly cookie under the browser's 4096-byte limit (see `ADR-002-JWT-TOKEN-OPTIMIZATION.md` — 96% JWT size reduction). The current flow:
 
 1. **JWT contains roles only** — `roles` claim has role codes (e.g., `SUPER_ADMIN`, `HR_MANAGER`)
 2. **JwtAuthenticationFilter** detects empty `permissionScopes` from token
@@ -54,8 +65,8 @@ Permissions were removed from the JWT to keep the httpOnly cookie under the brow
 6. Also adds as `GrantedAuthority` entries for Spring Security's `@PreAuthorize` path
 
 **Key files:**
-- `backend/.../security/JwtAuthenticationFilter.java` — lines 77–92, permission loading + normalization
-- `backend/.../security/SecurityContext.java` — `hasPermission()` with bidirectional format matching
+- `backend/.../security/JwtAuthenticationFilter.java` — permission loading + normalization
+- `backend/.../security/SecurityContext.java` — `hasPermission()` with bidirectional format matching + hierarchy
 - `backend/.../security/SecurityService.java` — `getCachedPermissions()` with Redis cache + tenant isolation
 - `backend/.../security/Permission.java` — canonical permission constants
 
@@ -68,6 +79,7 @@ SuperAdmin bypasses **all** access control checks. This is enforced at three lev
 | Permission checks | `PermissionAspect.java` | `if (SecurityContext.isSuperAdmin()) return joinPoint.proceed()` |
 | Feature flag checks | `FeatureFlagAspect.java` | Same pattern — added in QA Round 3 |
 | Frontend permissions | `usePermissions.ts` | `if (isAdmin) return true` in `hasPermission()` |
+| Middleware (Next.js) | `middleware.ts` | SUPER_ADMIN role in JWT bypasses all route restrictions |
 
 `SecurityContext.isSuperAdmin()` checks: `hasRole("SUPER_ADMIN") || isSystemAdmin()` — where `isSystemAdmin()` checks for the `SYSTEM:ADMIN` permission (optionally app-prefixed).
 
@@ -91,36 +103,126 @@ Feature flags are stored in the `feature_flags` table (per-tenant, keyed by `fea
 
 NU-AURA is a **bundle app platform** with 4 sub-apps accessed via a Google-style waffle grid app switcher:
 
-| Sub-App | Purpose | Status |
-|---------|---------|--------|
-| **NU-HRMS** | Core HR (employees, attendance, leave, payroll, benefits, assets, expenses, loans, compensation) | Built |
-| **NU-Hire** | Recruitment & onboarding (job postings, candidates, pipeline, onboarding, offboarding) | Built |
-| **NU-Grow** | Performance, learning & engagement (reviews, OKRs, 360 feedback, LMS, training, recognition, surveys, wellness) | Built |
-| **NU-Fluence** | Knowledge management & collaboration (wiki, blogs, templates, Drive integration) | Phase 2 — backend built, frontend not started |
+| Sub-App | Purpose | Entry Route | Status |
+|---------|---------|-------------|--------|
+| **NU-HRMS** | Core HR (employees, attendance, leave, payroll, benefits, assets, expenses, loans, compensation) | `/me/dashboard` | Built (~95%) |
+| **NU-Hire** | Recruitment & onboarding (job postings, candidates, pipeline, onboarding, offboarding) | `/recruitment` | Built (~92%) |
+| **NU-Grow** | Performance, learning & engagement (reviews, OKRs, 360 feedback, LMS, training, recognition, surveys, wellness) | `/performance` | Built (~90%) |
+| **NU-Fluence** | Knowledge management & collaboration (wiki, blogs, templates, Drive integration) | `/fluence/wiki` | Phase 2 — backend built, frontend routes defined |
 
 **Single login** for all sub-apps. Auth, RBAC, and platform services are shared.
 
-**App-aware sidebar:** Shows only sections relevant to the active sub-app (determined by route pathname via `useActiveApp` hook). Routes map to apps via `frontend/lib/config/apps.ts`.
+**App-aware sidebar:** Shows only sections relevant to the active sub-app (determined by route pathname via `useActiveApp` hook). Routes map to apps via `frontend/lib/config/apps.ts`. Sidebar has **9 main sections + 4 app hubs, 113 total menu items**.
 
 **Route structure:** Flat routes (`/employees`, `/recruitment`, `/performance`). Entry points at `/app/hrms`, `/app/hire`, `/app/grow`, `/app/fluence`.
 
 **Key files:**
-- `frontend/lib/config/apps.ts` — app definitions, route-to-app mapping
+- `frontend/lib/config/apps.ts` — app definitions, route-to-app mapping, permission prefixes per app
 - `frontend/lib/hooks/useActiveApp.ts` — active app detection from pathname
 - `frontend/components/platform/AppSwitcher.tsx` — waffle grid UI
-- `frontend/components/layout/menuSections.tsx` — sidebar menu config
+- `frontend/components/layout/menuSections.tsx` — sidebar menu config (461 lines)
 
 ---
 
 ## 1.5 Multi-Tenancy
 
-Shared database, shared schema. All tenant-specific tables have a `tenant_id` UUID column. PostgreSQL Row-Level Security (RLS) enforces isolation.
+Shared database, shared schema. All tenant-specific tables have a `tenant_id` UUID column. PostgreSQL Row-Level Security (RLS) enforces isolation. See `docs/adr/ADR-001-multi-tenant-architecture.md`.
 
 `TenantContext` ThreadLocal is the single source of truth for the current tenant. Set in `JwtAuthenticationFilter` from the JWT `tenantId` claim. Cleared after every request.
 
+Filter chain order: `TenantFilter` → `RateLimitingFilter` → `JwtAuthenticationFilter`.
+
 ---
 
-## 1.6 Error Handling Conventions
+## 1.6 Security Architecture
+
+### Authentication
+
+- **JWT expiry:** 1 hour (3,600,000 ms). Refresh token: 24 hours.
+- **Cookie-based:** httpOnly `access_token` cookie. Secure=true in production.
+- **CSRF:** Double-submit cookie pattern (`CookieCsrfTokenRepository`). Excluded for auth endpoints, external APIs, WebSocket, health checks.
+- **Google OAuth:** Supported via `@react-oauth/google` (frontend) + backend OAuth2 client.
+- **MFA:** Supported (`/api/v1/auth/mfa-login` is public/pre-auth).
+
+### Password Policy
+
+- Min 12, max 128 characters. Requires uppercase, lowercase, digit, special character.
+- Max 3 consecutive identical characters. Password history: last 5 passwords.
+- Max age: 90 days. Rejects common passwords. Rejects user info in password.
+
+### CORS
+
+- Default allowed origins: `http://localhost:3000`, `http://localhost:3001`, `http://localhost:8080`
+- Configurable via `app.cors.allowed-origins`. Credentials allowed.
+- Custom headers: `X-Tenant-ID`, `X-XSRF-TOKEN` in allowed/exposed headers.
+
+### OWASP Security Headers
+
+Applied at both Next.js middleware (edge) and Spring Security levels:
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `HSTS: max-age=31536000; includeSubDomains`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy`: Denies camera, microphone, geolocation, payment, USB, display-capture
+- `Content-Security-Policy`: Restrictive default-src 'self', allows Google OAuth domains
+- `X-XSS-Protection: 1; mode=block` (edge only)
+
+### Rate Limiting
+
+Token bucket algorithm (Bucket4j), backed by Redis for distributed rate limiting:
+
+| Endpoint Category | Capacity | Refill Rate |
+|-------------------|----------|-------------|
+| Authentication (`/api/v1/auth/**`) | 5 requests | 5 per minute |
+| General API | 100 requests | 100 per minute |
+| Export/Reporting | 5 requests | 5 per 5 minutes |
+| Social Feed/Wall | 30 requests | 30 per minute |
+
+Disabled in dev profile. Falls back to in-memory Bucket4j if Redis is unavailable.
+
+### Access Control Summary
+
+| Endpoint | Access |
+|----------|--------|
+| `/api/v1/auth/**`, `/actuator/health` | Public |
+| `/swagger-ui/**`, `/api-docs/**` | SUPER_ADMIN only |
+| `/actuator/**` (except health) | SUPER_ADMIN only |
+| All other `/api/**` | Authenticated + RBAC |
+
+---
+
+## 1.7 Event-Driven Architecture (Kafka)
+
+### Topics
+
+| Topic | Consumer Group | Purpose |
+|-------|----------------|---------|
+| `nu-aura.approvals` | `nu-aura-approvals-service` | Approval workflow events |
+| `nu-aura.notifications` | `nu-aura-notifications-service` | Email, SMS, push notifications |
+| `nu-aura.audit` | `nu-aura-audit-service` | Audit trail logging |
+| `nu-aura.employee-lifecycle` | `nu-aura-employee-lifecycle-service` | Hire, transfer, termination events |
+| `nu-aura.fluence-content` | `nu-aura-fluence-search-service` | Elasticsearch content indexing |
+
+Each topic has a matching dead-letter topic (`*.dlt`). DLT handler: `nu-aura-dlt-handler` consumer group. Failed events stored in `FailedKafkaEvent` table for manual recovery.
+
+**Key file:** `backend/.../infrastructure/kafka/KafkaTopics.java`
+**Runbook:** `docs/runbooks/kafka-dead-letter.md`
+
+---
+
+## 1.8 Approval Workflow Engine
+
+Generic `approval_service` engine. Workflows are data-driven, not hardcoded.
+
+**Data model:** `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`
+
+Supports: leave approvals, expense approvals, onboarding approvals, performance reviews, asset approvals, requisition approvals. Dynamic routing based on configurable steps and role-based approval chains.
+
+**Key doc:** `docs/build-kit/08_APPROVAL_WORKFLOW_ENGINE.md`
+
+---
+
+## 1.9 Error Handling Conventions
 
 ### Frontend
 
@@ -143,22 +245,66 @@ Updated frequently as the project evolves.
 
 ---
 
-## 2.1 Flyway Migration Status
+## 2.1 Codebase Scale
+
+### Backend (Spring Boot Monolith)
+
+| Metric | Count |
+|--------|-------|
+| Java source files | 1,622 |
+| Controllers | 143 |
+| Services | 209 |
+| Entities | 265 |
+| Repositories | 260 |
+| DTOs | 454 |
+| Config classes | 30+ |
+| Test classes | 120 |
+| Scheduled jobs (`@Scheduled`) | 24 |
+| Kafka listeners | 6 |
+
+**Spring Boot:** 3.4.1 / **Java:** 17 / **JaCoCo minimum:** 80% (excludes DTOs, entities, config)
+
+### Frontend (Next.js 14)
+
+| Metric | Count |
+|--------|-------|
+| Total .ts/.tsx files | 11,701 |
+| Page routes (`page.tsx`) | 200 |
+| Layout files | 5 |
+| Components (in `/components`) | 123 |
+| React Query hooks (in `/hooks`) | 190 |
+| Service files (in `/services`) | 92 |
+| Type definition files | 63 |
+| Zustand stores | 1 (`useAuth`) |
+| Sidebar menu items | 113 |
+
+### Database
+
+| Metric | Count |
+|--------|-------|
+| Total tables | 254 |
+| Business domains | 16 |
+| Active Flyway migrations | 59 files (V0–V62) |
+
+---
+
+## 2.2 Flyway Migration Status
 
 | Field | Value |
 |-------|-------|
-| Active migrations | V0–V62 (63 total) |
+| Active migrations | V0–V62 (59 files) |
 | Next migration | **V63** |
 | Legacy Liquibase | `db/changelog/` — **DO NOT USE** |
 
 **Recent migrations:**
+- `V59` — Login performance indexes
 - `V60` — Seed role_permissions for demo roles (EMPLOYEE, HR_MANAGER, MANAGER, etc.)
 - `V61` — Fix demo user passwords, reset failed_login_attempts, set auth_provider=LOCAL
 - `V62` — Seed feature flags for NuLogic demo tenant (enable_payroll, enable_leave, etc.)
 
 ---
 
-## 2.2 Seeded Feature Flags (NuLogic Demo Tenant)
+## 2.3 Seeded Feature Flags (NuLogic Demo Tenant)
 
 All enabled by default for `tenant_id = 660e8400-e29b-41d4-a716-446655440001`:
 
@@ -166,7 +312,60 @@ All enabled by default for `tenant_id = 660e8400-e29b-41d4-a716-446655440001`:
 
 ---
 
-## 2.3 Module Status
+## 2.4 Infrastructure Stack
+
+### Docker Compose Services (Development)
+
+| Service | Image | Port |
+|---------|-------|------|
+| Redis | `redis:7-alpine` | 6379 |
+| Zookeeper | `confluentinc/cp-zookeeper:7.6.0` | 2181 |
+| Kafka | `confluentinc/cp-kafka:7.6.0` | 9092 (external), 29092 (internal) |
+| Elasticsearch | `elasticsearch:8.11.0` | 9200 |
+| MinIO | `minio/minio:latest` | 9000 (API), 9001 (Console) |
+| Prometheus | `prometheus:latest` | 9090 |
+| Backend | Spring Boot | 8080 |
+| Frontend | Next.js | 3000 |
+
+**Network:** `hrms_network` (bridge). **No local PostgreSQL** — dev DB is Neon cloud.
+
+### Redis Usage
+
+- Permission cache (TTL: 1 hour)
+- Rate limiting (Bucket4j distributed state)
+- Session data
+- General application cache
+
+### Connection Pools (HikariCP)
+
+| Profile | Max Pool | Min Idle | Connection Timeout | Max Lifetime |
+|---------|----------|----------|-------------------|--------------|
+| Dev | 10 | 2 | 30s | 30min |
+| Prod | 20 | 5 | 30s | 10min |
+
+### Monitoring
+
+- **Prometheus:** 28 alert rules (2 groups), 19 SLO rules
+- **Grafana:** 4 dashboards (System Overview, API Metrics, Business Metrics, Webhooks)
+- **AlertManager:** Email + webhook + PagerDuty routing
+
+---
+
+## 2.5 Integration Points
+
+| Integration | Purpose | Config |
+|-------------|---------|--------|
+| Google OAuth | Social login + Calendar | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| Twilio | SMS notifications | `TwilioConfig.java` (mock mode in dev) |
+| MinIO | S3-compatible file storage | Port 9000/9001, `MinioConfig.java` |
+| Elasticsearch | Full-text search (NU-Fluence) | Port 9200, `ElasticsearchConfig.java` |
+| SMTP | Email delivery | `EmailConfig.java` |
+| Job Boards | Recruitment integration | `JobBoardIntegrationService.java` |
+| WebSocket/STOMP | Real-time notifications | `/ws/**` endpoint, SockJS fallback |
+
+---
+
+## 2.6 Module Status
 
 ### NU-HRMS — Fully Built & QA'd
 - Dashboard (main + executive)
@@ -183,23 +382,26 @@ All enabled by default for `tenant_id = 660e8400-e29b-41d4-a716-446655440001`:
 - Benefits (enrollment, plans)
 - Assets (assignment, tracking)
 - Documents (management, templates)
+- Projects & Resources (allocation, timesheets)
+- Calendar, NU-Drive, NU-Mail
 
 ### NU-Hire — Built
 - Job Postings, Candidates, Pipeline, Interviews
-- Onboarding / Offboarding
+- Onboarding / Offboarding / Preboarding
+- Offer Portal, Careers Page
 
 ### NU-Grow — Built
-- Performance Reviews, OKRs, 360 Feedback
+- Performance Reviews (Revolution), OKRs, 360 Feedback
 - LMS / Training, Recognition, Surveys, Wellness
 
 ### NU-Fluence — Phase 2
-- Backend built (Elasticsearch, MinIO drive, comments, engagement)
-- Frontend not started
-- Wiki, Blogs, Templates, Drive Integration planned
+- Backend built (Elasticsearch, MinIO drive, comments, engagement, wall/feed)
+- Frontend routes defined in `apps.ts` (wiki, blogs, my-content, templates, drive, search, wall, dashboard)
+- Wiki, Blogs, Templates, Drive Integration to be implemented
 
 ---
 
-## 2.4 Demo Accounts
+## 2.7 Demo Accounts
 
 8 demo users across roles for the NuLogic tenant. Passwords managed via V61 migration.
 
@@ -215,7 +417,132 @@ All enabled by default for `tenant_id = 660e8400-e29b-41d4-a716-446655440001`:
 
 ---
 
-## 2.5 Known Patterns & Gotchas
+## 2.8 Key Dependencies & Versions
+
+### Backend
+
+| Dependency | Version |
+|------------|---------|
+| Spring Boot | 3.4.1 |
+| Java | 17 |
+| JJWT | 0.12.6 |
+| MinIO SDK | 8.6.0 |
+| Apache POI | 5.3.0 |
+| OpenPDF | 2.0.3 |
+| Bucket4j | 8.7.0 |
+| MapStruct | 1.6.3 |
+| Lombok | 1.18.36 |
+| SpringDoc OpenAPI | 2.7.0 |
+| JaCoCo | 0.8.13 |
+
+### Frontend
+
+| Dependency | Version |
+|------------|---------|
+| Next.js | ^14.2.35 |
+| React | 18.2.0 |
+| TypeScript | ^5.9.3 |
+| Mantine | ^8.3.14 |
+| Tailwind CSS | ^3.4.0 |
+| React Query | ^5.17.0 |
+| Zustand | ^4.4.7 |
+| Axios | ^1.7.8 |
+| React Hook Form | ^7.49.2 |
+| Zod | ^3.22.4 |
+| Framer Motion | ^12.23.24 |
+| Recharts | ^3.5.0 |
+| Tiptap (Rich Text) | ^3.20.1 |
+| ExcelJS | ^4.4.0 |
+| Lucide React | ^0.561.0 |
+| Tabler Icons | ^3.36.1 |
+
+**Note:** `jsPDF` is NOT in dependencies. PDF generation uses OpenPDF (backend) or browser-native APIs.
+
+---
+
+## 2.9 Frontend Configuration
+
+### Next.js Config
+- React strict mode enabled
+- Image optimization: AVIF + WebP, 7-day cache TTL
+- Remote image patterns: Google, AWS S3, CloudFront, GCS, LinkedIn, MinIO
+- Bundle analyzer available via `ANALYZE=true`
+- Vendor chunk splitting: separate React Query, Recharts, Radix UI
+- Console.log stripped in production
+
+### TypeScript Config
+- Target: ES2020, Module: ESNext, JSX: Preserve
+- `strict: true` but `strictNullChecks: false` (overridden)
+- Path alias: `@/*` → `./*`
+
+### Middleware (Edge)
+- 16 public routes, 47+ authenticated routes
+- Coarse-grained JWT decode (base64, no signature verification at edge)
+- Fine-grained auth handled by frontend `AuthGuard` + backend RBAC
+- CSP: strict-dynamic in production, unsafe-eval in development
+
+---
+
+## 2.10 Scheduled Jobs
+
+24 `@Scheduled` jobs across these areas:
+- **Attendance:** Auto-regularization
+- **Contracts:** Lifecycle management
+- **Email:** Scheduled email delivery
+- **Notifications:** Scheduled notification dispatch
+- **Recruitment:** Job board integration sync
+- **Workflows:** Escalation scheduler
+- **Reports:** Scheduled report execution
+- **Webhooks:** Delivery + retry
+- **Rate Limiting:** Token bucket cleanup
+- **Tenant:** Tenant-related scheduled operations
+
+---
+
+## 2.11 Documentation Index
+
+| Location | Contents | Count |
+|----------|----------|-------|
+| `docs/build-kit/` | Core architecture docs (00–17) + ADRs (001–005) + index | 24 files |
+| `docs/adr/` | Foundational ADRs (multi-tenant, auth, caching, webhooks) | 5 files |
+| `docs/architecture-diagrams/` | Mermaid diagrams (system context, containers, modules, auth flow, etc.) | 9 .mmd files |
+| `docs/runbooks/` | Incident response, payroll correction, data correction, Kafka DLT | 4 files |
+| `docs/execution/` | Phase 0–7 execution logs | 8 files |
+| `docs/rate-limiting/` | Rate limiting implementation guide | 1 file |
+| Root docs | README, APIContracts, Backend, Frontend, Design, Security Audit, Go-Live Checklist, Production Readiness Matrix | 8+ files |
+
+**Total documentation files:** 86
+
+### Key Build-Kit Docs
+
+| # | Document | Scope |
+|---|----------|-------|
+| 00 | MASTER_PLAN | Consolidated reference — what's built, what's missing, decisions |
+| 04 | RBAC_PERMISSION_MATRIX | 500+ permissions, 16 modules, role definitions |
+| 05 | DATABASE_SCHEMA_DESIGN | 254 tables, 16 domains, RLS policies |
+| 06 | PAYROLL_RULE_ENGINE | SpEL formula engine, DAG evaluation |
+| 08 | APPROVAL_WORKFLOW_ENGINE | 4-table workflow model, dynamic routing |
+| 10 | EVENT_DRIVEN_ARCHITECTURE | Kafka topics, consumers, DLQ pattern |
+| 14 | DEVOPS_ARCHITECTURE | Docker, Kubernetes, CI/CD |
+| 15 | OBSERVABILITY | Prometheus, Grafana, SLOs, alerting |
+
+### Architecture Decision Records
+
+| ADR | Decision |
+|-----|----------|
+| ADR-001 (build-kit) | Theme consolidation — CSS Variables-first dark mode (79% class reduction) |
+| ADR-002 (build-kit) | JWT token optimization — minimal JWT + Redis permission cache (96% size reduction) |
+| ADR-003 (build-kit) | Payroll saga pattern — orchestration-based with compensating transactions |
+| ADR-004 (build-kit) | Recruitment ATS gap analysis — job board integration roadmap |
+| ADR-005 (build-kit) | Database connection pool sizing — HikariCP tuning |
+| ADR-001 (docs/adr) | Multi-tenant architecture — shared DB + shared schema + RLS |
+| ADR-002 (docs/adr) | Authentication strategy — JWT with roles only, Redis permission cache |
+| ADR-003 (docs/adr) | Caching strategy — Redis for sessions, permissions, rate limiting |
+| ADR-004 (docs/adr) | Webhook delivery system — retry logic, DLQ for failures |
+
+---
+
+## 2.12 Known Patterns & Gotchas
 
 1. **Sidebar app-awareness:** The sidebar shows sections based on the active sub-app (determined by route pathname via `useActiveApp` hook). Routes map to apps via `frontend/lib/config/apps.ts`.
 
@@ -229,15 +556,33 @@ All enabled by default for `tenant_id = 660e8400-e29b-41d4-a716-446655440001`:
 
 6. **Permission format in code:** Always use UPPERCASE:COLON (`EMPLOYEE:READ`) in `@RequiresPermission` annotations and `Permission.java` constants. The DB stores lowercase dot format but normalization handles the conversion automatically.
 
-7. **JWT cookie size limit:** Permissions are NOT in the JWT (CRIT-001). They're loaded from DB on each request. Don't try to add them back to the token.
+7. **JWT cookie size limit:** Permissions are NOT in the JWT (CRIT-001). They're loaded from DB on each request via Redis cache. Don't try to add them back to the token.
 
 8. **Feature flags must be seeded:** New feature-gated modules need their flag added to the DB via migration. Otherwise even SuperAdmin gets 403 when the bypass doesn't fire (edge cases in pre-auth flow).
+
+9. **Rich text editor:** Tiptap (17 extensions) is the standard rich text editor. Used across wiki, blogs, templates, and other content modules.
+
+10. **Drag and drop:** `@hello-pangea/dnd` is the standard DnD library. Used in kanban boards, pipeline management, etc.
+
+11. **Real-time features:** WebSocket via STOMP + SockJS at `/ws/**`. Used for notifications and live updates.
+
+12. **Application profiles:** `dev` (mock services, debug logging), `demo` (seed data), `prod` (hardened security, real integrations), `test` (test isolation).
+
+13. **No jsPDF in frontend:** PDF generation happens on the backend via OpenPDF (2.0.3). Frontend exports use ExcelJS for spreadsheets.
 
 ---
 
 # Tier 3: History
 
 Append-only log of changes.
+
+---
+
+## Architecture Audit — 2026-03-21
+
+**Scope:** Deep audit of entire codebase (backend, frontend, docs) by principal architect review.
+
+**Key findings documented:** Full codebase scale metrics, security architecture, infrastructure topology, integration landscape, Kafka event flow, scheduled job inventory, documentation index. All captured in Tier 1 and Tier 2 sections above.
 
 ---
 

@@ -197,27 +197,43 @@ Frontend:
 - Axios for HTTP calls (`frontend/lib/` — use the existing client, do NOT create new ones)
 - React Hook Form + Zod for all forms
 - Framer Motion for micro-animations
-- jsPDF for PDF generation
 - Recharts for charts
+- Tiptap (17 extensions) for rich text editing
+- ExcelJS for spreadsheet export
+- Lucide React + Tabler Icons for icons
+- `@hello-pangea/dnd` for drag and drop
+- `@react-oauth/google` for Google OAuth
+- STOMP + SockJS for WebSocket
 
 Backend:
-- Java Spring Boot (monolith in `/backend/`)
-- PostgreSQL (primary DB)
-- Redis (caching)
-- Kafka (event streaming for async workflows)
+- Java 17, Spring Boot 3.4.1 (monolith in `/backend/`)
+- PostgreSQL (primary DB) — Neon cloud for dev, PostgreSQL 16 for prod
+- Redis 7 (permission cache, rate limiting via Bucket4j 8.7.0, sessions)
+- Kafka (Confluent 7.6.0, event streaming for async workflows)
+- Elasticsearch 8.11.0 (full-text search for NU-Fluence)
+- MinIO (S3-compatible file storage)
+- MapStruct 1.6.3 for DTO mapping
+- JJWT 0.12.6 for JWT handling
+- OpenPDF 2.0.3 for backend PDF generation (no jsPDF in frontend)
+- Apache POI 5.3.0 for Excel processing
+- SpringDoc OpenAPI 2.7.0 for API docs
 
 Infrastructure:
-- Docker + Docker Compose (at repo root)
-- Kubernetes-ready Dockerfiles
+- Docker + Docker Compose (at repo root) — 8 services: Redis, Zookeeper, Kafka, Elasticsearch, MinIO, Prometheus, Backend, Frontend
+- Kubernetes manifests in `deployment/kubernetes/` (10 manifests, GCP GKE targeted)
+- Monitoring: Prometheus (28 alert rules, 19 SLOs) + Grafana (4 dashboards) + AlertManager
 - Start via: `docker-compose up -d` then `cd backend && ./start-backend.sh` then `cd frontend && npm run dev`
 
 Code locations:
-- Frontend pages: `frontend/app/<module>/page.tsx`
-- API hooks: `frontend/lib/` (React Query hooks + Axios calls)
-- Backend controllers: `backend/src/main/java/**/controller/`
-- Backend services: `backend/src/main/java/**/service/`
+- Frontend pages: `frontend/app/<module>/page.tsx` (200 page routes)
+- API hooks: `frontend/lib/hooks/` (190 hook files) + services: `frontend/lib/services/` (92 service files)
+- Components: `frontend/components/` (123 component files)
+- Backend controllers: `backend/src/main/java/**/controller/` (143 controllers)
+- Backend services: `backend/src/main/java/**/service/` (209 services)
+- Backend entities: 265 entities, 260 repositories, 454 DTOs
 - Security config: `backend/src/main/java/com/hrms/common/config/SecurityConfig.java`
 - Backend package root: `com.hrms` → `api/`, `application/`, `domain/`, `common/`, `infrastructure/`
+- Tests: 120 test classes, JaCoCo 80% minimum (excludes DTOs, entities, config)
 
 Provide deployment diagrams when designing services.
 
@@ -283,15 +299,18 @@ These decisions have been made. Do not re-evaluate unless explicitly asked.
 - **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
 - **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
 - **Flyway Status:** V0–V62 active (63 total). Next migration = **V63**. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for recent migration details.
-- **Kafka Topics:** `approval-events`, `audit-events`, `employee-lifecycle-events`, `notification-events` — 4 consumers + 1 EventPublisher + DLQ via FailedKafkaEvent table.
+- **Kafka Topics:** `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.employee-lifecycle`, `nu-aura.fluence-content` — 5 topics + 5 DLT topics + DLT handler. Failed events stored in `FailedKafkaEvent` table.
+- **Scheduled Jobs:** 24 `@Scheduled` jobs across attendance, contracts, email, notifications, recruitment, workflows, reports, webhooks, rate limiting, and tenant operations.
+- **Security:** Rate limiting (Bucket4j + Redis): 5/min auth, 100/min API, 5/5min exports. OWASP headers at both edge (Next.js middleware) and backend (Spring Security). CSRF double-submit cookie. Password policy: 12+ chars, uppercase/lowercase/digit/special required, history of 5, 90-day max age.
 - **Dev Database:** Neon cloud PostgreSQL (docker-compose.yml has NO local postgres service). Prod uses PostgreSQL 16.
+- **Integrations:** Google OAuth, Twilio (SMS, mock in dev), MinIO (file storage), Elasticsearch (search), SMTP (email), job boards (recruitment), WebSocket/STOMP (real-time notifications).
 - **Parallel Build Strategy:** When implementing large features, split into independent vertical slices (Agent A: Auth, Agent B: Employees, etc.) each working in their own `app/<module>/` directory to avoid conflicts.
 - **NU-AURA Platform Architecture (Locked In):**
   - NU-AURA is a **bundle app platform**, NOT just an HRMS. It contains 4 sub-apps accessed via a Google-style waffle grid app switcher in the header:
     - **NU-HRMS** — Core HR management (employees, attendance, leave, payroll, benefits, assets, etc.)
     - **NU-Hire** — Recruitment & onboarding (job postings, candidates, pipeline, onboarding, offboarding)
     - **NU-Grow** — Performance, learning & engagement (performance reviews, OKRs, 360 feedback, LMS, training, recognition, surveys, wellness)
-    - **NU-Fluence** — Knowledge management & collaboration (wiki, blogs, templates, Drive integration) — **Phase 2, not yet built**
+    - **NU-Fluence** — Knowledge management & collaboration (wiki, blogs, templates, Drive integration) — **Phase 2: backend built, frontend routes defined, UI not started**
   - **Single login** for NU-AURA; sub-apps share auth, RBAC, and all platform services
   - **App-aware sidebar:** The sidebar shows only sections relevant to the active sub-app (determined by route pathname)
   - **Route structure:** Flat routes remain (e.g., `/employees`, `/recruitment`, `/performance`). Routes are mapped to apps via `frontend/lib/config/apps.ts`. Entry points exist at `/app/hrms`, `/app/hire`, `/app/grow`, `/app/fluence`
@@ -300,7 +319,17 @@ These decisions have been made. Do not re-evaluate unless explicitly asked.
 
 ---
 
-## 14. Code Rules (Non-Negotiable)
+## 14. Documentation Reference
+
+- **MEMORY.md** (project root): Living architecture wiki — codebase scale metrics, security architecture, infrastructure topology, integration landscape, Kafka event flow, scheduled jobs, documentation index, QA history. **Always read this file alongside CLAUDE.md at the start of any task.**
+- **docs/build-kit/**: 24 architecture documents (00–17 + 6 ADRs). Key: `04_RBAC_PERMISSION_MATRIX.md` (500+ permissions), `05_DATABASE_SCHEMA_DESIGN.md` (254 tables), `08_APPROVAL_WORKFLOW_ENGINE.md`.
+- **docs/adr/**: 5 foundational ADRs (multi-tenant, auth, caching, webhooks).
+- **docs/architecture-diagrams/**: 9 Mermaid diagrams.
+- **docs/runbooks/**: 4 operational guides (incident response, payroll correction, data correction, Kafka DLT).
+
+---
+
+## 15. Code Rules (Non-Negotiable)
 
 - **Never rewrite what already exists.** Read the existing file first, then extend it.
 - **Never create a new Axios instance.** Use the existing one in `frontend/lib/`.
