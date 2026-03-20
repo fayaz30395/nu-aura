@@ -11,8 +11,8 @@ import com.hrms.domain.travel.TravelRequest;
 import com.hrms.domain.travel.TravelRequest.TravelStatus;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.travel.repository.TravelRequestRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,13 +24,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class TravelService implements ApprovalCallbackHandler {
 
     private final TravelRequestRepository travelRequestRepository;
     private final WorkflowService workflowService;
+
+    @Autowired
+    public TravelService(TravelRequestRepository travelRequestRepository,
+                         @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+        this.travelRequestRepository = travelRequestRepository;
+        this.workflowService = workflowService;
+    }
 
     @Transactional
     public TravelRequestDto createRequest(CreateTravelRequest request) {

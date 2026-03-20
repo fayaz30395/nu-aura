@@ -10,8 +10,8 @@ import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.onboarding.repository.*;
 import com.hrms.common.security.TenantContext;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class OnboardingManagementService implements ApprovalCallbackHandler {
 
@@ -34,6 +33,21 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     private final OnboardingTemplateTaskRepository templateTaskRepository;
     private final OnboardingTaskRepository taskRepository;
     private final WorkflowService workflowService;
+
+    @Autowired
+    public OnboardingManagementService(OnboardingProcessRepository onboardingRepository,
+                                       EmployeeRepository employeeRepository,
+                                       OnboardingChecklistTemplateRepository templateRepository,
+                                       OnboardingTemplateTaskRepository templateTaskRepository,
+                                       OnboardingTaskRepository taskRepository,
+                                       @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+        this.onboardingRepository = onboardingRepository;
+        this.employeeRepository = employeeRepository;
+        this.templateRepository = templateRepository;
+        this.templateTaskRepository = templateTaskRepository;
+        this.taskRepository = taskRepository;
+        this.workflowService = workflowService;
+    }
 
     @Transactional
     public OnboardingProcessResponse createProcess(OnboardingProcessRequest request) {

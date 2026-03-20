@@ -11,8 +11,8 @@ import com.hrms.domain.project.*;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.*;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service("projectTimesheetService")
-@RequiredArgsConstructor
 @Transactional
 public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
@@ -36,6 +35,19 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     private final EmployeeRepository employeeRepository;
     private final TimeEntryValidator timeEntryValidator;
     private final WorkflowService workflowService;
+
+    @Autowired
+    public ProjectTimesheetService(ProjectTimeEntryRepository timeEntryRepository,
+                                   HrmsProjectMemberRepository projectMemberRepository,
+                                   EmployeeRepository employeeRepository,
+                                   TimeEntryValidator timeEntryValidator,
+                                   @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+        this.timeEntryRepository = timeEntryRepository;
+        this.projectMemberRepository = projectMemberRepository;
+        this.employeeRepository = employeeRepository;
+        this.timeEntryValidator = timeEntryValidator;
+        this.workflowService = workflowService;
+    }
 
     // ==================== Time Entry Operations ====================
 

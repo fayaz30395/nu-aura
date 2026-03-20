@@ -11,8 +11,8 @@ import com.hrms.domain.loan.EmployeeLoan;
 import com.hrms.domain.loan.EmployeeLoan.LoanStatus;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.loan.repository.EmployeeLoanRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,13 +25,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class LoanService implements ApprovalCallbackHandler {
 
     private final EmployeeLoanRepository loanRepository;
     private final WorkflowService workflowService;
+
+    @Autowired
+    public LoanService(EmployeeLoanRepository loanRepository,
+                       @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+        this.loanRepository = loanRepository;
+        this.workflowService = workflowService;
+    }
 
     @Transactional
     public EmployeeLoanDto applyForLoan(CreateLoanRequest request) {

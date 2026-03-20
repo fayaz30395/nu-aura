@@ -32,7 +32,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class ExpenseClaimService implements ApprovalCallbackHandler {
 
@@ -40,6 +39,18 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
     private final WorkflowService workflowService;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public ExpenseClaimService(
+            ExpenseClaimRepository expenseClaimRepository,
+            EmployeeRepository employeeRepository,
+            DataScopeService dataScopeService,
+            @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+        this.expenseClaimRepository = expenseClaimRepository;
+        this.employeeRepository = employeeRepository;
+        this.dataScopeService = dataScopeService;
+        this.workflowService = workflowService;
+    }
 
     @Transactional
     public ExpenseClaimResponse createExpenseClaim(UUID employeeId, ExpenseClaimRequest request) {

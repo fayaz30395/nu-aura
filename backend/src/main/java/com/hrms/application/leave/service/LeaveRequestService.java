@@ -17,8 +17,8 @@ import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class LeaveRequestService implements ApprovalCallbackHandler {
@@ -40,6 +39,23 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final LeaveTypeRepository leaveTypeRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final WorkflowService workflowService;
+
+    @Autowired
+    public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
+                               LeaveBalanceService leaveBalanceService,
+                               WebSocketNotificationService webSocketNotificationService,
+                               EmployeeRepository employeeRepository,
+                               LeaveTypeRepository leaveTypeRepository,
+                               DomainEventPublisher domainEventPublisher,
+                               @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+        this.leaveRequestRepository = leaveRequestRepository;
+        this.leaveBalanceService = leaveBalanceService;
+        this.webSocketNotificationService = webSocketNotificationService;
+        this.employeeRepository = employeeRepository;
+        this.leaveTypeRepository = leaveTypeRepository;
+        this.domainEventPublisher = domainEventPublisher;
+        this.workflowService = workflowService;
+    }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 

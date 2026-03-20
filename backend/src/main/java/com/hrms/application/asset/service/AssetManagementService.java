@@ -27,13 +27,22 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class AssetManagementService implements ApprovalCallbackHandler {
 
     private final AssetRepository assetRepository;
     private final EmployeeRepository employeeRepository;
     private final WorkflowService workflowService;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public AssetManagementService(
+            AssetRepository assetRepository,
+            EmployeeRepository employeeRepository,
+            @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+        this.assetRepository = assetRepository;
+        this.employeeRepository = employeeRepository;
+        this.workflowService = workflowService;
+    }
 
     @Transactional
     public AssetResponse createAsset(AssetRequest request) {
