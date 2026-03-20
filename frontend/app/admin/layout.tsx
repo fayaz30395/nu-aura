@@ -6,6 +6,7 @@ import { Sidebar, SidebarItem, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED }
 import { Header } from '@/components/layout/Header';
 import { DarkModeProvider } from '@/components/layout/DarkModeProvider';
 import { usePermissions, Roles, Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import {
   LayoutDashboard,
   Users,
@@ -28,6 +29,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const { permissions, roles, hasPermission, isReady } = usePermissions();
+  const { user } = useAuth();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
     [roles]
@@ -308,7 +310,7 @@ export default function AdminLayout({
           <Header
             onMenuClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
             showMenuButton={true}
-            userName="Admin User"
+            userName={user?.fullName ?? 'User'}
             notificationCount={3}
             onLogout={handleLogout}
             onProfile={() => router.push('/admin/profile')}

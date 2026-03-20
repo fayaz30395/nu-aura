@@ -225,7 +225,15 @@
       "Skill(code-review:code-review)",
       "Skill(code-review:code-review:*)",
       "Bash(mv V49__add_deleted_at_column.sql V51__add_deleted_at_column.sql)",
-      "Bash(mv V50__contract_lifecycle_automation.sql V52__contract_lifecycle_automation.sql)"
+      "Bash(mv V50__contract_lifecycle_automation.sql V52__contract_lifecycle_automation.sql)",
+      "Bash(./mvnw flyway:repair -Dspring.profiles.active=dev)",
+      "Bash(export SPRING_DATASOURCE_URL=jdbc:postgresql://ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require)",
+      "Bash(export SPRING_DATASOURCE_USERNAME=neondb_owner)",
+      "Bash(export SPRING_DATASOURCE_PASSWORD=npg_p3Nnmrd9PvhB)",
+      "Bash(export SPRING_REDIS_HOST=localhost)",
+      "Bash(export SPRING_REDIS_PORT=6379)",
+      "Bash(export SPRING_FLYWAY_ENABLED=false)",
+      "Bash(bash /Users/fayaz.m/.claude/skills/git-pushing/scripts/smart_commit.sh)"
     ],
     "additionalDirectories": [
       "/tmp"

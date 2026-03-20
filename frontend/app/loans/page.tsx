@@ -39,7 +39,13 @@ export default function LoansPage() {
     isAuthenticated && hasHydrated
   );
 
-  const loans = loansResponse?.content ?? [];
+  // Extract loans from the paginated response
+  // loansResponse should be a Page<EmployeeLoan> with a 'content' array
+  const loans = Array.isArray(loansResponse?.content)
+    ? loansResponse.content
+    : Array.isArray(loansResponse)
+    ? loansResponse
+    : [];
   const error = queryError ? 'Failed to load loans data' : null;
 
   // Calculate summary from loans

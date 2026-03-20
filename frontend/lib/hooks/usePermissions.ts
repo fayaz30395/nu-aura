@@ -626,10 +626,18 @@ export function usePermissions(): UsePermissionsReturn {
     [permissions]
   );
 
+  // Check if user has admin role (SUPER_ADMIN or TENANT_ADMIN) — bypasses all permission checks
+  const isAdmin = useMemo(
+    () => roles.includes(Roles.SUPER_ADMIN) || roles.includes(Roles.TENANT_ADMIN),
+    [roles]
+  );
+
   // Permission check functions
   const hasPermission = useCallback(
     (permission: string): boolean => {
-      // SYSTEM_ADMIN bypasses all permission checks (mirrors backend SecurityContext.hasPermission)
+      // SUPER_ADMIN / TENANT_ADMIN bypasses all permission checks (mirrors backend SecurityConfig filter chain)
+      if (isAdmin) return true;
+      // SYSTEM_ADMIN permission also bypasses all checks (mirrors backend SecurityContext.hasPermission)
       if (isSystemAdmin) return true;
       if (permissions.includes(permission)) return true;
       // Check permission hierarchy: MODULE:MANAGE implies all actions in that module
@@ -640,23 +648,23 @@ export function usePermissions(): UsePermissionsReturn {
       }
       return false;
     },
-    [permissions, isSystemAdmin]
+    [permissions, isSystemAdmin, isAdmin]
   );
 
   const hasAnyPermission = useCallback(
     (...perms: string[]): boolean => {
-      if (isSystemAdmin) return true;
+      if (isAdmin || isSystemAdmin) return true;
       return perms.some((p) => hasPermission(p));
     },
-    [hasPermission, isSystemAdmin]
+    [hasPermission, isSystemAdmin, isAdmin]
   );
 
   const hasAllPermissions = useCallback(
     (...perms: string[]): boolean => {
-      if (isSystemAdmin) return true;
+      if (isAdmin || isSystemAdmin) return true;
       return perms.every((p) => hasPermission(p));
     },
-    [hasPermission, isSystemAdmin]
+    [hasPermission, isSystemAdmin, isAdmin]
   );
 
   // Role check functions
@@ -681,11 +689,7 @@ export function usePermissions(): UsePermissionsReturn {
     [roles]
   );
 
-  // Convenience checks
-  const isAdmin = useMemo(
-    () => hasAnyRole(Roles.SUPER_ADMIN, Roles.TENANT_ADMIN),
-    [hasAnyRole]
-  );
+  // Convenience checks — isAdmin already computed above (used by hasPermission bypass)
 
   const isHR = useMemo(
     () =>

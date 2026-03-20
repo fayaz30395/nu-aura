@@ -190,16 +190,19 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
       ],
     },
     // ─── 2. MY SPACE (Self-Service) ─────────────────────────────────
+    // Note: MY SPACE items have NO requiredPermission because they are self-service
+    // personal pages visible to ALL authenticated users. Permission checks happen
+    // at the page level and backend enforces that users can only see their own data.
     {
       id: 'my-space',
       label: 'My Space',
       items: [
-        { id: 'my-dashboard', label: 'My Dashboard', icon: icon.dashboard, href: '/me/dashboard', requiredPermission: Permissions.DASHBOARD_EMPLOYEE },
-        { id: 'profile', label: 'My Profile', icon: icon.user, href: '/me/profile', requiredPermission: Permissions.SELF_SERVICE_PROFILE_UPDATE },
-        { id: 'payslips', label: 'My Payslips', icon: icon.creditCard, href: '/me/payslips', requiredPermission: Permissions.SELF_SERVICE_VIEW_PAYSLIP },
-        { id: 'my-attendance', label: 'My Attendance', icon: icon.calendarCheck, href: '/me/attendance', requiredPermission: Permissions.ATTENDANCE_VIEW_SELF },
-        { id: 'leaves', label: 'My Leaves', icon: icon.palmtree, href: '/me/leaves', requiredPermission: Permissions.LEAVE_VIEW_SELF },
-        { id: 'my-documents', label: 'My Documents', icon: icon.fileText, href: '/me/documents', requiredPermission: Permissions.DOCUMENT_VIEW },
+        { id: 'my-dashboard', label: 'My Dashboard', icon: icon.dashboard, href: '/me/dashboard' },
+        { id: 'profile', label: 'My Profile', icon: icon.user, href: '/me/profile' },
+        { id: 'payslips', label: 'My Payslips', icon: icon.creditCard, href: '/me/payslips' },
+        { id: 'my-attendance', label: 'My Attendance', icon: icon.calendarCheck, href: '/me/attendance' },
+        { id: 'leaves', label: 'My Leaves', icon: icon.palmtree, href: '/me/leaves' },
+        { id: 'my-documents', label: 'My Documents', icon: icon.fileText, href: '/me/documents' },
       ],
     },
     // ─── 3. PEOPLE & ORGANIZATION ───────────────────────────────────

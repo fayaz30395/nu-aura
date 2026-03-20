@@ -43,6 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private ScopeContextService scopeContextService;
 
+    @Autowired
+    private SecurityService securityService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
@@ -73,6 +76,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     tokenPermissions.forEach(perm -> authorities.add(new SimpleGrantedAuthority(perm)));
                     roles = tokenRoles;
                     permissionScopes = tokenProvider.getPermissionScopesFromToken(jwt);
+
+                    // BUG-012 FIX: CRIT-001 moved permissions out of JWT to keep cookie < 4096 bytes.
+                    // When permissionScopes is empty (no permissions in JWT), load from DB via role lookup.
+                    // The DB stores permission codes in "resource.action" format (e.g. "employee.read")
+                    // but the backend @RequiresPermission uses "RESOURCE:ACTION" format (e.g. "EMPLOYEE:READ").
+                    // We normalize to the UPPERCASE:COLON format expected by Permission.java constants.
+                    if (permissionScopes.isEmpty() && !roles.isEmpty()) {
+                        Set<String> dbPermissions = securityService.getCachedPermissions(roles);
+                        permissionScopes = new HashMap<>();
+                        for (String dbPerm : dbPermissions) {
+                            String normalized = normalizePermissionCode(dbPerm);
+                            permissionScopes.put(normalized, com.hrms.domain.user.RoleScope.GLOBAL);
+                            authorities.add(new SimpleGrantedAuthority(normalized));
+                        }
+                        log.debug("BUG-012 fix: Loaded {} permissions from DB for roles {}: {}",
+                                permissionScopes.size(), roles, permissionScopes.keySet());
+                    }
                 } else {
                     // Fallback: Load from UserDetailsService (legacy mode)
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -152,6 +172,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContext.clear();
             TenantContext.clear();
         }
+    }
+
+    /**
+     * Normalize a permission code from DB format ("employee.read") to the canonical
+     * UPPERCASE:COLON format ("EMPLOYEE:READ") used by Permission.java constants and
+     * @RequiresPermission annotations.
+     *
+     * Handles multiple formats:
+     * - "employee.read" → "EMPLOYEE:READ"
+     * - "EMPLOYEE:READ" → "EMPLOYEE:READ" (already canonical)
+     * - "HRMS:EMPLOYEE:READ" → "HRMS:EMPLOYEE:READ" (app-prefixed, keep as-is)
+     */
+    private String normalizePermissionCode(String code) {
+        if (code == null) return null;
+        // If already in UPPER:COLON format, return as-is
+        if (code.contains(":")) return code;
+        // Convert "resource.action" to "RESOURCE:ACTION"
+        return code.replace('.', ':').toUpperCase();
     }
 
     /**

@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
   // React Query hooks for loading data
   const today = getLocalDateString();
-  const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError } = useDashboardAnalytics();
+  const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError, refetch: refetchAnalytics } = useDashboardAnalytics();
   const { data: attendanceRangeData = [] } = useAttendanceByDateRange(today, today, !!user?.employeeId);
   const { data: timeEntriesData = [] } = useMyTimeEntries(today, !!user?.employeeId);
   const { data: onboardingData = [] } = useOnboardingProcessesByStatus(
@@ -482,8 +482,13 @@ export default function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-[var(--text-secondary)] mb-4">{error || 'Unable to load analytics data'}</p>
-              <Button variant="primary" onClick={() => window.location.reload()} className="w-full">Try Again</Button>
+              <p className="text-[var(--text-secondary)] mb-4">
+                {error ? `${error}. This may be a temporary service issue.` : 'Unable to load analytics data'}
+              </p>
+              <div className="flex gap-2">
+                <Button variant="primary" onClick={() => refetchAnalytics()} className="flex-1">Retry</Button>
+                <Button variant="outline" onClick={() => window.location.reload()} className="flex-1">Refresh Page</Button>
+              </div>
             </CardContent>
           </Card>
         </div>
