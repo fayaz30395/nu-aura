@@ -6,12 +6,19 @@ import type {
 } from '@/lib/types/fluence-chat';
 
 /**
- * Get the tenant ID from the cookie (same logic as ApiClient).
+ * Get the tenant ID from localStorage (API-006: consistent with rest of app).
+ * Falls back to cookie for backward compatibility.
  */
 function getTenantId(): string | null {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(/(?:^|;\s*)tenant_id=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
+  if (typeof window === 'undefined') return null;
+  const fromStorage = localStorage.getItem('tenantId');
+  if (fromStorage) return fromStorage;
+  // Fallback to cookie
+  if (typeof document !== 'undefined') {
+    const match = document.cookie.match(/(?:^|;\s*)tenant_id=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+  return null;
 }
 
 /**

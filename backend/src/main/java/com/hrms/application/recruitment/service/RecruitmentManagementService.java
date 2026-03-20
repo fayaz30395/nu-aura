@@ -323,6 +323,21 @@ public class RecruitmentManagementService {
         Candidate.RecruitmentStage oldStage = candidate.getCurrentStage();
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
 
+        // BIZ-011: Validate stage transition — prevent skipping stages
+        // Rejection (CANDIDATE_REJECTED, PANEL_REJECT) is always allowed from any stage
+        if (stage != Candidate.RecruitmentStage.CANDIDATE_REJECTED
+                && stage != Candidate.RecruitmentStage.PANEL_REJECT
+                && oldStage != null) {
+            int oldOrdinal = oldStage.ordinal();
+            int newOrdinal = stage.ordinal();
+            // Allow forward by at most 2 positions, or backward (re-evaluation)
+            if (newOrdinal > oldOrdinal + 2) {
+                log.warn("Stage skip attempted: {} -> {} for candidate {}", oldStage, stage, candidateId);
+                throw new com.hrms.common.exception.BusinessException(
+                        "Cannot skip from " + oldStage + " to " + stage + ". Please follow the recruitment pipeline sequence.");
+            }
+        }
+
         candidate.setCurrentStage(stage);
         if (notes != null) {
             candidate.setNotes(notes);

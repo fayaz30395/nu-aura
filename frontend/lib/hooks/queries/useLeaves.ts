@@ -170,8 +170,9 @@ export function useApproveLeaveRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, approverId, comments }: { id: string; approverId: string; comments?: string }) =>
-      leaveService.approveLeaveRequest(id, approverId, comments),
+    // API-004: Backend derives approver from SecurityContext
+    mutationFn: ({ id }: { id: string; approverId?: string; comments?: string }) =>
+      leaveService.approveLeaveRequest(id),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
       if (result.employeeId) {

@@ -16,6 +16,7 @@ import { EntityType, CustomFieldValueRequest } from '@/lib/types/custom-fields';
 import { customFieldsApi } from '@/lib/api/custom-fields';
 import { AppLayout } from '@/components/layout';
 import { AlertCircle, Clock } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('EmployeeEditPage');
@@ -282,11 +283,15 @@ export default function EditEmployeePage() {
         });
       }
 
+      notifications.show({ title: 'Success', message: 'Employee updated successfully', color: 'green' });
+
       if (!employmentChanges) {
         router.push(`/employees/${employeeId}`);
       }
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update employee');
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update employee';
+      setError(message);
+      notifications.show({ title: 'Error', message, color: 'red' });
       log.error('Error updating employee:', err);
     }
   };

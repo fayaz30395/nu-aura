@@ -21,6 +21,9 @@ export interface AuthResponse {
   email: string;
   fullName: string;
   profilePictureUrl?: string;
+  // CRIT-001: permissions in response body (not JWT) to keep cookie under 4KB
+  roles?: string[];
+  permissions?: string[];
 }
 
 export interface User {

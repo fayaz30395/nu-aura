@@ -273,4 +273,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 
 StatCard.displayName = 'StatCard';
 
-export { StatCard };
+// PERF-001: Memoize to prevent re-renders when parent state changes
+const MemoizedStatCard = React.memo(StatCard);
+MemoizedStatCard.displayName = 'StatCard';
+
+export { MemoizedStatCard as StatCard };

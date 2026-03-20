@@ -92,15 +92,20 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         // L1 Approval: Validate that approver is the employee's manager
         validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
 
+        // BIZ-003: Validate sufficient balance before approving
+        java.math.BigDecimal daysToDeduct = Boolean.TRUE.equals(request.getIsHalfDay())
+                ? new java.math.BigDecimal("0.5")
+                : request.getTotalDays();
+
+        java.math.BigDecimal availableBalance = leaveBalanceService.getAvailableBalance(
+                request.getEmployeeId(), request.getLeaveTypeId());
+        if (availableBalance != null && availableBalance.compareTo(daysToDeduct) < 0) {
+            throw new com.hrms.common.exception.BusinessException(
+                    "Insufficient leave balance. Available: " + availableBalance + " days, Requested: " + daysToDeduct + " days");
+        }
+
         request.approve(approverId);
         LeaveRequest saved = leaveRequestRepository.save(request);
-
-        // R2-006 FIX: Half-day requests must deduct only 0.5 days regardless of
-        // what totalDays stores. Without this check a half-day would deduct a full
-        // day (or whatever totalDays evaluates to) from the employee's balance.
-        java.math.BigDecimal daysToDeduct = Boolean.TRUE.equals(saved.getIsHalfDay())
-                ? new java.math.BigDecimal("0.5")
-                : saved.getTotalDays();
 
         leaveBalanceService.deductLeave(
                 saved.getEmployeeId(),

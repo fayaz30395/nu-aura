@@ -45,6 +45,10 @@ public class StatutoryDeductionService {
     private static final BigDecimal ESI_EMPLOYER_RATE = new BigDecimal("0.0325");
 
     // ─── TDS / New Tax Regime slab boundaries (annual, INR) ──────────────────
+    // BIZ-007: These slabs are for FY 2024-25 New Tax Regime. When slabs change,
+    // create a DB-driven IncomeTaxSlab entity (similar to ProfessionalTaxSlab)
+    // with fiscal_year, min_income, max_income, rate columns and a tenant-aware
+    // repository. For now, these are correct for FY 2024-25.
     private static final BigDecimal SLAB_3L  = new BigDecimal("300000");
     private static final BigDecimal SLAB_6L  = new BigDecimal("600000");
     private static final BigDecimal SLAB_9L  = new BigDecimal("900000");

@@ -110,17 +110,10 @@ class LeaveService {
     return response.data;
   }
 
-  async approveLeaveRequest(
-    id: string,
-    approverId: string,
-    comments?: string
-  ): Promise<LeaveRequest> {
+  // API-004: Backend derives approver from SecurityContext; no extra params needed.
+  async approveLeaveRequest(id: string): Promise<LeaveRequest> {
     const response = await apiClient.post<LeaveRequest>(
-      `/leave-requests/${id}/approve`,
-      null,
-      {
-        params: { approverId, comments },
-      }
+      `/leave-requests/${id}/approve`
     );
     return response.data;
   }

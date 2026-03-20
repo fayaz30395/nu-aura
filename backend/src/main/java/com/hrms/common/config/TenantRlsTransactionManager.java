@@ -8,6 +8,7 @@ import org.springframework.transaction.TransactionDefinition;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
@@ -69,8 +70,10 @@ import java.util.UUID;
 @Slf4j
 public class TenantRlsTransactionManager extends JpaTransactionManager {
 
-    private static final String SET_TENANT_SQL = "SET LOCAL app.current_tenant_id = '%s'";
-    private static final String RESET_TENANT_SQL = "RESET app.current_tenant_id";
+    // Use set_config() with bind parameter to prevent SQL injection (CRIT-002).
+    // Third param 'true' = SET LOCAL (transaction-scoped).
+    private static final String SET_TENANT_SQL = "SELECT set_config('app.current_tenant_id', ?, true)";
+    private static final String RESET_TENANT_SQL = "SELECT set_config('app.current_tenant_id', '', false)";
 
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
@@ -116,14 +119,9 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
 
         try {
             Connection conn = DataSourceUtils.getConnection(ds);
-            try (Statement stmt = conn.createStatement()) {
-                // SET LOCAL scopes the variable to this transaction only.
-                // Using string interpolation here is intentional: tenantId is a
-                // UUID (validated on ingress in TenantFilter) so there is no SQL
-                // injection risk.  We deliberately avoid PreparedStatement here
-                // because SET LOCAL does not accept bind parameters in PostgreSQL.
-                String sql = String.format(SET_TENANT_SQL, tenantId);
-                stmt.execute(sql);
+            try (PreparedStatement ps = conn.prepareStatement(SET_TENANT_SQL)) {
+                ps.setString(1, tenantId.toString());
+                ps.execute();
                 log.trace("RLS: SET LOCAL app.current_tenant_id = {}", tenantId);
             }
         } catch (SQLException e) {

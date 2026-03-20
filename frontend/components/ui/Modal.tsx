@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, ReactNode } from 'react';
+import React, { useEffect, useRef, useCallback, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { modalVariants, overlayVariants } from '@/lib/animations/variants';
 import { X } from 'lucide-react';
@@ -33,6 +33,8 @@ interface ModalFooterProps {
   className?: string;
 }
 
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
@@ -42,21 +44,58 @@ const Modal: React.FC<ModalProps> = ({
   closeOnBackdrop = true,
   closeOnEscape = true,
 }) => {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && closeOnEscape) onClose();
-    };
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
+  // QA-003: Focus trap — trap Tab/Shift+Tab within modal
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape' && closeOnEscape) {
+      onClose();
+      return;
+    }
+
+    if (e.key !== 'Tab' || !modalRef.current) return;
+
+    const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }, [closeOnEscape, onClose]);
+
+  useEffect(() => {
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      // Save current focus to restore later
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
+
+      // Auto-focus first focusable element in modal
+      requestAnimationFrame(() => {
+        const firstFocusable = modalRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+        firstFocusable?.focus();
+      });
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
+      // Restore focus to the element that triggered the modal
+      previousFocusRef.current?.focus();
     };
-  }, [isOpen, onClose, closeOnEscape]);
+  }, [isOpen, handleKeyDown]);
 
   const sizeClasses = {
     sm: 'max-w-sm',
@@ -87,6 +126,7 @@ const Modal: React.FC<ModalProps> = ({
 
           {/* Modal */}
           <motion.div
+            ref={modalRef}
             className={cn(
               'relative w-full rounded-2xl border',
               'max-h-[90vh] overflow-hidden flex flex-col',
