@@ -229,29 +229,39 @@ public class LeaveRequestController {
     private LeaveRequestResponse toResponse(LeaveRequest request) {
         LeaveRequestResponse response = new LeaveRequestResponse();
         BeanUtils.copyProperties(request, response);
-        response.setStatus(request.getStatus().name());
+        response.setStatus(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN");
         if (request.getHalfDayPeriod() != null) {
             response.setHalfDayPeriod(request.getHalfDayPeriod().name());
         }
 
         // Get the employee to find reporting manager (approver)
         UUID tenantId = TenantContext.getCurrentTenant();
-        Optional<Employee> employeeOpt = employeeService.findByIdAndTenant(request.getEmployeeId(), tenantId);
-        if (employeeOpt.isPresent()) {
-            Employee employee = employeeOpt.get();
-            if (employee.getManagerId() != null) {
-                response.setApproverId(employee.getManagerId());
-                // Get the manager's name
-                Optional<Employee> managerOpt = employeeService.findByIdAndTenant(employee.getManagerId(),
-                        tenantId);
-                managerOpt.ifPresent(manager -> response.setPendingApproverName(manager.getFullName()));
+        if (request.getEmployeeId() != null) {
+            try {
+                Optional<Employee> employeeOpt = employeeService.findByIdAndTenant(request.getEmployeeId(), tenantId);
+                if (employeeOpt.isPresent()) {
+                    Employee employee = employeeOpt.get();
+                    if (employee.getManagerId() != null) {
+                        response.setApproverId(employee.getManagerId());
+                        // Get the manager's name
+                        Optional<Employee> managerOpt = employeeService.findByIdAndTenant(employee.getManagerId(),
+                                tenantId);
+                        managerOpt.ifPresent(manager -> response.setPendingApproverName(manager.getFullName()));
+                    }
+                }
+            } catch (Exception e) {
+                // Non-critical enrichment — don't fail the entire response
             }
         }
 
         // If already approved/rejected, get the approver's name
         if (request.getApprovedBy() != null) {
-            Optional<Employee> approverOpt = employeeService.findByIdAndTenant(request.getApprovedBy(), tenantId);
-            approverOpt.ifPresent(approver -> response.setApproverName(approver.getFullName()));
+            try {
+                Optional<Employee> approverOpt = employeeService.findByIdAndTenant(request.getApprovedBy(), tenantId);
+                approverOpt.ifPresent(approver -> response.setApproverName(approver.getFullName()));
+            } catch (Exception e) {
+                // Non-critical enrichment — don't fail the entire response
+            }
         }
 
         return response;

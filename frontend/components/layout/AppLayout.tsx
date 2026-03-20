@@ -35,6 +35,32 @@ export interface AppLayoutProps {
 
 const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
 
+// Role priority for display — higher-priority roles appear first
+const ROLE_PRIORITY: Record<string, number> = {
+  SUPER_ADMIN: 100,
+  TENANT_ADMIN: 90,
+  HR_ADMIN: 80,
+  HR_MANAGER: 75,
+  FINANCE_ADMIN: 70,
+  PAYROLL_ADMIN: 65,
+  DEPARTMENT_HEAD: 60,
+  MANAGER: 55,
+  RECRUITMENT_ADMIN: 50,
+  TEAM_LEAD: 45,
+  TRAINER: 40,
+  RECRUITER: 35,
+  EMPLOYEE: 10,
+};
+
+function getBestRoleLabel(roles?: Array<{ code: string; name: string }>): string | undefined {
+  if (!roles || roles.length === 0) return undefined;
+  // Sort by priority descending and return the name of the highest-priority role
+  const sorted = [...roles].sort((a, b) =>
+    (ROLE_PRIORITY[b.code] ?? 20) - (ROLE_PRIORITY[a.code] ?? 20)
+  );
+  return sorted[0].name;
+}
+
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   breadcrumbs = [],
@@ -300,7 +326,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           onLogout={handleLogout}
           userName={user?.fullName || 'User'}
           userAvatar={user?.profilePictureUrl}
-          userRole={user?.roles?.[0]?.name || 'Employee'}
+          userRole={getBestRoleLabel(user?.roles) || 'Employee'}
           {...headerProps}
         />
 
