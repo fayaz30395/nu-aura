@@ -25,26 +25,25 @@ public class ImplicitRoleService {
 
     /**
      * Get implicit roles for an employee based on their relationships.
+     * Optimized: uses a single query to fetch direct report IDs, then one more
+     * for skip-level check (max 2 queries instead of 3).
      */
     @Transactional(readOnly = true)
     public Set<String> getImplicitRoles(UUID employeeId, UUID tenantId) {
         Set<String> implicitRoles = new HashSet<>();
 
-        // Check if employee has direct reports
-        Long directReportCount = employeeRepository.countDirectReportsByManagerId(tenantId, employeeId);
-        if (directReportCount > 0) {
+        // Single query: fetch direct report IDs (replaces separate COUNT + SELECT)
+        List<UUID> directReportIds = employeeRepository.findEmployeeIdsByManagerIds(tenantId, List.of(employeeId));
+        if (!directReportIds.isEmpty()) {
             implicitRoles.add(RoleHierarchy.REPORTING_MANAGER);
-            log.debug("Employee {} has {} direct reports, granting REPORTING_MANAGER", employeeId, directReportCount);
+            log.debug("Employee {} has {} direct reports, granting REPORTING_MANAGER", employeeId, directReportIds.size());
 
-            // Check for skip-level reports (2nd level)
-            List<UUID> directReportIds = employeeRepository.findEmployeeIdsByManagerIds(tenantId, List.of(employeeId));
-            if (!directReportIds.isEmpty()) {
-                List<UUID> skipLevelReports = employeeRepository.findEmployeeIdsByManagerIds(tenantId, directReportIds);
-                if (!skipLevelReports.isEmpty()) {
-                    implicitRoles.add(RoleHierarchy.SKIP_LEVEL_MANAGER);
-                    log.debug("Employee {} has {} skip-level reports, granting SKIP_LEVEL_MANAGER",
-                            employeeId, skipLevelReports.size());
-                }
+            // Check for skip-level reports (2nd level) — only if direct reports exist
+            List<UUID> skipLevelReports = employeeRepository.findEmployeeIdsByManagerIds(tenantId, directReportIds);
+            if (!skipLevelReports.isEmpty()) {
+                implicitRoles.add(RoleHierarchy.SKIP_LEVEL_MANAGER);
+                log.debug("Employee {} has {} skip-level reports, granting SKIP_LEVEL_MANAGER",
+                        employeeId, skipLevelReports.size());
             }
         }
 

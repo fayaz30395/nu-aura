@@ -104,4 +104,13 @@ public interface UserAppAccessRepository extends JpaRepository<UserAppAccess, UU
            "WHERE ua.user.id = :userId AND ua.status = 'ACTIVE' AND a.status = 'ACTIVE' " +
            "ORDER BY a.displayOrder ASC")
     List<UserAppAccess> findUserApplications(@Param("userId") UUID userId);
+
+    /**
+     * Lightweight projection: fetch only application codes the user has active access to.
+     * Avoids hydrating full UserAppAccess + NuApplication entities during login.
+     */
+    @Query("SELECT a.code FROM UserAppAccess ua JOIN ua.application a " +
+           "WHERE ua.user.id = :userId AND ua.status = 'ACTIVE' AND a.status = 'ACTIVE' " +
+           "ORDER BY a.displayOrder ASC")
+    List<String> findActiveApplicationCodesByUserId(@Param("userId") UUID userId);
 }

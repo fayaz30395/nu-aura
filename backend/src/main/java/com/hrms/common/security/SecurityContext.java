@@ -295,6 +295,38 @@ public class SecurityContext {
                     return true;
                 }
             }
+
+            // Permission scope hierarchy: VIEW_ALL > VIEW_TEAM > VIEW_DEPARTMENT > VIEW_SELF
+            // A higher scope implies all lower scopes (e.g., VIEW_TEAM implies VIEW_SELF)
+            if (permission.endsWith(":VIEW_SELF")) {
+                for (String higherScope : new String[]{":VIEW_TEAM", ":VIEW_DEPARTMENT", ":VIEW_ALL"}) {
+                    String higherPerm = module + higherScope;
+                    if (permissions.contains(higherPerm)) {
+                        return true;
+                    }
+                    if (appCode != null && permissions.contains(appCode + ":" + higherPerm)) {
+                        return true;
+                    }
+                }
+            } else if (permission.endsWith(":VIEW_DEPARTMENT")) {
+                for (String higherScope : new String[]{":VIEW_TEAM", ":VIEW_ALL"}) {
+                    String higherPerm = module + higherScope;
+                    if (permissions.contains(higherPerm)) {
+                        return true;
+                    }
+                    if (appCode != null && permissions.contains(appCode + ":" + higherPerm)) {
+                        return true;
+                    }
+                }
+            } else if (permission.endsWith(":VIEW_TEAM")) {
+                String higherPerm = module + ":VIEW_ALL";
+                if (permissions.contains(higherPerm)) {
+                    return true;
+                }
+                if (appCode != null && permissions.contains(appCode + ":" + higherPerm)) {
+                    return true;
+                }
+            }
         }
 
         return false;
