@@ -54,6 +54,7 @@ export interface CreateRoleRequest {
 export interface UpdateRoleRequest {
   name: string;
   description?: string;
+  parentRoleId?: string;
 }
 
 export interface AssignPermissionsRequest {

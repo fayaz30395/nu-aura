@@ -27,6 +27,7 @@ import {
   useUpdateRole,
   useDeleteRole,
   useAssignPermissionsWithScope,
+  useEffectivePermissions,
 } from '@/lib/hooks/queries/useRoles';
 import { createLogger } from '@/lib/utils/logger';
 
@@ -43,10 +44,16 @@ const createRoleFormSchema = z.object({
 const updateRoleFormSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   description: z.string().optional().or(z.literal('')),
+  parentRoleId: z.string().nullable().optional(),
 });
 
 type CreateRoleFormData = z.infer<typeof createRoleFormSchema>;
 type UpdateRoleFormData = z.infer<typeof updateRoleFormSchema>;
+
+interface ParentRoleOption {
+  value: string;
+  label: string;
+}
 
 export default function RolesPage() {
   const router = useRouter();
@@ -69,6 +76,7 @@ export default function RolesPage() {
   const [showPermissionDropdown, setShowPermissionDropdown] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
+  const [selectedParentRoleId, setSelectedParentRoleId] = useState<string | null>(null);
 
   // Create form (for new role)
   const createForm = useForm<CreateRoleFormData>({
@@ -87,6 +95,9 @@ export default function RolesPage() {
   const updateRoleMutation = useUpdateRole(selectedRole?.id || '');
   const deleteRoleMutation = useDeleteRole();
   const assignPermissionsMutation = useAssignPermissionsWithScope(selectedRole?.id || '');
+
+  // Query hook for inherited permissions
+  const inheritedPermissionsQuery = useEffectivePermissions(selectedParentRoleId || '');
 
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
@@ -128,10 +139,12 @@ export default function RolesPage() {
       const updateData: UpdateRoleRequest = {
         name: data.name,
         description: data.description || '',
+        parentRoleId: data.parentRoleId || undefined,
       };
       await updateRoleMutation.mutateAsync(updateData);
       setShowEditModal(false);
       setSelectedRole(null);
+      setSelectedParentRoleId(null);
       editForm.reset();
     } catch (error) {
       log.error('Failed to update role:', error);
@@ -182,9 +195,11 @@ export default function RolesPage() {
 
   const openEditModal = (role: Role) => {
     setSelectedRole(role);
+    setSelectedParentRoleId(role.parentRoleId || null);
     editForm.reset({
       name: role.name,
       description: role.description || '',
+      parentRoleId: role.parentRoleId || null,
     });
     setShowEditModal(true);
   };
@@ -258,6 +273,32 @@ export default function RolesPage() {
     role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     role.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Get available parent roles (exclude current role and descendants to prevent cycles)
+  const getAvailableParentRoles = (): ParentRoleOption[] => {
+    if (!selectedRole) return [];
+
+    // Build a set of role IDs that are descendants of the current role
+    const descendants = new Set<string>();
+    const addDescendants = (roleId: string) => {
+      descendants.add(roleId);
+      roles
+        .filter((r) => r.parentRoleId === roleId)
+        .forEach((r) => addDescendants(r.id));
+    };
+    addDescendants(selectedRole.id);
+
+    return roles
+      .filter((role) =>
+        role.id !== selectedRole.id &&
+        !descendants.has(role.id) &&
+        !role.isSystemRole
+      )
+      .map((role) => ({
+        value: role.id,
+        label: `${role.name} (${role.code})`,
+      }));
+  };
 
   if (isLoading) {
     return (
@@ -564,7 +605,7 @@ export default function RolesPage() {
       {/* Edit Role Modal */}
       {showEditModal && selectedRole && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-md">
+          <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Role</h2>
             <form onSubmit={editForm.handleSubmit(handleUpdateRole)}>
               <div className="mb-4">
@@ -604,12 +645,60 @@ export default function RolesPage() {
                   <p className="mt-1 text-xs text-red-500">{editForm.formState.errors.description.message}</p>
                 )}
               </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  Parent Role
+                </label>
+                <select
+                  {...editForm.register('parentRoleId')}
+                  value={selectedParentRoleId || ''}
+                  onChange={(e) => {
+                    const value = e.target.value || null;
+                    setSelectedParentRoleId(value);
+                    editForm.setValue('parentRoleId', value);
+                  }}
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                >
+                  <option value="">None</option>
+                  {getAvailableParentRoles().map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
+                  Select a parent role to inherit its permissions
+                </p>
+              </div>
+              {/* Inherited Permissions Section */}
+              {selectedParentRoleId && inheritedPermissionsQuery.data && inheritedPermissionsQuery.data.length > 0 && (
+                <div className="mb-4 p-4 bg-[var(--bg-surface)] dark:bg-[var(--bg-primary)] rounded-lg border border-[var(--border-main)]">
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+                    Inherited Permissions from {selectedRole.parentRoleName || 'Parent Role'}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {inheritedPermissionsQuery.data.map((permission) => (
+                      <span
+                        key={permission.code}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 opacity-75"
+                      >
+                        {permission.code}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-xs text-[var(--text-muted)] mt-2">
+                    These permissions are inherited from the parent role and cannot be modified here.
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={() => {
                     setShowEditModal(false);
                     setSelectedRole(null);
+                    setSelectedParentRoleId(null);
                     editForm.reset();
                   }}
                   className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
