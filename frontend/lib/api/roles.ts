@@ -60,6 +60,11 @@ export const rolesApi = {
     const response = await apiClient.patch<Role>(`/roles/${roleId}/permissions/${permissionCode}/scope`, data);
     return response.data;
   },
+
+  getEffectivePermissions: async (roleId: string): Promise<Permission[]> => {
+    const response = await apiClient.get<Permission[]>(`/roles/${roleId}/effective-permissions`);
+    return response.data;
+  },
 };
 
 export const permissionsApi = {

@@ -38,6 +38,8 @@ export interface Role {
   isSystemRole: boolean;
   tenantId: string;
   permissions: Permission[];
+  parentRoleId?: string;
+  parentRoleName?: string;
   createdAt: string;
   updatedAt: string;
 }
