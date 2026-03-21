@@ -44,6 +44,9 @@ public class Role extends TenantAware {
     @Builder.Default
     private Set<RolePermission> permissions = new HashSet<>();
 
+    @Column(name = "parent_role_id")
+    private UUID parentRoleId;
+
     public RolePermission addPermission(Permission permission, RoleScope scope) {
         RolePermission rolePermission = RolePermission.builder()
                 .role(this)
