@@ -10,6 +10,7 @@ import {
   AssignPermissionsRequest,
   AssignPermissionsWithScopeRequest,
   UpdatePermissionScopeRequest,
+  Permission,
 } from '@/lib/types/roles';
 
 // Query key factory
@@ -63,6 +64,21 @@ export function usePermissionsByResource(resource: string) {
     queryKey: [...roleKeys.permissions(), 'resource', resource] as const,
     queryFn: () => permissionsApi.getPermissionsByResource(resource),
     enabled: !!resource,
+  });
+}
+
+/**
+ * Fetch effective (flattened) permissions for a role (includes inherited from parent)
+ */
+export function useEffectivePermissions(roleId: string) {
+  return useQuery({
+    queryKey: [...roleKeys.detail(roleId), 'effective-permissions'] as const,
+    queryFn: async () => {
+      const response = await rolesApi.getEffectivePermissions(roleId);
+      return response;
+    },
+    enabled: !!roleId,
+    staleTime: 30 * 1000,
   });
 }
 
