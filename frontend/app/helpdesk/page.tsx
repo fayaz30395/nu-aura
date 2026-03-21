@@ -18,7 +18,7 @@ import {
 export default function HelpdeskPage() {
   const router = useRouter();
   const { data: dashboard, isLoading: dashboardLoading, error: dashboardError } = useSLADashboard();
-  const { data: escalations = [], isLoading: escalationsLoading, error: escalationsError } = useMyPendingEscalations();
+  const { data: escalations = [], isLoading: escalationsLoading } = useMyPendingEscalations();
   const { data: slasResponse } = useSlaConfigs(0, 100);
 
   const activeSlaCount = useMemo(
@@ -26,7 +26,7 @@ export default function HelpdeskPage() {
     [slasResponse],
   );
 
-  const isLoading = dashboardLoading || escalationsLoading;
+  const _isLoading = dashboardLoading || escalationsLoading;
 
   const getStatValue = (formatter: () => string): string => {
     if (dashboardLoading) return '...';

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { BirthdayResponse, WorkAnniversaryResponse, NewJoineeResponse } from '@/lib/services/home.service';
 import { useUpcomingBirthdays, useUpcomingAnniversaries, useNewJoinees } from '@/lib/hooks/queries/useHome';
 
 type TabType = 'birthdays' | 'anniversaries' | 'newJoiners';

@@ -234,12 +234,6 @@ export default function RecruitmentDashboard() {
     );
   }
 
-  // Check individual query loading states for progressive rendering
-  const isJobsLoading = jobOpeningsQuery.isLoading;
-  const isCandidatesLoading = candidatesQuery.isLoading;
-  const isJobsByStatusLoading = openJobsQuery.isLoading;
-  const isInterviewsLoading = interviewsQuery.isLoading;
-
   // Show page skeleton only on initial page load when ALL critical queries are loading
   const isInitialLoad =
     jobOpeningsQuery.fetchStatus === 'fetching' &&
