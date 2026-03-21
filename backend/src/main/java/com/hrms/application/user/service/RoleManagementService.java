@@ -117,19 +117,40 @@ public class RoleManagementService {
         // Capture old values for audit
         String oldName = role.getName();
         String oldDescription = role.getDescription();
+        UUID oldParentRoleId = role.getParentRoleId();
 
         // Update basic fields
         role.setName(request.getName());
         role.setDescription(request.getDescription());
 
+        // Task 9: Handle parentRoleId if provided in request
+        if (request.getParentRoleId() != null || (request.getParentRoleId() == null && oldParentRoleId != null)) {
+            UUID newParentId = request.getParentRoleId();
+            if (newParentId != null) {
+                // Validate the parent role assignment (check for cycles, etc.)
+                validateAndSetParentRole(roleId, newParentId, tenantId);
+            }
+            role.setParentRoleId(newParentId);
+        }
+
         Role updatedRole = roleRepository.save(role);
         log.info("Updated role: {} for tenant: {}", updatedRole.getCode(), tenantId);
 
         // Audit log
+        Map<String, Object> oldAudit = Map.of(
+                "name", oldName,
+                "description", oldDescription,
+                "parentRoleId", oldParentRoleId
+        );
+        Map<String, Object> newAudit = Map.of(
+                "name", updatedRole.getName(),
+                "description", updatedRole.getDescription(),
+                "parentRoleId", updatedRole.getParentRoleId()
+        );
         auditLogService.logAction("ROLE", updatedRole.getId(),
                 com.hrms.domain.audit.AuditLog.AuditAction.UPDATE,
-                Map.of("name", oldName, "description", oldDescription),
-                Map.of("name", updatedRole.getName(), "description", updatedRole.getDescription()),
+                oldAudit,
+                newAudit,
                 "Updated role: " + updatedRole.getName());
 
         return mapToResponse(updatedRole);
@@ -595,5 +616,135 @@ public class RoleManagementService {
             default:
                 return "Unknown";
         }
+    }
+
+    /**
+     * Task 9: Validate role parent assignment and detect cycles.
+     *
+     * Checks:
+     * 1. If newParentId is null, clearing parent (always safe)
+     * 2. If roleId equals newParentId, throw error (self-parent)
+     * 3. Walk parent chain from newParentId upward to detect cycles
+     * 4. Max depth 10 to prevent infinite loops
+     *
+     * @param roleId The role being updated
+     * @param newParentId The proposed new parent role ID
+     * @param tenantId The tenant context
+     * @throws IllegalArgumentException if cycle detected or role is self-parent
+     */
+    @Transactional(readOnly = true)
+    public void validateAndSetParentRole(UUID roleId, UUID newParentId, UUID tenantId) {
+        if (newParentId == null) {
+            // Clearing parent is always safe
+            return;
+        }
+
+        // Check self-parent
+        if (roleId.equals(newParentId)) {
+            throw new IllegalArgumentException("Role cannot be its own parent");
+        }
+
+        // Walk parent chain from newParentId upward, checking for cycles
+        Set<UUID> visited = new HashSet<>();
+        Queue<UUID> toProcess = new LinkedList<>();
+        toProcess.offer(newParentId);
+
+        int depth = 0;
+        int maxDepth = 10;
+
+        while (!toProcess.isEmpty() && depth < maxDepth) {
+            UUID currentRoleId = toProcess.poll();
+
+            if (currentRoleId == null || visited.contains(currentRoleId)) {
+                continue;
+            }
+
+            // Cycle detected: we found the role being updated in the parent chain
+            if (currentRoleId.equals(roleId)) {
+                throw new IllegalArgumentException(
+                        "Cannot set parent role: would create a cycle in the role hierarchy");
+            }
+
+            visited.add(currentRoleId);
+
+            // Load parent of current role
+            Optional<Role> currentRoleOpt = roleRepository.findByIdAndTenantIdWithPermissions(currentRoleId, tenantId);
+            if (currentRoleOpt.isPresent()) {
+                Role currentRole = currentRoleOpt.get();
+                if (currentRole.getParentRoleId() != null) {
+                    toProcess.offer(currentRole.getParentRoleId());
+                }
+            }
+
+            depth++;
+        }
+
+        if (depth >= maxDepth) {
+            log.warn("validateAndSetParentRole: max depth exceeded; stopping cycle detection at depth {}", maxDepth);
+        }
+
+        log.debug("Parent role validation passed for roleId={} with newParentId={}", roleId, newParentId);
+    }
+
+    /**
+     * Task 9: Get effective permissions for a role, including inherited permissions
+     * from the parent role chain.
+     *
+     * Returns a set of permission responses, each marked with whether it's inherited
+     * and from which parent level.
+     *
+     * @param roleId The role to get effective permissions for
+     * @param tenantId The tenant context
+     * @return Set of PermissionResponse objects
+     */
+    @Transactional(readOnly = true)
+    public Set<PermissionResponse> getEffectivePermissions(UUID roleId, UUID tenantId) {
+        Set<PermissionResponse> effectivePerms = new HashSet<>();
+        Set<UUID> visitedRoles = new HashSet<>();
+        Queue<Role> toProcess = new LinkedList<>();
+
+        Optional<Role> roleOpt = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId);
+        if (!roleOpt.isPresent()) {
+            throw new ResourceNotFoundException("Role not found");
+        }
+
+        toProcess.offer(roleOpt.get());
+
+        int depth = 0;
+        int maxDepth = 10;
+
+        while (!toProcess.isEmpty() && depth < maxDepth) {
+            Role current = toProcess.poll();
+
+            if (current == null || visitedRoles.contains(current.getId())) {
+                continue;
+            }
+
+            visitedRoles.add(current.getId());
+
+            // Add permissions from this role
+            if (current.getPermissions() != null) {
+                for (RolePermission rolePermission : current.getPermissions()) {
+                    PermissionResponse permResp = mapPermissionToResponse(rolePermission);
+                    effectivePerms.add(permResp);
+                }
+            }
+
+            // Add parent to queue if it exists
+            if (current.getParentRoleId() != null) {
+                Optional<Role> parentOpt = roleRepository.findByIdAndTenantIdWithPermissions(current.getParentRoleId(), tenantId);
+                if (parentOpt.isPresent()) {
+                    toProcess.offer(parentOpt.get());
+                }
+            }
+
+            depth++;
+        }
+
+        if (depth >= maxDepth) {
+            log.warn("getEffectivePermissions: max depth exceeded for role {}", roleId);
+        }
+
+        return effectivePerms;
     }
 }

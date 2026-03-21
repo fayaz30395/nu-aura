@@ -83,15 +83,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // but the backend @RequiresPermission uses "RESOURCE:ACTION" format (e.g. "EMPLOYEE:READ").
                     // We normalize to the UPPERCASE:COLON format expected by Permission.java constants.
                     if (permissionScopes.isEmpty() && !roles.isEmpty()) {
-                        Set<String> dbPermissions = securityService.getCachedPermissions(roles);
+                        Set<String> dbPermissions;
+
+                        // Try to extract userId from JWT for user-keyed cache lookup (Task 8)
+                        UUID userId = null;
+                        try {
+                            String userIdStr = tokenProvider.getUserIdFromToken(jwt);
+                            if (userIdStr != null) {
+                                userId = UUID.fromString(userIdStr);
+                            }
+                        } catch (Exception e) {
+                            log.debug("Could not extract userId from JWT, falling back to role-based cache", e);
+                        }
+
+                        // Prefer user-keyed cache if userId available, otherwise use role-based cache
+                        if (userId != null) {
+                            dbPermissions = securityService.getCachedPermissionsForUser(userId, roles);
+                            log.debug("BUG-012 fix (user-keyed): Loaded {} permissions for user {} with roles {}: {}",
+                                    dbPermissions.size(), userId, roles, dbPermissions);
+                        } else {
+                            dbPermissions = securityService.getCachedPermissions(roles);
+                            log.debug("BUG-012 fix (role-based): Loaded {} permissions from DB for roles {}: {}",
+                                    dbPermissions.size(), roles, dbPermissions);
+                        }
+
                         permissionScopes = new HashMap<>();
                         for (String dbPerm : dbPermissions) {
                             String normalized = normalizePermissionCode(dbPerm);
                             permissionScopes.put(normalized, com.hrms.domain.user.RoleScope.GLOBAL);
                             authorities.add(new SimpleGrantedAuthority(normalized));
                         }
-                        log.debug("BUG-012 fix: Loaded {} permissions from DB for roles {}: {}",
-                                permissionScopes.size(), roles, permissionScopes.keySet());
                     }
                 } else {
                     // Fallback: Load from UserDetailsService (legacy mode)
