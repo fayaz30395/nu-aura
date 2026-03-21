@@ -148,7 +148,7 @@ const formatStatusLabel = (status: ExitStatus | string | null | undefined) => {
 export default function OffboardingPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const { data: exitResponse } = useExitProcesses(0, 20);
+  const { data: exitResponse, isPending } = useExitProcesses(0, 20);
   const createMutation = useCreateExitProcess();
   const updateMutation = useUpdateExitProcess();
   const deleteMutation = useDeleteExitProcess();
@@ -339,7 +339,7 @@ export default function OffboardingPage() {
     { label: 'Offboarding' },
   ];
 
-  if (!exitResponse && filteredProcesses.length === 0) {
+  if (isPending) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="offboarding">
         <div className="flex items-center justify-center h-64">

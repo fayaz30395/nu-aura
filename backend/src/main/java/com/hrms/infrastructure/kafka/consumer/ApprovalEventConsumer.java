@@ -8,6 +8,8 @@ import com.hrms.application.leave.service.LeaveBalanceService;
 import com.hrms.application.expense.service.ExpenseClaimService;
 import com.hrms.application.asset.service.AssetManagementService;
 import com.hrms.application.knowledge.service.WikiPageService;
+import com.hrms.application.integration.service.IntegrationEventRouter;
+import com.hrms.domain.integration.IntegrationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,6 +20,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -44,6 +48,7 @@ public class ApprovalEventConsumer {
     private final ExpenseClaimService expenseClaimService;
     private final AssetManagementService assetManagementService;
     private final WikiPageService wikiPageService;
+    private final IntegrationEventRouter integrationEventRouter;
 
     /**
      * Handle approval events.
@@ -159,6 +164,32 @@ public class ApprovalEventConsumer {
             leaveBalanceService.deductLeave(employeeId, leaveTypeId, BigDecimal.valueOf(days));
 
             log.info("Successfully deducted leave balance for request {}", leaveRequestId);
+
+            // Route to integration connectors
+            try {
+                Map<String, Object> integrationMetadata = new HashMap<>();
+                integrationMetadata.put("leaveRequestId", leaveRequestId.toString());
+                integrationMetadata.put("leaveType", leaveType);
+                integrationMetadata.put("days", days);
+                integrationMetadata.put("employeeId", employeeId.toString());
+                if (metadata != null) {
+                    integrationMetadata.putAll(metadata);
+                }
+
+                IntegrationEvent integrationEvent = new IntegrationEvent(
+                    "LEAVE_APPROVED",
+                    event.getTenantId(),
+                    leaveRequestId,
+                    "LeaveRequest",
+                    integrationMetadata,
+                    Instant.now()
+                );
+                integrationEventRouter.routeToConnectors(integrationEvent);
+            } catch (Exception e) {
+                log.warn("Failed to route LEAVE_APPROVED integration event for request {}: {}", leaveRequestId, e.getMessage());
+                // Don't fail the main consumer processing
+            }
+
         } catch (RuntimeException e) {
             log.error("Failed to deduct leave balance for request {}: {}", leaveRequestId, e.getMessage(), e);
             throw new RuntimeException("Leave deduction failed", e);
@@ -191,6 +222,30 @@ public class ApprovalEventConsumer {
             expenseClaimService.approveExpenseClaim(expenseClaimId);
 
             log.info("Successfully updated expense claim status: {}", expenseClaimId);
+
+            // Route to integration connectors
+            try {
+                Map<String, Object> integrationMetadata = new HashMap<>();
+                integrationMetadata.put("expenseClaimId", expenseClaimId.toString());
+                integrationMetadata.put("amount", amount);
+                if (metadata != null) {
+                    integrationMetadata.putAll(metadata);
+                }
+
+                IntegrationEvent integrationEvent = new IntegrationEvent(
+                    "EXPENSE_APPROVED",
+                    event.getTenantId(),
+                    expenseClaimId,
+                    "ExpenseClaim",
+                    integrationMetadata,
+                    Instant.now()
+                );
+                integrationEventRouter.routeToConnectors(integrationEvent);
+            } catch (Exception e) {
+                log.warn("Failed to route EXPENSE_APPROVED integration event for claim {}: {}", expenseClaimId, e.getMessage());
+                // Don't fail the main consumer processing
+            }
+
         } catch (RuntimeException e) {
             log.error("Failed to update expense claim {}: {}", expenseClaimId, e.getMessage(), e);
             throw new RuntimeException("Expense approval failed", e);
@@ -223,6 +278,30 @@ public class ApprovalEventConsumer {
             assetManagementService.assignAsset(assetId, employeeId);
 
             log.info("Successfully activated asset assignment");
+
+            // Route to integration connectors
+            try {
+                Map<String, Object> integrationMetadata = new HashMap<>();
+                integrationMetadata.put("assetId", assetId.toString());
+                integrationMetadata.put("employeeId", employeeId.toString());
+                if (metadata != null) {
+                    integrationMetadata.putAll(metadata);
+                }
+
+                IntegrationEvent integrationEvent = new IntegrationEvent(
+                    "ASSET_APPROVED",
+                    event.getTenantId(),
+                    assetId,
+                    "Asset",
+                    integrationMetadata,
+                    Instant.now()
+                );
+                integrationEventRouter.routeToConnectors(integrationEvent);
+            } catch (Exception e) {
+                log.warn("Failed to route ASSET_APPROVED integration event for asset {}: {}", assetId, e.getMessage());
+                // Don't fail the main consumer processing
+            }
+
         } catch (RuntimeException e) {
             log.error("Failed to activate asset assignment: {}", e.getMessage(), e);
             throw new RuntimeException("Asset approval failed", e);
@@ -255,6 +334,30 @@ public class ApprovalEventConsumer {
             wikiPageService.publishPage(pageId);
 
             log.info("Successfully published wiki page: {}", pageId);
+
+            // Route to integration connectors
+            try {
+                Map<String, Object> integrationMetadata = new HashMap<>();
+                integrationMetadata.put("pageId", pageId.toString());
+                integrationMetadata.put("pageTitle", pageTitle);
+                if (metadata != null) {
+                    integrationMetadata.putAll(metadata);
+                }
+
+                IntegrationEvent integrationEvent = new IntegrationEvent(
+                    "DOCUMENT_CREATED",
+                    event.getTenantId(),
+                    pageId,
+                    "WikiPage",
+                    integrationMetadata,
+                    Instant.now()
+                );
+                integrationEventRouter.routeToConnectors(integrationEvent);
+            } catch (Exception e) {
+                log.warn("Failed to route DOCUMENT_CREATED integration event for page {}: {}", pageId, e.getMessage());
+                // Don't fail the main consumer processing
+            }
+
         } catch (RuntimeException e) {
             log.error("Failed to publish wiki page {}: {}", pageId, e.getMessage(), e);
             throw new RuntimeException("Wiki page approval failed", e);

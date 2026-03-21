@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { Bell, Menu, HelpCircle, Search } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -46,7 +45,6 @@ const Header: React.FC<HeaderProps> = ({
   onSettings,
   className,
 }) => {
-  const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -77,19 +75,19 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 flex-shrink-0 glass-aura border-b transition-all duration-300',
-        'h-16',
+        'sticky top-0 z-40 flex-shrink-0 border-b transition-all duration-150',
+        'h-16 bg-header border-header-border',
         className
       )}
     >
-      <div className="flex items-center justify-between h-full px-4 sm:px-6">
+      <div className="flex items-center justify-between h-full px-6">
         {/* Left Side */}
         <div className="flex items-center gap-2">
           {/* Mobile hamburger */}
           {showMenuButton && (
             <button
               onClick={onMenuClick}
-              className="p-2 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all md:hidden min-w-[40px] min-h-[40px] flex items-center justify-center"
+              className="p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
@@ -121,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden p-2.5 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="lg:hidden p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Search"
           >
             <Search className="h-5 w-5" />
@@ -129,9 +127,9 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Right Side - Actions */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-2">
           {/* Help */}
-          <button className="hidden sm:flex p-2.5 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all" aria-label="Help">
+          <button className="hidden sm:flex p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150" aria-label="Help">
             <HelpCircle className="h-5 w-5" />
           </button>
 
@@ -143,14 +141,13 @@ const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative p-2.5 rounded-xl text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-all"
+              className="notification-btn relative p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />
               {totalUnreadCount > 0 && (
                 <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-400 opacity-75" />
-                  <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-xs font-bold text-white">
+                  <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-semibold text-white">
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
                   </span>
                 </span>
@@ -185,7 +182,7 @@ const Header: React.FC<HeaderProps> = ({
       {isMobileSearchOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => setIsMobileSearchOpen(false)} />
-          <div className="absolute top-0 left-0 right-0 glass-midnight p-4 shadow-xl animate-fade-in-down">
+          <div className="absolute top-0 left-0 right-0 bg-dropdown border-b border-dropdown-border p-4 shadow-dropdown animate-fade-in-down">
             <GlobalSearch onSelect={() => setIsMobileSearchOpen(false)} autoFocus />
           </div>
         </div>

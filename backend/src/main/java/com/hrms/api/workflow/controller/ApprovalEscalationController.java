@@ -136,8 +136,8 @@ public class ApprovalEscalationController {
                 .maxEscalations(config.getMaxEscalations())
                 .notifyOnEscalation(config.getNotifyOnEscalation())
                 .isActive(config.getIsActive())
-                .createdAt(config.getCreatedAt() != null ? config.getCreatedAt().toInstant() : null)
-                .updatedAt(config.getUpdatedAt() != null ? config.getUpdatedAt().toInstant() : null)
+                .createdAt(config.getCreatedAt() != null ? config.getCreatedAt().toInstant(java.time.ZoneOffset.UTC) : null)
+                .updatedAt(config.getUpdatedAt() != null ? config.getUpdatedAt().toInstant(java.time.ZoneOffset.UTC) : null)
                 .build();
     }
 }

@@ -218,13 +218,36 @@ export default function RecruitmentDashboard() {
     );
   }, [interviewsQuery.data]);
 
-  const isLoading =
-    jobOpeningsQuery.isLoading || candidatesQuery.isLoading || openJobsQuery.isLoading || interviewsQuery.isLoading;
-
   const hasError =
     jobOpeningsQuery.isError || candidatesQuery.isError || openJobsQuery.isError || interviewsQuery.isError;
 
-  if (isLoading) {
+  // Show full-page error immediately if any query errors
+  if (hasError) {
+    return (
+      <AppLayout>
+        <PageErrorFallback
+          title="Failed to Load Recruitment Data"
+          error={new Error('There was an error loading the recruitment dashboard. Please try refreshing the page.')}
+          onReset={() => window.location.reload()}
+        />
+      </AppLayout>
+    );
+  }
+
+  // Check individual query loading states for progressive rendering
+  const isJobsLoading = jobOpeningsQuery.isLoading;
+  const isCandidatesLoading = candidatesQuery.isLoading;
+  const isJobsByStatusLoading = openJobsQuery.isLoading;
+  const isInterviewsLoading = interviewsQuery.isLoading;
+
+  // Show page skeleton only on initial page load when ALL critical queries are loading
+  const isInitialLoad =
+    jobOpeningsQuery.fetchStatus === 'fetching' &&
+    candidatesQuery.fetchStatus === 'fetching' &&
+    openJobsQuery.fetchStatus === 'fetching' &&
+    interviewsQuery.fetchStatus === 'fetching';
+
+  if (isInitialLoad) {
     return (
       <AppLayout>
         <div className="space-y-6">
@@ -240,18 +263,6 @@ export default function RecruitmentDashboard() {
             <SkeletonCard />
           </div>
         </div>
-      </AppLayout>
-    );
-  }
-
-  if (hasError) {
-    return (
-      <AppLayout>
-        <PageErrorFallback
-          title="Failed to Load Recruitment Data"
-          error={new Error('There was an error loading the recruitment dashboard. Please try refreshing the page.')}
-          onReset={() => window.location.reload()}
-        />
       </AppLayout>
     );
   }

@@ -56,6 +56,9 @@ export function useSelfServiceDashboard(employeeId: string, enabled: boolean = t
     queryKey: selfServiceKeys.dashboard(employeeId),
     queryFn: async () => selfServiceService.getDashboard(employeeId),
     enabled: enabled && !!employeeId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnWindowFocus: false,
   });
 }
 

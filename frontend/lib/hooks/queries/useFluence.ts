@@ -938,7 +938,7 @@ export function useEditLock(contentType: string, contentId: string, enabled: boo
     try {
       const response = await fluenceService.acquireEditLock(contentType, contentId);
       setLockInfo(response);
-    } catch (error) {
+    } catch (_error) {
       // Lock service unavailable — allow editing without lock
       setLockInfo(null);
     }

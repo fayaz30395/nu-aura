@@ -76,6 +76,8 @@ export function useMyPendingEscalations() {
     queryKey: helpdeskSlaKeys.pendingEscalations(),
     queryFn: () => helpdeskSLAService.getMyPendingEscalations(),
     staleTime: 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }
 
@@ -99,6 +101,8 @@ export function useSLADashboard() {
     queryKey: helpdeskSlaKeys.dashboard(),
     queryFn: () => helpdeskSLAService.getDashboard(),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Title, Text, Container, Tabs, Card, Table, Group, Badge, Button, Grid, ThemeIcon, Select, Loader, Alert } from '@mantine/core';
 import { IconBuildingBank, IconFirstAidKit, IconReceiptTax, IconSettings, IconCalendar, IconDownload, IconInfoCircle } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { useActivePFConfigs, useActiveESIConfigs, usePTSlabsByState, useMonthlyStatutoryContributions } from '@/lib/hooks/queries/useStatutory';
 

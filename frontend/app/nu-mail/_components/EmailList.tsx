@@ -8,7 +8,6 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';

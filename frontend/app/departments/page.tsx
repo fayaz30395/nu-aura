@@ -90,7 +90,6 @@ export default function DepartmentsPage() {
 
   const departments = deptData?.content || [];
   const employees = empData?.content || [];
-  const loading = isLoading;
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -339,7 +338,7 @@ export default function DepartmentsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                  {loading ? (
+                  {isLoading ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-4">

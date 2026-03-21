@@ -1,0 +1,115 @@
+'use client';
+
+import React from 'react';
+import { Settings, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { ConnectorInfo, ConnectorStatus } from '@/lib/types/connector';
+
+interface ConnectorCardProps {
+  connector: ConnectorInfo;
+  status?: ConnectorStatus;
+  onConfigure: (connectorId: string) => void;
+  isLoading?: boolean;
+}
+
+export function ConnectorCard({ connector, status, onConfigure, isLoading }: ConnectorCardProps) {
+  const statusColors = {
+    ACTIVE: {
+      bg: 'bg-emerald-50 dark:bg-emerald-900/20',
+      text: 'text-emerald-700 dark:text-emerald-300',
+      icon: 'text-emerald-600 dark:text-emerald-400',
+    },
+    INACTIVE: {
+      bg: 'bg-slate-50 dark:bg-slate-900/20',
+      text: 'text-slate-700 dark:text-slate-300',
+      icon: 'text-slate-600 dark:text-slate-400',
+    },
+    ERROR: {
+      bg: 'bg-red-50 dark:bg-red-900/20',
+      text: 'text-red-700 dark:text-red-300',
+      icon: 'text-red-600 dark:text-red-400',
+    },
+  };
+
+  const colors = status ? statusColors[status] : statusColors.INACTIVE;
+  const isActive = status === 'ACTIVE';
+
+  return (
+    <Card variant="default" hover isClickable padding="md" className="h-full flex flex-col">
+      <CardHeader>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg truncate">{connector.name}</CardTitle>
+            <CardDescription className="mt-1 line-clamp-2">{connector.description}</CardDescription>
+          </div>
+          <div
+            className={`flex-shrink-0 h-10 w-10 rounded-lg ${colors.bg} flex items-center justify-center`}
+          >
+            {isActive ? (
+              <CheckCircle2 className={`h-5 w-5 ${colors.icon}`} />
+            ) : status === 'ERROR' ? (
+              <AlertCircle className={`h-5 w-5 ${colors.icon}`} />
+            ) : (
+              <Settings className={`h-5 w-5 ${colors.icon}`} />
+            )}
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-1 flex flex-col gap-4">
+        {/* Type Badge */}
+        <div className="flex flex-wrap gap-2">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+            {connector.type}
+          </span>
+        </div>
+
+        {/* Status */}
+        {status && (
+          <div className={`px-3 py-1.5 rounded-lg ${colors.bg} ${colors.text} text-sm font-medium`}>
+            {status === 'ACTIVE' ? 'Connected' : status === 'ERROR' ? 'Error' : 'Not Configured'}
+          </div>
+        )}
+
+        {/* Capabilities */}
+        {connector.capabilities.supportedEvents.length > 0 && (
+          <div className="pt-2 border-t border-[var(--border-subtle)]">
+            <p className="text-xs font-semibold text-[var(--text-secondary)] mb-2 uppercase">
+              Supports
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {connector.capabilities.supportedEvents.slice(0, 3).map((event) => (
+                <span
+                  key={event}
+                  className="inline-flex text-xs px-2 py-1 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]"
+                >
+                  {event}
+                </span>
+              ))}
+              {connector.capabilities.supportedEvents.length > 3 && (
+                <span className="inline-flex text-xs px-2 py-1 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                  +{connector.capabilities.supportedEvents.length - 3}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Action Button */}
+        <Button
+          variant="soft"
+          size="sm"
+          onClick={(e) => {
+            e.preventDefault();
+            onConfigure(connector.connectorId);
+          }}
+          disabled={isLoading}
+          className="mt-auto"
+        >
+          Configure
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}

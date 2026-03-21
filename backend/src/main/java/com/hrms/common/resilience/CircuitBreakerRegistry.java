@@ -26,6 +26,7 @@ public class CircuitBreakerRegistry {
     public static final String SMS = "sms";
     public static final String STORAGE = "storage";
     public static final String GOOGLE_AUTH = "google-auth";
+    public static final String DOCUSIGN = "docusign";
 
     /**
      * Configuration for different service types.
@@ -93,6 +94,13 @@ public class CircuitBreakerRegistry {
      */
     public CircuitBreaker forGoogleAuth() {
         return getOrCreate(GOOGLE_AUTH, ServiceConfig.AUTH);
+    }
+
+    /**
+     * Get or create a circuit breaker for DocuSign eSignature API.
+     */
+    public CircuitBreaker forDocuSign() {
+        return getOrCreate(DOCUSIGN, ServiceConfig.DEFAULT);
     }
 
     /**

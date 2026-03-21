@@ -12,6 +12,7 @@ import {
   AlertCircle,
   CheckCircle2,
   XCircle,
+  Zap,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -35,6 +36,10 @@ import {
   useSendSms,
   useTestPayment,
 } from '@/lib/hooks/queries/useIntegrations';
+import { useConnectors, useSaveConnectorConfig } from '@/lib/hooks/queries/useConnectors';
+import { ConnectorCard } from '@/components/integrations/ConnectorCard';
+import { ConnectorConfigPanel } from '@/components/integrations/ConnectorConfigPanel';
+import { IntegrationActivityLog } from '@/components/integrations/IntegrationActivityLog';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -44,7 +49,7 @@ export default function AdminIntegrationsPage() {
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
 
-  // React Query hooks
+  // React Query hooks - Legacy SMS/Payment integrations
   const { data: smsStatus, isLoading: smsLoading } = useSmsStatus();
   const { data: paymentStatus, isLoading: paymentLoading } = usePaymentStatus();
   const { data: smsTemplates = {} } = useSmsTemplates();
@@ -52,7 +57,11 @@ export default function AdminIntegrationsPage() {
   const sendSmsMutation = useSendSms();
   const testPaymentMutation = useTestPayment();
 
-  const loading = smsLoading || paymentLoading;
+  // React Query hooks - Connector framework
+  const { data: connectors = [], isLoading: connectorsLoading } = useConnectors();
+  const saveConfigMutation = useSaveConnectorConfig();
+
+  const loading = smsLoading || paymentLoading || connectorsLoading;
 
   // SMS Test State
   const [testPhoneNumber, setTestPhoneNumber] = useState('');
@@ -66,6 +75,18 @@ export default function AdminIntegrationsPage() {
 
   // Payment Test State
   const [paymentTestResult, setPaymentTestResult] = useState<IntegrationTestResponse | null>(null);
+
+  // Connector Config Panel State
+  const [selectedConnectorId, setSelectedConnectorId] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<string | null>(null);
+
+  const selectedConnector = selectedConnectorId
+    ? connectors.find((c) => c.connectorId === selectedConnectorId)
+    : null;
+
+  const filteredConnectors = filterType
+    ? connectors.filter((c) => c.type === filterType)
+    : connectors;
 
   // R2-008 FIX: return null immediately after router.push() so the component
   // stops rendering and doesn't briefly expose privileged UI before navigation.
@@ -151,6 +172,26 @@ export default function AdminIntegrationsPage() {
     });
   };
 
+  const handleSaveConnectorConfig = async (configData: any) => {
+    if (!selectedConnectorId) return;
+
+    saveConfigMutation.mutate(
+      { connectorId: selectedConnectorId, data: configData },
+      {
+        onSuccess: () => {
+          toast.success('Connector configured successfully');
+          setSelectedConnectorId(null);
+        },
+        onError: (error: unknown) => {
+          toast.error(
+            (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+              'Failed to save configuration'
+          );
+        },
+      }
+    );
+  };
+
   const renderStatusBadge = (status: IntegrationStatus | null) => {
     if (!status) return null;
 
@@ -204,6 +245,81 @@ export default function AdminIntegrationsPage() {
         </div>
         {/* Refresh disabled - data is automatically refetched by React Query */}
       </div>
+
+      {/* Tabs for filtering connectors */}
+      {connectors.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            variant={filterType === null ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => setFilterType(null)}
+          >
+            All ({connectors.length})
+          </Button>
+          {['NOTIFICATION', 'E_SIGNATURE', 'PAYMENT', 'STORAGE', 'CALENDAR', 'AUTH', 'ANALYTICS'].map(
+            (type) => {
+              const count = connectors.filter((c) => c.type === type).length;
+              return count > 0 ? (
+                <Button
+                  key={type}
+                  variant={filterType === type ? 'primary' : 'secondary'}
+                  size="sm"
+                  onClick={() => setFilterType(type)}
+                >
+                  {type} ({count})
+                </Button>
+              ) : null;
+            }
+          )}
+        </div>
+      )}
+
+      {/* Connectors Grid */}
+      {connectors.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Available Connectors</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredConnectors.map((connector) => (
+              <ConnectorCard
+                key={connector.connectorId}
+                connector={connector}
+                onConfigure={() => setSelectedConnectorId(connector.connectorId)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Connector Config Panel */}
+      {selectedConnector && (
+        <ConnectorConfigPanel
+          connector={selectedConnector}
+          isOpen={!!selectedConnectorId}
+          onClose={() => setSelectedConnectorId(null)}
+          onSave={handleSaveConnectorConfig}
+          isLoading={saveConfigMutation.isPending}
+        />
+      )}
+
+      {/* Activity Log */}
+      {connectors.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <CardTitle>Integration Activity Log</CardTitle>
+                <CardDescription>Recent events from all integrations</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <IntegrationActivityLog pageSize={10} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* SMS Integration */}
       <Card>

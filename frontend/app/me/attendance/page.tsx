@@ -40,7 +40,7 @@ export default function MyAttendancePage() {
   const startOfMonth = getMonthStartString(currentDate.getFullYear(), currentDate.getMonth());
   const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
 
-  const { data: attendance = [] } = useAttendanceByDateRange(startOfMonth, endOfMonth, Boolean(hasHydrated && user?.employeeId));
+  const { data: attendance = [], isLoading: isLoadingAttendance } = useAttendanceByDateRange(startOfMonth, endOfMonth, Boolean(hasHydrated && user?.employeeId));
   const todayDateStr = getLocalDateString();
   const { data: selectedDateTimeEntries = [], isLoading: isLoadingTimeEntries } = useMyTimeEntries(selectedDate ? getLocalDateString(selectedDate) : todayDateStr, Boolean(selectedDate));
 
@@ -48,7 +48,7 @@ export default function MyAttendancePage() {
   const checkOut = useCheckOut();
   const requestRegularization = useRequestRegularization();
 
-  const isLoading = !attendance || attendance.length === 0;
+  const isLoading = isLoadingAttendance;
 
   const todayAttendance = attendance.find((a) => {
     const recordDate = a.attendanceDate?.includes('T')

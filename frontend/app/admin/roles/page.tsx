@@ -350,7 +350,7 @@ export default function RolesPage() {
 
       <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-x-auto">
         <table className="min-w-full divide-y divide-[var(--border-main)]">
-          <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]900">
+          <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Code

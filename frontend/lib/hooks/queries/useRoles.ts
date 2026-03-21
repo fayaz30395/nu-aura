@@ -10,7 +10,7 @@ import {
   AssignPermissionsRequest,
   AssignPermissionsWithScopeRequest,
   UpdatePermissionScopeRequest,
-  Permission,
+  Permission as _Permission,
 } from '@/lib/types/roles';
 
 // Query key factory

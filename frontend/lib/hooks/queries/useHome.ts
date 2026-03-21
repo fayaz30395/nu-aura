@@ -56,6 +56,7 @@ export function useUpcomingBirthdays(days: number = 30, enabled: boolean = true)
     enabled,
     staleTime: 60 * 60 * 1000, // 1 hour
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -66,6 +67,7 @@ export function useUpcomingAnniversaries(days: number = 30, enabled: boolean = t
     enabled,
     staleTime: 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -76,6 +78,7 @@ export function useNewJoinees(days: number = 30, enabled: boolean = true) {
     enabled,
     staleTime: 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -86,6 +89,7 @@ export function useUpcomingHolidays(days: number = 90, enabled: boolean = true) 
     enabled,
     staleTime: 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 }
 

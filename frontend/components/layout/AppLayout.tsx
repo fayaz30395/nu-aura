@@ -344,10 +344,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         )}
 
         {/* Content Area — scrollable, fills remaining vertical space */}
-        <main
-          className="flex-1 overflow-auto transition-colors duration-300"
-          style={{ backgroundColor: 'var(--bg-main)' }}
-        >
+        <main className="flex-1 overflow-auto transition-colors duration-300 bg-transparent">
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>
               {/* Removed key={appCode} — it forced React to unmount/remount the entire
@@ -357,6 +354,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               <div
                 className={cn(
                   'p-4 sm:p-6 lg:p-8',
+                  'stagger-children',
                   // Bottom padding: mobile needs space for fixed bottom nav
                   'pb-24 md:pb-6 lg:pb-8'
                 )}

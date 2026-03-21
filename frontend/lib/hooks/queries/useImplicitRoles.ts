@@ -4,9 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { implicitRolesApi } from '@/lib/api/implicitRoles';
 import {
-  ImplicitRoleRule,
+  ImplicitRoleRule as _ImplicitRoleRule,
   ImplicitRoleRuleRequest,
-  ImplicitUserRole,
+  ImplicitUserRole as _ImplicitUserRole,
   BulkRuleIdsRequest,
 } from '@/lib/types/implicitRoles';
 

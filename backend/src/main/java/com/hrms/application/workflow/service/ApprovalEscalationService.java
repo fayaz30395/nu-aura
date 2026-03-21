@@ -88,7 +88,7 @@ public class ApprovalEscalationService {
             return resolveFallbackTarget(tenantId);
         }
 
-        UUID managerUserId = managerEmployee.get().getUserId();
+        UUID managerUserId = managerEmployee.get().getUser() != null ? managerEmployee.get().getUser().getId() : null;
         if (managerUserId == null) {
             log.warn("Cannot resolve skip-level manager: manager {} has no user account (tenant={})",
                     managerId, tenantId);
@@ -229,7 +229,7 @@ public class ApprovalEscalationService {
         step.setEscalated(true);
         step.setEscalatedAt(LocalDateTime.now());
         step.setEscalatedToUserId(targetUserId);
-        step.setReminderCount((step.getReminderCount() != null ? step.getReminderCount() : 0) + 1);
+        step.setReminderCount(step.getReminderCount() + 1);
 
         // Create new step for the escalation target
         StepExecution escalatedStep = StepExecution.builder()

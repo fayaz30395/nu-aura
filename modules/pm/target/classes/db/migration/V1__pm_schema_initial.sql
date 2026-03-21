@@ -114,6 +114,7 @@ CREATE INDEX IF NOT EXISTS idx_pm_milestone_status      ON pm.project_milestones
 CREATE INDEX IF NOT EXISTS idx_pm_milestone_due_date    ON pm.project_milestones (due_date);
 
 -- Wire task→milestone FK (milestone table now exists)
+ALTER TABLE pm.project_tasks DROP CONSTRAINT IF EXISTS fk_pm_task_milestone;
 ALTER TABLE pm.project_tasks
     ADD CONSTRAINT fk_pm_task_milestone
     FOREIGN KEY (milestone_id) REFERENCES pm.project_milestones(id) ON DELETE SET NULL;

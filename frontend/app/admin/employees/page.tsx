@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import {
   UserPlus, Users, Search, Shield, ChevronLeft, ChevronRight,
   AlertCircle, CheckCircle, X, Building2, Mail, Lock, User,
   Briefcase, Calendar, Hash, Eye, ChevronDown, ChevronUp,
-  Pencil, Info,
+  Pencil,
 } from 'lucide-react';
 import { AdminPageContent } from '@/components/layout';
 import { Button } from '@/components/ui/Button';
@@ -20,12 +20,11 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { NuAuraLoader } from '@/components/ui/Loading';
 import { useEmployees, useCreateEmployee, useManagers } from '@/lib/hooks/queries/useEmployees';
 import { useAllDepartments } from '@/lib/hooks/queries/useDepartments';
-import { useRoles, usePermissions as usePermissionsList, useAssignRolesToUser } from '@/lib/hooks/queries/useRoles';
+import { useRoles, useAssignRolesToUser } from '@/lib/hooks/queries/useRoles';
 // useUpdateUserRole removed — using usersApi.assignRoles for multi-role support
 import { Permissions, Roles, usePermissions } from '@/lib/hooks/usePermissions';
 import { Employee, CreateEmployeeRequest } from '@/lib/types/employee';
 import { usersApi } from '@/lib/api/users';
-import { Role, Permission } from '@/lib/types/roles';
 
 // ──────────────────────────────────────────────
 // Zod schema
@@ -239,21 +238,7 @@ export default function AdminEmployeesPage() {
   const [formStep, setFormStep] = useState<'details' | 'role'>('details');
   const [editingRoleForEmployee, setEditingRoleForEmployee] = useState<Employee | null>(null);
 
-  // RBAC guard — only SuperAdmin, HR Admin, or users with EMPLOYEE:MANAGE can access
-  if (isReady && !isAdmin && !hasPermission(Permissions.EMPLOYEE_MANAGE)) {
-    return (
-      <AdminPageContent className="p-8 flex items-center justify-center h-[60vh]">
-        <div className="text-center space-y-4">
-          <div className="h-16 w-16 mx-auto rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
-            <Shield className="h-8 w-8 text-red-500" />
-          </div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Access Denied</h2>
-          <p className="text-sm text-[var(--text-muted)]">You need HR Admin or Employee Management permission to access this page.</p>
-        </div>
-      </AdminPageContent>
-    );
-  }
-
+  // All hooks must be called unconditionally before any early returns
   // Queries
   const { data: employeesPage, isLoading: employeesLoading, error: employeesError } = useEmployees(page, PAGE_SIZE);
   const { data: departments } = useAllDepartments(0, 100);
@@ -262,7 +247,6 @@ export default function AdminEmployeesPage() {
 
   // Mutations
   const createEmployeeMutation = useCreateEmployee();
-
 
   const employees = employeesPage?.content ?? [];
   const totalPages = employeesPage?.totalPages ?? 0;
@@ -290,6 +274,21 @@ export default function AdminEmployeesPage() {
   });
 
   const selectedRoleCodes = watch('roleCodes');
+
+  // RBAC guard — only SuperAdmin, HR Admin, or users with EMPLOYEE:MANAGE can access
+  if (isReady && !isAdmin && !hasPermission(Permissions.EMPLOYEE_MANAGE)) {
+    return (
+      <AdminPageContent className="p-8 flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-4">
+          <div className="h-16 w-16 mx-auto rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+            <Shield className="h-8 w-8 text-red-500" />
+          </div>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Access Denied</h2>
+          <p className="text-sm text-[var(--text-muted)]">You need HR Admin or Employee Management permission to access this page.</p>
+        </div>
+      </AdminPageContent>
+    );
+  }
 
   const onSubmit = async (data: CreateEmployeeWithRoleForm) => {
     try {
@@ -331,15 +330,6 @@ export default function AdminEmployeesPage() {
   };
 
   const handleCloseModal = () => { setShowCreateModal(false); setFormStep('details'); reset(); };
-
-  const getRoleBadgeClass = useCallback((level: string | undefined) => {
-    const l = level?.toUpperCase();
-    if (l === 'CXO' || l === 'SVP' || l === 'VP') return 'status-danger';
-    if (l === 'DIRECTOR' || l === 'SENIOR_MANAGER') return 'status-orange';
-    if (l === 'MANAGER' || l === 'LEAD') return 'status-purple';
-    if (l === 'SENIOR') return 'status-info';
-    return 'status-neutral';
-  }, []);
 
   return (
     <AdminPageContent className="p-4 md:p-6 lg:p-8 space-y-6">

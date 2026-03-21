@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle, Filter, ChevronDown, Search } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
 import { Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
@@ -439,7 +439,7 @@ export default function ExpenseClaims() {
                 <DollarSign className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">{formatCurrency(statistics.totalPendingAmount, 'USD')}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{formatCurrency(statistics.totalPendingAmount)}</p>
                 <p className="text-sm text-[var(--text-muted)]">Pending Amount</p>
               </div>
             </div>

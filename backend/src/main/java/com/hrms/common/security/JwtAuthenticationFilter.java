@@ -88,10 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         // Try to extract userId from JWT for user-keyed cache lookup (Task 8)
                         UUID userId = null;
                         try {
-                            String userIdStr = tokenProvider.getUserIdFromToken(jwt);
-                            if (userIdStr != null) {
-                                userId = UUID.fromString(userIdStr);
-                            }
+                            userId = tokenProvider.getUserIdFromToken(jwt);
                         } catch (Exception e) {
                             log.debug("Could not extract userId from JWT, falling back to role-based cache", e);
                         }
@@ -125,11 +122,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .collect(Collectors.toSet());
                     // For legacy, everything is GLOBAL or we'd need to fetch from DB (slow in
                     // filter)
-                    permissionScopes = new HashMap<>();
+                    Map<String, com.hrms.domain.user.RoleScope> fallbackScopes = new HashMap<>();
                     authorities.stream()
                             .map(GrantedAuthority::getAuthority)
                             .filter(auth -> !auth.startsWith("ROLE_"))
-                            .forEach(perm -> permissionScopes.put(perm, com.hrms.domain.user.RoleScope.GLOBAL));
+                            .forEach(perm -> fallbackScopes.put(perm, com.hrms.domain.user.RoleScope.GLOBAL));
+                    permissionScopes = fallbackScopes;
                 }
 
                 // Create authentication with combined authorities

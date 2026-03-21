@@ -3,9 +3,9 @@
 import React from 'react';
 import { UseFormReturn, UseFieldArrayReturn } from 'react-hook-form';
 import {
-  PayrollRun,
-  Payslip,
-  SalaryStructure,
+  PayrollRun as _PayrollRun,
+  Payslip as _Payslip,
+  SalaryStructure as _SalaryStructure,
   PayrollRunFormData,
   PayslipFormData,
   SalaryStructureFormData,
