@@ -3,6 +3,7 @@ package com.hrms.api.user.controller;
 import com.hrms.api.user.dto.*;
 import com.hrms.application.user.service.RoleManagementService;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.hrms.common.security.Permission.ROLE_MANAGE;
+import static com.hrms.common.security.Permission.ROLE_READ;
 
 @RestController
 @RequestMapping("/api/v1/roles")
@@ -110,5 +113,13 @@ public class RoleController {
         RoleResponse role = roleManagementService.updatePermissionScope(
                 roleId, permissionCode, request.getScope(), request.getCustomTargets());
         return ResponseEntity.ok(role);
+    }
+
+    @GetMapping("/{id}/effective-permissions")
+    @RequiresPermission(ROLE_READ)
+    public ResponseEntity<Set<PermissionResponse>> getEffectivePermissions(@PathVariable UUID id) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        Set<PermissionResponse> permissions = roleManagementService.getEffectivePermissions(id, tenantId);
+        return ResponseEntity.ok(permissions);
     }
 }
