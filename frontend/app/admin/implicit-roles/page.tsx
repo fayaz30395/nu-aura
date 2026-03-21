@@ -727,7 +727,7 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
       <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
-            Users Affected by "{rule.ruleName}"
+            Users Affected by &quot;{rule.ruleName}&quot;
           </h2>
           <button
             onClick={onClose}

@@ -1,25 +1,28 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Space_Grotesk, Fraunces } from 'next/font/google';
+import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from 'next/font/google';
 import { ColorSchemeScript } from '@mantine/core';
 import { getThemeScript } from '@/lib/theme/theme-script';
 import './globals.css';
 import { Providers } from './providers';
 
-const inter = Inter({
+const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
   display: 'swap',
 });
 
-const fraunces = Fraunces({
+const plexSerif = IBM_Plex_Serif({
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-display',
+  display: 'swap',
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -45,7 +48,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
         <ColorSchemeScript defaultColorScheme="auto" />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${fraunces.variable} font-sans`}>
+      <body className={`${plexSans.variable} ${plexSerif.variable} ${plexMono.variable} font-sans`}>
         <Providers>{children}</Providers>
       </body>
     </html>

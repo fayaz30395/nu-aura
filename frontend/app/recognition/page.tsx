@@ -422,7 +422,7 @@ export default function RecognitionPage() {
                   <Crown className="h-5 w-5 text-yellow-500" />
                   Top Contributors
                 </h3>
-                {leaderboardQuery.isLoading ? (
+                {leaderboardQuery.isPending || (leaderboardQuery.isLoading && leaderboard.length === 0) ? (
                   <div className="space-y-4">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Skeleton key={i} className="h-12 w-full rounded-lg" />

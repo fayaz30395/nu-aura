@@ -31,7 +31,6 @@ import {
   MapPin,
   Users as UsersIcon,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
@@ -376,22 +375,26 @@ export default function DashboardPage() {
   const getNotificationIcon = (type: 'email' | 'drive' | 'calendar') => {
     switch (type) {
       case 'email':
-        return <Mail className="h-4 w-4 text-red-500" />;
+        return <Mail className="h-4 w-4" />;
       case 'drive':
-        return <HardDrive className="h-4 w-4 text-yellow-500" />;
+        return <HardDrive className="h-4 w-4" />;
       case 'calendar':
-        return <Calendar className="h-4 w-4 text-blue-500" />;
+        return <Calendar className="h-4 w-4" />;
+      default:
+        return <Bell className="h-4 w-4" />;
     }
   };
 
-  const getNotificationBg = (type: 'email' | 'drive' | 'calendar') => {
+  const getNotificationTone = (type: 'email' | 'drive' | 'calendar') => {
     switch (type) {
       case 'email':
-        return 'bg-red-50 dark:bg-red-950/30';
+        return 'status-danger';
       case 'drive':
-        return 'bg-yellow-50 dark:bg-yellow-950/30';
+        return 'status-warning';
       case 'calendar':
-        return 'bg-blue-50 dark:bg-blue-950/30';
+        return 'status-info';
+      default:
+        return 'status-neutral';
     }
   };
 
@@ -496,55 +499,59 @@ export default function DashboardPage() {
     );
   }
 
+  const viewBadgeClass = analytics.viewType === 'ADMIN'
+    ? 'status-info'
+    : analytics.viewType === 'MANAGER'
+      ? 'status-warning'
+      : 'status-success';
+
   return (
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-      <motion.div
-        className="space-y-6"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
-      >
+      <div className="space-y-8">
         {/* Header with greeting and time */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-                Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
-              </h1>
-              {/* View Type Badge */}
-              <span className={`hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${analytics.viewType === 'ADMIN'
-                  ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                  : analytics.viewType === 'MANAGER'
-                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                    : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                }`}>
-                {analytics.viewLabel}
-              </span>
+        <Card className="overflow-hidden">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h1 className="text-page-title">
+                    Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
+                  </h1>
+                  <span className={`badge-status ${viewBadgeClass}`}>{analytics.viewLabel}</span>
+                </div>
+                <p className="text-body-secondary">
+                  {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                  {analytics.viewType !== 'EMPLOYEE' && (
+                    <span className="ml-2 text-caption">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3 min-w-[140px]">
+                  <p className="text-stat-medium">
+                    {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                  <p className="text-caption">Current time</p>
+                </div>
+                {analytics.viewType !== 'EMPLOYEE' && (
+                  <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3 min-w-[140px]">
+                    <p className="text-caption">Team size</p>
+                    <p className="text-stat-medium">{analytics.teamSize}</p>
+                  </div>
+                )}
+              </div>
             </div>
-            <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-1">
-              {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-              {analytics.viewType !== 'EMPLOYEE' && (
-                <span className="ml-2 text-[var(--text-muted)]">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
-              )}
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-left sm:text-right">
-              <p className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">
-                {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-              </p>
-              <p className="text-xs sm:text-sm text-[var(--text-secondary)]">Current Time</p>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* Attendance Widget - Keka Style */}
-        <Card className="border-l-4 border-l-primary-500">
-          <CardContent className="p-4 sm:p-6">
+        {/* Attendance Widget */}
+        <Card className="relative overflow-hidden">
+          <div className="absolute left-0 top-0 h-full w-1.5 bg-[var(--accent-primary)]" />
+          <CardContent className="p-6 pl-7 sm:p-8 sm:pl-9">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
-                  <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-primary-600 dark:text-primary-400" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] flex items-center justify-center flex-shrink-0">
+                  <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-[var(--accent-primary)]" />
                 </div>
                 <div>
                   <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Today&apos;s Attendance</h3>
@@ -552,7 +559,7 @@ export default function DashboardPage() {
                     <div className="flex flex-wrap items-center gap-4 mt-1">
                       {/* Show first check-in time */}
                       <div className="flex items-center gap-1.5 text-sm">
-                        <LogIn className="h-4 w-4 text-green-600" />
+                        <LogIn className="h-4 w-4 text-[var(--status-success-text)]" />
                         <span className="text-[var(--text-secondary)]">First In:</span>
                         <span className="font-medium text-[var(--text-primary)]">
                           {new Date(timeEntries[0].checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -561,7 +568,7 @@ export default function DashboardPage() {
                       {/* Show last check-out time if available */}
                       {timeEntries.filter(e => e.checkOutTime).length > 0 && (
                         <div className="flex items-center gap-1.5 text-sm">
-                          <LogOut className="h-4 w-4 text-blue-600" />
+                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]" />
                           <span className="text-[var(--text-secondary)]">Last Out:</span>
                           <span className="font-medium text-[var(--text-primary)]">
                             {new Date(timeEntries.filter(e => e.checkOutTime).slice(-1)[0].checkOutTime!).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -570,13 +577,13 @@ export default function DashboardPage() {
                       )}
                       {/* Show session count if more than 1 */}
                       {timeEntries.length > 1 && (
-                        <span className="text-xs px-2 py-0.5 bg-[var(--bg-secondary)] rounded-full text-[var(--text-secondary)]">
+                        <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card-hover)] text-[var(--text-secondary)]">
                           {timeEntries.length} sessions
                         </span>
                       )}
                       {/* Show current status */}
                       {hasOpenSession && (
-                        <span className="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded-full text-green-700 dark:text-green-400 animate-pulse">
+                        <span className="badge-status status-success">
                           Working
                         </span>
                       )}
@@ -585,7 +592,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-4 mt-1">
                       {todayAttendance.checkInTime && (
                         <div className="flex items-center gap-1.5 text-sm">
-                          <LogIn className="h-4 w-4 text-green-600" />
+                          <LogIn className="h-4 w-4 text-[var(--status-success-text)]" />
                           <span className="text-[var(--text-secondary)]">In:</span>
                           <span className="font-medium text-[var(--text-primary)]">
                             {new Date(todayAttendance.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -594,7 +601,7 @@ export default function DashboardPage() {
                       )}
                       {todayAttendance.checkOutTime && (
                         <div className="flex items-center gap-1.5 text-sm">
-                          <LogOut className="h-4 w-4 text-blue-600" />
+                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]" />
                           <span className="text-[var(--text-secondary)]">Out:</span>
                           <span className="font-medium text-[var(--text-primary)]">
                             {new Date(todayAttendance.checkOutTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -678,28 +685,30 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Wider */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Quick Actions - Keka Style */}
+            {/* Quick Actions */}
             <Card>
               <CardHeader className="pb-4">
-                <CardTitle className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Quick Actions</CardTitle>
+                <CardTitle className="text-section-title">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
-                    { label: 'Apply Leave', icon: Calendar, color: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400', href: '/leave/apply' },
-                    { label: 'View Payslip', icon: FileText, color: 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400', href: '/payroll' },
-                    { label: 'Expenses', icon: CreditCard, color: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400', href: '/expenses' },
-                    { label: 'Directory', icon: Users, color: 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400', href: '/employees' },
+                    { label: 'Apply Leave', icon: Calendar, tone: 'status-info', href: '/leave/apply' },
+                    { label: 'View Payslip', icon: FileText, tone: 'status-success', href: '/payroll' },
+                    { label: 'Expenses', icon: CreditCard, tone: 'status-warning', href: '/expenses' },
+                    { label: 'Directory', icon: Users, tone: 'status-neutral', href: '/employees' },
                   ].map((action, idx) => (
                     <button
                       key={idx}
                       onClick={() => router.push(action.href)}
-                      className="flex flex-col items-center gap-2 sm:gap-4 p-4 sm:p-4 rounded-xl border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-sm transition-all min-h-[88px]"
+                      className="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px]"
                     >
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${action.color} flex items-center justify-center`}>
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
                         <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
-                      <span className="text-xs sm:text-sm font-medium text-[var(--text-secondary)] text-center">{action.label}</span>
+                      <span className="text-xs sm:text-sm font-medium text-[var(--text-secondary)] text-center">
+                        {action.label}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -710,7 +719,7 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Attendance Overview</CardTitle>
+                  <CardTitle className="text-section-title">Attendance Overview</CardTitle>
                   <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')} rightIcon={<ChevronRight className="h-4 w-4" />} className="text-xs sm:text-sm">
                     View All
                   </Button>
@@ -718,26 +727,20 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="text-center p-4 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-xl">
-                    <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onTime}</p>
-                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">On Time</p>
-                  </div>
-                  <div className="text-center p-4 sm:p-4 bg-yellow-50 dark:bg-yellow-950/30 rounded-xl">
-                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600 dark:text-yellow-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.late}</p>
-                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">Late</p>
-                  </div>
-                  <div className="text-center p-4 sm:p-4 bg-orange-50 dark:bg-orange-950/30 rounded-xl">
-                    <Coffee className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600 dark:text-orange-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onLeave}</p>
-                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">On Leave</p>
-                  </div>
-                  <div className="text-center p-4 sm:p-4 bg-danger-50 dark:bg-danger-950/20 rounded-xl">
-                    <UserX className="h-5 w-5 sm:h-6 sm:w-6 text-danger-600 dark:text-danger-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.absent}</p>
-                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">Absent</p>
-                  </div>
+                  {[
+                    { label: 'On Time', value: analytics.attendance.onTime, icon: UserCheck, tone: 'status-success' },
+                    { label: 'Late', value: analytics.attendance.late, icon: Clock, tone: 'status-warning' },
+                    { label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info' },
+                    { label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger' },
+                  ].map((item) => (
+                    <div key={item.label} className="text-center p-4 sm:p-5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+                      <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl ${item.tone}`}>
+                        <item.icon className="h-5 w-5" />
+                      </div>
+                      <p className="text-stat-medium">{item.value}</p>
+                      <p className="text-caption mt-1">{item.label}</p>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -746,7 +749,7 @@ export default function DashboardPage() {
             {analytics.headcount.departmentDistribution && analytics.headcount.departmentDistribution.length > 0 && (
               <Card>
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
+                  <CardTitle className="text-section-title">
                     {analytics.viewType === 'ADMIN' ? 'Department Headcount' : 'Team Distribution'}
                   </CardTitle>
                 </CardHeader>
@@ -754,15 +757,24 @@ export default function DashboardPage() {
                   <div className="space-y-4">
                     {analytics.headcount.departmentDistribution.slice(0, 5).map((dept, idx) => {
                       const percentage = analytics.headcount.total > 0 ? Math.round((dept.count / analytics.headcount.total) * 100) : 0;
-                      const colors = ['bg-primary-500', 'bg-green-500', 'bg-orange-500', 'bg-purple-500', 'bg-blue-500'];
+                      const colors = [
+                        'var(--accent-primary)',
+                        'var(--chart-secondary)',
+                        'var(--chart-success)',
+                        'var(--chart-warning)',
+                        'var(--chart-danger)',
+                      ];
                       return (
                         <div key={idx}>
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm font-medium text-[var(--text-secondary)]">{dept.department}</span>
                             <span className="text-sm text-[var(--text-secondary)]">{dept.count} ({percentage}%)</span>
                           </div>
-                          <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                            <div className={`h-full ${colors[idx % colors.length]} rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }} />
+                          <div className="w-full h-2 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{ width: `${percentage}%`, backgroundColor: colors[idx % colors.length] }}
+                            />
                           </div>
                         </div>
                       );
@@ -779,12 +791,14 @@ export default function DashboardPage() {
             {analytics.viewType === 'ADMIN' && analytics.payroll && (
               <Card>
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">Payroll Summary</CardTitle>
+                  <CardTitle className="text-section-title">Payroll Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-4">
-                    <Briefcase className="h-10 w-10 text-primary-600 dark:text-primary-400 mx-auto" />
-                    <p className="text-3xl font-bold text-[var(--text-primary)] mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
+                      <Briefcase className="h-6 w-6 text-[var(--accent-primary)]" />
+                    </div>
+                    <p className="text-stat-large mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
                     <p className="text-sm text-[var(--text-secondary)] mt-1">Current Month</p>
                   </div>
                   <div className="border-t border-[var(--border-main)] pt-4 mt-4">
@@ -805,16 +819,16 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">Upcoming</CardTitle>
+                  <CardTitle className="text-section-title">Upcoming</CardTitle>
                   <CalendarDays className="h-5 w-5 text-[var(--text-muted)]" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {analytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
-                    <div key={idx} className="flex items-center gap-4 p-4 bg-pink-50 dark:bg-pink-950/30 rounded-xl">
-                      <div className="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center">
-                        <Gift className="h-5 w-5 text-pink-600 dark:text-pink-400" />
+                    <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center status-warning">
+                        <Gift className="h-5 w-5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)] truncate">{event.employeeName}</p>
@@ -823,9 +837,9 @@ export default function DashboardPage() {
                     </div>
                   ))}
                   {analytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
-                    <div key={idx} className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                        <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center status-info">
+                        <Calendar className="h-5 w-5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)] truncate">{event.name}</p>
@@ -844,7 +858,7 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
+                  <CardTitle className="text-section-title">
                     Notifications
                   </CardTitle>
                   <div className="flex items-center gap-2">
@@ -852,7 +866,7 @@ export default function DashboardPage() {
                       <button
                         onClick={loadGoogleNotifications}
                         disabled={notificationsLoading}
-                        className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                        className="p-1.5 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors"
                       >
                         <RefreshCw className={`h-4 w-4 text-[var(--text-muted)] ${notificationsLoading ? 'animate-spin' : ''}`} />
                       </button>
@@ -864,7 +878,7 @@ export default function DashboardPage() {
               <CardContent>
                 {!hasGoogleToken ? (
                   <div className="text-center py-6">
-                    <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-3">
                       <Bell className="h-6 w-6 text-[var(--text-muted)]" />
                     </div>
                     <p className="text-sm text-[var(--text-secondary)] mb-3">Connect Google to see notifications</p>
@@ -878,11 +892,11 @@ export default function DashboardPage() {
                   </div>
                 ) : notificationsLoading ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]" />
                   </div>
                 ) : notifications.length === 0 ? (
                   <div className="text-center py-6">
-                    <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
+                    <CheckCircle className="h-8 w-8 text-[var(--status-success-text)] mx-auto mb-2" />
                     <p className="text-sm text-[var(--text-secondary)]">All caught up!</p>
                   </div>
                 ) : (
@@ -891,9 +905,9 @@ export default function DashboardPage() {
                       <div
                         key={notification.id}
                         onClick={() => handleNotificationClick(notification)}
-                        className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer hover:shadow-sm transition-all ${getNotificationBg(notification.type)}`}
+                        className="flex items-start gap-4 p-4 rounded-xl cursor-pointer border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${getNotificationTone(notification.type)}`}>
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -905,7 +919,7 @@ export default function DashboardPage() {
                               {notification.subtitle}
                             </p>
                             {notification.hasVideo && (
-                              <Video className="h-3 w-3 text-blue-500 flex-shrink-0" />
+                              <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0" />
                             )}
                           </div>
                         </div>
@@ -954,16 +968,16 @@ export default function DashboardPage() {
             {analytics.viewType !== 'EMPLOYEE' && (
               <Card>
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
+                  <CardTitle className="text-section-title">
                     {analytics.viewType === 'ADMIN' ? 'New Joiners' : 'New Team Members'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-4">
-                    <div className="w-16 h-16 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center mx-auto">
-                      <Users className="h-8 w-8 text-green-600 dark:text-green-400" />
+                    <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
+                      <Users className="h-8 w-8 text-[var(--accent-primary)]" />
                     </div>
-                    <p className="text-4xl font-bold text-[var(--text-primary)] mt-4">{analytics.headcount.newJoinees}</p>
+                    <p className="text-stat-large mt-4">{analytics.headcount.newJoinees}</p>
                     <p className="text-sm text-[var(--text-secondary)] mt-1">This Month</p>
                   </div>
                   {analytics.viewType === 'ADMIN' && (
@@ -971,11 +985,11 @@ export default function DashboardPage() {
                       <Button variant="outline" className="w-full" onClick={() => router.push('/employees?filter=new')}>
                         View All Joiners
                       </Button>
-                      <Button variant="ghost" className="w-full text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20" onClick={() => router.push('/onboarding')}>
+                      <Button variant="ghost" className="w-full text-[var(--accent-primary)] hover:bg-[var(--accent-primary-subtle)]" onClick={() => router.push('/onboarding')}>
                         <span className="flex items-center gap-2">
                           Manage Onboarding
                           {activeOnboardingCount > 0 && (
-                            <span className="bg-primary-100 text-primary-700 text-xs px-2 py-0.5 rounded-full dark:bg-primary-900 dark:text-primary-300">
+                            <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
                               {activeOnboardingCount} Active
                             </span>
                           )}
@@ -988,19 +1002,19 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-lg w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                 Event Details
               </h3>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
@@ -1061,7 +1075,7 @@ export default function DashboardPage() {
               )}
 
               {selectedEvent.calendarEvent.hangoutLink && (
-                <div className="flex items-center gap-4 text-blue-600 dark:text-blue-400">
+                <div className="flex items-center gap-4 text-[var(--accent-primary)]">
                   <Video className="h-5 w-5 flex-shrink-0" />
                   <a
                     href={selectedEvent.calendarEvent.hangoutLink}
@@ -1086,9 +1100,9 @@ export default function DashboardPage() {
                         {attendee.displayName || attendee.email}
                         {attendee.responseStatus && (
                           <span className={`ml-2 text-xs ${
-                            attendee.responseStatus === 'accepted' ? 'text-green-600' :
-                            attendee.responseStatus === 'declined' ? 'text-danger-600 dark:text-danger-400' :
-                            'text-yellow-600'
+                            attendee.responseStatus === 'accepted' ? 'text-[var(--status-success-text)]' :
+                            attendee.responseStatus === 'declined' ? 'text-[var(--status-danger-text)]' :
+                            'text-[var(--status-warning-text)]'
                           }`}>
                             ({attendee.responseStatus})
                           </span>
@@ -1139,7 +1153,7 @@ export default function DashboardPage() {
       {/* Email Preview Modal */}
       {selectedEmail && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate pr-4">
                 {selectedEmail.title}
@@ -1149,15 +1163,15 @@ export default function DashboardPage() {
                   setSelectedEmail(null);
                   setEmailContent('');
                 }}
-                className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                  <Mail className="h-5 w-5 text-danger-600 dark:text-danger-400" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center status-danger">
+                  <Mail className="h-5 w-5" />
                 </div>
                 <div>
                   <p className="font-medium text-[var(--text-primary)]">
@@ -1172,7 +1186,7 @@ export default function DashboardPage() {
               <div className="border-t border-[var(--border-main)] pt-4">
                 {emailLoading ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]" />
                   </div>
                 ) : (
                   <div
@@ -1199,11 +1213,11 @@ export default function DashboardPage() {
       {/* Drive File Preview Modal */}
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
-                  <HardDrive className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 status-warning">
+                  <HardDrive className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate">
@@ -1214,12 +1228,12 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
             </div>
-            <div className="relative h-[60vh] bg-[var(--bg-secondary)]">
+            <div className="relative h-[60vh] bg-[var(--bg-elevated)]">
               {selectedFile.driveFile.mimeType?.startsWith('image/') ? (
                 <Image
                   src={`https://drive.google.com/uc?id=${selectedFile.driveFile.id}`}

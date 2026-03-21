@@ -10,6 +10,8 @@ import com.hrms.application.onboarding.service.OnboardingManagementService;
 import com.hrms.application.compensation.service.CompensationService;
 import com.hrms.application.performance.service.PerformanceReviewService;
 import com.hrms.application.user.service.ImplicitRoleEngine;
+import com.hrms.application.integration.service.IntegrationEventRouter;
+import com.hrms.domain.integration.IntegrationEvent;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -54,6 +58,7 @@ public class EmployeeLifecycleConsumer {
     private final PerformanceReviewService performanceReviewService;
     private final ImplicitRoleEngine implicitRoleEngine;
     private final EmployeeRepository employeeRepository;
+    private final IntegrationEventRouter integrationEventRouter;
 
     /**
      * Handle employee lifecycle events.
@@ -142,6 +147,30 @@ public class EmployeeLifecycleConsumer {
             throw new RuntimeException("HIRED event processing failed", e);
         }
 
+        // Route to integration connectors
+        try {
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("employeeName", event.getName());
+            metadata.put("departmentId", event.getDepartmentId());
+            metadata.put("managerId", event.getManagerId());
+            if (event.getMetadata() != null) {
+                metadata.putAll(event.getMetadata());
+            }
+
+            IntegrationEvent integrationEvent = new IntegrationEvent(
+                "EMPLOYEE_HIRED",
+                tenantId,
+                employeeId,
+                "Employee",
+                metadata,
+                Instant.now()
+            );
+            integrationEventRouter.routeToConnectors(integrationEvent);
+        } catch (Exception e) {
+            log.warn("Failed to route EMPLOYEE_HIRED integration event for employee {}: {}", employeeId, e.getMessage());
+            // Don't fail the main consumer processing
+        }
+
         // Recompute implicit roles for new employee
         recomputeImplicitRolesForEmployee(employeeId, tenantId);
     }
@@ -198,6 +227,28 @@ public class EmployeeLifecycleConsumer {
             log.error("Failed to process ONBOARDED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("ONBOARDED event processing failed", e);
         }
+
+        // Route to integration connectors
+        try {
+            Map<String, Object> integrationMetadata = new HashMap<>();
+            integrationMetadata.put("employeeName", event.getName());
+            if (event.getMetadata() != null) {
+                integrationMetadata.putAll(event.getMetadata());
+            }
+
+            IntegrationEvent integrationEvent = new IntegrationEvent(
+                "EMPLOYEE_ONBOARDED",
+                tenantId,
+                employeeId,
+                "Employee",
+                integrationMetadata,
+                Instant.now()
+            );
+            integrationEventRouter.routeToConnectors(integrationEvent);
+        } catch (Exception e) {
+            log.warn("Failed to route EMPLOYEE_ONBOARDED integration event for employee {}: {}", employeeId, e.getMessage());
+            // Don't fail the main consumer processing
+        }
     }
 
     /**
@@ -243,6 +294,30 @@ public class EmployeeLifecycleConsumer {
             throw new RuntimeException("PROMOTED event processing failed", e);
         }
 
+        // Route to integration connectors
+        try {
+            Map<String, Object> integrationMetadata = new HashMap<>();
+            integrationMetadata.put("oldJobTitle", metadata != null ? metadata.get("oldJobTitle") : null);
+            integrationMetadata.put("newJobTitle", metadata != null ? metadata.get("newJobTitle") : null);
+            integrationMetadata.put("salaryIncrease", metadata != null ? metadata.get("salaryIncrease") : null);
+            if (metadata != null) {
+                integrationMetadata.putAll(metadata);
+            }
+
+            IntegrationEvent integrationEvent = new IntegrationEvent(
+                "EMPLOYEE_PROMOTED",
+                tenantId,
+                employeeId,
+                "Employee",
+                integrationMetadata,
+                Instant.now()
+            );
+            integrationEventRouter.routeToConnectors(integrationEvent);
+        } catch (Exception e) {
+            log.warn("Failed to route EMPLOYEE_PROMOTED integration event for employee {}: {}", employeeId, e.getMessage());
+            // Don't fail the main consumer processing
+        }
+
         // Recompute implicit roles (employee may gain/lose hierarchy position)
         recomputeImplicitRolesForEmployee(employeeId, tenantId);
     }
@@ -256,13 +331,14 @@ public class EmployeeLifecycleConsumer {
         UUID tenantId = event.getTenantId();
         Map<String, Object> metadata = event.getMetadata();
 
+        String oldDepartment = metadata != null ? (String) metadata.get("oldDepartment") : null;
+        String newDepartment = metadata != null ? (String) metadata.get("newDepartment") : null;
+        String oldLocation = metadata != null ? (String) metadata.get("oldLocation") : null;
+        String newLocation = metadata != null ? (String) metadata.get("newLocation") : null;
+        UUID oldReportingManager = metadata != null ? (UUID) metadata.get("oldReportingManager") : null;
+        UUID newReportingManager = event.getManagerId();
+
         try {
-            String oldDepartment = metadata != null ? (String) metadata.get("oldDepartment") : null;
-            String newDepartment = metadata != null ? (String) metadata.get("newDepartment") : null;
-            String oldLocation = metadata != null ? (String) metadata.get("oldLocation") : null;
-            String newLocation = metadata != null ? (String) metadata.get("newLocation") : null;
-            UUID oldReportingManager = metadata != null ? (UUID) metadata.get("oldReportingManager") : null;
-            UUID newReportingManager = event.getManagerId();
 
             log.info("Employee transferred: id={}, dept: {} -> {}, location: {} -> {}, manager: {} -> {}",
                     employeeId, oldDepartment, newDepartment, oldLocation, newLocation,
@@ -292,6 +368,33 @@ public class EmployeeLifecycleConsumer {
             throw new RuntimeException("TRANSFERRED event processing failed", e);
         }
 
+        // Route to integration connectors
+        try {
+            Map<String, Object> integrationMetadata = new HashMap<>();
+            integrationMetadata.put("oldDepartment", oldDepartment);
+            integrationMetadata.put("newDepartment", newDepartment);
+            integrationMetadata.put("oldLocation", oldLocation);
+            integrationMetadata.put("newLocation", newLocation);
+            integrationMetadata.put("oldReportingManager", oldReportingManager);
+            integrationMetadata.put("newReportingManager", newReportingManager);
+            if (metadata != null) {
+                integrationMetadata.putAll(metadata);
+            }
+
+            IntegrationEvent integrationEvent = new IntegrationEvent(
+                "EMPLOYEE_TRANSFERRED",
+                tenantId,
+                employeeId,
+                "Employee",
+                integrationMetadata,
+                Instant.now()
+            );
+            integrationEventRouter.routeToConnectors(integrationEvent);
+        } catch (Exception e) {
+            log.warn("Failed to route EMPLOYEE_TRANSFERRED integration event for employee {}: {}", employeeId, e.getMessage());
+            // Don't fail the main consumer processing
+        }
+
         // Recompute implicit roles (cascade for transferred employee and both managers)
         // 1. Recompute for transferred employee
         recomputeImplicitRolesForEmployee(employeeId, tenantId);
@@ -316,11 +419,10 @@ public class EmployeeLifecycleConsumer {
         UUID employeeId = event.getEmployeeId();
         UUID tenantId = event.getTenantId();
         Map<String, Object> metadata = event.getMetadata();
+        String reason = metadata != null ? (String) metadata.get("reason") : null;
+        String lastWorkingDay = metadata != null ? (String) metadata.get("lastWorkingDay") : null;
 
         try {
-            String reason = metadata != null ? (String) metadata.get("reason") : null;
-            String lastWorkingDay = metadata != null ? (String) metadata.get("lastWorkingDay") : null;
-
             log.info("Employee offboarded: id={}, reason={}, lastDay={}",
                     employeeId, reason, lastWorkingDay);
 
@@ -375,6 +477,29 @@ public class EmployeeLifecycleConsumer {
         } catch (RuntimeException e) {
             log.error("Failed to process OFFBOARDED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("OFFBOARDED event processing failed", e);
+        }
+
+        // Route to integration connectors
+        try {
+            Map<String, Object> integrationMetadata = new HashMap<>();
+            integrationMetadata.put("reason", reason);
+            integrationMetadata.put("lastWorkingDay", lastWorkingDay);
+            if (metadata != null) {
+                integrationMetadata.putAll(metadata);
+            }
+
+            IntegrationEvent integrationEvent = new IntegrationEvent(
+                "EMPLOYEE_OFFBOARDED",
+                tenantId,
+                employeeId,
+                "Employee",
+                integrationMetadata,
+                Instant.now()
+            );
+            integrationEventRouter.routeToConnectors(integrationEvent);
+        } catch (Exception e) {
+            log.warn("Failed to route EMPLOYEE_OFFBOARDED integration event for employee {}: {}", employeeId, e.getMessage());
+            // Don't fail the main consumer processing
         }
 
         // Recompute implicit roles (offboarded employee and manager)

@@ -86,6 +86,29 @@ public class CircuitBreaker {
     }
 
     /**
+     * Execute a supplier with circuit breaker protection.
+     * Throws exception if circuit is open or operation fails.
+     *
+     * @param supplier The operation to execute
+     * @return Result from supplier
+     */
+    public <T> T execute(Supplier<T> supplier) {
+        if (!allowRequest()) {
+            log.debug("Circuit breaker [{}] is OPEN, failing fast", name);
+            throw new RuntimeException("Circuit breaker is OPEN for service: " + name);
+        }
+
+        try {
+            T result = supplier.get();
+            recordSuccess();
+            return result;
+        } catch (RuntimeException e) {
+            recordFailure(e);
+            throw e;
+        }
+    }
+
+    /**
      * Execute a runnable with circuit breaker protection.
      *
      * @param runnable The operation to execute

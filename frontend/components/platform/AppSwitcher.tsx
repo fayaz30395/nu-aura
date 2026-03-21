@@ -107,16 +107,16 @@ export default function AppSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Switch application"
         aria-expanded={isOpen}
-        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] transition-all duration-200 shadow-sm"
+        className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] transition-colors duration-150 shadow-card"
       >
-        <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${app.gradient} flex items-center justify-center shadow-sm`}>
+        <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
           <CurrentIcon className="w-5 h-5 text-white" />
         </div>
         <div className="hidden sm:flex flex-col items-start">
           <span className="text-sm font-semibold text-[var(--text-primary)]">
             {app.name}
           </span>
-          <span className="text-xs text-[var(--text-muted)] -mt-0.5">
+          <span className="text-xs text-[var(--text-muted)]">
             NU-AURA Platform
           </span>
         </div>
@@ -128,16 +128,16 @@ export default function AppSwitcher() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.96 }}
-            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-full left-0 mt-2 w-[320px] glass-midnight rounded-2xl overflow-hidden z-50"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+            className="absolute top-full left-0 mt-2 w-[320px] bg-dropdown border border-dropdown-border rounded-lg overflow-hidden shadow-dropdown z-50"
           >
             {/* Header */}
-            <div className="px-5 py-3.5 bg-primary-50 dark:bg-primary-950/20 border-b border-[var(--dropdown-divider)]">
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-sm">
+            <div className="px-5 py-4 bg-[var(--bg-surface)] border-b border-[var(--dropdown-divider)]">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
                   <LayoutGrid className="w-4 h-4 text-white" />
                 </div>
                 <div>
@@ -153,7 +153,7 @@ export default function AppSwitcher() {
 
             {/* 2×2 Waffle Grid */}
             <div className="p-4">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 {APP_LIST.map((targetApp, index) => {
                   const Icon = getAppIcon(targetApp.iconName);
                   const isActive = targetApp.code === appCode;
@@ -162,76 +162,66 @@ export default function AppSwitcher() {
                   return (
                     <motion.div
                       key={targetApp.code}
-                      initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{
-                        duration: 0.3,
-                        delay: index * 0.08,
-                        ease: 'easeOut',
+                        duration: 0.15,
+                        delay: index * 0.03,
+                        ease: [0.4, 0, 0.2, 1],
                       }}
                     >
                       <button
                         onClick={() => handleAppClick(targetApp)}
                         disabled={isLocked}
                         className={`
-                          relative flex flex-col items-center gap-2.5 p-4 rounded-xl
-                          transition-all duration-200 group w-full h-full
+                          relative flex flex-col items-center gap-3 p-4 rounded-lg
+                          transition-all duration-150 group w-full h-full
                           ${isActive
-                            ? 'bg-primary-50 dark:bg-primary-950/30 border-2 border-primary-300 dark:border-primary-700'
+                            ? 'bg-accent-subtle border border-accent ring-1 ring-accent/20'
                             : isLocked
-                              ? 'bg-[var(--bg-surface)] border-2 border-[var(--border-subtle)] opacity-50 cursor-not-allowed'
-                              : 'bg-[var(--bg-surface)] border-2 border-transparent hover:border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] cursor-pointer'
+                              ? 'bg-[var(--bg-surface)] border border-[var(--border-subtle)] opacity-50 cursor-not-allowed'
+                              : 'bg-[var(--bg-surface)] border border-transparent hover:border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] cursor-pointer'
                           }
                         `}
                       >
                         {/* App Icon */}
-                        <motion.div
+                        <div
                           className={`
-                            relative w-14 h-14 rounded-2xl bg-gradient-to-br ${targetApp.gradient}
-                            flex items-center justify-center shadow-md
+                            relative w-12 h-12 rounded-lg bg-accent
+                            flex items-center justify-center
+                            ${!isLocked && !isActive ? 'group-hover:scale-105' : ''}
+                            transition-transform duration-150
                           `}
-                          whileHover={!isLocked ? { scale: 1.05 } : {}}
-                          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         >
-                          <Icon className="w-7 h-7 text-white" />
+                          <Icon className="w-6 h-6 text-white" />
 
                           {/* Lock overlay */}
                           {isLocked && (
-                            <motion.div
-                              className="absolute inset-0 rounded-2xl bg-surface-900/40 flex items-center justify-center"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              <Lock className="w-5 h-5 text-white" />
-                            </motion.div>
+                            <div className="absolute inset-0 rounded-lg bg-black/40 flex items-center justify-center">
+                              <Lock className="w-4 h-4 text-white" />
+                            </div>
                           )}
 
                           {/* Active check badge */}
                           {isActive && (
-                            <motion.div
-                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary-500 border-2 border-[var(--bg-elevated)] flex items-center justify-center shadow-sm"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                            >
-                              <Check className="w-3 h-3 text-white relative z-10" />
-                            </motion.div>
+                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent border-2 border-[var(--bg-dropdown)] flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            </div>
                           )}
-                        </motion.div>
+                        </div>
 
                         {/* App Name */}
-                        <div className="text-center">
+                        <div className="text-center w-full">
                           <p className={`text-sm font-semibold leading-tight ${
                             isActive
-                              ? 'text-primary-600 dark:text-primary-400'
+                              ? 'text-accent'
                               : isLocked
                                 ? 'text-[var(--text-muted)]'
                                 : 'text-[var(--text-primary)]'
                           }`}>
                             {targetApp.name}
                           </p>
-                          <p className={`text-xs mt-0.5 ${
+                          <p className={`text-xs mt-1 ${
                             isLocked
                               ? 'text-[var(--text-muted)]'
                               : 'text-[var(--text-secondary)]'
@@ -254,8 +244,8 @@ export default function AppSwitcher() {
             <div className="px-5 py-3 bg-[var(--bg-surface)] border-t border-[var(--dropdown-divider)]">
               {isNavigating ? (
                 <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-3.5 h-3.5 text-primary-500 animate-spin" />
-                  <p className="text-xs text-primary-500 font-medium">Switching app...</p>
+                  <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" />
+                  <p className="text-xs text-accent font-medium">Switching app...</p>
                 </div>
               ) : (
                 <p className="text-xs text-[var(--text-muted)] text-center">

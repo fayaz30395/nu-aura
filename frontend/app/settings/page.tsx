@@ -10,7 +10,6 @@ import {
   Moon,
   Sun,
   Mail,
-  Lock,
   Save,
   Check,
   AlertCircle,
@@ -37,7 +36,6 @@ export default function SettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const { isDark, toggleDarkMode } = useDarkMode();
-  const [isSaving, setIsSaving] = useState(false);
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);

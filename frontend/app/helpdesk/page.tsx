@@ -17,8 +17,8 @@ import {
 
 export default function HelpdeskPage() {
   const router = useRouter();
-  const { data: dashboard, isLoading: dashboardLoading } = useSLADashboard();
-  const { data: escalations = [], isLoading: escalationsLoading } = useMyPendingEscalations();
+  const { data: dashboard, isLoading: dashboardLoading, error: dashboardError } = useSLADashboard();
+  const { data: escalations = [], isLoading: escalationsLoading, error: escalationsError } = useMyPendingEscalations();
   const { data: slasResponse } = useSlaConfigs(0, 100);
 
   const activeSlaCount = useMemo(
@@ -28,31 +28,37 @@ export default function HelpdeskPage() {
 
   const isLoading = dashboardLoading || escalationsLoading;
 
+  const getStatValue = (formatter: () => string): string => {
+    if (dashboardLoading) return '...';
+    if (dashboardError || !dashboard) return 'N/A';
+    return formatter();
+  };
+
   const statCards = [
     {
       label: 'SLA Compliance',
-      value: dashboard ? `${dashboard.slaComplianceRate.toFixed(1)}%` : '\u2014',
+      value: getStatValue(() => `${dashboard.slaComplianceRate.toFixed(1)}%`),
       icon: CheckCircle2,
       color: 'text-green-600',
       bg: 'bg-green-50 dark:bg-green-950/20',
     },
     {
       label: 'Avg First Response',
-      value: dashboard ? `${dashboard.averageFirstResponseMinutes} min` : '\u2014',
+      value: getStatValue(() => `${dashboard.averageFirstResponseMinutes} min`),
       icon: Clock,
       color: 'text-blue-600',
       bg: 'bg-blue-50 dark:bg-blue-950/20',
     },
     {
       label: 'Avg Resolution',
-      value: dashboard ? `${dashboard.averageResolutionMinutes} min` : '\u2014',
+      value: getStatValue(() => `${dashboard.averageResolutionMinutes} min`),
       icon: BarChart3,
       color: 'text-purple-600',
       bg: 'bg-purple-50 dark:bg-purple-950/20',
     },
     {
       label: 'Avg CSAT',
-      value: dashboard ? `${dashboard.averageCSAT.toFixed(1)} / 5` : '\u2014',
+      value: getStatValue(() => `${dashboard.averageCSAT.toFixed(1)} / 5`),
       icon: Headphones,
       color: 'text-orange-600',
       bg: 'bg-orange-50 dark:bg-orange-950/20',
@@ -81,7 +87,7 @@ export default function HelpdeskPage() {
                 <div>
                   <p className="text-xs text-[var(--text-muted)]">{card.label}</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
-                    {isLoading ? '...' : card.value}
+                    {card.value}
                   </p>
                 </div>
               </div>

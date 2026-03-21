@@ -571,6 +571,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
           style={{
             backgroundColor: 'var(--bg-sidebar)',
+            backgroundImage: 'var(--sidebar-gradient)',
             borderColor: 'var(--sidebar-border)',
             width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
             minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,

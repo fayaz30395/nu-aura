@@ -29,15 +29,7 @@ export default function PaymentConfigPage() {
   const router = useRouter();
   const { hasHydrated } = useAuth();
 
-  useEffect(() => {
-    if (!PAYMENTS_ENABLED) {
-      router.replace('/dashboard');
-    }
-  }, [router]);
-
-  if (!PAYMENTS_ENABLED) {
-    return null;
-  }
+  // All hooks must be called unconditionally before any early returns
   const { data: configs = [] } = useAllPaymentConfigs();
   const saveConfigMutation = useSavePaymentConfig();
   const testConnectionMutation = useTestConnection();
@@ -50,9 +42,6 @@ export default function PaymentConfigPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // BUG-007 FIX: store timer ref to prevent setState on unmounted component
   const savedMsgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (savedMsgTimerRef.current) clearTimeout(savedMsgTimerRef.current);
-  }, []);
 
   const {
     register,
@@ -69,6 +58,16 @@ export default function PaymentConfigPage() {
   });
 
   const selectedConfig = configs.find((c) => c.provider === selectedProvider);
+
+  useEffect(() => {
+    if (!PAYMENTS_ENABLED) {
+      router.replace('/dashboard');
+    }
+  }, [router]);
+
+  useEffect(() => () => {
+    if (savedMsgTimerRef.current) clearTimeout(savedMsgTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (selectedConfig) {
@@ -89,6 +88,10 @@ export default function PaymentConfigPage() {
       });
     }
   }, [selectedProvider, selectedConfig, reset]);
+
+  if (!PAYMENTS_ENABLED) {
+    return null;
+  }
 
   const onSubmit = async (data: ConfigFormData) => {
     try {

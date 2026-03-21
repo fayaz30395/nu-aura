@@ -35,6 +35,16 @@ export default function AdminLayout({
     [roles]
   );
 
+  // Get primary user role for display
+  const userRoleDisplay = useMemo(() => {
+    if (!user?.roles || user.roles.length === 0) {
+      return 'Employee';
+    }
+    // Use the first role (typically the primary role)
+    const primaryRole = user.roles[0];
+    return primaryRole.name || primaryRole.code || 'Employee';
+  }, [user?.roles]);
+
   // Define sidebar navigation items (with permission metadata)
   const sidebarItems: SidebarItem[] = [
     // SuperAdmin only section
@@ -311,6 +321,7 @@ export default function AdminLayout({
             onMenuClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
             showMenuButton={true}
             userName={user?.fullName ?? 'User'}
+            userRole={userRoleDisplay}
             notificationCount={3}
             onLogout={handleLogout}
             onProfile={() => router.push('/admin/profile')}

@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout';
 import {
   CreditCard,
@@ -25,7 +24,7 @@ import { EmptyState } from '@/components/ui';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 
 // Phase 2 stabilization: payments module gated behind feature flag
-const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
+const _PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
 
 type TabType = 'all' | 'completed' | 'failed' | 'pending';
 
@@ -41,18 +40,9 @@ interface Filters {
 }
 
 export default function PaymentsPage() {
-  const router = useRouter();
   const { hasHydrated } = useAuth();
 
-  useEffect(() => {
-    if (!PAYMENTS_ENABLED) {
-      router.replace('/dashboard');
-    }
-  }, [router]);
-
-  if (!PAYMENTS_ENABLED) {
-    return null;
-  }
+  // All hooks must be called unconditionally before any early returns
   const { data: paymentsData, isLoading: paymentsLoading } = usePayments();
   const { data: statsData } = usePaymentStats();
 

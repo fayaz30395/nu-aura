@@ -126,6 +126,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/careers/**").permitAll()
                         // WebSocket/SockJS endpoints (auth handled at STOMP level)
                         .requestMatchers("/ws/**").permitAll()
+                        // DocuSign webhook (public, HMAC-verified via CRIT-002)
+                        .requestMatchers("/api/v1/integrations/docusign/webhook").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
@@ -159,7 +161,9 @@ public class SecurityConfig {
                     .ignoringRequestMatchers("/ws/**")
                     // Ignore CSRF for SSE streaming endpoints (authenticated via cookies, but
                     // native fetch may not have XSRF token on first request)
-                    .ignoringRequestMatchers("/api/v1/fluence/chat"));
+                    .ignoringRequestMatchers("/api/v1/fluence/chat")
+                    // Ignore CSRF for DocuSign webhook (public, HMAC-verified via CRIT-002)
+                    .ignoringRequestMatchers("/api/v1/integrations/docusign/webhook"));
         } else {
             http.csrf(AbstractHttpConfigurer::disable);
         }

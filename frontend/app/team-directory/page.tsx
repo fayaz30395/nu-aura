@@ -16,7 +16,6 @@ import {
   Users,
   Mail,
   Phone,
-  Briefcase,
   Building2,
   Grid3x3,
   List,

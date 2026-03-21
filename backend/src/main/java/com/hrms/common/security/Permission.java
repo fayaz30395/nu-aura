@@ -361,6 +361,10 @@ public final class Permission {
     public static final String ESIGNATURE_SIGN = "ESIGNATURE:SIGN";
     public static final String ESIGNATURE_MANAGE = "ESIGNATURE:MANAGE";
 
+    // Integration Management
+    public static final String INTEGRATION_READ = "INTEGRATION:READ";
+    public static final String INTEGRATION_MANAGE = "INTEGRATION:MANAGE";
+
     // Workflow Management
     public static final String WORKFLOW_VIEW = "WORKFLOW:VIEW";
     public static final String WORKFLOW_CREATE = "WORKFLOW:CREATE";

@@ -157,7 +157,7 @@ public class ImplicitRoleRuleController {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         // Verify target role exists
-        Role targetRole = roleRepository.findByIdAndTenantId(request.getTargetRoleId(), tenantId)
+        roleRepository.findById(request.getTargetRoleId()).filter(r -> r.getTenantId() == null || r.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Target role not found"));
 
         ImplicitRoleRule rule = new ImplicitRoleRule();
@@ -194,7 +194,7 @@ public class ImplicitRoleRuleController {
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
 
         // Verify target role exists
-        Role targetRole = roleRepository.findByIdAndTenantId(request.getTargetRoleId(), tenantId)
+        roleRepository.findById(request.getTargetRoleId()).filter(r -> r.getTenantId() == null || r.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Target role not found"));
 
         rule.setRuleName(request.getRuleName());
@@ -341,8 +341,8 @@ public class ImplicitRoleRuleController {
                 .priority(rule.getPriority())
                 .isActive(rule.getIsActive())
                 .affectedUserCount(affectedUserCount)
-                .createdAt(rule.getCreatedAt() != null ? rule.getCreatedAt().toInstant() : null)
-                .updatedAt(rule.getUpdatedAt() != null ? rule.getUpdatedAt().toInstant() : null)
+                .createdAt(rule.getCreatedAt() != null ? rule.getCreatedAt().toInstant(java.time.ZoneOffset.UTC) : null)
+                .updatedAt(rule.getUpdatedAt() != null ? rule.getUpdatedAt().toInstant(java.time.ZoneOffset.UTC) : null)
                 .build();
     }
 
@@ -358,7 +358,7 @@ public class ImplicitRoleRuleController {
                 .roleName(role != null ? role.getName() : null)
                 .scope(implicitRole.getScope())
                 .derivedFromContext(implicitRole.getDerivedFromContext())
-                .computedAt(implicitRole.getComputedAt() != null ? implicitRole.getComputedAt().toInstant() : null)
+                .computedAt(implicitRole.getComputedAt() != null ? implicitRole.getComputedAt().toInstant(java.time.ZoneOffset.UTC) : null)
                 .isActive(implicitRole.getIsActive())
                 .build();
     }

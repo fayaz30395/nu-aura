@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import {
   Card,

@@ -26,7 +26,7 @@ import {
 import { FluenceAttachment } from '@/lib/types/fluence';
 import { TextInput } from '@mantine/core';
 
-const log = createLogger('FluenceDrivePage');
+const _log = createLogger('FluenceDrivePage');
 
 type FileCategory = 'all' | 'documents' | 'images' | 'spreadsheets' | 'other';
 

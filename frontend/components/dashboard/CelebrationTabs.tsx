@@ -1,18 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { homeService, BirthdayResponse, WorkAnniversaryResponse, NewJoineeResponse } from '@/lib/services/home.service';
+import { BirthdayResponse, WorkAnniversaryResponse, NewJoineeResponse } from '@/lib/services/home.service';
+import { useUpcomingBirthdays, useUpcomingAnniversaries, useNewJoinees } from '@/lib/hooks/queries/useHome';
 
 type TabType = 'birthdays' | 'anniversaries' | 'newJoiners';
-
-interface TabState {
-  birthdays: BirthdayResponse[];
-  anniversaries: WorkAnniversaryResponse[];
-  newJoiners: NewJoineeResponse[];
-  isLoading: boolean;
-  error: string | null;
-}
 
 function AvatarInitials({ name }: { name: string }) {
   const initials = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -42,33 +35,21 @@ function SkeletonLoader() {
 export function CelebrationTabs() {
   const [activeTab, setActiveTab] = useState<TabType>('birthdays');
   const [isExpanded, setIsExpanded] = useState(true);
-  const [state, setState] = useState<TabState>({
-    birthdays: [], anniversaries: [], newJoiners: [], isLoading: true, error: null,
-  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setState((prev) => ({ ...prev, isLoading: true, error: null }));
-        const [birthdays, anniversaries, newJoiners] = await Promise.all([
-          homeService.getUpcomingBirthdays(14),
-          homeService.getUpcomingAnniversaries(14),
-          homeService.getNewJoinees(30),
-        ]);
-        setState({ birthdays: birthdays || [], anniversaries: anniversaries || [], newJoiners: newJoiners || [], isLoading: false, error: null });
-      } catch {
-        setState((prev) => ({ ...prev, isLoading: false, error: 'Failed to load celebrations' }));
-      }
-    };
-    fetchData();
-  }, []);
+  // Use React Query hooks — 14 days for birthdays and anniversaries, 30 for new joiners
+  const { data: birthdays = [], isLoading: birthdaysLoading, isError: birthdaysError } = useUpcomingBirthdays(14);
+  const { data: anniversaries = [], isLoading: anniversariesLoading, isError: anniversariesError } = useUpcomingAnniversaries(14);
+  const { data: newJoiners = [], isLoading: newJoinersLoading, isError: newJoinersError } = useNewJoinees(30);
 
-  const birthdayCount = state.birthdays.length;
-  const anniversaryCount = state.anniversaries.length;
-  const newJoinerCount = state.newJoiners.length;
+  const isLoading = birthdaysLoading || anniversariesLoading || newJoinersLoading;
+  const hasError = birthdaysError || anniversariesError || newJoinersError;
+
+  const birthdayCount = birthdays.length;
+  const anniversaryCount = anniversaries.length;
+  const newJoinerCount = newJoiners.length;
   const totalCount = birthdayCount + anniversaryCount + newJoinerCount;
 
-  if (totalCount === 0 && !state.isLoading && !state.error) {
+  if (totalCount === 0 && !isLoading && !hasError) {
     return (
       <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
         <p className="text-center text-xs text-[var(--text-muted)]">No celebrations this week</p>
@@ -115,11 +96,11 @@ export function CelebrationTabs() {
       {/* Content */}
       {isExpanded && (
         <div className="px-4 py-2">
-          {state.isLoading ? (
+          {isLoading ? (
             <SkeletonLoader />
-          ) : state.error ? (
+          ) : hasError ? (
             <div className="py-4 flex flex-col items-center gap-2 text-center">
-              <p className="text-xs text-[var(--text-muted)]">{state.error}</p>
+              <p className="text-xs text-[var(--text-muted)]">Failed to load celebrations</p>
               <button
                 onClick={() => window.location.reload()}
                 className="text-xs text-primary-500 hover:text-primary-400 font-medium transition-colors"
@@ -131,7 +112,7 @@ export function CelebrationTabs() {
             <>
               {activeTab === 'birthdays' && birthdayCount > 0 && (
                 <div className="space-y-1">
-                  {state.birthdays.map((person) => (
+                  {birthdays.map((person) => (
                     <div key={person.employeeId} className="flex items-center gap-2.5 py-2 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 px-1 transition-colors">
                       <AvatarInitials name={person.employeeName} />
                       <div className="flex-1 min-w-0">
@@ -148,7 +129,7 @@ export function CelebrationTabs() {
 
               {activeTab === 'anniversaries' && anniversaryCount > 0 && (
                 <div className="space-y-1">
-                  {state.anniversaries.map((person) => (
+                  {anniversaries.map((person) => (
                     <div key={person.employeeId} className="flex items-center gap-2.5 py-2 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 px-1 transition-colors">
                       <AvatarInitials name={person.employeeName} />
                       <div className="flex-1 min-w-0">
@@ -165,7 +146,7 @@ export function CelebrationTabs() {
 
               {activeTab === 'newJoiners' && newJoinerCount > 0 && (
                 <div className="space-y-1">
-                  {state.newJoiners.map((person) => (
+                  {newJoiners.map((person) => (
                     <div key={person.employeeId} className="flex items-center gap-2.5 py-2 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 px-1 transition-colors">
                       <AvatarInitials name={person.employeeName} />
                       <div className="flex-1 min-w-0">

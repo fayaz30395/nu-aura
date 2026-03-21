@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

@@ -6,6 +6,8 @@ import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.events.NotificationEvent;
 import com.hrms.application.notification.service.EmailService;
 import com.hrms.application.notification.service.NotificationService;
+import com.hrms.application.integration.service.IntegrationEventRouter;
+import com.hrms.domain.integration.IntegrationEvent;
 import com.hrms.domain.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,6 +44,7 @@ public class NotificationEventConsumer {
     private final IdempotencyService idempotencyService;
     private final EmailService emailService;
     private final NotificationService notificationService;
+    private final IntegrationEventRouter integrationEventRouter;
 
     /**
      * Handle notification events.
@@ -129,6 +134,31 @@ public class NotificationEventConsumer {
                 emailService.sendEmail(recipientIdStr, recipientIdStr, null, vars);
                 log.info("Email notification sent with plain text");
             }
+
+            // Route to integration connectors
+            try {
+                Map<String, Object> integrationMetadata = new HashMap<>();
+                integrationMetadata.put("templateName", templateName);
+                integrationMetadata.put("subject", subject);
+                integrationMetadata.put("recipientId", recipientIdStr);
+                if (templateData != null) {
+                    integrationMetadata.putAll(templateData);
+                }
+
+                IntegrationEvent integrationEvent = new IntegrationEvent(
+                    "NOTIFICATION_SENT",
+                    event.getTenantId(),
+                    event.getRecipientId() != null ? event.getRecipientId() : UUID.randomUUID(),
+                    "Notification",
+                    integrationMetadata,
+                    Instant.now()
+                );
+                integrationEventRouter.routeToConnectors(integrationEvent);
+            } catch (Exception e) {
+                log.warn("Failed to route email notification integration event: {}", e.getMessage());
+                // Don't fail the main consumer processing
+            }
+
         } catch (RuntimeException e) {
             log.error("Failed to send email to {}: {}", event.getRecipientId(), e.getMessage(), e);
             throw new RuntimeException("Email send failed", e);
@@ -181,6 +211,34 @@ public class NotificationEventConsumer {
             );
 
             log.info("In-app notification created for user: {}", event.getRecipientId());
+
+            // Route to integration connectors
+            try {
+                Map<String, Object> integrationMetadata = new HashMap<>();
+                integrationMetadata.put("userId", userId.toString());
+                integrationMetadata.put("subject", event.getSubject());
+                integrationMetadata.put("body", event.getBody());
+                if (entityId != null) {
+                    integrationMetadata.put("relatedEntityId", entityId.toString());
+                }
+                if (entityType != null) {
+                    integrationMetadata.put("relatedEntityType", entityType);
+                }
+
+                IntegrationEvent integrationEvent = new IntegrationEvent(
+                    "NOTIFICATION_SENT",
+                    event.getTenantId(),
+                    userId,
+                    "Notification",
+                    integrationMetadata,
+                    Instant.now()
+                );
+                integrationEventRouter.routeToConnectors(integrationEvent);
+            } catch (Exception e) {
+                log.warn("Failed to route in-app notification integration event: {}", e.getMessage());
+                // Don't fail the main consumer processing
+            }
+
         } catch (RuntimeException e) {
             log.error("Failed to create in-app notification for {}: {}", event.getRecipientId(), e.getMessage(), e);
             throw new RuntimeException("In-app notification creation failed", e);

@@ -11,6 +11,23 @@ interface TimeClockWidgetProps {
   isLoading?: boolean;
 }
 
+function getInitialTime() {
+  const now = new Date();
+  return now.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
+}
+
+function getInitialDateDisplay() {
+  const now = new Date();
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${dayNames[now.getDay()]}, ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+}
+
 export function TimeClockWidget({
   isCheckedIn,
   checkInTime,
@@ -18,9 +35,9 @@ export function TimeClockWidget({
   onCheckOut,
   isLoading = false,
 }: TimeClockWidgetProps) {
-  const [currentTime, setCurrentTime] = useState<string>('');
+  const [currentTime, setCurrentTime] = useState<string>(getInitialTime());
   const [elapsedTime, setElapsedTime] = useState<string>('');
-  const [dateDisplay, setDateDisplay] = useState<string>('');
+  const [dateDisplay, setDateDisplay] = useState<string>(getInitialDateDisplay());
 
   useEffect(() => {
     const updateTime = () => {
@@ -37,7 +54,6 @@ export function TimeClockWidget({
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       setDateDisplay(`${dayNames[now.getDay()]}, ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`);
     };
-    updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);

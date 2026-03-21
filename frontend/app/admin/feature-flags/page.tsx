@@ -11,13 +11,12 @@ import {
   Select,
   Card,
   Stack,
-  ActionIcon,
   Tooltip,
   Modal,
   Button,
   Textarea,
 } from '@mantine/core';
-import { Search, ToggleLeft, Filter, Plus, Info } from 'lucide-react';
+import { Search, ToggleLeft, Filter, Plus } from 'lucide-react';
 import { useFeatureFlags, useToggleFeatureFlag, useSetFeatureFlag } from '@/lib/hooks/queries/useFeatureFlags';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { SkeletonCard } from '@/components/ui/Loading';

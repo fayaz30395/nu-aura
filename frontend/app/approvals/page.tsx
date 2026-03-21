@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -15,7 +15,6 @@ import {
   Clock,
   XCircle,
   Search,
-  ChevronRight,
   AlertCircle,
 } from 'lucide-react';
 
@@ -179,7 +178,7 @@ export default function ApprovalsPage() {
     try {
       await approveMutation.mutateAsync({ executionId: id });
       toast.success('Approval submitted successfully');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to approve');
     }
   }, [approveMutation, toast]);
@@ -188,7 +187,7 @@ export default function ApprovalsPage() {
     try {
       await rejectMutation.mutateAsync({ executionId: id });
       toast.success('Rejection submitted successfully');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to reject');
     }
   }, [rejectMutation, toast]);

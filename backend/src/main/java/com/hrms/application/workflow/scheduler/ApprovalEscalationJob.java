@@ -142,7 +142,7 @@ public class ApprovalEscalationJob {
         ApprovalEscalationConfig config = configOpt.get();
 
         // Check if max escalations reached
-        int currentEscalationCount = (step.getReminderCount() != null ? step.getReminderCount() : 0);
+        int currentEscalationCount = step.getReminderCount();
         if (currentEscalationCount >= config.getMaxEscalations()) {
             log.warn("Step {} has reached max escalations ({}) for workflow {} (tenant={})",
                     step.getId(), config.getMaxEscalations(), workflowDefinitionId, tenantId);

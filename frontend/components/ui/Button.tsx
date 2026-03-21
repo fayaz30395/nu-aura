@@ -8,22 +8,22 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
         // Primary - Main CTA
         primary:
-          'bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500/50 shadow-sm',
+          'bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-105 focus-visible:ring-[var(--ring-primary)] shadow-sm',
         // Secondary - Neutral actions
         secondary:
-          'bg-surface-100 text-surface-700 hover:bg-surface-200 dark:bg-surface-700 dark:text-surface-200 dark:hover:bg-surface-600 focus-visible:ring-surface-500/50',
+          'bg-[var(--bg-card)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] focus-visible:ring-[var(--ring-primary)]',
         // Outline - Secondary importance
         outline:
-          'border border-surface-300 bg-transparent text-surface-700 hover:bg-surface-50 hover:border-surface-400 dark:border-surface-600 dark:text-surface-200 dark:hover:bg-surface-800 dark:hover:border-surface-500 focus-visible:ring-surface-500/50',
+          'border border-[var(--border-main)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)] focus-visible:ring-[var(--ring-primary)]',
         // Ghost - Minimal emphasis
         ghost:
-          'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-50 focus-visible:ring-surface-500/50',
+          'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-primary)] focus-visible:ring-[var(--ring-primary)]',
         // Danger / Destructive - Destructive actions
         danger:
           'bg-danger-500 text-white hover:bg-danger-600 focus-visible:ring-danger-500/50 shadow-sm',
@@ -37,31 +37,31 @@ const buttonVariants = cva(
           'bg-warning-500 text-white hover:bg-warning-600 focus-visible:ring-warning-500/50 shadow-sm',
         // Link - Text button
         link:
-          'text-primary-600 underline-offset-4 hover:underline dark:text-primary-400 focus-visible:ring-primary-500/50',
+          'text-[var(--accent-primary)] underline-offset-4 hover:underline focus-visible:ring-[var(--ring-primary)]',
         // Soft variants - Subtle colored backgrounds
         soft:
-          'bg-primary-50 text-primary-700 hover:bg-primary-100 dark:bg-primary-950 dark:text-primary-300 dark:hover:bg-primary-900 focus-visible:ring-primary-500/50',
+          'bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] hover:brightness-95 focus-visible:ring-[var(--ring-primary)]',
         'soft-danger':
           'bg-danger-50 text-danger-700 hover:bg-danger-100 dark:bg-danger-950 dark:text-danger-300 dark:hover:bg-danger-900 focus-visible:ring-danger-500/50',
         'soft-success':
           'bg-success-50 text-success-700 hover:bg-success-100 dark:bg-success-950 dark:text-success-300 dark:hover:bg-success-900 focus-visible:ring-success-500/50',
         // Default - dark button
         default:
-          'bg-surface-900 text-white hover:bg-surface-800 dark:bg-surface-100 dark:text-surface-900 dark:hover:bg-surface-200 shadow-sm',
+          'bg-[var(--text-primary)] text-[var(--text-inverse)] hover:opacity-90 focus-visible:ring-[var(--ring-primary)] shadow-sm',
         // CTA - Special call-to-action (alias for primary)
         cta:
-          'bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500/50 shadow-sm',
+          'bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-105 focus-visible:ring-[var(--ring-primary)] shadow-sm',
       },
       size: {
-        xs: 'h-7 px-2 text-xs rounded',
-        sm: 'h-8 px-3 text-sm rounded-md',
-        md: 'h-10 px-4 text-sm rounded-lg',
-        lg: 'h-11 px-5 text-base rounded-lg',
-        xl: 'h-12 px-6 text-base rounded-lg',
-        icon: 'h-10 w-10 rounded-lg',
-        'icon-sm': 'h-8 w-8 rounded-md',
-        'icon-xs': 'h-7 w-7 rounded',
-        'icon-lg': 'h-12 w-12 rounded-lg',
+        xs: 'h-7 px-2 text-xs rounded-md',
+        sm: 'h-9 px-3 text-sm rounded-lg',
+        md: 'h-11 px-4 text-sm rounded-xl',
+        lg: 'h-12 px-5 text-base rounded-xl',
+        xl: 'h-12 px-6 text-base rounded-xl',
+        icon: 'h-11 w-11 rounded-xl',
+        'icon-sm': 'h-9 w-9 rounded-lg',
+        'icon-xs': 'h-7 w-7 rounded-md',
+        'icon-lg': 'h-12 w-12 rounded-xl',
       },
     },
     defaultVariants: {
@@ -105,8 +105,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         disabled={isLoading || disabled}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
         {...props}
       >
         {isLoading ? (

@@ -6,7 +6,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { loanService } from '@/lib/services/loan.service';
 import { LoanStatus } from '@/lib/types/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { useEmployeeLoans } from '@/lib/hooks/queries/useLoans';
 import { EmptyState } from '@/components/ui/EmptyState';
