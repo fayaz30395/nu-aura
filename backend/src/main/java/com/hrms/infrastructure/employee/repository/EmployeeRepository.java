@@ -286,4 +286,37 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
            "(e.joiningDate IS NULL AND e.createdAt IS NOT NULL AND e.createdAt <= :cutoffDateTime)")
     long countJoinedOnOrBefore(@Param("cutoffDate") LocalDate cutoffDate,
                                @Param("cutoffDateTime") LocalDateTime cutoffDateTime);
+
+    /**
+     * Check if an employee is a department head (manages any department).
+     * Used by ImplicitRoleEngine to determine if employee should get IS_DEPARTMENT_HEAD role.
+     */
+    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM Department d " +
+           "WHERE d.managerId = :employeeId AND d.tenantId = :tenantId AND d.isActive = true")
+    boolean isDepartmentHead(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId);
+
+    /**
+     * Check if an employee has skip-level reports (indirect reports).
+     * A skip-level report is an employee whose manager has this employee as their manager.
+     * Used by ImplicitRoleEngine to determine if employee should get IS_SKIP_LEVEL_MANAGER role.
+     */
+    @Query(value = """
+        SELECT EXISTS(
+          SELECT 1 FROM employees e1
+          WHERE e1.manager_id = :employeeId AND e1.tenant_id = :tenantId AND e1.is_deleted = false
+          AND EXISTS(
+            SELECT 1 FROM employees e2
+            WHERE e2.manager_id = e1.id AND e2.tenant_id = :tenantId AND e2.is_deleted = false
+          )
+        )
+        """, nativeQuery = true)
+    boolean hasSkipLevelReports(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId);
+
+    /**
+     * Get all user-employee pairs for a tenant.
+     * Returns List<Object[]> with {userId, employeeId}.
+     * Used by ImplicitRoleEngine.recomputeAll() to batch recompute all users.
+     */
+    @Query("SELECT u.id, e.id FROM Employee e JOIN e.user u WHERE e.tenantId = :tenantId AND e.isDeleted = false")
+    List<Object[]> findUserEmployeePairsByTenantId(@Param("tenantId") UUID tenantId);
 }
