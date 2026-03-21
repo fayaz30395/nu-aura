@@ -170,6 +170,7 @@ public final class Permission {
     // System Administration
     public static final String SYSTEM_ADMIN = "SYSTEM:ADMIN";
     public static final String ROLE_MANAGE = "ROLE:MANAGE";
+    public static final String ROLE_READ = "ROLE:READ";
     public static final String PERMISSION_MANAGE = "PERMISSION:MANAGE";
     public static final String USER_VIEW = "USER:VIEW";
     public static final String USER_MANAGE = "USER:MANAGE";
