@@ -1,8 +1,10 @@
 package com.hrms.common.security;
 
 import com.hrms.common.config.CacheConfig;
+import com.hrms.domain.user.ImplicitUserRole;
 import com.hrms.domain.user.Role;
 import com.hrms.domain.user.RolePermission;
+import com.hrms.infrastructure.user.repository.ImplicitUserRoleRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SecurityService {
 
     private final RoleRepository roleRepository;
+    private final ImplicitUserRoleRepository implicitUserRoleRepository;
 
     public boolean hasPermission(Authentication authentication, String permissionCode) {
         if (authentication == null || !authentication.isAuthenticated() || permissionCode == null) {
@@ -140,6 +140,131 @@ public class SecurityService {
         }
         java.util.TreeSet<String> sorted = new java.util.TreeSet<>(roles);
         return tenantId + "::" + String.join(",", sorted);
+    }
+
+    /**
+     * NEW METHOD (Task 8): Load permissions for a specific user, merging explicit roles
+     * + implicit roles + role hierarchy inheritance.
+     *
+     * Cache key: "permissions:{tenantId}:{userId}"
+     * TTL: 5 minutes (short-lived, user-specific)
+     *
+     * Algorithm:
+     * 1. Load explicit role permissions from provided role codes
+     * 2. Walk parent_role_id chain for each explicit role (max depth 10, cycle detection)
+     * 3. Load active implicit roles for the user
+     * 4. Walk parent chain for each implicit role's role
+     * 5. Merge all permissions additively into a Set<String>
+     *
+     * @param userId UUID of the user (from JWT)
+     * @param explicitRoleCodes Collection of explicit role codes (from JWT)
+     * @return Set of permission codes (database format: "module.action")
+     */
+    @Cacheable(
+        value = CacheConfig.ROLE_PERMISSIONS,
+        key = "'permissions:' + #root.target.userCacheKey(#userId)",
+        condition = "#root.target.isTenantContextPresent()"
+    )
+    @Transactional(readOnly = true)
+    public Set<String> getCachedPermissionsForUser(UUID userId, Collection<String> explicitRoleCodes) {
+        Set<String> allPermissions = new HashSet<>();
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        if (tenantId == null || userId == null) {
+            log.warn("getCachedPermissionsForUser called without TenantContext or userId; returning empty permissions");
+            return allPermissions;
+        }
+
+        // 1. Load explicit role permissions + inheritance chain
+        if (explicitRoleCodes != null && !explicitRoleCodes.isEmpty()) {
+            List<Role> explicitRoles = roleRepository.findByCodeInAndTenantId(explicitRoleCodes, tenantId);
+            for (Role role : explicitRoles) {
+                Set<String> rolePerms = flattenRolePermissions(role, tenantId);
+                allPermissions.addAll(rolePerms);
+            }
+        }
+
+        // 2. Load implicit roles for this user (active only)
+        List<ImplicitUserRole> implicitRoles = implicitUserRoleRepository
+                .findByUserIdAndTenantIdAndIsActiveTrue(userId, tenantId);
+
+        for (ImplicitUserRole implicitRole : implicitRoles) {
+            // Load the role entity and walk its parent chain
+            Optional<Role> roleOpt = roleRepository.findByIdAndTenantIdWithPermissions(implicitRole.getRoleId(), tenantId);
+            if (roleOpt.isPresent()) {
+                Set<String> rolePerms = flattenRolePermissions(roleOpt.get(), tenantId);
+                allPermissions.addAll(rolePerms);
+            }
+        }
+
+        log.debug("getCachedPermissionsForUser: user={}, explicitRoles={}, implicitRoles={}, totalPermissions={}",
+                userId, explicitRoleCodes, implicitRoles.size(), allPermissions.size());
+
+        return allPermissions;
+    }
+
+    /**
+     * Helper method: Walk parent_role_id chain to collect all permissions for a role
+     * and all its ancestors (up the inheritance hierarchy).
+     *
+     * @param role The role to start from
+     * @param tenantId The tenant context
+     * @return Set of permission codes (directly assigned + inherited from parent roles)
+     */
+    private Set<String> flattenRolePermissions(Role role, UUID tenantId) {
+        Set<String> permissions = new HashSet<>();
+        Set<UUID> visited = new HashSet<>();
+        Queue<Role> toProcess = new LinkedList<>();
+
+        toProcess.offer(role);
+
+        int depth = 0;
+        int maxDepth = 10;
+
+        while (!toProcess.isEmpty() && depth < maxDepth) {
+            Role current = toProcess.poll();
+
+            if (current == null || visited.contains(current.getId())) {
+                continue;
+            }
+
+            visited.add(current.getId());
+
+            // Add permissions from this role
+            if (current.getPermissions() != null) {
+                for (RolePermission rp : current.getPermissions()) {
+                    permissions.add(rp.getPermission().getCode());
+                }
+            }
+
+            // Add parent to queue if it exists
+            if (current.getParentRoleId() != null) {
+                Optional<Role> parentOpt = roleRepository.findByIdAndTenantIdWithPermissions(current.getParentRoleId(), tenantId);
+                if (parentOpt.isPresent()) {
+                    toProcess.offer(parentOpt.get());
+                }
+            }
+
+            depth++;
+        }
+
+        if (depth >= maxDepth) {
+            log.warn("flattenRolePermissions: max depth exceeded for role {}", role.getId());
+        }
+
+        return permissions;
+    }
+
+    /**
+     * Cache key builder for user-keyed cache entries.
+     * Used by @Cacheable condition SpEL.
+     */
+    public String userCacheKey(UUID userId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            return "NO_TENANT::" + userId;
+        }
+        return tenantId + ":" + userId;
     }
 
     // Check if user is the current employee
