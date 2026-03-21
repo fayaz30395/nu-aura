@@ -9,6 +9,8 @@ import com.hrms.application.leave.service.LeaveBalanceService;
 import com.hrms.application.onboarding.service.OnboardingManagementService;
 import com.hrms.application.compensation.service.CompensationService;
 import com.hrms.application.performance.service.PerformanceReviewService;
+import com.hrms.application.user.service.ImplicitRoleEngine;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -50,6 +52,8 @@ public class EmployeeLifecycleConsumer {
     private final OnboardingManagementService onboardingManagementService;
     private final CompensationService compensationService;
     private final PerformanceReviewService performanceReviewService;
+    private final ImplicitRoleEngine implicitRoleEngine;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * Handle employee lifecycle events.
@@ -137,6 +141,9 @@ public class EmployeeLifecycleConsumer {
             log.error("Failed to process HIRED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("HIRED event processing failed", e);
         }
+
+        // Recompute implicit roles for new employee
+        recomputeImplicitRolesForEmployee(employeeId, tenantId);
     }
 
     /**
@@ -235,6 +242,9 @@ public class EmployeeLifecycleConsumer {
             log.error("Failed to process PROMOTED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("PROMOTED event processing failed", e);
         }
+
+        // Recompute implicit roles (employee may gain/lose hierarchy position)
+        recomputeImplicitRolesForEmployee(employeeId, tenantId);
     }
 
     /**
@@ -280,6 +290,21 @@ public class EmployeeLifecycleConsumer {
         } catch (RuntimeException e) {
             log.error("Failed to process TRANSFERRED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("TRANSFERRED event processing failed", e);
+        }
+
+        // Recompute implicit roles (cascade for transferred employee and both managers)
+        // 1. Recompute for transferred employee
+        recomputeImplicitRolesForEmployee(employeeId, tenantId);
+
+        // 2. Recompute for old manager (may lose MANAGER role if no other reports)
+        UUID oldManagerId = metadata != null ? (UUID) metadata.get("oldReportingManager") : null;
+        if (oldManagerId != null) {
+            recomputeImplicitRolesForEmployee(oldManagerId, tenantId);
+        }
+
+        // 3. Recompute for new manager (may gain MANAGER role)
+        if (event.getManagerId() != null) {
+            recomputeImplicitRolesForEmployee(event.getManagerId(), tenantId);
         }
     }
 
@@ -350,6 +375,36 @@ public class EmployeeLifecycleConsumer {
         } catch (RuntimeException e) {
             log.error("Failed to process OFFBOARDED event for employee {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("OFFBOARDED event processing failed", e);
+        }
+
+        // Recompute implicit roles (offboarded employee and manager)
+        // 1. Recompute for offboarded employee
+        recomputeImplicitRolesForEmployee(employeeId, tenantId);
+
+        // 2. Recompute for manager (may lose MANAGER role if no other reports)
+        String managerId = metadata != null ? (String) metadata.get("managerId") : null;
+        if (managerId != null) {
+            recomputeImplicitRolesForEmployee(UUID.fromString(managerId), tenantId);
+        }
+    }
+
+    /**
+     * Helper method to recompute implicit roles for an employee.
+     * Wrapped in try-catch to ensure recomputation failures don't break the main event processing.
+     *
+     * @param employeeId Employee ID
+     * @param tenantId   Tenant ID
+     */
+    private void recomputeImplicitRolesForEmployee(UUID employeeId, UUID tenantId) {
+        try {
+            employeeRepository.findByIdAndTenantId(employeeId, tenantId).ifPresent(employee -> {
+                if (employee.getUser() != null) {
+                    implicitRoleEngine.recompute(employee.getUser().getId(), employeeId, tenantId);
+                }
+            });
+        } catch (Exception e) {
+            log.warn("Failed to recompute implicit roles for employee {} in tenant {}: {}",
+                employeeId, tenantId, e.getMessage());
         }
     }
 }
