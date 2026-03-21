@@ -319,4 +319,21 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
      */
     @Query("SELECT u.id, e.id FROM Employee e JOIN e.user u WHERE e.tenantId = :tenantId AND e.isDeleted = false")
     List<Object[]> findUserEmployeePairsByTenantId(@Param("tenantId") UUID tenantId);
+
+    /**
+     * Find the user ID of the department head for a given department.
+     * Returns the user ID of the employee who manages the specified department.
+     * Used by escalation logic to resolve DEPARTMENT_HEAD escalation targets.
+     *
+     * @param tenantId The tenant ID
+     * @param departmentId The department ID
+     * @return Optional containing the department head's user ID
+     */
+    @Query("SELECT DISTINCT u.id FROM User u " +
+           "JOIN Employee e ON u.id = e.userId " +
+           "WHERE e.tenantId = :tenantId " +
+           "AND e.id = (SELECT d.managerId FROM Department d WHERE d.id = :departmentId AND d.tenantId = :tenantId) " +
+           "AND e.status = 'ACTIVE'")
+    Optional<UUID> findDepartmentHeadUserId(@Param("tenantId") UUID tenantId,
+                                           @Param("departmentId") UUID departmentId);
 }

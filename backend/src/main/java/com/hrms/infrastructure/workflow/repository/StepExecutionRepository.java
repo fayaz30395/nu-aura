@@ -163,4 +163,22 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
            "AND s.action IN :actions " +
            "GROUP BY s.action")
     List<Object[]> countTodayActionsByUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId, @Param("startOfDay") LocalDateTime startOfDay, @Param("actions") java.util.Collection<StepExecution.ApprovalAction> actions);
+
+    /**
+     * Find stale PENDING steps that are eligible for escalation.
+     * A step is stale if it has been assigned for longer than 48 hours (the default timeout)
+     * and hasn't already reached the max escalation limit.
+     *
+     * <p>The actual timeout for each workflow is determined in the service layer by checking
+     * the ApprovalEscalationConfig.timeoutHours setting.</p>
+     *
+     * @param tenantId The tenant ID
+     * @return List of stale step executions
+     */
+    @Query("SELECT s FROM StepExecution s " +
+           "LEFT JOIN FETCH s.workflowExecution we " +
+           "WHERE s.tenantId = :tenantId " +
+           "AND s.status = 'PENDING' " +
+           "AND s.assignedAt < (CURRENT_TIMESTAMP - INTERVAL '48' HOUR)")
+    List<StepExecution> findStaleStepsForEscalation(@Param("tenantId") UUID tenantId);
 }
