@@ -175,10 +175,10 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * @param tenantId The tenant ID
      * @return List of stale step executions
      */
-    @Query("SELECT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution we " +
-           "WHERE s.tenantId = :tenantId " +
+    @Query(value = "SELECT s.* FROM step_executions s " +
+           "LEFT JOIN workflow_executions we ON s.workflow_execution_id = we.id " +
+           "WHERE s.tenant_id = :tenantId " +
            "AND s.status = 'PENDING' " +
-           "AND s.assignedAt < (CURRENT_TIMESTAMP - INTERVAL '48' HOUR)")
+           "AND s.assigned_at < (CURRENT_TIMESTAMP - INTERVAL '48 hours')", nativeQuery = true)
     List<StepExecution> findStaleStepsForEscalation(@Param("tenantId") UUID tenantId);
 }

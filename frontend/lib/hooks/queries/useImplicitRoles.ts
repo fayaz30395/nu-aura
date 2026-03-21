@@ -160,13 +160,13 @@ export function useRecomputeAll() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (ruleId?: string) => implicitRolesApi.recomputeAll(ruleId),
+    mutationFn: () => implicitRolesApi.recomputeAll(),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
       queryClient.invalidateQueries({ queryKey: implicitRoleKeys.all });
       notifications.show({
-        title: 'Success',
-        message: `Recomputed ${data.recomputedCount} implicit role assignments`,
+        title: 'Recomputation Triggered',
+        message: data.message || 'Implicit role recomputation has been triggered',
         color: 'green',
       });
     },
@@ -194,7 +194,7 @@ export function useBulkActivateRules() {
       queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
       notifications.show({
         title: 'Success',
-        message: `Activated ${data.activatedCount} rule(s)`,
+        message: `Activated ${data.totalProcessed} of ${data.totalRequested} rule(s)`,
         color: 'green',
       });
     },
@@ -222,7 +222,7 @@ export function useBulkDeactivateRules() {
       queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
       notifications.show({
         title: 'Success',
-        message: `Deactivated ${data.deactivatedCount} rule(s)`,
+        message: `Deactivated ${data.totalProcessed} of ${data.totalRequested} rule(s)`,
         color: 'green',
       });
     },
