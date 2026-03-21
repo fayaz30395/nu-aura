@@ -329,11 +329,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
      * @param departmentId The department ID
      * @return Optional containing the department head's user ID
      */
-    @Query("SELECT DISTINCT u.id FROM User u " +
-           "JOIN Employee e ON u.id = e.userId " +
-           "WHERE e.tenantId = :tenantId " +
-           "AND e.id = (SELECT d.managerId FROM Department d WHERE d.id = :departmentId AND d.tenantId = :tenantId) " +
-           "AND e.status = 'ACTIVE'")
+    @Query(value = "SELECT DISTINCT u.id FROM users u " +
+           "JOIN employees e ON u.id = e.user_id " +
+           "WHERE e.tenant_id = :tenantId " +
+           "AND e.id = (SELECT d.manager_id FROM departments d WHERE d.id = :departmentId AND d.tenant_id = :tenantId) " +
+           "AND e.status = 'ACTIVE'", nativeQuery = true)
     Optional<UUID> findDepartmentHeadUserId(@Param("tenantId") UUID tenantId,
                                            @Param("departmentId") UUID departmentId);
 }

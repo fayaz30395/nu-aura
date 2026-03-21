@@ -382,9 +382,16 @@ public class EmployeeLifecycleConsumer {
         recomputeImplicitRolesForEmployee(employeeId, tenantId);
 
         // 2. Recompute for manager (may lose MANAGER role if no other reports)
-        String managerId = metadata != null ? (String) metadata.get("managerId") : null;
-        if (managerId != null) {
-            recomputeImplicitRolesForEmployee(UUID.fromString(managerId), tenantId);
+        if (metadata != null && metadata.get("managerId") != null) {
+            try {
+                UUID managerId = metadata.get("managerId") instanceof UUID
+                        ? (UUID) metadata.get("managerId")
+                        : UUID.fromString(metadata.get("managerId").toString());
+                recomputeImplicitRolesForEmployee(managerId, tenantId);
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid managerId in OFFBOARDED event metadata for employee {}: {}",
+                        employeeId, metadata.get("managerId"));
+            }
         }
     }
 
