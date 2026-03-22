@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Sidebar, SidebarItem, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from '@/components/ui/Sidebar';
 import { Header } from '@/components/layout/Header';
@@ -34,6 +34,25 @@ export default function AdminLayout({
     () => roles.includes(Roles.SUPER_ADMIN),
     [roles]
   );
+
+  // BUG-017: Check if user has admin-level roles to access /admin route
+  // SuperAdmin bypasses all checks per CLAUDE.md
+  // HR_ADMIN, HR_MANAGER, and TENANT_ADMIN are allowed admin access
+  const hasAdminAccess = useMemo(
+    () =>
+      isSuperAdmin ||
+      roles.includes(Roles.TENANT_ADMIN) ||
+      roles.includes(Roles.HR_ADMIN) ||
+      roles.includes(Roles.HR_MANAGER),
+    [isSuperAdmin, roles]
+  );
+
+  // Redirect unauthorized users after hydration
+  useEffect(() => {
+    if (isReady && !hasAdminAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAdminAccess, router]);
 
   // Get primary user role for display
   const userRoleDisplay = useMemo(() => {
@@ -272,6 +291,33 @@ export default function AdminLayout({
       localStorage.setItem('admin-sidebar-collapsed', String(collapsed));
     }
   };
+
+  // BUG-017: Show loading state while checking authorization
+  // Prevents rendering admin UI for unauthorized users
+  if (!isReady || !hasAdminAccess) {
+    return (
+      <DarkModeProvider>
+        <div className="flex h-screen items-center justify-center bg-surface-50">
+          <div className="text-center">
+            {!isReady ? (
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-full border-4 border-surface-200 border-t-primary-600 animate-spin mx-auto" />
+                <p className="text-surface-600">Loading...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+                  <span className="text-red-600 text-lg">✕</span>
+                </div>
+                <h1 className="text-xl font-semibold text-surface-900">Access Denied</h1>
+                <p className="text-surface-600">You do not have permission to access the admin dashboard.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </DarkModeProvider>
+    );
+  }
 
   return (
     <DarkModeProvider>

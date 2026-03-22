@@ -41,6 +41,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const stompClientRef = useRef<Client | null>(null);
     const approvalCallbacksRef = useRef<Set<(notification: Notification) => void>>(new Set());
+    const connectionAttemptsRef = useRef(0);
+    const MAX_RECONNECTION_ATTEMPTS = 5;
 
     useEffect(() => {
         // Only connect if authenticated
@@ -48,6 +50,13 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
             if (stompClientRef.current?.active) {
                 stompClientRef.current.deactivate();
             }
+            connectionAttemptsRef.current = 0;
+            return;
+        }
+
+        // Skip if too many failed connection attempts
+        if (connectionAttemptsRef.current >= MAX_RECONNECTION_ATTEMPTS) {
+            log.warn('Max WebSocket reconnection attempts reached, stopping reconnection loop');
             return;
         }
 
@@ -64,7 +73,9 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         });
 
         client.onConnect = (_frame) => {
+            connectionAttemptsRef.current = 0; // Reset on successful connection
             setIsConnected(true);
+            log.info('WebSocket connected successfully');
 
             // Subscribe to global broadcasts
             client.subscribe('/topic/broadcast', (message: IMessage) => {
@@ -93,12 +104,21 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         };
 
         client.onStompError = (frame) => {
-            log.error('Broker reported error:', frame.headers['message']);
+            connectionAttemptsRef.current += 1;
+            log.error(`WebSocket error (attempt ${connectionAttemptsRef.current}/${MAX_RECONNECTION_ATTEMPTS}):`, frame.headers['message']);
             log.error('Additional details:', frame.body);
+
+            // Stop retrying after max attempts
+            if (connectionAttemptsRef.current >= MAX_RECONNECTION_ATTEMPTS) {
+                log.warn('Max WebSocket reconnection attempts exceeded, giving up');
+                client.deactivate();
+            }
         };
 
         client.onDisconnect = () => {
             setIsConnected(false);
+            connectionAttemptsRef.current += 1;
+            log.warn(`WebSocket disconnected (attempt ${connectionAttemptsRef.current}/${MAX_RECONNECTION_ATTEMPTS})`);
         };
 
         client.activate();

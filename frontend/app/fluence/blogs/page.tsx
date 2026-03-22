@@ -112,7 +112,7 @@ export default function BlogsPage() {
               Read and share insights with your team
             </p>
           </div>
-          <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
+          <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
             <Button
               onClick={handleNewPost}
               className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"
@@ -245,7 +245,7 @@ export default function BlogsPage() {
                 <p className="text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">
                   Start building your knowledge base by creating your first blog post
                 </p>
-                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
+                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
                   <Button
                     onClick={handleNewPost}
                     className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"

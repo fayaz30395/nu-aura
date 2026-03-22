@@ -292,8 +292,8 @@ Updated frequently as the project evolves.
 
 | Field | Value |
 |-------|-------|
-| Active migrations | V0–V62 (59 files) |
-| Next migration | **V63** |
+| Active migrations | V0–V62, V67 (60 files) |
+| Next migration | **V68** |
 | Legacy Liquibase | `db/changelog/` — **DO NOT USE** |
 
 **Recent migrations:**
@@ -301,6 +301,7 @@ Updated frequently as the project evolves.
 - `V60` — Seed role_permissions for demo roles (EMPLOYEE, HR_MANAGER, MANAGER, etc.)
 - `V61` — Fix demo user passwords, reset failed_login_attempts, set auth_provider=LOCAL
 - `V62` — Seed feature flags for NuLogic demo tenant (enable_payroll, enable_leave, etc.)
+- `V67` — Fix RBAC permission gaps round 2: 40 missing uppercase permission codes + role assignments for 6 roles. **Awaiting backend restart for Flyway to apply.**
 
 ---
 
@@ -583,6 +584,38 @@ Append-only log of changes.
 **Scope:** Deep audit of entire codebase (backend, frontend, docs) by principal architect review.
 
 **Key findings documented:** Full codebase scale metrics, security architecture, infrastructure topology, integration landscape, Kafka event flow, scheduled job inventory, documentation index. All captured in Tier 1 and Tier 2 sections above.
+
+---
+
+## QA Round 4 (Deep RBAC Regression) — 2026-03-22
+
+**Scope:** Deep regression with strict RBAC verification across all roles (SuperAdmin, Team Lead, Employee). Sequential single-tab testing — login as each role, test all allowed/blocked routes, verify permission enforcement.
+
+**Status:** IN PROGRESS — Backend went down during Team Lead testing. SuperAdmin complete, Team Lead/Employee pending.
+
+**Result so far:** 7 bugs found across 53 routes tested. SuperAdmin: 51 routes (46 pass, 5 fail). Team Lead: 2 routes tested (1 pass, 1 fail). Employee: not started.
+
+### Bugs Found
+
+| Bug | Severity | Module | Description | Status |
+|-----|----------|--------|-------------|--------|
+| BUG-001 | Medium | Dashboard | `/api/v1/linkedin-posts/active` 500 — endpoint doesn't exist in codebase | Open |
+| BUG-002 | High | People/Org Chart | `/api/v1/employees/directory/search` 500 — incorrect field mapping in EmployeeDirectoryService | Open |
+| BUG-003 | High | Approvals | `/api/v1/workflow/inbox?status=PENDING` 500 — NullPointerException risk in WorkflowService | Open |
+| BUG-004 | High | Expenses | `/api/v1/expenses/employees/` 500 — empty UUID path variable not validated | Open |
+| BUG-005 | Medium | Admin Users | Hydration mismatch — SSR/client UI divergence | Open |
+| BUG-006 | Critical | Performance (RBAC) | Team Lead gets 403 on `/api/v1/goals` and `/api/v1/review-cycles/active` — missing REVIEW:VIEW permission | Fix Ready (V67) |
+| BUG-007 | Medium | Sidebar Layout | SSR hydration mismatch on `backgroundImage: var(--sidebar-gradient)` | Fixed (suppressHydrationWarning) |
+
+### Changes Made
+
+**Backend (1 new):**
+- `V67__fix_rbac_permission_gaps_round2.sql` — 40 new permissions + 6 role assignments (awaiting Flyway apply)
+
+**Frontend (1 modified):**
+- `components/ui/Sidebar.tsx` — Added `suppressHydrationWarning` to fix SSR gradient mismatch
+
+**Report:** `qa-reports/qa-deep-regression-2026-03-22.xlsx` (interim — will be updated after Team Lead + Employee regression)
 
 ---
 

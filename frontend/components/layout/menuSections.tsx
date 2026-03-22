@@ -224,7 +224,8 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
       label: 'HR Operations',
       items: [
         {
-          id: 'attendance', label: 'Attendance', icon: icon.clock, href: '/attendance', requiredPermission: Permissions.ATTENDANCE_VIEW_ALL,
+          id: 'attendance', label: 'Attendance', icon: icon.clock, href: '/attendance',
+          // Parent section has no requiredPermission - show if any child is visible
           children: [
             { id: 'attendance-overview', label: 'Overview', href: '/attendance', icon: sm.barChart2, requiredPermission: Permissions.ATTENDANCE_VIEW_ALL },
             { id: 'attendance-team', label: 'Team Attendance', href: '/attendance/team', icon: sm.users, requiredPermission: Permissions.ATTENDANCE_VIEW_ALL },
@@ -234,7 +235,8 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           ],
         },
         {
-          id: 'leave', label: 'Leave Management', icon: icon.palmtree, href: '/leave', requiredPermission: Permissions.LEAVE_VIEW_ALL,
+          id: 'leave', label: 'Leave Management', icon: icon.palmtree, href: '/leave',
+          // Parent section has no requiredPermission - show if any child is visible (e.g., employees see "My Leaves")
           children: [
             { id: 'leave-overview', label: 'Overview', href: '/leave', icon: sm.dashboard, requiredPermission: Permissions.LEAVE_VIEW_ALL },
             { id: 'leave-my-leaves', label: 'My Leaves', href: '/leave/my-leaves', icon: sm.user, requiredPermission: Permissions.LEAVE_VIEW_SELF },
@@ -334,7 +336,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           ],
         },
         { id: 'compensation', label: 'Compensation', icon: icon.trendingUp, href: '/compensation', requiredPermission: Permissions.COMPENSATION_VIEW },
-        { id: 'benefits', label: 'Benefits', icon: icon.gift, href: '/benefits', requiredPermission: Permissions.BENEFIT_VIEW },
+        { id: 'benefits', label: 'Benefits', icon: icon.gift, href: '/benefits', requiredPermission: Permissions.BENEFIT_VIEW_SELF },
         { id: 'expenses', label: 'Expenses', icon: icon.receipt, href: '/expenses', requiredPermission: Permissions.EXPENSE_VIEW },
         // Payments module is gated behind NEXT_PUBLIC_PAYMENTS_ENABLED env var (Phase 2 stabilization)
         ...(process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true'

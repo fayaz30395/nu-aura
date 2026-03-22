@@ -17,7 +17,9 @@ export function useAdminStats() {
   return useQuery<AdminStats, Error, AdminStats>({
     queryKey: adminKeys.stats(),
     queryFn: () => adminService.getStats(),
-    staleTime: 60 * 1000,
+    staleTime: 5 * 60 * 1000, // 5 minutes - stats don't change frequently
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -25,7 +27,11 @@ export function useAdminUsers(page: number, size: number, search: string) {
   return useQuery<Page<AdminUserSummary>, Error, Page<AdminUserSummary>>({
     queryKey: adminKeys.userList(page, size, search),
     queryFn: () => adminService.getUsers(page, size, search || undefined),
-    staleTime: 30 * 1000,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    retry: 1, // Reduce retry attempts
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
   });
 }
 
@@ -33,9 +39,12 @@ export function useSystemHealth() {
   return useQuery<HealthResponse, Error, HealthResponse>({
     queryKey: adminKeys.health(),
     queryFn: () => adminService.getSystemHealth(),
-    refetchInterval: 60 * 1000,
-    retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
+    staleTime: 30 * 1000, // 30 seconds - health is more dynamic
+    gcTime: 1 * 60 * 1000, // 1 minute
+    refetchInterval: 60 * 1000, // Poll every 60 seconds when mounted
+    refetchOnWindowFocus: false,
+    retry: 1,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
   });
 }
 

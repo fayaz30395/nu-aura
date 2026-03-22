@@ -93,6 +93,7 @@ export function useLeaveRequestsByStatus(
     queryKey: leaveKeys.requestsByStatus(status, page, size),
     queryFn: () => leaveService.getLeaveRequestsByStatus(status, page, size),
     staleTime: 30 * 1000, // 30 seconds for pending approvals
+    enabled: !!status, // Don't fire if status is empty/undefined
   });
 }
 
