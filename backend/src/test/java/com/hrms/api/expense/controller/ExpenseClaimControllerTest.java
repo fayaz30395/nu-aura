@@ -26,7 +26,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -93,11 +97,11 @@ class ExpenseClaimControllerTest {
         claimResponse = ExpenseClaimResponse.builder()
                 .id(claimId)
                 .employeeId(employeeId)
-                .title("Business Trip Expenses")
+                .description("Business Trip Expenses")
                 .description("Expenses for client meeting in NY")
                 .status(ExpenseClaim.ExpenseStatus.DRAFT)
                 .category(ExpenseClaim.ExpenseCategory.TRAVEL)
-                .amount(1500.0)
+                .amount(new BigDecimal("1500.0"))
                 .currency("USD")
                 .claimDate(LocalDate.now())
                 .createdAt(LocalDateTime.now())
@@ -112,10 +116,10 @@ class ExpenseClaimControllerTest {
         @DisplayName("Should create expense claim successfully")
         void shouldCreateExpenseClaimSuccessfully() throws Exception {
             ExpenseClaimRequest request = ExpenseClaimRequest.builder()
-                    .title("Business Trip Expenses")
+                    .description("Business Trip Expenses")
                     .description("Expenses for client meeting in NY")
                     .category(ExpenseClaim.ExpenseCategory.TRAVEL)
-                    .amount(1500.0)
+                    .amount(new BigDecimal("1500.0"))
                     .currency("USD")
                     .claimDate(LocalDate.now())
                     .build();
@@ -150,16 +154,16 @@ class ExpenseClaimControllerTest {
         void shouldCreateClaimWithDifferentCategories() throws Exception {
             for (ExpenseClaim.ExpenseCategory category : ExpenseClaim.ExpenseCategory.values()) {
                 ExpenseClaimRequest request = ExpenseClaimRequest.builder()
-                        .title("Expense - " + category)
+                        .description("Expense - " + category)
                         .category(category)
-                        .amount(100.0)
+                        .amount(new BigDecimal("100.0"))
                         .currency("USD")
                         .claimDate(LocalDate.now())
                         .build();
 
                 ExpenseClaimResponse response = claimResponse.toBuilder()
                         .category(category)
-                        .title("Expense - " + category)
+                        .description("Expense - " + category)
                         .build();
 
                 when(expenseClaimService.createExpenseClaim(eq(employeeId), any(ExpenseClaimRequest.class)))
@@ -181,17 +185,17 @@ class ExpenseClaimControllerTest {
         @DisplayName("Should update expense claim successfully")
         void shouldUpdateExpenseClaimSuccessfully() throws Exception {
             ExpenseClaimRequest request = ExpenseClaimRequest.builder()
-                    .title("Updated Business Trip Expenses")
+                    .description("Updated Business Trip Expenses")
                     .description("Updated description")
                     .category(ExpenseClaim.ExpenseCategory.TRAVEL)
-                    .amount(2000.0)
+                    .amount(new BigDecimal("2000.0"))
                     .currency("USD")
                     .claimDate(LocalDate.now())
                     .build();
 
             ExpenseClaimResponse updatedResponse = claimResponse.toBuilder()
-                    .title("Updated Business Trip Expenses")
-                    .amount(2000.0)
+                    .description("Updated Business Trip Expenses")
+                    .amount(new BigDecimal("2000.0"))
                     .build();
 
             when(expenseClaimService.updateExpenseClaim(eq(claimId), any(ExpenseClaimRequest.class)))

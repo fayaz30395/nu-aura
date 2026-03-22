@@ -72,11 +72,18 @@ class RoleControllerTest {
         roleResponse.setCode("MANAGER");
         roleResponse.setName("Manager");
         roleResponse.setDescription("Manager role with team management capabilities");
-        roleResponse.setPermissions(new HashSet<>() {{
-            add("employee.view");
-            add("employee.create");
-            add("leave.approve");
-        }});
+        // Create permission responses
+        Set<PermissionResponse> permissions = new HashSet<>();
+        PermissionResponse p1 = new PermissionResponse();
+        p1.setCode("employee.view");
+        permissions.add(p1);
+        PermissionResponse p2 = new PermissionResponse();
+        p2.setCode("employee.create");
+        permissions.add(p2);
+        PermissionResponse p3 = new PermissionResponse();
+        p3.setCode("leave.approve");
+        permissions.add(p3);
+        roleResponse.setPermissions(permissions);
 
         createRoleRequest = new CreateRoleRequest();
         createRoleRequest.setCode("MANAGER");

@@ -208,12 +208,12 @@ class EmployeeLifecycleEventTest {
         @DisplayName("Status change event payload should contain old and new status for downstream modules")
         void statusChangePayloadShouldContainBothStatuses() {
             // Given
-            Employee employee = buildEmployee(Employee.EmployeeStatus.ON_PROBATION);
+            Employee employee = buildEmployee(Employee.EmployeeStatus.ACTIVE);
 
             // When
             EmployeeStatusChangedEvent event = EmployeeStatusChangedEvent.of(
                     this, employee,
-                    Employee.EmployeeStatus.ON_PROBATION,
+                    Employee.EmployeeStatus.ACTIVE,
                     Employee.EmployeeStatus.ACTIVE
             );
 

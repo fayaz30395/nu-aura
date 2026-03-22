@@ -78,7 +78,7 @@ class LeaveTypeServiceTest {
                 .applicableAfterDays(0)
                 .accrualType(LeaveType.AccrualType.YEARLY)
                 .accrualRate(new BigDecimal("1.67"))
-                .genderSpecific(false)
+                .genderSpecific(LeaveType.GenderSpecific.ALL)
                 .isActive(true)
                 .build();
         testLeaveType.setTenantId(tenantId);
@@ -279,7 +279,7 @@ class LeaveTypeServiceTest {
                     .applicableAfterDays(30)
                     .accrualType(LeaveType.AccrualType.MONTHLY)
                     .accrualRate(new BigDecimal("2.5"))
-                    .genderSpecific(true)
+                    .genderSpecific(LeaveType.GenderSpecific.FEMALE)
                     .build();
 
             when(leaveTypeRepository.findById(leaveTypeId))

@@ -47,7 +47,7 @@ class EmployeeControllerTest {
     static class TestConfig {
         @Bean
         public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
-            return new JpaMetamodelMappingContext();
+            return new JpaMetamodelMappingContext(Collections.emptySet());
         }
     }
 
@@ -88,7 +88,7 @@ class EmployeeControllerTest {
         employeeResponse.setWorkEmail("john.doe@example.com");
         employeeResponse.setDepartmentId(departmentId);
         employeeResponse.setDesignation("Senior Engineer");
-        employeeResponse.setEmploymentType(Employee.EmploymentType.PERMANENT);
+        employeeResponse.setEmploymentType(Employee.EmploymentType.FULL_TIME);
         employeeResponse.setJoiningDate(LocalDate.of(2020, 1, 15));
         employeeResponse.setManagerId(managerId);
 
@@ -101,7 +101,7 @@ class EmployeeControllerTest {
         createEmployeeRequest.setPassword("TempPassword@123");
         createEmployeeRequest.setDepartmentId(departmentId);
         createEmployeeRequest.setDesignation("Senior Engineer");
-        createEmployeeRequest.setEmploymentType(Employee.EmploymentType.PERMANENT);
+        createEmployeeRequest.setEmploymentType(Employee.EmploymentType.FULL_TIME);
         createEmployeeRequest.setJoiningDate(LocalDate.of(2020, 1, 15));
         createEmployeeRequest.setManagerId(managerId);
 

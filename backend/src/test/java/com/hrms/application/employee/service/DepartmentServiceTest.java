@@ -77,7 +77,7 @@ class DepartmentServiceTest {
                 .isActive(true)
                 .location("New York")
                 .costCenter("CC001")
-                .type("Technical")
+                .type(Department.DepartmentType.ENGINEERING)
                 .build();
         testDepartment.setTenantId(tenantId);
     }
@@ -97,7 +97,7 @@ class DepartmentServiceTest {
                     .isActive(true)
                     .location("Los Angeles")
                     .costCenter("CC002")
-                    .type("Business")
+                    .type(Department.DepartmentType.OPERATIONS)
                     .build();
 
             when(departmentRepository.existsByCodeAndTenantId("DEPT002", tenantId))
