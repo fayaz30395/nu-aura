@@ -2,8 +2,10 @@ package com.hrms.api.knowledge.controller;
 
 import com.hrms.application.knowledge.service.FluenceEditLockService;
 import com.hrms.application.knowledge.service.FluenceEditLockService.EditLockInfo;
+import com.hrms.common.security.RequiresFeature;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.featureflag.FeatureFlag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/fluence/edit-lock")
 @RequiredArgsConstructor
+@RequiresFeature(FeatureFlag.ENABLE_FLUENCE)
 public class FluenceEditLockController {
 
     private final FluenceEditLockService editLockService;

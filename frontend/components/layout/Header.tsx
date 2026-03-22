@@ -45,10 +45,10 @@ const Header: React.FC<HeaderProps> = ({
   onSettings,
   className,
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [, setMounted] = useState(false);
 
   // Unread count: use the larger of WebSocket in-memory count vs REST API persisted count
   const { unreadCount: wsUnreadCount, notifications: _wsNotifications } = useWebSocket();
@@ -57,7 +57,8 @@ const Header: React.FC<HeaderProps> = ({
   // Google notification count isn't known until the panel opens — use system count for badge
   const totalUnreadCount = systemUnreadCount;
 
-  useEffect(() => { setMounted(true); }, []);
+  // Set mounted flag to avoid hydration mismatch on SSR
+  useEffect(() => { setIsMounted(true); }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -178,8 +179,8 @@ const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Mobile Search Overlay */}
-      {isMobileSearchOpen && (
+      {/* Mobile Search Overlay — only render after client hydration to avoid SSR mismatch */}
+      {isMounted && isMobileSearchOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => setIsMobileSearchOpen(false)} />
           <div className="absolute top-0 left-0 right-0 bg-dropdown border-b border-dropdown-border p-4 shadow-dropdown animate-fade-in-down">

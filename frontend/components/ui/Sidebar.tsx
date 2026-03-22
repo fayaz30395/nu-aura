@@ -569,6 +569,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             'will-change-[width]',
             className
           )}
+          suppressHydrationWarning
           style={{
             backgroundColor: 'var(--bg-sidebar)',
             backgroundImage: 'var(--sidebar-gradient)',

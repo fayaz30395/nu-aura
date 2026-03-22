@@ -257,7 +257,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         { label: 'Me', href: '/me/profile', icon: User },
       ],
       FLUENCE: [
-        { label: 'Home', href: '/fluence/wiki', icon: Home },
+        { label: 'Home', href: '/fluence/dashboard', icon: Home },
         { label: 'Wiki', href: '/fluence/wiki', icon: FileText },
         { label: 'Blogs', href: '/fluence/blogs', icon: Edit },
         { label: 'Wall', href: '/fluence/wall', icon: MessageCircle },

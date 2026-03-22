@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,9 +48,10 @@ public class KekaImportService {
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
 
-    private static final String DEFAULT_PASSWORD = "Welcome@123";
     private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*";
 
     /**
      * Upload a KEKA CSV file and extract headers
@@ -254,18 +256,38 @@ public class KekaImportService {
             return existingUser.get();
         }
 
+        // Generate secure random password for each imported user
+        // TODO: Send password reset email to user after KEKA import completes
+        String randomPassword = generateSecurePassword(16);
+
         User user = User.builder()
                 .tenantId(tenantId)
                 .email(email)
                 .firstName(firstName)
                 .lastName(lastName)
-                .passwordHash(passwordEncoder.encode(DEFAULT_PASSWORD))
+                .passwordHash(passwordEncoder.encode(randomPassword))
                 .status(User.UserStatus.ACTIVE)
                 .mfaEnabled(false)
                 .roles(new HashSet<>(Collections.singleton(defaultRole)))
                 .build();
 
+        log.info("Created user account for {} with temporary password (should send reset email)", email);
+
         return userRepository.save(user);
+    }
+
+    /**
+     * Generate a secure random password.
+     * @param length desired password length
+     * @return cryptographically secure random password
+     */
+    private String generateSecurePassword(int length) {
+        StringBuilder password = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = SECURE_RANDOM.nextInt(PASSWORD_CHARS.length());
+            password.append(PASSWORD_CHARS.charAt(index));
+        }
+        return password.toString();
     }
 
     /**

@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -47,8 +48,9 @@ public class EmployeeImportService {
     private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
     private final CustomFieldValueRepository customFieldValueRepository;
 
-    private static final String DEFAULT_PASSWORD = "Welcome@123";
     private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*";
 
     /**
      * Parse and validate an import file, returning a preview of what will be imported.
@@ -213,9 +215,13 @@ public class EmployeeImportService {
     // Private helper methods
 
     private User createUserForEmployee(EmployeeImportRow row, UUID tenantId, Role defaultRole) {
+        // Generate a secure random password for each imported user
+        // TODO: Send password reset email to user after import completes
+        String randomPassword = generateSecurePassword(16);
+
         User user = User.builder()
                 .email(row.getWorkEmail())
-                .passwordHash(passwordEncoder.encode(DEFAULT_PASSWORD))
+                .passwordHash(passwordEncoder.encode(randomPassword))
                 .firstName(row.getFirstName())
                 .lastName(row.getLastName() != null ? row.getLastName() : "")
                 .status(User.UserStatus.ACTIVE)
@@ -223,7 +229,24 @@ public class EmployeeImportService {
                 .build();
 
         user.setTenantId(tenantId);
+
+        log.info("Created user account for {} with temporary password (should send reset email)", row.getWorkEmail());
+
         return userRepository.save(user);
+    }
+
+    /**
+     * Generate a secure random password.
+     * @param length desired password length
+     * @return cryptographically secure random password
+     */
+    private String generateSecurePassword(int length) {
+        StringBuilder password = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = SECURE_RANDOM.nextInt(PASSWORD_CHARS.length());
+            password.append(PASSWORD_CHARS.charAt(index));
+        }
+        return password.toString();
     }
 
     private Employee createEmployee(EmployeeImportRow row, User user, UUID tenantId,

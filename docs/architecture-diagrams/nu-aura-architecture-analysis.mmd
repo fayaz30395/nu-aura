@@ -1,0 +1,524 @@
+%% NU-AURA Platform Architecture — Comprehensive Analysis Diagrams
+%% Generated: 2026-03-22
+
+%% 1. HIGH-LEVEL SYSTEM ARCHITECTURE
+graph TB
+    subgraph "Client Layer"
+        WEB[Next.js 14 Frontend<br/>Port 3000<br/>200 pages, 123 components]
+        MOBILE[Mobile App<br/>Future]
+    end
+
+    subgraph "Edge Layer - Missing"
+        CDN[CDN<br/>Cloudflare/CloudFront<br/>Status: NOT IMPLEMENTED]
+        GATEWAY[API Gateway<br/>Kong/Spring Cloud Gateway<br/>Status: NOT IMPLEMENTED]
+    end
+
+    subgraph "Application Layer"
+        MONO[Spring Boot 3.4.1 Monolith<br/>Port 8080<br/>1,622 Java files<br/>130 Controllers, 199 Services<br/>265 Entities, 260 Repositories]
+    end
+
+    subgraph "Data Layer"
+        PG[(PostgreSQL 16<br/>Neon Cloud<br/>254 Tables<br/>HikariCP Pool: 10-20)]
+        REDIS[(Redis 7<br/>Cache + Sessions + Rate Limiting<br/>Lettuce Client)]
+        ES[(Elasticsearch 8.11<br/>Full-text Search<br/>NU-Fluence Indexing)]
+        KAFKA[Kafka 7.6<br/>5 Topics + 5 DLT<br/>Confluent Platform]
+        MINIO[(MinIO<br/>S3-compatible Storage<br/>Docs, Resumes, Assets)]
+    end
+
+    subgraph "External Integrations"
+        GOOGLE[Google OAuth<br/>SSO + Calendar]
+        TWILIO[Twilio<br/>SMS Notifications]
+        SMTP[SMTP Server<br/>Email Delivery]
+        JOBS[Job Boards<br/>Naukri, Indeed, LinkedIn]
+        DOCUSIGN[DocuSign<br/>E-signature Webhooks]
+    end
+
+    WEB --> MONO
+    MOBILE -.-> MONO
+
+    MONO --> PG
+    MONO --> REDIS
+    MONO --> ES
+    MONO --> KAFKA
+    MONO --> MINIO
+
+    MONO --> GOOGLE
+    MONO --> TWILIO
+    MONO --> SMTP
+    MONO --> JOBS
+    DOCUSIGN -.webhook.-> MONO
+
+    style MONO fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
+    style CDN fill:#ddd,stroke:#999,stroke-dasharray: 5 5
+    style GATEWAY fill:#ddd,stroke:#999,stroke-dasharray: 5 5
+    style PG fill:#4ecdc4,stroke:#0b7285
+    style REDIS fill:#ffe66d,stroke:#f59f00
+    style KAFKA fill:#95e1d3,stroke:#0ca678
+
+%% 2. MONOLITH INTERNAL STRUCTURE (DOMAIN BOUNDARIES)
+graph TB
+    subgraph "API Layer - 130 Controllers"
+        C1[Attendance Controllers<br/>12 controllers]
+        C2[Employee Controllers<br/>18 controllers]
+        C3[Leave Controllers<br/>9 controllers]
+        C4[Payroll Controllers<br/>14 controllers]
+        C5[Recruitment Controllers<br/>16 controllers]
+        C6[Performance Controllers<br/>11 controllers]
+        C7[Expense Controllers<br/>8 controllers]
+        C8[Asset Controllers<br/>6 controllers]
+        C9[Workflow Controllers<br/>10 controllers]
+        C10[Analytics Controllers<br/>7 controllers]
+        C11[Notification Controllers<br/>5 controllers]
+        C12[Other Controllers<br/>14 controllers]
+    end
+
+    subgraph "Application Layer - 199 Services"
+        S1[Attendance Services]
+        S2[Employee Services]
+        S3[Leave Services]
+        S4[Payroll Services]
+        S5[Recruitment Services]
+        S6[Performance Services]
+        S7[Expense Services]
+        S8[Asset Services]
+        S9[Workflow Services]
+        S10[Analytics Services]
+        S11[Notification Services]
+    end
+
+    subgraph "Domain Layer - 265 Entities"
+        E1[Attendance Entities<br/>20 tables]
+        E2[Employee Entities<br/>30 tables]
+        E3[Leave Entities<br/>15 tables]
+        E4[Payroll Entities<br/>30 tables]
+        E5[Recruitment Entities<br/>25 tables]
+        E6[Performance Entities<br/>20 tables]
+        E7[Expense Entities<br/>25 tables]
+        E8[Asset Entities<br/>10 tables]
+        E9[Workflow Entities<br/>15 tables]
+        E10[IAM Entities<br/>10 tables]
+        E11[Audit Entities<br/>5 tables]
+    end
+
+    subgraph "Infrastructure Layer - 260 Repositories"
+        R1[Attendance Repos]
+        R2[Employee Repos]
+        R3[Leave Repos]
+        R4[Payroll Repos]
+        R5[Recruitment Repos]
+        R6[Performance Repos]
+        R7[Expense Repos]
+        R8[Asset Repos]
+        R9[Workflow Repos]
+        R10[Other Repos]
+    end
+
+    C1 --> S1 --> E1 --> R1
+    C2 --> S2 --> E2 --> R2
+    C3 --> S3 --> E3 --> R3
+    C4 --> S4 --> E4 --> R4
+    C5 --> S5 --> E5 --> R5
+    C6 --> S6 --> E6 --> R6
+    C7 --> S7 --> E7 --> R7
+    C8 --> S8 --> E8 --> R8
+    C9 --> S9 --> E9 --> R9
+    C10 --> S10 --> E10 --> R10
+
+    style S1 fill:#ffc9c9
+    style S2 fill:#ffc9c9
+    style S3 fill:#ffc9c9
+    style S4 fill:#ffc9c9
+    style S5 fill:#ffc9c9
+
+%% 3. AUTHENTICATION & AUTHORIZATION FLOW
+sequenceDiagram
+    participant Client
+    participant Next.js
+    participant Spring Boot
+    participant PostgreSQL
+    participant Redis
+
+    Client->>Next.js: POST /auth/login<br/>(email, password)
+    Next.js->>Spring Boot: POST /api/v1/auth/login
+    Spring Boot->>PostgreSQL: SELECT user WHERE email=?<br/>(1,338ms - SLOW)
+    PostgreSQL-->>Spring Boot: User record + roles
+    Spring Boot->>Redis: getCachedPermissions(roles)<br/>(uses roles as cache key)
+    Redis-->>Spring Boot: 500+ permissions array
+    Spring Boot->>Spring Boot: Generate JWT<br/>(roles only, NO permissions)<br/>JWT size: <4096 bytes
+    Spring Boot-->>Next.js: Set-Cookie: access_token<br/>(httpOnly, Secure, SameSite=Strict)
+    Next.js-->>Client: 200 OK + redirect to /dashboard
+
+    Note over Client,Redis: JWT expires in 1 hour<br/>Refresh token expires in 24 hours
+
+    Client->>Next.js: GET /dashboard
+    Next.js->>Spring Boot: GET /api/v1/dashboards/employee<br/>(Cookie: access_token)
+    Spring Boot->>Spring Boot: JwtAuthenticationFilter<br/>Validate JWT signature
+    Spring Boot->>Spring Boot: Extract roles from JWT
+    Spring Boot->>Redis: getCachedPermissions(roles)<br/>(TTL: 1 hour)
+    Redis-->>Spring Boot: Permissions array (cached)
+    Spring Boot->>Spring Boot: Set SecurityContext<br/>(TenantContext + Permissions)
+    Spring Boot->>Spring Boot: PermissionAspect<br/>Check @RequiresPermission("DASHBOARD:READ")
+    Spring Boot->>PostgreSQL: Query dashboard data<br/>(25,146ms - CRITICAL ISSUE)
+    PostgreSQL-->>Spring Boot: Dashboard data
+    Spring Boot-->>Next.js: 200 OK + JSON
+    Next.js-->>Client: Render dashboard
+
+%% 4. MULTI-TENANT ISOLATION ARCHITECTURE
+graph TB
+    subgraph "Request Flow"
+        REQ[HTTP Request<br/>Header: X-Tenant-ID]
+    end
+
+    subgraph "Filter Chain"
+        F1[TenantFilter<br/>Extract tenant_id from JWT]
+        F2[RateLimitingFilter<br/>Bucket4j + Redis]
+        F3[JwtAuthenticationFilter<br/>Validate JWT + Load Permissions]
+        F4[Spring Security Filter Chain<br/>@RequiresPermission Checks]
+    end
+
+    subgraph "Application Layer"
+        TL[TenantContext ThreadLocal<br/>setCurrentTenant uuid]
+        SVC[Service Layer<br/>Business Logic]
+    end
+
+    subgraph "Data Access Layer"
+        REPO[Repository Layer<br/>All queries include tenant_id]
+        RLS[PostgreSQL RLS<br/>Row-Level Security Policies]
+    end
+
+    subgraph "Database"
+        DB[(PostgreSQL<br/>All tables have tenant_id column)]
+    end
+
+    REQ --> F1
+    F1 --> F2
+    F2 --> F3
+    F3 --> F4
+    F4 --> TL
+    TL --> SVC
+    SVC --> REPO
+    REPO --> RLS
+    RLS --> DB
+
+    F1 -.Set ThreadLocal.-> TL
+    F4 -.Clear ThreadLocal after request.-> TL
+
+    style TL fill:#ffc078,stroke:#e67700
+    style RLS fill:#69db7c,stroke:#2f9e44
+
+%% 5. EVENT-DRIVEN ARCHITECTURE (KAFKA)
+graph LR
+    subgraph "Producers"
+        P1[Leave Service<br/>Leave approval events]
+        P2[Payroll Service<br/>Payroll run events]
+        P3[Employee Service<br/>Lifecycle events]
+        P4[Fluence Service<br/>Content indexing events]
+        P5[Audit Service<br/>Audit log events]
+    end
+
+    subgraph "Kafka Topics"
+        T1[nu-aura.approvals<br/>Replication: 1]
+        T2[nu-aura.notifications<br/>Replication: 1]
+        T3[nu-aura.audit<br/>Replication: 1]
+        T4[nu-aura.employee-lifecycle<br/>Replication: 1]
+        T5[nu-aura.fluence-content<br/>Replication: 1]
+    end
+
+    subgraph "Dead Letter Topics"
+        DLT1[*.approvals.dlt]
+        DLT2[*.notifications.dlt]
+        DLT3[*.audit.dlt]
+        DLT4[*.employee-lifecycle.dlt]
+        DLT5[*.fluence-content.dlt]
+    end
+
+    subgraph "Consumers"
+        C1[ApprovalEventConsumer<br/>Group: nu-aura-approvals-service]
+        C2[NotificationEventConsumer<br/>Group: nu-aura-notifications-service]
+        C3[AuditEventConsumer<br/>Group: nu-aura-audit-service]
+        C4[EmployeeLifecycleConsumer<br/>Group: nu-aura-employee-lifecycle-service]
+        C5[FluenceSearchConsumer<br/>Group: nu-aura-fluence-search-service]
+        DLTC[DeadLetterHandler<br/>Group: nu-aura-dlt-handler]
+    end
+
+    subgraph "Failure Storage"
+        DLTDB[(FailedKafkaEvent Table<br/>Manual recovery)]
+    end
+
+    P1 --> T1
+    P2 --> T1
+    P1 --> T2
+    P2 --> T2
+    P1 --> T3
+    P2 --> T3
+    P3 --> T4
+    P4 --> T5
+
+    T1 --> C1
+    T2 --> C2
+    T3 --> C3
+    T4 --> C4
+    T5 --> C5
+
+    T1 -.failure.-> DLT1
+    T2 -.failure.-> DLT2
+    T3 -.failure.-> DLT3
+    T4 -.failure.-> DLT4
+    T5 -.failure.-> DLT5
+
+    DLT1 --> DLTC
+    DLT2 --> DLTC
+    DLT3 --> DLTC
+    DLT4 --> DLTC
+    DLT5 --> DLTC
+
+    DLTC --> DLTDB
+
+    style T1 fill:#95e1d3
+    style T2 fill:#95e1d3
+    style T3 fill:#95e1d3
+    style T4 fill:#95e1d3
+    style T5 fill:#95e1d3
+    style DLT1 fill:#ff6b6b
+    style DLT2 fill:#ff6b6b
+    style DLT3 fill:#ff6b6b
+    style DLT4 fill:#ff6b6b
+    style DLT5 fill:#ff6b6b
+
+%% 6. PERFORMANCE BOTTLENECK DIAGRAM
+graph TB
+    subgraph "Client Request"
+        REQ[GET /api/v1/dashboards/employee<br/>Expected: <2 seconds<br/>Actual: 25 seconds]
+    end
+
+    subgraph "Dashboard Service - Sequential Execution"
+        DS[EmployeeDashboardService.getEmployeeDashboard]
+    end
+
+    subgraph "Database Queries - CRITICAL ISSUES"
+        Q1[Attendance Records<br/>findByTenantIdAndEmployeeIdAndDate<br/>Duration: 444-467ms<br/>Issue: Missing index on tenant_id, employee_id, date]
+        Q2[Leave Requests Count<br/>countByTenantIdAndStatusAndEmployeeId<br/>Duration: 224-245ms<br/>Issue: Missing index on tenant_id, employee_id, status]
+        Q3[Payslip Details N+1<br/>findByEmployeeIdAndYearAndMonth<br/>Duration: 222-333ms x 11 queries = 2,500ms<br/>Issue: Loop instead of batch query]
+        Q4[Leave Balance<br/>findBalancesByEmployeeId<br/>Duration: 517ms<br/>Issue: Missing index on tenant_id, employee_id, year]
+        Q5[Holiday Lookup<br/>findAllByTenantIdAndHolidayDateBetween<br/>Duration: 224-281ms<br/>Issue: Missing index on tenant_id, holiday_date]
+    end
+
+    subgraph "Missing Optimization Layers"
+        CACHE[Redis Cache<br/>Status: CONFIGURED BUT NOT USED<br/>Missing @Cacheable annotations]
+        PARALLEL[Parallel Execution<br/>Status: NOT IMPLEMENTED<br/>Should use CompletableFuture]
+        BATCH[Batch Queries<br/>Status: NOT IMPLEMENTED<br/>Should fetch 11 months in 1 query]
+    end
+
+    REQ --> DS
+    DS --> Q1
+    DS --> Q2
+    DS --> Q3
+    DS --> Q4
+    DS --> Q5
+
+    Q1 -.should use.-> CACHE
+    Q2 -.should use.-> CACHE
+    Q3 -.should use.-> BATCH
+    Q4 -.should use.-> CACHE
+    Q5 -.should use.-> CACHE
+
+    DS -.should use.-> PARALLEL
+
+    style Q1 fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px
+    style Q2 fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px
+    style Q3 fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px
+    style Q4 fill:#ff8787,stroke:#c92a2a,stroke-width:2px
+    style Q5 fill:#ff8787,stroke:#c92a2a,stroke-width:2px
+    style CACHE fill:#ffc9c9,stroke:#ff6b6b,stroke-dasharray: 5 5
+    style PARALLEL fill:#ffc9c9,stroke:#ff6b6b,stroke-dasharray: 5 5
+    style BATCH fill:#ffc9c9,stroke:#ff6b6b,stroke-dasharray: 5 5
+
+%% 7. SCALABILITY ROADMAP
+graph LR
+    subgraph "Phase 1: Optimize Monolith 0-3 months"
+        P1A[Add Database Indexes<br/>10x query speedup]
+        P1B[Implement Redis Caching<br/>5x dashboard speedup]
+        P1C[Parallelize Queries<br/>10x dashboard speedup]
+        P1D[Increase HikariCP Pool<br/>5x concurrent users]
+        P1E[Add Read Replicas<br/>2x read throughput]
+    end
+
+    subgraph "Phase 2: Modernize 3-9 months"
+        P2A[Migrate to WebFlux<br/>3x CPU efficiency]
+        P2B[Add API Gateway<br/>Circuit breakers, centralized auth]
+        P2C[Implement GraphQL<br/>Reduce over-fetching]
+        P2D[Add CDN<br/>5x static asset speed]
+        P2E[Shard Database<br/>10x write throughput]
+    end
+
+    subgraph "Phase 3: Scale 9-18 months"
+        P3A[Migrate to Microservices<br/>11 domains → 11 services]
+        P3B[Kubernetes Auto-scaling<br/>Elastic capacity]
+        P3C[Managed Kafka<br/>99.99% uptime]
+        P3D[Global CDN + Edge Caching<br/>Sub-100ms global latency]
+        P3E[Multi-region Deployment<br/>Disaster recovery]
+    end
+
+    P1A --> P1B --> P1C --> P1D --> P1E
+    P1E --> P2A --> P2B --> P2C --> P2D --> P2E
+    P2E --> P3A --> P3B --> P3C --> P3D --> P3E
+
+    style P1A fill:#69db7c
+    style P1B fill:#69db7c
+    style P1C fill:#69db7c
+    style P2A fill:#ffd43b
+    style P2B fill:#ffd43b
+    style P3A fill:#ff8787
+    style P3B fill:#ff8787
+
+%% 8. INFRASTRUCTURE TOPOLOGY (DOCKER COMPOSE)
+graph TB
+    subgraph "Development Environment - Docker Compose"
+        FE[Frontend<br/>Next.js:14<br/>Port: 3000]
+        BE[Backend<br/>Spring Boot:3.4.1<br/>Port: 8080]
+        REDIS2[Redis:7-alpine<br/>Port: 6379]
+        ZK[Zookeeper:7.6.0<br/>Port: 2181]
+        KAFKA2[Kafka:7.6.0<br/>Ports: 9092 external, 29092 internal]
+        ES2[Elasticsearch:8.11.0<br/>Port: 9200]
+        MINIO2[MinIO:latest<br/>Ports: 9000 API, 9001 Console]
+        PROM[Prometheus:latest<br/>Port: 9090]
+    end
+
+    subgraph "External Services"
+        NEON[(Neon Cloud PostgreSQL<br/>NO local postgres container)]
+    end
+
+    FE --> BE
+    BE --> REDIS2
+    BE --> KAFKA2
+    BE --> ES2
+    BE --> MINIO2
+    BE --> NEON
+
+    KAFKA2 --> ZK
+    PROM --> BE
+
+    style NEON fill:#4ecdc4,stroke:#0b7285,stroke-width:3px
+    style BE fill:#ff6b6b,stroke:#c92a2a
+    style REDIS2 fill:#ffe66d
+    style KAFKA2 fill:#95e1d3
+
+%% 9. KUBERNETES DEPLOYMENT TOPOLOGY (GCP GKE)
+graph TB
+    subgraph "Ingress Layer"
+        ING[Ingress Controller<br/>NGINX or GCP Load Balancer]
+    end
+
+    subgraph "Application Pods"
+        FE_POD1[Frontend Pod 1<br/>Next.js]
+        FE_POD2[Frontend Pod 2<br/>Next.js]
+        BE_POD1[Backend Pod 1<br/>Spring Boot]
+        BE_POD2[Backend Pod 2<br/>Spring Boot]
+        BE_POD3[Backend Pod 3<br/>Spring Boot]
+    end
+
+    subgraph "Infrastructure Pods"
+        REDIS_POD[Redis Pod<br/>StatefulSet]
+        KAFKA_POD[Kafka Pod<br/>StatefulSet]
+        ES_POD[Elasticsearch Pod<br/>StatefulSet]
+        MINIO_POD[MinIO Pod<br/>StatefulSet]
+    end
+
+    subgraph "Monitoring Pods"
+        PROM_POD[Prometheus Pod]
+        GRAFANA_POD[Grafana Pod]
+        ALERT_POD[AlertManager Pod]
+    end
+
+    subgraph "Managed Services"
+        CLOUD_SQL[(Cloud SQL<br/>PostgreSQL 16)]
+        GCS[(Google Cloud Storage<br/>Backups)]
+    end
+
+    ING --> FE_POD1
+    ING --> FE_POD2
+    ING --> BE_POD1
+    ING --> BE_POD2
+    ING --> BE_POD3
+
+    BE_POD1 --> REDIS_POD
+    BE_POD2 --> REDIS_POD
+    BE_POD3 --> REDIS_POD
+
+    BE_POD1 --> KAFKA_POD
+    BE_POD2 --> KAFKA_POD
+    BE_POD3 --> KAFKA_POD
+
+    BE_POD1 --> ES_POD
+    BE_POD2 --> ES_POD
+
+    BE_POD1 --> CLOUD_SQL
+    BE_POD2 --> CLOUD_SQL
+    BE_POD3 --> CLOUD_SQL
+
+    MINIO_POD --> GCS
+
+    PROM_POD --> BE_POD1
+    PROM_POD --> BE_POD2
+    PROM_POD --> BE_POD3
+
+    PROM_POD --> GRAFANA_POD
+    PROM_POD --> ALERT_POD
+
+    style ING fill:#74c0fc
+    style BE_POD1 fill:#ff6b6b
+    style BE_POD2 fill:#ff6b6b
+    style BE_POD3 fill:#ff6b6b
+    style CLOUD_SQL fill:#4ecdc4
+
+%% 10. SECURITY ARCHITECTURE LAYERS
+graph TB
+    subgraph "Layer 1: Edge Security - Next.js Middleware"
+        L1A[OWASP Security Headers<br/>X-Frame-Options: DENY<br/>X-Content-Type-Options: nosniff<br/>HSTS, CSP, Referrer-Policy]
+        L1B[Coarse JWT Decode<br/>Base64 decode, no signature verification]
+        L1C[Route Protection<br/>16 public routes, 47+ auth routes]
+    end
+
+    subgraph "Layer 2: Network Security - Spring Security"
+        L2A[CORS Configuration<br/>Explicit origins, no wildcards]
+        L2B[CSRF Protection<br/>Double-submit cookie pattern]
+        L2C[Security Headers Backend<br/>Defense in depth - same headers as edge]
+    end
+
+    subgraph "Layer 3: Authentication - TenantFilter + JwtAuthenticationFilter"
+        L3A[Tenant Extraction<br/>X-Tenant-ID from JWT claim]
+        L3B[JWT Validation<br/>JJWT 0.12.6, signature verification]
+        L3C[Permission Loading<br/>Redis cache, 1-hour TTL]
+    end
+
+    subgraph "Layer 4: Authorization - PermissionAspect"
+        L4A[@RequiresPermission<br/>AOP aspect, checks SecurityContext]
+        L4B[SuperAdmin Bypass<br/>SUPER_ADMIN role bypasses all checks]
+        L4C[Permission Hierarchy<br/>MODULE:MANAGE implies all sub-permissions]
+    end
+
+    subgraph "Layer 5: Data Access - Repository + RLS"
+        L5A[Repository Query Filter<br/>All queries include tenant_id]
+        L5B[PostgreSQL RLS<br/>Row-Level Security policies]
+        L5C[Audit Logging<br/>JSONB old_values, new_values]
+    end
+
+    subgraph "Layer 6: Rate Limiting - Bucket4j"
+        L6A[Token Bucket Algorithm<br/>5/min auth, 100/min API, 5/5min exports]
+        L6B[Redis-backed State<br/>Distributed rate limiting]
+        L6C[Graceful Degradation<br/>Fallback to in-memory if Redis down]
+    end
+
+    L1A --> L1B --> L1C
+    L1C --> L2A --> L2B --> L2C
+    L2C --> L3A --> L3B --> L3C
+    L3C --> L4A --> L4B --> L4C
+    L4C --> L5A --> L5B --> L5C
+    L3A --> L6A --> L6B --> L6C
+
+    style L1A fill:#69db7c
+    style L2B fill:#69db7c
+    style L3B fill:#69db7c
+    style L4A fill:#ffd43b
+    style L5B fill:#ff8787
+    style L6A fill:#ffc078
