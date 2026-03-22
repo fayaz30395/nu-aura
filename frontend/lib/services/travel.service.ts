@@ -1,4 +1,5 @@
 import { apiClient } from '../api/client';
+// Travel service - uses /api/v1/travel/requests endpoints
 import {
   TravelRequest,
   TravelRequestRequest,
