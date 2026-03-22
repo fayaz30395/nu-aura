@@ -906,6 +906,12 @@ public class WorkflowService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
 
+        // BUG-003 FIX: Guard against null context - return empty page instead of NPE
+        if (tenantId == null || currentUser == null) {
+            log.warn("Tenant or user context unavailable in getApprovalInbox - returning empty page");
+            return Page.empty(pageable);
+        }
+
         // Resolve status filter
         StepExecution.StepStatus stepStatus = null;
         if (status == null || "PENDING".equalsIgnoreCase(status)) {
@@ -929,7 +935,19 @@ public class WorkflowService {
         Page<StepExecution> steps = stepExecutionRepository.findInboxForUser(
                 tenantId, currentUser, stepStatus, entityType, fromDate, toDate, searchTerm, pageable);
 
-        return steps.map(step -> WorkflowExecutionResponse.from(step.getWorkflowExecution()));
+        // BUG-003 FIX: Filter out steps with null workflowExecution to prevent NPE
+        java.util.List<WorkflowExecutionResponse> responses = steps.getContent().stream()
+                .filter(step -> {
+                    if (step.getWorkflowExecution() == null) {
+                        log.warn("StepExecution {} has null workflowExecution - skipping", step.getId());
+                        return false;
+                    }
+                    return true;
+                })
+                .map(step -> WorkflowExecutionResponse.from(step.getWorkflowExecution()))
+                .collect(java.util.stream.Collectors.toList());
+
+        return new org.springframework.data.domain.PageImpl<>(responses, pageable, steps.getTotalElements());
     }
 
     /**

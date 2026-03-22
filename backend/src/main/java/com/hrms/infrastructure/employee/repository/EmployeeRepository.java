@@ -57,12 +57,17 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     /**
      * Search employees with eager loading to prevent N+1 queries.
+     * BUG-002 FIX: Added email search via user join and empty string handling.
      */
     @EntityGraph(attributePaths = {"user"})
-    @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND " +
-           "(LOWER(e.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+    @Query("SELECT e FROM Employee e " +
+           "LEFT JOIN e.user u " +
+           "WHERE e.tenantId = :tenantId AND " +
+           "(:search = '' OR " +
+           "LOWER(e.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "LOWER(e.lastName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Employee> searchEmployees(@Param("tenantId") UUID tenantId, @Param("search") String search, Pageable pageable);
 
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.managerId = :managerId")

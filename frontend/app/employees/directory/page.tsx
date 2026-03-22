@@ -233,7 +233,8 @@ export default function TeamDirectory() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-xl transition-colors ${viewMode === 'grid'
+                aria-label="Grid view"
+                className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'grid'
                     ? 'bg-primary-100 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
@@ -242,7 +243,8 @@ export default function TeamDirectory() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-xl transition-colors ${viewMode === 'list'
+                aria-label="List view"
+                className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'list'
                     ? 'bg-primary-100 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
@@ -503,7 +505,8 @@ export default function TeamDirectory() {
                             <a
                               href={`mailto:${employee.personalEmail}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="p-2 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                              aria-label={`Email ${employee.fullName}`}
+                              className="p-2 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                             >
                               <Mail className="w-4 h-4" />
                             </a>
@@ -512,7 +515,8 @@ export default function TeamDirectory() {
                             <a
                               href={`tel:${employee.phoneNumber}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="p-2 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors"
+                              aria-label={`Call ${employee.fullName}`}
+                              className="p-2 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                             >
                               <Phone className="w-4 h-4" />
                             </a>
@@ -606,7 +610,8 @@ export default function TeamDirectory() {
                                 <a
                                   href={`mailto:${employee.personalEmail}`}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="p-2 text-[var(--text-muted)] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                  aria-label={`Email ${employee.fullName}`}
+                                  className="p-2 text-[var(--text-muted)] hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-md"
                                 >
                                   <Mail className="w-4 h-4" />
                                 </a>
@@ -615,7 +620,8 @@ export default function TeamDirectory() {
                                 <a
                                   href={`tel:${employee.phoneNumber}`}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                                  aria-label={`Call ${employee.fullName}`}
+                                  className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:hover:text-green-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 rounded-md"
                                 >
                                   <Phone className="w-4 h-4" />
                                 </a>
@@ -636,7 +642,8 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => handlePageChange(filters.page - 1)}
                   disabled={filters.page === 0}
-                  className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  aria-label="Previous page"
+                  className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 >
                   <ChevronLeft className="w-5 h-5 text-[var(--text-secondary)]" />
                 </button>
@@ -666,7 +673,8 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => handlePageChange(filters.page + 1)}
                   disabled={filters.page >= totalPages - 1}
-                  className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  aria-label="Next page"
+                  className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 >
                   <ChevronRight className="w-5 h-5 text-[var(--text-secondary)]" />
                 </button>
@@ -709,7 +717,8 @@ export default function TeamDirectory() {
                 <div className={`h-24 ${getRandomColor(selectedEmployee.fullName)} relative`}>
                   <button
                     onClick={() => setSelectedEmployee(null)}
-                    className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
+                    aria-label="Close employee details"
+                    className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                   >
                     <X className="w-5 h-5 text-white" />
                   </button>

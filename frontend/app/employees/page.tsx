@@ -456,7 +456,8 @@ export default function EmployeesPage() {
                       reset();
                       setCurrentTab('basic');
                     }}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
+                    aria-label="Close add employee dialog"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
                   >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -469,7 +470,7 @@ export default function EmployeesPage() {
                   <nav className="-mb-px flex space-x-8">
                     <button
                       onClick={() => setCurrentTab('basic')}
-                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'basic'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
@@ -479,7 +480,7 @@ export default function EmployeesPage() {
                     </button>
                     <button
                       onClick={() => setCurrentTab('personal')}
-                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'personal'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
@@ -489,7 +490,7 @@ export default function EmployeesPage() {
                     </button>
                     <button
                       onClick={() => setCurrentTab('employment')}
-                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'employment'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
@@ -499,7 +500,7 @@ export default function EmployeesPage() {
                     </button>
                     <button
                       onClick={() => setCurrentTab('bank')}
-                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'bank'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'

@@ -507,7 +507,7 @@ export default function BenefitsPage() {
           <div className="flex border-b border-[var(--border-main)]">
             <button
               onClick={() => setActiveTab('plans')}
-              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'plans'
+              className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
@@ -517,7 +517,7 @@ export default function BenefitsPage() {
             </button>
             <button
               onClick={() => setActiveTab('enrollments')}
-              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'enrollments'
+              className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
@@ -527,7 +527,7 @@ export default function BenefitsPage() {
             </button>
             <button
               onClick={() => setActiveTab('claims')}
-              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'claims'
+              className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}

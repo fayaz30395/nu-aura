@@ -80,12 +80,14 @@ public class EmployeeController {
     @Operation(summary = "Search employees", description = "Search employees by name, email, or employee code")
     @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
     public ResponseEntity<Page<EmployeeResponse>> searchEmployees(
-            @Parameter(description = "Search query string") @RequestParam String query,
+            @Parameter(description = "Search query string") @RequestParam(required = false) String query,
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size
     ) {
+        // BUG-002 FIX: Handle null/empty query gracefully - return all employees instead of 500 error
+        String searchQuery = (query == null || query.trim().isEmpty()) ? "" : query.trim();
         Pageable pageable = PageRequest.of(page, size);
-        Page<EmployeeResponse> employees = employeeService.searchEmployees(query, pageable);
+        Page<EmployeeResponse> employees = employeeService.searchEmployees(searchQuery, pageable);
         return ResponseEntity.ok(employees);
     }
 
