@@ -12,17 +12,17 @@ import {
 class TravelService {
   // Travel Request Management
   async createTravelRequest(data: TravelRequestRequest): Promise<TravelRequest> {
-    const response = await apiClient.post<TravelRequest>('/travel-requests', data);
+    const response = await apiClient.post<TravelRequest>('/api/v1/travel/requests', data);
     return response.data;
   }
 
   async updateTravelRequest(id: string, data: TravelRequestRequest): Promise<TravelRequest> {
-    const response = await apiClient.put<TravelRequest>(`/travel-requests/${id}`, data);
+    const response = await apiClient.put<TravelRequest>(`/api/v1/travel/requests/${id}`, data);
     return response.data;
   }
 
   async getTravelRequestById(id: string): Promise<TravelRequest> {
-    const response = await apiClient.get<TravelRequest>(`/travel-requests/${id}`);
+    const response = await apiClient.get<TravelRequest>(`/api/v1/travel/requests/${id}`);
     return response.data;
   }
 
@@ -42,7 +42,7 @@ class TravelService {
       if (filters.search) params.search = filters.search;
     }
 
-    const response = await apiClient.get<Page<TravelRequest>>('/travel-requests', {
+    const response = await apiClient.get<Page<TravelRequest>>('/api/v1/travel/requests', {
       params,
     });
     return response.data;
@@ -54,7 +54,7 @@ class TravelService {
     size: number = 20
   ): Promise<Page<TravelRequest>> {
     const response = await apiClient.get<Page<TravelRequest>>(
-      `/travel-requests/employee/${employeeId}`,
+      `/api/v1/travel/requests/employee/${employeeId}`,
       {
         params: { page, size },
       }
@@ -68,7 +68,7 @@ class TravelService {
     size: number = 20
   ): Promise<Page<TravelRequest>> {
     const response = await apiClient.get<Page<TravelRequest>>(
-      `/travel-requests/status/${status}`,
+      `/api/v1/travel/requests/status/${status}`,
       {
         params: { page, size },
       }
@@ -78,7 +78,7 @@ class TravelService {
 
   async submitTravelRequest(id: string): Promise<TravelRequest> {
     const response = await apiClient.post<TravelRequest>(
-      `/travel-requests/${id}/submit`
+      `/api/v1/travel/requests/${id}/submit`
     );
     return response.data;
   }
@@ -89,7 +89,7 @@ class TravelService {
     comments?: string
   ): Promise<TravelRequest> {
     const response = await apiClient.post<TravelRequest>(
-      `/travel-requests/${id}/approve`,
+      `/api/v1/travel/requests/${id}/approve`,
       null,
       {
         params: { approverId, comments },
@@ -104,7 +104,7 @@ class TravelService {
     reason: string
   ): Promise<TravelRequest> {
     const response = await apiClient.post<TravelRequest>(
-      `/travel-requests/${id}/reject`,
+      `/api/v1/travel/requests/${id}/reject`,
       null,
       {
         params: { approverId, reason },
@@ -115,7 +115,7 @@ class TravelService {
 
   async cancelTravelRequest(id: string, reason: string): Promise<TravelRequest> {
     const response = await apiClient.post<TravelRequest>(
-      `/travel-requests/${id}/cancel`,
+      `/api/v1/travel/requests/${id}/cancel`,
       null,
       {
         params: { reason },
@@ -126,28 +126,28 @@ class TravelService {
 
   async completeTravelRequest(id: string): Promise<TravelRequest> {
     const response = await apiClient.post<TravelRequest>(
-      `/travel-requests/${id}/complete`
+      `/api/v1/travel/requests/${id}/complete`
     );
     return response.data;
   }
 
   async deleteTravelRequest(id: string): Promise<void> {
-    await apiClient.delete(`/travel-requests/${id}`);
+    await apiClient.delete(`/api/v1/travel/requests/${id}`);
   }
 
   // Travel Expense Management
   async createTravelExpense(data: TravelExpenseRequest): Promise<TravelExpense> {
-    const response = await apiClient.post<TravelExpense>('/travel-expenses', data);
+    const response = await apiClient.post<TravelExpense>('/api/v1/travel/expenses', data);
     return response.data;
   }
 
   async updateTravelExpense(id: string, data: TravelExpenseRequest): Promise<TravelExpense> {
-    const response = await apiClient.put<TravelExpense>(`/travel-expenses/${id}`, data);
+    const response = await apiClient.put<TravelExpense>(`/api/v1/travel/expenses/${id}`, data);
     return response.data;
   }
 
   async getTravelExpenseById(id: string): Promise<TravelExpense> {
-    const response = await apiClient.get<TravelExpense>(`/travel-expenses/${id}`);
+    const response = await apiClient.get<TravelExpense>(`/api/v1/travel/expenses/${id}`);
     return response.data;
   }
 
@@ -157,7 +157,7 @@ class TravelService {
     size: number = 20
   ): Promise<Page<TravelExpense>> {
     const response = await apiClient.get<Page<TravelExpense>>(
-      `/travel-expenses/request/${travelRequestId}`,
+      `/api/v1/travel/expenses/request/${travelRequestId}`,
       {
         params: { page, size },
       }
@@ -171,7 +171,7 @@ class TravelService {
     size: number = 20
   ): Promise<Page<TravelExpense>> {
     const response = await apiClient.get<Page<TravelExpense>>(
-      `/travel-expenses/employee/${employeeId}`,
+      `/api/v1/travel/expenses/employee/${employeeId}`,
       {
         params: { page, size },
       }
@@ -186,7 +186,7 @@ class TravelService {
     comments?: string
   ): Promise<TravelExpense> {
     const response = await apiClient.post<TravelExpense>(
-      `/travel-expenses/${id}/approve`,
+      `/api/v1/travel/expenses/${id}/approve`,
       null,
       {
         params: { approverId, approvedAmount, comments },
@@ -201,7 +201,7 @@ class TravelService {
     reason: string
   ): Promise<TravelExpense> {
     const response = await apiClient.post<TravelExpense>(
-      `/travel-expenses/${id}/reject`,
+      `/api/v1/travel/expenses/${id}/reject`,
       null,
       {
         params: { approverId, reason },
@@ -211,7 +211,7 @@ class TravelService {
   }
 
   async deleteTravelExpense(id: string): Promise<void> {
-    await apiClient.delete(`/travel-expenses/${id}`);
+    await apiClient.delete(`/api/v1/travel/expenses/${id}`);
   }
 
   // Helper Methods
@@ -220,7 +220,7 @@ class TravelService {
     if (year) params.year = year;
 
     const response = await apiClient.get(
-      `/travel-requests/employee/${employeeId}/summary`,
+      `/api/v1/travel/requests/employee/${employeeId}/summary`,
       { params }
     );
     return response.data;
@@ -228,7 +228,7 @@ class TravelService {
 
   async getExpenseSummary(travelRequestId: string): Promise<unknown> {
     const response = await apiClient.get(
-      `/travel-expenses/request/${travelRequestId}/summary`
+      `/api/v1/travel/expenses/request/${travelRequestId}/summary`
     );
     return response.data;
   }

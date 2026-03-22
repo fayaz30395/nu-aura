@@ -33,6 +33,18 @@ public class FluenceAttachmentController {
 
     private final FluenceAttachmentService attachmentService;
 
+    @GetMapping("/recent")
+    @Operation(summary = "Get recent attachments for the current tenant")
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<List<FluenceAttachmentDto>> getRecentAttachments() {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        List<KnowledgeAttachment> attachments = attachmentService.getRecentAttachments(tenantId);
+        List<FluenceAttachmentDto> dtos = attachments.stream()
+                .map(FluenceAttachmentDto::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @PostMapping(value = "/{contentType}/{contentId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload a file attachment")
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_CREATE)
@@ -87,18 +99,6 @@ public class FluenceAttachmentController {
         UUID tenantId = TenantContext.requireCurrentTenant();
         attachmentService.deleteAttachment(tenantId, id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/recent")
-    @Operation(summary = "Get recent attachments for the current tenant")
-    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
-    public ResponseEntity<List<FluenceAttachmentDto>> getRecentAttachments() {
-        UUID tenantId = TenantContext.requireCurrentTenant();
-        List<KnowledgeAttachment> attachments = attachmentService.getRecentAttachments(tenantId);
-        List<FluenceAttachmentDto> dtos = attachments.stream()
-                .map(FluenceAttachmentDto::fromEntity)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
     }
 
     private KnowledgeAttachment.ContentType parseContentType(String contentType) {

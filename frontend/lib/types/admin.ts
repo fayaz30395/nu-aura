@@ -4,14 +4,22 @@ export interface AdminStats {
   pendingApprovals: number;
 }
 
+export interface RoleInfo {
+  id: string;
+  code: string;
+  name: string;
+  description?: string;
+}
+
 export interface AdminUserSummary {
   id: string;
-  name: string;
+  firstName: string;
+  lastName?: string;
   email: string;
   tenantName: string;
   departmentName?: string;
-  status: string;
-  roles: string[];
+  userStatus: string;
+  roles: RoleInfo[];
 }
 
 export interface Page<T> {

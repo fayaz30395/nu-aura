@@ -16,11 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import java.util.Collections;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,20 +34,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
-@ContextConfiguration(classes = {EmployeeController.class, EmployeeControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {EmployeeController.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @DisplayName("EmployeeController Unit Tests")
 class EmployeeControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
-            return new JpaMetamodelMappingContext(Collections.emptySet());
-        }
-    }
+    @MockBean
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @Autowired
     private MockMvc mockMvc;

@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
@@ -38,20 +36,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AttendanceController.class)
-@ContextConfiguration(classes = {AttendanceController.class, AttendanceControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {AttendanceController.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @DisplayName("AttendanceController Unit Tests")
 class AttendanceControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
-            return new JpaMetamodelMappingContext(java.util.Collections.emptySet());
-        }
-    }
+    @MockBean
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @Autowired
     private MockMvc mockMvc;

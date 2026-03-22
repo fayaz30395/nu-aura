@@ -129,9 +129,13 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
     /**
      * Paginated inbox query with server-side filters.
      * Returns step executions assigned to the user, joined with their workflow execution.
+     *
+     * BUG-017 FIX: Use LEFT JOIN instead of JOIN FETCH for pagination compatibility.
+     * JOIN FETCH is not compatible with pagination in Hibernate - it causes "cannot use FETCH with pagination" errors.
+     * LEFT JOIN allows lazy loading of workflowExecution without breaking pagination.
      */
     @Query("SELECT s FROM StepExecution s " +
-           "JOIN FETCH s.workflowExecution e " +
+           "LEFT JOIN s.workflowExecution e " +
            "WHERE s.tenantId = :tenantId " +
            "AND s.assignedToUserId = :userId " +
            "AND (:status IS NULL OR s.status = :status) " +

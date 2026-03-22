@@ -104,7 +104,7 @@ export default function ExpenseClaims() {
       category: 'TRAVEL',
       description: '',
       amount: 0,
-      currency: 'USD',
+      currency: 'INR',
       receiptUrl: '',
       notes: '',
     },
@@ -538,7 +538,7 @@ export default function ExpenseClaims() {
               </div>
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min $</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min ₹</label>
                   <input
                     type="number"
                     placeholder="0"
@@ -548,7 +548,7 @@ export default function ExpenseClaims() {
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max $</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max ₹</label>
                   <input
                     type="number"
                     placeholder="0"

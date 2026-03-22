@@ -218,7 +218,7 @@ export default function AdminDashboardPage() {
                     className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
-                      {user.name || user.email?.split('@')[0] || '—'}
+                      {user.firstName && (user.firstName + (user.lastName ? ' ' + user.lastName : '')) || user.email?.split('@')[0] || '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                       {user.email}
@@ -231,20 +231,20 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        user.status === 'ACTIVE'
+                        user.userStatus === 'ACTIVE'
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                          : user.status === 'INACTIVE'
+                          : user.userStatus === 'INACTIVE'
                           ? 'bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300'
-                          : user.status === 'SUSPENDED'
+                          : user.userStatus === 'SUSPENDED'
                           ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
                           : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200'
                       }`}>
-                        {user.status}
+                        {user.userStatus}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                       {Array.isArray(user.roles) && user.roles.length > 0
-                        ? user.roles.join(', ')
+                        ? user.roles.map((role) => role.name).join(', ')
                         : '—'}
                     </td>
                   </tr>
@@ -481,16 +481,16 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
               dotColor = 'bg-green-500';
               textColor = 'text-green-700 dark:text-green-300';
               statusLabel = 'Operational';
-            } else if (isUnavailable) {
-              componentColor = 'bg-amber-50 dark:bg-amber-900/20';
-              dotColor = 'bg-amber-500';
-              textColor = 'text-amber-700 dark:text-amber-300';
-              statusLabel = 'Unavailable';
             } else if (isDegraded) {
               componentColor = 'bg-orange-50 dark:bg-orange-900/20';
               dotColor = 'bg-orange-500';
               textColor = 'text-orange-700 dark:text-orange-300';
               statusLabel = 'Degraded';
+            } else if (isUnavailable) {
+              componentColor = 'bg-red-50 dark:bg-red-900/20';
+              dotColor = 'bg-red-500';
+              textColor = 'text-red-700 dark:text-red-300';
+              statusLabel = 'Unavailable';
             }
 
             return (
