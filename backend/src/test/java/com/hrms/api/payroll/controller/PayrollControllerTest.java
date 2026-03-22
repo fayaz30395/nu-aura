@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import java.util.Collections;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ActiveProfiles;
@@ -90,18 +91,16 @@ class PayrollControllerTest {
 
         payrollRun = new PayrollRun();
         payrollRun.setId(payrollRunId);
-        payrollRun.setYear(2024);
-        payrollRun.setMonth(3);
+        payrollRun.setPayPeriodYear(2024);
+        payrollRun.setPayPeriodMonth(3);
         payrollRun.setStatus(PayrollRun.PayrollStatus.DRAFT);
-        payrollRun.setPayPeriodStart(LocalDate.of(2024, 3, 1));
-        payrollRun.setPayPeriodEnd(LocalDate.of(2024, 3, 31));
 
         payslip = new Payslip();
         payslip.setId(payslipId);
         payslip.setPayrollRunId(payrollRunId);
         payslip.setEmployeeId(employeeId);
-        payslip.setYear(2024);
-        payslip.setMonth(3);
+        payslip.setPayPeriodYear(2024);
+        payslip.setPayPeriodMonth(3);
     }
 
     @Nested
@@ -162,8 +161,8 @@ class PayrollControllerTest {
         void shouldUpdatePayrollRun() throws Exception {
             PayrollRun updatedRun = new PayrollRun();
             updatedRun.setId(payrollRunId);
-            updatedRun.setYear(2024);
-            updatedRun.setMonth(3);
+            updatedRun.setPayPeriodYear(2024);
+            updatedRun.setPayPeriodMonth(3);
             updatedRun.setStatus(PayrollRun.PayrollStatus.DRAFT);
 
             when(payrollRunService.updatePayrollRun(eq(payrollRunId), any(PayrollRun.class)))
