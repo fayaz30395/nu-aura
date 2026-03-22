@@ -146,7 +146,8 @@ export default function OnboardingPage() {
                                 <div className="flex items-center gap-2 bg-[var(--bg-input)] px-4 py-2 rounded-2xl border border-white/20">
                                     <Filter className="h-4 w-4 text-[var(--text-muted)]" />
                                     <select
-                                        className="bg-transparent border-none text-xs font-black uppercase tracking-widest text-[var(--text-secondary)] focus:ring-0 cursor-pointer outline-none"
+                                        aria-label="Filter by status"
+                                        className="bg-transparent border-none text-xs font-black uppercase tracking-widest text-[var(--text-secondary)] focus:ring-0 focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] cursor-pointer outline-none rounded-md"
                                         value={statusFilter}
                                         onChange={(e) => setStatusFilter(e.target.value)}
                                     >

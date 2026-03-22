@@ -27,14 +27,14 @@ public class AssetManagementController {
     private final com.hrms.common.security.DataScopeService dataScopeService;
 
     @PostMapping
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(ASSET_CREATE)
     public ResponseEntity<AssetResponse> createAsset(@Valid @RequestBody AssetRequest request) {
         AssetResponse response = assetService.createAsset(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{assetId}")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(ASSET_MANAGE)
     public ResponseEntity<AssetResponse> updateAsset(
             @PathVariable UUID assetId,
             @Valid @RequestBody AssetRequest request) {
@@ -43,7 +43,7 @@ public class AssetManagementController {
     }
 
     @PostMapping("/{assetId}/assign")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(ASSET_ASSIGN)
     public ResponseEntity<AssetResponse> assignAsset(
             @PathVariable UUID assetId,
             @RequestParam UUID employeeId) {
@@ -52,30 +52,30 @@ public class AssetManagementController {
     }
 
     @PostMapping("/{assetId}/return")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(ASSET_MANAGE)
     public ResponseEntity<AssetResponse> returnAsset(@PathVariable UUID assetId) {
         AssetResponse response = assetService.returnAsset(assetId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{assetId}")
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(ASSET_VIEW)
     public ResponseEntity<AssetResponse> getAssetById(@PathVariable UUID assetId) {
         AssetResponse response = assetService.getAssetById(assetId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(ASSET_VIEW)
     public ResponseEntity<Page<AssetResponse>> getAllAssets(Pageable pageable) {
         org.springframework.data.jpa.domain.Specification<Asset> spec = dataScopeService
-                .getScopeSpecification(EMPLOYEE_VIEW_SELF);
+                .getScopeSpecification(ASSET_VIEW);
         Page<AssetResponse> response = assetService.getAllAssets(spec, pageable);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/employee/{employeeId}")
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(ASSET_VIEW)
     public ResponseEntity<List<AssetResponse>> getAssetsByEmployee(@PathVariable UUID employeeId) {
         List<AssetResponse> response = assetService.getAssetsByEmployee(employeeId);
         return ResponseEntity.ok(response);

@@ -101,7 +101,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
         <div className="flex items-center justify-end gap-1">
           <button
             onClick={() => onView(candidate)}
-            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            aria-label={`View ${candidate.fullName}`}
+            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="View"
           >
             <Eye className="h-4 w-4" />
@@ -111,7 +112,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onCalculateMatch(candidate)}
             disabled={aiLoadingState === `match-${candidate.id}`}
-            className="p-2 text-[var(--text-muted)] hover:text-purple-600 dark:hover:text-purple-400 transition-colors disabled:opacity-50"
+            aria-label={`Calculate match score for ${candidate.fullName}`}
+            className="p-2 text-[var(--text-muted)] hover:text-purple-600 dark:hover:text-purple-400 transition-colors disabled:opacity-50 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Calculate Match Score"
           >
             {aiLoadingState === `match-${candidate.id}` ? (
@@ -130,7 +132,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onScreeningSummary(candidate)}
             disabled={aiLoadingState === `screening-${candidate.id}`}
-            className="p-2 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors disabled:opacity-50"
+            aria-label={`Screening summary for ${candidate.fullName}`}
+            className="p-2 text-[var(--text-muted)] hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors disabled:opacity-50 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Screening Summary"
           >
             {aiLoadingState === `screening-${candidate.id}` ? (
@@ -144,7 +147,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onSynthesizeFeedback(candidate)}
             disabled={aiLoadingState === `feedback-${candidate.id}`}
-            className="p-2 text-[var(--text-muted)] hover:text-lime-600 dark:hover:text-lime-400 transition-colors disabled:opacity-50"
+            aria-label={`Synthesize feedback for ${candidate.fullName}`}
+            className="p-2 text-[var(--text-muted)] hover:text-lime-600 dark:hover:text-lime-400 transition-colors disabled:opacity-50 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Synthesize Feedback"
           >
             {aiLoadingState === `feedback-${candidate.id}` ? (
@@ -157,7 +161,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           {/* Schedule Interview */}
           <button
             onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
-            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            aria-label={`Schedule interview for ${candidate.fullName}`}
+            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Schedule Interview"
           >
             <Calendar className="h-4 w-4" />
@@ -167,7 +172,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           {candidate.status === 'SELECTED' && (
             <button
               onClick={() => onOffer(candidate)}
-              className="p-2 text-[var(--text-muted)] hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+              aria-label={`Generate offer for ${candidate.fullName}`}
+              className="p-2 text-[var(--text-muted)] hover:text-teal-600 dark:hover:text-teal-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
               title="Generate Offer Letter"
             >
               <Send className="h-4 w-4" />
@@ -179,14 +185,16 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             <>
               <button
                 onClick={() => onAccept(candidate)}
-                className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                aria-label={`Accept offer for ${candidate.fullName}`}
+                className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:hover:text-green-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 title="Accept Offer"
               >
                 <CheckCircle className="h-4 w-4" />
               </button>
               <button
                 onClick={() => onDecline(candidate)}
-                className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                aria-label={`Decline offer for ${candidate.fullName}`}
+                className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 title="Decline Offer"
               >
                 <XCircle className="h-4 w-4" />
@@ -197,7 +205,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           {/* Edit */}
           <button
             onClick={() => onEdit(candidate)}
-            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            aria-label={`Edit ${candidate.fullName}`}
+            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Edit"
           >
             <Edit2 className="h-4 w-4" />
@@ -207,7 +216,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <PermissionGate permission={Permissions.CANDIDATE_EVALUATE}>
             <button
               onClick={() => onDelete(candidate)}
-              className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 transition-colors"
+              aria-label={`Delete ${candidate.fullName}`}
+              className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
               title="Delete"
             >
               <Trash2 className="h-4 w-4" />

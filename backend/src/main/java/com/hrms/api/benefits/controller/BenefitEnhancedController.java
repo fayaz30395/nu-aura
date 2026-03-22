@@ -35,7 +35,7 @@ public class BenefitEnhancedController {
     // ==================== BENEFIT PLANS ====================
 
     @PostMapping("/plans")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Create a new benefit plan")
     public ResponseEntity<BenefitPlanEnhancedResponse> createPlan(
             @Valid @RequestBody BenefitPlanEnhancedRequest request) {
@@ -43,7 +43,7 @@ public class BenefitEnhancedController {
     }
 
     @PutMapping("/plans/{planId}")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Update a benefit plan")
     public ResponseEntity<BenefitPlanEnhancedResponse> updatePlan(
             @PathVariable UUID planId,
@@ -107,7 +107,7 @@ public class BenefitEnhancedController {
     }
 
     @PostMapping("/enrollments/{enrollmentId}/approve")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Approve an enrollment")
     public ResponseEntity<EnrollmentResponse> approveEnrollment(
             @PathVariable UUID enrollmentId,
@@ -116,14 +116,14 @@ public class BenefitEnhancedController {
     }
 
     @PostMapping("/enrollments/{enrollmentId}/activate")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Activate an approved enrollment")
     public ResponseEntity<EnrollmentResponse> activateEnrollment(@PathVariable UUID enrollmentId) {
         return ResponseEntity.ok(benefitService.activateEnrollment(enrollmentId));
     }
 
     @PostMapping("/enrollments/{enrollmentId}/terminate")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Terminate an enrollment")
     public ResponseEntity<EnrollmentResponse> terminateEnrollment(
             @PathVariable UUID enrollmentId,
@@ -132,7 +132,7 @@ public class BenefitEnhancedController {
     }
 
     @PostMapping("/enrollments/{enrollmentId}/cobra")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Start COBRA continuation for terminated enrollment")
     public ResponseEntity<EnrollmentResponse> startCobra(
             @PathVariable UUID enrollmentId,
@@ -158,7 +158,7 @@ public class BenefitEnhancedController {
     }
 
     @GetMapping("/enrollments/pending")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_VIEW)
     @Operation(summary = "Get all pending enrollments")
     public ResponseEntity<List<EnrollmentResponse>> getPendingEnrollments() {
         return ResponseEntity.ok(benefitService.getPendingEnrollments());
@@ -181,7 +181,7 @@ public class BenefitEnhancedController {
     }
 
     @PostMapping("/claims/{claimId}/process")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Process and approve a claim")
     public ResponseEntity<ClaimResponse> processClaim(
             @PathVariable UUID claimId,
@@ -191,7 +191,7 @@ public class BenefitEnhancedController {
     }
 
     @PostMapping("/claims/{claimId}/reject")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Reject a claim")
     public ResponseEntity<ClaimResponse> rejectClaim(
             @PathVariable UUID claimId,
@@ -200,14 +200,14 @@ public class BenefitEnhancedController {
     }
 
     @PostMapping("/claims/{claimId}/initiate-payment")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Initiate payment for approved claim")
     public ResponseEntity<ClaimResponse> initiatePayment(@PathVariable UUID claimId) {
         return ResponseEntity.ok(benefitService.initiateClaimPayment(claimId));
     }
 
     @PostMapping("/claims/{claimId}/complete-payment")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Complete payment for a claim")
     public ResponseEntity<ClaimResponse> completePayment(
             @PathVariable UUID claimId,
@@ -234,7 +234,7 @@ public class BenefitEnhancedController {
     }
 
     @GetMapping("/claims/pending")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_VIEW)
     @Operation(summary = "Get all pending claims")
     public ResponseEntity<List<ClaimResponse>> getPendingClaims() {
         return ResponseEntity.ok(benefitService.getPendingClaims());
@@ -243,7 +243,7 @@ public class BenefitEnhancedController {
     // ==================== FLEX BENEFITS ====================
 
     @PostMapping("/flex/allocations")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
     @Operation(summary = "Create flex benefit allocation for employee")
     public ResponseEntity<FlexAllocationResponse> createFlexAllocation(
             @Valid @RequestBody FlexAllocationRequest request) {

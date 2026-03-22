@@ -18,6 +18,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -313,6 +314,41 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = buildErrorResponse(status, "Invalid State", ex.getMessage(), path);
         errorResponse.setErrorCode("ILLEGAL_STATE");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
+     * BUG-004 FIX: Handle invalid UUID path variables (e.g., empty string, malformed UUID).
+     * Returns 400 Bad Request instead of 500 Internal Server Error.
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        String paramName = ex.getName();
+        String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+        String providedValue = ex.getValue() != null ? ex.getValue().toString() : "null";
+
+        String errorMessage = String.format(
+            "Invalid value '%s' for parameter '%s'. Expected type: %s",
+            providedValue, paramName, requiredType
+        );
+
+        logError("validation", "type_mismatch", ex, status, path);
+        recordErrorMetric("validation", "type_mismatch", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Invalid Parameter", errorMessage, path);
+        errorResponse.setErrorCode("TYPE_MISMATCH");
+
+        Map<String, String> details = new HashMap<>();
+        details.put("parameter", paramName);
+        details.put("providedValue", providedValue);
+        details.put("expectedType", requiredType);
+        errorResponse.setErrors(details);
 
         return jsonResponse(status, errorResponse);
     }

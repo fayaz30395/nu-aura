@@ -96,7 +96,8 @@ export default function EmployeeDetailPage() {
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => router.push('/employees')}
-                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
+                    aria-label="Back to employees list"
+                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
                   >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -127,7 +128,8 @@ export default function EmployeeDetailPage() {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => router.push('/employees')}
-                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
+                  aria-label="Back to employees list"
+                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -139,7 +141,7 @@ export default function EmployeeDetailPage() {
                 <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
                   <button
                     onClick={() => router.push(`/employees/${employeeId}/edit`)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md"
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                   >
                     Edit Employee
                   </button>
@@ -147,7 +149,7 @@ export default function EmployeeDetailPage() {
                 <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
                   <button
                     onClick={() => setShowDeleteModal(true)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md"
+                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                   >
                     Delete
                   </button>
@@ -186,7 +188,7 @@ export default function EmployeeDetailPage() {
               <nav className="-mb-px flex space-x-8 px-6">
                 <button
                   onClick={() => setCurrentTab('basic')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'basic'
+                  className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'basic'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
@@ -195,7 +197,7 @@ export default function EmployeeDetailPage() {
                 </button>
                 <button
                   onClick={() => setCurrentTab('personal')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'personal'
+                  className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'personal'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
@@ -204,7 +206,7 @@ export default function EmployeeDetailPage() {
                 </button>
                 <button
                   onClick={() => setCurrentTab('employment')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'employment'
+                  className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'employment'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
@@ -213,7 +215,7 @@ export default function EmployeeDetailPage() {
                 </button>
                 <button
                   onClick={() => setCurrentTab('bank')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'bank'
+                  className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'bank'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
@@ -222,7 +224,7 @@ export default function EmployeeDetailPage() {
                 </button>
                 <button
                   onClick={() => setCurrentTab('custom')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'custom'
+                  className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'custom'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
@@ -231,7 +233,7 @@ export default function EmployeeDetailPage() {
                 </button>
                 <button
                   onClick={() => setCurrentTab('talent')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'talent'
+                  className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'talent'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
@@ -241,7 +243,7 @@ export default function EmployeeDetailPage() {
                 {dottedReports.length > 0 && (
                   <button
                     onClick={() => setCurrentTab('dottedReports')}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'dottedReports'
+                    className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'dottedReports'
                         ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
                         : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                       }`}

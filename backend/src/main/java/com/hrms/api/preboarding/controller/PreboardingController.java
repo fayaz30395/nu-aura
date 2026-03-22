@@ -5,6 +5,8 @@ import com.hrms.application.preboarding.service.PreboardingService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.preboarding.PreboardingCandidate;
 import com.hrms.domain.preboarding.PreboardingCandidate.PreboardingStatus;
+
+import static com.hrms.common.security.Permission.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +29,7 @@ public class PreboardingController {
     // ============ ADMIN ENDPOINTS ============
 
     @PostMapping("/candidates")
-    @RequiresPermission("PREBOARDING:CREATE")
+    @RequiresPermission(PREBOARDING_CREATE)
     public ResponseEntity<PreboardingCandidateResponse> createInvitation(
             @Valid @RequestBody CreatePreboardingRequest request) {
         PreboardingCandidate candidate = preboardingService.createInvitation(
@@ -43,7 +45,7 @@ public class PreboardingController {
     }
 
     @GetMapping("/candidates")
-    @RequiresPermission("PREBOARDING:VIEW")
+    @RequiresPermission(PREBOARDING_VIEW)
     public ResponseEntity<Page<PreboardingCandidateResponse>> getAllCandidates(Pageable pageable) {
         Page<PreboardingCandidateResponse> candidates = preboardingService.getAllCandidates(pageable)
                 .map(PreboardingCandidateResponse::from);
@@ -51,7 +53,7 @@ public class PreboardingController {
     }
 
     @GetMapping("/candidates/status/{status}")
-    @RequiresPermission("PREBOARDING:VIEW")
+    @RequiresPermission(PREBOARDING_VIEW)
     public ResponseEntity<Page<PreboardingCandidateResponse>> getCandidatesByStatus(
             @PathVariable String status, Pageable pageable) {
         PreboardingStatus preboardingStatus = PreboardingStatus.valueOf(status.toUpperCase());
@@ -62,7 +64,7 @@ public class PreboardingController {
     }
 
     @GetMapping("/candidates/upcoming")
-    @RequiresPermission("PREBOARDING:VIEW")
+    @RequiresPermission(PREBOARDING_VIEW)
     public ResponseEntity<List<PreboardingCandidateResponse>> getUpcomingJoiners(
             @RequestParam(defaultValue = "7") int days) {
         LocalDate startDate = LocalDate.now();
@@ -76,21 +78,21 @@ public class PreboardingController {
     }
 
     @PostMapping("/candidates/{id}/cancel")
-    @RequiresPermission("PREBOARDING:MANAGE")
+    @RequiresPermission(PREBOARDING_MANAGE)
     public ResponseEntity<Void> cancelInvitation(@PathVariable UUID id) {
         preboardingService.cancelInvitation(id);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/candidates/{id}/resend")
-    @RequiresPermission("PREBOARDING:MANAGE")
+    @RequiresPermission(PREBOARDING_MANAGE)
     public ResponseEntity<Void> resendInvitation(@PathVariable UUID id) {
         preboardingService.resendInvitation(id);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/candidates/{id}/convert")
-    @RequiresPermission("PREBOARDING:MANAGE")
+    @RequiresPermission(PREBOARDING_MANAGE)
     public ResponseEntity<Void> markConverted(@PathVariable UUID id, @Valid @RequestBody Map<String, UUID> body) {
         preboardingService.markConverted(id, body.get("employeeId"));
         return ResponseEntity.ok().build();
