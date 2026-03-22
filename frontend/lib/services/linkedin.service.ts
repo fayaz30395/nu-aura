@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api/client';
+// LinkedIn service - uses /api/v1/knowledge/blogs endpoints
 import type {
   LinkedInPost,
   CreateLinkedInPostRequest,

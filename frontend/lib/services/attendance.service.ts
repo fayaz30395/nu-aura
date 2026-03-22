@@ -1,4 +1,5 @@
 import { apiClient } from '../api/client';
+// Attendance service - handles paginated response mapping
 import {
   Shift,
   ShiftRequest,
