@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import java.util.Collections;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ActiveProfiles;

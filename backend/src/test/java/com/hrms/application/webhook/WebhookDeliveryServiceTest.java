@@ -3,6 +3,7 @@ package com.hrms.application.webhook;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.application.webhook.service.WebhookDeliveryService;
 import com.hrms.application.webhook.service.WebhookService;
+import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.webhook.*;
 import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;
@@ -43,6 +44,9 @@ class WebhookDeliveryServiceTest {
     private WebhookService webhookService;
 
     @Mock
+    private MetricsService metricsService;
+
+    @Mock
     private RestTemplate restTemplate;
 
     private WebhookDeliveryService webhookDeliveryService;
@@ -62,6 +66,7 @@ class WebhookDeliveryServiceTest {
                 webhookService,
                 objectMapper,
                 meterRegistry,
+                metricsService,
                 restTemplate
         );
         TenantContext.setCurrentTenant(TENANT_ID);
