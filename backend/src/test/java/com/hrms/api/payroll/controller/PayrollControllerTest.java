@@ -48,7 +48,7 @@ class PayrollControllerTest {
     static class TestConfig {
         @Bean
         public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
-            return new JpaMetamodelMappingContext();
+            return new JpaMetamodelMappingContext(Collections.emptySet());
         }
     }
 
