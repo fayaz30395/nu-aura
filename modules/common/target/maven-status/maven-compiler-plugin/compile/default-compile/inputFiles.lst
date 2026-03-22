@@ -1,5 +1,5 @@
-/sessions/practical-sharp-turing/mnt/nu-aura/modules/common/src/main/java/com/nulogic/common/security/RequiresPermission.java
-/sessions/practical-sharp-turing/mnt/nu-aura/modules/common/src/main/java/com/nulogic/common/entity/TenantAware.java
-/sessions/practical-sharp-turing/mnt/nu-aura/modules/common/src/main/java/com/nulogic/common/security/Permission.java
-/sessions/practical-sharp-turing/mnt/nu-aura/modules/common/src/main/java/com/nulogic/common/entity/BaseEntity.java
-/sessions/practical-sharp-turing/mnt/nu-aura/modules/common/src/main/java/com/nulogic/common/security/TenantContext.java
+/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/main/java/com/nulogic/common/security/Permission.java
+/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/main/java/com/nulogic/common/security/RequiresPermission.java
+/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/main/java/com/nulogic/common/entity/TenantAware.java
+/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/main/java/com/nulogic/common/entity/BaseEntity.java
+/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/main/java/com/nulogic/common/security/TenantContext.java

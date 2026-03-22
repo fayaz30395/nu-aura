@@ -98,6 +98,9 @@ class AuthControllerTest {
     @MockBean
     private TenantFilter tenantFilter;
 
+    @MockBean
+    private com.hrms.application.auth.service.MfaService mfaService;
+
     private AuthResponse authResponse;
 
     @BeforeEach

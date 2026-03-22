@@ -245,7 +245,8 @@ public class DepartmentService {
                     .ifPresent(manager -> response.setManagerName(manager.getFullName()));
         }
 
-        // Add employee count
+        // Add employee count - count all employees in this department regardless of status (BUG-004 fix)
+        // Changed to include ALL employees (not just ACTIVE) so frontend can accurately display department staffing
         long empCount = employeeRepository.countByDepartmentIdAndTenantId(department.getId(), tenantId);
         response.setEmployeeCount(empCount);
 

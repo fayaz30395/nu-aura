@@ -180,7 +180,7 @@ export default function MyDocumentsPage() {
   if (!hasHydrated || isLoading) {
     return (
       <AppLayout
-        activeMenuItem="profile"
+        activeMenuItem="my-documents"
         breadcrumbs={[
           { label: 'My Dashboard', href: '/me/dashboard' },
           { label: 'Documents', href: '/me/documents' },
@@ -196,7 +196,7 @@ export default function MyDocumentsPage() {
   if (!user?.employeeId) {
     return (
       <AppLayout
-        activeMenuItem="profile"
+        activeMenuItem="my-documents"
         breadcrumbs={[
           { label: 'My Dashboard', href: '/me/dashboard' },
           { label: 'Documents', href: '/me/documents' },
@@ -221,7 +221,7 @@ export default function MyDocumentsPage() {
 
   return (
     <AppLayout
-      activeMenuItem="profile"
+      activeMenuItem="my-documents"
       breadcrumbs={[
         { label: 'My Dashboard', href: '/me/dashboard' },
         { label: 'Documents', href: '/me/documents' },

@@ -182,13 +182,15 @@ class AttendanceService {
     startDate: string,
     endDate: string
   ): Promise<AttendanceRecord[]> {
-    const response = await apiClient.get<AttendanceDayResponse[]>(
+    const response = await apiClient.get<{ content: AttendanceDayResponse[] }>(
       `/attendance/my-attendance`,
       {
         params: { startDate, endDate },
       }
     );
-    return (response.data || []).map(mapAttendanceDay);
+    // Handle both paginated response (with content property) and direct array response
+    const items = Array.isArray(response.data) ? response.data : response.data?.content || [];
+    return items.map(mapAttendanceDay);
   }
 
   async getAttendanceByDate(

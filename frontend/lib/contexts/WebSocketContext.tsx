@@ -42,7 +42,9 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     const stompClientRef = useRef<Client | null>(null);
     const approvalCallbacksRef = useRef<Set<(notification: Notification) => void>>(new Set());
     const connectionAttemptsRef = useRef(0);
+    const lastErrorLogTimeRef = useRef<number>(0);
     const MAX_RECONNECTION_ATTEMPTS = 5;
+    const ERROR_LOG_THROTTLE_MS = 5000; // Suppress error logs for 5 seconds
 
     useEffect(() => {
         // Only connect if authenticated
@@ -67,8 +69,11 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
+            // Suppress STOMP debug output in production; only show in development if needed
             debug: (str) => {
-                log.debug('STOMP:', str);
+                if (process.env.NODE_ENV === 'development' && str.includes('error')) {
+                    log.debug('STOMP:', str);
+                }
             },
         });
 
@@ -105,8 +110,12 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
 
         client.onStompError = (frame) => {
             connectionAttemptsRef.current += 1;
-            log.error(`WebSocket error (attempt ${connectionAttemptsRef.current}/${MAX_RECONNECTION_ATTEMPTS}):`, frame.headers['message']);
-            log.error('Additional details:', frame.body);
+            // Throttle error logging to prevent console flooding
+            const now = Date.now();
+            if (now - lastErrorLogTimeRef.current > ERROR_LOG_THROTTLE_MS) {
+                log.error(`WebSocket error (attempt ${connectionAttemptsRef.current}/${MAX_RECONNECTION_ATTEMPTS}):`, frame.headers['message']);
+                lastErrorLogTimeRef.current = now;
+            }
 
             // Stop retrying after max attempts
             if (connectionAttemptsRef.current >= MAX_RECONNECTION_ATTEMPTS) {
@@ -118,7 +127,14 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         client.onDisconnect = () => {
             setIsConnected(false);
             connectionAttemptsRef.current += 1;
-            log.warn(`WebSocket disconnected (attempt ${connectionAttemptsRef.current}/${MAX_RECONNECTION_ATTEMPTS})`);
+            // Only log disconnection if in development (suppress in production)
+            if (process.env.NODE_ENV === 'development') {
+                const now = Date.now();
+                if (now - lastErrorLogTimeRef.current > ERROR_LOG_THROTTLE_MS) {
+                    log.warn(`WebSocket disconnected (attempt ${connectionAttemptsRef.current}/${MAX_RECONNECTION_ATTEMPTS})`);
+                    lastErrorLogTimeRef.current = now;
+                }
+            }
         };
 
         client.activate();

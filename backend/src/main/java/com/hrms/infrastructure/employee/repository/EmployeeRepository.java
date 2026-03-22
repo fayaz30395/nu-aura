@@ -98,7 +98,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id WHERE e.tenant_id = :tenantId AND e.status = 'ACTIVE' AND e.id IN :employeeIds GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
     List<Object[]> findDepartmentDistributionForEmployees(@Param("tenantId") UUID tenantId, @Param("employeeIds") List<UUID> employeeIds);
 
-    long countByDepartmentIdAndTenantId(UUID departmentId, UUID tenantId);
+    // BUG-004 FIX: Count employees by department, excluding soft-deleted records
+    @Query("SELECT COUNT(e) FROM Employee e WHERE e.departmentId = :departmentId AND e.tenantId = :tenantId AND e.isDeleted = false")
+    long countByDepartmentIdAndTenantId(@Param("departmentId") UUID departmentId, @Param("tenantId") UUID tenantId);
 
     Optional<Employee> findByUserIdAndTenantId(UUID userId, UUID tenantId);
 

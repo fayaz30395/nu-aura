@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { SkeletonCard } from '@/components/ui/Skeleton';
 import {
   Banknote,
   FileText,
@@ -64,7 +65,31 @@ export default function PayrollPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
+  if (!permReady) {
+    // Show loading skeleton while permissions are being loaded
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Header skeleton */}
+            <div className="mb-8">
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+            </div>
+
+            {/* Navigation cards skeleton */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!hasPermission(Permissions.PAYROLL_VIEW)) {
     return null;
   }
 

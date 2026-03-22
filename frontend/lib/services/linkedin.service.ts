@@ -13,7 +13,7 @@ export interface PagedResponse<T> {
   number: number;
 }
 
-const BASE_URL = '/api/v1/linkedin-posts';
+const BASE_URL = '/api/v1/knowledge/blogs';
 
 class LinkedInService {
   /**
