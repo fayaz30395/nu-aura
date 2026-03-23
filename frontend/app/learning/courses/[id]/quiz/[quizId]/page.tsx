@@ -251,10 +251,10 @@ export default function QuizPage() {
             <ArrowLeft className="h-4 w-4" /> Back to Course
           </Link>
 
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="skeuo-card overflow-hidden">
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-8">
-              <h1 className="text-3xl font-bold mb-2">{quiz.title}</h1>
+              <h1 className="text-3xl font-bold skeuo-emboss mb-2">{quiz.title}</h1>
               {quiz.description && (
                 <p className="text-blue-100">{quiz.description}</p>
               )}
@@ -374,7 +374,7 @@ export default function QuizPage() {
         <div className="flex-1 p-6">
           <div className="max-w-4xl mx-auto">
             {/* Question */}
-            <div className="bg-white rounded-lg shadow p-8 mb-6">
+            <div className="skeuo-card p-8 mb-6">
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{currentQuestion.title}</h3>
                 {currentQuestion.description && (
@@ -469,7 +469,7 @@ export default function QuizPage() {
             </div>
 
             {/* Question navigator */}
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
+            <div className="skeuo-card p-6 mb-6">
               <h4 className="font-semibold text-[var(--text-primary)] mb-3">Questions ({questionsAnswered}/{quiz.questions.length} answered)</h4>
               <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 gap-2">
                 {quiz.questions.map((q, idx) => {
@@ -550,7 +550,7 @@ export default function QuizPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
         <div className="max-w-4xl mx-auto">
           {/* Result Card */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+          <div className="skeuo-card overflow-hidden mb-6">
             <div className={`bg-gradient-to-r ${passed ? 'from-green-600 to-green-700' : 'from-red-600 to-red-700'} text-white p-8 text-center`}>
               <div className="flex justify-center mb-4">
                 {passed ? (

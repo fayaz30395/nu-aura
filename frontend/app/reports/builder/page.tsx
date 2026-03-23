@@ -210,7 +210,7 @@ export default function ReportBuilderPage() {
     >
       <div className="p-6 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Custom Report Builder</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Custom Report Builder</h1>
           <p className="text-sm text-[var(--text-muted)] mt-1">
             Select a data source, pick columns, add filters, then preview or export.
           </p>

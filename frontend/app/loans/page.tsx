@@ -52,9 +52,9 @@ export default function LoansPage() {
   const activeLoans = loans.filter((l) =>
     l.status === 'ACTIVE' || l.status === 'DISBURSED'
   );
-  const totalOutstanding = activeLoans.reduce((sum, l) => sum + l.remainingBalance, 0);
-  const totalRepaid = loans.reduce((sum, l) => sum + l.amountRepaid, 0);
-  const pendingApprovals = loans.filter((l) => l.status === 'PENDING_APPROVAL').length;
+  const totalOutstanding = activeLoans.reduce((sum, l) => sum + (l.outstandingAmount || 0), 0);
+  const totalRepaid = loans.reduce((sum, l) => sum + (l.paidAmount || 0), 0);
+  const pendingApprovals = loans.filter((l) => l.status === 'PENDING').length;
 
   const summary = {
     activeLoans: activeLoans.length,
@@ -65,12 +65,7 @@ export default function LoansPage() {
 
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
-      DRAFT: {
-        bg: 'bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
-        icon: FileText,
-      },
-      PENDING_APPROVAL: {
+      PENDING: {
         bg: 'bg-amber-100 dark:bg-amber-900/30',
         text: 'text-amber-700 dark:text-amber-400',
         icon: Clock,
@@ -105,8 +100,13 @@ export default function LoansPage() {
         text: 'text-red-800 dark:text-red-300',
         icon: AlertCircle,
       },
+      CANCELLED: {
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
+        icon: XCircle,
+      },
     };
-    return configs[status] || configs.DRAFT;
+    return configs[status] || configs.PENDING;
   };
 
   if (loading) {
@@ -141,17 +141,17 @@ export default function LoansPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Employee Loans
             </h1>
-            <p className="text-[var(--text-muted)] mt-1">
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
               Manage your loan applications and repayments
             </p>
           </div>
           <PermissionGate permission={Permissions.LOAN_CREATE}>
             <button
               onClick={() => router.push('/loans/new')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+              className="btn-primary flex items-center justify-center gap-2"
             >
               <Plus className="h-5 w-5" />
               Apply for Loan
@@ -161,7 +161,7 @@ export default function LoansPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="skeuo-card p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600">
                 <CreditCard className="h-5 w-5 text-white" />
@@ -177,7 +177,7 @@ export default function LoansPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="skeuo-card p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
                 <DollarSign className="h-5 w-5 text-white" />
@@ -193,7 +193,7 @@ export default function LoansPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="skeuo-card p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
                 <TrendingUp className="h-5 w-5 text-white" />
@@ -209,7 +209,7 @@ export default function LoansPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="skeuo-card p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
                 <Clock className="h-5 w-5 text-white" />
@@ -227,7 +227,7 @@ export default function LoansPage() {
         </div>
 
         {/* Loans List */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+        <div className="skeuo-card overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               My Loans
@@ -243,9 +243,9 @@ export default function LoansPage() {
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="table-aura">
                 <thead>
-                  <tr className="bg-[var(--bg-secondary)]/50">
+                  <tr className="skeuo-table-header">
                     <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Loan #
                     </th>
@@ -292,12 +292,12 @@ export default function LoansPage() {
                         </td>
                         <td className="px-5 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
-                            {loanService.formatCurrency(loan.approvedAmount || loan.requestedAmount)}
+                            {loanService.formatCurrency(loan.totalAmount || loan.principalAmount)}
                           </span>
                         </td>
                         <td className="px-5 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
-                            {loan.termMonths} months
+                            {loan.tenureMonths} months
                           </span>
                         </td>
                         <td className="px-5 py-4">
@@ -310,7 +310,7 @@ export default function LoansPage() {
                         </td>
                         <td className="px-5 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
-                            {loanService.formatCurrency(loan.remainingBalance)}
+                            {loanService.formatCurrency(loan.outstandingAmount || 0)}
                           </span>
                         </td>
                         <td className="px-5 py-4">
@@ -338,7 +338,7 @@ export default function LoansPage() {
           <PermissionGate permission={Permissions.LOAN_CREATE}>
             <button
               onClick={() => router.push('/loans/new')}
-              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+              className="group card-interactive p-6 text-left"
             >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
@@ -357,7 +357,7 @@ export default function LoansPage() {
 
           <button
             onClick={() => router.push('/loans?filter=active')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group card-interactive p-6 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">

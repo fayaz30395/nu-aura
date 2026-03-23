@@ -248,8 +248,8 @@ export default function CustomFieldsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Custom Fields</h1>
-          <p className="text-[var(--text-secondary)] mt-1">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Custom Fields</h1>
+          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Define custom fields to extend entity data with your own attributes
           </p>
         </div>
@@ -270,12 +270,12 @@ export default function CustomFieldsPage() {
               placeholder="Search fields..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-aura"
             />
             <select
               value={filterEntityType}
               onChange={(e) => setFilterEntityType(e.target.value as EntityType | 'ALL')}
-              className="px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-aura"
             >
               <option value="ALL">All Entity Types</option>
               {ENTITY_TYPES.map((type) => (
@@ -291,15 +291,15 @@ export default function CustomFieldsPage() {
               setSelectedDefinition(null);
               setShowCreateModal(true);
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
+            className="btn-primary !h-auto"
           >
             Create Custom Field
           </button>
         </div>
 
-        <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-[var(--border-main)]">
-            <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]900">
+        <div className="skeuo-card overflow-hidden">
+          <table className="table-aura">
+            <thead className="skeuo-table-header">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Field
@@ -403,8 +403,8 @@ export default function CustomFieldsPage() {
 
         {/* Create/Edit Modal */}
         {(showCreateModal || showEditModal) && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center z-50 p-4">
+            <div className="skeuo-card p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">
                 {showCreateModal ? 'Create Custom Field' : 'Edit Custom Field'}
               </h2>
@@ -417,7 +417,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('fieldCode')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input-aura"
                       placeholder="e.g., blood_group"
                       disabled={showEditModal}
                     />
@@ -430,7 +430,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('fieldName')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input-aura"
                       placeholder="e.g., Blood Group"
                     />
                     {errors.fieldName && <p className="text-red-500 text-sm mt-1">{errors.fieldName.message}</p>}
@@ -443,7 +443,7 @@ export default function CustomFieldsPage() {
                   </label>
                   <textarea
                     {...register('description')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                     rows={2}
                     placeholder="Optional description..."
                   />
@@ -461,7 +461,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input-aura"
                           disabled={showEditModal}
                         >
                           {ENTITY_TYPES.map((type) => (
@@ -484,7 +484,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input-aura"
                           disabled={showEditModal}
                         >
                           {FIELD_TYPES.map((type) => (
@@ -507,7 +507,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('fieldGroup')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input-aura"
                       placeholder="e.g., Personal, Emergency Contact"
                     />
                     {errors.fieldGroup && <p className="text-red-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
@@ -519,7 +519,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="number"
                       {...register('displayOrder')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input-aura"
                     />
                     {errors.displayOrder && <p className="text-red-500 text-sm mt-1">{errors.displayOrder.message}</p>}
                   </div>
@@ -532,7 +532,7 @@ export default function CustomFieldsPage() {
                     </label>
                     <textarea
                       {...register('optionsText')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input-aura"
                       rows={4}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
                     />
@@ -548,7 +548,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('placeholder')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input-aura"
                       placeholder="Placeholder text..."
                     />
                     {errors.placeholder && <p className="text-red-500 text-sm mt-1">{errors.placeholder.message}</p>}
@@ -560,7 +560,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('defaultValue')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="input-aura"
                     />
                     {errors.defaultValue && <p className="text-red-500 text-sm mt-1">{errors.defaultValue.message}</p>}
                   </div>
@@ -577,7 +577,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input-aura"
                         >
                           {VISIBILITIES.map((v) => (
                             <option key={v} value={v}>
@@ -599,7 +599,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input-aura"
                         >
                           {VISIBILITIES.map((v) => (
                             <option key={v} value={v}>
@@ -670,14 +670,14 @@ export default function CustomFieldsPage() {
                       setShowEditModal(false);
                       setSelectedDefinition(null);
                     }}
-                    className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                    className="btn-secondary"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting || createMutation.isPending}
-                    className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                    className="btn-primary !h-auto disabled:opacity-50"
                   >
                     {isSubmitting || createMutation.isPending ? 'Saving...' : (showCreateModal ? 'Create Field' : 'Update Field')}
                   </button>

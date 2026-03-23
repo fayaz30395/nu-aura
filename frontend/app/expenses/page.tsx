@@ -459,7 +459,7 @@ export default function ExpenseClaims() {
         </div>
 
         {/* Filters Bar */}
-        <div className="bg-[var(--bg-input)] rounded-lg p-4 mb-6 border border-[var(--border-main)]">
+        <div className="skeuo-card p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
@@ -469,7 +469,7 @@ export default function ExpenseClaims() {
                 placeholder="Search claims..."
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="input-aura pl-10"
               />
             </div>
 
@@ -506,7 +506,7 @@ export default function ExpenseClaims() {
                 <select
                   value={filters.category}
                   onChange={(e) => setFilters({ ...filters, category: e.target.value as ExpenseCategory | 'ALL' })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                  className="input-aura"
                 >
                   <option value="ALL">All Categories</option>
                   <option value="TRAVEL">Travel</option>
@@ -525,7 +525,7 @@ export default function ExpenseClaims() {
                   type="date"
                   value={filters.dateFrom}
                   onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                  className="input-aura"
                 />
               </div>
               <div>
@@ -534,7 +534,7 @@ export default function ExpenseClaims() {
                   type="date"
                   value={filters.dateTo}
                   onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                  className="input-aura"
                 />
               </div>
               <div className="flex gap-2">
@@ -545,7 +545,7 @@ export default function ExpenseClaims() {
                     placeholder="0"
                     value={filters.amountMin}
                     onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                   />
                 </div>
                 <div className="flex-1">
@@ -555,7 +555,7 @@ export default function ExpenseClaims() {
                     placeholder="0"
                     value={filters.amountMax}
                     onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                   />
                 </div>
               </div>
@@ -565,14 +565,14 @@ export default function ExpenseClaims() {
 
         {/* New Claim Form */}
         {showForm && (
-          <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Create New Expense Claim</h2>
+          <div className="skeuo-card p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4 skeuo-emboss">Create New Expense Claim</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim Date</label>
                 <input
                   type="date"
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="input-aura"
                   {...register('claimDate')}
                 />
                 {errors.claimDate && <span className="text-red-500 text-sm">{errors.claimDate.message}</span>}
@@ -581,7 +581,7 @@ export default function ExpenseClaims() {
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
                 <select
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="input-aura"
                   {...register('category')}
                 >
                   <option value="">Select category</option>
@@ -603,7 +603,7 @@ export default function ExpenseClaims() {
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
                 <textarea
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="input-aura"
                   rows={3}
                   placeholder="Describe your expense..."
                   {...register('description')}
@@ -617,7 +617,7 @@ export default function ExpenseClaims() {
                   type="number"
                   step="0.01"
                   min="0"
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="input-aura"
                   placeholder="0.00"
                   {...register('amount')}
                 />
@@ -627,7 +627,7 @@ export default function ExpenseClaims() {
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Currency</label>
                 <select
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="input-aura"
                   {...register('currency')}
                 >
                   <option value="USD">USD</option>
@@ -641,7 +641,7 @@ export default function ExpenseClaims() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL (Optional)</label>
                 <input
                   type="url"
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="input-aura"
                   placeholder="https://..."
                   {...register('receiptUrl')}
                 />
@@ -651,7 +651,7 @@ export default function ExpenseClaims() {
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes (Optional)</label>
                 <textarea
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="input-aura"
                   rows={2}
                   placeholder="Additional notes..."
                   {...register('notes')}
@@ -663,7 +663,7 @@ export default function ExpenseClaims() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? 'Creating...' : 'Create Claim'}
                   </button>
@@ -671,7 +671,7 @@ export default function ExpenseClaims() {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-6 py-3 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
@@ -726,8 +726,8 @@ export default function ExpenseClaims() {
         )}
 
         {/* Tabs */}
-        <div className="bg-[var(--bg-secondary)] rounded-t-lg shadow-sm">
-          <div className="flex border-b">
+        <div className="skeuo-card !rounded-b-none">
+          <div className="flex border-b border-[var(--border-main)]">
             <button
               onClick={() => { setActiveTab('my-claims'); setSelectedClaims(new Set()); }}
               className={`px-6 py-3 font-medium transition-colors ${
@@ -778,11 +778,11 @@ export default function ExpenseClaims() {
 
         {/* Content Area */}
         {activeTab === 'analytics' ? (
-          <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
+          <div className="skeuo-card !rounded-t-none p-6">
             <ExpenseAnalytics claims={currentClaimsData} />
           </div>
         ) : (
-        <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
+        <div className="skeuo-card !rounded-t-none p-6">
           {/* Select All Header for Pending Tab */}
           {activeTab === 'pending' && filteredClaims.filter(c => c.status === 'SUBMITTED').length > 0 && (
             <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)]">
@@ -976,7 +976,7 @@ export default function ExpenseClaims() {
                 value={bulkRejectReason}
                 onChange={(e) => setBulkRejectReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="input-aura"
                 placeholder="Enter reason for rejection..."
               />
             </div>
@@ -1044,7 +1044,7 @@ export default function ExpenseClaims() {
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="input-aura"
                 placeholder="Enter reason for rejection..."
               />
             </div>

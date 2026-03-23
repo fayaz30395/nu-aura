@@ -47,7 +47,7 @@ export default function ContractDetailPage() {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold">{contract.title}</h1>
+              <h1 className="text-3xl font-bold skeuo-emboss">{contract.title}</h1>
               <p className="text-[var(--text-secondary)]">{contractService.getTypeLabel(contract.type)}</p>
             </div>
           </div>

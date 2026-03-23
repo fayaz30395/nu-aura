@@ -311,7 +311,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
           <User size={14} className="text-primary-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Active Pipeline</span>
         </div>
-        <p className="text-2xl font-bold text-[var(--text-primary)]">{totalActive}</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{totalActive}</p>
         <p className="text-xs text-[var(--text-muted)] mt-0.5">{totalAccepted} accepted, {totalRejected} rejected</p>
       </div>
 
@@ -321,7 +321,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
           <TrendingUp size={14} className="text-green-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Conversion Rate</span>
         </div>
-        <p className="text-2xl font-bold text-[var(--text-primary)]">{conversionRate}%</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{conversionRate}%</p>
         <p className="text-xs text-[var(--text-muted)] mt-0.5">Applied → Accepted</p>
       </div>
 
@@ -331,7 +331,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
           <Clock size={14} className="text-orange-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Avg. Time in Stage</span>
         </div>
-        <p className="text-2xl font-bold text-[var(--text-primary)]">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
         <p className="text-xs text-[var(--text-muted)] mt-0.5">Across all stages</p>
       </div>
 
@@ -765,7 +765,7 @@ export default function ApplicantPipelinePage() {
         {/* ── Header ────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">ATS Pipeline</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">ATS Pipeline</h1>
             <p className="text-sm text-[var(--text-muted)] mt-0.5">
               Drag candidates between stages or use the quick-move buttons
             </p>

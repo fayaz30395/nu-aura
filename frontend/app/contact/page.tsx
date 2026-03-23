@@ -126,7 +126,7 @@ export default function ContactPage() {
           <Badge size="lg" variant="primary" className="mb-6">
             Contact Us
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
             Let&apos;s start a conversation
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -172,7 +172,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Form */}
             <div>
-              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4 skeuo-emboss">
                 Send us a message
               </h2>
               <p className="text-[var(--text-secondary)] mb-8">
@@ -292,7 +292,7 @@ export default function ContactPage() {
                   <textarea
                     rows={5}
                     placeholder="Tell us more about your inquiry..."
-                    className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-input)] border ${
+                    className={`input-aura w-full px-4 py-3 rounded-lg bg-[var(--bg-input)] border ${
                       errors.message ? 'border-danger-500' : 'border-[var(--border-main)]'
                     } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
                     {...register('message')}
@@ -307,7 +307,7 @@ export default function ContactPage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full gap-2"
+                  className="btn-primary w-full gap-2"
                   isLoading={isSubmitting}
                   loadingText="Sending..."
                 >

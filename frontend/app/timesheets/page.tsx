@@ -751,7 +751,7 @@ export default function TimesheetsPage() {
                   required
                   value={entryForm.projectId}
                   onChange={(e) => setEntryForm({ ...entryForm, projectId: e.target.value })}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura"
                 >
                   <option value="">Select a project</option>
                   {projects.map((project) => (
@@ -772,7 +772,7 @@ export default function TimesheetsPage() {
                     required
                     value={entryForm.entryDate}
                     onChange={(e) => setEntryForm({ ...entryForm, entryDate: e.target.value })}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                   />
                 </div>
                 <div>
@@ -790,7 +790,7 @@ export default function TimesheetsPage() {
                       const val = parseFloat(e.target.value);
                       setEntryForm({ ...entryForm, hours: Number.isNaN(val) ? 0 : val });
                     }}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                   />
                 </div>
               </div>
@@ -802,7 +802,7 @@ export default function TimesheetsPage() {
                 <select
                   value={entryForm.activityType}
                   onChange={(e) => setEntryForm({ ...entryForm, activityType: e.target.value as ActivityType })}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura"
                 >
                   {ACTIVITY_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -820,7 +820,7 @@ export default function TimesheetsPage() {
                   rows={3}
                   value={entryForm.workDescription}
                   onChange={(e) => setEntryForm({ ...entryForm, workDescription: e.target.value })}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura"
                   placeholder="Describe the work done..."
                 />
               </div>

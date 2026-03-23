@@ -370,7 +370,7 @@ export default function MyAttendancePage() {
         {/* ── PAGE HEADER ─────────────────────────────────────── */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-page-title text-[var(--text-primary)]">Attendance</h1>
+            <h1 className="text-page-title text-[var(--text-primary)] skeuo-emboss">Attendance</h1>
           </div>
           <Button variant="outline" onClick={exportCSV} className="gap-2">
             <Download className="h-4 w-4" />

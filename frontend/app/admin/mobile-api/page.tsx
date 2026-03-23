@@ -228,7 +228,7 @@ export default function MobileApiPage() {
         {/* Header */}
         <Group justify="space-between" mb="xl">
           <div>
-            <Title order={1} size="h2" mb="xs">
+            <Title order={1} size="h2" mb="xs" className="skeuo-emboss">
               <Group gap="sm">
                 <ThemeIcon size="lg" color="blue" radius="md">
                   <IconDeviceMobile size={24} />
@@ -236,7 +236,7 @@ export default function MobileApiPage() {
                 Mobile API Documentation
               </Group>
             </Title>
-            <Text c="dimmed">
+            <Text c="dimmed" className="skeuo-deboss">
               Optimized API endpoints for mobile applications with minimal payloads and offline-first support
             </Text>
           </div>
@@ -245,7 +245,7 @@ export default function MobileApiPage() {
         {/* Overview Cards */}
         <Grid mb="xl">
           <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-            <Card withBorder>
+            <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   Total Endpoints
@@ -264,7 +264,7 @@ export default function MobileApiPage() {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-            <Card withBorder>
+            <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   Active Devices
@@ -278,7 +278,7 @@ export default function MobileApiPage() {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-            <Card withBorder>
+            <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   API Calls (24h)
@@ -292,7 +292,7 @@ export default function MobileApiPage() {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
-            <Card withBorder>
+            <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   Avg Response
@@ -308,7 +308,7 @@ export default function MobileApiPage() {
 
         {/* Features Overview */}
         <Stack gap="lg" mb="xl">
-          <Card withBorder>
+          <Card withBorder className="skeuo-card">
             <Stack gap="md">
               <Group>
                 <ThemeIcon color="blue" size="lg">

@@ -35,7 +35,7 @@ public class ResourceAllocationService {
      */
     @Transactional(readOnly = true)
     public List<AllocationSummaryResponse> getAllocationSummary() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<ProjectEmployee> active = projectEmployeeRepository.findAllActiveAssignments(tenantId);
 
         // Group by employee
@@ -48,7 +48,7 @@ public class ResourceAllocationService {
             UUID employeeId = entry.getKey();
             List<ProjectEmployee> assignments = entry.getValue();
 
-            Employee emp = employeeRepository.findById(employeeId).orElse(null);
+            Employee emp = employeeRepository.findByIdAndTenantId(employeeId, tenantId).orElse(null);
             if (emp == null) continue;
 
             int total = assignments.stream()
@@ -56,7 +56,7 @@ public class ResourceAllocationService {
                     .sum();
 
             List<AllocationSummaryResponse.AllocationEntry> projects = assignments.stream().map(pe -> {
-                String projName = projectRepository.findById(pe.getProjectId())
+                String projName = projectRepository.findByIdAndTenantId(pe.getProjectId(), tenantId)
                         .map(Project::getName)
                         .orElse("Unknown");
                 return AllocationSummaryResponse.AllocationEntry.builder()
@@ -87,14 +87,14 @@ public class ResourceAllocationService {
      */
     @Transactional(readOnly = true)
     public EmployeeTimelineResponse getEmployeeTimeline(UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<ProjectEmployee> all = projectEmployeeRepository.findAllByEmployeeIdAndTenantId(employeeId, tenantId);
 
-        Employee emp = employeeRepository.findById(employeeId)
+        Employee emp = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         List<EmployeeTimelineResponse.TimelineSlot> slots = all.stream().map(pe -> {
-            String projName = projectRepository.findById(pe.getProjectId())
+            String projName = projectRepository.findByIdAndTenantId(pe.getProjectId(), tenantId)
                     .map(Project::getName)
                     .orElse("Unknown");
             return EmployeeTimelineResponse.TimelineSlot.builder()
@@ -120,7 +120,7 @@ public class ResourceAllocationService {
      */
     @Transactional
     public ProjectEmployeeResponse reallocate(UUID projectEmployeeId, ReallocateRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ProjectEmployee pe = projectEmployeeRepository.findById(projectEmployeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
@@ -142,9 +142,9 @@ public class ResourceAllocationService {
         pe = projectEmployeeRepository.save(pe);
         log.info("Reallocated project employee {} to {}%", projectEmployeeId, pe.getAllocationPercentage());
 
-        String empName = employeeRepository.findById(pe.getEmployeeId())
+        String empName = employeeRepository.findByIdAndTenantId(pe.getEmployeeId(), tenantId)
                 .map(Employee::getFullName).orElse(null);
-        String projName = projectRepository.findById(pe.getProjectId())
+        String projName = projectRepository.findByIdAndTenantId(pe.getProjectId(), tenantId)
                 .map(Project::getName).orElse(null);
 
         return ProjectEmployeeResponse.builder()
@@ -166,7 +166,7 @@ public class ResourceAllocationService {
      */
     @Transactional(readOnly = true)
     public List<AvailableResourceResponse> getAvailableResources(int minAvailablePercent) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<ProjectEmployee> active = projectEmployeeRepository.findAllActiveAssignments(tenantId);
 
         // Sum allocations per employee

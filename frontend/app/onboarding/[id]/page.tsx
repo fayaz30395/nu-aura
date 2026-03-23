@@ -160,7 +160,7 @@ export default function OnboardingDetailPage() {
                                 {process.employeeName?.charAt(0)}
                             </div>
                             <div>
-                                <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
+                                <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                                     {process.employeeName}
                                 </h1>
                                 <div className="flex flex-wrap items-center gap-4 mt-2 font-bold text-[var(--text-muted)]">

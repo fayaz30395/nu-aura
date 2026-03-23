@@ -129,7 +129,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Leave Calendar</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Leave Calendar</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('my')}
@@ -155,7 +155,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         {/* Calendar Controls */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 mb-6">
+        <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6 mb-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <h2 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -186,7 +186,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         {/* Legend */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-4 mb-6">
+        <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-4 mb-6">
           <div className="flex flex-wrap gap-4">
             <div className="text-sm text-[var(--text-secondary)] font-medium">Legend:</div>
             {leaveTypes.map(type => (
@@ -206,7 +206,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         {/* Calendar Grid */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
+        <div className="skeuo-card bg-[var(--bg-card)] rounded-lg overflow-hidden">
           {loading ? (
             <div className="text-center py-12 text-[var(--text-primary)]">Loading calendar...</div>
           ) : (
@@ -286,7 +286,7 @@ export default function LeaveCalendarPage() {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
+          <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
             <div className="text-sm text-[var(--text-secondary)] mb-1">Total Leaves This Month</div>
             <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">
               {leaves.filter(l => {
@@ -296,13 +296,13 @@ export default function LeaveCalendarPage() {
               }).length}
             </div>
           </div>
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
+          <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
             <div className="text-sm text-[var(--text-secondary)] mb-1">Pending Approvals</div>
             <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">
               {leaves.filter(l => l.status === 'PENDING').length}
             </div>
           </div>
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
+          <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
             <div className="text-sm text-[var(--text-secondary)] mb-1">Upcoming Leaves</div>
             <div className="text-3xl font-bold text-purple-600 dark:text-purple-500">
               {leaves.filter(l => new Date(l.startDate) > new Date()).length}

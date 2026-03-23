@@ -41,7 +41,7 @@ export default function PerformanceRevolutionPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">
+                        <h1 className="text-3xl font-bold skeuo-emboss bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">
                             Performance Revolution
                         </h1>
                         <p className="text-[var(--text-secondary)] mt-1">Advanced OKR visualization and 360° performance insights</p>
@@ -50,7 +50,7 @@ export default function PerformanceRevolutionPage() {
                         <Button variant="outline" size="sm" onClick={() => { okrGraphQuery.refetch(); performanceSpiderQuery.refetch(); }} leftIcon={<RefreshCw className="h-4 w-4" />}>
                             Refresh
                         </Button>
-                        <Button variant="primary" size="sm" leftIcon={<Share2 className="h-4 w-4" />}>
+                        <Button variant="primary" size="sm" className="btn-primary" leftIcon={<Share2 className="h-4 w-4" />}>
                             Share Progress
                         </Button>
                     </div>

@@ -202,12 +202,12 @@ export default function HelpdeskSLAPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">SLA Management</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">SLA Management</h1>
           {activeTab === 'slas' && (
             <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
               <button
                 onClick={() => { setShowForm(true); setEditingId(null); resetFormHandler(); }}
-                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                className="btn-primary !h-auto"
               >
                 Create SLA Policy
               </button>
@@ -218,22 +218,22 @@ export default function HelpdeskSLAPage() {
         {/* Dashboard Cards */}
         {dashboardData && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="skeuo-card p-6">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</div>
               <div className="text-[var(--text-secondary)]">SLA Compliance</div>
               <div className="text-sm text-[var(--text-muted)] mt-1">
                 {dashboardData.slaMetCount} met / {dashboardData.slaBreachedCount} breached
               </div>
             </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="skeuo-card p-6">
               <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg First Response</div>
             </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="skeuo-card p-6">
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg Resolution Time</div>
             </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="skeuo-card p-6">
               <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
               <div className="text-[var(--text-secondary)]">Avg CSAT Score</div>
               <div className="text-sm text-[var(--text-muted)] mt-1">
@@ -267,7 +267,7 @@ export default function HelpdeskSLAPage() {
 
         {/* SLA Form */}
         {showForm && activeTab === 'slas' && (
-          <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 mb-6">
+          <div className="skeuo-card p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">
               {editingId ? 'Edit SLA Policy' : 'Create SLA Policy'}
             </h2>
@@ -278,7 +278,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="text"
                     {...register('name')}
-                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                   />
                   {errors.name && (
                     <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -288,7 +288,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Priority</label>
                   <select
                     {...register('priority')}
-                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                   >
                     <option value="">All Priorities</option>
                     <option value="LOW">Low</option>
@@ -303,7 +303,7 @@ export default function HelpdeskSLAPage() {
                 <label className="block text-sm font-medium mb-1">Description</label>
                 <textarea
                   {...register('description')}
-                  className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                  className="input-aura"
                   rows={2}
                 />
               </div>
@@ -314,7 +314,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('firstResponseMinutes')}
-                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                     min="1"
                   />
                   {errors.firstResponseMinutes && (
@@ -326,7 +326,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('resolutionMinutes')}
-                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                     min="1"
                   />
                   {errors.resolutionMinutes && (
@@ -338,7 +338,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('escalationAfterMinutes')}
-                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                     min="1"
                   />
                 </div>
@@ -349,7 +349,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Business Hours Start</label>
                   <select
                     {...register('businessStartHour')}
-                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
@@ -360,7 +360,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Business Hours End</label>
                   <select
                     {...register('businessEndHour')}
-                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
+                    className="input-aura"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
@@ -403,7 +403,7 @@ export default function HelpdeskSLAPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                    className="btn-primary !h-auto disabled:opacity-50"
                   >
                     {editingId ? 'Update' : 'Create'}
                   </button>
@@ -411,7 +411,7 @@ export default function HelpdeskSLAPage() {
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setEditingId(null); }}
-                  className="px-6 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
@@ -426,7 +426,7 @@ export default function HelpdeskSLAPage() {
           <>
             {/* Dashboard Tab */}
             {activeTab === 'dashboard' && dashboardData && (
-              <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6">
+              <div className="skeuo-card p-6">
                 <h2 className="text-xl font-semibold mb-4">SLA Performance Overview</h2>
                 <div className="space-y-6">
                   {/* SLA Compliance Bar */}
@@ -472,9 +472,9 @@ export default function HelpdeskSLAPage() {
 
             {/* SLA Policies Tab */}
             {activeTab === 'slas' && (
-              <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md overflow-hidden">
-                <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
-                  <thead className="bg-[var(--bg-secondary)]/50">
+              <div className="skeuo-card overflow-hidden">
+                <table className="table-aura">
+                  <thead className="skeuo-table-header">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Policy</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">First Response</th>
@@ -552,7 +552,7 @@ export default function HelpdeskSLAPage() {
               <div className="space-y-4">
                 {escalations.length > 0 ? (
                   escalations.map((escalation) => (
-                    <div key={escalation.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6">
+                    <div key={escalation.id} className="skeuo-card p-6">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -581,7 +581,7 @@ export default function HelpdeskSLAPage() {
                         <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
                           <button
                             onClick={() => handleAcknowledge(escalation.id)}
-                            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                            className="btn-primary !h-auto"
                           >
                             Acknowledge
                           </button>
@@ -590,7 +590,7 @@ export default function HelpdeskSLAPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-8 text-center text-[var(--text-muted)]">
+                  <div className="skeuo-card p-8 text-center text-[var(--text-muted)]">
                     No pending escalations. All caught up!
                   </div>
                 )}

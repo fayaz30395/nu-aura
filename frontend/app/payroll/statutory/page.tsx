@@ -146,10 +146,10 @@ export default function StatutoryPage() {
           {/* Page header */}
           <Group justify="space-between" align="flex-start">
             <div>
-              <Title order={2} fw={600}>
+              <Title order={2} fw={600} className="skeuo-emboss">
                 Statutory Deduction Preview
               </Title>
-              <Text c="dimmed" size="sm" mt={4}>
+              <Text c="dimmed" size="sm" mt={4} className="skeuo-deboss">
                 Preview India statutory deductions (PF, ESI, Professional Tax, TDS) before
                 applying them to a payslip.
               </Text>
@@ -162,8 +162,8 @@ export default function StatutoryPage() {
           <Grid gutter="lg">
             {/* Left: Input form */}
             <Grid.Col span={{ base: 12, md: 5 }}>
-              <Card withBorder shadow="xs" radius="md" p="lg">
-                <Title order={4} mb="md" fw={500}>
+              <Card withBorder shadow="xs" radius="md" p="lg" className="skeuo-card">
+                <Title order={4} mb="md" fw={500} className="skeuo-emboss">
                   Input Parameters
                 </Title>
 
@@ -176,7 +176,7 @@ export default function StatutoryPage() {
                       <input
                         type="text"
                         placeholder="550e8400-e29b-41d4-a716-446655440000"
-                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input-aura"
                         {...form.register('employeeId')}
                       />
                       {form.formState.errors.employeeId && (
@@ -194,7 +194,7 @@ export default function StatutoryPage() {
                         min="0"
                         step="0.01"
                         placeholder="25000"
-                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input-aura"
                         {...form.register('basicSalary')}
                       />
                       {form.formState.errors.basicSalary && (
@@ -212,7 +212,7 @@ export default function StatutoryPage() {
                         min="0"
                         step="0.01"
                         placeholder="40000"
-                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input-aura"
                         {...form.register('grossSalary')}
                       />
                       {form.formState.errors.grossSalary && (
@@ -226,7 +226,7 @@ export default function StatutoryPage() {
                         State
                       </label>
                       <select
-                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input-aura"
                         {...form.register('state')}
                       >
                         {STATE_OPTIONS.map(opt => (
@@ -256,9 +256,9 @@ export default function StatutoryPage() {
 
             {/* Right: Results */}
             <Grid.Col span={{ base: 12, md: 7 }}>
-              <Card withBorder shadow="xs" radius="md" p="lg" pos="relative">
+              <Card withBorder shadow="xs" radius="md" p="lg" pos="relative" className="skeuo-card">
                 <LoadingOverlay visible={loading} overlayProps={{ radius: 'md', blur: 2 }} />
-                <Title order={4} mb="md" fw={500}>
+                <Title order={4} mb="md" fw={500} className="skeuo-emboss">
                   Deduction Breakdown
                 </Title>
 

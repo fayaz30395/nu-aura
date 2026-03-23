@@ -126,7 +126,7 @@ export default function TaxDeclarationsPage() {
                 {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(declaration.taxableIncome)}
             </Table.Td>
             <Table.Td>
-                <Badge color={statusColor(declaration.status)}>{declaration.status}</Badge>
+                <Badge color={statusColor(declaration.status)} className="badge-status">{declaration.status}</Badge>
             </Table.Td>
             <Table.Td>
                 <Group gap={0} justify="flex-end">
@@ -157,16 +157,16 @@ export default function TaxDeclarationsPage() {
             <Container size="xl" py="lg">
                 <Group justify="space-between" mb="lg">
                     <div>
-                        <Title order={2}>Tax Declarations</Title>
+                        <Title order={2} className="skeuo-emboss">Tax Declarations</Title>
                         <Text c="dimmed">Manage employee tax declarations and proofs</Text>
                     </div>
-                    <Button leftSection={<IconPlus size={20} />} onClick={() => setModalOpen(true)}>
+                    <Button leftSection={<IconPlus size={20} />} onClick={() => setModalOpen(true)} className="btn-primary">
                         New Declaration
                     </Button>
                 </Group>
 
-                <Card withBorder radius="md" p="md">
-                    <Table verticalSpacing="sm">
+                <Card withBorder radius="md" p="md" className="skeuo-card">
+                    <Table verticalSpacing="sm" className="table-aura">
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th>Financial Year</Table.Th>

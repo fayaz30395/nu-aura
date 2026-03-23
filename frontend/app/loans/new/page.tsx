@@ -104,14 +104,15 @@ export default function NewLoanPage() {
 
   const onSubmit = async (data: LoanFormData) => {
     try {
+      // BUG-FIX: Map form field names to backend CreateLoanRequest DTO fields.
+      // Backend expects principalAmount/tenureMonths/remarks, not requestedAmount/termMonths/notes.
       await createLoanMutation.mutateAsync({
         loanType: data.loanType as LoanType,
-        requestedAmount: data.requestedAmount as number,
+        principalAmount: data.requestedAmount as number,
         interestRate: data.interestRate as number,
-        termMonths: data.termMonths as number,
+        tenureMonths: data.termMonths as number,
         purpose: data.purpose as string,
-        repaymentFrequency: data.repaymentFrequency as RepaymentFrequency,
-        notes: data.notes || undefined,
+        remarks: data.notes || undefined,
       });
       router.push('/loans');
     } catch (err) {
@@ -135,7 +136,7 @@ export default function NewLoanPage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Apply for Loan</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Apply for Loan</h1>
             <p className="text-[var(--text-muted)] mt-1">
               Fill in the details for your loan application
             </p>

@@ -176,7 +176,7 @@ export default function TemplateEditorPage() {
                             <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-600 transition-colors" />
                         </Button>
                         <div>
-                            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] flex items-center gap-4">
+                            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss flex items-center gap-4">
                                 Blueprint <span className="text-primary-600">Editor</span>
                                 <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-indigo-500/20 text-indigo-600">
                                     V1.0
@@ -188,7 +188,7 @@ export default function TemplateEditorPage() {
 
                     <Button
                         variant="primary"
-                        className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
+                        className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
                         leftIcon={<Save className="h-4 w-4" />}
                         isLoading={updateTemplateMutation.isPending && !editingTask}
                         onClick={handleSaveTemplate}
@@ -211,7 +211,7 @@ export default function TemplateEditorPage() {
                                 <div className="space-y-4">
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Template Title</label>
                                     <Input
-                                        className="rounded-2xl bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-primary-500"
+                                        className="input-aura rounded-2xl bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-primary-500"
                                         value={localTemplate?.name || ''}
                                         onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, name: e.target.value } : null)}
                                     />
@@ -371,7 +371,7 @@ export default function TemplateEditorPage() {
                                 <div className="col-span-full space-y-4">
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Task Objective</label>
                                     <Input
-                                        className="rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-primary-500"
+                                        className="input-aura rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-primary-500"
                                         placeholder="e.g., Set up workstation and systems"
                                         value={taskForm.taskName}
                                         onChange={(e) => setTaskForm({ ...taskForm, taskName: e.target.value })}
@@ -453,7 +453,7 @@ export default function TemplateEditorPage() {
 
                             <div className="pt-10 flex gap-4">
                                 <Button
-                                    className="flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6"
+                                    className="btn-primary flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6"
                                     leftIcon={<Save className="h-4 w-4" />}
                                     isLoading={addTaskMutation.isPending || updateTaskMutation.isPending}
                                     onClick={handleSaveTask}

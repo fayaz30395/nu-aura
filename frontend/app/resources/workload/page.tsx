@@ -260,7 +260,7 @@ export default function WorkloadDashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-[var(--text-primary)]">
+            <h1 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
               Resource Utilization
             </h1>
             <p className="text-sm text-[var(--text-muted)]">
@@ -291,7 +291,7 @@ export default function WorkloadDashboardPage() {
           <select
             value={selectedDateRange}
             onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-            className="rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+            className="input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
           >
             {dateRangeOptions.map((opt) => (
               <option key={opt.key} value={opt.key}>{opt.label}</option>

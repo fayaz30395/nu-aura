@@ -81,7 +81,7 @@ export default function StatutoryPage() {
     return (
         <AppLayout>
         <Container size="xl" py="lg">
-            <Title order={2} mb="sm">Statutory Compliance</Title>
+            <Title order={2} mb="sm" className="skeuo-emboss">Statutory Compliance</Title>
             <Text c="dimmed" mb="lg">Manage Provident Fund, ESI, and Professional Tax configurations.</Text>
 
             <Tabs value={activeTab} onChange={setActiveTab} variant="outline" radius="md">
@@ -103,7 +103,7 @@ export default function StatutoryPage() {
                 <Tabs.Panel value="pf" py="md">
                     <Grid>
                         <Grid.Col span={8}>
-                            <Card withBorder radius="md">
+                            <Card withBorder className="skeuo-card" radius="md">
                                 <Group justify="space-between" mb="md">
                                     <Title order={4}>Active PF Configurations</Title>
                                     <Button variant="light" size="xs">New Configuration</Button>
@@ -137,7 +137,7 @@ export default function StatutoryPage() {
                             </Card>
                         </Grid.Col>
                         <Grid.Col span={4}>
-                            <Card withBorder radius="md" bg="gray.0">
+                            <Card withBorder className="skeuo-card" radius="md" bg="gray.0">
                                 <Group mb="xs">
                                     <ThemeIcon color="blue" variant="light"><IconSettings size={18} /></ThemeIcon>
                                     <Text fw={500}>PF Rules</Text>
@@ -152,7 +152,7 @@ export default function StatutoryPage() {
                 </Tabs.Panel>
 
                 <Tabs.Panel value="esi" py="md">
-                    <Card withBorder radius="md">
+                    <Card withBorder className="skeuo-card" radius="md">
                         <Group justify="space-between" mb="md">
                             <Title order={4}>Active ESI Configurations</Title>
                             <Button variant="light" size="xs">New Configuration</Button>
@@ -185,7 +185,7 @@ export default function StatutoryPage() {
                 </Tabs.Panel>
 
                 <Tabs.Panel value="pt" py="md">
-                    <Card withBorder radius="md">
+                    <Card withBorder className="skeuo-card" radius="md">
                         <Group justify="space-between" mb="md">
                             <Title order={4}>Professional Tax Slabs (Maharashtra)</Title>
                             <Button variant="light" size="xs">Add Slab</Button>
@@ -215,7 +215,7 @@ export default function StatutoryPage() {
                     </Card>
                 </Tabs.Panel>
                 <Tabs.Panel value="report" py="md">
-                    <Card withBorder radius="md">
+                    <Card withBorder className="skeuo-card" radius="md">
                         <Group justify="space-between" mb="md" align="flex-end">
                             <Title order={4}>Monthly Statutory Contributions</Title>
                             {reportFetched && contributions.length > 0 && (

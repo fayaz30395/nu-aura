@@ -119,6 +119,15 @@ app:
       # Enable CSRF protection in production
       enabled: true
 
+  # Production uses Google Drive for file storage
+  storage:
+    provider: google-drive
+
+  google-drive:
+    credentials-path: ${GOOGLE_DRIVE_CREDENTIALS_PATH:/etc/secrets/google-drive/credentials.json}
+    root-folder-id: ${GOOGLE_DRIVE_ROOT_FOLDER_ID}
+    application-name: ${GOOGLE_DRIVE_APP_NAME:NU-AURA-HRMS}
+
   # CORS — must be explicitly set via env var in production; no wildcard permitted
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:https://app.nulogic.io}

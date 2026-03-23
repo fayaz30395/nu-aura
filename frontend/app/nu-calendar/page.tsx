@@ -455,7 +455,7 @@ function CalendarContent() {
               <CalendarIcon className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">NU-Calendar</h1>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">NU-Calendar</h1>
               <p className="text-sm text-[var(--text-muted)]">Your Google Calendar events</p>
             </div>
           </div>

@@ -96,23 +96,23 @@ export default function MyLeavesPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">My Leaves</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Leaves</h1>
           <button
             onClick={() => router.push('/leave/apply')}
-            className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-semibold"
+            className="btn-primary !h-auto"
           >
             Apply for Leave
           </button>
         </div>
 
         {/* Filters */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 mb-6">
+        <div className="skeuo-card p-6 mb-6">
           <div className="flex gap-4 items-center">
             <label className="text-sm font-medium text-[var(--text-secondary)]">Filter by Status:</label>
             <select
               value={filterStatus}
               onChange={(e) => { setFilterStatus(e.target.value as LeaveRequestStatus | ''); setCurrentPage(0); }}
-              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+              className="input-aura"
             >
               <option value="">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -140,7 +140,7 @@ export default function MyLeavesPage() {
         )}
 
         {/* Leave Requests Table */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
+        <div className="skeuo-card overflow-hidden">
           {!requestsData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
@@ -159,7 +159,7 @@ export default function MyLeavesPage() {
               <p className="text-sm text-[var(--text-secondary)] mb-6">Get started by applying for your first leave</p>
               <button
                 onClick={() => router.push('/leave/apply')}
-                className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-medium"
+                className="btn-primary !h-auto"
               >
                 Apply for Leave
               </button>
@@ -167,8 +167,8 @@ export default function MyLeavesPage() {
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-[var(--bg-secondary)]/50">
+                <table className="table-aura">
+                  <thead className="skeuo-table-header">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>

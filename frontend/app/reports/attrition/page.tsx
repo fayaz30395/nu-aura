@@ -110,7 +110,7 @@ export default function AttritionReportPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Attrition Analysis</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Attrition Analysis</h1>
             <p className="text-sm text-[var(--text-muted)] mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">
@@ -183,7 +183,7 @@ export default function AttritionReportPage() {
             <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 bg-white border border-[var(--border-main)] rounded-lg">
+          <div className="text-center py-16 skeuo-card">
             <Shield className="h-12 w-12 text-green-400 mx-auto mb-3" />
             <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
             <p className="text-sm text-[var(--text-muted)] mt-1">Lower the minimum risk score to see more results</p>
@@ -196,7 +196,7 @@ export default function AttritionReportPage() {
                 const colors = RISK_COLOR[pred.riskLevel] ?? RISK_COLOR.MEDIUM;
                 const expanded = expandedId === pred.id;
                 return (
-                  <div key={pred.id} className={`bg-white border rounded-lg overflow-hidden transition-all ${expanded ? 'shadow-md' : ''}`}>
+                  <div key={pred.id} className={`skeuo-card overflow-hidden transition-all ${expanded ? 'shadow-md' : ''}`}>
                     <button
                       onClick={() => setExpandedId(expanded ? null : pred.id)}
                       className="w-full flex items-center gap-4 px-5 py-3 text-left hover:bg-[var(--bg-surface)]"

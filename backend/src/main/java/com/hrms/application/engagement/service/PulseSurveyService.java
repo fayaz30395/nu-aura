@@ -8,6 +8,7 @@ import com.hrms.domain.engagement.PulseSurvey.SurveyStatus;
 import com.hrms.domain.engagement.PulseSurveyQuestion.QuestionCategory;
 import com.hrms.domain.engagement.PulseSurveyQuestion.QuestionType;
 import com.hrms.infrastructure.engagement.repository.*;
+import com.hrms.common.exception.BusinessException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -223,7 +224,7 @@ public class PulseSurveyService {
             try {
                 question.setOptions(objectMapper.writeValueAsString(request.getOptions()));
             } catch (JsonProcessingException e) {
-                log.error("Error serializing options", e);
+                throw new BusinessException("Failed to serialize question options: " + e.getMessage());
             }
         }
 
@@ -329,7 +330,7 @@ public class PulseSurveyService {
                 try {
                     answer.setSelectedOptions(objectMapper.writeValueAsString(answerReq.getSelectedOptions()));
                 } catch (JsonProcessingException e) {
-                    log.error("Error serializing selected options", e);
+                    throw new BusinessException("Failed to serialize selected options: " + e.getMessage());
                 }
             }
 

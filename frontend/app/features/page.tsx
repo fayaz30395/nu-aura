@@ -404,7 +404,7 @@ export default function FeaturesPage() {
           <Badge size="lg" variant="primary" className="mb-6">
             Platform Features
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
             Everything you need to manage your workforce
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -523,7 +523,7 @@ export default function FeaturesPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/auth/login">
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="btn-primary gap-2">
                 Start Free Trial
                 <ArrowRight className="h-5 w-5" />
               </Button>

@@ -231,11 +231,11 @@ export default function ShiftsManagementPage() {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
                 <Clock className="h-8 w-8 text-primary-600" />
                 Shift Management
               </h1>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
                 Configure and manage work shifts for your organization
               </p>
             </div>
@@ -245,7 +245,7 @@ export default function ShiftsManagementPage() {
                 setEditingShift(null);
                 setShowModal(true);
               }}
-              className="flex items-center gap-2 bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors shadow-lg hover:shadow-xl"
+              className="btn-primary flex items-center gap-2"
             >
               <Plus className="h-5 w-5" />
               Add Shift
@@ -281,7 +281,7 @@ export default function ShiftsManagementPage() {
               shifts.map((shift) => (
                 <div
                   key={shift.id}
-                  className="bg-[var(--bg-input)] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="skeuo-card overflow-hidden"
                   style={{ borderTop: `4px solid ${shift.colorCode || '#3B82F6'}` }}
                 >
                   <div className="p-6">
@@ -386,8 +386,8 @@ export default function ShiftsManagementPage() {
 
           {/* Add/Edit Shift Modal */}
           {showModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-              <div className="bg-[var(--bg-input)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
+              <div className="skeuo-card max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -417,7 +417,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="text"
                             {...form.register('shiftCode')}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                             placeholder="DS, NS, GS"
                           />
                           {form.formState.errors.shiftCode && (
@@ -431,7 +431,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="text"
                             {...form.register('shiftName')}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                             placeholder="Day Shift, Night Shift"
                           />
                           {form.formState.errors.shiftName && (
@@ -447,7 +447,7 @@ export default function ShiftsManagementPage() {
                           </label>
                           <select
                             {...form.register('shiftType')}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           >
                             <option value="REGULAR">Regular</option>
                             <option value="ROTATIONAL">Rotational</option>
@@ -461,7 +461,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="color"
                             {...form.register('colorCode')}
-                            className="w-full h-10 px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700"
+                            className="input-aura h-10"
                           />
                         </div>
                       </div>
@@ -490,7 +490,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="time"
                             {...form.register('startTime')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           />
                         </div>
                         <div>
@@ -500,7 +500,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="time"
                             {...form.register('endTime')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           />
                         </div>
                         <div>
@@ -511,7 +511,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('breakDurationMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           />
                         </div>
                       </div>
@@ -526,7 +526,7 @@ export default function ShiftsManagementPage() {
                             step="0.5"
                             min="0"
                             {...form.register('fullDayHours')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           />
                         </div>
                         <div>
@@ -536,7 +536,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="text"
                             {...form.register('workingDays')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                             placeholder="MONDAY,TUESDAY,WEDNESDAY"
                           />
                         </div>
@@ -555,7 +555,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('gracePeriodInMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           />
                         </div>
                         <div>
@@ -566,7 +566,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('lateMarkAfterMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           />
                         </div>
                         <div>
@@ -577,7 +577,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('halfDayAfterMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                           />
                         </div>
                       </div>
@@ -625,7 +625,7 @@ export default function ShiftsManagementPage() {
                             step="0.1"
                             min="1"
                             {...form.register('overtimeMultiplier')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="input-aura"
                             disabled={!form.watch('allowsOvertime')}
                           />
                         </div>
@@ -641,14 +641,14 @@ export default function ShiftsManagementPage() {
                           setEditingShift(null);
                           resetForm();
                         }}
-                        className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                        className="btn-secondary"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={form.formState.isSubmitting || createShiftMutation.isPending || updateShiftMutation.isPending}
-                        className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50"
+                        className="btn-primary disabled:opacity-50"
                       >
                         {(form.formState.isSubmitting || createShiftMutation.isPending || updateShiftMutation.isPending) ? 'Saving...' : editingShift ? 'Update' : 'Create'} Shift
                       </button>

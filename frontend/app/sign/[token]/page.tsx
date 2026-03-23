@@ -255,9 +255,9 @@ export default function SignPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="max-w-md w-full skeuo-card p-8 text-center">
           <XCircle className="h-14 w-14 text-red-500 mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-slate-800 mb-2">Link Invalid or Expired</h1>
+          <h1 className="text-xl font-semibold text-slate-800 skeuo-emboss mb-2">Link Invalid or Expired</h1>
           <p className="text-slate-500 text-sm mb-2">{error}</p>
           {docInfo?.tokenExpiresAt && (
             <p className="text-slate-400 text-xs mt-4">
@@ -274,7 +274,7 @@ export default function SignPage() {
     const isDeclinedStatus = docInfo?.status === 'DECLINED';
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="max-w-md w-full skeuo-card p-8 text-center">
           {isSignedStatus ? (
             <CheckCircle className="h-14 w-14 text-green-500 mx-auto mb-4" />
           ) : isDeclinedStatus ? (
@@ -282,7 +282,7 @@ export default function SignPage() {
           ) : (
             <AlertCircle className="h-14 w-14 text-amber-500 mx-auto mb-4" />
           )}
-          <h1 className="text-xl font-semibold text-slate-800 mb-2">
+          <h1 className="text-xl font-semibold text-slate-800 skeuo-emboss mb-2">
             {isSignedStatus
               ? 'Document Already Signed'
               : isDeclinedStatus
@@ -309,7 +309,7 @@ export default function SignPage() {
   if (step === 'success') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="max-w-md w-full skeuo-card p-8 text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-2xl font-semibold text-slate-800 mb-2">
             Document Signed Successfully
@@ -353,7 +353,7 @@ export default function SignPage() {
   if (step === 'declined') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="max-w-md w-full skeuo-card p-8 text-center">
           <XCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
           <h1 className="text-2xl font-semibold text-slate-800 mb-2">
             Signing Request Declined
@@ -391,7 +391,7 @@ export default function SignPage() {
 
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Document Info Card */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="skeuo-card p-6">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
               <FileText className="h-6 w-6 text-blue-600" />
@@ -449,7 +449,7 @@ export default function SignPage() {
 
         {/* Step: Email Verification */}
         {step === 'verify' && (
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="skeuo-card p-6">
             <h2 className="text-base font-semibold text-slate-800 mb-1">
               Verify Your Identity
             </h2>
@@ -501,7 +501,7 @@ export default function SignPage() {
 
         {/* Step: Signing */}
         {step === 'sign' && (
-          <div className="bg-white rounded-xl shadow-sm p-6 space-y-5">
+          <div className="skeuo-card p-6 space-y-5">
             <div>
               <h2 className="text-base font-semibold text-slate-800 mb-1">
                 Sign Document
@@ -595,7 +595,7 @@ export default function SignPage() {
                     setSubmitError(null);
                   }}
                   placeholder="Your full name"
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input-aura"
                 />
                 {typedName && (
                   <div className="mt-3 border border-slate-200 rounded-lg p-4 bg-slate-50">
@@ -665,7 +665,7 @@ export default function SignPage() {
       {/* Decline Modal */}
       {showDeclineModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+          <div className="skeuo-card max-w-md w-full p-6">
             <h3 className="text-base font-semibold text-slate-800 mb-1">
               Decline to Sign
             </h3>
@@ -678,7 +678,7 @@ export default function SignPage() {
               onChange={(e) => setDeclineReason(e.target.value)}
               placeholder="Reason for declining (optional)..."
               rows={3}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none"
+              className="input-aura resize-none"
             />
             {declineError && (
               <p className="mt-2 text-xs text-red-600 flex items-center gap-1">

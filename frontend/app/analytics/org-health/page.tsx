@@ -71,7 +71,7 @@ export default function OrganizationHealthPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                     >
-                        <h1 className="text-3xl font-bold text-[var(--text-primary)]">Organization Health</h1>
+                        <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Organization Health</h1>
                         <p className="text-[var(--text-secondary)] mt-1">Executive summary of workforce vitality and performance</p>
                     </motion.div>
                     <div className="flex items-center gap-4">

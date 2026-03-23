@@ -252,7 +252,7 @@ export default function OKRPage() {
       <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">OKR Management</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">OKR Management</h1>
           <p className="text-sm text-[var(--text-muted)] mt-1">
             Objectives and Key Results tracking
           </p>
@@ -387,7 +387,7 @@ export default function OKRPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="text-right mr-4">
-                      <div className="text-2xl font-bold text-[var(--text-primary)]">
+                      <div className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {objective.progressPercentage}%
                       </div>
                       <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">

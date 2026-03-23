@@ -449,8 +449,8 @@ export default function EmployeesPage() {
 
         {/* Add Employee Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl skeuo-card">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
+            <div className="skeuo-card rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-[var(--text-primary)]">Add New Employee</h2>
@@ -527,7 +527,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('employeeCode')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="EMP001"
                           />
                           {errors.employeeCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employeeCode.message}</p>}
@@ -539,7 +539,7 @@ export default function EmployeesPage() {
                           <input
                             type="email"
                             {...register('workEmail')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="employee@company.com"
                           />
                           {errors.workEmail && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.workEmail.message}</p>}
@@ -554,7 +554,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('firstName')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.firstName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.firstName.message}</p>}
                         </div>
@@ -565,7 +565,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('middleName')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.middleName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.middleName.message}</p>}
                         </div>
@@ -576,7 +576,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('lastName')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.lastName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.lastName.message}</p>}
                         </div>
@@ -589,7 +589,7 @@ export default function EmployeesPage() {
                         <input
                           type="password"
                           {...register('password')}
-                          className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                          className="input-aura"
                           placeholder="Employee will change on first login"
                         />
                         {errors.password && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.password.message}</p>}
@@ -608,7 +608,7 @@ export default function EmployeesPage() {
                           <input
                             type="email"
                             {...register('personalEmail')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="personal@email.com"
                           />
                           {errors.personalEmail && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.personalEmail.message}</p>}
@@ -620,7 +620,7 @@ export default function EmployeesPage() {
                           <input
                             type="tel"
                             {...register('phoneNumber')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="+1 234 567 8900"
                           />
                           {errors.phoneNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.phoneNumber.message}</p>}
@@ -635,7 +635,7 @@ export default function EmployeesPage() {
                           <input
                             type="tel"
                             {...register('emergencyContactNumber')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="+1 234 567 8900"
                           />
                           {errors.emergencyContactNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.emergencyContactNumber.message}</p>}
@@ -647,7 +647,7 @@ export default function EmployeesPage() {
                           <input
                             type="date"
                             {...register('dateOfBirth')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.dateOfBirth && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.dateOfBirth.message}</p>}
                         </div>
@@ -664,7 +664,7 @@ export default function EmployeesPage() {
                             <select
                               {...field}
                               value={field.value || ''}
-                              className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                              className="input-aura"
                             >
                               <option value="">Select Gender</option>
                               <option value="MALE">Male</option>
@@ -684,7 +684,7 @@ export default function EmployeesPage() {
                         <textarea
                           rows={2}
                           {...register('address')}
-                          className="w-full min-h-[80px] px-4 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                          className="input-aura min-h-[80px] py-2"
                           placeholder="Street address"
                         />
                         {errors.address && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.address.message}</p>}
@@ -698,7 +698,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('city')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.city && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.city.message}</p>}
                         </div>
@@ -709,7 +709,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('state')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.state && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.state.message}</p>}
                         </div>
@@ -723,7 +723,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('postalCode')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.postalCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.postalCode.message}</p>}
                         </div>
@@ -734,7 +734,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('country')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.country && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.country.message}</p>}
                         </div>
@@ -753,7 +753,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('designation')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="Senior Software Engineer"
                           />
                           {errors.designation && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.designation.message}</p>}
@@ -768,7 +768,7 @@ export default function EmployeesPage() {
                             render={({ field }) => (
                               <select
                                 {...field}
-                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                                className="input-aura"
                               >
                                 <option value="FULL_TIME">Full Time</option>
                                 <option value="PART_TIME">Part Time</option>
@@ -791,7 +791,7 @@ export default function EmployeesPage() {
                           render={({ field }) => (
                             <select
                               {...field}
-                              className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                              className="input-aura"
                             >
                               <option value="">Select Department</option>
                               {departments.map((dept) => (
@@ -817,7 +817,7 @@ export default function EmployeesPage() {
                               <select
                                 {...field}
                                 value={field.value || ''}
-                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                                className="input-aura"
                               >
                                 <option value="">Select Level</option>
                                 <option value="ENTRY">Entry</option>
@@ -846,7 +846,7 @@ export default function EmployeesPage() {
                               <select
                                 {...field}
                                 value={field.value || ''}
-                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                                className="input-aura"
                               >
                                 <option value="">Select Role</option>
                                 <option value="ENGINEER">Engineer</option>
@@ -875,7 +875,7 @@ export default function EmployeesPage() {
                           <input
                             type="date"
                             {...register('joiningDate')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.joiningDate && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.joiningDate.message}</p>}
                         </div>
@@ -886,7 +886,7 @@ export default function EmployeesPage() {
                           <input
                             type="date"
                             {...register('confirmationDate')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                           />
                           {errors.confirmationDate && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.confirmationDate.message}</p>}
                         </div>
@@ -902,7 +902,7 @@ export default function EmployeesPage() {
                           render={({ field }) => (
                             <select
                               {...field}
-                              className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                              className="input-aura"
                             >
                               <option value="">Select Manager</option>
                               <option value="SELF">Self (No Reporting Manager)</option>
@@ -932,7 +932,7 @@ export default function EmployeesPage() {
                             render={({ field }) => (
                               <select
                                 {...field}
-                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                                className="input-aura"
                               >
                                 <option value="">None</option>
                                 {managers.map((manager) => (
@@ -954,7 +954,7 @@ export default function EmployeesPage() {
                             render={({ field }) => (
                               <select
                                 {...field}
-                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                                className="input-aura"
                               >
                                 <option value="">None</option>
                                 {managers.map((manager) => (
@@ -984,7 +984,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('bankAccountNumber')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="1234567890"
                           />
                           {errors.bankAccountNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankAccountNumber.message}</p>}
@@ -996,7 +996,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('bankName')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="Bank of America"
                           />
                           {errors.bankName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankName.message}</p>}
@@ -1011,7 +1011,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('bankIfscCode')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="HDFC0001234"
                           />
                           {errors.bankIfscCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankIfscCode.message}</p>}
@@ -1023,7 +1023,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('taxId')}
-                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                            className="input-aura"
                             placeholder="XXX-XX-XXXX"
                           />
                           {errors.taxId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.taxId.message}</p>}
@@ -1069,8 +1069,8 @@ export default function EmployeesPage() {
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && employeeToDelete && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl skeuo-card">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
+            <div className="skeuo-card rounded-xl max-w-md w-full p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
                   <svg className="h-5 w-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

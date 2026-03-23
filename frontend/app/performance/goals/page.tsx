@@ -196,7 +196,7 @@ export default function GoalsPage() {
           </p>
           <button
             onClick={() => window.history.back()}
-            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="mt-6 btn-primary !h-auto transition-colors"
           >
             Go Back
           </button>
@@ -209,21 +209,21 @@ export default function GoalsPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Goals</h1>
+          <h1 className="text-3xl font-bold skeuo-emboss">Goals</h1>
           <PermissionGate permission={Permissions.GOAL_CREATE}>
             <button
               onClick={() => {
                 resetFormHandler();
                 setShowModal(true);
               }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              className="btn-primary !h-auto"
             >
               Create Goal
             </button>
           </PermissionGate>
         </div>
 
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
+        <div className="skeuo-card p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -232,7 +232,7 @@ export default function GoalsPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as GoalType | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="input-aura"
               >
                 <option value="ALL">All Types</option>
                 <option value="OKR">OKR</option>
@@ -250,7 +250,7 @@ export default function GoalsPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as GoalStatus | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="input-aura"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -269,7 +269,7 @@ export default function GoalsPage() {
             <div className="text-[var(--text-secondary)]">Loading goals...</div>
           </div>
         ) : filteredGoals.length === 0 ? (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+          <div className="skeuo-card p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">No goals found</div>
             <PermissionGate permission={Permissions.GOAL_CREATE}>
               <button
@@ -277,7 +277,7 @@ export default function GoalsPage() {
                   resetFormHandler();
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                className="btn-primary !h-auto"
               >
                 Create Your First Goal
               </button>
@@ -288,7 +288,7 @@ export default function GoalsPage() {
             {filteredGoals.map((goal) => {
               const progress = calculateProgress(goal.currentValue, goal.targetValue);
               return (
-                <div key={goal.id} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                <div key={goal.id} className="skeuo-card p-6 hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold mb-2">{goal.title}</h3>
@@ -354,8 +354,8 @@ export default function GoalsPage() {
         )}
 
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
+            <div className="skeuo-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedGoal ? 'Edit Goal' : 'Create Goal'}
@@ -369,7 +369,7 @@ export default function GoalsPage() {
                       <input
                         type="text"
                         {...register('title')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="input-aura"
                       />
                       {errors.title && (
                         <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
@@ -383,7 +383,7 @@ export default function GoalsPage() {
                       <textarea
                         rows={3}
                         {...register('description')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="input-aura"
                       />
                       {errors.description && (
                         <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -397,7 +397,7 @@ export default function GoalsPage() {
                         </label>
                         <select
                           {...register('goalType')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         >
                           <option value="OKR">OKR</option>
                           <option value="KPI">KPI</option>
@@ -417,7 +417,7 @@ export default function GoalsPage() {
                         </label>
                         <select
                           {...register('status')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         >
                           <option value="DRAFT">Draft</option>
                           <option value="ACTIVE">Active</option>
@@ -440,7 +440,7 @@ export default function GoalsPage() {
                         <input
                           type="number"
                           {...register('targetValue')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                         {errors.targetValue && (
                           <p className="text-red-500 text-sm mt-1">{errors.targetValue.message}</p>
@@ -454,7 +454,7 @@ export default function GoalsPage() {
                         <input
                           type="number"
                           {...register('currentValue')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                         {errors.currentValue && (
                           <p className="text-red-500 text-sm mt-1">{errors.currentValue.message}</p>
@@ -469,7 +469,7 @@ export default function GoalsPage() {
                           type="text"
                           placeholder="e.g., tasks, %"
                           {...register('unit')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                         {errors.unit && (
                           <p className="text-red-500 text-sm mt-1">{errors.unit.message}</p>
@@ -485,7 +485,7 @@ export default function GoalsPage() {
                         <input
                           type="date"
                           {...register('startDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                         {errors.startDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -499,7 +499,7 @@ export default function GoalsPage() {
                         <input
                           type="date"
                           {...register('endDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                         {errors.endDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -515,14 +515,14 @@ export default function GoalsPage() {
                         setShowModal(false);
                         resetFormHandler();
                       }}
-                      className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                      className="flex-1 btn-secondary"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                      className="flex-1 btn-primary !h-auto disabled:opacity-50"
                     >
                       {isSubmitting ? 'Saving...' : selectedGoal ? 'Update' : 'Create'}
                     </button>
@@ -534,8 +534,8 @@ export default function GoalsPage() {
         )}
 
         {showDeleteConfirm && selectedGoal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
+            <div className="skeuo-card max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Goal</h2>
               <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete &quot;{selectedGoal.title}&quot;? This action cannot be undone.
@@ -546,7 +546,7 @@ export default function GoalsPage() {
                     setShowDeleteConfirm(false);
                     setSelectedGoal(null);
                   }}
-                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                  className="flex-1 btn-secondary"
                 >
                   Cancel
                 </button>

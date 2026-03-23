@@ -17,6 +17,8 @@ public interface DocumentExpiryTrackingRepository extends JpaRepository<Document
 
     Optional<DocumentExpiryTracking> findByDocumentId(UUID documentId);
 
+    Optional<DocumentExpiryTracking> findByTenantIdAndDocumentId(UUID tenantId, UUID documentId);
+
     List<DocumentExpiryTracking> findByTenantIdAndExpiryDateBefore(UUID tenantId, LocalDate date);
 
     List<DocumentExpiryTracking> findByTenantIdAndExpiryDateBetween(UUID tenantId, LocalDate startDate, LocalDate endDate);

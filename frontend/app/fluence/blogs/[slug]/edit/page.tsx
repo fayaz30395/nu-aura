@@ -185,7 +185,7 @@ export default function EditBlogPost() {
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Edit Blog Post
               </h1>
             </div>

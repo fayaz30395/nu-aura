@@ -167,7 +167,7 @@ export default function CourseCatalogPage() {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Course Catalog</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Course Catalog</h1>
             <p className="text-[var(--text-muted)] mt-1 text-sm">
               Browse and enroll in available courses
             </p>

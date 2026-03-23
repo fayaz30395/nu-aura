@@ -305,11 +305,21 @@ app:
   frontend:
     url: ${FRONTEND_URL:http://localhost:3000}
 
+  # Storage provider: 'minio' (default, local dev) or 'google-drive' (production)
+  storage:
+    provider: ${STORAGE_PROVIDER:minio}
+
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
     access-key: ${MINIO_ACCESS_KEY:}
     secret-key: ${MINIO_SECRET_KEY:}
     bucket: ${MINIO_BUCKET:hrms-files}
+    url-expiry-hours: ${MINIO_URL_EXPIRY_HOURS:24}
+
+  google-drive:
+    credentials-path: ${GOOGLE_DRIVE_CREDENTIALS_PATH:}
+    root-folder-id: ${GOOGLE_DRIVE_ROOT_FOLDER_ID:}
+    application-name: ${GOOGLE_DRIVE_APP_NAME:NU-AURA-HRMS}
 
   slack:
     enabled: ${SLACK_ENABLED:false}

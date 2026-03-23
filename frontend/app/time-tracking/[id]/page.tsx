@@ -134,7 +134,7 @@ export default function TimeEntryDetailPage() {
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Time Entry
               </h1>
               <span
@@ -164,7 +164,7 @@ export default function TimeEntryDetailPage() {
               </div>
               <span className="text-sm text-[var(--text-muted)]">Hours Worked</span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)]">
+            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {timeTrackingService.formatHours(entry.hoursWorked)}
             </p>
           </div>
@@ -176,7 +176,7 @@ export default function TimeEntryDetailPage() {
               </div>
               <span className="text-sm text-[var(--text-muted)]">Billable Hours</span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)]">
+            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {entry.isBillable
                 ? timeTrackingService.formatHours(entry.billableHours)
                 : 'N/A'}
@@ -193,7 +193,7 @@ export default function TimeEntryDetailPage() {
                   Billing Amount
                 </span>
               </div>
-              <p className="text-2xl font-bold text-[var(--text-primary)]">
+              <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 {timeTrackingService.formatCurrency(entry.billingAmount)}
               </p>
             </div>

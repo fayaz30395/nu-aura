@@ -816,7 +816,7 @@ function MailContent() {
             />
 
             {/* Email List / Viewer */}
-            <Card className="lg:col-span-3">
+            <Card className="skeuo-card lg:col-span-3">
               {selectedEmail ? (
                 <EmailViewer
                   email={selectedEmail}

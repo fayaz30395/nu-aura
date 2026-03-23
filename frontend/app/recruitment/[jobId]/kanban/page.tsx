@@ -493,7 +493,7 @@ export default function KanbanPage() {
               <IconArrowLeft size={18} />
             </ActionIcon>
             <div>
-              <Title order={3}>Recruitment Pipeline</Title>
+              <Title order={3} className="skeuo-emboss">Recruitment Pipeline</Title>
               <Text size="sm" c="dimmed">
                 Drag candidates between stages or use arrows to move forward / backward
               </Text>
@@ -510,10 +510,10 @@ export default function KanbanPage() {
                 />
               </Tooltip>
             )}
-            <Badge variant="outline" color="red" size="sm">
+            <Badge variant="outline" color="red" size="sm" className="badge-status">
               Rejected: {rejectedCandidates.length}
             </Badge>
-            <Badge variant="outline" color="gray" size="sm">
+            <Badge variant="outline" color="gray" size="sm" className="badge-status">
               Total: {candidates.length}
             </Badge>
           </Group>

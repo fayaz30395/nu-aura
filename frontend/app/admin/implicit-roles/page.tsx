@@ -265,8 +265,8 @@ export default function ImplicitRolesPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Implicit Roles</h1>
-          <p className="text-[var(--text-secondary)] mt-1">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Implicit Roles</h1>
+          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage rules that automatically assign roles to users based on their organizational context
           </p>
         </div>
@@ -278,13 +278,13 @@ export default function ImplicitRolesPage() {
               placeholder="Search rules..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+              className="input-aura w-full"
             />
           </div>
           <select
             value={activeFilter}
             onChange={(e) => setActiveFilter(e.target.value as 'all' | 'active' | 'inactive')}
-            className="px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="input-aura"
           >
             <option value="all">All Rules</option>
             <option value="active">Active</option>
@@ -292,7 +292,7 @@ export default function ImplicitRolesPage() {
           </select>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500 whitespace-nowrap"
+            className="btn-primary !h-auto whitespace-nowrap"
           >
             Create Rule
           </button>
@@ -335,9 +335,9 @@ export default function ImplicitRolesPage() {
           </div>
         )}
 
-        <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-x-auto">
-          <table className="min-w-full divide-y divide-[var(--border-main)]">
-            <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]">
+        <div className="skeuo-card overflow-x-auto">
+          <table className="table-aura">
+            <thead className="skeuo-table-header">
               <tr>
                 <th className="px-4 py-3 text-left">
                   <input
@@ -457,8 +457,8 @@ export default function ImplicitRolesPage() {
 
       {/* Create Rule Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center z-50 p-4">
+          <div className="skeuo-card p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Create New Implicit Role Rule</h2>
             <form onSubmit={createForm.handleSubmit(handleCreateRule)}>
               <div className="grid grid-cols-2 gap-4 mb-4">
@@ -469,7 +469,7 @@ export default function ImplicitRolesPage() {
                   <input
                     type="text"
                     {...createForm.register('ruleName')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                     placeholder="e.g., Manager Auto-Role"
                   />
                   {createForm.formState.errors.ruleName && (
@@ -483,7 +483,7 @@ export default function ImplicitRolesPage() {
                   </label>
                   <select
                     {...createForm.register('conditionType')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                   >
                     {conditionOptions.map((opt) => (
                       <option key={opt} value={opt}>
@@ -506,7 +506,7 @@ export default function ImplicitRolesPage() {
                   </label>
                   <select
                     {...createForm.register('targetRoleId')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                   >
                     <option value="">Select a role...</option>
                     {roles.map((role) => (
@@ -528,7 +528,7 @@ export default function ImplicitRolesPage() {
                   </label>
                   <select
                     {...createForm.register('scope')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                   >
                     {scopeOptions.map((opt) => (
                       <option key={opt} value={opt}>
@@ -546,7 +546,7 @@ export default function ImplicitRolesPage() {
                 <input
                   type="number"
                   {...createForm.register('priority', { valueAsNumber: true })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-aura"
                   placeholder="0"
                 />
               </div>
@@ -557,7 +557,7 @@ export default function ImplicitRolesPage() {
                 </label>
                 <textarea
                   {...createForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-aura"
                   rows={3}
                   placeholder="Optional description..."
                 />
@@ -570,14 +570,14 @@ export default function ImplicitRolesPage() {
                     setShowCreateModal(false);
                     createForm.reset();
                   }}
-                  className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                  className="btn-primary !h-auto disabled:opacity-50"
                 >
                   Create Rule
                 </button>
@@ -589,8 +589,8 @@ export default function ImplicitRolesPage() {
 
       {/* Edit Rule Modal */}
       {showEditModal && selectedRule && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center z-50 p-4">
+          <div className="skeuo-card p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Implicit Role Rule</h2>
             <form onSubmit={editForm.handleSubmit(handleUpdateRule)}>
               <div className="grid grid-cols-2 gap-4 mb-4">
@@ -601,7 +601,7 @@ export default function ImplicitRolesPage() {
                   <input
                     type="text"
                     {...editForm.register('ruleName')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                   />
                   {editForm.formState.errors.ruleName && (
                     <p className="mt-1 text-xs text-red-500">{editForm.formState.errors.ruleName.message}</p>
@@ -614,7 +614,7 @@ export default function ImplicitRolesPage() {
                   </label>
                   <select
                     {...editForm.register('conditionType')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                   >
                     {conditionOptions.map((opt) => (
                       <option key={opt} value={opt}>
@@ -632,7 +632,7 @@ export default function ImplicitRolesPage() {
                   </label>
                   <select
                     {...editForm.register('targetRoleId')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                   >
                     {roles.map((role) => (
                       <option key={role.id} value={role.id}>
@@ -648,7 +648,7 @@ export default function ImplicitRolesPage() {
                   </label>
                   <select
                     {...editForm.register('scope')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input-aura"
                   >
                     {scopeOptions.map((opt) => (
                       <option key={opt} value={opt}>
@@ -666,7 +666,7 @@ export default function ImplicitRolesPage() {
                 <input
                   type="number"
                   {...editForm.register('priority', { valueAsNumber: true })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-aura"
                 />
               </div>
 
@@ -676,7 +676,7 @@ export default function ImplicitRolesPage() {
                 </label>
                 <textarea
                   {...editForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-aura"
                   rows={3}
                 />
               </div>
@@ -689,14 +689,14 @@ export default function ImplicitRolesPage() {
                     setSelectedRule(null);
                     editForm.reset();
                   }}
-                  className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                  className="btn-primary !h-auto disabled:opacity-50"
                 >
                   Update Rule
                 </button>
@@ -723,8 +723,8 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
   const usersQuery = useAffectedUsers(rule.id);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center z-50 p-4">
+      <div className="skeuo-card p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             Users Affected by &quot;{rule.ruleName}&quot;
@@ -740,9 +740,9 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
         {usersQuery.isLoading && <p className="text-[var(--text-muted)]">Loading...</p>}
 
         {usersQuery.data && (
-          <div className="bg-[var(--bg-input)] rounded-lg overflow-x-auto">
-            <table className="min-w-full divide-y divide-[var(--border-main)]">
-              <thead className="bg-[var(--bg-surface)]">
+          <div className="skeuo-card overflow-x-auto">
+            <table className="table-aura">
+              <thead className="skeuo-table-header">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
                     User Name
@@ -802,7 +802,7 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
         <div className="flex justify-end mt-6">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+            className="btn-secondary"
           >
             Close
           </button>

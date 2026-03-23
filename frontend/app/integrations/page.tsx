@@ -210,7 +210,7 @@ export default function IntegrationsPage() {
           <Badge size="lg" variant="info" className="mb-6">
             Integrations
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
             Works with the tools you already use
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">

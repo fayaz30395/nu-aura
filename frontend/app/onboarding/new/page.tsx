@@ -112,7 +112,7 @@ export default function NewOnboardingPage() {
                 {/* Header & Progress */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="space-y-2">
-                        <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)]">
+                        <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] skeuo-emboss">
                             Initiate <span className="text-primary-600">Onboarding</span>
                         </h1>
                         <p className="text-[var(--text-muted)] font-medium">Step {currentStep} of 3: {steps[currentStep - 1].name}</p>
@@ -332,7 +332,7 @@ export default function NewOnboardingPage() {
                                     onClick={handleSubmit}
                                     isLoading={createProcessMutation.isPending}
                                     size="lg"
-                                    className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20"
+                                    className="btn-primary px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20"
                                     leftIcon={<Zap className="h-4 w-4" />}
                                 >
                                     Launch Process

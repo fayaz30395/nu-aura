@@ -75,7 +75,7 @@ export default function PayrollReportsPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Payroll Reports</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Payroll Reports</h1>
             <p className="text-slate-600 dark:text-slate-400 mt-1">
               Generate comprehensive payroll reports with salary breakdowns
             </p>
@@ -123,7 +123,7 @@ export default function PayrollReportsPage() {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800"
+                      className="input-aura"
                     />
                   </div>
                   <div>
@@ -132,7 +132,7 @@ export default function PayrollReportsPage() {
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800"
+                      className="input-aura"
                     />
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export default function PayrollReportsPage() {
               <button
                 onClick={handleDownload}
                 disabled={downloadMutation.isPending}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full btn-primary !h-auto disabled:opacity-50"
               >
                 {downloadMutation.isPending ? (
                   <>

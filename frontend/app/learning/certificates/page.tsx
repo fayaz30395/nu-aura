@@ -108,9 +108,9 @@ export default function CertificateGalleryPage() {
 
   const getStatusBadge = (isActive: boolean) => {
     if (isActive) {
-      return <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 rounded-full text-xs font-semibold">Active</span>;
+      return <span className="badge-status px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 rounded-full text-xs font-semibold">Active</span>;
     }
-    return <span className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 rounded-full text-xs font-semibold">Expired</span>;
+    return <span className="badge-status px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 rounded-full text-xs font-semibold">Expired</span>;
   };
 
   const formatDate = (date: string) => {
@@ -129,24 +129,24 @@ export default function CertificateGalleryPage() {
           <Link href="/learning" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-2">My Certificates</h1>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">My Certificates</h1>
           <p className="text-[var(--text-secondary)]">Collection of all earned certificates and credentials</p>
         </div>
 
         {/* Summary Stats */}
         {!isLoading && certificates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6">
+            <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md p-6">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{certificates.length}</div>
               <div className="text-[var(--text-secondary)] text-sm">Total Certificates</div>
             </div>
-            <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6">
+            <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md p-6">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400">
                 {certificates.filter(c => c.isActive).length}
               </div>
               <div className="text-[var(--text-secondary)] text-sm">Active Credentials</div>
             </div>
-            <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6">
+            <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md p-6">
               <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                 {certificates.reduce((sum, c) => sum + (c.scoreAchieved || 0), 0) / Math.max(certificates.length, 1) | 0}%
               </div>
@@ -166,7 +166,7 @@ export default function CertificateGalleryPage() {
                 placeholder="Search by course name or certificate number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               />
             </div>
 
@@ -218,7 +218,7 @@ export default function CertificateGalleryPage() {
                   </div>
 
                   {/* Certificate Number */}
-                  <div className="bg-[var(--bg-card)] rounded-lg p-4 mb-4">
+                  <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-4 mb-4">
                     <div className="text-xs text-[var(--text-secondary)] mb-1">Certificate ID</div>
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{cert.certificateNumber}</span>
@@ -265,7 +265,7 @@ export default function CertificateGalleryPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => handleDownload(cert.id, cert.certificateNumber)}
-                      className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium transition-colors"
+                      className="btn-primary flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium transition-colors"
                       title="Download PDF"
                     >
                       <Download className="h-4 w-4" />

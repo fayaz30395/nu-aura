@@ -84,7 +84,7 @@ export default function FluenceDashboardPage() {
                   <div className="p-4 bg-white/20 rounded-lg backdrop-blur-sm">
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>
-                  <h1 className={`${typography.pageTitle} text-white`}>
+                  <h1 className={`${typography.pageTitle} text-white skeuo-emboss`}>
                     NU-Fluence Knowledge Hub
                   </h1>
                 </div>

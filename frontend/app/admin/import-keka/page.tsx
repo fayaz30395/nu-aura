@@ -324,16 +324,16 @@ export default function KekaImportPage() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Admin
             </button>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               KEKA Data Import
             </h1>
-            <p className="text-[var(--text-secondary)] mt-2">
+            <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
               Migrate employees and related data from KEKA HRMS into NU-AURA
             </p>
           </div>
 
           {/* Progress Stepper */}
-          <div className="mb-8 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg p-6">
+          <div className="mb-8 skeuo-card p-6">
             <Stepper active={['upload', 'mapping', 'preview', 'import', 'result'].indexOf(step)}>
               <Stepper.Step label="Upload" description="Select KEKA export file" />
               <Stepper.Step label="Mapping" description="Map columns" />
@@ -362,7 +362,7 @@ export default function KekaImportPage() {
 
           {/* Step 1: Upload */}
           {step === 'upload' && (
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
+            <div className="skeuo-card p-6 space-y-6">
               {/* Download Templates */}
               <div>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center">
@@ -492,7 +492,7 @@ export default function KekaImportPage() {
 
           {/* Step 2: Mapping */}
           {step === 'mapping' && (
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
+            <div className="skeuo-card p-6 space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 flex items-center">
                   <MapPin className="w-5 h-5 mr-2" />
@@ -556,7 +556,7 @@ export default function KekaImportPage() {
                             onChange={(e) =>
                               updateMapping(mapping.sourceColumn, e.target.value)
                             }
-                            className="px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded text-sm"
+                            className="input-aura !h-auto px-2 py-1 text-sm"
                           >
                             <option value="">Select field...</option>
                             {Object.entries(KEKA_COLUMN_PRESETS).map(([label, field]) => (
@@ -597,7 +597,7 @@ export default function KekaImportPage() {
 
           {/* Step 3: Preview */}
           {step === 'preview' && preview && (
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
+            <div className="skeuo-card p-6 space-y-6">
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -709,7 +709,7 @@ export default function KekaImportPage() {
 
           {/* Step 4: Import Options */}
           {step === 'import' && preview && (
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
+            <div className="skeuo-card p-6 space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 flex items-center">
                   <Settings className="w-5 h-5 mr-2" />
@@ -816,7 +816,7 @@ export default function KekaImportPage() {
 
           {/* Step 5: Result */}
           {step === 'result' && result && (
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
+            <div className="skeuo-card p-6 space-y-6">
               {/* Status Badge */}
               <div className="flex items-center justify-between">
                 <div>

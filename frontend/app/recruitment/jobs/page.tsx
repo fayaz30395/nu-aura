@@ -245,8 +245,8 @@ export default function JobOpeningsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Job Openings</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Manage job openings and recruitment positions</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Openings</h1>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage job openings and recruitment positions</p>
           </div>
           <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
             <Button onClick={() => { reset(); setEditingJob(null); setShowAddModal(true); }} className="flex items-center gap-2">
@@ -268,7 +268,7 @@ export default function JobOpeningsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            <Card className="bg-[var(--bg-card)]">
+            <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
@@ -287,7 +287,7 @@ export default function JobOpeningsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            <Card className="bg-[var(--bg-card)]">
+            <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -306,7 +306,7 @@ export default function JobOpeningsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            <Card className="bg-[var(--bg-card)]">
+            <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
@@ -325,7 +325,7 @@ export default function JobOpeningsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            <Card className="bg-[var(--bg-card)]">
+            <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
@@ -519,7 +519,7 @@ export default function JobOpeningsPage() {
                       <input
                         type="text"
                         {...register('jobCode')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                         placeholder="JOB-001"
                       />
                       {errors.jobCode && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobCode.message}</p>}
@@ -529,7 +529,7 @@ export default function JobOpeningsPage() {
                       <input
                         type="text"
                         {...register('jobTitle')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                         placeholder="Senior Software Engineer"
                       />
                       {errors.jobTitle && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobTitle.message}</p>}
@@ -541,7 +541,7 @@ export default function JobOpeningsPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Department</label>
                       <select
                         {...register('departmentId')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       >
                         <option value="">Select Department</option>
                         {(departments || []).map((dept: Department) => (
@@ -554,7 +554,7 @@ export default function JobOpeningsPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring Manager</label>
                       <select
                         {...register('hiringManagerId')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       >
                         <option value="">Select Manager</option>
                         {managers.map((mgr) => (
@@ -571,7 +571,7 @@ export default function JobOpeningsPage() {
                       <input
                         type="text"
                         {...register('location')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                         placeholder="Remote / City"
                       />
                       {errors.location && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.location.message}</p>}
@@ -580,7 +580,7 @@ export default function JobOpeningsPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment Type</label>
                       <select
                         {...register('employmentType')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       >
                         <option value="FULL_TIME">Full Time</option>
                         <option value="PART_TIME">Part Time</option>
@@ -596,7 +596,7 @@ export default function JobOpeningsPage() {
                         type="number"
                         min="1"
                         {...register('numberOfOpenings')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       />
                       {errors.numberOfOpenings && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.numberOfOpenings.message}</p>}
                     </div>
@@ -608,7 +608,7 @@ export default function JobOpeningsPage() {
                       <input
                         type="number"
                         {...register('minSalary')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                         placeholder="50000"
                       />
                       {errors.minSalary && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.minSalary.message}</p>}
@@ -618,7 +618,7 @@ export default function JobOpeningsPage() {
                       <input
                         type="number"
                         {...register('maxSalary')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                         placeholder="80000"
                       />
                       {errors.maxSalary && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.maxSalary.message}</p>}
@@ -628,7 +628,7 @@ export default function JobOpeningsPage() {
                       <input
                         type="text"
                         {...register('experienceRequired')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                         placeholder="3-5 years"
                       />
                       {errors.experienceRequired && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.experienceRequired.message}</p>}
@@ -640,7 +640,7 @@ export default function JobOpeningsPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
                       <select
                         {...register('status')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       >
                         <option value="DRAFT">Draft</option>
                         <option value="OPEN">Open</option>
@@ -654,7 +654,7 @@ export default function JobOpeningsPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Priority</label>
                       <select
                         {...register('priority')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       >
                         <option value="LOW">Low</option>
                         <option value="MEDIUM">Medium</option>
@@ -668,7 +668,7 @@ export default function JobOpeningsPage() {
                       <input
                         type="date"
                         {...register('closingDate')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       />
                       {errors.closingDate && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.closingDate.message}</p>}
                     </div>

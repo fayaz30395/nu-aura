@@ -234,7 +234,7 @@ export default function NewTravelRequestPage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">New Travel Request</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">New Travel Request</h1>
             <p className="text-[var(--text-muted)] mt-1">Submit a new travel request for approval</p>
           </div>
         </div>

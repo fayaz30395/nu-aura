@@ -11,7 +11,6 @@ import com.hrms.infrastructure.ai.repository.ChatbotConversationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -222,8 +221,9 @@ public class FluenceChatService {
 
     /**
      * Persist the conversation to the database for audit and history.
+     * Note: Single save() call — JPA repository provides its own transaction.
+     * Spring AOP cannot intercept private/self-invoked methods, so @Transactional was removed.
      */
-    @Transactional
     private UUID persistConversation(
             FluenceChatRequest request,
             String response,

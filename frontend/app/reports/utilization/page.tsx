@@ -131,7 +131,7 @@ export default function UtilizationReportsPage() {
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
-            <p className="text-3xl font-bold text-[var(--text-primary)]">{value}</p>
+            <p className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">{value}</p>
             {subValue && (
               <p className="text-sm text-[var(--text-muted)]">{subValue}</p>
             )}
@@ -258,7 +258,7 @@ export default function UtilizationReportsPage() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Utilization Dashboard
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">

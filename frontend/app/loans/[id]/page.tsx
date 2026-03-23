@@ -29,12 +29,7 @@ export default function LoanDetailPage() {
 
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
-      DRAFT: {
-        bg: 'bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
-        icon: FileText,
-      },
-      PENDING_APPROVAL: {
+      PENDING: {
         bg: 'bg-amber-100 dark:bg-amber-900/30',
         text: 'text-amber-700 dark:text-amber-400',
         icon: Clock,
@@ -69,8 +64,13 @@ export default function LoanDetailPage() {
         text: 'text-red-800 dark:text-red-300',
         icon: AlertCircle,
       },
+      CANCELLED: {
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
+        icon: XCircle,
+      },
     };
-    return configs[status] || configs.DRAFT;
+    return configs[status] || configs.PENDING;
   };
 
   if (isLoading) {
@@ -113,8 +113,8 @@ export default function LoanDetailPage() {
 
   const statusConfig = getStatusConfig(loan.status);
   const StatusIcon = statusConfig.icon;
-  const progress = loan.approvedAmount
-    ? ((loan.amountRepaid / (loan.totalPayable || loan.approvedAmount)) * 100)
+  const progress = loan.totalAmount
+    ? (((loan.paidAmount || 0) / loan.totalAmount) * 100)
     : 0;
 
   return (
@@ -130,7 +130,7 @@ export default function LoanDetailPage() {
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
               </h1>
               <span
@@ -154,11 +154,11 @@ export default function LoanDetailPage() {
                 <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <span className="text-sm text-[var(--text-muted)]">
-                {loan.approvedAmount ? 'Approved Amount' : 'Requested Amount'}
+                {loan.totalAmount ? 'Total Amount' : 'Principal Amount'}
               </span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)]">
-              {loanService.formatCurrency(loan.approvedAmount || loan.requestedAmount)}
+            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              {loanService.formatCurrency(loan.totalAmount || loan.principalAmount)}
             </p>
           </div>
 
@@ -169,8 +169,8 @@ export default function LoanDetailPage() {
               </div>
               <span className="text-sm text-[var(--text-muted)]">Amount Repaid</span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)]">
-              {loanService.formatCurrency(loan.amountRepaid)}
+            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              {loanService.formatCurrency(loan.paidAmount || 0)}
             </p>
           </div>
 
@@ -180,11 +180,11 @@ export default function LoanDetailPage() {
                 <Wallet className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <span className="text-sm text-[var(--text-muted)]">
-                Remaining Balance
+                Outstanding Amount
               </span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)]">
-              {loanService.formatCurrency(loan.remainingBalance)}
+            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              {loanService.formatCurrency(loan.outstandingAmount || 0)}
             </p>
           </div>
         </div>
@@ -207,8 +207,8 @@ export default function LoanDetailPage() {
               />
             </div>
             <div className="flex justify-between mt-2 text-sm text-[var(--text-muted)]">
-              <span>Paid: {loanService.formatCurrency(loan.amountRepaid)}</span>
-              <span>Remaining: {loanService.formatCurrency(loan.remainingBalance)}</span>
+              <span>Paid: {loanService.formatCurrency(loan.paidAmount || 0)}</span>
+              <span>Outstanding: {loanService.formatCurrency(loan.outstandingAmount || 0)}</span>
             </div>
           </div>
         )}
@@ -228,26 +228,28 @@ export default function LoanDetailPage() {
             <div>
               <p className="text-sm text-[var(--text-muted)] mb-1">Loan Term</p>
               <p className="text-lg font-medium text-[var(--text-primary)]">
-                {loan.termMonths} months
+                {loan.tenureMonths} months
               </p>
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">Monthly Payment</p>
+              <p className="text-sm text-[var(--text-muted)] mb-1">EMI Amount</p>
               <p className="text-lg font-medium text-[var(--text-primary)]">
-                {loan.monthlyPayment ? loanService.formatCurrency(loan.monthlyPayment) : 'N/A'}
+                {loan.emiAmount ? loanService.formatCurrency(loan.emiAmount) : 'N/A'}
               </p>
             </div>
-            <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">Repayment Frequency</p>
-              <p className="text-lg font-medium text-[var(--text-primary)]">
-                {loan.repaymentFrequency.replace('_', ' ')}
-              </p>
-            </div>
-            {loan.nextPaymentDate && (
+            {loan.paidEmis != null && (
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">Next Payment Date</p>
+                <p className="text-sm text-[var(--text-muted)] mb-1">EMIs Paid / Remaining</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
-                  {new Date(loan.nextPaymentDate).toLocaleDateString('en-IN', {
+                  {loan.paidEmis} / {loan.remainingEmis ?? 'N/A'}
+                </p>
+              </div>
+            )}
+            {loan.firstEmiDate && (
+              <div>
+                <p className="text-sm text-[var(--text-muted)] mb-1">First EMI Date</p>
+                <p className="text-lg font-medium text-[var(--text-primary)]">
+                  {new Date(loan.firstEmiDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric',
@@ -255,16 +257,18 @@ export default function LoanDetailPage() {
                 </p>
               </div>
             )}
-            <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">Request Date</p>
-              <p className="text-lg font-medium text-[var(--text-primary)]">
-                {new Date(loan.requestDate).toLocaleDateString('en-IN', {
-                  day: '2-digit',
-                  month: 'short',
-                  year: 'numeric',
-                })}
-              </p>
-            </div>
+            {loan.requestedDate && (
+              <div>
+                <p className="text-sm text-[var(--text-muted)] mb-1">Request Date</p>
+                <p className="text-lg font-medium text-[var(--text-primary)]">
+                  {new Date(loan.requestedDate).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -274,12 +278,12 @@ export default function LoanDetailPage() {
             Purpose
           </h3>
           <p className="text-[var(--text-secondary)]">{loan.purpose}</p>
-          {loan.notes && (
+          {loan.remarks && (
             <>
               <h4 className="text-sm font-medium text-[var(--text-muted)] mt-4 mb-2">
-                Additional Notes
+                Additional Remarks
               </h4>
-              <p className="text-[var(--text-secondary)]">{loan.notes}</p>
+              <p className="text-[var(--text-secondary)]">{loan.remarks}</p>
             </>
           )}
         </div>
@@ -307,11 +311,11 @@ export default function LoanDetailPage() {
                   })}
                 </p>
               </div>
-              {loan.disbursedDate && (
+              {loan.disbursementDate && (
                 <div>
                   <p className="text-sm text-[var(--text-muted)] mb-1">Disbursed Date</p>
                   <p className="text-lg font-medium text-[var(--text-primary)]">
-                    {new Date(loan.disbursedDate).toLocaleDateString('en-IN', {
+                    {new Date(loan.disbursementDate).toLocaleDateString('en-IN', {
                       day: '2-digit',
                       month: 'short',
                       year: 'numeric',
@@ -324,7 +328,7 @@ export default function LoanDetailPage() {
         )}
 
         {/* Rejection Reason */}
-        {loan.status === 'REJECTED' && loan.rejectionReason && (
+        {loan.status === 'REJECTED' && loan.rejectedReason && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
             <div className="flex items-center gap-4 mb-3">
               <XCircle className="h-5 w-5 text-red-500" />
@@ -332,7 +336,7 @@ export default function LoanDetailPage() {
                 Rejection Reason
               </h3>
             </div>
-            <p className="text-red-600 dark:text-red-300">{loan.rejectionReason}</p>
+            <p className="text-red-600 dark:text-red-300">{loan.rejectedReason}</p>
           </div>
         )}
 

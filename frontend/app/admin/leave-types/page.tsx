@@ -257,8 +257,8 @@ export default function LeaveTypesManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Leave Types Management</h1>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Leave Types Management</h1>
+            <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
               Configure and manage leave types for your organization
             </p>
           </div>
@@ -268,7 +268,7 @@ export default function LeaveTypesManagementPage() {
               setEditingLeaveType(null);
               setShowModal(true);
             }}
-            className="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 transition-colors"
+            className="btn-primary !h-auto"
           >
             + Add Leave Type
           </button>
@@ -288,9 +288,9 @@ export default function LeaveTypesManagementPage() {
         )}
 
         {/* Leave Types Table */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[var(--bg-surface)]">
+        <div className="skeuo-card overflow-hidden">
+          <table className="table-aura">
+            <thead className="skeuo-table-header">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Code & Name
@@ -419,8 +419,8 @@ export default function LeaveTypesManagementPage() {
 
         {/* Add/Edit Leave Type Modal */}
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
+            <div className="skeuo-card max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -450,7 +450,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="text"
                           {...form.register('leaveCode')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                           placeholder="AL, SL, CL"
                         />
                         {form.formState.errors.leaveCode && (
@@ -464,7 +464,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="text"
                           {...form.register('leaveName')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                           placeholder="Annual Leave, Sick Leave"
                         />
                         {form.formState.errors.leaveName && (
@@ -480,7 +480,7 @@ export default function LeaveTypesManagementPage() {
                       <textarea
                         {...form.register('description')}
                         rows={2}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="input-aura"
                         placeholder="Brief description of this leave type..."
                       />
                     </div>
@@ -512,7 +512,7 @@ export default function LeaveTypesManagementPage() {
                         </label>
                         <select
                           {...form.register('genderSpecific')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         >
                           {genderOptions.map(option => (
                             <option key={option} value={option}>{option}</option>
@@ -535,7 +535,7 @@ export default function LeaveTypesManagementPage() {
                           step="0.5"
                           min="0"
                           {...form.register('annualQuota')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                       </div>
                       <div>
@@ -546,7 +546,7 @@ export default function LeaveTypesManagementPage() {
                           type="number"
                           min="1"
                           {...form.register('maxConsecutiveDays')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                       </div>
                       <div>
@@ -557,7 +557,7 @@ export default function LeaveTypesManagementPage() {
                           type="number"
                           min="1"
                           {...form.register('maxDaysPerRequest')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                       </div>
                     </div>
@@ -571,7 +571,7 @@ export default function LeaveTypesManagementPage() {
                           type="number"
                           min="0"
                           {...form.register('minDaysNotice')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                       </div>
                       <div>
@@ -582,7 +582,7 @@ export default function LeaveTypesManagementPage() {
                           type="number"
                           min="0"
                           {...form.register('applicableAfterDays')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                       </div>
                     </div>
@@ -598,7 +598,7 @@ export default function LeaveTypesManagementPage() {
                         </label>
                         <select
                           {...form.register('accrualType')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         >
                           <option value="">No Accrual</option>
                           {accrualTypes.map(type => (
@@ -615,7 +615,7 @@ export default function LeaveTypesManagementPage() {
                           step="0.1"
                           min="0"
                           {...form.register('accrualRate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         />
                       </div>
                     </div>
@@ -644,7 +644,7 @@ export default function LeaveTypesManagementPage() {
                             step="0.5"
                             min="0"
                             {...form.register('maxCarryForwardDays')}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="input-aura"
                           />
                         </div>
                       )}
@@ -678,14 +678,14 @@ export default function LeaveTypesManagementPage() {
                         setEditingLeaveType(null);
                         resetForm();
                       }}
-                      className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                      className="btn-secondary"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                      className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50"
+                      className="btn-primary !h-auto disabled:opacity-50"
                     >
                       {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingLeaveType ? 'Update' : 'Create')} Leave Type
                     </button>
