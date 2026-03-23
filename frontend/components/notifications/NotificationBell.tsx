@@ -186,7 +186,7 @@ export const NotificationBell: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-gray-300 dark:hover:text-white transition-colors"
+        className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]  transition-colors"
       >
         <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
@@ -226,7 +226,7 @@ export const NotificationBell: React.FC = () => {
                     className={`p-4 border-b dark:border-surface-700 transition-colors ${
                       !notification.isRead
                         ? 'bg-blue-50 dark:bg-blue-900/20'
-                        : 'hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700/50'
+                        : 'hover:bg-[var(--bg-surface)] '
                     } ${hasRoute ? 'cursor-pointer' : ''}`}
                     onClick={() => hasRoute && handleNotificationClick(notification)}
                   >

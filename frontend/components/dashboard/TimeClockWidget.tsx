@@ -86,7 +86,7 @@ export function TimeClockWidget({
         </div>
         <a
           href="/attendance"
-          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)]  transition-colors"
         >
           View All
         </a>
@@ -110,7 +110,7 @@ export function TimeClockWidget({
         disabled={isLoading}
         className={`skeuo-button relative z-10 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 px-4 text-sm font-medium transition-colors ${
           isCheckedIn
-            ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+            ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]'
             : 'bg-primary-600 text-white hover:bg-primary-700'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
       >

@@ -241,7 +241,7 @@ export default function FeedbackRequestForm({
                   <button
                     type="button"
                     onClick={() => removePeer(peer.employeeId)}
-                    className="p-1 hover:bg-gray-200 rounded"
+                    className="p-1 hover:bg-[var(--bg-card-hover)] rounded"
                   >
                     <X className="h-5 w-5 text-[var(--text-muted)]" />
                   </button>

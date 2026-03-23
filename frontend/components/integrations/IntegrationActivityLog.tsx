@@ -39,7 +39,7 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
       case 'SKIPPED':
         return 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300';
       default:
-        return 'bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300';
+        return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
   };
 

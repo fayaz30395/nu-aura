@@ -112,7 +112,7 @@ export function GradientRingSpinner({ size = 'md', className }: Omit<PremiumSpin
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-gray-200 dark:text-gray-700"
+          className="text-[var(--border-main)]"
           opacity="0.2"
         />
 

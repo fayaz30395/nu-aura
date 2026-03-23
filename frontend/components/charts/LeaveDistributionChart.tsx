@@ -57,7 +57,7 @@ export const LeaveDistributionChart: React.FC<LeaveDistributionChartProps> = ({ 
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-slate-400 dark:text-slate-500">
+            <div className="text-center text-[var(--text-muted)]">
               <p className="text-sm font-medium">No leave data available</p>
               <p className="text-xs mt-1">Leave requests will appear here once submitted</p>
             </div>
