@@ -169,12 +169,12 @@ export default function AdminDashboardPage() {
               value={pendingSearch}
               onChange={(e) => setPendingSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearchApply()}
-              className="flex-1 sm:flex-none min-w-0 px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="input-aura flex-1 sm:flex-none min-w-0 px-3 py-2 text-sm rounded-xl"
             />
             <button
               type="button"
               onClick={handleSearchApply}
-              className="px-3 py-2 text-sm font-medium rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="btn-secondary px-3 py-2 text-sm font-medium rounded-xl"
             >
               Search
             </button>
@@ -182,8 +182,8 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
-            <thead className="bg-[var(--bg-secondary)]/50">
+          <table className="table-aura min-w-full">
+            <thead>
               <tr>
                 <Th>Name</Th>
                 <Th>Email</Th>
@@ -231,7 +231,7 @@ export default function AdminDashboardPage() {
                       {user.departmentName?.trim() ? user.departmentName : '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      <span className={`badge-status inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
                         user.userStatus === 'ACTIVE'
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
                           : user.userStatus === 'INACTIVE'
@@ -303,7 +303,7 @@ export default function AdminDashboardPage() {
               type="email"
               placeholder="user@example.com"
               {...registerRole('email')}
-              className="w-full px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="input-aura w-full px-3 py-2 text-sm rounded-xl"
             />
             {roleErrors.email && (
               <p className="text-xs text-red-500 mt-1">{roleErrors.email.message}</p>
@@ -315,7 +315,7 @@ export default function AdminDashboardPage() {
             </label>
             <select
               {...registerRole('role')}
-              className="w-full px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="input-aura w-full px-3 py-2 text-sm rounded-xl"
             >
               {ROLE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -500,7 +500,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: 0.05 + index * 0.05 }}
-                className={`${componentColor} rounded-lg p-4 border border-[var(--border-main)]`}
+                className={`card-aura ${componentColor} rounded-lg p-4 border border-[var(--border-main)]`}
               >
                 <div className="flex items-start gap-2">
                   <div className={`${dotColor} w-2 h-2 rounded-full mt-1 flex-shrink-0`} />

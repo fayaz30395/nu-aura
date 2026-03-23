@@ -32,10 +32,10 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
+      <div className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6">
+          <h2 className="skeuo-emboss text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Payroll Run' : 'Edit Payroll Run'}
           </h2>
           <form onSubmit={formHook.handleSubmit(onSubmit)}>
@@ -47,7 +47,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                 <input
                   type="text"
                   {...formHook.register('runName')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                   placeholder="e.g., November 2024 Payroll"
                 />
                 {formHook.formState.errors.runName && (
@@ -61,7 +61,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
@@ -72,7 +72,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
@@ -85,7 +85,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                 <input
                   type="date"
                   {...formHook.register('paymentDate')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.paymentDate && (
                   <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
@@ -97,7 +97,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                 <textarea
                   {...formHook.register('notes')}
                   rows={3}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                   placeholder="Additional notes..."
                 />
               </div>
@@ -107,14 +107,14 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                className="btn-secondary flex-1 px-4 py-2 rounded-lg"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -147,10 +147,10 @@ export const PayslipModal = React.memo(function PayslipModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
+      <div className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6">
+          <h2 className="skeuo-emboss text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Payslip' : 'Edit Payslip'}
           </h2>
           <form onSubmit={formHook.handleSubmit(onSubmit)}>
@@ -161,7 +161,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="text"
                     {...formHook.register('employeeId')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.employeeId && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
@@ -172,7 +172,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="text"
                     {...formHook.register('payrollRunId')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollRunId && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollRunId.message}</p>
@@ -186,7 +186,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
@@ -197,7 +197,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
@@ -210,7 +210,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                 <input
                   type="date"
                   {...formHook.register('paymentDate')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.paymentDate && (
                   <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
@@ -224,7 +224,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="number"
                     step="0.01"
                     {...formHook.register('baseSalary', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.baseSalary && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
@@ -236,7 +236,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="number"
                     step="0.01"
                     {...formHook.register('allowances', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                 </div>
                 <div>
@@ -245,7 +245,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="number"
                     step="0.01"
                     {...formHook.register('deductions', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                 </div>
               </div>
@@ -255,14 +255,14 @@ export const PayslipModal = React.memo(function PayslipModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                className="btn-secondary flex-1 px-4 py-2 rounded-lg"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -307,10 +307,10 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
+      <div className="skeuo-card rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6">
+          <h2 className="skeuo-emboss text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Salary Structure' : 'Edit Salary Structure'}
           </h2>
           <form onSubmit={formHook.handleSubmit(onSubmit)}>
@@ -321,7 +321,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <input
                     type="text"
                     {...formHook.register('employeeId')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.employeeId && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
@@ -332,7 +332,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <input
                     type="date"
                     {...formHook.register('effectiveDate')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.effectiveDate && (
                     <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.effectiveDate.message}</p>
@@ -346,7 +346,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   type="number"
                   step="0.01"
                   {...formHook.register('baseSalary', { valueAsNumber: true })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.baseSalary && (
                   <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
@@ -373,7 +373,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           type="text"
                           placeholder="Name"
                           {...formHook.register(`allowances.${idx}.name`)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <div className="w-24">
@@ -382,7 +382,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           step="0.01"
                           placeholder="Amount"
                           {...formHook.register(`allowances.${idx}.amount`, { valueAsNumber: true })}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <button
@@ -417,7 +417,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           type="text"
                           placeholder="Name"
                           {...formHook.register(`deductions.${idx}.name`)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <div className="w-24">
@@ -426,7 +426,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           step="0.01"
                           placeholder="Amount"
                           {...formHook.register(`deductions.${idx}.amount`, { valueAsNumber: true })}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <button
@@ -446,14 +446,14 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                className="btn-secondary flex-1 px-4 py-2 rounded-lg"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -486,21 +486,21 @@ export const DeleteConfirmModal = React.memo(function DeleteConfirmModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
+    <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
+      <div className="skeuo-card rounded-xl max-w-md w-full p-6 border border-[var(--border-main)]">
+        <h2 className="skeuo-emboss text-xl font-bold mb-4">{title}</h2>
         <p className="text-[var(--text-secondary)] mb-6">{message}</p>
         <div className="flex gap-4">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+            className="btn-secondary flex-1 px-4 py-2 rounded-lg"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 skeuo-button"
           >
             {loading ? 'Deleting...' : 'Delete'}
           </button>

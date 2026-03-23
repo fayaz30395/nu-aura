@@ -19,6 +19,7 @@ import { Card } from '@/components/ui/Card';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { DriveFile } from './types';
 import { getFileIcon, getPreviewUrl } from './fileUtils';
+import { safeWindowOpen } from '@/lib/utils/url';
 
 // ---- New Folder Modal ----
 interface NewFolderModalProps {
@@ -337,7 +338,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => window.open(file.webViewLink, '_blank')}
+              onClick={() => safeWindowOpen(file.webViewLink, '_blank')}
               className="text-white hover:bg-[var(--bg-secondary)]"
               leftIcon={<ExternalLink className="h-4 w-4" />}
             >

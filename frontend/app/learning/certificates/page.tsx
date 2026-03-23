@@ -21,6 +21,7 @@ import { apiClient } from '@/lib/api/client';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { useMyCertificates } from '@/lib/hooks/queries/useLearning';
 import type { Certificate } from '@/lib/services/lms.service';
+import { safeWindowOpen } from '@/lib/utils/url';
 
 export default function CertificateGalleryPage() {
   const toast = useToast();
@@ -88,14 +89,14 @@ export default function CertificateGalleryPage() {
   };
 
   const handlePrint = (certId: string) => {
-    window.open(`/learning/certificates/${certId}/print`, '_blank');
+    safeWindowOpen(`/learning/certificates/${certId}/print`, '_blank');
   };
 
   const handleShareLinkedIn = (certificate: Certificate) => {
     const linkedInUrl = `https://www.linkedin.com/feed/?v=create-charter`;
     const text = `I just completed "${certificate.courseTitle}" and earned a certificate! #SkillDevelopment #Learning`;
     const shareUrl = `${linkedInUrl}&quote=${encodeURIComponent(text)}`;
-    window.open(shareUrl, '_blank');
+    safeWindowOpen(shareUrl, '_blank');
   };
 
   const handleCopyCertificateNumber = (certNumber: string) => {

@@ -30,6 +30,7 @@ import {
   EmptyState,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { safeWindowOpen } from '@/lib/utils/url';
 import {
   useMyDocumentRequests,
   useCreateDocumentRequest,
@@ -369,7 +370,7 @@ export default function MyDocumentsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => window.open(request.generatedDocumentUrl, '_blank')}
+                            onClick={() => safeWindowOpen(request.generatedDocumentUrl, '_blank')}
                             className="flex items-center gap-2"
                           >
                             <Download className="h-4 w-4" />

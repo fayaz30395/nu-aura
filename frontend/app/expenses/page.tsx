@@ -12,6 +12,7 @@ import { PermissionGate } from '@/components/auth/PermissionGate';
 import { ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
 import { Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
 import { ExpenseAnalytics } from '@/components/expenses';
+import { safeWindowOpen } from '@/lib/utils/url';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
 import {
@@ -942,7 +943,7 @@ export default function ExpenseClaims() {
                     )}
                     {claim.receiptUrl && (
                       <button
-                        onClick={() => window.open(claim.receiptUrl, '_blank')}
+                        onClick={() => safeWindowOpen(claim.receiptUrl, '_blank')}
                         className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-sm transition-colors flex items-center gap-2"
                       >
                         <Receipt className="w-4 h-4" />

@@ -51,6 +51,7 @@ import { getLocalDateString, getLocalDateTimeString } from '@/lib/utils/dateUtil
 import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
 import { createLogger } from '@/lib/utils/logger';
 import { formatCurrency } from '@/lib/utils';
+import { safeWindowOpen } from '@/lib/utils/url';
 
 const log = createLogger('DashboardPage');
 
@@ -1134,7 +1135,7 @@ export default function DashboardPage() {
                   variant="primary"
                   className="flex-1"
                   leftIcon={<Video className="h-4 w-4" />}
-                  onClick={() => window.open(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
+                  onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
                 >
                   Join Meeting
                 </Button>
@@ -1143,7 +1144,7 @@ export default function DashboardPage() {
                 variant="outline"
                 className={selectedEvent.calendarEvent.hangoutLink ? '' : 'flex-1'}
                 leftIcon={<ExternalLink className="h-4 w-4" />}
-                onClick={() => window.open(selectedEvent.calendarEvent!.htmlLink, '_blank')}
+                onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.htmlLink, '_blank')}
               >
                 Open in Calendar
               </Button>
@@ -1265,7 +1266,7 @@ export default function DashboardPage() {
                 <Button
                   variant="outline"
                   leftIcon={<ExternalLink className="h-4 w-4" />}
-                  onClick={() => window.open(selectedFile.driveFile!.webViewLink, '_blank')}
+                  onClick={() => safeWindowOpen(selectedFile.driveFile!.webViewLink, '_blank')}
                 >
                   Open in Drive
                 </Button>

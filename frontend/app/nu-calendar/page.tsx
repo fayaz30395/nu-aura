@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/Input';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
 import { createLogger } from '@/lib/utils/logger';
+import { safeWindowOpen } from '@/lib/utils/url';
 
 const log = createLogger('NuCalendarPage');
 
@@ -706,7 +707,7 @@ function CalendarContent() {
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                window.open(event.hangoutLink, '_blank');
+                                safeWindowOpen(event.hangoutLink, '_blank');
                               }}
                               leftIcon={<Video className="h-4 w-4" />}
                             >
@@ -811,7 +812,7 @@ function CalendarContent() {
               {selectedEvent.hangoutLink && (
                 <Button
                   variant="primary"
-                  onClick={() => window.open(selectedEvent.hangoutLink, '_blank')}
+                  onClick={() => safeWindowOpen(selectedEvent.hangoutLink, '_blank')}
                   leftIcon={<Video className="h-4 w-4" />}
                   className="w-full"
                 >
@@ -866,7 +867,7 @@ function CalendarContent() {
                 {selectedEvent.htmlLink && (
                   <Button
                     variant="outline"
-                    onClick={() => window.open(selectedEvent.htmlLink, '_blank')}
+                    onClick={() => safeWindowOpen(selectedEvent.htmlLink, '_blank')}
                     leftIcon={<ExternalLink className="h-4 w-4" />}
                     className="flex-1"
                   >

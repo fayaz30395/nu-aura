@@ -6,6 +6,7 @@ import { Card, CardContent, Button, Badge, EmptyState } from '@/components/ui';
 import { EnrollmentStatus } from '@/lib/types/training';
 import type { TrainingEnrollment } from '@/lib/types/training';
 import { toBadgeVariant } from '@/lib/utils/type-guards';
+import { safeWindowOpen } from '@/lib/utils/url';
 interface MyTrainingsTabProps {
   enrollments: TrainingEnrollment[];
   loading: boolean;
@@ -121,7 +122,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => window.open(enrollment.certificateUrl, '_blank')}
+                    onClick={() => safeWindowOpen(enrollment.certificateUrl, '_blank')}
                   >
                     <Download className="h-4 w-4 mr-1" />
                     Certificate

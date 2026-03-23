@@ -65,7 +65,7 @@ services:
     # Do NOT expose 9200 externally in production
 
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
     container_name: hrms-minio
     restart: always
     environment:

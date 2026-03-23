@@ -8,6 +8,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: hrms-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
@@ -24,6 +25,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
     container_name: hrms-zookeeper
+    restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SYNC_LIMIT: 2
@@ -39,6 +41,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: hrms-kafka
+    restart: unless-stopped
     depends_on:
       - zookeeper
     ports:
@@ -73,8 +76,11 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     container_name: hrms-elasticsearch
+    restart: unless-stopped
     environment:
       - discovery.type=single-node
+      # SECURITY NOTE: xpack.security is disabled for local dev convenience.
+      # In production (docker-compose.prod.yml), xpack.security.enabled=true with ELASTIC_PASSWORD.
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
@@ -90,8 +96,9 @@ services:
       - hrms_network
 
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
     container_name: hrms-minio
+    restart: unless-stopped
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -109,6 +116,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: hrms-backend
+    restart: unless-stopped
     ports:
       - "8080:8080"
     depends_on:
@@ -142,6 +150,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: hrms-frontend
+    restart: unless-stopped
     ports:
       - "3000:3000"
     depends_on:
@@ -152,8 +161,9 @@ services:
       - hrms_network
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.53.0
     container_name: hrms-prometheus
+    restart: unless-stopped
     ports:
       - "9090:9090"
     volumes:
