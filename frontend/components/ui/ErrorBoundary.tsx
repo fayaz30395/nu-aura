@@ -76,7 +76,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-2">
+            <h2 className="text-2xl font-bold text-center text-[var(--text-primary)] mb-2">
               Something went wrong
             </h2>
             <p className="text-[var(--text-secondary)] text-center mb-6">
@@ -101,7 +101,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 <p className="text-xs text-[var(--text-muted)] mb-1">
                   Error Reference
                 </p>
-                <p className="text-sm font-mono text-gray-700 dark:text-gray-300 select-all">
+                <p className="text-sm font-mono text-[var(--text-secondary)] select-all">
                   {this.state.errorId}
                 </p>
               </div>
@@ -116,13 +116,13 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-surface-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors"
+                className="flex-1 px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] font-medium transition-colors"
               >
                 Refresh Page
               </button>
               <button
                 onClick={() => (window.location.href = '/')}
-                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-surface-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors"
+                className="flex-1 px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] font-medium transition-colors"
               >
                 Go Home
               </button>
