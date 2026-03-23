@@ -5,12 +5,14 @@ import com.hrms.api.travel.dto.TravelRequestDto;
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
+import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.travel.TravelRequest;
 import com.hrms.domain.travel.TravelRequest.TravelStatus;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.travel.repository.TravelRequestRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -199,6 +201,21 @@ public class TravelService implements ApprovalCallbackHandler {
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request cancelled: {}", saved.getRequestNumber());
         return TravelRequestDto.fromEntity(saved);
+    }
+
+    @Transactional
+    public void deleteRequest(UUID requestId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Travel request not found: " + requestId));
+
+        if (travelRequest.getStatus() != TravelStatus.DRAFT) {
+            throw new ValidationException("Only DRAFT travel requests can be deleted");
+        }
+
+        travelRequestRepository.delete(travelRequest);
+        log.info("Deleted travel request: {}", requestId);
     }
 
     @Transactional(readOnly = true)

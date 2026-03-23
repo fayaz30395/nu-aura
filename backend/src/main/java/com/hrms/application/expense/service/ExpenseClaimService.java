@@ -15,6 +15,7 @@ import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
+import com.hrms.common.exception.ValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -186,6 +187,89 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         claim.cancel();
         expenseClaimRepository.save(claim);
         log.info("Cancelled expense claim: {}", claim.getClaimNumber());
+    }
+
+    @Transactional
+    public void deleteExpenseClaim(UUID claimId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
+
+        if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
+            throw new ValidationException("Only DRAFT expense claims can be deleted");
+        }
+
+        expenseClaimRepository.delete(claim);
+        log.info("Deleted expense claim: {}", claim.getClaimNumber());
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getEmployeeStatistics(UUID employeeId, Integer year) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        List<ExpenseClaim> claims = expenseClaimRepository.findAllByEmployeeIdAndTenantId(employeeId, tenantId);
+
+        // Filter by year if provided
+        if (year != null) {
+            claims = claims.stream()
+                    .filter(c -> c.getClaimDate() != null && c.getClaimDate().getYear() == year)
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
+        Map<String, Object> statistics = new HashMap<>();
+
+        statistics.put("totalClaims", (long) claims.size());
+
+        BigDecimal totalAmount = claims.stream()
+                .map(ExpenseClaim::getAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        statistics.put("totalAmount", totalAmount);
+
+        BigDecimal pendingAmount = claims.stream()
+                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.SUBMITTED
+                        || c.getStatus() == ExpenseClaim.ExpenseStatus.PENDING_APPROVAL)
+                .map(ExpenseClaim::getAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        statistics.put("pendingAmount", pendingAmount);
+
+        BigDecimal approvedAmount = claims.stream()
+                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.APPROVED)
+                .map(ExpenseClaim::getAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        statistics.put("approvedAmount", approvedAmount);
+
+        BigDecimal rejectedAmount = claims.stream()
+                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.REJECTED)
+                .map(ExpenseClaim::getAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        statistics.put("rejectedAmount", rejectedAmount);
+
+        BigDecimal paidAmount = claims.stream()
+                .filter(c -> c.getStatus() == ExpenseClaim.ExpenseStatus.PAID)
+                .map(ExpenseClaim::getAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        statistics.put("paidAmount", paidAmount);
+
+        Map<String, BigDecimal> byCategory = new HashMap<>();
+        for (ExpenseClaim.ExpenseCategory cat : ExpenseClaim.ExpenseCategory.values()) {
+            BigDecimal catAmount = claims.stream()
+                    .filter(c -> c.getCategory() == cat)
+                    .map(ExpenseClaim::getAmount)
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (catAmount.compareTo(BigDecimal.ZERO) > 0) {
+                byCategory.put(cat.name(), catAmount);
+            }
+        }
+        statistics.put("byCategory", byCategory);
+
+        return statistics;
     }
 
     @Transactional(readOnly = true)

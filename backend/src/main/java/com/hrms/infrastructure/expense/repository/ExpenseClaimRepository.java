@@ -26,6 +26,8 @@ public interface ExpenseClaimRepository extends JpaRepository<ExpenseClaim, UUID
 
     Page<ExpenseClaim> findAllByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId, Pageable pageable);
 
+    List<ExpenseClaim> findAllByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId);
+
     Page<ExpenseClaim> findAllByStatusAndTenantId(ExpenseClaim.ExpenseStatus status, UUID tenantId, Pageable pageable);
 
     Page<ExpenseClaim> findAllByCategoryAndTenantId(ExpenseClaim.ExpenseCategory category, UUID tenantId, Pageable pageable);

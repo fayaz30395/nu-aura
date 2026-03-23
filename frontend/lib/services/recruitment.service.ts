@@ -40,8 +40,10 @@ class RecruitmentService {
   }
 
   async getJobOpeningsByStatus(status: JobStatus): Promise<JobOpening[]> {
-    const response = await apiClient.get<JobOpening[]>(`/recruitment/job-openings/status/${status}`);
-    return response.data;
+    const response = await apiClient.get<Page<JobOpening>>(`/recruitment/job-openings/status/${status}`, {
+      params: { size: 1000 },
+    });
+    return response.data.content;
   }
 
   async deleteJobOpening(id: string): Promise<void> {
@@ -73,8 +75,10 @@ class RecruitmentService {
   }
 
   async getCandidatesByJobOpening(jobOpeningId: string): Promise<Candidate[]> {
-    const response = await apiClient.get<Candidate[]>(`/recruitment/candidates/job-opening/${jobOpeningId}`);
-    return response.data;
+    const response = await apiClient.get<Page<Candidate>>(`/recruitment/candidates/job-opening/${jobOpeningId}`, {
+      params: { size: 1000 },
+    });
+    return response.data.content;
   }
 
   async deleteCandidate(id: string): Promise<void> {
@@ -139,8 +143,10 @@ class RecruitmentService {
   }
 
   async getInterviewsByCandidate(candidateId: string): Promise<Interview[]> {
-    const response = await apiClient.get<Interview[]>(`/recruitment/interviews/candidate/${candidateId}`);
-    return response.data;
+    const response = await apiClient.get<Page<Interview>>(`/recruitment/interviews/candidate/${candidateId}`, {
+      params: { size: 1000 },
+    });
+    return response.data.content;
   }
 
   async deleteInterview(id: string): Promise<void> {
