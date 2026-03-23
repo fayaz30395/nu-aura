@@ -412,7 +412,7 @@ export default function ReportBuilderPage() {
               <span className="text-xs text-[var(--text-muted)]">Showing up to 100 rows</span>
             </div>
             <div className="overflow-x-auto">
-              <table className="min-w-full text-sm divide-y divide-gray-200">
+              <table className="min-w-full text-sm divide-y divide-[var(--border-main)]">
                 <thead className="bg-[var(--bg-surface)]">
                   <tr>
                     {Object.keys(previewRows[0]).map(col => (
@@ -425,7 +425,7 @@ export default function ReportBuilderPage() {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
+                <tbody className="bg-[var(--bg-card)] divide-y divide-[var(--border-subtle)]">
                   {previewRows.slice(0, 50).map((row, i) => (
                     <tr key={i} className="hover:bg-[var(--bg-surface)]">
                       {Object.values(row).map((val, j) => (
