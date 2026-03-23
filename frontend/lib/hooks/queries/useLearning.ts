@@ -24,6 +24,8 @@ export const learningKeys = {
   certificates: () => [...learningKeys.all, 'certificates'] as const,
   myCertificates: (page?: number, size?: number) =>
     [...learningKeys.certificates(), 'my', { page, size }] as const,
+  // Skill Gaps
+  skillGaps: (employeeId: string) => [...learningKeys.all, 'skillGaps', employeeId] as const,
 };
 
 // ─── Dashboard Query ────────────────────────────────────────────────────────
@@ -138,5 +140,18 @@ export function useUpdateContentProgress() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: learningKeys.enrollments() });
     },
+  });
+}
+
+// ─── Skill Gap Query ──────────────────────────────────────────────────────
+
+export function useSkillGaps(employeeId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: learningKeys.skillGaps(employeeId),
+    queryFn: () => lmsService.getSkillGaps(employeeId),
+    enabled: enabled && !!employeeId,
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 60 * 60 * 1000,
+    retry: 1,
   });
 }

@@ -187,7 +187,7 @@ export default function LinkedInPostsPage() {
                           )}
                         </div>
                         {!post.isActive && (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                             Inactive
                           </span>
                         )}
@@ -196,7 +196,7 @@ export default function LinkedInPostsPage() {
 
                     {/* Content */}
                     <div className="p-5 space-y-4">
-                      <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
+                      <p className="text-sm text-[var(--text-secondary)] line-clamp-3">
                         {post.contentSnippet}
                       </p>
 
@@ -469,7 +469,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-[var(--text-muted)]" />
           </button>
@@ -485,7 +485,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             <input
               type="url"
               {...register('postUrl')}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                 errors.postUrl ? 'border-red-500' : 'border-[var(--border-main)]'
               }`}
               placeholder="https://www.linkedin.com/feed/update/..."
@@ -504,7 +504,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
               <input
                 type="text"
                 {...register('authorName')}
-                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                   errors.authorName ? 'border-red-500' : 'border-[var(--border-main)]'
                 }`}
                 placeholder="John Doe"
@@ -520,7 +520,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
               <input
                 type="text"
                 {...register('authorTitle')}
-                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
                 placeholder="CEO at Company"
               />
             </div>
@@ -534,7 +534,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             <textarea
               {...register('contentSnippet')}
               rows={4}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white resize-none ${
                 errors.contentSnippet ? 'border-red-500' : 'border-[var(--border-main)]'
               }`}
               placeholder="Paste the post content or a snippet..."
@@ -552,7 +552,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             <input
               type="url"
               {...register('imageUrl')}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                 errors.imageUrl ? 'border-red-500' : 'border-[var(--border-main)]'
               }`}
               placeholder="https://..."
@@ -570,7 +570,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             <input
               type="date"
               {...register('postedAt')}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                 errors.postedAt ? 'border-red-500' : 'border-[var(--border-main)]'
               }`}
             />
@@ -587,7 +587,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             <input
               type="text"
               {...register('tags')}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
               placeholder="tag1, tag2, tag3"
             />
             <p className="mt-1 text-xs text-[var(--text-muted)]">
@@ -615,7 +615,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                           errors.likes ? 'border-red-500' : 'border-[var(--border-main)]'
                         }`}
                       />
@@ -640,7 +640,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                           errors.comments ? 'border-red-500' : 'border-[var(--border-main)]'
                         }`}
                       />
@@ -665,7 +665,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                           errors.shares ? 'border-red-500' : 'border-[var(--border-main)]'
                         }`}
                       />
@@ -706,7 +706,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium"
           >
             Cancel
           </button>

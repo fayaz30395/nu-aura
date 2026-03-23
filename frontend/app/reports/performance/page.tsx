@@ -54,8 +54,8 @@ export default function PerformanceReportsPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Performance Reports</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Performance Reports</h1>
+            <p className="text-[var(--text-secondary)] mt-1">
               Generate performance review reports with ratings and goal achievements
             </p>
           </div>
@@ -92,12 +92,12 @@ export default function PerformanceReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                   Review Period (Optional)
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">From</label>
+                    <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
                     <input
                       type="date"
                       value={startDate}
@@ -106,7 +106,7 @@ export default function PerformanceReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">To</label>
+                    <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
                     <input
                       type="date"
                       value={endDate}
@@ -115,14 +115,14 @@ export default function PerformanceReportsPage() {
                     />
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-[var(--text-muted)] mt-2">
                   Leave empty to include all performance reviews
                 </p>
               </div>
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                   Export Format
                 </label>
                 <div className="grid grid-cols-3 gap-4">
@@ -133,13 +133,13 @@ export default function PerformanceReportsPage() {
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
                           ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/20'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
-                      <p className={`font-medium text-sm ${format === fmt ? 'text-indigo-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                      <p className={`font-medium text-sm ${format === fmt ? 'text-indigo-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--text-muted)]">
                         .{fmt === 'EXCEL' ? 'xlsx' : fmt.toLowerCase()}
                       </p>
                     </button>

@@ -119,10 +119,10 @@ export default function SystemDashboard() {
             <Server className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               System Dashboard
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Mission control center for cross-tenant management
             </p>
           </div>
@@ -147,10 +147,10 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-[var(--border-main)]"
         >
           <Group justify="space-between" mb="md">
-            <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
+            <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Total Tenants
             </Text>
             <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
@@ -158,7 +158,7 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-slate-900 dark:text-slate-50">
+            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
               {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.totalTenants ?? 0}
             </Text>
             <Group gap="xs">
@@ -173,10 +173,10 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-[var(--border-main)]"
         >
           <Group justify="space-between" mb="md">
-            <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
+            <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Active Users
             </Text>
             <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
@@ -184,10 +184,10 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-slate-900 dark:text-slate-50">
+            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
               {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.totalActiveUsers ?? 0}
             </Text>
-            <Text size="xs" className="text-slate-500 dark:text-slate-500">
+            <Text size="xs" className="text-[var(--text-muted)]">
               Across all tenants
             </Text>
           </div>
@@ -197,10 +197,10 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-[var(--border-main)]"
         >
           <Group justify="space-between" mb="md">
-            <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
+            <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Total Employees
             </Text>
             <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
@@ -208,10 +208,10 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-slate-900 dark:text-slate-50">
+            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
               {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.totalEmployees ?? 0}
             </Text>
-            <Text size="xs" className="text-slate-500 dark:text-slate-500">
+            <Text size="xs" className="text-[var(--text-muted)]">
               System-wide total
             </Text>
           </div>
@@ -221,10 +221,10 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-[var(--border-main)]"
         >
           <Group justify="space-between" mb="md">
-            <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
+            <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Pending Approvals
             </Text>
             <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
@@ -232,10 +232,10 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-slate-900 dark:text-slate-50">
+            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
               {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.pendingApprovals ?? 0}
             </Text>
-            <Text size="xs" className="text-slate-500 dark:text-slate-500">
+            <Text size="xs" className="text-[var(--text-muted)]">
               Awaiting action
             </Text>
           </div>
@@ -246,16 +246,16 @@ export default function SystemDashboard() {
       <Paper
         p="lg"
         radius="md"
-        className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+        className="skeuo-card bg-[var(--bg-input)] border border-[var(--border-main)]"
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-            <Text fw={600} className="text-slate-900 dark:text-slate-50">
+            <BarChart3 className="h-5 w-5 text-[var(--text-secondary)]" />
+            <Text fw={600} className="text-[var(--text-primary)]">
               Platform Growth
             </Text>
           </div>
-          <Text size="xs" className="text-slate-500 dark:text-slate-500">
+          <Text size="xs" className="text-[var(--text-muted)]">
             Last 6 months
           </Text>
         </Group>
@@ -303,7 +303,7 @@ export default function SystemDashboard() {
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-80 flex items-center justify-center text-slate-500">
+          <div className="h-80 flex items-center justify-center text-[var(--text-muted)]">
             Loading chart data...
           </div>
         )}
@@ -313,16 +313,16 @@ export default function SystemDashboard() {
       <Paper
         p="lg"
         radius="md"
-        className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+        className="skeuo-card bg-[var(--bg-input)] border border-[var(--border-main)]"
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-            <Text fw={600} className="text-slate-900 dark:text-slate-50">
+            <Building2 className="h-5 w-5 text-[var(--text-secondary)]" />
+            <Text fw={600} className="text-[var(--text-primary)]">
               All Tenants
             </Text>
           </div>
-          <Text size="xs" className="text-slate-500 dark:text-slate-500">
+          <Text size="xs" className="text-[var(--text-muted)]">
             Page {page + 1} of {tenantListQuery.data?.pageable?.totalPages ?? 1}
           </Text>
         </Group>
@@ -337,14 +337,14 @@ export default function SystemDashboard() {
           <>
             <Table striped highlightOnHover>
               <Table.Thead>
-                <Table.Tr className="bg-slate-50 dark:bg-slate-700/50">
-                  <Table.Th className="text-slate-700 dark:text-slate-300">Tenant</Table.Th>
-                  <Table.Th className="text-slate-700 dark:text-slate-300">Plan</Table.Th>
-                  <Table.Th className="text-slate-700 dark:text-slate-300">Status</Table.Th>
-                  <Table.Th className="text-slate-700 dark:text-slate-300 text-right">Employees</Table.Th>
-                  <Table.Th className="text-slate-700 dark:text-slate-300 text-right">Users</Table.Th>
-                  <Table.Th className="text-slate-700 dark:text-slate-300">Created</Table.Th>
-                  <Table.Th className="text-slate-700 dark:text-slate-300">Action</Table.Th>
+                <Table.Tr className="bg-[var(--bg-surface)]">
+                  <Table.Th className="text-[var(--text-secondary)]">Tenant</Table.Th>
+                  <Table.Th className="text-[var(--text-secondary)]">Plan</Table.Th>
+                  <Table.Th className="text-[var(--text-secondary)]">Status</Table.Th>
+                  <Table.Th className="text-[var(--text-secondary)] text-right">Employees</Table.Th>
+                  <Table.Th className="text-[var(--text-secondary)] text-right">Users</Table.Th>
+                  <Table.Th className="text-[var(--text-secondary)]">Created</Table.Th>
+                  <Table.Th className="text-[var(--text-secondary)]">Action</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -352,10 +352,10 @@ export default function SystemDashboard() {
                   <Table.Tr key={tenant.tenantId}>
                     <Table.Td>
                       <div className="flex flex-col">
-                        <Text fw={500} size="sm" className="text-slate-900 dark:text-slate-50">
+                        <Text fw={500} size="sm" className="text-[var(--text-primary)]">
                           {tenant.name}
                         </Text>
-                        <Text size="xs" className="text-slate-500 dark:text-slate-500">
+                        <Text size="xs" className="text-[var(--text-muted)]">
                           {tenant.tenantId.substring(0, 8)}...
                         </Text>
                       </div>
@@ -379,17 +379,17 @@ export default function SystemDashboard() {
                       </Badge>
                     </Table.Td>
                     <Table.Td className="text-right">
-                      <Text size="sm" fw={500} className="text-slate-900 dark:text-slate-50">
+                      <Text size="sm" fw={500} className="text-[var(--text-primary)]">
                         {tenant.employeeCount}
                       </Text>
                     </Table.Td>
                     <Table.Td className="text-right">
-                      <Text size="sm" fw={500} className="text-slate-900 dark:text-slate-50">
+                      <Text size="sm" fw={500} className="text-[var(--text-primary)]">
                         {tenant.userCount}
                       </Text>
                     </Table.Td>
                     <Table.Td>
-                      <Text size="sm" className="text-slate-600 dark:text-slate-400">
+                      <Text size="sm" className="text-[var(--text-secondary)]">
                         {new Date(tenant.createdAt).toLocaleDateString()}
                       </Text>
                     </Table.Td>
@@ -436,7 +436,7 @@ export default function SystemDashboard() {
             </Group>
           </>
         ) : (
-          <Text className="text-slate-500 dark:text-slate-500">No tenants found</Text>
+          <Text className="text-[var(--text-muted)]">No tenants found</Text>
         )}
       </Paper>
 
@@ -453,29 +453,29 @@ export default function SystemDashboard() {
         {selectedTenant && (
           <Stack gap="md">
             <div>
-              <Text fw={500} size="sm" className="text-slate-700 dark:text-slate-300 mb-2">
+              <Text fw={500} size="sm" className="text-[var(--text-secondary)] mb-2">
                 Tenant Information
               </Text>
-              <Paper p="sm" className="bg-slate-50 dark:bg-slate-700/50 rounded-md">
+              <Paper p="sm" className="bg-[var(--bg-surface)] rounded-md">
                 <Stack gap="xs">
                   <div>
-                    <Text size="xs" className="text-slate-600 dark:text-slate-400">
+                    <Text size="xs" className="text-[var(--text-secondary)]">
                       Name
                     </Text>
-                    <Text fw={500} size="sm" className="text-slate-900 dark:text-slate-50">
+                    <Text fw={500} size="sm" className="text-[var(--text-primary)]">
                       {selectedTenant.name}
                     </Text>
                   </div>
                   <div>
-                    <Text size="xs" className="text-slate-600 dark:text-slate-400">
+                    <Text size="xs" className="text-[var(--text-secondary)]">
                       ID
                     </Text>
-                    <Text fw={500} size="sm" className="text-slate-900 dark:text-slate-50">
+                    <Text fw={500} size="sm" className="text-[var(--text-primary)]">
                       {selectedTenant.tenantId}
                     </Text>
                   </div>
                   <div>
-                    <Text size="xs" className="text-slate-600 dark:text-slate-400">
+                    <Text size="xs" className="text-[var(--text-secondary)]">
                       Plan
                     </Text>
                     <Badge size="sm" color="blue">
@@ -487,10 +487,10 @@ export default function SystemDashboard() {
             </div>
 
             <div>
-              <Text fw={500} size="sm" className="text-slate-700 dark:text-slate-300 mb-2">
+              <Text fw={500} size="sm" className="text-[var(--text-secondary)] mb-2">
                 Access Method
               </Text>
-              <Text size="sm" className="text-slate-600 dark:text-slate-400 mb-3">
+              <Text size="sm" className="text-[var(--text-secondary)] mb-3">
                 Click the button below to impersonate this tenant and access their dashboard.
               </Text>
               <Button
@@ -502,7 +502,7 @@ export default function SystemDashboard() {
               </Button>
             </div>
 
-            <Text size="xs" className="text-slate-500 dark:text-slate-500 italic">
+            <Text size="xs" className="text-[var(--text-muted)] italic">
               All access will be logged for audit purposes
             </Text>
           </Stack>

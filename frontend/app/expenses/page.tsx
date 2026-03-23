@@ -60,7 +60,7 @@ export default function ExpenseClaims() {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Initialize React Query hooks
-  const myClaimsQuery = useMyExpenseClaims(0, 50);
+  const myClaimsQuery = useMyExpenseClaims(user?.employeeId, 0, 50);
   const pendingClaimsQuery = usePendingExpenseClaims(0, 50);
   const allClaimsQuery = useAllExpenseClaims(0, 20);
   const createMutation = useCreateExpenseClaim();
@@ -343,13 +343,13 @@ export default function ExpenseClaims() {
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      DRAFT: 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-300',
+      DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]',
       SUBMITTED: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
       APPROVED: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
       REJECTED: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
       PAID: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300'
     };
-    return styles[status] || 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-300';
+    return styles[status] || 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]';
   };
 
   // Show loading state while hydrating

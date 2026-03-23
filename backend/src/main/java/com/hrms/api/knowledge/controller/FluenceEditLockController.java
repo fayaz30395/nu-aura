@@ -2,7 +2,9 @@ package com.hrms.api.knowledge.controller;
 
 import com.hrms.application.knowledge.service.FluenceEditLockService;
 import com.hrms.application.knowledge.service.FluenceEditLockService.EditLockInfo;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresFeature;
+import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.featureflag.FeatureFlag;
@@ -28,6 +30,7 @@ public class FluenceEditLockController {
      * Acquire an edit lock on content.
      */
     @PostMapping("/{contentType}/{contentId}")
+    @RequiresPermission({Permission.KNOWLEDGE_WIKI_UPDATE, Permission.KNOWLEDGE_BLOG_UPDATE})
     public ResponseEntity<EditLockResponse> acquireLock(
             @PathVariable String contentType,
             @PathVariable UUID contentId) {
@@ -53,6 +56,7 @@ public class FluenceEditLockController {
      * Release an edit lock on content.
      */
     @DeleteMapping("/{contentType}/{contentId}")
+    @RequiresPermission({Permission.KNOWLEDGE_WIKI_UPDATE, Permission.KNOWLEDGE_BLOG_UPDATE})
     public ResponseEntity<EditLockResponse> releaseLock(
             @PathVariable String contentType,
             @PathVariable UUID contentId) {
@@ -79,6 +83,7 @@ public class FluenceEditLockController {
      * Check current lock status for content.
      */
     @GetMapping("/{contentType}/{contentId}")
+    @RequiresPermission({Permission.KNOWLEDGE_WIKI_READ, Permission.KNOWLEDGE_BLOG_READ})
     public ResponseEntity<EditLockResponse> checkLock(
             @PathVariable String contentType,
             @PathVariable UUID contentId) {
@@ -101,6 +106,7 @@ public class FluenceEditLockController {
      * Refresh (heartbeat) an existing edit lock to extend its TTL.
      */
     @PutMapping("/{contentType}/{contentId}/heartbeat")
+    @RequiresPermission({Permission.KNOWLEDGE_WIKI_UPDATE, Permission.KNOWLEDGE_BLOG_UPDATE})
     public ResponseEntity<EditLockResponse> refreshLock(
             @PathVariable String contentType,
             @PathVariable UUID contentId) {

@@ -129,7 +129,7 @@ export default function MyProfilePage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-600 dark:text-slate-400 mb-4">
+              <p className="text-[var(--text-secondary)] mb-4">
                 {error || 'Unable to load your profile'}
               </p>
             </CardContent>
@@ -168,8 +168,8 @@ export default function MyProfilePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">My Profile</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Profile</h1>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Manage your personal information
             </p>
           </div>
@@ -242,24 +242,24 @@ export default function MyProfilePage() {
                     alt={displayName}
                     width={128}
                     height={128}
-                    className="rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg bg-[var(--bg-input)]"
+                    className="rounded-full object-cover border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] shadow-lg bg-[var(--bg-input)]"
                     onError={() => setPhotoLoadError(true)}
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-white dark:border-slate-900 flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">
+                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">
                     {getInitials(displayName)}
                   </div>
                 )}
-                <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-white dark:border-slate-900 rounded-full" />
+                <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] rounded-full" />
               </div>
               <div className="flex-1 pb-6">
-                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-50">
+                <h2 className="text-3xl font-bold text-[var(--text-primary)]">
                   {displayName}
                 </h2>
-                <p className="text-lg text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-lg text-[var(--text-secondary)] mt-1">
                   {employee.designation}
                 </p>
-                <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-slate-600 dark:text-slate-400">
+                <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-[var(--text-secondary)]">
                   <div className="flex items-center gap-1">
                     <Mail className="h-4 w-4" />
                     {employee.workEmail}
@@ -290,24 +290,24 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Full Name
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">{displayName}</p>
+                <p className="text-[var(--text-primary)] mt-1">{displayName}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Date of Birth
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">
+                <p className="text-[var(--text-primary)] mt-1">
                   {employee.dateOfBirth ? formatDate(employee.dateOfBirth) : 'Not provided'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Gender
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">
+                <p className="text-[var(--text-primary)] mt-1">
                   {employee.gender || 'Not provided'}
                 </p>
               </div>
@@ -325,13 +325,13 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Work Email
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">{employee.workEmail}</p>
+                <p className="text-[var(--text-primary)] mt-1">{employee.workEmail}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Personal Email
                 </label>
                 {isEditing ? (
@@ -342,13 +342,13 @@ export default function MyProfilePage() {
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
-                  <p className="text-slate-900 dark:text-slate-50 mt-1">
+                  <p className="text-[var(--text-primary)] mt-1">
                     {employee.personalEmail || 'Not provided'}
                   </p>
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Phone Number
                 </label>
                 {isEditing ? (
@@ -359,13 +359,13 @@ export default function MyProfilePage() {
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
-                  <p className="text-slate-900 dark:text-slate-50 mt-1">
+                  <p className="text-[var(--text-primary)] mt-1">
                     {employee.phoneNumber || 'Not provided'}
                   </p>
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Emergency Contact
                 </label>
                 {isEditing ? (
@@ -378,7 +378,7 @@ export default function MyProfilePage() {
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
-                  <p className="text-slate-900 dark:text-slate-50 mt-1">
+                  <p className="text-[var(--text-primary)] mt-1">
                     {employee.emergencyContactNumber || 'Not provided'}
                   </p>
                 )}
@@ -397,7 +397,7 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Street Address
                 </label>
                 {isEditing ? (
@@ -408,14 +408,14 @@ export default function MyProfilePage() {
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
-                  <p className="text-slate-900 dark:text-slate-50 mt-1">
+                  <p className="text-[var(--text-primary)] mt-1">
                     {employee.address || 'Not provided'}
                   </p>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <label className="text-sm font-medium text-[var(--text-secondary)]">
                     City
                   </label>
                   {isEditing ? (
@@ -426,13 +426,13 @@ export default function MyProfilePage() {
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
-                    <p className="text-slate-900 dark:text-slate-50 mt-1">
+                    <p className="text-[var(--text-primary)] mt-1">
                       {employee.city || 'N/A'}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <label className="text-sm font-medium text-[var(--text-secondary)]">
                     State
                   </label>
                   {isEditing ? (
@@ -443,7 +443,7 @@ export default function MyProfilePage() {
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
-                    <p className="text-slate-900 dark:text-slate-50 mt-1">
+                    <p className="text-[var(--text-primary)] mt-1">
                       {employee.state || 'N/A'}
                     </p>
                   )}
@@ -451,7 +451,7 @@ export default function MyProfilePage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <label className="text-sm font-medium text-[var(--text-secondary)]">
                     Postal Code
                   </label>
                   {isEditing ? (
@@ -462,13 +462,13 @@ export default function MyProfilePage() {
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
-                    <p className="text-slate-900 dark:text-slate-50 mt-1">
+                    <p className="text-[var(--text-primary)] mt-1">
                       {employee.postalCode || 'N/A'}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <label className="text-sm font-medium text-[var(--text-secondary)]">
                     Country
                   </label>
                   {isEditing ? (
@@ -479,7 +479,7 @@ export default function MyProfilePage() {
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
-                    <p className="text-slate-900 dark:text-slate-50 mt-1">
+                    <p className="text-[var(--text-primary)] mt-1">
                       {employee.country || 'N/A'}
                     </p>
                   )}
@@ -499,39 +499,39 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Joining Date
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">
+                <p className="text-[var(--text-primary)] mt-1">
                   {formatDate(employee.joiningDate)}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Employment Type
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">
+                <p className="text-[var(--text-primary)] mt-1">
                   {formatEnumValue(employee.employmentType)}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Department
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">
+                <p className="text-[var(--text-primary)] mt-1">
                   {employee.departmentName || 'N/A'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Reporting Manager
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">
+                <p className="text-[var(--text-primary)] mt-1">
                   {employee.managerName || 'N/A'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Status
                 </label>
                 <span
@@ -557,28 +557,28 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Bank Name
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">
+                <p className="text-[var(--text-primary)] mt-1">
                   {employee.bankName || 'Not provided'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Account Number
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1 font-mono">
+                <p className="text-[var(--text-primary)] mt-1 font-mono">
                   {employee.bankAccountNumber
                     ? `****${employee.bankAccountNumber.slice(-4)}`
                     : 'Not provided'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   IFSC Code
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1 font-mono">
+                <p className="text-[var(--text-primary)] mt-1 font-mono">
                   {employee.bankIfscCode || 'Not provided'}
                 </p>
               </div>
@@ -596,10 +596,10 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   PAN Number
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1 font-mono">
+                <p className="text-[var(--text-primary)] mt-1 font-mono">
                   {employee.taxId || 'Not provided'}
                 </p>
               </div>

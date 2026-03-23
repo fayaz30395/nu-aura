@@ -175,11 +175,19 @@ public class SecurityService {
             return allPermissions;
         }
 
+        // PERF-M01: Load ALL tenant roles with permissions in a single query,
+        // then reuse the in-memory map for all hierarchy walks below.
+        List<Role> allTenantRoles = roleRepository.findByTenantIdWithPermissions(tenantId);
+        Map<UUID, Role> roleMap = new HashMap<>();
+        for (Role r : allTenantRoles) {
+            roleMap.put(r.getId(), r);
+        }
+
         // 1. Load explicit role permissions + inheritance chain
         if (explicitRoleCodes != null && !explicitRoleCodes.isEmpty()) {
             List<Role> explicitRoles = roleRepository.findByCodeInAndTenantId(explicitRoleCodes, tenantId);
             for (Role role : explicitRoles) {
-                Set<String> rolePerms = flattenRolePermissions(role, tenantId);
+                Set<String> rolePerms = flattenRolePermissions(role, roleMap);
                 allPermissions.addAll(rolePerms);
             }
         }
@@ -189,10 +197,9 @@ public class SecurityService {
                 .findByUserIdAndTenantIdAndIsActiveTrue(userId, tenantId);
 
         for (ImplicitUserRole implicitRole : implicitRoles) {
-            // Load the role entity and walk its parent chain
-            Optional<Role> roleOpt = roleRepository.findByIdAndTenantIdWithPermissions(implicitRole.getRoleId(), tenantId);
-            if (roleOpt.isPresent()) {
-                Set<String> rolePerms = flattenRolePermissions(roleOpt.get(), tenantId);
+            Role implicitRoleEntity = roleMap.get(implicitRole.getRoleId());
+            if (implicitRoleEntity != null) {
+                Set<String> rolePerms = flattenRolePermissions(implicitRoleEntity, roleMap);
                 allPermissions.addAll(rolePerms);
             }
         }
@@ -204,18 +211,22 @@ public class SecurityService {
     }
 
     /**
-     * Helper method: Walk parent_role_id chain to collect all permissions for a role
+     * PERF-M01 FIX: Walk parent_role_id chain to collect all permissions for a role
      * and all its ancestors (up the inheritance hierarchy).
      *
+     * Uses a pre-loaded in-memory roleMap to avoid any DB queries during hierarchy walks.
+     * The caller is responsible for loading all tenant roles once via
+     * {@code roleRepository.findByTenantIdWithPermissions(tenantId)}.
+     *
      * @param role The role to start from
-     * @param tenantId The tenant context
+     * @param roleMap Pre-loaded map of roleId -> Role (with permissions) for the tenant
      * @return Set of permission codes (directly assigned + inherited from parent roles)
      */
-    private Set<String> flattenRolePermissions(Role role, UUID tenantId) {
+    private Set<String> flattenRolePermissions(Role role, Map<UUID, Role> roleMap) {
         Set<String> permissions = new HashSet<>();
         Set<UUID> visited = new HashSet<>();
-        Queue<Role> toProcess = new LinkedList<>();
 
+        Queue<Role> toProcess = new LinkedList<>();
         toProcess.offer(role);
 
         int depth = 0;
@@ -237,11 +248,11 @@ public class SecurityService {
                 }
             }
 
-            // Add parent to queue if it exists
+            // Walk parent chain via in-memory map — no additional DB queries
             if (current.getParentRoleId() != null) {
-                Optional<Role> parentOpt = roleRepository.findByIdAndTenantIdWithPermissions(current.getParentRoleId(), tenantId);
-                if (parentOpt.isPresent()) {
-                    toProcess.offer(parentOpt.get());
+                Role parent = roleMap.get(current.getParentRoleId());
+                if (parent != null) {
+                    toProcess.offer(parent);
                 }
             }
 

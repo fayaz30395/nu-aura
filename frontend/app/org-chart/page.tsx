@@ -73,12 +73,12 @@ export default function OrgChartPage() {
       'SENIOR_MANAGER': 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700',
       'MANAGER': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700/50',
       'LEAD': 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700',
-      'SENIOR': 'bg-[var(--bg-surface)] text-gray-800 border-[var(--border-strong)] dark:bg-[var(--bg-surface)] dark:text-gray-300 dark:border-[var(--border-strong)]',
+      'SENIOR': 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-strong)] dark:bg-[var(--bg-surface)] dark:text-[var(--text-secondary)] dark:border-[var(--border-strong)]',
       'MID': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
       'ENTRY': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
     };
 
-    const cardColor = employee.level ? levelColors[employee.level] : 'bg-white border-[var(--border-main)]';
+    const cardColor = employee.level ? levelColors[employee.level] : 'bg-[var(--bg-card)] border-[var(--border-main)]';
 
     return (
       <div key={employee.id} className="flex flex-col items-center">
@@ -117,7 +117,7 @@ export default function OrgChartPage() {
 
           {hasChildren && (
             <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
-              <div className="bg-gray-300 rounded-full px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
+              <div className="bg-[var(--border-main)] rounded-full px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
                 {employee.children!.length}
               </div>
             </div>
@@ -128,12 +128,12 @@ export default function OrgChartPage() {
         {hasChildren && (
           <div className="relative mt-12">
             {/* Vertical line from parent */}
-            <div className="absolute left-1/2 -top-8 w-0.5 h-8 bg-gray-300 transform -translate-x-1/2" />
+            <div className="absolute left-1/2 -top-8 w-0.5 h-8 bg-[var(--border-main)] transform -translate-x-1/2" />
 
             {/* Horizontal line connecting children */}
             {employee.children!.length > 1 && (
               <div
-                className="absolute top-0 h-0.5 bg-gray-300"
+                className="absolute top-0 h-0.5 bg-[var(--border-main)]"
                 style={{
                   left: '50%',
                   right: '50%',
@@ -147,7 +147,7 @@ export default function OrgChartPage() {
               {employee.children!.map((child, _index) => (
                 <div key={child.id} className="relative">
                   {/* Vertical line to child */}
-                  <div className="absolute left-1/2 -top-0 w-0.5 h-8 bg-gray-300 transform -translate-x-1/2" />
+                  <div className="absolute left-1/2 -top-0 w-0.5 h-8 bg-[var(--border-main)] transform -translate-x-1/2" />
                   {renderEmployeeCard(child, depth + 1)}
                 </div>
               ))}
@@ -250,7 +250,7 @@ export default function OrgChartPage() {
             <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded">Executive</span>
             <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">Director/VP</span>
             <span className="px-2 py-1 bg-green-100 text-green-800 rounded">Manager</span>
-            <span className="px-2 py-1 bg-[var(--bg-surface)] text-gray-800 rounded">Individual Contributor</span>
+            <span className="px-2 py-1 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded">Individual Contributor</span>
           </div>
         </div>
 

@@ -277,13 +277,15 @@ export default function AdminLayout({
     router.push('/auth/login');
   };
 
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('admin-sidebar-collapsed');
-      return saved === 'true';
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Sync collapsed state from localStorage after hydration to avoid SSR mismatch
+  useEffect(() => {
+    const saved = localStorage.getItem('admin-sidebar-collapsed');
+    if (saved === 'true') {
+      setIsCollapsed(true);
     }
-    return false;
-  });
+  }, []);
 
   const handleCollapsedChange = (collapsed: boolean) => {
     setIsCollapsed(collapsed);

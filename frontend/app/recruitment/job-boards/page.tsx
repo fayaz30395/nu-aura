@@ -157,7 +157,7 @@ export default function JobBoardsPage() {
         ) : postings.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center text-[var(--text-muted)]">
-              <Globe className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+              <Globe className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]" />
               <p>No job board postings found. Post a job to get started!</p>
             </CardContent>
           </Card>
@@ -261,7 +261,7 @@ export default function JobBoardsPage() {
                         key={board}
                         onClick={() => toggleBoard(board)}
                         className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm font-medium transition-all ${
-                          isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:border-gray-400'
+                          isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
                         }`}
                       >
                         <Globe className="w-4 h-4" />

@@ -59,8 +59,8 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
-        <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{label}</p>
+      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-lg border border-[var(--border-main)]">
+        <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
         {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {entry.value}
@@ -151,15 +151,15 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Analytics Dashboard
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Comprehensive HR metrics and insights
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center bg-[var(--bg-input)] rounded-lg border border-slate-200 dark:border-slate-700 p-1">
+            <div className="flex items-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-1">
               {(['7d', '30d', '90d', 'custom'] as const).map((range) => (
                 <button
                   key={range}
@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     timeRange === range
                       ? 'bg-primary-600 text-white'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
                   }`}
                 >
                   {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '90d' ? '90 Days' : 'Custom'}
@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
                   className="input-aura px-3 py-1.5 text-sm"
                   aria-label="Start date"
                 />
-                <span className="text-sm text-slate-400">to</span>
+                <span className="text-sm text-[var(--text-muted)]">to</span>
                 <input
                   type="date"
                   value={customEnd}
@@ -212,8 +212,8 @@ export default function AnalyticsPage() {
             <CardContent className="p-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Total Employees</p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-50 mt-1">
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Total Employees</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {analytics.headcount.total}
                   </p>
                   <div className="flex items-center gap-1 mt-2">
@@ -229,7 +229,7 @@ export default function AnalyticsPage() {
                     >
                       {Math.abs(analytics.headcount.growthPercentage)}%
                     </span>
-                    <span className="text-xs text-slate-400">vs last month</span>
+                    <span className="text-xs text-[var(--text-muted)]">vs last month</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
@@ -243,13 +243,13 @@ export default function AnalyticsPage() {
             <CardContent className="p-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Attendance Rate</p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-50 mt-1">
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Attendance Rate</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {analytics.attendance.attendancePercentage}%
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-sm text-green-600">{analytics.attendance.present}</span>
-                    <span className="text-xs text-slate-400">present today</span>
+                    <span className="text-xs text-[var(--text-muted)]">present today</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center">
@@ -263,13 +263,13 @@ export default function AnalyticsPage() {
             <CardContent className="p-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Leave Utilization</p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-50 mt-1">
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Leave Utilization</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {analytics.leave.utilizationPercentage}%
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-sm text-orange-600">{analytics.leave.pending}</span>
-                    <span className="text-xs text-slate-400">pending approvals</span>
+                    <span className="text-xs text-[var(--text-muted)]">pending approvals</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
@@ -284,15 +284,15 @@ export default function AnalyticsPage() {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-500">Monthly Payroll</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-slate-50 mt-1">
+                    <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">
                       {formatCurrency(analytics.payroll.currentMonth.total)}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-sm text-blue-600">
                         {analytics.payroll.currentMonth.processed}
                       </span>
-                      <span className="text-xs text-slate-400">processed</span>
+                      <span className="text-xs text-[var(--text-muted)]">processed</span>
                     </div>
                   </div>
                   <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
@@ -341,7 +341,7 @@ export default function AnalyticsPage() {
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-slate-400">
+                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
                     No attendance trend data available
                   </div>
                 )}
@@ -381,13 +381,13 @@ export default function AnalyticsPage() {
                         verticalAlign="bottom"
                         height={36}
                         formatter={(value) => (
-                          <span className="text-sm text-slate-600 dark:text-slate-400">{value}</span>
+                          <span className="text-sm text-[var(--text-secondary)]">{value}</span>
                         )}
                       />
                     </PieChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="w-full text-center text-slate-400">
+                  <div className="w-full text-center text-[var(--text-muted)]">
                     No attendance data available
                   </div>
                 )}
@@ -426,7 +426,7 @@ export default function AnalyticsPage() {
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-slate-400">
+                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
                     No department data available
                   </div>
                 )}
@@ -471,13 +471,13 @@ export default function AnalyticsPage() {
                         verticalAlign="bottom"
                         height={36}
                         formatter={(value) => (
-                          <span className="text-sm text-slate-600 dark:text-slate-400">{value}</span>
+                          <span className="text-sm text-[var(--text-secondary)]">{value}</span>
                         )}
                       />
                     </PieChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-slate-400">
+                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
                     No leave distribution data available
                   </div>
                 )}

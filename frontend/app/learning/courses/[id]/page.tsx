@@ -215,7 +215,7 @@ export default function CourseDetailPage() {
               {/* Completion percentage */}
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-3">
-                  <div className="flex-1 h-3 bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                  <div className="flex-1 h-3 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-500" style={{ width: `${completionPercentage}%` }} />
                   </div>
                   <span className="text-sm font-bold text-[var(--text-primary)]">{completionPercentage}%</span>
@@ -248,7 +248,7 @@ export default function CourseDetailPage() {
           {/* Quizzes Section */}
           {isEnrolled && quizzes.length > 0 && (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] overflow-hidden">
-              <div className="p-6 border-b border-gray-100 dark:border-[var(--border-main)]">
+              <div className="p-6 border-b border-[var(--border-main)]">
                 <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
                   <HelpCircle className="h-5 w-5" />
                   Quizzes & Assessments
@@ -258,14 +258,14 @@ export default function CourseDetailPage() {
                 </p>
               </div>
 
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
+              <div className="divide-y divide-[var(--border-main)]">
                 {quizzes.map((quiz, idx) => {
                   const isAvailable = quiz.status === 'AVAILABLE';
                   const isPassed = quiz.status === 'PASSED';
                   const isFailed = quiz.status === 'FAILED';
 
                   return (
-                    <div key={quiz.id} className="p-4 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700/50 transition-colors">
+                    <div key={quiz.id} className="p-4 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
@@ -298,7 +298,7 @@ export default function CourseDetailPage() {
                           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
                             isAvailable || isPassed || isFailed
                               ? 'bg-blue-600 text-white hover:bg-blue-700'
-                              : 'bg-gray-200 dark:bg-[var(--bg-secondary)] text-[var(--text-muted)] cursor-not-allowed'
+                              : 'bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed'
                           }`}
                         >
                           {isPassed ? 'Review' : isFailed ? 'Retry' : 'Take Quiz'}
@@ -314,7 +314,7 @@ export default function CourseDetailPage() {
           {/* Curriculum */}
           {course.modules && course.modules.length > 0 && (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] overflow-hidden">
-              <div className="p-6 border-b border-gray-100 dark:border-[var(--border-main)]">
+              <div className="p-6 border-b border-[var(--border-main)]">
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">Course Curriculum</h2>
                 <p className="text-sm text-[var(--text-muted)] mt-0.5">
                   {course.modules.length} modules · {totalContents} lessons
@@ -324,15 +324,15 @@ export default function CourseDetailPage() {
                 {course.modules.map((mod, idx) => {
                   const expanded = expandedModules.has(mod.id);
                   return (
-                    <div key={mod.id} className="border-b border-gray-100 dark:border-[var(--border-main)] last:border-0">
+                    <div key={mod.id} className="border-b border-[var(--border-main)] last:border-0">
                       <button
                         onClick={() => toggleModule(mod.id)}
-                        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700/50 transition-colors"
+                        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors"
                       >
                         <div className="flex items-center gap-4">
                           <span className="text-xs font-bold text-[var(--text-muted)] w-5">{idx + 1}</span>
                           <div>
-                            <p className="text-sm font-semibold text-gray-800 dark:text-white">{mod.title}</p>
+                            <p className="text-sm font-semibold text-[var(--text-primary)]">{mod.title}</p>
                             <p className="text-xs text-[var(--text-muted)] mt-0.5">
                               {mod.contents?.length ?? 0} lessons
                               {mod.durationMinutes ? ` · ${mod.durationMinutes}m` : ''}
@@ -342,12 +342,12 @@ export default function CourseDetailPage() {
                         {expanded ? <ChevronUp className="h-4 w-4 text-[var(--text-muted)]" /> : <ChevronDown className="h-4 w-4 text-[var(--text-muted)]" />}
                       </button>
                       {expanded && mod.contents && (
-                        <div className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/30 border-t border-gray-100 dark:border-[var(--border-main)]">
+                        <div className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/30 border-t border-[var(--border-main)]">
                           {mod.contents.map((content, cIdx) => (
-                            <div key={content.id} className="flex items-center gap-4 px-6 py-2.5 border-b border-gray-100 dark:border-[var(--border-main)] last:border-0">
+                            <div key={content.id} className="flex items-center gap-4 px-6 py-2.5 border-b border-[var(--border-main)] last:border-0">
                               <span className="text-xs text-[var(--text-muted)] w-4">{cIdx + 1}</span>
                               <BookOpen className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
-                              <p className="text-sm text-[var(--text-primary)] dark:text-gray-300 flex-1">{content.title}</p>
+                              <p className="text-sm text-[var(--text-primary)] flex-1">{content.title}</p>
                               {content.durationMinutes && (
                                 <span className="text-xs text-[var(--text-muted)]">{content.durationMinutes}m</span>
                               )}
@@ -385,7 +385,7 @@ export default function CourseDetailPage() {
                     <span className="text-[var(--text-secondary)]">Progress</span>
                     <span className="font-semibold text-[var(--text-primary)]">{progress}%</span>
                   </div>
-                  <div className="w-full h-2 bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                     <div className="h-full bg-blue-600 rounded-full" style={{ width: `${progress}%` }} />
                   </div>
                 </div>
@@ -428,7 +428,7 @@ export default function CourseDetailPage() {
                 {enrollment?.status === 'COMPLETED' && enrollment?.certificateId && (
                   <Link
                     href="/learning/certificates"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] text-[var(--text-primary)] dark:text-gray-300 rounded-md text-sm font-medium hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md text-sm font-medium hover:bg-[var(--bg-surface)]"
                   >
                     <Award className="h-4 w-4 text-green-600 dark:text-green-400" /> View All Certificates
                   </Link>

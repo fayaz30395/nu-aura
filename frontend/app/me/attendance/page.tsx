@@ -261,9 +261,9 @@ export default function MyAttendancePage() {
     return (
       <AppLayout activeMenuItem="my-attendance">
         <div className="text-center py-12">
-          <Clock className="h-16 w-16 mx-auto text-slate-300 mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
-          <p className="text-slate-500 max-w-md mx-auto">
+          <Clock className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
+          <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Attendance tracking requires an employee profile. Use the admin panels to manage team attendance.
           </p>
           <button
@@ -281,8 +281,8 @@ export default function MyAttendancePage() {
     <AppLayout activeMenuItem="my-attendance">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 skeuo-emboss">My Attendance</h1>
-          <p className="text-slate-600 mt-1 skeuo-deboss">Track your attendance and working hours</p>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Attendance</h1>
+          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track your attendance and working hours</p>
         </div>
 
         {error && (
@@ -302,17 +302,17 @@ export default function MyAttendancePage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 skeuo-emboss">Today&apos;s Status</h3>
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">Today&apos;s Status</h3>
                 {todayAttendance && (
                   <div className="mt-2 space-y-1">
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Check-in: <span className="font-medium">{formatTime(todayAttendance.checkInTime)}</span>
                     </p>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Check-out: <span className="font-medium">{formatTime(todayAttendance.checkOutTime)}</span>
                     </p>
                     {todayAttendance.workDurationMinutes !== undefined && (
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-[var(--text-secondary)]">
                         Work Duration: <span className="font-medium">{formatDuration(todayAttendance.workDurationMinutes)}</span>
                       </p>
                     )}
@@ -324,7 +324,7 @@ export default function MyAttendancePage() {
                   </div>
                 )}
                 {!todayAttendance && (
-                  <p className="text-sm text-slate-500 mt-2">No attendance record for today</p>
+                  <p className="text-sm text-[var(--text-muted)] mt-2">No attendance record for today</p>
                 )}
               </div>
               <div className="flex gap-4">
@@ -369,7 +369,7 @@ export default function MyAttendancePage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 skeuo-deboss">Present Days</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Present Days</p>
                   <p className="text-3xl font-bold text-green-600 mt-2 skeuo-emboss">{monthStats.present}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -383,7 +383,7 @@ export default function MyAttendancePage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 skeuo-deboss">Absent Days</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Absent Days</p>
                   <p className="text-3xl font-bold text-red-600 mt-2 skeuo-emboss">{monthStats.absent}</p>
                 </div>
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
@@ -397,7 +397,7 @@ export default function MyAttendancePage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 skeuo-deboss">On Leave</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">On Leave</p>
                   <p className="text-3xl font-bold text-blue-600 mt-2 skeuo-emboss">{monthStats.leave}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -411,7 +411,7 @@ export default function MyAttendancePage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 skeuo-deboss">Avg. Hours/Day</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Avg. Hours/Day</p>
                   <p className="text-3xl font-bold text-purple-600 mt-2 skeuo-emboss">
                     {monthStats.avgHours.toFixed(1)}
                   </p>
@@ -436,7 +436,7 @@ export default function MyAttendancePage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={previousMonth}
-                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -448,7 +448,7 @@ export default function MyAttendancePage() {
                   </span>
                   <button
                     onClick={nextMonth}
-                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
@@ -458,7 +458,7 @@ export default function MyAttendancePage() {
             <CardContent>
               <div className="grid grid-cols-7 gap-1">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                  <div key={day} className="text-center text-xs font-semibold text-slate-500 py-1">
+                  <div key={day} className="text-center text-xs font-semibold text-[var(--text-muted)] py-1">
                     {day}
                   </div>
                 ))}
@@ -478,13 +478,13 @@ export default function MyAttendancePage() {
                       className={`aspect-square p-1 rounded-md border transition-all ${
                         isSelected
                           ? 'border-primary-500 bg-primary-50 shadow-sm'
-                          : 'border-slate-100 hover:border-slate-300 hover:bg-slate-50'
+                          : 'border-[var(--border-subtle)] hover:border-[var(--border-main)] hover:bg-[var(--bg-surface)]'
                       } ${isToday ? 'ring-2 ring-primary-300' : ''}`}
                     >
                       <div className="flex flex-col items-center justify-center h-full gap-0.5">
                         <span
                           className={`text-xs font-medium ${
-                            isToday ? 'text-primary-600' : 'text-slate-700'
+                            isToday ? 'text-primary-600' : 'text-[var(--text-secondary)]'
                           }`}
                         >
                           {day.getDate()}
@@ -514,8 +514,8 @@ export default function MyAttendancePage() {
               {selectedDate ? (
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-slate-600">Date</p>
-                    <p className="text-lg font-semibold text-slate-900">
+                    <p className="text-sm text-[var(--text-secondary)]">Date</p>
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {selectedDate?.toLocaleDateString('en-US', {
                         weekday: 'long',
                         month: 'long',
@@ -527,7 +527,7 @@ export default function MyAttendancePage() {
                   {selectedAttendance && (
                     <>
                       <div>
-                        <p className="text-sm text-slate-600">Status</p>
+                        <p className="text-sm text-[var(--text-secondary)]">Status</p>
                         <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
                           {getStatusIcon(selectedAttendance.status)}
                           {selectedAttendance.status.replace(/_/g, ' ')}
@@ -536,8 +536,8 @@ export default function MyAttendancePage() {
 
                       {selectedAttendance.workDurationMinutes !== undefined && (
                         <div>
-                          <p className="text-sm text-slate-600">Total Work Duration</p>
-                          <p className="text-md font-medium text-slate-900">
+                          <p className="text-sm text-[var(--text-secondary)]">Total Work Duration</p>
+                          <p className="text-md font-medium text-[var(--text-primary)]">
                             {formatDuration(selectedAttendance.workDurationMinutes)}
                           </p>
                         </div>
@@ -563,9 +563,9 @@ export default function MyAttendancePage() {
                   )}
 
                   {/* Sessions */}
-                  <div className="pt-3 border-t border-slate-200">
+                  <div className="pt-3 border-t border-[var(--border-main)]">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-medium text-slate-700">Sessions</p>
+                      <p className="text-sm font-medium text-[var(--text-secondary)]">Sessions</p>
                       {selectedDateTimeEntries.length > 0 && (
                         <span className="text-sm font-bold text-primary-600">
                           Total: {formatDuration(
@@ -581,7 +581,7 @@ export default function MyAttendancePage() {
                         <div className="w-6 h-6 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
                       </div>
                     ) : selectedDateTimeEntries.length === 0 ? (
-                      <p className="text-sm text-slate-500 py-2">No sessions recorded</p>
+                      <p className="text-sm text-[var(--text-muted)] py-2">No sessions recorded</p>
                     ) : (
                       <div className="space-y-2 max-h-[250px] overflow-y-auto">
                         {selectedDateTimeEntries.map((entry) => (
@@ -590,13 +590,13 @@ export default function MyAttendancePage() {
                             className={`p-2 rounded-lg border text-sm ${
                               entry.open
                                 ? 'bg-green-50 border-green-200'
-                                : 'bg-slate-50 border-slate-200'
+                                : 'bg-[var(--bg-surface)] border-[var(--border-main)]'
                             }`}
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                  entry.open ? 'bg-green-600 text-white' : 'bg-slate-300 text-slate-700'
+                                  entry.open ? 'bg-green-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
                                 }`}>
                                   {entry.sequenceNumber}
                                 </span>
@@ -606,7 +606,7 @@ export default function MyAttendancePage() {
                                     <span>{formatTime(entry.checkInTime)}</span>
                                     {entry.checkOutTime ? (
                                       <>
-                                        <span className="text-slate-400 mx-1">-</span>
+                                        <span className="text-[var(--text-muted)] mx-1">-</span>
                                         <LogOut className="h-3 w-3 text-blue-600" />
                                         <span>{formatTime(entry.checkOutTime)}</span>
                                       </>
@@ -639,7 +639,7 @@ export default function MyAttendancePage() {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-[300px] text-slate-500">
+                <div className="flex items-center justify-center h-[300px] text-[var(--text-muted)]">
                   <p>Select a date to view details</p>
                 </div>
               )}
@@ -652,17 +652,17 @@ export default function MyAttendancePage() {
       {showRegularizationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-md card-aura">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
               Request Regularization
             </h3>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Reason
               </label>
               <textarea
                 value={regularizationReason}
                 onChange={(e) => setRegularizationReason(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 rows={4}
                 placeholder="Please explain why you need regularization..."
               />
@@ -674,7 +674,7 @@ export default function MyAttendancePage() {
                   setRegularizationReason('');
                   setRegularizingRecord(null);
                 }}
-                className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors"
               >
                 Cancel
               </button>

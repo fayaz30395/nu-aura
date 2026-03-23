@@ -245,7 +245,7 @@ export default function QuizPage() {
   if (state === 'intro') {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-[var(--bg-surface)] to-blue-50 p-6">
         <div className="max-w-2xl mx-auto">
           <Link href={`/learning/courses/${courseId}`} className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-8 w-fit">
             <ArrowLeft className="h-4 w-4" /> Back to Course
@@ -340,7 +340,7 @@ export default function QuizPage() {
       <AppLayout>
       <div className="min-h-screen bg-[var(--bg-secondary)] flex flex-col">
         {/* Header */}
-        <div className="bg-white border-b border-[var(--border-main)] sticky top-0 z-40">
+        <div className="bg-[var(--bg-card)] border-b border-[var(--border-main)] sticky top-0 z-40">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
             <div>
               <h2 className="font-semibold text-[var(--text-primary)]">{quiz.title}</h2>
@@ -349,7 +349,7 @@ export default function QuizPage() {
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-[var(--text-secondary)]">Progress:</span>
-                <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-600 transition-all duration-300"
                     style={{ width: `${((currentQuestionIdx + 1) / quiz.questions.length) * 100}%` }}
@@ -483,7 +483,7 @@ export default function QuizPage() {
                           ? 'bg-blue-600 text-white'
                           : qAnswered
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                          : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-gray-200'
+                          : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
                       }`}
                     >
                       {idx + 1}
@@ -496,7 +496,7 @@ export default function QuizPage() {
         </div>
 
         {/* Navigation footer */}
-        <div className="bg-white border-t border-[var(--border-main)] sticky bottom-0 z-40">
+        <div className="bg-[var(--bg-card)] border-t border-[var(--border-main)] sticky bottom-0 z-40">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
             <button
               onClick={() => setCurrentQuestionIdx(Math.max(0, currentQuestionIdx - 1))}
@@ -547,7 +547,7 @@ export default function QuizPage() {
 
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-[var(--bg-surface)] to-blue-50 p-6">
         <div className="max-w-4xl mx-auto">
           {/* Result Card */}
           <div className="skeuo-card overflow-hidden mb-6">

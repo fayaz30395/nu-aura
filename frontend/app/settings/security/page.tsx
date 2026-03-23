@@ -103,8 +103,8 @@ export default function SecuritySettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Security Settings</h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Security Settings</h1>
+          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage your account security and authentication
           </p>
         </div>
@@ -190,7 +190,7 @@ export default function SecuritySettingsPage() {
               {isMfaLoading && (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin">
-                    <div className="w-8 h-8 border-4 border-slate-200 dark:border-slate-700 border-t-primary-600 rounded-full" />
+                    <div className="w-8 h-8 border-4 border-[var(--border-main)] border-t-primary-600 rounded-full" />
                   </div>
                 </div>
               )}
@@ -204,7 +204,7 @@ export default function SecuritySettingsPage() {
 
               {/* Actions */}
               {!isMfaLoading && !isMfaError && mfaStatusData && !mfaStatusData.enabled && (
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="pt-4 border-t border-[var(--border-main)]">
                   <Button
                     onClick={() => setShowMfaSetup(true)}
                     variant="primary"
@@ -212,14 +212,14 @@ export default function SecuritySettingsPage() {
                   >
                     Enable Two-Factor Authentication
                   </Button>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                  <p className="text-xs text-[var(--text-muted)] mt-3">
                     You&apos;ll need an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy to enable this feature.
                   </p>
                 </div>
               )}
 
               {!isMfaLoading && !isMfaError && mfaStatusData && mfaStatusData.enabled && (
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4">
+                <div className="pt-4 border-t border-[var(--border-main)] space-y-4">
                   {!showDisableForm ? (
                     <Button
                       onClick={() => setShowDisableForm(true)}
@@ -230,7 +230,7 @@ export default function SecuritySettingsPage() {
                     </Button>
                   ) : (
                     <form onSubmit={handleSubmit(handleDisableMfa)} className="space-y-4">
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                      <p className="text-sm text-[var(--text-secondary)]">
                         Enter your current 6-digit authenticator code to disable two-factor authentication:
                       </p>
                       <input
@@ -239,7 +239,7 @@ export default function SecuritySettingsPage() {
                         maxLength={6}
                         placeholder="000000"
                         disabled={disableMfaMutation.isPending}
-                        className="w-full px-4 py-2 text-center text-xl tracking-widest border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-surface)] text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                        className="w-full px-4 py-2 text-center text-xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                         autoComplete="off"
                         {...register('code', {
                           onChange: (e) => {
@@ -288,8 +288,8 @@ export default function SecuritySettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="text-sm space-y-2 text-slate-600 dark:text-slate-400">
-                <p className="font-medium text-slate-900 dark:text-slate-50">Protect Your Account:</p>
+              <div className="text-sm space-y-2 text-[var(--text-secondary)]">
+                <p className="font-medium text-[var(--text-primary)]">Protect Your Account:</p>
                 <ul className="space-y-2 ml-4">
                   <li className="list-disc">Use a strong, unique password</li>
                   <li className="list-disc">Enable two-factor authentication</li>
@@ -316,18 +316,18 @@ export default function SecuritySettingsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="flex items-start gap-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
                   <Laptop className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-slate-900 dark:text-slate-50">This Device</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="font-medium text-[var(--text-primary)]">This Device</p>
+                  <p className="text-sm text-[var(--text-muted)] mt-1">
                     Current session - active now
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 pt-2">
+              <p className="text-sm text-[var(--text-muted)] pt-2">
                 Session management features will be available soon. You can manually log out from other devices using the logout button.
               </p>
             </div>

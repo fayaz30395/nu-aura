@@ -312,7 +312,7 @@ export default function LeaveTypesManagementPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-[var(--bg-card)] divide-y divide-gray-200">
+            <tbody className="bg-[var(--bg-card)] divide-y divide-[var(--border-main)]">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">

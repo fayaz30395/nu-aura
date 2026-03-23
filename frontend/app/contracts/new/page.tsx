@@ -65,7 +65,7 @@ export default function CreateContractPage() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6 max-w-2xl">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 rounded">
+          <button onClick={() => router.back()} className="p-2 hover:bg-[var(--bg-surface)] rounded">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-3xl font-bold skeuo-emboss">Create Contract</h1>

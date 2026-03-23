@@ -96,9 +96,9 @@ public class TimeTrackingController {
     @Operation(summary = "Reject time entry", description = "Reject a submitted time entry")
     public ResponseEntity<TimeEntryDto> rejectEntry(
             @PathVariable UUID id,
-            @Valid @RequestBody Map<String, String> body
+            @Valid @RequestBody(required = false) Map<String, String> body
     ) {
-        String reason = body.get("reason");
+        String reason = body != null ? body.get("reason") : null;
         return ResponseEntity.ok(timeTrackingService.rejectEntry(id, reason));
     }
 

@@ -122,7 +122,7 @@ const getCategoryColor = (category: AssetCategory) => {
     case AssetCategory.SOFTWARE_LICENSE:
       return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   }
 };
 

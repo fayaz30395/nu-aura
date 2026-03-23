@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
   Users, UserPlus, Calendar, CheckCircle2, Clock,
-  Search, Mail, RefreshCw
+  Search, Mail, RefreshCw, AlertCircle
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -114,7 +114,7 @@ function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
 }
 
 export default function PreboardingPage() {
-  const { data: candidates = [], isLoading: loading } = usePreboardingCandidates();
+  const { data: candidates = [], isLoading: loading, isError, error, refetch } = usePreboardingCandidates();
   const createCandidateMutation = useCreatePreboardingCandidate();
   const resendInvitationMutation = useResendPreboardingInvitation();
 
@@ -170,6 +170,24 @@ export default function PreboardingPage() {
             </Button>
           </PermissionGate>
         </div>
+
+        {/* Error State */}
+        {isError && (
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+                <p className="text-sm text-danger-600 dark:text-danger-400">
+                  {error instanceof Error ? error.message : 'Failed to load pre-boarding data'}
+                </p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => refetch()}>
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

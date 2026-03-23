@@ -125,7 +125,7 @@ export default function FeatureFlagsPage() {
               <Group gap="md" wrap="nowrap" style={{ flex: 1 }}>
                 <ToggleLeft
                   size={24}
-                  className={flag.enabled ? 'text-green-500' : 'text-gray-400'}
+                  className={flag.enabled ? 'text-green-500' : 'text-[var(--text-muted)]'}
                 />
                 <div style={{ flex: 1 }}>
                   <Group gap="xs">
@@ -180,7 +180,7 @@ export default function FeatureFlagsPage() {
         {filteredFlags.length === 0 && (
           <Card withBorder padding="xl" radius="md" className="skeuo-card">
             <Stack align="center" gap="sm">
-              <ToggleLeft size={48} className="text-gray-400" />
+              <ToggleLeft size={48} className="text-[var(--text-muted)]" />
               <Text size="sm" c="dimmed">
                 {search || categoryFilter
                   ? 'No feature flags match your filters'

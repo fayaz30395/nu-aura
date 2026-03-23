@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -187,6 +188,8 @@ public class ImplicitRoleEngine {
         long totalAdded = 0;
         long totalRemoved = 0;
         long totalProcessed = 0;
+        long totalFailed = 0;
+        List<UUID> failedUserIds = new ArrayList<>();
 
         for (Object[] pair : pairs) {
             UUID userId = (UUID) pair[0];
@@ -197,12 +200,21 @@ public class ImplicitRoleEngine {
                 totalRemoved += result.removed;
                 totalProcessed++;
             } catch (Exception e) {
+                // BP-L01 FIX: Track failures instead of silently swallowing.
+                // Batch continues processing other users but reports failures.
+                totalFailed++;
+                failedUserIds.add(userId);
                 log.error("Error recomputing implicit roles for user {} in tenant {}", userId, tenantId, e);
             }
         }
 
-        log.info("ImplicitRoleEngine: batch recompute complete for tenant {}: processed={}, added={}, removed={}",
-                tenantId, totalProcessed, totalAdded, totalRemoved);
+        log.info("ImplicitRoleEngine: batch recompute complete for tenant {}: processed={}, added={}, removed={}, failed={}",
+                tenantId, totalProcessed, totalAdded, totalRemoved, totalFailed);
+
+        if (totalFailed > 0) {
+            log.warn("ImplicitRoleEngine: {} users failed recompute in tenant {}: {}",
+                    totalFailed, tenantId, failedUserIds.size() <= 20 ? failedUserIds : failedUserIds.subList(0, 20) + "...");
+        }
     }
 
     /**

@@ -76,9 +76,9 @@ public class TravelController {
     @Operation(summary = "Reject travel request", description = "Reject a submitted travel request")
     public ResponseEntity<TravelRequestDto> rejectRequest(
             @PathVariable UUID id,
-            @Valid @RequestBody Map<String, String> body
+            @Valid @RequestBody(required = false) Map<String, String> body
     ) {
-        String reason = body.get("reason");
+        String reason = body != null ? body.get("reason") : null;
         return ResponseEntity.ok(travelService.rejectRequest(id, reason));
     }
 

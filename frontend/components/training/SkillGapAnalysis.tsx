@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     Target,
     ArrowUpRight,
     BookOpen,
-    Loader2
+    Loader2,
+    RefreshCw,
+    AlertTriangle
 } from 'lucide-react';
 import {
     Card,
@@ -13,37 +15,37 @@ import {
     Button,
     Badge
 } from '@/components/ui';
-import { lmsService, SkillGapReport } from '@/lib/services/lms.service';
-import { logger } from '@/lib/utils/logger';
+import { useSkillGaps } from '@/lib/hooks/queries/useLearning';
 
 interface SkillGapAnalysisProps {
     employeeId: string;
 }
 
 export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }) => {
-    const [report, setReport] = useState<SkillGapReport | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { data: report, isLoading, isError, error, refetch } = useSkillGaps(employeeId);
 
-    useEffect(() => {
-        const fetchGaps = async () => {
-            setLoading(true);
-            try {
-                const data = await lmsService.getSkillGaps(employeeId);
-                setReport(data);
-            } catch (err) {
-                logger.error('Error fetching skill gaps:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchGaps();
-    }, [employeeId]);
-
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
             </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <Card>
+                <CardContent className="p-8 text-center">
+                    <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto mb-3" />
+                    <p className="text-surface-600 dark:text-surface-400 mb-4">
+                        Failed to load skill gap analysis.
+                    </p>
+                    <Button variant="outline" onClick={() => refetch()} className="gap-2">
+                        <RefreshCw className="h-4 w-4" />
+                        Retry
+                    </Button>
+                </CardContent>
+            </Card>
         );
     }
 

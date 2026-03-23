@@ -6,7 +6,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useContracts, useExpiringContracts, useActiveContracts, useExpiredContracts } from '@/lib/hooks/queries/useContracts';
 import { contractService } from '@/lib/services/contract.service';
 import { Button, Table, Badge, Input, Select } from '@mantine/core';
-import { Plus, Search, FileText } from 'lucide-react';
+import { Plus, Search, FileText, AlertCircle, RefreshCw } from 'lucide-react';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 
@@ -16,7 +16,7 @@ export default function ContractsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
 
-  const { data: contractsData, isLoading } = useContracts({ page, size: 20 });
+  const { data: contractsData, isLoading, isError, error, refetch } = useContracts({ page, size: 20 });
   const { data: expiringData } = useExpiringContracts();
   const { data: activeData } = useActiveContracts();
   const { data: expiredData } = useExpiredContracts();
@@ -109,6 +109,21 @@ export default function ContractsPage() {
             clearable
           />
         </div>
+
+        {/* Error State */}
+        {isError && (
+          <div className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+              <p className="text-sm text-danger-600 dark:text-danger-400">
+                {error instanceof Error ? error.message : 'Failed to load contracts'}
+              </p>
+            </div>
+            <Button variant="light" size="xs" onClick={() => refetch()} leftSection={<RefreshCw className="w-3.5 h-3.5" />}>
+              Retry
+            </Button>
+          </div>
+        )}
 
         {/* Contracts Table */}
         <div className="bg-[var(--bg-card)] rounded-lg shadow">

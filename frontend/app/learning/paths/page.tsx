@@ -132,7 +132,7 @@ export default function LearningPathsPage() {
                 placeholder="Search learning paths..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-aura w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
               />
             </div>
 
@@ -142,7 +142,7 @@ export default function LearningPathsPage() {
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
               >
                 <option value="ALL">All Difficulty Levels</option>
                 <option value="BEGINNER">Beginner</option>
@@ -233,7 +233,7 @@ export default function LearningPathsPage() {
                         <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
                         <span className="text-xs font-bold text-[var(--text-primary)]">{path.progressPercentage}%</span>
                       </div>
-                      <div className="w-full h-2 bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                      <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                         <div
                           className="h-full bg-blue-600 transition-all duration-300"
                           style={{ width: `${path.progressPercentage}%` }}
@@ -282,7 +282,7 @@ export default function LearningPathsPage() {
           </div>
         ) : (
           <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-12 text-center">
-            <Zap className="h-16 w-16 text-gray-300 dark:text-[var(--text-primary)] mx-auto mb-4" />
+            <Zap className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || selectedDifficulty !== 'ALL' ? 'No matching learning paths' : 'No learning paths available'}
             </h3>

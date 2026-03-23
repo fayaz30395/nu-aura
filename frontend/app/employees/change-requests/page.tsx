@@ -112,7 +112,7 @@ export default function EmploymentChangeRequestsPage() {
         );
       case 'CANCELLED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800/30 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-[var(--bg-surface)] text-[var(--text-muted)]">
             <AlertCircle className="h-3 w-3" />
             Cancelled
           </span>
@@ -149,10 +149,10 @@ export default function EmploymentChangeRequestsPage() {
     if (newValue === currentValue) return null;
 
     return (
-      <div className="flex items-center gap-2 py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
-        <span className="text-sm font-medium text-slate-600 dark:text-slate-400 w-40">{label}:</span>
-        <span className="text-sm text-slate-500 dark:text-slate-500">{currentValue || 'N/A'}</span>
-        <ArrowRight className="h-4 w-4 text-slate-400" />
+      <div className="flex items-center gap-2 py-2 border-b border-[var(--border-subtle)] last:border-0">
+        <span className="text-sm font-medium text-[var(--text-secondary)] w-40">{label}:</span>
+        <span className="text-sm text-[var(--text-muted)]">{currentValue || 'N/A'}</span>
+        <ArrowRight className="h-4 w-4 text-[var(--text-muted)]" />
         <span className="text-sm font-medium text-primary-600 dark:text-primary-400">{newValue || 'N/A'}</span>
       </div>
     );
@@ -171,7 +171,7 @@ export default function EmploymentChangeRequestsPage() {
         </div>
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white skeuo-emboss">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
             Employment Change Requests
           </h1>
           <div className="flex gap-2">
@@ -180,7 +180,7 @@ export default function EmploymentChangeRequestsPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'pending'
                   ? 'bg-primary-600 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
               Pending
@@ -190,7 +190,7 @@ export default function EmploymentChangeRequestsPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'all'
                   ? 'bg-primary-600 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
               All Requests
@@ -201,7 +201,7 @@ export default function EmploymentChangeRequestsPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="skeuo-card p-6">
-            <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+            <div className="text-sm text-[var(--text-secondary)] mb-1">
               {filter === 'pending' ? 'Pending Requests' : 'Total Requests'}
             </div>
             <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">
@@ -213,11 +213,11 @@ export default function EmploymentChangeRequestsPage() {
         {/* Requests List */}
         <div className="space-y-4">
           {loading ? (
-            <div className="text-center py-12 text-slate-600 dark:text-slate-400">Loading...</div>
+            <div className="text-center py-12 text-[var(--text-secondary)]">Loading...</div>
           ) : requests.length === 0 ? (
             <div className="skeuo-card p-12 text-center">
-              <User className="h-12 w-12 mx-auto text-slate-400 mb-4" />
-              <p className="text-slate-600 dark:text-slate-400">
+              <User className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+              <p className="text-[var(--text-secondary)]">
                 {filter === 'pending' ? 'No pending change requests' : 'No change requests found'}
               </p>
             </div>
@@ -229,7 +229,7 @@ export default function EmploymentChangeRequestsPage() {
               >
                 {/* Header */}
                 <div
-                  className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                  className="p-4 cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
                   onClick={() => setExpandedId(expandedId === request.id ? null : request.id)}
                 >
                   <div className="flex items-center justify-between">
@@ -240,10 +240,10 @@ export default function EmploymentChangeRequestsPage() {
                         </span>
                       </div>
                       <div>
-                        <div className="font-medium text-slate-900 dark:text-white">
+                        <div className="font-medium text-[var(--text-primary)]">
                           {request.employeeName || 'Unknown Employee'}
                         </div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">
+                        <div className="text-sm text-[var(--text-muted)]">
                           {request.employeeCode} • Requested by {request.requesterName}
                         </div>
                       </div>
@@ -252,9 +252,9 @@ export default function EmploymentChangeRequestsPage() {
                       {getChangeTypeBadge(request.changeType)}
                       {getStatusBadge(request.status)}
                       {expandedId === request.id ? (
-                        <ChevronUp className="h-5 w-5 text-slate-400" />
+                        <ChevronUp className="h-5 w-5 text-[var(--text-muted)]" />
                       ) : (
-                        <ChevronDown className="h-5 w-5 text-slate-400" />
+                        <ChevronDown className="h-5 w-5 text-[var(--text-muted)]" />
                       )}
                     </div>
                   </div>
@@ -262,14 +262,14 @@ export default function EmploymentChangeRequestsPage() {
 
                 {/* Expanded Content */}
                 {expandedId === request.id && (
-                  <div className="border-t border-slate-200 dark:border-slate-700 p-4">
+                  <div className="border-t border-[var(--border-main)] p-4">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Changes */}
                       <div>
-                        <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
+                        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
                           Proposed Changes
                         </h4>
-                        <div className="bg-slate-50/50 rounded-lg p-4">
+                        <div className="bg-[var(--bg-surface)] rounded-lg p-4">
                           {renderChangeDetail(
                             'Designation',
                             request.currentDesignation,
@@ -315,35 +315,35 @@ export default function EmploymentChangeRequestsPage() {
 
                       {/* Details */}
                       <div>
-                        <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
+                        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
                           Request Details
                         </h4>
                         <div className="space-y-4">
                           {request.reason && (
                             <div>
-                              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                              <span className="text-sm font-medium text-[var(--text-secondary)]">
                                 Reason:
                               </span>
-                              <p className="text-sm text-slate-900 dark:text-white mt-1">
+                              <p className="text-sm text-[var(--text-primary)] mt-1">
                                 {request.reason}
                               </p>
                             </div>
                           )}
                           {request.effectiveDate && (
                             <div>
-                              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                              <span className="text-sm font-medium text-[var(--text-secondary)]">
                                 Effective Date:
                               </span>
-                              <p className="text-sm text-slate-900 dark:text-white mt-1">
+                              <p className="text-sm text-[var(--text-primary)] mt-1">
                                 {new Date(request.effectiveDate).toLocaleDateString()}
                               </p>
                             </div>
                           )}
                           <div>
-                            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                            <span className="text-sm font-medium text-[var(--text-secondary)]">
                               Requested On:
                             </span>
-                            <p className="text-sm text-slate-900 dark:text-white mt-1">
+                            <p className="text-sm text-[var(--text-primary)] mt-1">
                               {new Date(request.createdAt).toLocaleString()}
                             </p>
                           </div>
@@ -359,10 +359,10 @@ export default function EmploymentChangeRequestsPage() {
                           )}
                           {request.approverName && (
                             <div>
-                              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                              <span className="text-sm font-medium text-[var(--text-secondary)]">
                                 {request.status === 'APPROVED' ? 'Approved' : 'Processed'} By:
                               </span>
-                              <p className="text-sm text-slate-900 dark:text-white mt-1">
+                              <p className="text-sm text-[var(--text-primary)] mt-1">
                                 {request.approverName}
                               </p>
                             </div>
@@ -373,7 +373,7 @@ export default function EmploymentChangeRequestsPage() {
 
                     {/* Actions */}
                     {request.status === 'PENDING' && (
-                      <div className="flex gap-4 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <div className="flex gap-4 mt-6 pt-4 border-t border-[var(--border-main)]">
                         <PermissionGate permission={Permissions.EMPLOYMENT_CHANGE_APPROVE}>
                           <button
                             onClick={() => setApproveConfirm(request.id)}
@@ -406,10 +406,10 @@ export default function EmploymentChangeRequestsPage() {
       {showRejectModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none">
           <div className="skeuo-card max-w-md w-full mx-4 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Reject Change Request
             </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+            <p className="text-sm text-[var(--text-secondary)] mb-4">
               Please provide a reason for rejecting this change request.
             </p>
             <textarea

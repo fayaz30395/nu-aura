@@ -6,7 +6,7 @@ import com.hrms.application.performance.service.GoalService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +21,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/goals")
+@RequiredArgsConstructor
 public class GoalController {
 
-    @Autowired
-    private GoalService goalService;
+    private final GoalService goalService;
 
     @PostMapping
     @RequiresPermission(Permission.GOAL_CREATE)

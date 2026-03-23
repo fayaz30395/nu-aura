@@ -473,7 +473,7 @@ export default function ShiftsManagementPage() {
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
                           placeholder="Brief description of this shift..."
                         />
                       </div>
@@ -484,7 +484,7 @@ export default function ShiftsManagementPage() {
                       <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Timing</h3>
                       <div className="grid grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Start Time *
                           </label>
                           <input
@@ -494,7 +494,7 @@ export default function ShiftsManagementPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             End Time *
                           </label>
                           <input
@@ -504,7 +504,7 @@ export default function ShiftsManagementPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Break (minutes)
                           </label>
                           <input
@@ -518,7 +518,7 @@ export default function ShiftsManagementPage() {
 
                       <div className="grid grid-cols-2 gap-4 mt-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Full Day Hours
                           </label>
                           <input
@@ -530,7 +530,7 @@ export default function ShiftsManagementPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Working Days
                           </label>
                           <input
@@ -548,7 +548,7 @@ export default function ShiftsManagementPage() {
                       <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Attendance Rules</h3>
                       <div className="grid grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Grace Period (min)
                           </label>
                           <input
@@ -559,7 +559,7 @@ export default function ShiftsManagementPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Late Mark After (min)
                           </label>
                           <input
@@ -570,7 +570,7 @@ export default function ShiftsManagementPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Half Day After (min)
                           </label>
                           <input
@@ -617,7 +617,7 @@ export default function ShiftsManagementPage() {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Overtime Multiplier
                           </label>
                           <input

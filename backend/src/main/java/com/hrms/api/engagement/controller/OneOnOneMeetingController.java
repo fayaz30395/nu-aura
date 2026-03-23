@@ -119,9 +119,9 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_CREATE)
     public ResponseEntity<OneOnOneMeetingResponse> cancelMeeting(
             @PathVariable UUID meetingId,
-            @Valid @RequestBody Map<String, String> body) {
+            @Valid @RequestBody(required = false) Map<String, String> body) {
         UUID userId = SecurityContext.getCurrentEmployeeId();
-        String reason = body.get("reason");
+        String reason = body != null ? body.get("reason") : null;
         OneOnOneMeeting meeting = meetingService.cancelMeeting(meetingId, userId, reason);
         return ResponseEntity.ok(buildResponse(meeting));
     }

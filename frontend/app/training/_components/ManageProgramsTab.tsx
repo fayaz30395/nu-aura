@@ -76,7 +76,7 @@ const getCategoryColor = (category: TrainingCategory): string => {
     case TrainingCategory.SAFETY:
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }
 };
 
@@ -195,7 +195,7 @@ export function ManageProgramsTab({
                     >
                       {program.category.replace('_', ' ')}
                     </span>
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-200">
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)]">
                       {program.deliveryMode.replace('_', ' ')}
                     </span>
                     {program.isMandatory && (

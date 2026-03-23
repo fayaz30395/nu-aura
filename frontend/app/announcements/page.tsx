@@ -54,9 +54,9 @@ const categoryIconBgColors: Record<AnnouncementCategory, string> = {
   BENEFIT: 'bg-indigo-100 dark:bg-indigo-900/30',
   TRAINING: 'bg-cyan-100 dark:bg-cyan-900/30',
   SOCIAL: 'bg-orange-100 dark:bg-orange-900/30',
-  IT_MAINTENANCE: 'bg-gray-100 dark:bg-gray-900/30',
+  IT_MAINTENANCE: 'bg-[var(--bg-surface)]',
   HEALTH_SAFETY: 'bg-emerald-100 dark:bg-emerald-900/30',
-  OTHER: 'bg-slate-100 dark:bg-slate-900/30',
+  OTHER: 'bg-[var(--bg-surface)]',
 };
 
 /** Maps each announcement category to a text color class for the icon. */
@@ -70,9 +70,9 @@ const categoryIconTextColors: Record<AnnouncementCategory, string> = {
   BENEFIT: 'text-indigo-800 dark:text-indigo-400',
   TRAINING: 'text-cyan-800 dark:text-cyan-400',
   SOCIAL: 'text-orange-800 dark:text-orange-400',
-  IT_MAINTENANCE: 'text-gray-800 dark:text-gray-400',
+  IT_MAINTENANCE: 'text-[var(--text-secondary)]',
   HEALTH_SAFETY: 'text-emerald-800 dark:text-emerald-400',
-  OTHER: 'text-slate-800 dark:text-slate-400',
+  OTHER: 'text-[var(--text-secondary)]',
 };
 import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
 import { useToast } from '@/components/notifications/ToastProvider';
@@ -415,7 +415,7 @@ export default function AnnouncementsPage() {
                     onClick={() => handleAnnouncementClick(announcement)}
                     className={`bg-[var(--bg-card)] rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
                       announcement.isRead
-                        ? 'border-l-gray-200 dark:border-l-slate-700'
+                        ? 'border-l-[var(--border-main)]'
                         : 'border-l-purple-500'
                     }`}
                   >
@@ -504,7 +504,7 @@ export default function AnnouncementsPage() {
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
@@ -514,7 +514,7 @@ export default function AnnouncementsPage() {
               <button
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
-                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -612,7 +612,7 @@ export default function AnnouncementsPage() {
                 </div>
 
                 {/* Modal Footer */}
-                <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex justify-between items-center">
+                <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between items-center">
                   <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                     <CheckCircle className="w-4 h-4 text-green-500" />
                     Marked as read
@@ -648,7 +648,7 @@ export default function AnnouncementsPage() {
                     )}
                     <button
                       onClick={() => setSelectedAnnouncement(null)}
-                      className="px-4 py-2 bg-[var(--bg-surface)] dark:bg-slate-800 text-[var(--text-secondary)] rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors font-medium"
+                      className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium"
                     >
                       Close
                     </button>
@@ -800,13 +800,13 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] dark:border-slate-700 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-[var(--text-muted)]" />
           </button>
@@ -888,7 +888,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
               </label>
               <select
                 {...register('targetAudience')}
-                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
+                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-[var(--bg-secondary)] dark:text-white"
               >
                 <option value="ALL_EMPLOYEES">All Employees</option>
                 <option value="SPECIFIC_DEPARTMENTS">Specific Departments</option>
@@ -918,7 +918,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                         className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
                           targetDepartmentIds.includes(dept.id)
                             ? 'bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700'
-                            : 'hover:bg-[var(--bg-surface)] dark:hover:bg-slate-700 border border-transparent'
+                            : 'hover:bg-[var(--bg-surface)] border border-transparent'
                         }`}
                       >
                         <input
@@ -971,7 +971,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex gap-4">
+          <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
             <button
               type="button"
               onClick={onClose}

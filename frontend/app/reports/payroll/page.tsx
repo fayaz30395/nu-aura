@@ -75,8 +75,8 @@ export default function PayrollReportsPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Payroll Reports</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Payroll Reports</h1>
+            <p className="text-[var(--text-secondary)] mt-1">
               Generate comprehensive payroll reports with salary breakdowns
             </p>
           </div>
@@ -113,12 +113,12 @@ export default function PayrollReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                   Payroll Period <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">From</label>
+                    <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
                     <input
                       type="date"
                       value={startDate}
@@ -127,7 +127,7 @@ export default function PayrollReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">To</label>
+                    <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
                     <input
                       type="date"
                       value={endDate}
@@ -140,7 +140,7 @@ export default function PayrollReportsPage() {
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                   Export Format
                 </label>
                 <div className="grid grid-cols-3 gap-4">
@@ -151,13 +151,13 @@ export default function PayrollReportsPage() {
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
                           ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/20'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
-                      <p className={`font-medium text-sm ${format === fmt ? 'text-purple-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                      <p className={`font-medium text-sm ${format === fmt ? 'text-purple-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--text-muted)]">
                         .{fmt === 'EXCEL' ? 'xlsx' : fmt.toLowerCase()}
                       </p>
                     </button>

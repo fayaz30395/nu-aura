@@ -613,7 +613,7 @@ function EditRoleModal({
               {selectedCount} permissions selected
             </p>
           </div>
-          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
+          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -666,7 +666,7 @@ function EditRoleModal({
                               onClick={toggle}
                               className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
                             >
-                              <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
+                              <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
                                 {isChecked && <Check className="w-3 h-3" />}
                               </div>
                               <div className="flex-1 min-w-0">
@@ -755,7 +755,7 @@ function CreateRoleModal({
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Create New Role</h2>
             <p className="text-sm text-[var(--text-muted)]">Create a custom role with specific permissions</p>
           </div>
-          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
+          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -825,7 +825,7 @@ function CreateRoleModal({
                                 onClick={toggle}
                                 className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
                               >
-                                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
+                                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
                                   {isChecked && <Check className="w-3 h-3" />}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -916,7 +916,7 @@ function EditUserModal({
               Assign roles to {user.fullName}
             </p>
           </div>
-          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
+          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -948,7 +948,7 @@ function EditUserModal({
                       >
                         <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked
                             ? 'bg-primary-500 text-white'
-                            : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'
+                            : 'bg-[var(--bg-surface)]'
                           }`}>
                           {isChecked && <Check className="w-3 h-3" />}
                         </div>

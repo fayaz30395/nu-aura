@@ -166,7 +166,7 @@ export default function CertificateGalleryPage() {
                 placeholder="Search by course name or certificate number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-aura w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               />
             </div>
 
@@ -176,7 +176,7 @@ export default function CertificateGalleryPage() {
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               >
                 <option value="ALL">All Time</option>
                 <option value="LAST_30">Last 30 Days</option>
@@ -224,7 +224,7 @@ export default function CertificateGalleryPage() {
                       <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{cert.certificateNumber}</span>
                       <button
                         onClick={() => handleCopyCertificateNumber(cert.certificateNumber)}
-                        className="p-1 hover:bg-gray-200 dark:hover:bg-[var(--bg-secondary)] rounded transition-colors"
+                        className="p-1 hover:bg-[var(--bg-surface)] rounded transition-colors"
                         title="Copy certificate number"
                       >
                         {copiedId === cert.certificateNumber ? (
@@ -238,7 +238,7 @@ export default function CertificateGalleryPage() {
 
                   {/* Details */}
                   <div className="space-y-4 mb-4 text-sm">
-                    <div className="flex items-center justify-between text-[var(--text-primary)] dark:text-gray-300">
+                    <div className="flex items-center justify-between text-[var(--text-primary)]">
                       <span className="text-[var(--text-secondary)]">Issued</span>
                       <span className="font-medium flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
@@ -247,14 +247,14 @@ export default function CertificateGalleryPage() {
                     </div>
 
                     {cert.expiryDate && (
-                      <div className="flex items-center justify-between text-[var(--text-primary)] dark:text-gray-300">
+                      <div className="flex items-center justify-between text-[var(--text-primary)]">
                         <span className="text-[var(--text-secondary)]">Expires</span>
                         <span className="font-medium">{formatDate(cert.expiryDate)}</span>
                       </div>
                     )}
 
                     {cert.scoreAchieved && (
-                      <div className="flex items-center justify-between text-[var(--text-primary)] dark:text-gray-300">
+                      <div className="flex items-center justify-between text-[var(--text-primary)]">
                         <span className="text-[var(--text-secondary)]">Score</span>
                         <span className="font-bold text-blue-600 dark:text-blue-400">{cert.scoreAchieved}%</span>
                       </div>
@@ -273,7 +273,7 @@ export default function CertificateGalleryPage() {
                     </button>
                     <button
                       onClick={() => handlePrint(cert.id)}
-                      className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-200 dark:bg-[var(--bg-secondary)] text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-[var(--bg-secondary)] text-xs font-medium transition-colors"
+                      className="flex items-center justify-center gap-1 px-3 py-2 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)] text-xs font-medium transition-colors"
                       title="Print certificate"
                     >
                       <Printer className="h-4 w-4" />
@@ -305,7 +305,7 @@ export default function CertificateGalleryPage() {
           </div>
         ) : (
           <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-12 text-center">
-            <Award className="h-16 w-16 text-gray-300 dark:text-[var(--text-primary)] mx-auto mb-4" />
+            <Award className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || dateFilter !== 'ALL' ? 'No matching certificates' : 'No certificates earned yet'}
             </h3>

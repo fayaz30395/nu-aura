@@ -243,10 +243,10 @@ export default function SignPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-10 w-10 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-slate-600 text-sm">Loading document information...</p>
+          <p className="text-[var(--text-secondary)] text-sm">Loading document information...</p>
         </div>
       </div>
     );
@@ -254,13 +254,13 @@ export default function SignPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
           <XCircle className="h-14 w-14 text-red-500 mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-slate-800 skeuo-emboss mb-2">Link Invalid or Expired</h1>
-          <p className="text-slate-500 text-sm mb-2">{error}</p>
+          <h1 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-2">Link Invalid or Expired</h1>
+          <p className="text-[var(--text-muted)] text-sm mb-2">{error}</p>
           {docInfo?.tokenExpiresAt && (
-            <p className="text-slate-400 text-xs mt-4">
+            <p className="text-[var(--text-muted)] text-xs mt-4">
               This link expired on {formatDate(docInfo.tokenExpiresAt)}.
             </p>
           )}
@@ -273,7 +273,7 @@ export default function SignPage() {
     const isSignedStatus = docInfo?.status === 'SIGNED';
     const isDeclinedStatus = docInfo?.status === 'DECLINED';
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
           {isSignedStatus ? (
             <CheckCircle className="h-14 w-14 text-green-500 mx-auto mb-4" />
@@ -282,14 +282,14 @@ export default function SignPage() {
           ) : (
             <AlertCircle className="h-14 w-14 text-amber-500 mx-auto mb-4" />
           )}
-          <h1 className="text-xl font-semibold text-slate-800 skeuo-emboss mb-2">
+          <h1 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-2">
             {isSignedStatus
               ? 'Document Already Signed'
               : isDeclinedStatus
               ? 'Document Declined'
               : 'Signing Link Expired'}
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-[var(--text-muted)] text-sm">
             {isSignedStatus
               ? 'This document has already been signed. No further action is required.'
               : isDeclinedStatus
@@ -297,7 +297,7 @@ export default function SignPage() {
               : 'This signing link is no longer active.'}
           </p>
           {docInfo?.documentTitle && (
-            <p className="text-slate-400 text-xs mt-4">
+            <p className="text-[var(--text-muted)] text-xs mt-4">
               Document: <span className="font-medium">{docInfo.documentTitle}</span>
             </p>
           )}
@@ -308,38 +308,38 @@ export default function SignPage() {
 
   if (step === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-semibold text-slate-800 mb-2">
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             Document Signed Successfully
           </h1>
-          <p className="text-slate-500 text-sm mb-6">
+          <p className="text-[var(--text-muted)] text-sm mb-6">
             Your signature has been recorded. A confirmation will be sent to your email.
           </p>
-          <div className="bg-slate-50 rounded-lg p-4 text-left text-sm space-y-2">
+          <div className="bg-[var(--bg-surface)] rounded-lg p-4 text-left text-sm space-y-2">
             {docInfo?.documentTitle && (
               <div className="flex justify-between">
-                <span className="text-slate-500">Document</span>
-                <span className="font-medium text-slate-700">{docInfo.documentTitle}</span>
+                <span className="text-[var(--text-muted)]">Document</span>
+                <span className="font-medium text-[var(--text-secondary)]">{docInfo.documentTitle}</span>
               </div>
             )}
             {docInfo?.companyName && (
               <div className="flex justify-between">
-                <span className="text-slate-500">Company</span>
-                <span className="font-medium text-slate-700">{docInfo.companyName}</span>
+                <span className="text-[var(--text-muted)]">Company</span>
+                <span className="font-medium text-[var(--text-secondary)]">{docInfo.companyName}</span>
               </div>
             )}
             {docInfo?.signerEmail && (
               <div className="flex justify-between">
-                <span className="text-slate-500">Signer</span>
-                <span className="font-medium text-slate-700">{docInfo.signerEmail}</span>
+                <span className="text-[var(--text-muted)]">Signer</span>
+                <span className="font-medium text-[var(--text-secondary)]">{docInfo.signerEmail}</span>
               </div>
             )}
             {docInfo?.approvalId && (
               <div className="flex justify-between">
-                <span className="text-slate-500">Reference</span>
-                <span className="font-medium text-slate-700 text-xs break-all">
+                <span className="text-[var(--text-muted)]">Reference</span>
+                <span className="font-medium text-[var(--text-secondary)] text-xs break-all">
                   {docInfo.approvalId}
                 </span>
               </div>
@@ -352,17 +352,17 @@ export default function SignPage() {
 
   if (step === 'declined') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
           <XCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-semibold text-slate-800 mb-2">
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             Signing Request Declined
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-[var(--text-muted)] text-sm">
             You have declined to sign this document. The requester will be notified.
           </p>
           {docInfo?.documentTitle && (
-            <p className="text-slate-400 text-xs mt-4">
+            <p className="text-[var(--text-muted)] text-xs mt-4">
               Document: <span className="font-medium">{docInfo.documentTitle}</span>
             </p>
           )}
@@ -373,18 +373,18 @@ export default function SignPage() {
 
   // Main flow: verify and sign steps
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)]">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
+      <div className="bg-[var(--bg-card)] border-b border-[var(--border-subtle)] shadow-sm">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
           <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
             <FileText className="h-4 w-4 text-white" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-medium">
+            <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium">
               NU-AURA HRMS
             </p>
-            <p className="text-sm font-semibold text-slate-700">Electronic Signature</p>
+            <p className="text-sm font-semibold text-[var(--text-secondary)]">Electronic Signature</p>
           </div>
         </div>
       </div>
@@ -397,28 +397,28 @@ export default function SignPage() {
               <FileText className="h-6 w-6 text-blue-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-semibold text-slate-800 truncate">
+              <h1 className="text-lg font-semibold text-[var(--text-primary)] truncate">
                 {docInfo?.documentTitle || 'Document for Signature'}
               </h1>
               {docInfo?.documentDescription && (
-                <p className="text-sm text-slate-500 mt-1">{docInfo.documentDescription}</p>
+                <p className="text-sm text-[var(--text-muted)] mt-1">{docInfo.documentDescription}</p>
               )}
-              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600">
+              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)]">
                 {docInfo?.candidateName && (
                   <span>
-                    <span className="text-slate-400">Candidate: </span>
+                    <span className="text-[var(--text-muted)]">Candidate: </span>
                     <span className="font-medium">{docInfo.candidateName}</span>
                   </span>
                 )}
                 {docInfo?.companyName && (
                   <span>
-                    <span className="text-slate-400">Company: </span>
+                    <span className="text-[var(--text-muted)]">Company: </span>
                     <span className="font-medium">{docInfo.companyName}</span>
                   </span>
                 )}
                 {docInfo?.documentType && (
                   <span>
-                    <span className="text-slate-400">Type: </span>
+                    <span className="text-[var(--text-muted)]">Type: </span>
                     <span className="font-medium">
                       {docInfo.documentType.replace(/_/g, ' ')}
                     </span>
@@ -433,7 +433,7 @@ export default function SignPage() {
             </div>
           </div>
           {docInfo?.documentUrl && (
-            <div className="mt-4 pt-4 border-t border-slate-100">
+            <div className="mt-4 pt-4 border-t border-[var(--border-subtle)]">
               <a
                 href={docInfo.documentUrl}
                 target="_blank"
@@ -450,10 +450,10 @@ export default function SignPage() {
         {/* Step: Email Verification */}
         {step === 'verify' && (
           <div className="skeuo-card p-6">
-            <h2 className="text-base font-semibold text-slate-800 mb-1">
+            <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Verify Your Identity
             </h2>
-            <p className="text-sm text-slate-500 mb-5">
+            <p className="text-sm text-[var(--text-muted)] mb-5">
               Enter the email address where this signing request was sent to confirm your
               identity.
             </p>
@@ -461,7 +461,7 @@ export default function SignPage() {
               <div>
                 <label
                   htmlFor="signer-email"
-                  className="block text-sm font-medium text-slate-700 mb-1"
+                  className="block text-sm font-medium text-[var(--text-secondary)] mb-1"
                 >
                   Email Address
                 </label>
@@ -478,7 +478,7 @@ export default function SignPage() {
                   className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
                     emailError
                       ? 'border-red-400 bg-red-50'
-                      : 'border-slate-300 bg-white'
+                      : 'border-[var(--border-main)] bg-[var(--bg-card)]'
                   }`}
                 />
                 {emailError && (
@@ -503,16 +503,16 @@ export default function SignPage() {
         {step === 'sign' && (
           <div className="skeuo-card p-6 space-y-5">
             <div>
-              <h2 className="text-base font-semibold text-slate-800 mb-1">
+              <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
                 Sign Document
               </h2>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--text-muted)]">
                 Choose your preferred signature method below.
               </p>
             </div>
 
             {/* Method Tabs */}
-            <div className="flex gap-2 border border-slate-200 rounded-lg p-1 bg-slate-50">
+            <div className="flex gap-2 border border-[var(--border-subtle)] rounded-lg p-1 bg-[var(--bg-surface)]">
               <button
                 onClick={() => {
                   setSignatureMethod('DRAWN');
@@ -520,8 +520,8 @@ export default function SignPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'DRAWN'
-                    ? 'bg-white text-blue-600 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-[var(--bg-card)] text-blue-600 shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
                 <PenLine className="h-4 w-4" />
@@ -534,8 +534,8 @@ export default function SignPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'TYPED'
-                    ? 'bg-white text-blue-600 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-[var(--bg-card)] text-blue-600 shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
                 <Type className="h-4 w-4" />
@@ -547,10 +547,10 @@ export default function SignPage() {
             {signatureMethod === 'DRAWN' && (
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-slate-500">Draw your signature in the box below</p>
+                  <p className="text-xs text-[var(--text-muted)]">Draw your signature in the box below</p>
                   <button
                     onClick={clearCanvas}
-                    className="text-xs text-slate-400 hover:text-slate-600 underline"
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline"
                   >
                     Clear
                   </button>
@@ -560,7 +560,7 @@ export default function SignPage() {
                     ref={canvasRef}
                     width={560}
                     height={200}
-                    className="w-full rounded-lg border-2 border-dashed border-slate-300 bg-white cursor-crosshair touch-none"
+                    className="w-full rounded-lg border-2 border-dashed border-[var(--border-main)] bg-[var(--bg-card)] cursor-crosshair touch-none"
                     style={{ height: '200px' }}
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}
@@ -572,7 +572,7 @@ export default function SignPage() {
                   />
                   {isCanvasEmpty && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <p className="text-slate-300 text-sm select-none">
+                      <p className="text-[var(--text-muted)] text-sm select-none">
                         Sign here using your mouse or finger
                       </p>
                     </div>
@@ -584,7 +584,7 @@ export default function SignPage() {
             {/* Typed Signature */}
             {signatureMethod === 'TYPED' && (
               <div>
-                <label className="block text-xs text-slate-500 mb-2">
+                <label className="block text-xs text-[var(--text-muted)] mb-2">
                   Type your full name
                 </label>
                 <input
@@ -598,8 +598,8 @@ export default function SignPage() {
                   className="input-aura"
                 />
                 {typedName && (
-                  <div className="mt-3 border border-slate-200 rounded-lg p-4 bg-slate-50">
-                    <p className="text-xs text-slate-400 mb-2">Signature preview</p>
+                  <div className="mt-3 border border-[var(--border-subtle)] rounded-lg p-4 bg-[var(--bg-surface)]">
+                    <p className="text-xs text-[var(--text-muted)] mb-2">Signature preview</p>
                     <p
                       style={{
                         fontFamily: 'cursive',
@@ -628,7 +628,7 @@ export default function SignPage() {
               <button
                 onClick={() => setShowDeclineModal(true)}
                 disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
-                className="flex-1 py-2.5 px-4 border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50"
+                className="flex-1 py-2.5 px-4 border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50"
               >
                 I Decline
               </button>
@@ -649,7 +649,7 @@ export default function SignPage() {
             </div>
 
             {/* Legal notice */}
-            <p className="text-xs text-slate-400 text-center leading-relaxed">
+            <p className="text-xs text-[var(--text-muted)] text-center leading-relaxed">
               By clicking &quot;Sign Document&quot; you agree that your electronic signature is
               legally equivalent to your handwritten signature.
             </p>
@@ -657,7 +657,7 @@ export default function SignPage() {
         )}
 
         {/* Footer */}
-        <p className="text-center text-xs text-slate-400 pb-4">
+        <p className="text-center text-xs text-[var(--text-muted)] pb-4">
           Powered by NU-AURA HRMS &mdash; Electronic Signature Service
         </p>
       </div>
@@ -666,10 +666,10 @@ export default function SignPage() {
       {showDeclineModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 px-4">
           <div className="skeuo-card max-w-md w-full p-6">
-            <h3 className="text-base font-semibold text-slate-800 mb-1">
+            <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Decline to Sign
             </h3>
-            <p className="text-sm text-slate-500 mb-4">
+            <p className="text-sm text-[var(--text-muted)] mb-4">
               Please provide a reason for declining (optional). The requester will be
               notified.
             </p>
@@ -694,7 +694,7 @@ export default function SignPage() {
                   setDeclineError(null);
                 }}
                 disabled={declineDocumentMutation.isPending}
-                className="flex-1 py-2.5 px-4 border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+                className="flex-1 py-2.5 px-4 border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>

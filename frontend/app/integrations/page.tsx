@@ -157,7 +157,7 @@ export default function IntegrationsPage() {
         'OAuth 2.0',
         'Swagger documentation',
       ],
-      color: 'from-slate-600 to-slate-700',
+      color: 'from-surface-600 to-surface-700',
       popular: true,
     },
     {

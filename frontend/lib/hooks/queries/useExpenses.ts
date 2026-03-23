@@ -32,21 +32,19 @@ export const expenseKeys = {
 
 // ========== QUERIES ==========
 
-// Get my expense claims
+// Get my expense claims (employee-specific)
 export function useMyExpenseClaims(
+  employeeId: string | undefined,
   page: number = 0,
   size: number = 50,
   status?: ExpenseStatus,
   dateFrom?: string,
   dateTo?: string
 ) {
-  // BUG-FIX: Previously passed '' as employeeId, causing 404 on /expenses/employees/.
-  // Now falls back to getAllClaims which is tenant-scoped and works for self-service.
   return useQuery({
     queryKey: expenseKeys.myClaimsList(page, size, status, dateFrom, dateTo),
-    queryFn: async () => {
-      return expenseService.getAllClaims(page, size);
-    },
+    queryFn: () => expenseService.getMyClaims(employeeId!, page, size),
+    enabled: !!employeeId,
     staleTime: 60 * 1000, // 1 minute
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),

@@ -131,7 +131,7 @@ export default function TemplatesPage() {
                                                         <div className="flex items-center gap-2">
                                                             <div className="flex -space-x-2">
                                                                 {[1, 2, 3].map(i => (
-                                                                    <div key={i} className="h-6 w-6 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-2 border-white/50 dark:border-white/10" />
+                                                                    <div key={i} className="h-6 w-6 rounded-full bg-[var(--bg-secondary)] border-2 border-white/50" />
                                                                 ))}
                                                             </div>
                                                             <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Reusable</span>

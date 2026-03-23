@@ -81,7 +81,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
       case 'Internship':
         return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300';
       default:
-        return 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
+        return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
   };
 
@@ -90,15 +90,15 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           onClick={() => onViewDetails(job)}>
       <div className="flex flex-col gap-4">
         <div>
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          <h3 className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {job.title}
           </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             {job.department}
           </p>
         </div>
 
-        <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+        <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
           {job.description}
         </p>
 
@@ -106,17 +106,17 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           <Badge variant="outline" className={`${getEmploymentTypeBg(job.employmentType)} border-0`}>
             {job.employmentType}
           </Badge>
-          <Badge variant="outline" className="border-slate-300 dark:border-slate-600">
+          <Badge variant="outline" className="border-[var(--border-main)]">
             <MapPin className="h-3 w-3 mr-1" />
             {job.location}
           </Badge>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-700">
-          <span className="text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center justify-between pt-2 border-t border-[var(--border-main)]">
+          <span className="text-xs text-[var(--text-muted)]">
             {formatDate(job.postedDate)}
           </span>
-          <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-primary-600 transition-colors" />
+          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-primary-600 transition-colors" />
         </div>
       </div>
     </Card>
@@ -135,10 +135,10 @@ const JobDetailModal: React.FC<{
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader onClose={onClose}>
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             {job.title}
           </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             {job.department} · {job.location}
           </p>
         </div>
@@ -149,53 +149,53 @@ const JobDetailModal: React.FC<{
           {/* Meta Info */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide font-semibold">
+              <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wide font-semibold">
                 Employment Type
               </p>
-              <p className="mt-2 text-sm font-medium text-slate-900 dark:text-slate-50">
+              <p className="mt-2 text-sm font-medium text-[var(--text-primary)]">
                 {job.employmentType}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide font-semibold">
+              <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wide font-semibold">
                 Experience Level
               </p>
-              <p className="mt-2 text-sm font-medium text-slate-900 dark:text-slate-50">
+              <p className="mt-2 text-sm font-medium text-[var(--text-primary)]">
                 {job.experience}
               </p>
             </div>
             {job.salaryRange && (
               <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide font-semibold">
+                <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wide font-semibold">
                   Salary Range
                 </p>
-                <p className="mt-2 text-sm font-medium text-slate-900 dark:text-slate-50">
+                <p className="mt-2 text-sm font-medium text-[var(--text-primary)]">
                   {job.salaryRange}
                 </p>
               </div>
             )}
           </div>
 
-          <hr className="border-slate-200 dark:border-slate-700" />
+          <hr className="border-[var(--border-main)]" />
 
           {/* Description */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-3">
               About this role
             </h4>
-            <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+            <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap">
               {job.fullDescription}
             </p>
           </div>
 
           {/* Responsibilities */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-3">
               Responsibilities
             </h4>
             <ul className="space-y-2">
               {job.responsibilities.map((resp, idx) => (
-                <li key={idx} className="flex gap-4 text-sm text-slate-700 dark:text-slate-300">
+                <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
                   <span className="text-primary-600 dark:text-primary-400 font-bold">•</span>
                   {resp}
                 </li>
@@ -205,12 +205,12 @@ const JobDetailModal: React.FC<{
 
           {/* Requirements */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-3">
               Requirements
             </h4>
             <ul className="space-y-2">
               {job.requirements.map((req, idx) => (
-                <li key={idx} className="flex gap-4 text-sm text-slate-700 dark:text-slate-300">
+                <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
                   <span className="text-primary-600 dark:text-primary-400 font-bold">•</span>
                   {req}
                 </li>
@@ -305,10 +305,10 @@ const ApplicationModal: React.FC<{
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader onClose={onClose}>
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             Apply for {job.title}
           </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             Fill in your details below
           </p>
         </div>
@@ -328,7 +328,7 @@ const ApplicationModal: React.FC<{
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Full Name *
             </label>
             <Input
@@ -341,7 +341,7 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Email Address *
             </label>
             <Input
@@ -354,7 +354,7 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Phone Number *
             </label>
             <Input
@@ -367,7 +367,7 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Resume *
             </label>
             <div className="relative">
@@ -381,15 +381,15 @@ const ApplicationModal: React.FC<{
               />
               <label
                 htmlFor="resume-input"
-                className="flex items-center gap-2 p-4 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="flex items-center gap-2 p-4 border-2 border-dashed border-[var(--border-main)] rounded-lg cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
               >
-                <Upload className="h-5 w-5 text-slate-500" />
+                <Upload className="h-5 w-5 text-[var(--text-muted)]" />
                 <div className="text-sm">
-                  <p className="font-medium text-slate-700 dark:text-slate-300">
+                  <p className="font-medium text-[var(--text-secondary)]">
                     {resumeFile ? resumeFile.name : 'Upload your resume'}
                   </p>
                   {!resumeFile && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-[var(--text-muted)]">
                       PDF, DOC, or DOCX (max 5MB)
                     </p>
                   )}
@@ -399,7 +399,7 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Cover Letter
             </label>
             <textarea
@@ -412,7 +412,7 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               LinkedIn Profile URL
             </label>
             <Input
@@ -525,7 +525,7 @@ export default function CareersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-indigo-700 via-indigo-600 to-violet-700 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
@@ -544,7 +544,7 @@ export default function CareersPage() {
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto mb-4">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search job titles or keywords..."
@@ -563,11 +563,11 @@ export default function CareersPage() {
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
             <div className="skeuo-card p-6 sticky top-24">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-5">Filters</h3>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider mb-5">Filters</h3>
 
               {/* Department Filter */}
               <div className="mb-5">
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Department
                 </label>
                 <select
@@ -589,7 +589,7 @@ export default function CareersPage() {
 
               {/* Location Filter */}
               <div className="mb-5">
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Location
                 </label>
                 <select
@@ -611,7 +611,7 @@ export default function CareersPage() {
 
               {/* Employment Type Filter */}
               <div className="mb-5">
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Employment Type
                 </label>
                 <select
@@ -633,7 +633,7 @@ export default function CareersPage() {
 
               {/* Experience Level Filter */}
               <div className="mb-5">
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Experience Level
                 </label>
                 <select
@@ -683,11 +683,11 @@ export default function CareersPage() {
               </div>
             ) : paginatedJobs.length === 0 ? (
               <div className="text-center py-20 skeuo-card">
-                <Briefcase className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <Briefcase className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No jobs found
                 </h3>
-                <p className="text-gray-500 mb-6">
+                <p className="text-[var(--text-muted)] mb-6">
                   Try adjusting your filters or search query
                 </p>
                 <Button
@@ -759,7 +759,7 @@ export default function CareersPage() {
                 )}
 
                 {/* Results Info */}
-                <div className="text-center mt-8 text-sm text-gray-500">
+                <div className="text-center mt-8 text-sm text-[var(--text-muted)]">
                   Showing {(currentPage - 1) * jobsPerPage + 1} to{' '}
                   {Math.min(currentPage * jobsPerPage, jobs.length)} of {jobs.length} positions
                 </div>

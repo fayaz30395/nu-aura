@@ -32,7 +32,7 @@ public class TimeTrackingService {
     @Transactional
     public TimeEntryDto createEntry(CreateTimeEntryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         TimeEntry entry = TimeEntry.builder()
                 .employeeId(employeeId)
@@ -198,7 +198,7 @@ public class TimeTrackingService {
     @Transactional(readOnly = true)
     public Page<TimeEntryDto> getMyEntries(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return timeEntryRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(TimeEntryDto::fromEntity);
     }
@@ -206,7 +206,7 @@ public class TimeTrackingService {
     @Transactional(readOnly = true)
     public List<TimeEntryDto> getMyEntriesForDateRange(LocalDate startDate, LocalDate endDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return timeEntryRepository.findByEmployeeIdAndTenantIdAndEntryDateBetween(
                 employeeId, tenantId, startDate, endDate
         ).stream().map(TimeEntryDto::fromEntity).collect(Collectors.toList());
@@ -240,7 +240,7 @@ public class TimeTrackingService {
     @Transactional(readOnly = true)
     public Map<String, Object> getTimeSummary(LocalDate startDate, LocalDate endDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         BigDecimal totalHours = timeEntryRepository.sumHoursWorkedByEmployee(tenantId, employeeId, startDate, endDate);
 

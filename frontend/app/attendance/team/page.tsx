@@ -654,7 +654,7 @@ export default function TeamAttendancePage() {
                       record.status === 'LATE' ? 'border-t-orange-500' :
                       record.status === 'LEAVE' ? 'border-t-blue-500' :
                       record.status === 'HALF_DAY' ? 'border-t-yellow-500' :
-                      'border-t-gray-400'
+                      'border-t-[var(--border-main)]'
                     }`}>
                       <CardContent className="p-6 flex flex-col gap-4">
                         <div className="flex items-start justify-between gap-2">

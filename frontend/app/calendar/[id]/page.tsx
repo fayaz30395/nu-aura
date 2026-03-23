@@ -97,7 +97,7 @@ export default function EventDetailPage() {
       },
       COMPLETED: {
         bg: 'bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]',
-        text: 'text-gray-700 dark:text-[var(--text-muted)]',
+        text: 'text-[var(--text-secondary)]',
         icon: CheckCircle,
       },
     };

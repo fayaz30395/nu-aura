@@ -283,7 +283,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckIn}
                         isLoading={checkInPending}
-                        className="h-14 px-8 text-base font-semibold bg-white text-primary-600 hover:bg-gray-50 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-white text-primary-600 hover:bg-[var(--bg-surface)] border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2" />
                         Check In

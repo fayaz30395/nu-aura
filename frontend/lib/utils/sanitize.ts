@@ -24,8 +24,10 @@ export function sanitizeHtml(html: string | null | undefined): string {
       'table', 'thead', 'tbody', 'tr', 'th', 'td',
       'div', 'span',
     ],
+    // SEC-H03 FIX: Removed 'style' attribute to prevent CSS injection attacks
+    // (data exfiltration via background-image:url(...), clickjacking via position:fixed).
     ALLOWED_ATTR: [
-      'href', 'src', 'alt', 'title', 'class', 'style',
+      'href', 'src', 'alt', 'title', 'class',
       'target', 'rel', 'width', 'height',
     ],
     ALLOW_DATA_ATTR: false,
@@ -56,8 +58,9 @@ export function sanitizeEmailHtml(html: string | null | undefined): string {
       'table', 'thead', 'tbody', 'tr', 'th', 'td',
       'div', 'span',
     ],
+    // SEC-H03 FIX: Removed 'style' attribute to prevent CSS injection attacks.
     ALLOWED_ATTR: [
-      'href', 'src', 'alt', 'title', 'style',
+      'href', 'src', 'alt', 'title',
       'width', 'height', 'border', 'cellpadding', 'cellspacing',
     ],
     FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input'],
@@ -87,8 +90,9 @@ export function sanitizeAnnouncementHtml(html: string | null | undefined): strin
       'table', 'thead', 'tbody', 'tr', 'th', 'td',
       'div', 'span', 'hr',
     ],
+    // SEC-H03 FIX: Removed 'style' attribute to prevent CSS injection attacks.
     ALLOWED_ATTR: [
-      'href', 'src', 'alt', 'title', 'class', 'style',
+      'href', 'src', 'alt', 'title', 'class',
       'target', 'rel', 'width', 'height',
     ],
     FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button'],

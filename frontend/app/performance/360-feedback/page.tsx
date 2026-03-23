@@ -41,7 +41,7 @@ const log = createLogger('FeedbackPage');
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'DRAFT':
-      return 'bg-[var(--bg-surface)] text-gray-800';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
     case 'ACTIVE':
     case 'IN_PROGRESS':
       return 'bg-blue-100 text-blue-800';
@@ -52,7 +52,7 @@ const getStatusColor = (status: string) => {
     case 'CLOSED':
       return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }
 };
 
@@ -82,7 +82,7 @@ const RatingStars = ({ rating, onChange }: { rating: number; onChange?: (r: numb
         >
           <Star
             className={`h-5 w-5 ${
-              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--text-muted)]'
             }`}
           />
         </button>
@@ -468,7 +468,7 @@ export default function Feedback360Page() {
           ) : (
             <div className="bg-white rounded-lg border border-[var(--border-main)]">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="min-w-full divide-y divide-[var(--border-main)]">
                   <thead className="bg-[var(--bg-surface)]">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
@@ -488,7 +488,7 @@ export default function Feedback360Page() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-[var(--border-main)]">
                     {pendingReviews.map((request) => (
                       <tr key={request.id} className="hover:bg-[var(--bg-surface)]">
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -611,7 +611,7 @@ export default function Feedback360Page() {
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-[var(--text-secondary)]">Communication</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-blue-500"
                                 style={{ width: `${(summary.avgCommunication / 5) * 100}%` }}
@@ -627,7 +627,7 @@ export default function Feedback360Page() {
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-[var(--text-secondary)]">Teamwork</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-green-500"
                                 style={{ width: `${(summary.avgTeamwork / 5) * 100}%` }}
@@ -643,7 +643,7 @@ export default function Feedback360Page() {
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-[var(--text-secondary)]">Leadership</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-purple-500"
                                 style={{ width: `${(summary.avgLeadership / 5) * 100}%` }}

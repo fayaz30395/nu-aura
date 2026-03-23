@@ -130,8 +130,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     permissionScopes = fallbackScopes;
                 }
 
-                // Create authentication with combined authorities
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                // PERF-H01 FIX: Avoid redundant DB query for NU Platform tokens.
+                // When the JWT already provided roles/permissions (first branch), we can
+                // construct a UserPrincipal directly from JWT claims instead of hitting the DB.
+                // The legacy fallback branch (else) already loaded UserDetails above.
+                UserDetails userDetails;
+                boolean isNuPlatformToken = !tokenPermissions.isEmpty() || !tokenRoles.isEmpty();
+
+                if (isNuPlatformToken) {
+                    // Construct UserPrincipal from JWT claims — no DB query needed
+                    UUID userId = null;
+                    try {
+                        userId = tokenProvider.getUserIdFromToken(jwt);
+                    } catch (Exception e) {
+                        log.debug("Could not extract userId from JWT for principal construction", e);
+                    }
+                    userDetails = new UserPrincipal(
+                            userId,
+                            tenantId,
+                            username,
+                            null, // password not needed for token-based auth
+                            authorities);
+                } else {
+                    // Legacy mode: UserDetails was already loaded in the else branch above,
+                    // but the variable was scoped inside. Load once here for legacy tokens.
+                    userDetails = userDetailsService.loadUserByUsername(username);
+                }
+
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

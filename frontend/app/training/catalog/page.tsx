@@ -244,7 +244,7 @@ export default function CourseCatalogPage() {
           </div>
         ) : visibleCourses.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-4">
-            <GraduationCap className="h-12 w-12 text-gray-300" />
+            <GraduationCap className="h-12 w-12 text-[var(--text-muted)]" />
             <p className="text-lg font-medium text-[var(--text-muted)]">No courses found</p>
             {searchQuery && (
               <p className="text-sm">

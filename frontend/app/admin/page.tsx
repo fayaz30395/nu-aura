@@ -235,7 +235,7 @@ export default function AdminDashboardPage() {
                         user.userStatus === 'ACTIVE'
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
                           : user.userStatus === 'INACTIVE'
-                          ? 'bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300'
+                          ? 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                           : user.userStatus === 'SUSPENDED'
                           ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
                           : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]'

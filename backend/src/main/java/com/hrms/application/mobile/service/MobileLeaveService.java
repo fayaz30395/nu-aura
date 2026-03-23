@@ -32,7 +32,7 @@ public class MobileLeaveService {
     public MobileLeaveDto.RecentLeaveRequest quickApplyLeave(
             MobileLeaveDto.QuickLeaveRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         // Create leave request
         LeaveRequest leaveRequest = LeaveRequest.builder()
@@ -59,7 +59,7 @@ public class MobileLeaveService {
      */
     @Transactional(readOnly = true)
     public MobileLeaveDto.LeaveBalanceResponse getLeaveBalance() {
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         // Build leave balance response
         // This is a placeholder - integrate with actual LeaveBalanceService
@@ -99,7 +99,7 @@ public class MobileLeaveService {
     @Transactional(readOnly = true)
     public List<MobileLeaveDto.RecentLeaveRequest> getRecentLeaveRequests() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         List<LeaveRequest> requests = leaveRequestRepository
                 .findAllByTenantIdAndEmployeeId(tenantId, employeeId, PageRequest.of(0, 10))

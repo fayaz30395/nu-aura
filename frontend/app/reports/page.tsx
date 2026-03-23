@@ -154,21 +154,21 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className={`p-2 rounded-lg ${report.bgColor}`}>
               <report.icon className={`h-5 w-5 ${report.color}`} />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100">{report.title}</h3>
-              <p className="text-sm text-slate-500">{report.category}</p>
+              <h3 className="font-semibold text-[var(--text-primary)]">{report.title}</h3>
+              <p className="text-sm text-[var(--text-muted)]">{report.category}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
           >
-            <X className="h-5 w-5 text-slate-500" />
+            <X className="h-5 w-5 text-[var(--text-muted)]" />
           </button>
         </div>
 
@@ -176,7 +176,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         <div className="p-6 space-y-6">
           {/* Format Selection */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
               Export Format
             </label>
             <div className="grid grid-cols-3 gap-4">
@@ -185,17 +185,17 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
                   format === 'EXCEL'
                     ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                    : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
                 <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'EXCEL' ? 'text-green-600' : 'text-slate-400'}`}
+                  className={`h-6 w-6 ${format === 'EXCEL' ? 'text-green-600' : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'EXCEL' ? 'text-green-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                  <p className={`font-medium text-sm ${format === 'EXCEL' ? 'text-green-700' : 'text-[var(--text-secondary)]'}`}>
                     Excel
                   </p>
-                  <p className="text-xs text-slate-500">.xlsx</p>
+                  <p className="text-xs text-[var(--text-muted)]">.xlsx</p>
                 </div>
                 {format === 'EXCEL' && <Check className="h-4 w-4 text-green-600 absolute top-2 right-2" />}
               </button>
@@ -205,15 +205,15 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
                   format === 'PDF'
                     ? 'border-red-500 bg-red-50 dark:bg-red-950/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                    : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
-                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-red-600' : 'text-slate-400'}`} />
+                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-red-600' : 'text-[var(--text-muted)]'}`} />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'PDF' ? 'text-red-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                  <p className={`font-medium text-sm ${format === 'PDF' ? 'text-red-700' : 'text-[var(--text-secondary)]'}`}>
                     PDF
                   </p>
-                  <p className="text-xs text-slate-500">.pdf</p>
+                  <p className="text-xs text-[var(--text-muted)]">.pdf</p>
                 </div>
                 {format === 'PDF' && <Check className="h-4 w-4 text-red-600 absolute top-2 right-2" />}
               </button>
@@ -223,17 +223,17 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
                   format === 'CSV'
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                    : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
                 <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'CSV' ? 'text-blue-600' : 'text-slate-400'}`}
+                  className={`h-6 w-6 ${format === 'CSV' ? 'text-blue-600' : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'CSV' ? 'text-blue-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                  <p className={`font-medium text-sm ${format === 'CSV' ? 'text-blue-700' : 'text-[var(--text-secondary)]'}`}>
                     CSV
                   </p>
-                  <p className="text-xs text-slate-500">.csv</p>
+                  <p className="text-xs text-[var(--text-muted)]">.csv</p>
                 </div>
                 {format === 'CSV' && <Check className="h-4 w-4 text-blue-600 absolute top-2 right-2" />}
               </button>
@@ -243,26 +243,26 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
           {/* Date Range (if required) */}
           {report.requiresDateRange && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                 Date Range <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">From</label>
+                  <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">To</label>
+                  <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
                   <input
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
                   />
                 </div>
               </div>
@@ -278,17 +278,17 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex gap-4">
+        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            className="flex-1 px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleDownload}
             disabled={isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isPending ? (
               <>
@@ -339,8 +339,8 @@ export default function ReportsPage() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Reports</h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Reports</h1>
+          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Generate and download various HR reports in Excel or PDF format
           </p>
         </div>
@@ -378,7 +378,7 @@ export default function ReportsPage() {
                     <div className={`p-4 rounded-lg ${report.bgColor}`}>
                       <IconComponent className={`h-6 w-6 ${report.color}`} />
                     </div>
-                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                       {report.category}
                     </span>
                   </div>
@@ -388,20 +388,20 @@ export default function ReportsPage() {
                 <CardContent className="mt-auto">
                   <div className="flex flex-col gap-4">
                     {report.requiresDateRange && (
-                      <div className="flex items-center gap-1 text-xs text-slate-500">
+                      <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
                         <Calendar className="h-3 w-3" />
                         <span>Requires date range</span>
                       </div>
                     )}
                     {report.filters && report.filters.length > 0 && (
-                      <div className="flex items-center gap-1 text-xs text-slate-500">
+                      <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
                         <Filter className="h-3 w-3" />
                         <span>Filters available</span>
                       </div>
                     )}
                     <button
                       onClick={() => setSelectedReport(report)}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 dark:bg-slate-700 text-white rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors duration-200"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors duration-200"
                     >
                       <Download className="h-4 w-4" />
                       <span className="text-sm font-medium">Download Report</span>

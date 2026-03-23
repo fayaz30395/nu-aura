@@ -68,7 +68,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
       'Benefits': 'bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300',
       'Company Policies': 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300',
     };
-    return colors[category] || 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
+    return colors[category] || 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   };
 
   const helpfulRate = article.helpful + article.unhelpful > 0
@@ -83,9 +83,9 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-4 mb-3">
-            <FileText className="h-5 w-5 text-slate-400 flex-shrink-0 mt-1" />
+            <FileText className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-1" />
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+              <h3 className="text-base font-semibold text-[var(--text-primary)] group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
                 {article.title}
               </h3>
               <Badge
@@ -97,7 +97,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 mt-4">
+          <div className="flex flex-wrap gap-4 text-xs text-[var(--text-muted)] mt-4">
             <span className="flex items-center gap-1">
               <Eye className="h-3 w-3" />
               {article.views} views
@@ -113,7 +113,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
           </div>
         </div>
 
-        <ChevronRight className="h-5 w-5 text-slate-400 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 group-hover:translate-x-1 transition-transform" />
       </div>
     </Card>
   );
@@ -145,17 +145,17 @@ const ArticleDetailModal: React.FC<{
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader onClose={onClose}>
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             {article.title}
           </h2>
           <div className="flex items-center gap-4 mt-3 flex-wrap">
             <Badge variant="outline">{article.category}</Badge>
-            <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
               <Eye className="h-3 w-3" />
               {article.views} views
             </span>
             {article.author && (
-              <span className="text-xs text-slate-500 dark:text-slate-400">
+              <span className="text-xs text-[var(--text-muted)]">
                 by {article.author}
               </span>
             )}
@@ -167,16 +167,16 @@ const ArticleDetailModal: React.FC<{
         <div className="space-y-6">
           {/* Article Content */}
           <div className="prose prose-sm dark:prose-invert max-w-none">
-            <div className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+            <div className="text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed">
               {article.content}
             </div>
           </div>
 
-          <hr className="border-slate-200 dark:border-slate-700" />
+          <hr className="border-[var(--border-main)]" />
 
           {/* Feedback Section */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-4">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
               Was this article helpful?
             </h4>
 
@@ -211,14 +211,14 @@ const ArticleDetailModal: React.FC<{
             </div>
           </div>
 
-          <hr className="border-slate-200 dark:border-slate-700" />
+          <hr className="border-[var(--border-main)]" />
 
           {/* Related Articles Section */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
               Related Articles
             </h4>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-[var(--text-muted)]">
               More articles in {article.category} category (feature coming soon)
             </p>
           </div>
@@ -313,10 +313,10 @@ export default function KnowledgeBasePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Knowledge Base
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
+            <p className="text-[var(--text-secondary)] mt-2">
               Find answers to common questions
             </p>
           </div>
@@ -337,7 +337,7 @@ export default function KnowledgeBasePage() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-[var(--bg-input)] rounded-lg p-6 sticky top-6">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-6">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-6">
                 Categories
               </h3>
 
@@ -349,7 +349,7 @@ export default function KnowledgeBasePage() {
                   className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
                     selectedCategory === ''
                       ? 'bg-primary-600 text-white'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
                   All Articles ({articles.length})
@@ -366,7 +366,7 @@ export default function KnowledgeBasePage() {
                       className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
                         selectedCategory === category
                           ? 'bg-primary-600 text-white'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                       }`}
                     >
                       {category} ({count})
@@ -395,13 +395,13 @@ export default function KnowledgeBasePage() {
             {/* Search Bar */}
             <div className="mb-8">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   placeholder="Search articles..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
               </div>
             </div>
@@ -415,11 +415,11 @@ export default function KnowledgeBasePage() {
               </div>
             ) : articles.length === 0 ? (
               <div className="text-center py-20">
-                <FileText className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                <FileText className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No articles found
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-6">
+                <p className="text-[var(--text-secondary)] mb-6">
                   Try adjusting your search or category filter
                 </p>
                 <Button
@@ -460,10 +460,10 @@ export default function KnowledgeBasePage() {
         <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="lg">
           <ModalHeader onClose={() => setShowCreateModal(false)}>
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                 Create New Article
               </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              <p className="text-sm text-[var(--text-secondary)] mt-1">
                 Add a new article to the knowledge base
               </p>
             </div>
@@ -472,7 +472,7 @@ export default function KnowledgeBasePage() {
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                   Title
                 </label>
                 <Input
@@ -483,7 +483,7 @@ export default function KnowledgeBasePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                   Category
                 </label>
                 <select className="input-aura">
@@ -496,13 +496,13 @@ export default function KnowledgeBasePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                   Content
                 </label>
                 <textarea
                   placeholder="Write the article content here..."
                   rows={8}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
               </div>
             </div>
@@ -528,10 +528,10 @@ export default function KnowledgeBasePage() {
       <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} size="lg">
         <ModalHeader onClose={() => setShowTicketModal(false)}>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+            <h2 className="text-2xl font-bold text-[var(--text-primary)]">
               Submit a Support Ticket
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               Couldn&apos;t find the answer? We&apos;re here to help
             </p>
           </div>
@@ -540,7 +540,7 @@ export default function KnowledgeBasePage() {
         <ModalBody>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Subject
               </label>
               <Input
@@ -551,21 +551,21 @@ export default function KnowledgeBasePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Description
               </label>
               <textarea
                 placeholder="Provide more details about your issue..."
                 rows={6}
-                className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Priority
               </label>
-              <select className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg">
+              <select className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg">
                 <option>Low</option>
                 <option>Medium</option>
                 <option>High</option>

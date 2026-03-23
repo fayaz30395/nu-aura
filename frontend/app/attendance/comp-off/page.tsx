@@ -149,7 +149,7 @@ export default function CompOffPage() {
               <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
             ) : requests.length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
-                <Clock className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                <Clock className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]" />
                 <p>No comp-off requests found.</p>
               </div>
             ) : (

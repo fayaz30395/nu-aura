@@ -20,6 +20,8 @@ import {
   Star,
   Crown,
   Medal,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -76,7 +78,7 @@ const getCategoryColor = (category: ProgramCategory) => {
     case ProgramCategory.STRESS_MANAGEMENT:
       return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }
 };
 
@@ -99,14 +101,15 @@ export default function WellnessPage() {
   });
 
   // React Query hooks
-  const { data: programs = [], isLoading: programsLoading } = useActivePrograms();
-  const { data: challenges = [], isLoading: challengesLoading } = useActiveChallenges();
+  const { data: programs = [], isLoading: programsLoading, isError: programsError, refetch: refetchPrograms } = useActivePrograms();
+  const { data: challenges = [], isLoading: challengesLoading, isError: challengesError, refetch: refetchChallenges } = useActiveChallenges();
   const { data: leaderboard = [], isLoading: leaderboardLoading } = useWellnessLeaderboard(5);
   const { data: myPoints } = useMyWellnessPoints();
   const logHealthMutation = useLogHealth();
   const joinChallengeMutation = useJoinChallenge();
 
   const loading = programsLoading || challengesLoading || leaderboardLoading;
+  const hasError = programsError || challengesError;
 
   const handleLogHealth = () => {
     logHealthMutation.mutate({
@@ -162,6 +165,24 @@ export default function WellnessPage() {
             </Button>
           </PermissionGate>
         </div>
+
+        {/* Error State */}
+        {hasError && (
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+                <p className="text-sm text-danger-600 dark:text-danger-400">
+                  Some wellness data could not be loaded. Showing available information.
+                </p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => { refetchPrograms(); refetchChallenges(); }}>
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -410,7 +431,7 @@ export default function WellnessPage() {
                         className="flex items-center gap-4 p-2 rounded-lg bg-[var(--bg-secondary)]"
                       >
                         <div className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-500 text-white' :
-                            index === 1 ? 'bg-gray-400 text-white' :
+                            index === 1 ? 'bg-[var(--text-muted)] text-white' :
                               index === 2 ? 'bg-amber-600 text-white' :
                                 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>
