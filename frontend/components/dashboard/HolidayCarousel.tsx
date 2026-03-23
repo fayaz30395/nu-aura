@@ -68,11 +68,11 @@ export function HolidayCarousel({
         </div>
         <div className="rounded-lg bg-[var(--bg-surface)] p-4 animate-pulse">
           <div className="flex items-start gap-2">
-            <div className="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-700" />
+            <div className="w-12 h-12 rounded-lg bg-[var(--bg-surface)]" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+              <div className="h-4 bg-[var(--bg-surface)] rounded w-3/4" />
+              <div className="h-3 bg-[var(--bg-surface)] rounded w-1/2" />
+              <div className="h-3 bg-[var(--bg-surface)] rounded w-1/3" />
             </div>
           </div>
         </div>
@@ -87,7 +87,7 @@ export function HolidayCarousel({
           <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
         </div>
         <div className="text-center py-4">
-          <CalendarDays className="w-6 h-6 text-gray-300 dark:text-gray-600 mx-auto mb-1" />
+          <CalendarDays className="w-6 h-6 text-[var(--text-muted)] mx-auto mb-1" />
           <p className="text-xs text-[var(--text-muted)]">No upcoming holidays</p>
         </div>
       </div>
@@ -117,7 +117,7 @@ export function HolidayCarousel({
       {/* Holiday Card — clean flat style */}
       <div className="rounded-lg bg-[var(--bg-surface)] p-4">
         <div className="flex items-start gap-2">
-          <div className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-white border border-[var(--border-main)] dark:bg-gray-800 dark:border-gray-700">
+          <div className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-white border border-[var(--border-main)] dark:bg-[var(--bg-surface)] dark:border-[var(--border-main)]">
             <CalendarDays className="h-4 w-4 text-[var(--text-muted)]" />
           </div>
           <div className="flex-1 min-w-0">
@@ -136,7 +136,7 @@ export function HolidayCarousel({
               <span className="text-xs text-[var(--text-muted)]">
                 {currentHoliday.daysUntil > 0 ? `In ${currentHoliday.daysUntil} days` : 'Today'}
               </span>
-              <span className="inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-medium text-[var(--text-secondary)] uppercase dark:bg-gray-700 dark:text-[var(--text-muted)]">
+              <span className="inline-block rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-xs font-medium text-[var(--text-secondary)] uppercase ">
                 {currentHoliday.type.replace(/_/g, ' ')}
               </span>
             </div>
@@ -149,7 +149,7 @@ export function HolidayCarousel({
         <div className="flex items-center justify-between mt-3">
           <button
             onClick={() => setCurrentIndex((prev) => (prev - 1 + displayedHolidays.length) % displayedHolidays.length)}
-            className="rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
+            className="rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -159,14 +159,14 @@ export function HolidayCarousel({
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
                 className={`h-1.5 rounded-full transition-all ${
-                  idx === currentIndex ? 'w-4 bg-gray-500 dark:bg-gray-400' : 'w-1.5 bg-gray-300 dark:bg-gray-600'
+                  idx === currentIndex ? 'w-4 bg-[var(--text-muted)]' : 'w-1.5 bg-[var(--border-main)]'
                 }`}
               />
             ))}
           </div>
           <button
             onClick={() => setCurrentIndex((prev) => (prev + 1) % displayedHolidays.length)}
-            className="rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
+            className="rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

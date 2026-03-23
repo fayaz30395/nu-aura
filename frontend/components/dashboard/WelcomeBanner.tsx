@@ -34,10 +34,10 @@ export function WelcomeBanner({
           <h1 className="text-2xl font-semibold text-white tracking-tight">
             Welcome back, {firstName}
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             {today}
-            {designation && <span className="text-slate-500"> · {designation}</span>}
-            {department && <span className="text-slate-500"> · {department}</span>}
+            {designation && <span className="text-[var(--text-muted)]"> · {designation}</span>}
+            {department && <span className="text-[var(--text-muted)]"> · {department}</span>}
           </p>
         </div>
       </div>
@@ -80,7 +80,7 @@ export function QuickAccessWidget({
             {pendingApprovals > 0 && (
               <a
                 href="/approvals"
-                className="flex items-center justify-between rounded-lg bg-[var(--bg-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 group"
+                className="flex items-center justify-between rounded-lg bg-[var(--bg-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--bg-surface)]  group"
               >
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-amber-500" />
@@ -100,7 +100,7 @@ export function QuickAccessWidget({
             {pendingTimesheets > 0 && (
               <a
                 href="/timesheets"
-                className="flex items-center justify-between rounded-lg bg-[var(--bg-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 group"
+                className="flex items-center justify-between rounded-lg bg-[var(--bg-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--bg-surface)]  group"
               >
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-blue-500" />
@@ -120,7 +120,7 @@ export function QuickAccessWidget({
             {pendingProfileUpdates > 0 && (
               <a
                 href="/profile"
-                className="flex items-center justify-between rounded-lg bg-[var(--bg-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 group"
+                className="flex items-center justify-between rounded-lg bg-[var(--bg-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--bg-surface)]  group"
               >
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-purple-500" />
@@ -142,7 +142,7 @@ export function QuickAccessWidget({
         {/* Inbox row */}
         <a
           href="/inbox"
-          className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 border-t border-[var(--border-subtle)] mt-1.5 pt-2.5"
+          className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-[var(--bg-surface)]  border-t border-[var(--border-subtle)] mt-1.5 pt-2.5"
         >
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4 text-[var(--text-muted)]" />
