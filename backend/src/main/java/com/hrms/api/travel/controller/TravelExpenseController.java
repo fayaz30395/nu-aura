@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.hrms.common.exception.ValidationException;
+
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
@@ -85,10 +87,18 @@ public class TravelExpenseController {
 
         if (body != null) {
             if (body.get("approverId") != null) {
-                approverId = UUID.fromString(body.get("approverId").toString());
+                try {
+                    approverId = UUID.fromString(body.get("approverId").toString());
+                } catch (IllegalArgumentException e) {
+                    throw new ValidationException("Invalid approverId format: " + body.get("approverId"));
+                }
             }
             if (body.get("approvedAmount") != null) {
-                approvedAmount = new BigDecimal(body.get("approvedAmount").toString());
+                try {
+                    approvedAmount = new BigDecimal(body.get("approvedAmount").toString());
+                } catch (NumberFormatException e) {
+                    throw new ValidationException("Invalid approvedAmount format: " + body.get("approvedAmount"));
+                }
             }
             if (body.get("comments") != null) {
                 comments = body.get("comments").toString();
@@ -105,7 +115,14 @@ public class TravelExpenseController {
             @PathVariable UUID id,
             @RequestBody Map<String, String> body
     ) {
-        UUID approverId = body.get("approverId") != null ? UUID.fromString(body.get("approverId")) : null;
+        UUID approverId = null;
+        if (body.get("approverId") != null) {
+            try {
+                approverId = UUID.fromString(body.get("approverId"));
+            } catch (IllegalArgumentException e) {
+                throw new ValidationException("Invalid approverId format: " + body.get("approverId"));
+            }
+        }
         String reason = body.get("reason");
         return ResponseEntity.ok(travelExpenseService.rejectExpense(id, approverId, reason));
     }
