@@ -138,7 +138,7 @@ export function useApproveGoal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => goalService.approveGoal(id),
+    mutationFn: ({ id, approverId }: { id: string; approverId: string }) => goalService.approveGoal(id, approverId),
     onSuccess: (data: Goal) => {
       queryClient.invalidateQueries({ queryKey: performanceKeys.goals() });
       queryClient.setQueryData(performanceKeys.goalDetail(data.id), data);

@@ -1,6 +1,7 @@
 package com.hrms.application.lms.service;
 
 import com.hrms.api.lms.dto.CompletionStatsResponse;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.lms.CourseEnrollment;
 import com.hrms.domain.lms.CourseEnrollment.EnrollmentStatus;
 import com.hrms.infrastructure.lms.repository.CourseEnrollmentRepository;
@@ -74,7 +75,7 @@ public class CourseEnrollmentService {
         }
 
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found: " + enrollmentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found: " + enrollmentId));
 
         enrollment.setProgressPercentage(BigDecimal.valueOf(progressPercent));
         enrollment.setLastAccessedAt(LocalDateTime.now());

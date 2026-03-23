@@ -36,7 +36,7 @@ public class EmployeeDirectoryService {
 
     @Transactional(readOnly = true)
     public Page<EmployeeDirectoryResponse> searchEmployees(EmployeeSearchRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Searching employees for tenant: {} with filters: {}", tenantId, request);
 
         // Build specification for dynamic query

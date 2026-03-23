@@ -11,7 +11,7 @@ import {
   TemplateMappingRequest,
 } from '../types/connector';
 
-const BASE_URL = '/api/v1/integrations';
+const BASE_URL = '/integrations';
 
 export const connectorService = {
   // Connector Info & List

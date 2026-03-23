@@ -181,7 +181,7 @@ public class WallService {
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        Employee employee = employeeRepository.findById(employeeId)
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         // Check if user already reacted
@@ -240,7 +240,7 @@ public class WallService {
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        Employee author = employeeRepository.findById(authorId)
+        Employee author = employeeRepository.findByIdAndTenantId(authorId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Author not found"));
 
         PostComment comment = new PostComment(post, author, request.getContent());
@@ -312,7 +312,7 @@ public class WallService {
             throw new IllegalArgumentException("Option does not belong to this poll");
         }
 
-        Employee employee = employeeRepository.findById(employeeId)
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         // Check if user already voted on this poll

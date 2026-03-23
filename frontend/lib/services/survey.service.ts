@@ -5,7 +5,7 @@ import type {
   SurveyStatus,
 } from '../types/survey';
 
-const BASE_URL = '/api/v1/survey-management';
+const BASE_URL = '/survey-management';
 
 export interface PagedResponse<T> {
   content: T[];

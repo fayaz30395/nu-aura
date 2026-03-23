@@ -1,5 +1,6 @@
 package com.hrms.application.notification.service;
 
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.notification.Notification;
@@ -116,6 +117,6 @@ public class NotificationService {
     public Notification getNotificationById(UUID notificationId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return notificationRepository.findByIdAndTenantId(notificationId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Notification not found with id: " + notificationId));
+                .orElseThrow(() -> new ResourceNotFoundException("Notification not found: " + notificationId));
     }
 }

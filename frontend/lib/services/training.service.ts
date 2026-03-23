@@ -8,7 +8,7 @@ import type {
   EnrollmentStatus,
 } from '../types/training';
 
-const BASE_URL = '/api/v1/training';
+const BASE_URL = '/training';
 
 export interface PagedResponse<T> {
   content: T[];

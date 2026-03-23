@@ -5,6 +5,7 @@ import com.hrms.api.auth.dto.MfaSetupResponse;
 import com.hrms.api.auth.dto.MfaStatusResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hrms.common.exception.AuthenticationException;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.user.repository.UserRepository;
@@ -84,7 +85,7 @@ public class MfaService {
             userRepository.save(user);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize backup codes for user: {}", userId, e);
-            throw new RuntimeException("Failed to setup MFA", e);
+            throw new BusinessException("Failed to initialize MFA. Please try again.");
         }
 
         // Generate QR code URL

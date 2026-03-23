@@ -7,7 +7,7 @@ import {
   AssetStatus,
 } from '../types/asset';
 
-const BASE_URL = '/api/v1/assets';
+const BASE_URL = '/assets';
 
 export const assetService = {
   // Get all assets with pagination

@@ -30,10 +30,19 @@ class EmployeeService {
     page: number = 0,
     size: number = 20,
     sortBy: string = 'createdAt',
-    sortDirection: 'ASC' | 'DESC' = 'DESC'
+    sortDirection: 'ASC' | 'DESC' = 'DESC',
+    search?: string,
+    status?: string
   ): Promise<Page<Employee>> {
+    // When a search query is present, use the dedicated search endpoint
+    if (search && search.trim()) {
+      const response = await apiClient.get<Page<Employee>>('/employees/search', {
+        params: { query: search.trim(), page, size, status: status || undefined },
+      });
+      return response.data;
+    }
     const response = await apiClient.get<Page<Employee>>('/employees', {
-      params: { page, size, sortBy, sortDirection },
+      params: { page, size, sortBy, sortDirection, status: status || undefined },
     });
     return response.data;
   }
@@ -43,8 +52,8 @@ class EmployeeService {
     page: number = 0,
     size: number = 20
   ): Promise<Page<Employee>> {
-    const response = await apiClient.get<Page<Employee>>('/employees', {
-      params: { search: query, page, size },
+    const response = await apiClient.get<Page<Employee>>('/employees/search', {
+      params: { query, page, size },
     });
     return response.data;
   }

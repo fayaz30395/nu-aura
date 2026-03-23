@@ -245,7 +245,7 @@ public class AttendanceRecordService {
      */
     public AttendanceTimeEntry multiCheckIn(UUID employeeId, LocalDateTime checkInTime,
             String entryType, String source, String location, String ip, String notes) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         if (tenantId == null) {
             throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
         }
@@ -274,7 +274,7 @@ public class AttendanceRecordService {
      */
     public AttendanceTimeEntry multiCheckOut(UUID employeeId, UUID timeEntryId,
             LocalDateTime checkOutTime, String source, String location, String ip) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         if (tenantId == null) {
             throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
         }
@@ -318,7 +318,7 @@ public class AttendanceRecordService {
      */
     @Transactional(readOnly = true)
     public List<AttendanceTimeEntry> getTimeEntriesForDate(UUID employeeId, LocalDate date) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Optional<AttendanceRecord> record = attendanceRecordRepository
                 .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, date, tenantId);
 
@@ -373,7 +373,7 @@ public class AttendanceRecordService {
     // ===================== Existing Methods =====================
 
     public AttendanceRecord requestRegularization(UUID id, String reason) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         AttendanceRecord record = attendanceRecordRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId))
@@ -385,7 +385,7 @@ public class AttendanceRecordService {
 
     @Transactional
     public AttendanceRecord approveRegularization(UUID id, UUID approverId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         AttendanceRecord record = attendanceRecordRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId))
@@ -397,7 +397,7 @@ public class AttendanceRecordService {
 
     @Transactional(readOnly = true)
     public AttendanceRecord getAttendanceRecordById(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceRecordRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
@@ -405,27 +405,27 @@ public class AttendanceRecordService {
 
     @Transactional(readOnly = true)
     public Page<AttendanceRecord> getAttendanceByEmployee(UUID employeeId, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceRecordRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
     }
 
     @Transactional(readOnly = true)
     public List<AttendanceRecord> getAttendanceByDateRange(UUID employeeId, LocalDate startDate, LocalDate endDate) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceRecordRepository.findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
                 tenantId, employeeId, startDate, endDate);
     }
 
     @Transactional(readOnly = true)
     public Page<AttendanceRecord> getPendingRegularizations(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceRecordRepository.findPendingRegularizations(tenantId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<AttendanceRecord> getPendingRegularizations(
             org.springframework.data.jpa.domain.Specification<AttendanceRecord> spec, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         org.springframework.data.jpa.domain.Specification<AttendanceRecord> tenantSpec = (root, query, cb) -> cb
                 .equal(root.get("tenantId"), tenantId);
         org.springframework.data.jpa.domain.Specification<AttendanceRecord> statusSpec = (root, query, cb) -> cb
@@ -437,7 +437,7 @@ public class AttendanceRecordService {
     @Transactional(readOnly = true)
     public Page<AttendanceRecord> getAllAttendance(
             org.springframework.data.jpa.domain.Specification<AttendanceRecord> spec, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         org.springframework.data.jpa.domain.Specification<AttendanceRecord> tenantSpec = (root, query, cb) -> cb
                 .equal(root.get("tenantId"), tenantId);
 
@@ -447,7 +447,7 @@ public class AttendanceRecordService {
     @Transactional(readOnly = true)
     public Page<AttendanceRecord> getAttendanceByDate(LocalDate date,
             org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         org.springframework.data.jpa.domain.Specification<AttendanceRecord> tenantSpec = (root, query, cb) -> cb
                 .equal(root.get("tenantId"), tenantId);
         org.springframework.data.jpa.domain.Specification<AttendanceRecord> dateSpec = (root, query, cb) -> cb
@@ -525,7 +525,7 @@ public class AttendanceRecordService {
     }
 
     private UUID validateAndGetTenantId() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         if (tenantId == null) {
             throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
         }

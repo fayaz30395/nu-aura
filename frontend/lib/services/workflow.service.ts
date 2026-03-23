@@ -135,8 +135,8 @@ export const workflowService = {
       params: {
         status: params.status ?? 'PENDING',
         module: params.module,
-        fromDate: params.fromDate,
-        toDate: params.toDate,
+        fromDate: params.fromDate ? `${params.fromDate}T00:00:00` : undefined,
+        toDate: params.toDate ? `${params.toDate}T23:59:59` : undefined,
         search: params.search,
         page: params.page ?? 0,
         size: params.size ?? 20,

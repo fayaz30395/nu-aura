@@ -150,8 +150,7 @@ public class EmployeeService {
     public EmployeeResponse updateEmployee(UUID employeeId, UpdateEmployeeRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .filter(e -> e.getTenantId().equals(tenantId))
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         // Capture previous values for event tracking
@@ -370,8 +369,7 @@ public class EmployeeService {
     public EmployeeResponse getEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .filter(e -> e.getTenantId().equals(tenantId))
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         EmployeeResponse response = EmployeeResponse.fromEmployee(employee);
@@ -474,8 +472,7 @@ public class EmployeeService {
     public EmployeeResponse getEmployeeHierarchy(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .filter(e -> e.getTenantId().equals(tenantId))
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         EmployeeResponse response = EmployeeResponse.fromEmployee(employee);
@@ -538,8 +535,7 @@ public class EmployeeService {
     public void deleteEmployee(UUID employeeId, String terminationReason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .filter(e -> e.getTenantId().equals(tenantId))
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         // Mark as terminated instead of deleting

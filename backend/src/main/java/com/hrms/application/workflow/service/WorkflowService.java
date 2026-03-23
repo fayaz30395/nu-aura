@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@Transactional
 public class WorkflowService {
 
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
@@ -280,6 +279,7 @@ public class WorkflowService {
         return WorkflowDefinitionResponse.from(saved);
     }
 
+    @Transactional
     public void deactivateWorkflowDefinition(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WorkflowDefinition definition = workflowDefinitionRepository.findByIdAndTenantId(id, tenantId)
@@ -294,6 +294,7 @@ public class WorkflowService {
 
     // ==================== Workflow Execution ====================
 
+    @Transactional
     public WorkflowExecutionResponse startWorkflow(WorkflowExecutionRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();

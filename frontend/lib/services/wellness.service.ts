@@ -8,7 +8,7 @@ import type {
   LeaderboardEntry,
 } from '../types/wellness';
 
-const BASE_URL = '/api/v1/wellness';
+const BASE_URL = '/wellness';
 
 export const wellnessService = {
   // Dashboard

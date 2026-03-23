@@ -203,8 +203,8 @@ class PayrollService {
     return response.data;
   }
 
-  async getSalaryStructureByEmployee(employeeId: string): Promise<SalaryStructure> {
-    const response = await apiClient.get<SalaryStructure>(
+  async getSalaryStructureByEmployee(employeeId: string): Promise<SalaryStructure[]> {
+    const response = await apiClient.get<SalaryStructure[]>(
       `/payroll/salary-structures/employee/${employeeId}`
     );
     return response.data;

@@ -120,14 +120,13 @@ class LeaveService {
 
   async rejectLeaveRequest(
     id: string,
-    approverId: string,
     reason: string
   ): Promise<LeaveRequest> {
     const response = await apiClient.post<LeaveRequest>(
       `/leave-requests/${id}/reject`,
       null,
       {
-        params: { approverId, reason },
+        params: { reason },
       }
     );
     return response.data;

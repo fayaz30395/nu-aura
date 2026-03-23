@@ -147,27 +147,27 @@ describe('Performance Service', () => {
     });
 
     it('should update progress successfully', async () => {
-      mockApiClient.patch.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.put.mockResolvedValueOnce({ data: mockGoal });
       const result = await goalService.updateProgress('goal-1', 75);
       expect(result).toEqual(mockGoal);
-      expect(mockApiClient.patch).toHaveBeenCalledWith('/goals/goal-1/progress', null, { params: { progress: 75 } });
+      expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1/progress', null, { params: { progressPercentage: 75 } });
     });
 
     it('should handle error when updating progress fails', async () => {
-      mockApiClient.patch.mockRejectedValueOnce(new Error('Update failed'));
+      mockApiClient.put.mockRejectedValueOnce(new Error('Update failed'));
       await expect(goalService.updateProgress('goal-1', 75)).rejects.toThrow('Update failed');
     });
 
     it('should approve goal successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockGoal });
-      const result = await goalService.approveGoal('goal-1');
+      mockApiClient.put.mockResolvedValueOnce({ data: mockGoal });
+      const result = await goalService.approveGoal('goal-1', 'approver-1');
       expect(result).toEqual(mockGoal);
-      expect(mockApiClient.post).toHaveBeenCalledWith('/goals/goal-1/approve');
+      expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1/approve', null, { params: { approverId: 'approver-1' } });
     });
 
     it('should handle error when approving goal fails', async () => {
-      mockApiClient.post.mockRejectedValueOnce(new Error('Approve failed'));
-      await expect(goalService.approveGoal('goal-1')).rejects.toThrow('Approve failed');
+      mockApiClient.put.mockRejectedValueOnce(new Error('Approve failed'));
+      await expect(goalService.approveGoal('goal-1', 'approver-1')).rejects.toThrow('Approve failed');
     });
 
     it('should get goal analytics successfully', async () => {
@@ -285,7 +285,7 @@ describe('Performance Service', () => {
       mockApiClient.get.mockResolvedValueOnce({ data: [mockReview] });
       const result = await reviewService.getPendingReviews('rev-1');
       expect(result).toEqual([mockReview]);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/reviews/reviewer/rev-1/pending');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/reviews/pending/rev-1');
     });
 
     it('should handle error when getting pending reviews fails', async () => {
@@ -294,26 +294,26 @@ describe('Performance Service', () => {
     });
 
     it('should submit review successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockReview });
+      mockApiClient.put.mockResolvedValueOnce({ data: mockReview });
       const result = await reviewService.submitReview('review-1');
       expect(result).toEqual(mockReview);
-      expect(mockApiClient.post).toHaveBeenCalledWith('/reviews/review-1/submit');
+      expect(mockApiClient.put).toHaveBeenCalledWith('/reviews/review-1/submit');
     });
 
     it('should handle error when submitting review fails', async () => {
-      mockApiClient.post.mockRejectedValueOnce(new Error('Submit failed'));
+      mockApiClient.put.mockRejectedValueOnce(new Error('Submit failed'));
       await expect(reviewService.submitReview('review-1')).rejects.toThrow('Submit failed');
     });
 
     it('should complete review successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockReview });
+      mockApiClient.put.mockResolvedValueOnce({ data: mockReview });
       const result = await reviewService.completeReview('review-1');
       expect(result).toEqual(mockReview);
-      expect(mockApiClient.post).toHaveBeenCalledWith('/reviews/review-1/complete');
+      expect(mockApiClient.put).toHaveBeenCalledWith('/reviews/review-1/complete');
     });
 
     it('should handle error when completing review fails', async () => {
-      mockApiClient.post.mockRejectedValueOnce(new Error('Complete failed'));
+      mockApiClient.put.mockRejectedValueOnce(new Error('Complete failed'));
       await expect(reviewService.completeReview('review-1')).rejects.toThrow('Complete failed');
     });
 

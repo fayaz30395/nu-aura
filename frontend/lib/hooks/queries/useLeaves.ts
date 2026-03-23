@@ -190,8 +190,8 @@ export function useRejectLeaveRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, approverId, reason }: { id: string; approverId: string; reason: string }) =>
-      leaveService.rejectLeaveRequest(id, approverId, reason),
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      leaveService.rejectLeaveRequest(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
     },

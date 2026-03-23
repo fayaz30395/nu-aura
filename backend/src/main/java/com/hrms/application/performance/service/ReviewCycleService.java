@@ -376,6 +376,30 @@ public class ReviewCycleService {
                 .build();
     }
 
+    @Transactional
+    public void deleteCycle(UUID cycleId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+
+        if (cycle.getStatus() != ReviewCycle.CycleStatus.PLANNING
+                && cycle.getStatus() != ReviewCycle.CycleStatus.DRAFT) {
+            throw new IllegalStateException(
+                    "Only cycles in PLANNING or DRAFT status can be deleted. Current status: " + cycle.getStatus());
+        }
+
+        // Delete any reviews associated with this cycle
+        List<PerformanceReview> reviews = performanceReviewRepository
+                .findByTenantIdAndReviewCycleId(tenantId, cycleId);
+        if (!reviews.isEmpty()) {
+            performanceReviewRepository.deleteAll(reviews);
+        }
+
+        reviewCycleRepository.delete(cycle);
+        log.info("Deleted review cycle {} for tenant {}", cycleId, tenantId);
+    }
+
     private ReviewCycleResponse mapToResponse(ReviewCycle cycle) {
         return ReviewCycleResponse.builder()
                 .id(cycle.getId())

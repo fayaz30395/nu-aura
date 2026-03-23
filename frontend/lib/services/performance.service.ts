@@ -82,15 +82,17 @@ export const goalService = {
 
   // Update goal progress
   updateProgress: async (id: string, progress: number): Promise<Goal> => {
-    const response = await apiClient.patch<Goal>(`/goals/${id}/progress`, null, {
-      params: { progress },
+    const response = await apiClient.put<Goal>(`/goals/${id}/progress`, null, {
+      params: { progressPercentage: progress },
     });
     return response.data;
   },
 
   // Approve a goal
-  approveGoal: async (id: string): Promise<Goal> => {
-    const response = await apiClient.post<Goal>(`/goals/${id}/approve`);
+  approveGoal: async (id: string, approverId: string): Promise<Goal> => {
+    const response = await apiClient.put<Goal>(`/goals/${id}/approve`, null, {
+      params: { approverId },
+    });
     return response.data;
   },
 
@@ -161,19 +163,19 @@ export const reviewService = {
 
   // Get pending reviews for a reviewer
   getPendingReviews: async (reviewerId: string): Promise<PerformanceReview[]> => {
-    const response = await apiClient.get<PerformanceReview[]>(`/reviews/reviewer/${reviewerId}/pending`);
+    const response = await apiClient.get<PerformanceReview[]>(`/reviews/pending/${reviewerId}`);
     return response.data;
   },
 
   // Submit a review
   submitReview: async (id: string): Promise<PerformanceReview> => {
-    const response = await apiClient.post<PerformanceReview>(`/reviews/${id}/submit`);
+    const response = await apiClient.put<PerformanceReview>(`/reviews/${id}/submit`);
     return response.data;
   },
 
   // Complete a review
   completeReview: async (id: string): Promise<PerformanceReview> => {
-    const response = await apiClient.post<PerformanceReview>(`/reviews/${id}/complete`);
+    const response = await apiClient.put<PerformanceReview>(`/reviews/${id}/complete`);
     return response.data;
   },
 

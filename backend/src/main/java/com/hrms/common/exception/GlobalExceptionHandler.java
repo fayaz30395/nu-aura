@@ -14,13 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -391,6 +394,65 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Feature Disabled",
                 ex.getMessage(), path);
         errorResponse.setErrorCode("FEATURE_DISABLED");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
+
+        logError("request", "method_not_supported", ex, status, path);
+        recordErrorMetric("request", "method_not_supported", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Method Not Allowed",
+                "HTTP method not supported for this endpoint", path);
+        errorResponse.setErrorCode("METHOD_NOT_ALLOWED");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParameter(
+            MissingServletRequestParameterException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        logError("validation", "missing_parameter", ex, status, path);
+        recordErrorMetric("validation", "missing_parameter", status);
+
+        String message = String.format("Required parameter '%s' is missing", ex.getParameterName());
+        ErrorResponse errorResponse = buildErrorResponse(status, "Missing Parameter", message, path);
+        errorResponse.setErrorCode("MISSING_PARAMETER");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(
+            ConstraintViolationException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach(violation -> {
+            String fieldName = violation.getPropertyPath().toString();
+            String errorMessage = violation.getMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        logError("validation", "constraint_violation", ex, status, path);
+        recordErrorMetric("validation", "constraint_violation", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Constraint Violation",
+                "Validation constraints violated", path);
+        errorResponse.setErrors(errors);
+        errorResponse.setErrorCode("CONSTRAINT_VIOLATION");
 
         return jsonResponse(status, errorResponse);
     }

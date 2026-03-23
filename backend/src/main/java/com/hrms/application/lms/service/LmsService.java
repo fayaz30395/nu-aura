@@ -2,6 +2,7 @@ package com.hrms.application.lms.service;
 
 import com.hrms.api.lms.dto.CourseCatalogResponse;
 import com.hrms.api.lms.dto.CourseCatalogResponse.CourseSummaryDto;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.lms.*;
 import com.hrms.domain.lms.Course.CourseStatus;
 import com.hrms.domain.lms.CourseEnrollment.EnrollmentStatus;
@@ -190,7 +191,7 @@ public class LmsService {
     @Transactional
     public CourseEnrollment updateEnrollmentProgress(UUID tenantId, UUID enrollmentId) {
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found: " + enrollmentId));
 
         // Calculate progress based on content completions
         List<CourseModule> modules = moduleRepository.findByCourseOrdered(tenantId, enrollment.getCourseId());
@@ -249,7 +250,7 @@ public class LmsService {
                 .findByEnrollmentIdAndContentIdAndTenantId(enrollmentId, contentId, tenantId)
                 .orElseGet(() -> {
                     ModuleContent content = contentRepository.findByIdAndTenantId(contentId, tenantId)
-                            .orElseThrow(() -> new RuntimeException("Content not found"));
+                            .orElseThrow(() -> new ResourceNotFoundException("Content not found: " + contentId));
                     ContentProgress newProgress = ContentProgress.builder()
                             .enrollmentId(enrollmentId)
                             .contentId(contentId)
@@ -287,7 +288,7 @@ public class LmsService {
 
     public Certificate issueCertificate(UUID tenantId, UUID enrollmentId, UUID issuedBy) {
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found: " + enrollmentId));
 
         Optional<Certificate> existing = certificateRepository.findByEnrollmentIdAndTenantId(enrollmentId, tenantId);
         if (existing.isPresent()) {
@@ -295,7 +296,7 @@ public class LmsService {
         }
 
         Course course = courseRepository.findByIdAndTenantId(enrollment.getCourseId(), tenantId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found: " + enrollment.getCourseId()));
 
         Certificate certificate = Certificate.builder()
                 .certificateNumber("CERT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())

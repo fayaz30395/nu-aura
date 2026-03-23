@@ -1,6 +1,7 @@
 package com.hrms.application.attendance.service;
 
 import com.hrms.common.config.CacheConfig;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.OfficeLocation;
 import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
@@ -45,7 +46,7 @@ public class OfficeLocationService {
     public OfficeLocation updateLocation(UUID id, OfficeLocation updates) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OfficeLocation location = officeLocationRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new RuntimeException("Office location not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Office location not found: " + id));
 
         location.setLocationName(updates.getLocationName());
         location.setAddress(updates.getAddress());
@@ -90,7 +91,7 @@ public class OfficeLocationService {
     public void deleteLocation(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OfficeLocation location = officeLocationRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new RuntimeException("Office location not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Office location not found: " + id));
 
         location.setIsActive(false);
         officeLocationRepository.save(location);

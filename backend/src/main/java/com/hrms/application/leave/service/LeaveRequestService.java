@@ -28,7 +28,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
-@Transactional
 @Slf4j
 public class LeaveRequestService implements ApprovalCallbackHandler {
 
@@ -345,7 +344,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private void startLeaveApprovalWorkflow(LeaveRequest leaveRequest, UUID tenantId) {
         try {
             Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId).orElse(null);
-            LeaveType leaveType = leaveTypeRepository.findById(leaveRequest.getLeaveTypeId()).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
 
             String employeeName = employee != null ? employee.getFirstName() + " " + employee.getLastName() : "Employee";
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
@@ -371,7 +370,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private void publishLeaveRequestedEvent(LeaveRequest saved, UUID tenantId) {
         try {
             Employee employee = employeeRepository.findByIdAndTenantId(saved.getEmployeeId(), tenantId).orElse(null);
-            LeaveType leaveType = leaveTypeRepository.findById(saved.getLeaveTypeId()).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
             if (employee == null) return;
 
             String requesterName = employee.getFirstName() + " " + employee.getLastName();
@@ -389,7 +388,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private void publishLeaveApprovedEvent(LeaveRequest saved, UUID tenantId,
                                            UUID approverId, java.math.BigDecimal daysDeducted) {
         try {
-            LeaveType leaveType = leaveTypeRepository.findById(saved.getLeaveTypeId()).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
 
             domainEventPublisher.publish(LeaveApprovedEvent.of(
@@ -404,7 +403,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private void publishLeaveRejectedEvent(LeaveRequest saved, UUID tenantId,
                                            UUID approverId, String reason) {
         try {
-            LeaveType leaveType = leaveTypeRepository.findById(saved.getLeaveTypeId()).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
 
             domainEventPublisher.publish(LeaveRejectedEvent.of(
@@ -423,7 +422,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             UUID tenantId = TenantContext.requireCurrentTenant();
             Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId)
                     .orElse(null);
-            LeaveType leaveType = leaveTypeRepository.findById(leaveRequest.getLeaveTypeId()).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
 
             if (employee == null)
                 return;
@@ -444,7 +443,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     private void notifyLeaveApproved(LeaveRequest leaveRequest) {
         try {
-            LeaveType leaveType = leaveTypeRepository.findById(leaveRequest.getLeaveTypeId()).orElse(null);
+            UUID tenantId = TenantContext.requireCurrentTenant();
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
             String dates = formatDateRange(leaveRequest);
 
@@ -457,7 +457,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     private void notifyLeaveRejected(LeaveRequest leaveRequest, String reason) {
         try {
-            LeaveType leaveType = leaveTypeRepository.findById(leaveRequest.getLeaveTypeId()).orElse(null);
+            UUID tenantId = TenantContext.requireCurrentTenant();
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
 
             webSocketNotificationService.notifyLeaveRejected(

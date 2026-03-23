@@ -47,8 +47,7 @@ public class LeaveTypeService {
     public LeaveType updateLeaveType(UUID id, LeaveType leaveTypeData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        LeaveType leaveType = leaveTypeRepository.findById(id)
-            .filter(lt -> lt.getTenantId().equals(tenantId))
+        LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(id, tenantId)
             .orElseThrow(() -> new ResourceNotFoundException("Leave type not found"));
 
         leaveType.setLeaveName(leaveTypeData.getLeaveName());
@@ -75,8 +74,7 @@ public class LeaveTypeService {
     @Cacheable(value = CacheConfig.LEAVE_TYPES, key = "T(com.hrms.common.security.TenantContext).getCurrentTenant() + ':id:' + #id")
     public LeaveType getLeaveTypeById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return leaveTypeRepository.findById(id)
-            .filter(lt -> lt.getTenantId().equals(tenantId))
+        return leaveTypeRepository.findByIdAndTenantId(id, tenantId)
             .orElseThrow(() -> new ResourceNotFoundException("Leave type not found"));
     }
 

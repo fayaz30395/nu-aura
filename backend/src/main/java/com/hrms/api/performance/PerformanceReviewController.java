@@ -113,6 +113,20 @@ public class PerformanceReviewController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    @RequiresPermission(Permission.REVIEW_CREATE)
+    public ResponseEntity<Void> deleteReview(@PathVariable UUID id) {
+        reviewService.deleteReview(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/competencies/{id}")
+    @RequiresPermission(Permission.REVIEW_CREATE)
+    public ResponseEntity<Void> deleteCompetency(@PathVariable UUID id) {
+        reviewService.deleteCompetency(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/competencies")
     @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<CompetencyResponse> addCompetency(@Valid @RequestBody CompetencyRequest request) {
