@@ -30,7 +30,7 @@ export default function CustomFieldRenderer({
 }: CustomFieldRendererProps) {
   const currentValue = value?.value || definition.defaultValue || '';
 
-  const baseInputClass = `w-full px-3 py-2 border border-gray-300 dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[var(--bg-surface)] dark:disabled:bg-gray-800 disabled:cursor-not-allowed ${className}`;
+  const baseInputClass = `w-full px-3 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[var(--bg-surface)]  disabled:cursor-not-allowed ${className}`;
 
   const renderField = () => {
     switch (definition.fieldType) {
@@ -94,7 +94,7 @@ export default function CustomFieldRenderer({
               value={value?.currencyCode || 'INR'}
               onChange={(e) => onChange(currentValue, { currencyCode: e.target.value })}
               disabled={disabled}
-              className="px-3 py-2 border border-gray-300 dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="INR">INR</option>
               <option value="USD">USD</option>
@@ -174,7 +174,7 @@ export default function CustomFieldRenderer({
                   disabled={disabled}
                   className="rounded text-blue-600 focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">{option}</span>
+                <span className="text-sm text-[var(--text-secondary)]">{option}</span>
               </label>
             ))}
           </div>
@@ -190,7 +190,7 @@ export default function CustomFieldRenderer({
               disabled={disabled}
               className="rounded text-blue-600 focus:ring-blue-500 w-5 h-5"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-[var(--text-secondary)]">
               {definition.description || 'Yes'}
             </span>
           </label>
@@ -248,7 +248,7 @@ export default function CustomFieldRenderer({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
         {definition.fieldName}
         {definition.isRequired && <span className="text-red-500 ml-1">*</span>}
       </label>
