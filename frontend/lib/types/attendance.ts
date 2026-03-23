@@ -90,7 +90,7 @@ export type RegularizationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface AttendanceRecord {
   id: string;
-  tenantId: string;
+  tenantId?: string;
   employeeId: string;
   shiftId?: string;
   attendanceDate: string;

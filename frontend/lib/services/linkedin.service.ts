@@ -35,16 +35,8 @@ class LinkedInService {
       );
       return response.data;
     } catch (error) {
-      // Backend endpoint not implemented or service unavailable
-      // Return empty list to prevent dashboard from breaking
-      console.warn('[LinkedInService] getActiveLinkedInPosts failed, returning empty list:', error);
-      return {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size,
-        number: page,
-      };
+      console.error('[LinkedInService] getActiveLinkedInPosts failed:', error);
+      throw error;
     }
   }
 
@@ -66,16 +58,8 @@ class LinkedInService {
       );
       return response.data;
     } catch (error) {
-      // Backend endpoint not implemented or service unavailable
-      // Return empty list to prevent admin panel from breaking
-      console.warn('[LinkedInService] getAllLinkedInPosts failed, returning empty list:', error);
-      return {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size,
-        number: page,
-      };
+      console.error('[LinkedInService] getAllLinkedInPosts failed:', error);
+      throw error;
     }
   }
 

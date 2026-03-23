@@ -38,7 +38,7 @@ class PayrollService {
     page: number = 0,
     size: number = 20
   ): Promise<Page<PayrollRun>> {
-    const response = await apiClient.get<Page<PayrollRun>>('/payroll/runs/status/' + status, {
+    const response = await apiClient.get<Page<PayrollRun>>(`/payroll/runs/status/${status}`, {
       params: { page, size },
     });
     return response.data;

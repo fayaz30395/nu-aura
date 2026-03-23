@@ -62,7 +62,6 @@ const mapAttendanceStatus = (status?: string | null): AttendanceStatus => {
 const mapAttendanceDay = (day: AttendanceDayResponse): AttendanceRecord => {
   return {
     id: day.id,
-    tenantId: '',
     employeeId: day.employeeId,
     attendanceDate: day.attendanceDate,
     checkInTime: day.checkInTime || undefined,
@@ -80,7 +79,7 @@ const mapAttendanceDay = (day: AttendanceDayResponse): AttendanceRecord => {
     regularizationReason: day.regularizationReason || undefined,
     createdAt: day.checkInTime || new Date().toISOString(),
     updatedAt: day.checkOutTime || day.checkInTime || new Date().toISOString(),
-  } as AttendanceRecord;
+  };
 };
 
 class AttendanceService {
