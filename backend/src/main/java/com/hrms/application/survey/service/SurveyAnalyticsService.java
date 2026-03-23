@@ -67,7 +67,8 @@ public class SurveyAnalyticsService {
             try {
                 question.setOptions(objectMapper.writeValueAsString(request.getOptions()));
             } catch (JsonProcessingException e) {
-                log.error("Error serializing options", e);
+                // BP-L01 FIX: Serialization failure means data cannot be persisted correctly.
+                throw new IllegalStateException("Failed to serialize survey question options", e);
             }
         }
 
@@ -141,7 +142,8 @@ public class SurveyAnalyticsService {
                 try {
                     answer.setSelectedOptions(objectMapper.writeValueAsString(answerReq.getSelectedOptions()));
                 } catch (JsonProcessingException e) {
-                    log.error("Error serializing selected options", e);
+                    // BP-L01 FIX: Serialization failure corrupts survey response data.
+                    throw new IllegalStateException("Failed to serialize selected options for question " + answerReq.getQuestionId(), e);
                 }
             }
 
@@ -149,7 +151,8 @@ public class SurveyAnalyticsService {
                 try {
                     answer.setRanking(objectMapper.writeValueAsString(answerReq.getRanking()));
                 } catch (JsonProcessingException e) {
-                    log.error("Error serializing ranking", e);
+                    // BP-L01 FIX: Serialization failure corrupts ranking data.
+                    throw new IllegalStateException("Failed to serialize ranking for question " + answerReq.getQuestionId(), e);
                 }
             }
 
@@ -722,7 +725,10 @@ public class SurveyAnalyticsService {
             try {
                 options = objectMapper.readValue(question.getOptions(), new TypeReference<List<String>>() {});
             } catch (JsonProcessingException e) {
-                log.error("Error parsing options", e);
+                // BP-L01 FIX: Log with question context and return empty list
+                // instead of null so downstream code doesn't NPE on corrupt data.
+                log.warn("Failed to parse options JSON for question {}: {}", question.getId(), e.getMessage());
+                options = Collections.emptyList();
             }
         }
 
@@ -866,7 +872,9 @@ public class SurveyAnalyticsService {
             try {
                 themes = objectMapper.readValue(insight.getKeyThemes(), new TypeReference<List<String>>() {});
             } catch (JsonProcessingException e) {
-                log.error("Error parsing themes", e);
+                // BP-L01 FIX: Log with insight context and return empty list for corrupt data.
+                log.warn("Failed to parse key themes JSON for insight {}: {}", insight.getId(), e.getMessage());
+                themes = Collections.emptyList();
             }
         }
 

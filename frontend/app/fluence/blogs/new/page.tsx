@@ -134,7 +134,7 @@ export default function CreateBlogPost() {
             <div className="flex items-center gap-4 mb-2">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -152,7 +152,7 @@ export default function CreateBlogPost() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Title
             </label>
             <TextInput
@@ -165,7 +165,7 @@ export default function CreateBlogPost() {
 
           {/* Excerpt */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Excerpt
             </label>
             <Textarea
@@ -179,7 +179,7 @@ export default function CreateBlogPost() {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Category
             </label>
             <Controller
@@ -202,7 +202,7 @@ export default function CreateBlogPost() {
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Tags
             </label>
             <Controller
@@ -222,7 +222,7 @@ export default function CreateBlogPost() {
 
           {/* Cover Image URL */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Cover Image URL
             </label>
             <TextInput
@@ -238,7 +238,7 @@ export default function CreateBlogPost() {
 
           {/* Visibility */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Visibility
             </label>
             <Controller
@@ -273,7 +273,7 @@ export default function CreateBlogPost() {
 
           {/* Content Editor */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Content
             </label>
             <Controller

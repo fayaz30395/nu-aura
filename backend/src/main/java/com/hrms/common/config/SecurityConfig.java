@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,8 +38,16 @@ public class SecurityConfig {
     @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001,http://localhost:8080}")
     private String allowedOriginsStr;
 
+    /**
+     * SEC-C02 FIX: CSRF can only be disabled in non-production profiles.
+     * In production, this property is ignored — CSRF is always enforced.
+     * Set to false in dev/test profiles via application-dev.yml if needed.
+     */
     @Value("${app.security.csrf.enabled:true}")
     private boolean csrfEnabled;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -134,8 +143,14 @@ public class SecurityConfig {
                 .addFilterBefore(rateLimitingFilter, TenantFilter.class)
                 .addFilterAfter(jwtAuthenticationFilter, TenantFilter.class);
 
-        // Configure CSRF protection
-        if (csrfEnabled) {
+        // SEC-C02 FIX: CSRF can only be disabled in dev/test profiles.
+        // In production, CSRF is always enforced regardless of the property value.
+        // This prevents accidental CSRF bypass from config drift or env var typos.
+        boolean isProductionProfile = Arrays.asList(environment.getActiveProfiles()).contains("prod")
+                || Arrays.asList(environment.getActiveProfiles()).contains("production");
+        boolean shouldEnableCsrf = isProductionProfile || csrfEnabled;
+
+        if (shouldEnableCsrf) {
             // Use cookie-based CSRF token (double-submit pattern)
             // The token is stored in a cookie and must be sent back in a header
             CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
@@ -165,6 +180,7 @@ public class SecurityConfig {
                     // Ignore CSRF for DocuSign webhook (public, HMAC-verified via CRIT-002)
                     .ignoringRequestMatchers("/api/v1/integrations/docusign/webhook"));
         } else {
+            // Only reachable in non-production profiles (dev, test, local)
             http.csrf(AbstractHttpConfigurer::disable);
         }
 

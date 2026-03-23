@@ -156,18 +156,18 @@ export default function SettingsPage() {
     description: string;
     icon?: React.ElementType;
   }) => (
-    <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700 last:border-b-0">
+    <div className="flex items-center justify-between py-3 border-b border-[var(--border-main)] last:border-b-0">
       <div className="flex items-center gap-4">
         {Icon && (
-          <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
-            <Icon className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+          <div className="p-2 bg-[var(--bg-surface)] rounded-lg">
+            <Icon className="h-4 w-4 text-[var(--text-secondary)]" />
           </div>
         )}
         <div>
-          <label className="text-sm font-medium text-slate-900 dark:text-slate-50">
+          <label className="text-sm font-medium text-[var(--text-primary)]">
             {label}
           </label>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             {description}
           </p>
         </div>
@@ -192,8 +192,8 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Settings</h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Settings</h1>
+          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage your account settings and preferences
           </p>
         </div>
@@ -228,16 +228,16 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   Email Address
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">{user?.email || 'N/A'}</p>
+                <p className="text-[var(--text-primary)] mt-1">{user?.email || 'N/A'}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <label className="text-sm font-medium text-[var(--text-secondary)]">
                   User ID
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1 font-mono text-sm">
+                <p className="text-[var(--text-primary)] mt-1 font-mono text-sm">
                   {user?.id || 'N/A'}
                 </p>
               </div>
@@ -256,10 +256,10 @@ export default function SettingsPage() {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-slate-900 dark:text-slate-50">
+                  <label className="text-sm font-medium text-[var(--text-primary)]">
                     Dark Mode
                   </label>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  <p className="text-sm text-[var(--text-secondary)] mt-1">
                     Switch between light and dark theme
                   </p>
                 </div>
@@ -328,13 +328,13 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Tabs */}
-              <div className="flex gap-2 border-b border-slate-200 dark:border-slate-700">
+              <div className="flex gap-2 border-b border-[var(--border-main)]">
                 <button
                   onClick={() => setActiveNotificationTab('channels')}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeNotificationTab === 'channels'
                       ? 'border-primary-600 text-primary-600'
-                      : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -347,7 +347,7 @@ export default function SettingsPage() {
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeNotificationTab === 'categories'
                       ? 'border-primary-600 text-primary-600'
-                      : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -360,7 +360,7 @@ export default function SettingsPage() {
               {/* Channel Settings */}
               {activeNotificationTab === 'channels' && (
                 <div className="space-y-1 pt-2">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                  <p className="text-sm text-[var(--text-muted)] mb-4">
                     Choose how you want to receive notifications
                   </p>
                   <ToggleSwitch
@@ -390,7 +390,7 @@ export default function SettingsPage() {
               {/* Category Settings */}
               {activeNotificationTab === 'categories' && (
                 <div className="space-y-1 pt-2">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                  <p className="text-sm text-[var(--text-muted)] mb-4">
                     Choose which types of notifications you want to receive
                   </p>
                   <ToggleSwitch
@@ -453,10 +453,10 @@ export default function SettingsPage() {
               )}
 
               {/* Summary */}
-              <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+              <div className="mt-4 p-4 bg-[var(--bg-surface)] rounded-lg">
                 <div className="flex items-center gap-2 text-sm">
                   <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-slate-600 dark:text-slate-400">
+                  <span className="text-[var(--text-secondary)]">
                     {[emailNotifications, pushNotifications, smsNotifications].filter(Boolean).length} delivery channel(s) enabled,{' '}
                     {[leaveNotifications, attendanceNotifications, payrollNotifications, performanceNotifications,
                       announcementNotifications, birthdayNotifications, anniversaryNotifications, systemAlertNotifications
@@ -465,7 +465,7 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700">
+              <div className="flex justify-end pt-4 border-t border-[var(--border-main)]">
                 <button
                   onClick={handleNotificationSave}
                   disabled={isSavingNotifications}
@@ -513,7 +513,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">
+                <div className="text-sm text-[var(--text-secondary)]">
                   <p>
                     For additional security, we recommend:
                   </p>

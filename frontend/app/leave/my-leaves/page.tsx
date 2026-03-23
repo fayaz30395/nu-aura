@@ -69,7 +69,7 @@ export default function MyLeavesPage() {
       case 'APPROVED': return 'bg-green-100 text-green-800';
       case 'PENDING': return 'bg-yellow-100 text-yellow-800';
       case 'REJECTED': return 'bg-red-100 text-red-800';
-      case 'CANCELLED': return 'bg-[var(--bg-surface)] text-gray-800';
+      case 'CANCELLED': return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
       default: return 'bg-blue-100 text-blue-800';
     }
   };
@@ -152,7 +152,7 @@ export default function MyLeavesPage() {
             <div className="text-center py-12 px-4">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 rounded-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] flex items-center justify-center">
-                  <CalendarOff className="w-8 h-8 text-gray-400 dark:text-[var(--text-secondary)]" />
+                  <CalendarOff className="w-8 h-8 text-[var(--text-muted)]" />
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">No leave requests found</h3>

@@ -26,49 +26,49 @@ export const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; ico
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   BIRTHDAY: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   WORK_ANNIVERSARY: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   NEW_JOINER: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   PROMOTION: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   RECOGNITION: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   LINKEDIN_POST: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   SPOTLIGHT: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
     icon: 'text-[var(--text-muted)]',
-    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   },
   WALL_POST: {
     bg: 'bg-[var(--bg-surface)]',
@@ -142,7 +142,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
             {onEdit && (
               <button
                 onClick={() => { onEdit(); setShowMenu(false); }}
-                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
               >
                 <Pencil className="h-3 w-3" />
                 Edit post
@@ -602,7 +602,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                             alt={reactor.fullName}
                             width={20}
                             height={20}
-                            className="h-5 w-5 rounded-full border border-white dark:border-gray-800 object-cover"
+                            className="h-5 w-5 rounded-full border border-white dark:border-[var(--border-main)] object-cover"
                             title={reactor.fullName}
                             unoptimized
                           />
@@ -717,10 +717,10 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
 
   // ─── Default card layout (non-WALL_POST types) ─────────────────────
   return (
-    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800`}>
+    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] `}>
       <div className="flex items-start gap-2.5">
         {/* Icon */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-[var(--border-main)] dark:bg-gray-800 dark:border-gray-700 ${colors.icon}`}>
+        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-[var(--border-main)] dark:bg-[var(--bg-surface)] dark:border-[var(--border-main)] ${colors.icon}`}>
           {item.personAvatarUrl ? (
             <Image src={item.personAvatarUrl} alt={item.personName || ''} width={32} height={32} className="rounded-full object-cover" />
           ) : icon}
@@ -842,7 +842,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                     href={item.linkedinPostUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-0.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 ml-auto"
+                    className="inline-flex items-center gap-0.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)]  ml-auto"
                   >
                     View on LinkedIn <ExternalLink className="h-2.5 w-2.5" />
                   </a>
@@ -857,7 +857,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               <button
                 onClick={handleLike}
                 className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
-                  liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300'
+                  liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >
                 <Heart className={`h-3 w-3 ${liked ? 'fill-red-500' : ''}`} />
@@ -866,7 +866,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               <button
                 onClick={handleToggleComments}
                 className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
-                  showComments ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300'
+                  showComments ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >
                 <MessageCircle className="h-3 w-3" />

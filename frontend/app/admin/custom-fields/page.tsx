@@ -359,7 +359,7 @@ export default function CustomFieldsPage() {
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           definition.isActive
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-300'
+                            : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                         }`}
                       >
                         {definition.isActive ? 'Active' : 'Inactive'}

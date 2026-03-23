@@ -14,7 +14,9 @@ import {
     Zap,
     TrendingUp,
     ShieldCheck,
-    Layout
+    Layout,
+    AlertCircle,
+    RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
@@ -34,7 +36,7 @@ export default function OnboardingPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
-    const { data, isLoading } = useOnboardingProcesses(0, 100);
+    const { data, isLoading, isError, error, refetch } = useOnboardingProcesses(0, 100);
 
     const getStatusVariant = (status: string): BadgeVariant => {
         switch (status) {
@@ -127,6 +129,24 @@ export default function OnboardingPage() {
                         </motion.div>
                     ))}
                 </div>
+
+                {/* Error State */}
+                {isError && (
+                    <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+                        <CardContent className="p-6 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+                                <p className="text-sm text-danger-600 dark:text-danger-400">
+                                    {error instanceof Error ? error.message : 'Failed to load onboarding data'}
+                                </p>
+                            </div>
+                            <Button variant="outline" size="sm" onClick={() => refetch()}>
+                                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                                Retry
+                            </Button>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Filters and List */}
                 <div className="space-y-6">

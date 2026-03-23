@@ -153,9 +153,9 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips">
         <div className="text-center py-12">
-          <DollarSign className="h-16 w-16 mx-auto text-slate-300 mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
-          <p className="text-slate-500 max-w-md mx-auto">
+          <DollarSign className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
+          <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Payslip access requires an employee profile. Use the admin panels to manage payroll.
           </p>
           <button
@@ -175,10 +175,10 @@ export default function MyPayslipsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {isAdminView ? 'All Employee Payslips' : 'My Payslips'}
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               {isAdminView
                 ? 'View and manage all employee salary statements'
                 : 'View and download your salary statements'}
@@ -210,8 +210,8 @@ export default function MyPayslipsPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total Payslips</p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-50 mt-2">
+                  <p className="text-sm text-[var(--text-secondary)]">Total Payslips</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
                     {filteredPayslips.length}
                   </p>
                 </div>
@@ -227,8 +227,8 @@ export default function MyPayslipsPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Employees</p>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-slate-50 mt-2">
+                    <p className="text-sm text-[var(--text-secondary)]">Employees</p>
+                    <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
                       {new Set(filteredPayslips.map(p => p.employeeId)).size}
                     </p>
                   </div>
@@ -244,10 +244,10 @@ export default function MyPayslipsPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                  <p className="text-sm text-[var(--text-secondary)]">
                     {isAdminView ? `Total Payout (${selectedYear})` : `Total Earnings (${selectedYear})`}
                   </p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-50 mt-2">
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
                     {formatCurrency(yearlyTotal)}
                   </p>
                 </div>
@@ -262,10 +262,10 @@ export default function MyPayslipsPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                  <p className="text-sm text-[var(--text-secondary)]">
                     {isAdminView ? 'Avg. per Employee' : 'Average Salary'}
                   </p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-50 mt-2">
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
                     {formatCurrency(yearlyAverage)}
                   </p>
                 </div>
@@ -282,7 +282,7 @@ export default function MyPayslipsPage() {
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   placeholder={isAdminView ? "Search by employee name, month, or status..." : "Search payslips..."}
@@ -292,7 +292,7 @@ export default function MyPayslipsPage() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-slate-400" />
+                <Filter className="h-4 w-4 text-[var(--text-muted)]" />
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
@@ -322,11 +322,11 @@ export default function MyPayslipsPage() {
         {filteredPayslips.length === 0 ? (
           <Card className="card-aura">
             <CardContent className="py-16 text-center">
-              <FileText className="h-16 w-16 mx-auto text-slate-300 dark:text-slate-700 mb-4" />
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
+              <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                 No Payslips Found
               </h3>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-[var(--text-secondary)]">
                 {searchQuery
                   ? 'Try adjusting your search criteria'
                   : `No payslips available for ${selectedYear}`}
@@ -350,10 +350,10 @@ export default function MyPayslipsPage() {
                               {payslip.employeeName}
                             </p>
                           )}
-                          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+                          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                             {formatMonthYear(payslip.paymentDate)}
                           </h3>
-                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                          <p className="text-sm text-[var(--text-secondary)] mt-1">
                             Payment Date: {formatDate(payslip.paymentDate)}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
@@ -374,12 +374,12 @@ export default function MyPayslipsPage() {
 
                       <div className="flex flex-col md:items-end gap-2">
                         <div className="space-y-1">
-                          <p className="text-sm text-slate-600 dark:text-slate-400">Net Salary</p>
+                          <p className="text-sm text-[var(--text-secondary)]">Net Salary</p>
                           <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                             {formatCurrency(payslip.netAmount)}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                           <span>Gross: {formatCurrency(payslip.grossAmount)}</span>
                           <span>•</span>
                           <span>Deductions: {formatCurrency(payslip.deductions)}</span>
@@ -406,29 +406,29 @@ export default function MyPayslipsPage() {
 
                     {/* Breakdown */}
                     {(payslip.allowanceDetails || payslip.deductionDetails) && (
-                      <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {/* Earnings */}
                           {payslip.allowanceDetails && payslip.allowanceDetails.length > 0 && (
                             <div>
-                              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                              <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
                                 Earnings
                               </h4>
                               <div className="space-y-1">
                                 <div className="flex justify-between text-sm">
-                                  <span className="text-slate-600 dark:text-slate-400">
+                                  <span className="text-[var(--text-secondary)]">
                                     Base Salary
                                   </span>
-                                  <span className="text-slate-900 dark:text-slate-50 font-medium">
+                                  <span className="text-[var(--text-primary)] font-medium">
                                     {formatCurrency(payslip.baseSalary)}
                                   </span>
                                 </div>
                                 {payslip.allowanceDetails.map((allowance, idx) => (
                                   <div key={idx} className="flex justify-between text-sm">
-                                    <span className="text-slate-600 dark:text-slate-400">
+                                    <span className="text-[var(--text-secondary)]">
                                       {allowance.name}
                                     </span>
-                                    <span className="text-slate-900 dark:text-slate-50 font-medium">
+                                    <span className="text-[var(--text-primary)] font-medium">
                                       {formatCurrency(allowance.amount)}
                                     </span>
                                   </div>
@@ -440,13 +440,13 @@ export default function MyPayslipsPage() {
                           {/* Deductions */}
                           {payslip.deductionDetails && payslip.deductionDetails.length > 0 && (
                             <div>
-                              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                              <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
                                 Deductions
                               </h4>
                               <div className="space-y-1">
                                 {payslip.deductionDetails.map((deduction, idx) => (
                                   <div key={idx} className="flex justify-between text-sm">
-                                    <span className="text-slate-600 dark:text-slate-400">
+                                    <span className="text-[var(--text-secondary)]">
                                       {deduction.name}
                                     </span>
                                     <span className="text-red-600 dark:text-red-400 font-medium">

@@ -362,7 +362,7 @@ export default function CoursePlayerPage() {
     <AppLayout>
       <div className="flex flex-col h-screen bg-[var(--bg-surface)] overflow-hidden">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-[var(--border-main)] shrink-0 z-10">
+      <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-card)] border-b border-[var(--border-main)] shrink-0 z-10">
         <div className="flex items-center gap-4">
           <Link href="/learning" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
             <X className="h-5 w-5" />
@@ -374,7 +374,7 @@ export default function CoursePlayerPage() {
             <Menu className="h-5 w-5" />
           </button>
           <div className="hidden md:block">
-            <p className="text-sm font-semibold text-gray-800 truncate max-w-xs">{course.title}</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-xs">{course.title}</p>
             {activeContent && (
               <p className="text-xs text-[var(--text-muted)]">{activeContent.title}</p>
             )}
@@ -387,7 +387,7 @@ export default function CoursePlayerPage() {
           )}
           {/* Progress bar */}
           <div className="hidden sm:flex items-center gap-2">
-            <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-600 rounded-full transition-all duration-500"
                 style={{ width: `${overallProgress}%` }}
@@ -419,7 +419,7 @@ export default function CoursePlayerPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         {sidebarOpen && (
-          <aside className="w-72 bg-white border-r border-[var(--border-main)] flex flex-col overflow-y-auto shrink-0">
+          <aside className="w-72 bg-[var(--bg-card)] border-r border-[var(--border-main)] flex flex-col overflow-y-auto shrink-0">
             <div className="p-4 border-b border-[var(--border-subtle)]">
               <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Course Content</p>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">
@@ -442,7 +442,7 @@ export default function CoursePlayerPage() {
                       <button
                         key={content.id}
                         onClick={() => navigateTo(content.id)}
-                        className={`w-full flex items-start gap-4 px-4 py-3 text-left transition-colors border-b border-gray-50 ${
+                        className={`w-full flex items-start gap-4 px-4 py-3 text-left transition-colors border-b border-[var(--border-main)] ${
                           isActive
                             ? 'bg-blue-50 border-l-2 border-l-blue-600'
                             : 'hover:bg-[var(--bg-surface)]'
@@ -454,7 +454,7 @@ export default function CoursePlayerPage() {
                           ) : status === 'in_progress' ? (
                             <div className="h-4 w-4 rounded-full border-2 border-blue-500 bg-blue-100" />
                           ) : (
-                            <Circle className="h-4 w-4 text-gray-300" />
+                            <Circle className="h-4 w-4 text-[var(--text-muted)]" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">

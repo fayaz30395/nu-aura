@@ -173,7 +173,7 @@ export default function ShiftSwapPage() {
               <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
             ) : getDisplayData().length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
-                <ArrowLeftRight className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                <ArrowLeftRight className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]" />
                 <p>No shift swap requests found.</p>
               </div>
             ) : (

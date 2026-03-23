@@ -270,10 +270,10 @@ export default function MyLeavesPage() {
       <AppLayout activeMenuItem="leaves">
         <div className="text-center py-12">
           <AlertCircle className="h-16 w-16 mx-auto text-amber-400 mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
             {is403 ? 'Access Restricted' : 'Unable to Load Leave Data'}
           </h2>
-          <p className="text-slate-500 max-w-md mx-auto">
+          <p className="text-[var(--text-muted)] max-w-md mx-auto">
             {is403
               ? 'You don\'t have permission to view leave requests. Please contact your administrator to grant leave management access.'
               : 'There was an error loading your leave data. Please try refreshing the page or contact support if the issue persists.'}
@@ -287,9 +287,9 @@ export default function MyLeavesPage() {
     return (
       <AppLayout activeMenuItem="leaves">
         <div className="text-center py-12">
-          <Calendar className="h-16 w-16 mx-auto text-slate-300 mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
-          <p className="text-slate-500 max-w-md mx-auto">
+          <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
+          <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Leave management requires an employee profile. Use the admin panels to manage employee leaves.
           </p>
           <button
@@ -309,8 +309,8 @@ export default function MyLeavesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">My Leaves</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Leaves</h1>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Manage your leave requests and balances
             </p>
           </div>
@@ -359,24 +359,24 @@ export default function MyLeavesPage() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                     {leaveType?.leaveName || 'Unknown'}
                   </h3>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600 dark:text-slate-400">Available</span>
+                      <span className="text-[var(--text-secondary)]">Available</span>
                       <span className="font-semibold text-green-600 dark:text-green-400 skeuo-emboss">
                         {balance.available}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600 dark:text-slate-400">Used</span>
-                      <span className="font-semibold text-slate-900 dark:text-slate-50 skeuo-emboss">
+                      <span className="text-[var(--text-secondary)]">Used</span>
+                      <span className="font-semibold text-[var(--text-primary)] skeuo-emboss">
                         {balance.used}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600 dark:text-slate-400">Pending</span>
+                      <span className="text-[var(--text-secondary)]">Pending</span>
                       <span className="font-semibold text-yellow-600 dark:text-yellow-400 skeuo-emboss">
                         {balance.pending}
                       </span>
@@ -384,7 +384,7 @@ export default function MyLeavesPage() {
                   </div>
                   {/* Progress Bar */}
                   <div className="mt-4">
-                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all"
                         style={{
@@ -420,7 +420,7 @@ export default function MyLeavesPage() {
               {/* Filters */}
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-slate-500" />
+                  <Filter className="h-4 w-4 text-[var(--text-muted)]" />
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
@@ -448,7 +448,7 @@ export default function MyLeavesPage() {
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    className="px-3 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
                   >
                     Clear
                   </button>
@@ -459,21 +459,21 @@ export default function MyLeavesPage() {
           <CardContent>
             {leaveRequests.length === 0 ? (
               <div className="text-center py-12">
-                <Calendar className="h-16 w-16 mx-auto text-slate-300 dark:text-slate-700 mb-4" />
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                   No Leave Requests
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400">
+                <p className="text-[var(--text-secondary)]">
                   You haven&apos;t applied for any leaves yet
                 </p>
               </div>
             ) : filteredLeaveRequests.length === 0 ? (
               <div className="text-center py-12">
-                <Filter className="h-16 w-16 mx-auto text-slate-300 dark:text-slate-700 mb-4" />
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                <Filter className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                   No Matching Requests
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400">
+                <p className="text-[var(--text-secondary)]">
                   No leave requests match the selected filters
                 </p>
                 <button
@@ -493,7 +493,7 @@ export default function MyLeavesPage() {
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-4 mb-2">
-                          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+                          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                             {getLeaveTypeName(request.leaveTypeId)}
                           </h3>
                           <span
@@ -505,7 +505,7 @@ export default function MyLeavesPage() {
                             {request.status}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
                             {formatDate(request.startDate)} - {formatDate(request.endDate)}
@@ -516,14 +516,14 @@ export default function MyLeavesPage() {
                             {request.isHalfDay && ' (Half Day)'}
                           </div>
                         </div>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                        <p className="text-sm text-[var(--text-secondary)] mt-2">
                           <span className="font-medium">Reason:</span> {request.reason}
                         </p>
                         {/* Approver Info for PENDING */}
                         {request.status === 'PENDING' && request.pendingApproverName && (
                           <div className="flex items-center gap-2 mt-3 text-sm">
                             <User className="h-4 w-4 text-blue-500" />
-                            <span className="text-slate-600 dark:text-slate-400">
+                            <span className="text-[var(--text-secondary)]">
                               Pending approval from:{' '}
                               <span className="font-medium text-blue-600 dark:text-blue-400">
                                 {request.pendingApproverName}
@@ -533,10 +533,10 @@ export default function MyLeavesPage() {
                         )}
                         {(request.status === 'APPROVED' || request.status === 'REJECTED') && request.approverName && (
                           <div className="flex items-center gap-2 mt-3 text-sm">
-                            <User className="h-4 w-4 text-slate-500" />
-                            <span className="text-slate-600 dark:text-slate-400">
+                            <User className="h-4 w-4 text-[var(--text-muted)]" />
+                            <span className="text-[var(--text-secondary)]">
                               {request.status === 'APPROVED' ? 'Approved' : 'Rejected'} by:{' '}
-                              <span className="font-medium text-slate-900 dark:text-slate-100">
+                              <span className="font-medium text-[var(--text-primary)]">
                                 {request.approverName}
                               </span>
                             </span>
@@ -549,7 +549,7 @@ export default function MyLeavesPage() {
                           </p>
                         )}
                         {request.cancellationReason && (
-                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                          <p className="text-sm text-[var(--text-secondary)] mt-2">
                             <span className="font-medium">Cancellation Reason:</span>{' '}
                             {request.cancellationReason}
                           </p>
@@ -576,13 +576,13 @@ export default function MyLeavesPage() {
                       )}
                     </div>
                     {/* Applied on date - bottom right */}
-                    <div className="flex justify-end mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex justify-end mt-4 pt-3 border-t border-[var(--border-subtle)]">
                       <div className="text-right">
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className="text-xs text-[var(--text-muted)] ">
                           Applied on {formatDate(request.appliedOn)}
                         </p>
                         {request.approvedOn && (
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          <p className="text-xs text-[var(--text-muted)]  mt-1">
                             {request.status === 'APPROVED' ? 'Approved' : 'Rejected'} on{' '}
                             {formatDate(request.approvedOn)}
                           </p>
@@ -600,13 +600,13 @@ export default function MyLeavesPage() {
         {showApplyModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
             <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
-                <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+                <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
                   </h2>
                   <button
                     onClick={handleCloseModal}
-                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -615,12 +615,12 @@ export default function MyLeavesPage() {
                 <form onSubmit={handleLeaveSubmit(onLeaveSubmit)} className="p-6 space-y-4">
                   {/* Leave Type */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Leave Type *
                     </label>
                     <select
                       {...registerLeave('leaveTypeId')}
-                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
                     >
                       <option value="">Select leave type</option>
                       {leaveTypes.map((type) => (
@@ -635,25 +635,25 @@ export default function MyLeavesPage() {
                   {/* Dates */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Start Date *
                       </label>
                       <input
                         type="date"
                         {...registerLeave('startDate')}
-                        className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
                       />
                       {leaveErrors.startDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         End Date *
                       </label>
                       <input
                         type="date"
                         {...registerLeave('endDate')}
                         min={startDate}
-                        className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
                       />
                       {leaveErrors.endDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.endDate.message}</p>}
                     </div>
@@ -669,7 +669,7 @@ export default function MyLeavesPage() {
                     />
                     <label
                       htmlFor="halfDay"
-                      className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                      className="text-sm font-medium text-[var(--text-secondary)]"
                     >
                       This is a half-day leave
                     </label>
@@ -677,21 +677,21 @@ export default function MyLeavesPage() {
 
                   {/* Total Days */}
                   <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-lg">
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Total Days: <span className="font-bold text-primary-600">{calculateDays()}</span>
                     </p>
                   </div>
 
                   {/* Reason */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Reason *
                     </label>
                     <textarea
                       {...registerLeave('reason')}
                       rows={4}
                       placeholder="Please provide a reason for your leave..."
-                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
                     />
                     {leaveErrors.reason && <p className="text-red-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
                   </div>
@@ -702,7 +702,7 @@ export default function MyLeavesPage() {
                       type="button"
                       onClick={handleCloseModal}
                       disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                      className="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                      className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -733,13 +733,13 @@ export default function MyLeavesPage() {
         {showCancelModal && cancellingRequest && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
             <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
-              <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
+              <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+                <h2 className="text-xl font-bold text-[var(--text-primary)]">
                   Cancel Leave Request
                 </h2>
                 <button
                   onClick={handleCloseCancelModal}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -759,14 +759,14 @@ export default function MyLeavesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Reason for cancellation *
                   </label>
                   <textarea
                     {...registerCancel('reason')}
                     rows={3}
                     placeholder="Please provide a reason for cancelling this leave request..."
-                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-800"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-[var(--bg-surface)]"
                   />
                   {cancelErrors.reason && <p className="text-red-500 text-sm mt-1">{cancelErrors.reason.message}</p>}
                 </div>
@@ -776,7 +776,7 @@ export default function MyLeavesPage() {
                     type="button"
                     onClick={handleCloseCancelModal}
                     disabled={cancelLeaveRequest.isPending || cancelSubmitting}
-                    className="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                    className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50"
                   >
                     Keep Request
                   </button>

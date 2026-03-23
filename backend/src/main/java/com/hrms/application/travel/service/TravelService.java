@@ -43,7 +43,7 @@ public class TravelService implements ApprovalCallbackHandler {
     @Transactional
     public TravelRequestDto createRequest(CreateTravelRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         TravelRequest travelRequest = TravelRequest.builder()
                 .employeeId(employeeId)
@@ -229,7 +229,7 @@ public class TravelService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Page<TravelRequestDto> getMyRequests(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return travelRequestRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(TravelRequestDto::fromEntity);
     }

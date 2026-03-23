@@ -2,6 +2,8 @@ package com.hrms.api.document.controller;
 
 import com.hrms.application.document.service.FileStorageService;
 import com.hrms.application.document.service.FileStorageService.FileUploadResult;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,7 @@ public class FileUploadController {
     private final FileStorageService fileStorageService;
 
     @PostMapping("/upload")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(Permission.DOCUMENT_UPLOAD)
     @Operation(summary = "Upload a file", description = "Upload a file to the specified category")
     public ResponseEntity<FileUploadResponse> uploadFile(
             @RequestParam("file") MultipartFile file,
@@ -96,7 +98,7 @@ public class FileUploadController {
     }
 
     @GetMapping("/download")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(Permission.DOCUMENT_VIEW)
     @Operation(summary = "Get download URL", description = "Get a pre-signed URL for downloading a file")
     public ResponseEntity<DownloadUrlResponse> getDownloadUrl(@RequestParam("objectName") String objectName) {
         // SEC-008 FIX: Verify the objectName belongs to the current tenant
@@ -111,7 +113,7 @@ public class FileUploadController {
     }
 
     @GetMapping("/download/direct")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(Permission.DOCUMENT_VIEW)
     @Operation(summary = "Download file directly", description = "Download a file directly as a stream")
     public ResponseEntity<InputStreamResource> downloadFile(
             @RequestParam("objectName") String objectName,
@@ -160,7 +162,7 @@ public class FileUploadController {
     }
 
     @GetMapping("/exists")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(Permission.DOCUMENT_VIEW)
     @Operation(summary = "Check if file exists", description = "Check if a file exists in storage")
     public ResponseEntity<FileExistsResponse> fileExists(@RequestParam("objectName") String objectName) {
         // SEC-008 FIX: Verify the objectName belongs to the current tenant

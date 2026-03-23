@@ -42,7 +42,7 @@ public class LoanService implements ApprovalCallbackHandler {
     @Transactional
     public EmployeeLoanDto applyForLoan(CreateLoanRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         EmployeeLoan loan = EmployeeLoan.builder()
                 .employeeId(employeeId)
@@ -212,7 +212,7 @@ public class LoanService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Page<EmployeeLoanDto> getMyLoans(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return loanRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(EmployeeLoanDto::fromEntity);
     }

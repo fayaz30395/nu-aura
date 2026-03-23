@@ -24,11 +24,9 @@ public class CustomUserDetailsService implements UserDetailsService {
                 com.hrms.common.security.TenantContext.getCurrentTenant())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        // Debug logging
-        log.debug("Loading user: email={}, id={}, passwordHashLength={}, passwordHashPrefix={}",
-                user.getEmail(), user.getId(),
-                user.getPasswordHash() != null ? user.getPasswordHash().length() : 0,
-                user.getPasswordHash() != null && user.getPasswordHash().length() > 10 ? user.getPasswordHash().substring(0, 10) : "null");
+        // SEC-C01 FIX: Removed password hash details from log output to prevent
+        // credential leakage if an attacker gains access to application logs.
+        log.debug("Loading user: email={}, id={}", user.getEmail(), user.getId());
 
         return UserPrincipal.create(user);
     }

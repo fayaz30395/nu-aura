@@ -327,7 +327,7 @@ export default function ImplicitRolesPage() {
               </button>
               <button
                 onClick={() => setSelectedRules([])}
-                className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
+                className="px-3 py-1 text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] rounded hover:bg-[var(--bg-surface)]"
               >
                 Clear
               </button>
@@ -428,7 +428,7 @@ export default function ImplicitRolesPage() {
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         rule.isActive
                           ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                          : 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400'
+                          : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                       }`}
                     >
                       {rule.isActive ? 'Active' : 'Inactive'}
@@ -782,7 +782,7 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           userRole.isActive
                             ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                            : 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400'
+                            : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                         }`}
                       >
                         {userRole.isActive ? 'Active' : 'Inactive'}

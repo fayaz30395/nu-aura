@@ -124,20 +124,20 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {step === 'loading' && (
           <div className="flex flex-col items-center justify-center py-12">
             <Loader2 className="h-8 w-8 text-primary-600 animate-spin mb-4" />
-            <p className="text-slate-600 dark:text-slate-400">Loading setup information...</p>
+            <p className="text-[var(--text-secondary)]">Loading setup information...</p>
           </div>
         )}
 
         {/* Scan QR Code Step */}
         {step === 'scan' && (
           <div className="space-y-4">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               Scan the QR code with an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy.
             </p>
 
             {/* QR Code */}
             {qrCodeUrl && (
-              <div className="flex justify-center p-4 bg-[var(--bg-surface)] rounded-lg border border-slate-200 dark:border-slate-600">
+              <div className="flex justify-center p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
                 {/* unoptimized because qrCodeUrl is a data: URI — next/image optimization doesn't apply */}
                 <Image src={qrCodeUrl} alt="QR Code for MFA" width={192} height={192} unoptimized />
               </div>
@@ -145,23 +145,23 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
             {/* Manual Entry Code */}
             <div className="space-y-2">
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase">
+              <p className="text-xs text-[var(--text-muted)] font-medium uppercase">
                 Or enter this code manually:
               </p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 px-4 py-3 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg font-mono text-sm text-slate-900 dark:text-slate-50 break-all">
+                <code className="flex-1 px-4 py-3 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg font-mono text-sm text-[var(--text-primary)] break-all">
                   {secret}
                 </code>
                 <button
                   type="button"
                   onClick={copySecret}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
                   title="Copy secret"
                 >
                   {copiedSecret ? (
                     <Check className="h-5 w-5 text-green-600" />
                   ) : (
-                    <Copy className="h-5 w-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
+                    <Copy className="h-5 w-5 text-[var(--text-muted)] hover:text-[var(--text-secondary)]" />
                   )}
                 </button>
               </div>
@@ -172,7 +172,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {/* Verify Code Step */}
         {step === 'verify' && (
           <form onSubmit={handleVerify} className="space-y-4">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               Enter the 6-digit code from your authenticator app to verify and enable two-factor authentication.
             </p>
 
@@ -186,7 +186,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
             {/* Code Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="text-sm font-medium text-[var(--text-secondary)]">
                 Verification Code
               </label>
               <input
@@ -200,7 +200,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   setVerificationCode(value);
                 }}
                 disabled={isVerifying}
-                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-surface)] text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                 autoComplete="off"
               />
             </div>
@@ -250,17 +250,17 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   key={index}
                   type="button"
                   onClick={() => copyBackupCode(code, index)}
-                  className="p-4 text-left bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors group"
+                  className="p-4 text-left bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors group"
                   title="Click to copy"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <code className="font-mono text-sm text-slate-900 dark:text-slate-50 flex-1">
+                    <code className="font-mono text-sm text-[var(--text-primary)] flex-1">
                       {code}
                     </code>
                     {copiedIndex === index ? (
                       <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
                     ) : (
-                      <Copy className="h-4 w-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex-shrink-0" />
+                      <Copy className="h-4 w-4 text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] flex-shrink-0" />
                     )}
                   </div>
                 </button>
@@ -284,10 +284,10 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
             <div className="flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
               <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
             </div>
-            <p className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+            <p className="text-lg font-semibold text-[var(--text-primary)]">
               Two-Factor Authentication Enabled
             </p>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 text-center">
+            <p className="text-sm text-[var(--text-secondary)] mt-2 text-center">
               Your account is now protected with two-factor authentication.
             </p>
           </div>

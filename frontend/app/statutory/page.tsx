@@ -137,7 +137,7 @@ export default function StatutoryPage() {
                             </Card>
                         </Grid.Col>
                         <Grid.Col span={4}>
-                            <Card withBorder className="skeuo-card" radius="md" bg="gray.0">
+                            <Card withBorder className="skeuo-card" radius="md">
                                 <Group mb="xs">
                                     <ThemeIcon color="blue" variant="light"><IconSettings size={18} /></ThemeIcon>
                                     <Text fw={500}>PF Rules</Text>
@@ -338,7 +338,7 @@ export default function StatutoryPage() {
                                             })}
                                         </Table.Tbody>
                                         <Table.Tfoot>
-                                            <Table.Tr style={{ backgroundColor: 'var(--mantine-color-gray-1)' }}>
+                                            <Table.Tr style={{ backgroundColor: 'var(--bg-surface)' }}>
                                                 <Table.Td fw={600}>Totals ({contributions.length})</Table.Td>
                                                 <Table.Td ta="right" fw={600}>{fmt(totals.gross)}</Table.Td>
                                                 <Table.Td ta="right" fw={600}>{fmt(totals.pfEmp)}</Table.Td>

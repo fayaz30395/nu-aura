@@ -113,17 +113,20 @@ public class TravelExpenseController {
     @Operation(summary = "Reject travel expense", description = "Reject a travel expense")
     public ResponseEntity<TravelExpenseDto> rejectExpense(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body
+            @RequestBody(required = false) Map<String, String> body
     ) {
         UUID approverId = null;
-        if (body.get("approverId") != null) {
-            try {
-                approverId = UUID.fromString(body.get("approverId"));
-            } catch (IllegalArgumentException e) {
-                throw new ValidationException("Invalid approverId format: " + body.get("approverId"));
+        String reason = null;
+        if (body != null) {
+            if (body.get("approverId") != null) {
+                try {
+                    approverId = UUID.fromString(body.get("approverId"));
+                } catch (IllegalArgumentException e) {
+                    throw new ValidationException("Invalid approverId format: " + body.get("approverId"));
+                }
             }
+            reason = body.get("reason");
         }
-        String reason = body.get("reason");
         return ResponseEntity.ok(travelExpenseService.rejectExpense(id, approverId, reason));
     }
 

@@ -80,7 +80,7 @@ const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; bad
   [ApplicationStatus.OFFERED]:        { col: 'border-t-green-500',   header: 'bg-green-50',   badge: 'bg-green-100 text-green-700',     bg: 'bg-green-50/50' },
   [ApplicationStatus.ACCEPTED]:       { col: 'border-t-emerald-500', header: 'bg-emerald-50', badge: 'bg-emerald-100 text-emerald-700', bg: 'bg-emerald-50/50' },
   [ApplicationStatus.REJECTED]:       { col: 'border-t-red-500',     header: 'bg-red-50',     badge: 'bg-red-100 text-red-700',         bg: 'bg-red-50/50' },
-  [ApplicationStatus.WITHDRAWN]:      { col: 'border-t-gray-400',    header: 'bg-[var(--bg-surface)]',    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',       bg: 'bg-[var(--bg-surface)]/50' },
+  [ApplicationStatus.WITHDRAWN]:      { col: 'border-t-[var(--border-main)]',    header: 'bg-[var(--bg-surface)]',    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',       bg: 'bg-[var(--bg-surface)]/50' },
 };
 
 const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {

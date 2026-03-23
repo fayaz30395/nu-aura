@@ -73,7 +73,7 @@ const MODULE_TABS: ModuleTab[] = [
   { key: 'ALL', label: 'All', color: 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]', textColor: 'text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200' },
   { key: 'LEAVE', label: 'Leave', entityType: 'LEAVE_REQUEST', color: 'bg-blue-100 dark:bg-blue-900/40', textColor: 'text-blue-700 dark:text-blue-300' },
   { key: 'EXPENSE', label: 'Expense', entityType: 'EXPENSE_CLAIM', color: 'bg-orange-100 dark:bg-orange-900/40', textColor: 'text-orange-700 dark:text-orange-300' },
-  { key: 'ASSET', label: 'Asset', entityType: 'ASSET_REQUEST', color: 'bg-slate-100 dark:bg-slate-800/50', textColor: 'text-slate-700 dark:text-slate-300' },
+  { key: 'ASSET', label: 'Asset', entityType: 'ASSET_REQUEST', color: 'bg-[var(--bg-surface)]', textColor: 'text-[var(--text-secondary)]' },
   { key: 'TRAVEL', label: 'Travel', entityType: 'TRAVEL_REQUEST', color: 'bg-emerald-100 dark:bg-emerald-900/40', textColor: 'text-emerald-700 dark:text-emerald-300' },
   { key: 'RECRUITMENT', label: 'Recruitment', entityType: 'RECRUITMENT_OFFER', color: 'bg-violet-100 dark:bg-violet-900/40', textColor: 'text-violet-700 dark:text-violet-300' },
   { key: 'OTHERS', label: 'Others', color: 'bg-purple-100 dark:bg-purple-900/40', textColor: 'text-purple-700 dark:text-purple-300' },
@@ -83,7 +83,7 @@ const MODULE_TABS: ModuleTab[] = [
 const MODULE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
   Leave: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300' },
   Expense: { bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-300' },
-  Asset: { bg: 'bg-slate-100 dark:bg-slate-800/50', text: 'text-slate-700 dark:text-slate-300' },
+  Asset: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
   Travel: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300' },
   Recruitment: { bg: 'bg-violet-100 dark:bg-violet-900/30', text: 'text-violet-700 dark:text-violet-300' },
 };
@@ -398,7 +398,7 @@ export default function ApprovalInboxPage() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-white py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900 dark:text-[var(--text-primary)]"
+              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
         </div>
@@ -553,7 +553,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               rows={3}
             />
           </div>
@@ -597,7 +597,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being rejected…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               rows={3}
             />
           </div>
@@ -664,7 +664,7 @@ export default function ApprovalInboxPage() {
               <input
                 type="date"
                 {...delegationForm.register('startDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
               {delegationForm.formState.errors.startDate && (
                 <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
@@ -681,7 +681,7 @@ export default function ApprovalInboxPage() {
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
               {delegationForm.formState.errors.endDate && (
                 <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
@@ -698,7 +698,7 @@ export default function ApprovalInboxPage() {
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-white p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 rows={3}
               />
             </div>

@@ -33,7 +33,7 @@ public class WellnessController {
     @RequiresPermission(Permission.WELLNESS_VIEW)
     @Operation(summary = "Get wellness dashboard for current user")
     public ResponseEntity<WellnessDashboard> getDashboard() {
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.ok(wellnessService.getDashboard(employeeId));
     }
 
@@ -105,7 +105,7 @@ public class WellnessController {
             @PathVariable UUID challengeId,
             @RequestParam(required = false) UUID teamId,
             @RequestParam(required = false) String teamName) {
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         log.info("Employee {} joining challenge {}", employeeId, challengeId);
         wellnessService.joinChallenge(challengeId, employeeId, teamId, teamName);
         return ResponseEntity.ok().build();
@@ -115,7 +115,7 @@ public class WellnessController {
     @RequiresPermission(Permission.WELLNESS_CREATE)
     @Operation(summary = "Leave a challenge")
     public ResponseEntity<Void> leaveChallenge(@PathVariable UUID challengeId) {
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         log.info("Employee {} leaving challenge {}", employeeId, challengeId);
         wellnessService.leaveChallenge(challengeId, employeeId);
         return ResponseEntity.ok().build();
@@ -127,7 +127,7 @@ public class WellnessController {
     @RequiresPermission(Permission.WELLNESS_CREATE)
     @Operation(summary = "Log a health metric")
     public ResponseEntity<HealthLogDto> logHealth(@Valid @RequestBody HealthLogDto request) {
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         log.info("Employee {} logging health metric: {}", employeeId, request.getMetricType());
         return ResponseEntity.ok(wellnessService.logHealth(employeeId, request));
     }
@@ -138,7 +138,7 @@ public class WellnessController {
     public ResponseEntity<List<HealthLogDto>> getHealthLogs(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.ok(wellnessService.getHealthLogs(employeeId, startDate, endDate));
     }
 
@@ -148,7 +148,7 @@ public class WellnessController {
     @RequiresPermission(Permission.WELLNESS_VIEW)
     @Operation(summary = "Get current user's wellness points")
     public ResponseEntity<WellnessPointsDto> getMyPoints() {
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.ok(wellnessService.getMyPoints(employeeId));
     }
 

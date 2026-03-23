@@ -144,7 +144,7 @@ const getBenefitColor = (type: string) => {
     case 'VISION':
       return 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900 dark:text-cyan-400';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-600 dark:bg-[var(--bg-primary)] dark:text-[var(--text-muted)]';
+      return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   }
 };
 

@@ -101,8 +101,8 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors ${
-                  option.value === value ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-[var(--text-primary)]'
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-primary-50 transition-colors ${
+                  option.value === value ? 'bg-primary-50 text-primary-700' : 'text-[var(--text-primary)]'
                 }`}
               >
                 <div className="font-medium">{option.label}</div>
@@ -124,8 +124,8 @@ function InterviewsPageLoading() {
   return (
     <AppLayout>
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded w-1/4" />
-        <div className="h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded" />
+        <div className="h-8 bg-[var(--bg-secondary)] rounded w-1/4" />
+        <div className="h-64 bg-[var(--bg-secondary)] rounded" />
       </div>
     </AppLayout>
   );
@@ -478,22 +478,22 @@ function InterviewsPage() {
 
 const getStatusColor = (status: InterviewStatus): string => {
   switch (status) {
-    case 'SCHEDULED': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
-    case 'RESCHEDULED': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-    case 'COMPLETED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-    case 'CANCELLED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-    case 'NO_SHOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
-    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+    case 'SCHEDULED': return 'bg-blue-100 text-blue-800';
+    case 'RESCHEDULED': return 'bg-yellow-100 text-yellow-800';
+    case 'COMPLETED': return 'bg-green-100 text-green-800';
+    case 'CANCELLED': return 'bg-red-100 text-red-800';
+    case 'NO_SHOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
   }
 };
 
 const getResultColor = (result?: InterviewResult): string => {
   switch (result) {
-    case 'SELECTED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-    case 'REJECTED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-    case 'ON_HOLD': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-    case 'PENDING': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
-    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+    case 'SELECTED': return 'bg-green-100 text-green-800';
+    case 'REJECTED': return 'bg-red-100 text-red-800';
+    case 'ON_HOLD': return 'bg-yellow-100 text-yellow-800';
+    case 'PENDING': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
   }
 };
 
@@ -552,8 +552,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-primary-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Total</p>
@@ -565,8 +565,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Scheduled</p>
@@ -578,8 +578,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Completed</p>
@@ -591,8 +591,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center">
+                  <AlertCircle className="h-6 w-6 text-yellow-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Pending Decision</p>
@@ -638,7 +638,7 @@ const formatDateTime = (dateString?: string): string => {
           <CardContent className="p-0">
             {filteredInterviews.length === 0 ? (
               <div className="text-center py-12">
-                <Calendar className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <Calendar className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
                 <p className="text-[var(--text-muted)]">No interviews found</p>
                 <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="mt-4">
                   Schedule First Interview
@@ -659,13 +659,13 @@ const formatDateTime = (dateString?: string): string => {
                       <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody className="divide-y divide-[var(--border-main)]">
                     {filteredInterviews.map((interview) => (
-                      <tr key={interview.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+                      <tr key={interview.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
-                              <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                            <div className="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                              <User className="h-5 w-5 text-primary-600" />
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-[var(--text-primary)]">{interview.candidateName || 'Unknown'}</div>
@@ -694,7 +694,7 @@ const formatDateTime = (dateString?: string): string => {
                               href={interview.googleMeetLink || interview.meetingLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 mt-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                              className="inline-flex items-center gap-1 mt-1 text-xs text-blue-600 hover:underline"
                             >
                               <Video className="h-3 w-3" />
                               Join Meet
@@ -714,7 +714,7 @@ const formatDateTime = (dateString?: string): string => {
                               </span>
                             )}
                             {interview.rating && (
-                              <span className="flex items-center gap-1 text-sm text-yellow-600 dark:text-yellow-400">
+                              <span className="flex items-center gap-1 text-sm text-yellow-600">
                                 <Star className="h-4 w-4 fill-current" />
                                 {interview.rating}/5
                               </span>
@@ -726,7 +726,7 @@ const formatDateTime = (dateString?: string): string => {
                             {interview.status === 'SCHEDULED' && (
                               <button
                                 onClick={() => handleProvideFeedback(interview)}
-                                className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:text-[var(--text-muted)] dark:hover:text-green-400 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-green-600 transition-colors"
                                 title="Provide Feedback"
                               >
                                 <CheckCircle className="h-4 w-4" />
@@ -734,14 +734,14 @@ const formatDateTime = (dateString?: string): string => {
                             )}
                             <button
                               onClick={() => handleEdit(interview)}
-                              className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-primary-600 transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => { setInterviewToDelete(interview); setShowDeleteModal(true); }}
-                              className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-red-600 transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -766,7 +766,7 @@ const formatDateTime = (dateString?: string): string => {
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
+                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -895,7 +895,7 @@ const formatDateTime = (dateString?: string): string => {
                           }
                         }}
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/20 ${
-                          createMeetToggle ? 'bg-blue-500' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
+                          createMeetToggle ? 'bg-blue-500' : 'bg-[var(--bg-secondary)]'
                         } ${!hasValidGoogleToken() ? 'opacity-50 cursor-not-allowed' : ''}`}
                         disabled={!hasValidGoogleToken()}
                       >
@@ -910,7 +910,7 @@ const formatDateTime = (dateString?: string): string => {
 
                   {/* Time Slot Preview when Google Meet is enabled */}
                   {createMeetToggle && watchCreate('scheduledAt') && (
-                    <div className="px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-xs text-blue-700 dark:text-blue-300 flex items-center gap-2">
+                    <div className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700 flex items-center gap-2">
                       <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>
                         Calendar event: {new Date(watchCreate('scheduledAt')).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
@@ -957,7 +957,7 @@ const formatDateTime = (dateString?: string): string => {
                         type="button"
                         onClick={handleGenerateQuestions}
                         disabled={generateQuestionsMutation.isPending}
-                        className="flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 disabled:opacity-50"
+                        className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 disabled:opacity-50"
                       >
                         <Sparkles className="h-3 w-3" />
                         Generate AI Questions
@@ -992,7 +992,7 @@ const formatDateTime = (dateString?: string): string => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
-                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
+                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1014,7 +1014,7 @@ const formatDateTime = (dateString?: string): string => {
                           onClick={() => setValueFeedback('rating', rating)}
                           className={`p-2 rounded-xl transition-colors ${
                             watchFeedback('rating') === rating
-                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
+                              ? 'bg-yellow-100 text-yellow-600'
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-yellow-500'
                           }`}
                         >
@@ -1067,8 +1067,8 @@ const formatDateTime = (dateString?: string): string => {
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                  <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 flex items-center justify-center">
+                  <Trash2 className="h-6 w-6 text-red-600" />
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h3>
               </div>
@@ -1097,7 +1097,7 @@ const formatDateTime = (dateString?: string): string => {
                     <Sparkles className="h-5 w-5 text-primary-500" />
                     <h2 className="text-2xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
-                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
+                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1113,9 +1113,9 @@ const formatDateTime = (dateString?: string): string => {
                             <div className="flex items-start justify-between gap-2">
                               <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                               <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
-                                q.difficulty === 'easy' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
-                                q.difficulty === 'medium' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' :
-                                'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                                q.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                                q.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-red-100 text-red-700'
                               }`}>
                                 {q.difficulty}
                               </span>

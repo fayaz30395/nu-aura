@@ -252,7 +252,7 @@ export default function PricingPage() {
                       className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
                         plan.popular
                           ? 'from-primary-500 to-primary-600'
-                          : 'from-slate-600 to-slate-700'
+                          : 'from-surface-600 to-surface-700'
                       } flex items-center justify-center mb-4`}
                     >
                       <plan.icon className="h-6 w-6 text-white" />

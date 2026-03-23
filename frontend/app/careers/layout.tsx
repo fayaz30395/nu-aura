@@ -18,9 +18,9 @@ export default function CareersLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--bg-card)]">
       {/* Public Navbar */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <header className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border-main)] shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/careers" className="flex items-center gap-3">
             <Image
@@ -31,7 +31,7 @@ export default function CareersLayout({
               className="h-8 w-auto object-contain"
               priority
             />
-            <span className="text-sm font-medium text-gray-500 border-l border-gray-300 pl-3">
+            <span className="text-sm font-medium text-[var(--text-muted)] border-l border-[var(--border-main)] pl-3">
               Careers
             </span>
           </Link>

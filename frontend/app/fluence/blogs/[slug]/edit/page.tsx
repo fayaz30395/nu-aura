@@ -181,7 +181,7 @@ export default function EditBlogPost() {
             <div className="flex items-center gap-4 mb-2">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>

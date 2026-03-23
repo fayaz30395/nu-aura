@@ -115,7 +115,7 @@ const getTypeColor = (type: RecognitionType) => {
     case RecognitionType.PEER_NOMINATION:
       return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
   }
 };
 
@@ -441,7 +441,7 @@ export default function RecognitionPage() {
                         className="flex items-center gap-4 p-2 rounded-lg card-aura transition-colors"
                       >
                         <div className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-yellow-500 text-white' :
-                            index === 1 ? 'bg-gray-400 text-white' :
+                            index === 1 ? 'bg-[var(--text-muted)] text-white' :
                               index === 2 ? 'bg-amber-600 text-white' :
                                 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>

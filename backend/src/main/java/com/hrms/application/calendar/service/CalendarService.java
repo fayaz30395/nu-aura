@@ -33,7 +33,7 @@ public class CalendarService {
     @Transactional
     public CalendarEventDto createEvent(CreateCalendarEventRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         validateEventTimes(request.getStartTime(), request.getEndTime());
 
@@ -162,7 +162,7 @@ public class CalendarService {
     @Transactional(readOnly = true)
     public Page<CalendarEventDto> getMyEvents(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return calendarEventRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(CalendarEventDto::fromEntity);
     }
@@ -170,7 +170,7 @@ public class CalendarService {
     @Transactional(readOnly = true)
     public List<CalendarEventDto> getMyEventsForRange(LocalDateTime startTime, LocalDateTime endTime) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return calendarEventRepository.findByEmployeeAndDateRange(tenantId, employeeId, startTime, endTime)
                 .stream().map(CalendarEventDto::fromEntity).collect(Collectors.toList());
     }
@@ -199,7 +199,7 @@ public class CalendarService {
     @Transactional(readOnly = true)
     public Page<CalendarEventDto> getEventsOrganizedByMe(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return calendarEventRepository.findByOrganizerIdAndTenantId(employeeId, tenantId, pageable)
                 .map(CalendarEventDto::fromEntity);
     }
@@ -207,7 +207,7 @@ public class CalendarService {
     @Transactional(readOnly = true)
     public List<CalendarEventDto> getEventsAsAttendee() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return calendarEventRepository.findByAttendee(tenantId, employeeId.toString())
                 .stream().map(CalendarEventDto::fromEntity).collect(Collectors.toList());
     }
@@ -359,7 +359,7 @@ public class CalendarService {
         log.info("[MOCK] Importing event {} from {}", externalEventId, provider);
 
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         // Create a mock imported event
         CalendarEvent event = CalendarEvent.builder()

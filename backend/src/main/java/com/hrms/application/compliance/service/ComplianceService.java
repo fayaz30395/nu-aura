@@ -155,7 +155,7 @@ public class ComplianceService {
 
     public PolicyAcknowledgment acknowledgePolicy(UUID policyId, String signature, String ipAddress) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentUserId();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         CompliancePolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Policy not found"));

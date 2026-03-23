@@ -63,8 +63,8 @@ export default function LeaveReportsPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Leave Reports</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Leave Reports</h1>
+            <p className="text-[var(--text-secondary)] mt-1">
               Generate leave request reports with customizable filters
             </p>
           </div>
@@ -101,12 +101,12 @@ export default function LeaveReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                   Date Range <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">From</label>
+                    <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
                     <input
                       type="date"
                       value={startDate}
@@ -115,7 +115,7 @@ export default function LeaveReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">To</label>
+                    <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
                     <input
                       type="date"
                       value={endDate}
@@ -128,13 +128,13 @@ export default function LeaveReportsPage() {
 
               {/* Filters */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3 flex items-center gap-2">
                   <Filter className="h-4 w-4" />
                   Filters (Optional)
                 </label>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Leave Status</label>
+                    <label className="block text-xs text-[var(--text-muted)] mb-1">Leave Status</label>
                     <select
                       value={leaveStatus}
                       onChange={(e) => setLeaveStatus(e.target.value)}
@@ -152,7 +152,7 @@ export default function LeaveReportsPage() {
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                   Export Format
                 </label>
                 <div className="grid grid-cols-3 gap-4">
@@ -163,13 +163,13 @@ export default function LeaveReportsPage() {
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
                           ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
-                      <p className={`font-medium text-sm ${format === fmt ? 'text-orange-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                      <p className={`font-medium text-sm ${format === fmt ? 'text-orange-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--text-muted)]">
                         .{fmt === 'EXCEL' ? 'xlsx' : fmt.toLowerCase()}
                       </p>
                     </button>

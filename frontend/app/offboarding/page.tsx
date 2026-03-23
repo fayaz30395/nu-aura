@@ -373,9 +373,9 @@ export default function OffboardingPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-red-200 bg-red-50">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-2 text-red-600">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
               </div>
@@ -388,8 +388,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
-                  <UserMinus className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                <div className="rounded-lg bg-primary-100 p-4">
+                  <UserMinus className="h-6 w-6 text-primary-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Exits</p>
@@ -401,8 +401,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
-                  <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="rounded-lg bg-blue-100 p-4">
+                  <Clock className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Initiated</p>
@@ -414,8 +414,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
-                  <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <div className="rounded-lg bg-amber-100 p-4">
+                  <Clock className="h-6 w-6 text-amber-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Progress</p>
@@ -427,8 +427,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
-                  <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <div className="rounded-lg bg-purple-100 p-4">
+                  <FileText className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Clearance Pending</p>
@@ -440,8 +440,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
-                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="rounded-lg bg-green-100 p-4">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
@@ -526,7 +526,7 @@ export default function OffboardingPage() {
                       <tr key={process.id}>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-4">
-                            <div className="rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-2">
+                            <div className="rounded-full bg-[var(--bg-secondary)] p-2">
                               <User className="h-5 w-5 text-[var(--text-secondary)]" />
                             </div>
                             <div>
@@ -568,13 +568,13 @@ export default function OffboardingPage() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right">
                           <div className="relative group inline-block">
-                            <button className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]">
+                            <button className="p-1 rounded hover:bg-[var(--bg-secondary)]">
                               <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                             </button>
                             <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(process)}
-                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
                                 <Eye className="h-4 w-4" />
                                 View Details
@@ -582,7 +582,7 @@ export default function OffboardingPage() {
                               <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleOpenEditModal(process)}
-                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <Edit className="h-4 w-4" />
                                   Edit
@@ -592,7 +592,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
-                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <Clock className="h-4 w-4" />
                                     Start Process
@@ -603,7 +603,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
-                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <FileText className="h-4 w-4" />
                                     Request Clearance
@@ -614,7 +614,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_APPROVE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
-                                    className="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-2"
+                                    className="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 flex items-center gap-2"
                                   >
                                     <CheckCircle className="h-4 w-4" />
                                     Complete
@@ -624,7 +624,7 @@ export default function OffboardingPage() {
                               <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleDeleteClick(process)}
-                                  className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                  className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   Delete
@@ -846,7 +846,7 @@ export default function OffboardingPage() {
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-4">
-              <div className="rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-2">
+              <div className="rounded-full bg-[var(--bg-secondary)] p-2">
                 <User className="h-6 w-6 text-[var(--text-secondary)]" />
               </div>
               <div>

@@ -242,7 +242,7 @@ export default function LeaveCalendarPage() {
                           ? 'text-primary-600 dark:text-primary-400'
                           : day.isCurrentMonth
                           ? 'text-[var(--text-primary)]'
-                          : 'text-gray-400 dark:text-[var(--text-secondary)]'
+                          : 'text-[var(--text-muted)]'
                       }`}
                     >
                       {day.date.getDate()}

@@ -174,7 +174,7 @@ export default function HeadcountReportPage() {
               <div className="skeuo-card p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Building2 className="h-4 w-4 text-blue-600" />
-                  <h2 className="text-sm font-semibold text-gray-800">Headcount by Department</h2>
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">Headcount by Department</h2>
                 </div>
                 {metrics?.byDepartment && metrics.byDepartment.length > 0 ? (
                   <div className="space-y-2">
@@ -184,7 +184,7 @@ export default function HeadcountReportPage() {
                         <div key={dept.department}>
                           <div className="flex justify-between text-xs mb-1">
                             <span className="text-[var(--text-secondary)] truncate pr-2">{dept.department}</span>
-                            <span className="font-semibold text-gray-800 shrink-0">{dept.count}</span>
+                            <span className="font-semibold text-[var(--text-primary)] shrink-0">{dept.count}</span>
                           </div>
                           <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
@@ -203,7 +203,7 @@ export default function HeadcountReportPage() {
                         <div key={dept}>
                           <div className="flex justify-between text-xs mb-1">
                             <span className="text-[var(--text-secondary)] truncate pr-2">{dept}</span>
-                            <span className="font-semibold text-gray-800 shrink-0">{count}</span>
+                            <span className="font-semibold text-[var(--text-primary)] shrink-0">{count}</span>
                           </div>
                           <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
@@ -223,7 +223,7 @@ export default function HeadcountReportPage() {
               <div className="skeuo-card p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Users className="h-4 w-4 text-indigo-600" />
-                  <h2 className="text-sm font-semibold text-gray-800">12-Month Headcount Trend</h2>
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">12-Month Headcount Trend</h2>
                 </div>
                 {trend.length > 0 ? (
                   <div className="space-y-1.5">
@@ -249,7 +249,7 @@ export default function HeadcountReportPage() {
             {/* By Employment Type */}
             {metrics?.byEmploymentType && Object.keys(metrics.byEmploymentType).length > 0 && (
               <div className="skeuo-card p-5">
-                <h2 className="text-sm font-semibold text-gray-800 mb-4">By Employment Type</h2>
+                <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">By Employment Type</h2>
                 <div className="flex flex-wrap gap-4">
                   {Object.entries(metrics.byEmploymentType).map(([type, count]) => (
                     <div key={type} className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-surface)] rounded-lg">

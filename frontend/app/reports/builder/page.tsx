@@ -366,7 +366,7 @@ export default function ReportBuilderPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="w-full bg-[var(--bg-surface)] hover:bg-gray-200 text-[var(--text-primary)] text-sm font-medium py-1.5 rounded border border-[var(--border-strong)] disabled:opacity-50"
+                  className="w-full bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] text-sm font-medium py-1.5 rounded border border-[var(--border-strong)] disabled:opacity-50"
                 >
                   {saving ? 'Saving…' : 'Save Template'}
                 </button>

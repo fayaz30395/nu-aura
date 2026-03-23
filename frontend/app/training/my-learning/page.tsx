@@ -57,7 +57,7 @@ function ProgressBar({ value }: { value: number }) {
     clamped >= 50   ? '#f59e0b' :
                       '#3b82f6';
   return (
-    <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+    <div className="w-full bg-[var(--border-main)] rounded-full h-2.5 overflow-hidden">
       <div
         className="h-2.5 rounded-full transition-all duration-300"
         style={{ width: `${clamped}%`, backgroundColor: color }}
@@ -209,7 +209,7 @@ export default function MyLearningPage() {
           </div>
         ) : enrollments.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-4">
-            <BookOpen className="h-12 w-12 text-gray-300" />
+            <BookOpen className="h-12 w-12 text-[var(--text-muted)]" />
             <p className="text-lg font-medium text-[var(--text-muted)]">No courses yet</p>
             <p className="text-sm">
               Browse the{' '}

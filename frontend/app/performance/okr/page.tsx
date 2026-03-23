@@ -53,7 +53,7 @@ const getLevelIcon = (level: string) => {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'DRAFT':
-      return 'bg-[var(--bg-surface)] text-gray-800';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
     case 'ACTIVE':
       return 'bg-blue-100 text-blue-800';
     case 'ON_TRACK':
@@ -67,7 +67,7 @@ const getStatusColor = (status: string) => {
     case 'CANCELLED':
       return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }
 };
 
@@ -390,7 +390,7 @@ export default function OKRPage() {
                       <div className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {objective.progressPercentage}%
                       </div>
-                      <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-24 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                         <div
                           className={`h-full ${getProgressColor(objective.progressPercentage)}`}
                           style={{ width: `${objective.progressPercentage}%` }}
@@ -466,7 +466,7 @@ export default function OKRPage() {
                                       </span>
                                       <span>{kr.progressPercentage}%</span>
                                     </div>
-                                    <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                    <div className="w-full h-1.5 bg-[var(--border-main)] rounded-full overflow-hidden">
                                       <div
                                         className={`h-full ${getProgressColor(
                                           kr.progressPercentage

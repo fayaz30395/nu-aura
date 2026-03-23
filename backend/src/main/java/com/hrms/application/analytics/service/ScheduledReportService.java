@@ -317,7 +317,8 @@ public class ScheduledReportService {
         ScheduledReportResponse response = ScheduledReportResponse.fromEntity(report, createdByName, departmentName);
         response.setRecipients(deserializeList(report.getRecipients()));
 
-        // Parse parameters
+        // BP-L01 FIX: Re-throw parameter parsing failures instead of silently swallowing.
+        // Invalid parameters indicate corrupt data that callers must handle.
         try {
             Map<String, Object> params = objectMapper.readValue(report.getParameters(),
                     objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
@@ -335,7 +336,8 @@ public class ScheduledReportService {
                 response.setDepartmentName(departmentName);
             }
         } catch (Exception e) {
-            log.error("Error parsing parameters", e);
+            log.error("Error parsing report parameters for report {}: {}", report.getId(), e.getMessage(), e);
+            throw new IllegalStateException("Failed to parse report parameters for report " + report.getId(), e);
         }
 
         return response;

@@ -111,7 +111,7 @@ const getTypeColor = (type: SurveyType) => {
     case SurveyType.FEEDBACK:
       return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
   }
 };
 

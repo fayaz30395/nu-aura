@@ -512,7 +512,7 @@ export default function HelpdeskSLAPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 rounded-full text-xs ${
-                            sla.isActive ? 'bg-green-100 text-green-800' : 'bg-[var(--bg-surface)] text-gray-800'
+                            sla.isActive ? 'bg-green-100 text-green-800' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                           }`}>
                             {sla.isActive ? 'Active' : 'Inactive'}
                           </span>

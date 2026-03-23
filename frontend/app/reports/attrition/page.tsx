@@ -169,7 +169,7 @@ export default function AttritionReportPage() {
               onChange={e => setMinScore(Number(e.target.value))}
               className="w-16 text-sm border border-[var(--border-main)] rounded px-2 py-1"
             />
-            <button onClick={load} className="text-xs px-2 py-1 bg-[var(--bg-surface)] hover:bg-gray-200 rounded">Apply</button>
+            <button onClick={load} className="text-xs px-2 py-1 bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] rounded">Apply</button>
           </div>
           <span className="text-xs text-[var(--text-muted)]">{filtered.length} employees shown</span>
           {selectedRisk !== 'ALL' && (
@@ -204,7 +204,7 @@ export default function AttritionReportPage() {
                       {/* Risk score bar */}
                       <div className="shrink-0 w-16 text-center">
                         <div className="text-lg font-bold text-[var(--text-primary)]">{Math.round(pred.riskScore)}</div>
-                        <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
+                        <div className="h-1.5 bg-[var(--border-main)] rounded-full overflow-hidden mt-1">
                           <div className={`h-full ${colors.bar} rounded-full`} style={{ width: `${pred.riskScore}%` }} />
                         </div>
                       </div>
@@ -256,7 +256,7 @@ export default function AttritionReportPage() {
                                 {pred.riskFactors.map((f, i) => (
                                   <div key={i} className="flex items-center gap-2">
                                     <span className="text-xs text-[var(--text-secondary)] w-28 shrink-0">{f.name}</span>
-                                    <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                    <div className="flex-1 h-1.5 bg-[var(--border-main)] rounded-full overflow-hidden">
                                       <div
                                         className={`h-full rounded-full ${f.impact === 'HIGH' ? 'bg-red-500' : f.impact === 'MEDIUM' ? 'bg-yellow-400' : 'bg-green-400'}`}
                                         style={{ width: `${f.score}%` }}

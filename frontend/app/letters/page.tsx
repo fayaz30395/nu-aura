@@ -120,7 +120,7 @@ const getCategoryLabel = (category: LetterCategory) => {
 const getStatusColor = (status: LetterStatus) => {
   switch (status) {
     case LetterStatus.DRAFT:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
     case LetterStatus.PENDING_APPROVAL:
       return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
     case LetterStatus.APPROVED:
@@ -132,7 +132,7 @@ const getStatusColor = (status: LetterStatus) => {
     case LetterStatus.EXPIRED:
       return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
   }
 };
 
