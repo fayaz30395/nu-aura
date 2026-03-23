@@ -1,33 +1,52 @@
 #!/bin/bash
 
-# Start Backend with all required environment variables
-export JWT_SECRET="EIpKw+jjwEbzx1iJ9twBAlSrBDwbQxIePd9eFGFIopMWMVfSMXA/mPfYBnuyzJfMOFcFElTghR27sQ0mslFdNA=="
-export SPRING_PROFILES_ACTIVE=dev
-export SPRING_DATASOURCE_URL=jdbc:postgresql://ep-green-flower-anmsqzxh-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
-export SPRING_DATASOURCE_USERNAME=neondb_owner
-export SPRING_DATASOURCE_PASSWORD=npg_p3Nnmrd9PvhB
+# NU-AURA Backend — Local Development Startup Script
+# SETUP: Copy .env.example to .env in the project root and fill in all required values.
+# This script reads credentials from environment variables. Never hardcode secrets here.
+
+set -euo pipefail
+
+# Load .env file if it exists (project root or backend directory)
+if [ -f "../.env" ]; then
+  set -a; source "../.env"; set +a
+elif [ -f ".env" ]; then
+  set -a; source ".env"; set +a
+fi
+
+# Validate required environment variables
+: "${JWT_SECRET:?ERROR: JWT_SECRET is not set. Copy .env.example to .env and fill in values.}"
+: "${SPRING_DATASOURCE_URL:?ERROR: SPRING_DATASOURCE_URL is not set.}"
+: "${SPRING_DATASOURCE_USERNAME:?ERROR: SPRING_DATASOURCE_USERNAME is not set.}"
+: "${SPRING_DATASOURCE_PASSWORD:?ERROR: SPRING_DATASOURCE_PASSWORD is not set.}"
+: "${APP_SECURITY_ENCRYPTION_KEY:?ERROR: APP_SECURITY_ENCRYPTION_KEY is not set.}"
+
+export JWT_SECRET
+export SPRING_DATASOURCE_URL
+export SPRING_DATASOURCE_USERNAME
+export SPRING_DATASOURCE_PASSWORD
+export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-dev}"
 # Flyway uses direct (non-pooler) endpoint for migrations
-export SPRING_FLYWAY_URL=jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
-export SPRING_FLYWAY_USER=neondb_owner
-export SPRING_FLYWAY_PASSWORD=npg_p3Nnmrd9PvhB
-export SPRING_REDIS_HOST=localhost
-export SPRING_REDIS_PORT=6379
-export FRONTEND_URL=http://localhost:3000
+export SPRING_FLYWAY_URL="${SPRING_FLYWAY_URL:-${SPRING_DATASOURCE_URL}}"
+export SPRING_FLYWAY_USER="${SPRING_FLYWAY_USER:-${SPRING_DATASOURCE_USERNAME}}"
+export SPRING_FLYWAY_PASSWORD="${SPRING_FLYWAY_PASSWORD:-${SPRING_DATASOURCE_PASSWORD}}"
+export SPRING_REDIS_HOST="${SPRING_REDIS_HOST:-localhost}"
+export SPRING_REDIS_PORT="${SPRING_REDIS_PORT:-6379}"
+export FRONTEND_URL="${FRONTEND_URL:-http://localhost:3000}"
 # Local development: disable secure cookies (HTTP) and CSRF (for testing)
-export COOKIE_SECURE=false
-export CSRF_ENABLED=false
+export COOKIE_SECURE="${COOKIE_SECURE:-false}"
+export CSRF_ENABLED="${CSRF_ENABLED:-false}"
 # CORS allowed origins
-export APP_CORS_ALLOWED_ORIGINS="http://localhost:3000,http://localhost:3001,http://localhost:8080"
+export APP_CORS_ALLOWED_ORIGINS="${APP_CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001,http://localhost:8080}"
 # Encryption key for sensitive data (32 bytes)
-export APP_SECURITY_ENCRYPTION_KEY="0123456789ABCDEF0123456789ABCDEF"
-# AI / LLM Configuration (Groq free tier)
-export OPENAI_API_KEY="${OPENAI_API_KEY:-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}"
+export APP_SECURITY_ENCRYPTION_KEY
+# AI / LLM Configuration (optional)
+export OPENAI_API_KEY="${OPENAI_API_KEY:-}"
 export OPENAI_BASE_URL="${OPENAI_BASE_URL:-https://api.groq.com/openai/v1}"
 export OPENAI_MODEL="${OPENAI_MODEL:-llama-3.1-8b-instant}"
 
 echo "Checking for existing processes on port 8080..."
 # Kill any process running on port 8080
-PORT_PID=$(lsof -ti:8080)
+PORT_PID=$(lsof -ti:8080 || true)
 if [ -n "$PORT_PID" ]; then
   echo "Found process $PORT_PID on port 8080. Killing it..."
   kill -9 $PORT_PID
@@ -43,4 +62,22 @@ echo "Profile: $SPRING_PROFILES_ACTIVE"
 echo "Database: $SPRING_DATASOURCE_URL"
 echo ""
 
-mvn spring-boot:run -Dmaven.test.skip=true
+JAR_FILE="target/hrms-backend-1.0.0.jar"
+
+# Build only if JAR doesn't exist
+if [ ! -f "$JAR_FILE" ]; then
+  echo "JAR not found — building..."
+  mvn clean package -DskipTests -q
+fi
+
+# Fast-startup JVM flags for dev:
+#   -XX:TieredStopAtLevel=1  → skip C2 JIT (saves ~5-10s)
+#   -XX:+UseParallelGC       → faster GC during startup
+#   -Dspring.jmx.enabled=false → skip JMX bean registration
+#   -Dspring.devtools.restart.enabled=false → disable devtools restart classloader
+java \
+  -XX:TieredStopAtLevel=1 \
+  -XX:+UseParallelGC \
+  -Dspring.jmx.enabled=false \
+  -Dspring.devtools.restart.enabled=false \
+  -jar "$JAR_FILE"

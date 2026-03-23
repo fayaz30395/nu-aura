@@ -95,6 +95,11 @@ const AUTHENTICATED_ROUTES = [
   '/loans',
   '/org-chart',
   '/payments',
+  // QA5-001: Routes discovered during frontend code review — missing from protection list
+  '/holidays',
+  '/integrations',
+  '/team-directory',
+  '/security',
 ];
 
 // API routes and static assets to skip

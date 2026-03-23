@@ -130,28 +130,41 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Paginated inbox query with server-side filters.
      * Returns step executions assigned to the user, joined with their workflow execution.
      *
-     * BUG-017 FIX: Use LEFT JOIN instead of JOIN FETCH for pagination compatibility.
-     * JOIN FETCH is not compatible with pagination in Hibernate - it causes "cannot use FETCH with pagination" errors.
-     * LEFT JOIN allows lazy loading of workflowExecution without breaking pagination.
+     * BUG-017 FIX: Use JOIN (not JOIN FETCH) for pagination compatibility.
+     * JOIN FETCH causes "cannot use FETCH with pagination" in Hibernate.
+     * Plain JOIN works with pagination and is correct since workflowExecution is non-nullable.
      */
-    @Query("SELECT s FROM StepExecution s " +
-           "LEFT JOIN s.workflowExecution e " +
-           "WHERE s.tenantId = :tenantId " +
-           "AND s.assignedToUserId = :userId " +
-           "AND (:status IS NULL OR s.status = :status) " +
-           "AND (:entityType IS NULL OR e.entityType = :entityType) " +
-           "AND (:fromDate IS NULL OR e.submittedAt >= :fromDate) " +
-           "AND (:toDate IS NULL OR e.submittedAt <= :toDate) " +
-           "AND (:search IS NULL OR :search = '' " +
+    @Query(value = "SELECT s.* FROM step_executions s " +
+           "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
+           "WHERE s.tenant_id = :tenantId " +
+           "AND s.assigned_to_user_id = :userId " +
+           "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
+           "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +
+           "AND (CAST(:fromDate AS TIMESTAMP) IS NULL OR e.submitted_at >= :fromDate) " +
+           "AND (CAST(:toDate AS TIMESTAMP) IS NULL OR e.submitted_at <= :toDate) " +
+           "AND (CAST(:search AS VARCHAR) IS NULL OR :search = '' " +
            "     OR LOWER(e.title) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(e.requesterName) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(e.referenceNumber) LIKE LOWER(CONCAT('%', :search, '%'))) " +
-           "ORDER BY s.assignedAt DESC")
+           "     OR LOWER(e.requester_name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "     OR LOWER(e.reference_number) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+           "ORDER BY s.assigned_at DESC",
+           countQuery = "SELECT COUNT(s.id) FROM step_executions s " +
+           "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
+           "WHERE s.tenant_id = :tenantId " +
+           "AND s.assigned_to_user_id = :userId " +
+           "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
+           "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +
+           "AND (CAST(:fromDate AS TIMESTAMP) IS NULL OR e.submitted_at >= :fromDate) " +
+           "AND (CAST(:toDate AS TIMESTAMP) IS NULL OR e.submitted_at <= :toDate) " +
+           "AND (CAST(:search AS VARCHAR) IS NULL OR :search = '' " +
+           "     OR LOWER(e.title) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "     OR LOWER(e.requester_name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "     OR LOWER(e.reference_number) LIKE LOWER(CONCAT('%', :search, '%')))",
+           nativeQuery = true)
     Page<StepExecution> findInboxForUser(
             @Param("tenantId") UUID tenantId,
             @Param("userId") UUID userId,
-            @Param("status") StepExecution.StepStatus status,
-            @Param("entityType") com.hrms.domain.workflow.WorkflowDefinition.EntityType entityType,
+            @Param("status") String status,
+            @Param("entityType") String entityType,
             @Param("fromDate") LocalDateTime fromDate,
             @Param("toDate") LocalDateTime toDate,
             @Param("search") String search,

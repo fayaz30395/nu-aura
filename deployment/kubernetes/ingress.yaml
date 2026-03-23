@@ -29,25 +29,13 @@ metadata:
     # Health check path
     ingress.kubernetes.io/health-check-path: "/api/health"
 
-    # Rate limiting
-    nginx.ingress.kubernetes.io/limit-rps: "100"
-
-    # CORS
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-    # TODO: Replace with exact production subdomain once DNS is finalised (e.g. https://app.nulogic.io)
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.nulogic.io, https://localhost:3000"
-    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
-
-    # Security headers
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "X-Frame-Options: DENY";
-      more_set_headers "X-Content-Type-Options: nosniff";
-      more_set_headers "X-XSS-Protection: 1; mode=block";
-      more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
-      more_set_headers "Permissions-Policy: geolocation=(), microphone=(), camera=()";
-      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://accounts.google.com https://*.googleapis.com; frame-ancestors 'none';";
+    # NOTE: CORS, rate limiting, and security headers are handled by:
+    # - Cloud Armor security policy (WAF rules, rate limiting)
+    # - Spring Security backend (CORS, OWASP headers)
+    # - Next.js middleware (CSP, security headers at edge)
+    # NGINX ingress annotations were removed because GCE ingress is used.
 spec:
+  # TODO: Replace hrms.example.com and api.hrms.example.com with production domains before deployment
   tls:
   - secretName: hrms-tls
     hosts:

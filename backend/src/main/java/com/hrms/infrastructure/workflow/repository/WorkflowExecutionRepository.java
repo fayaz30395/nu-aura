@@ -19,7 +19,7 @@ public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecu
 
     Optional<WorkflowExecution> findByIdAndTenantId(UUID id, UUID tenantId);
 
-    Optional<WorkflowExecution> findByReferenceNumber(String referenceNumber);
+    Optional<WorkflowExecution> findByReferenceNumberAndTenantId(String referenceNumber, UUID tenantId);
 
     Page<WorkflowExecution> findByTenantId(UUID tenantId, Pageable pageable);
 

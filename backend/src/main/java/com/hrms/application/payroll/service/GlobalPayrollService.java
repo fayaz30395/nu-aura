@@ -43,7 +43,7 @@ public class GlobalPayrollService {
 
         @Transactional
         public CurrencyDto createCurrency(CurrencyDto request) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 if (currencyRepository.existsByCurrencyCodeAndTenantId(request.getCurrencyCode(), tenantId)) {
                         throw new IllegalArgumentException("Currency already exists: " + request.getCurrencyCode());
@@ -79,7 +79,7 @@ public class GlobalPayrollService {
 
         @Transactional(readOnly = true)
         public List<CurrencyDto> getActiveCurrencies() {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 return currencyRepository.findByTenantIdAndIsActiveTrue(tenantId).stream()
                                 .map(CurrencyDto::fromEntity)
                                 .collect(Collectors.toList());
@@ -87,7 +87,7 @@ public class GlobalPayrollService {
 
         @Transactional(readOnly = true)
         public CurrencyDto getBaseCurrency() {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 return currencyRepository.findBaseCurrency(tenantId)
                                 .map(CurrencyDto::fromEntity)
                                 .orElse(null);
@@ -97,7 +97,7 @@ public class GlobalPayrollService {
 
         @Transactional
         public ExchangeRateDto createExchangeRate(ExchangeRateDto request) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 ExchangeRate rate = ExchangeRate.builder()
                                 .fromCurrency(request.getFromCurrency().toUpperCase())
@@ -125,7 +125,7 @@ public class GlobalPayrollService {
 
         @Transactional(readOnly = true)
         public BigDecimal getExchangeRate(String fromCurrency, String toCurrency, LocalDate date) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 // If same currency, return 1
                 if (fromCurrency.equalsIgnoreCase(toCurrency)) {
@@ -158,7 +158,7 @@ public class GlobalPayrollService {
 
         @Transactional
         public PayrollLocationDto createLocation(PayrollLocationDto request) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 if (locationRepository.existsByLocationCodeAndTenantId(request.getLocationCode(), tenantId)) {
                         throw new IllegalArgumentException(
@@ -200,14 +200,14 @@ public class GlobalPayrollService {
 
         @Transactional(readOnly = true)
         public Page<PayrollLocationDto> getAllLocations(Pageable pageable) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 return locationRepository.findByTenantId(tenantId, pageable)
                                 .map(PayrollLocationDto::fromEntity);
         }
 
         @Transactional(readOnly = true)
         public List<PayrollLocationDto> getActiveLocations() {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 return locationRepository.findByTenantIdAndIsActiveTrue(tenantId).stream()
                                 .map(PayrollLocationDto::fromEntity)
                                 .collect(Collectors.toList());
@@ -218,7 +218,7 @@ public class GlobalPayrollService {
         @Transactional
         public GlobalPayrollRunDto createPayrollRun(LocalDate periodStart, LocalDate periodEnd,
                         LocalDate paymentDate, String description) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 String runCode = generateRunCode(periodStart);
 
@@ -249,7 +249,7 @@ public class GlobalPayrollService {
 
         @Transactional
         public GlobalPayrollRunDto processPayrollRun(UUID runId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 UUID currentUserId = SecurityContext.getCurrentUserId();
 
                 GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantId(runId, tenantId)
@@ -329,7 +329,7 @@ public class GlobalPayrollService {
 
         @Transactional
         public GlobalPayrollRunDto approvePayrollRun(UUID runId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 UUID currentUserId = SecurityContext.getCurrentUserId();
 
                 GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantId(runId, tenantId)
@@ -358,7 +358,7 @@ public class GlobalPayrollService {
 
         @Transactional(readOnly = true)
         public GlobalPayrollRunDto getPayrollRun(UUID runId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantId(runId, tenantId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found: " + runId));
@@ -393,7 +393,7 @@ public class GlobalPayrollService {
 
         @Transactional(readOnly = true)
         public Page<GlobalPayrollRunDto> getAllPayrollRuns(Pageable pageable) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 return payrollRunRepository.findByTenantId(tenantId, pageable)
                                 .map(GlobalPayrollRunDto::fromEntity);
         }
@@ -402,7 +402,7 @@ public class GlobalPayrollService {
 
         @Transactional
         public EmployeePayrollRecordDto addEmployeeToPayroll(UUID runId, EmployeePayrollRecordDto request) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantId(runId, tenantId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found: " + runId));
@@ -447,7 +447,7 @@ public class GlobalPayrollService {
 
         @Transactional(readOnly = true)
         public GlobalPayrollDashboard getDashboard() {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 int currentYear = Year.now().getValue();
 
                 // Get counts

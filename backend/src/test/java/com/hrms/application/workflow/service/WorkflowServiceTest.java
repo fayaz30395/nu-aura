@@ -134,7 +134,7 @@ class WorkflowServiceTest {
 
             Page<StepExecution> stepPage = new PageImpl<>(List.of(step), pageable, 1);
             when(stepExecutionRepository.findInboxForUser(
-                    eq(TENANT_ID), eq(USER_ID), eq(StepExecution.StepStatus.PENDING),
+                    eq(TENANT_ID), eq(USER_ID), eq("PENDING"),
                     isNull(), isNull(), isNull(), isNull(), eq(pageable)))
                     .thenReturn(stepPage);
 
@@ -147,7 +147,7 @@ class WorkflowServiceTest {
             assertThat(result.getTotalElements()).isEqualTo(1);
             assertThat(result.getContent()).hasSize(1);
             verify(stepExecutionRepository).findInboxForUser(
-                    TENANT_ID, USER_ID, StepExecution.StepStatus.PENDING,
+                    TENANT_ID, USER_ID, "PENDING",
                     null, null, null, null, pageable);
         }
 
@@ -177,8 +177,8 @@ class WorkflowServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<StepExecution> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
             when(stepExecutionRepository.findInboxForUser(
-                    eq(TENANT_ID), eq(USER_ID), eq(StepExecution.StepStatus.PENDING),
-                    eq(WorkflowDefinition.EntityType.LEAVE_REQUEST), isNull(), isNull(), isNull(), eq(pageable)))
+                    eq(TENANT_ID), eq(USER_ID), eq("PENDING"),
+                    eq("LEAVE_REQUEST"), isNull(), isNull(), isNull(), eq(pageable)))
                     .thenReturn(emptyPage);
 
             // When
@@ -186,8 +186,8 @@ class WorkflowServiceTest {
 
             // Then
             verify(stepExecutionRepository).findInboxForUser(
-                    TENANT_ID, USER_ID, StepExecution.StepStatus.PENDING,
-                    WorkflowDefinition.EntityType.LEAVE_REQUEST, null, null, null, pageable);
+                    TENANT_ID, USER_ID, "PENDING",
+                    "LEAVE_REQUEST", null, null, null, pageable);
         }
 
         @Test
@@ -197,7 +197,7 @@ class WorkflowServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<StepExecution> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
             when(stepExecutionRepository.findInboxForUser(
-                    eq(TENANT_ID), eq(USER_ID), eq(StepExecution.StepStatus.PENDING),
+                    eq(TENANT_ID), eq(USER_ID), eq("PENDING"),
                     isNull(), isNull(), isNull(), isNull(), eq(pageable)))
                     .thenReturn(emptyPage);
 
@@ -206,7 +206,7 @@ class WorkflowServiceTest {
 
             // Then - should pass null entityType (invalid module ignored)
             verify(stepExecutionRepository).findInboxForUser(
-                    TENANT_ID, USER_ID, StepExecution.StepStatus.PENDING,
+                    TENANT_ID, USER_ID, "PENDING",
                     null, null, null, null, pageable);
         }
 
@@ -221,7 +221,7 @@ class WorkflowServiceTest {
 
             Page<StepExecution> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
             when(stepExecutionRepository.findInboxForUser(
-                    eq(TENANT_ID), eq(USER_ID), eq(StepExecution.StepStatus.PENDING),
+                    eq(TENANT_ID), eq(USER_ID), eq("PENDING"),
                     isNull(), eq(fromDate), eq(toDate), eq("John"), eq(pageable)))
                     .thenReturn(emptyPage);
 
@@ -230,7 +230,7 @@ class WorkflowServiceTest {
 
             // Then
             verify(stepExecutionRepository).findInboxForUser(
-                    TENANT_ID, USER_ID, StepExecution.StepStatus.PENDING,
+                    TENANT_ID, USER_ID, "PENDING",
                     null, fromDate, toDate, "John", pageable);
         }
 
@@ -241,7 +241,7 @@ class WorkflowServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<StepExecution> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
             when(stepExecutionRepository.findInboxForUser(
-                    eq(TENANT_ID), eq(USER_ID), eq(StepExecution.StepStatus.PENDING),
+                    eq(TENANT_ID), eq(USER_ID), eq("PENDING"),
                     isNull(), isNull(), isNull(), isNull(), eq(pageable)))
                     .thenReturn(emptyPage);
 
@@ -250,7 +250,7 @@ class WorkflowServiceTest {
 
             // Then
             verify(stepExecutionRepository).findInboxForUser(
-                    TENANT_ID, USER_ID, StepExecution.StepStatus.PENDING,
+                    TENANT_ID, USER_ID, "PENDING",
                     null, null, null, null, pageable);
         }
 
@@ -264,7 +264,7 @@ class WorkflowServiceTest {
 
             Page<StepExecution> stepPage = new PageImpl<>(List.of(step), pageable, 12); // 12 total
             when(stepExecutionRepository.findInboxForUser(
-                    eq(TENANT_ID), eq(USER_ID), eq(StepExecution.StepStatus.PENDING),
+                    eq(TENANT_ID), eq(USER_ID), eq("PENDING"),
                     isNull(), isNull(), isNull(), isNull(), eq(pageable)))
                     .thenReturn(stepPage);
 

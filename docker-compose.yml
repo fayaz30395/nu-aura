@@ -131,8 +131,8 @@ services:
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      JWT_SECRET: ${JWT_SECRET:-TWkTl+dNYIi7savU25egqcV2235Nq+qVw/wksIV7Qg0=}
-      APP_SECURITY_ENCRYPTION_KEY: ${APP_SECURITY_ENCRYPTION_KEY:-local-dev-enc-key-change-in-prod-32b}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
+      APP_SECURITY_ENCRYPTION_KEY: ${APP_SECURITY_ENCRYPTION_KEY:?APP_SECURITY_ENCRYPTION_KEY must be set in .env}
       FRONTEND_URL: http://localhost:3000
     networks:
       - hrms_network

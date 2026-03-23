@@ -259,12 +259,19 @@ public class Employee extends TenantAware {
     }
 
     public String getFullName() {
-        StringBuilder name = new StringBuilder(firstName);
-        if (middleName != null)
-            name.append(" ").append(middleName);
-        if (lastName != null)
-            name.append(" ").append(lastName);
-        return name.toString();
+        StringBuilder name = new StringBuilder();
+        if (firstName != null) {
+            name.append(firstName);
+        }
+        if (middleName != null && !middleName.isEmpty()) {
+            if (name.length() > 0) name.append(" ");
+            name.append(middleName);
+        }
+        if (lastName != null && !lastName.isEmpty()) {
+            if (name.length() > 0) name.append(" ");
+            name.append(lastName);
+        }
+        return name.length() > 0 ? name.toString() : "";
     }
 
     public void terminate() {

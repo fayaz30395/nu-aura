@@ -60,7 +60,7 @@ public class EmployeeService {
         @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
     })
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         // Check if employee code already exists
         if (employeeRepository.existsByEmployeeCodeAndTenantId(request.getEmployeeCode(), tenantId)) {
@@ -148,7 +148,7 @@ public class EmployeeService {
         @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
     })
     public EmployeeResponse updateEmployee(UUID employeeId, UpdateEmployeeRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
@@ -368,7 +368,7 @@ public class EmployeeService {
     @Transactional(readOnly = true)
     @Cacheable(value = CacheConfig.EMPLOYEE_WITH_DETAILS, key = "#employeeId", unless = "#result == null")
     public EmployeeResponse getEmployee(UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
@@ -410,7 +410,7 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public Page<EmployeeResponse> getAllEmployees(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
 
         Page<Employee> employeePage = employeeRepository.findAllByTenantId(tenantId, pageable);
@@ -421,7 +421,7 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public Page<EmployeeResponse> searchEmployees(String search, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
 
         Page<Employee> employeePage = employeeRepository.searchEmployees(tenantId, search, pageable);
@@ -441,7 +441,7 @@ public class EmployeeService {
      */
     @Transactional(readOnly = true)
     public List<EmployeeResponse> getManagerEmployees() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Employee.EmployeeLevel> managerLevels = java.util.Arrays.asList(
                 Employee.EmployeeLevel.LEAD,
                 Employee.EmployeeLevel.MANAGER,
@@ -459,7 +459,7 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public List<EmployeeResponse> getSubordinates(UUID managerId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         List<Employee> subordinates = new ArrayList<>();
         employeeRepository.findAllByManagerId(tenantId, managerId)
@@ -472,7 +472,7 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public EmployeeResponse getEmployeeHierarchy(UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
@@ -520,7 +520,7 @@ public class EmployeeService {
      */
     @Transactional(readOnly = true)
     public List<EmployeeResponse> getDottedLineReports(UUID managerId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Employee> reports = employeeRepository.findDottedLineReportsByManagerId(tenantId, managerId);
         Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
         Map<UUID, String> empNames = buildEmployeeNameMap(reports);
@@ -536,7 +536,7 @@ public class EmployeeService {
 
     @Transactional
     public void deleteEmployee(UUID employeeId, String terminationReason) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
@@ -586,7 +586,7 @@ public class EmployeeService {
      */
     @Transactional(readOnly = true)
     public java.util.Optional<Employee> getEmployeeByUserId(UUID userId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return employeeRepository.findByUserIdAndTenantId(userId, tenantId);
     }
 

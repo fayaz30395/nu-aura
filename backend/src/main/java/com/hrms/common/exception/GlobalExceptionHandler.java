@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -119,9 +121,11 @@ public class GlobalExceptionHandler {
 
         logError("database", "data_integrity_violation", ex, status, path);
         recordErrorMetric("database", "data_integrity_violation", status);
+        // SECURITY: Log the full cause server-side but never expose DB internals to API consumers
+        log.error("Data integrity violation detail: {}", ex.getMostSpecificCause().getMessage());
 
         ErrorResponse errorResponse = buildErrorResponse(status, "Data Integrity Violation",
-                ex.getMostSpecificCause().getMessage(), path);
+                "A data conflict occurred. Please check your input and try again.", path);
         errorResponse.setErrorCode("DB_INTEGRITY_VIOLATION");
 
         return jsonResponse(status, errorResponse);
@@ -148,6 +152,27 @@ public class GlobalExceptionHandler {
                 "Invalid input parameters", path);
         errorResponse.setErrors(errors);
         errorResponse.setErrorCode("VALIDATION_FAILED");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
+     * CRIT-001 FIX: Handle JPA EntityNotFoundException (thrown by 37+ service methods).
+     * Without this handler, these exceptions fall through to the generic Exception handler
+     * and return HTTP 500 instead of the correct 404.
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(
+            EntityNotFoundException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        logError("resource", "entity_not_found", ex, status, path);
+        recordErrorMetric("resource", "entity_not_found", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Not Found", ex.getMessage(), path);
+        errorResponse.setErrorCode("ENTITY_NOT_FOUND");
 
         return jsonResponse(status, errorResponse);
     }

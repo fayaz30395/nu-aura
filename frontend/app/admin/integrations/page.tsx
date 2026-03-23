@@ -37,6 +37,7 @@ import {
   useTestPayment,
 } from '@/lib/hooks/queries/useIntegrations';
 import { useConnectors, useSaveConnectorConfig } from '@/lib/hooks/queries/useConnectors';
+import type { ConnectorConfigRequest } from '@/lib/types/connector';
 import { ConnectorCard } from '@/components/integrations/ConnectorCard';
 import { ConnectorConfigPanel } from '@/components/integrations/ConnectorConfigPanel';
 import { IntegrationActivityLog } from '@/components/integrations/IntegrationActivityLog';
@@ -172,7 +173,7 @@ export default function AdminIntegrationsPage() {
     });
   };
 
-  const handleSaveConnectorConfig = async (configData: any) => {
+  const handleSaveConnectorConfig = async (configData: ConnectorConfigRequest) => {
     if (!selectedConnectorId) return;
 
     saveConfigMutation.mutate(

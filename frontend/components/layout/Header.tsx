@@ -77,7 +77,8 @@ const Header: React.FC<HeaderProps> = ({
     <header
       className={cn(
         'sticky top-0 z-40 flex-shrink-0 border-b transition-all duration-150',
-        'h-16 bg-header border-header-border',
+        'h-16 border-header-border',
+        'glass-bg',
         className
       )}
     >
@@ -183,7 +184,7 @@ const Header: React.FC<HeaderProps> = ({
       {isMounted && isMobileSearchOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => setIsMobileSearchOpen(false)} />
-          <div className="absolute top-0 left-0 right-0 bg-dropdown border-b border-dropdown-border p-4 shadow-dropdown animate-fade-in-down">
+          <div className="absolute top-0 left-0 right-0 skeuo-glass border-b border-dropdown-border p-4 shadow-dropdown animate-fade-in-down rounded-b-xl">
             <GlobalSearch onSelect={() => setIsMobileSearchOpen(false)} autoFocus />
           </div>
         </div>
