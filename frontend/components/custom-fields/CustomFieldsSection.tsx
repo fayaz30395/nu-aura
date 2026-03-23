@@ -119,12 +119,12 @@ export default function CustomFieldsSection({
   if (loading) {
     return (
       <div className={`animate-pulse ${className}`}>
-        <div className="h-6 bg-gray-200 dark:bg-surface-700 rounded w-1/4 mb-4"></div>
+        <div className="h-6 bg-[var(--bg-surface)] rounded w-1/4 mb-4"></div>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i}>
-              <div className="h-4 bg-gray-200 dark:bg-surface-700 rounded w-1/3 mb-2"></div>
-              <div className="h-10 bg-gray-200 dark:bg-surface-700 rounded"></div>
+              <div className="h-4 bg-[var(--bg-surface)] rounded w-1/3 mb-2"></div>
+              <div className="h-10 bg-[var(--bg-surface)] rounded"></div>
             </div>
           ))}
         </div>

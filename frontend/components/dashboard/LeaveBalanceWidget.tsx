@@ -72,7 +72,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
         </div>
         <a
           href="/leaves"
-          className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)] hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
         >
           View All <ArrowRight className="h-3 w-3" />
         </a>
@@ -101,7 +101,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
               key={idx}
               onClick={() => setSelectedIndex(idx)}
               className={`h-1.5 rounded-full transition-all ${
-                idx === selectedIndex ? 'w-4 bg-gray-500 dark:bg-gray-400' : 'w-1.5 bg-gray-300 dark:bg-gray-600'
+                idx === selectedIndex ? 'w-4 bg-[var(--text-muted)]' : 'w-1.5 bg-[var(--border-main)]'
               }`}
             />
           ))}
@@ -118,7 +118,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
         </a>
         <a
           href="/leaves/balance"
-          className="block w-full rounded-lg border border-[var(--border-main)] py-2 text-center text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors dark:hover:bg-gray-900"
+          className="block w-full rounded-lg border border-[var(--border-main)] py-2 text-center text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors "
         >
           View All Balances
         </a>
