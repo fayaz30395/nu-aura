@@ -511,7 +511,7 @@ export default function ExpenseClaims() {
                   <option value="TRAVEL">Travel</option>
                   <option value="ACCOMMODATION">Accommodation</option>
                   <option value="MEALS">Meals</option>
-                  <option value="TRANSPORTATION">Transportation</option>
+                  <option value="TRANSPORT">Transportation</option>
                   <option value="OFFICE_SUPPLIES">Office Supplies</option>
                   <option value="EQUIPMENT">Equipment</option>
                   <option value="TRAINING">Training</option>
@@ -587,7 +587,7 @@ export default function ExpenseClaims() {
                   <option value="TRAVEL">Travel</option>
                   <option value="ACCOMMODATION">Accommodation</option>
                   <option value="MEALS">Meals</option>
-                  <option value="TRANSPORTATION">Transportation</option>
+                  <option value="TRANSPORT">Transportation</option>
                   <option value="OFFICE_SUPPLIES">Office Supplies</option>
                   <option value="EQUIPMENT">Equipment</option>
                   <option value="TRAINING">Training</option>

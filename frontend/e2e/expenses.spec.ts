@@ -208,7 +208,7 @@ test.describe('Expenses - Create Claim', () => {
       await page.waitForTimeout(1000);
 
       // Look for category options
-      const categories = ['TRAVEL', 'MEALS', 'ACCOMMODATION', 'TRANSPORTATION', 'EQUIPMENT'];
+      const categories = ['TRAVEL', 'MEALS', 'ACCOMMODATION', 'TRANSPORT', 'EQUIPMENT'];
       let hasCategory = false;
 
       for (const cat of categories) {

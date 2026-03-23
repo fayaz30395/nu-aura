@@ -82,10 +82,11 @@ public class ExpenseClaimController {
     @RequiresPermission(Permission.EXPENSE_MANAGE)
     public ResponseEntity<ExpenseClaimResponse> markAsPaid(
             @PathVariable UUID claimId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate,
             @NotBlank @Size(max = 255) @RequestParam String paymentReference) {
+        LocalDate effectiveDate = paymentDate != null ? paymentDate : LocalDate.now();
         log.info("Marking expense claim as paid: {}", claimId);
-        return ResponseEntity.ok(expenseClaimService.markAsPaid(claimId, paymentDate, paymentReference));
+        return ResponseEntity.ok(expenseClaimService.markAsPaid(claimId, effectiveDate, paymentReference));
     }
 
     @PostMapping("/{claimId}/cancel")
@@ -94,6 +95,28 @@ public class ExpenseClaimController {
         log.info("Cancelling expense claim: {}", claimId);
         expenseClaimService.cancelExpenseClaim(claimId);
         return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{claimId}")
+    @RequiresPermission(Permission.EXPENSE_CREATE)
+    public ResponseEntity<Void> deleteExpenseClaim(@PathVariable UUID claimId) {
+        log.info("Deleting expense claim: {}", claimId);
+        expenseClaimService.deleteExpenseClaim(claimId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/statistics/{employeeId}")
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
+    public ResponseEntity<Map<String, Object>> getEmployeeStatistics(
+            @PathVariable UUID employeeId,
+            @RequestParam(required = false) Integer year) {
+        log.info("Getting expense statistics for employee: {}", employeeId);
+        return ResponseEntity.ok(expenseClaimService.getEmployeeStatistics(employeeId, year));
     }
 
     @GetMapping("/{claimId}")

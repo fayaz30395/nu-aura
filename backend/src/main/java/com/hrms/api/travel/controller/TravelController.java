@@ -89,6 +89,14 @@ public class TravelController {
         return ResponseEntity.ok(travelService.cancelRequest(id));
     }
 
+    @DeleteMapping("/requests/{id}")
+    @RequiresPermission(Permission.TRAVEL_CREATE)
+    @Operation(summary = "Delete travel request", description = "Delete a draft travel request")
+    public ResponseEntity<Void> deleteRequest(@PathVariable UUID id) {
+        travelService.deleteRequest(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/requests/my")
     @RequiresPermission(Permission.TRAVEL_VIEW)
     @Operation(summary = "Get my travel requests", description = "Get current user's travel requests")

@@ -4,21 +4,25 @@ export type ExpenseCategory =
   | 'TRAVEL'
   | 'ACCOMMODATION'
   | 'MEALS'
-  | 'TRANSPORTATION'
+  | 'TRANSPORT'
   | 'OFFICE_SUPPLIES'
   | 'EQUIPMENT'
+  | 'SOFTWARE'
   | 'TRAINING'
   | 'COMMUNICATION'
   | 'ENTERTAINMENT'
   | 'MEDICAL'
+  | 'RELOCATION'
   | 'OTHER';
 
 export type ExpenseStatus =
   | 'DRAFT'
   | 'SUBMITTED'
+  | 'PENDING_APPROVAL'
   | 'APPROVED'
   | 'REJECTED'
-  | 'PAID';
+  | 'PAID'
+  | 'CANCELLED';
 
 export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'INR';
 

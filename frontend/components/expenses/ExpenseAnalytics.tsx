@@ -44,13 +44,15 @@ const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
   TRAVEL: '#3b82f6',
   ACCOMMODATION: '#8b5cf6',
   MEALS: '#f59e0b',
-  TRANSPORTATION: '#10b981',
+  TRANSPORT: '#10b981',
   OFFICE_SUPPLIES: '#6366f1',
   EQUIPMENT: '#ec4899',
+  SOFTWARE: '#14b8a6',
   TRAINING: '#3e63dd',
   COMMUNICATION: '#f97316',
   ENTERTAINMENT: '#a855f7',
   MEDICAL: '#ef4444',
+  RELOCATION: '#d946ef',
   OTHER: '#6b7280',
 };
 
@@ -58,13 +60,15 @@ const CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   TRAVEL: 'Travel',
   ACCOMMODATION: 'Accommodation',
   MEALS: 'Meals',
-  TRANSPORTATION: 'Transportation',
+  TRANSPORT: 'Transportation',
   OFFICE_SUPPLIES: 'Office Supplies',
   EQUIPMENT: 'Equipment',
+  SOFTWARE: 'Software',
   TRAINING: 'Training',
   COMMUNICATION: 'Communication',
   ENTERTAINMENT: 'Entertainment',
   MEDICAL: 'Medical',
+  RELOCATION: 'Relocation',
   OTHER: 'Other',
 };
 
