@@ -114,12 +114,12 @@ export default function AdminLeaveRequestsPage() {
 
   const getStatusColor = (status: LeaveRequestStatus) => {
     const colors = {
-      PENDING: 'bg-yellow-100 text-yellow-800',
-      APPROVED: 'bg-green-100 text-green-800',
-      REJECTED: 'bg-red-100 text-red-800',
-      CANCELLED: 'bg-[var(--bg-surface)] text-gray-800',
+      PENDING: 'badge-status status-warning',
+      APPROVED: 'badge-status status-success',
+      REJECTED: 'badge-status status-danger',
+      CANCELLED: 'badge-status status-neutral',
     };
-    return colors[status] || 'bg-[var(--bg-surface)] text-gray-800';
+    return colors[status] || 'badge-status status-neutral';
   };
 
   const formatDate = (dateString: string) => {
@@ -147,7 +147,7 @@ export default function AdminLeaveRequestsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Leave Request Management</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Leave Request Management</h1>
           <p className="mt-2 text-[var(--text-secondary)]">Review and process employee leave requests</p>
         </div>
 
@@ -175,9 +175,9 @@ export default function AdminLeaveRequestsPage() {
         </div>
 
         {/* Leave Requests Table */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
-            <thead className="bg-[var(--bg-secondary)]/50">
+        <div className="card-aura overflow-hidden">
+          <table className="table-aura">
+            <thead className="skeuo-table-header">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
                   Request #
@@ -289,7 +289,7 @@ export default function AdminLeaveRequestsPage() {
                 value={approvalComments}
                 onChange={(e) => setApprovalComments(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Add any comments..."
               />
             </div>
@@ -307,7 +307,7 @@ export default function AdminLeaveRequestsPage() {
               </button>
               <button
                 onClick={handleApprove}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                className="btn-primary px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
                 disabled={approveMutation.isPending}
               >
                 {approveMutation.isPending ? 'Approving...' : 'Approve'}
@@ -333,7 +333,7 @@ export default function AdminLeaveRequestsPage() {
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Explain why this request is being rejected..."
                 required
               />
@@ -352,7 +352,7 @@ export default function AdminLeaveRequestsPage() {
               </button>
               <button
                 onClick={handleReject}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+                className="btn-secondary px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
                 disabled={rejectMutation.isPending || !rejectionReason.trim()}
               >
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}

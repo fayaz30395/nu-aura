@@ -550,8 +550,8 @@ function CandidatesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Candidates</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Track and manage candidate applications</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Candidates</h1>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track and manage candidate applications</p>
           </div>
           <div className="flex gap-2">
             <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
@@ -614,8 +614,8 @@ function CandidatesPage() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-[var(--bg-secondary)]/50">
+                <table className="w-full table-aura">
+                  <thead className="skeuo-table-header">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job</th>

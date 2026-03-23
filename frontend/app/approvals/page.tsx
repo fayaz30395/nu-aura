@@ -56,26 +56,26 @@ function getStatusConfig(status: string) {
   switch (status) {
     case 'PENDING':
       return {
-        bg: 'bg-amber-100 dark:bg-amber-900/30',
-        text: 'text-amber-700 dark:text-amber-400',
+        bg: 'badge-status status-warning',
+        text: '',
         icon: Clock,
       };
     case 'APPROVED':
       return {
-        bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-        text: 'text-emerald-700 dark:text-emerald-400',
+        bg: 'badge-status status-success',
+        text: '',
         icon: CheckCircle,
       };
     case 'REJECTED':
       return {
-        bg: 'bg-red-100 dark:bg-red-900/30',
-        text: 'text-red-700 dark:text-red-400',
+        bg: 'badge-status status-danger',
+        text: '',
         icon: XCircle,
       };
     default:
       return {
-        bg: 'bg-[var(--bg-secondary)]',
-        text: 'text-[var(--text-secondary)]',
+        bg: 'badge-status status-neutral',
+        text: '',
         icon: AlertCircle,
       };
   }
@@ -128,14 +128,14 @@ function ApprovalCard({ approval, onApprove, onReject, isLoading }: {
                 <Button
                   onClick={() => onApprove(approval.id)}
                   isLoading={isLoading}
-                  className="h-9 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white border-0"
+                  className="btn-primary h-9 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white border-0"
                 >
                   Approve
                 </Button>
                 <Button
                   onClick={() => onReject(approval.id)}
                   isLoading={isLoading}
-                  className="h-9 px-3 text-xs bg-red-600 hover:bg-red-700 text-white border-0"
+                  className="btn-secondary h-9 px-3 text-xs bg-red-600 hover:bg-red-700 text-white border-0"
                 >
                   Reject
                 </Button>

@@ -31,15 +31,15 @@ export const CandidateStats = memo(function CandidateStats({
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {cards.map(card => (
-        <Card key={card.label} className="bg-[var(--bg-card)]">
+        <Card key={card.label} className="skeuo-card">
           <CardContent className="p-5">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 relative z-10">
               <div className={`w-12 h-12 rounded-xl ${card.bg} flex items-center justify-center`}>
                 <Users className={`h-6 w-6 ${card.text}`} />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">{card.label}</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">{card.value}</p>
+                <p className="text-sm text-[var(--text-muted)] skeuo-deboss">{card.label}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{card.value}</p>
               </div>
             </div>
           </CardContent>

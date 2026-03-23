@@ -110,10 +110,10 @@ export default function PayslipsPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
                   Payslips
                 </h1>
-                <p className="text-[var(--text-secondary)] mt-2">
+                <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
                   View and download employee payslips
                 </p>
               </div>
@@ -144,7 +144,7 @@ export default function PayslipsPage() {
           )}
 
           {/* Filters */}
-          <div className="mb-6 bg-[var(--bg-card)] rounded-lg shadow-md p-6">
+          <div className="mb-6 skeuo-card rounded-lg p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Search */}
               <div>
@@ -158,7 +158,7 @@ export default function PayslipsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Employee name..."
-                    className="w-full pl-10 pr-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                    className="input-aura w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function PayslipsPage() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">All Months</option>
                   {getMonthOptions().map(option => (
@@ -190,7 +190,7 @@ export default function PayslipsPage() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">All Years</option>
                   {[2024, 2023, 2022, 2021, 2020].map(year => (
@@ -209,7 +209,7 @@ export default function PayslipsPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as PayslipStatus)}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="ALL">All Status</option>
                   <option value="DRAFT">Draft</option>
@@ -234,7 +234,7 @@ export default function PayslipsPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
             </div>
           ) : filteredPayslips.length === 0 ? (
-            <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-12 text-center">
+            <div className="card-aura rounded-lg p-12 text-center">
               <div className="text-[var(--text-secondary)] mb-4">
                 No payslips found for the selected filters
               </div>

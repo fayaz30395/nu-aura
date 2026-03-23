@@ -206,13 +206,13 @@ export default function MyLeavesPage() {
   const getStatusColor = (status: LeaveRequestStatus) => {
     switch (status) {
       case 'APPROVED':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        return 'badge-status status-success';
       case 'REJECTED':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        return 'badge-status status-danger';
       case 'CANCELLED':
-        return 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200';
+        return 'badge-status status-neutral';
       default:
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        return 'badge-status status-warning';
     }
   };
 
@@ -424,7 +424,7 @@ export default function MyLeavesPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
-                    className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 skeuo-input"
+                    className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="PENDING">Pending</option>
@@ -436,7 +436,7 @@ export default function MyLeavesPage() {
                 <select
                   value={leaveTypeFilter}
                   onChange={(e) => setLeaveTypeFilter(e.target.value)}
-                  className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 skeuo-input"
+                  className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
                   <option value="ALL">All Leave Types</option>
                   {leaveTypes.map((type) => (
@@ -488,7 +488,7 @@ export default function MyLeavesPage() {
                 {filteredLeaveRequests.map((request) => (
                   <div
                     key={request.id}
-                    className="p-6 border border-slate-200 dark:border-slate-700 rounded-lg hover:shadow-md transition-shadow"
+                    className="card-aura p-6 rounded-lg hover:shadow-md transition-shadow"
                   >
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">

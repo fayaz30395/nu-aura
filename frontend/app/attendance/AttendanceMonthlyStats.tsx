@@ -33,7 +33,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.06 }}
         >
-          <Card className="card-interactive border border-[var(--border-main)] hover:shadow-lg transition-all">
+          <Card className="skeuo-card card-interactive border border-[var(--border-main)] hover:shadow-lg transition-all">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}>
@@ -43,8 +43,8 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
                   <span className="text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full">/ {stat.total}</span>
                 )}
               </div>
-              <div className={`text-stat-large tabular-nums ${stat.textColor}`}>{stat.value}</div>
-              <div className="text-xs font-semibold text-[var(--text-secondary)] mt-1">{stat.label}</div>
+              <div className={`text-stat-large tabular-nums ${stat.textColor} skeuo-emboss`}>{stat.value}</div>
+              <div className="text-xs font-semibold text-[var(--text-secondary)] mt-1 skeuo-deboss">{stat.label}</div>
             </CardContent>
           </Card>
         </motion.div>

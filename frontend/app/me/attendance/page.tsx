@@ -157,21 +157,21 @@ export default function MyAttendancePage() {
   const getStatusColor = (status: AttendanceStatus) => {
     switch (status) {
       case 'PRESENT':
-        return 'bg-green-100 text-green-800';
+        return 'badge-status status-success';
       case 'ABSENT':
-        return 'bg-red-100 text-red-800';
+        return 'badge-status status-danger';
       case 'HALF_DAY':
-        return 'bg-orange-100 text-orange-800';
+        return 'badge-status status-warning';
       case 'ON_LEAVE':
-        return 'bg-blue-100 text-blue-800';
+        return 'badge-status status-info';
       case 'WEEKLY_OFF':
-        return 'bg-slate-100 text-slate-800';
+        return 'badge-status status-neutral';
       case 'HOLIDAY':
-        return 'bg-purple-100 text-purple-800';
+        return 'badge-status status-info';
       case 'PENDING_REGULARIZATION':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'badge-status status-warning';
       default:
-        return 'bg-slate-100 text-slate-800';
+        return 'badge-status status-neutral';
     }
   };
 
@@ -298,11 +298,11 @@ export default function MyAttendancePage() {
         )}
 
         {/* Check-in/Check-out Card */}
-        <Card>
+        <Card className="skeuo-card">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">Today&apos;s Status</h3>
+                <h3 className="text-lg font-semibold text-slate-900 skeuo-emboss">Today&apos;s Status</h3>
                 {todayAttendance && (
                   <div className="mt-2 space-y-1">
                     <p className="text-sm text-slate-600">
@@ -365,12 +365,12 @@ export default function MyAttendancePage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">Present Days</p>
-                  <p className="text-3xl font-bold text-green-600 mt-2">{monthStats.present}</p>
+                  <p className="text-sm text-slate-600 skeuo-deboss">Present Days</p>
+                  <p className="text-3xl font-bold text-green-600 mt-2 skeuo-emboss">{monthStats.present}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-green-600" />
@@ -379,12 +379,12 @@ export default function MyAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">Absent Days</p>
-                  <p className="text-3xl font-bold text-red-600 mt-2">{monthStats.absent}</p>
+                  <p className="text-sm text-slate-600 skeuo-deboss">Absent Days</p>
+                  <p className="text-3xl font-bold text-red-600 mt-2 skeuo-emboss">{monthStats.absent}</p>
                 </div>
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                   <XCircle className="h-6 w-6 text-red-600" />
@@ -393,12 +393,12 @@ export default function MyAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">On Leave</p>
-                  <p className="text-3xl font-bold text-blue-600 mt-2">{monthStats.leave}</p>
+                  <p className="text-sm text-slate-600 skeuo-deboss">On Leave</p>
+                  <p className="text-3xl font-bold text-blue-600 mt-2 skeuo-emboss">{monthStats.leave}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                   <Coffee className="h-6 w-6 text-blue-600" />
@@ -407,12 +407,12 @@ export default function MyAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">Avg. Hours/Day</p>
-                  <p className="text-3xl font-bold text-purple-600 mt-2">
+                  <p className="text-sm text-slate-600 skeuo-deboss">Avg. Hours/Day</p>
+                  <p className="text-3xl font-bold text-purple-600 mt-2 skeuo-emboss">
                     {monthStats.avgHours.toFixed(1)}
                   </p>
                 </div>
@@ -426,7 +426,7 @@ export default function MyAttendancePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           {/* Calendar */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 card-aura">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
@@ -503,7 +503,7 @@ export default function MyAttendancePage() {
           </Card>
 
           {/* Attendance Details */}
-          <Card>
+          <Card className="card-aura">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
@@ -651,8 +651,8 @@ export default function MyAttendancePage() {
       {/* Regularization Modal */}
       {showRegularizationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">
+          <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-md card-aura">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
               Request Regularization
             </h3>
             <div className="mb-4">
