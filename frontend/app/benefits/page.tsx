@@ -549,7 +549,7 @@ export default function BenefitsPage() {
                 </h2>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {benefits.filter((b) => b.isEnrolled).map((benefit) => (
-                    <Card key={benefit.id} className="hover:shadow-lg transition-shadow">
+                    <Card key={benefit.id} className="card-interactive">
                       <CardContent className="p-4">
                         <div className="flex items-start gap-4">
                           <div className={`rounded-lg p-4 ${getBenefitColor(benefit.type)}`}>
@@ -560,7 +560,7 @@ export default function BenefitsPage() {
                               <h3 className="font-semibold text-[var(--text-primary)]">
                                 {benefit.name}
                               </h3>
-                              <Badge variant="success">Enrolled</Badge>
+                              <span className="badge-status status-success">Enrolled</span>
                             </div>
                             <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                               {benefit.description}
@@ -594,7 +594,7 @@ export default function BenefitsPage() {
                 </h2>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {benefits.filter((b) => !b.isEnrolled).map((benefit) => (
-                    <Card key={benefit.id} className="hover:shadow-lg transition-shadow border-dashed">
+                    <Card key={benefit.id} className="card-interactive border-dashed">
                       <CardContent className="p-4">
                         <div className="flex items-start gap-4">
                           <div className={`rounded-lg p-4 ${getBenefitColor(benefit.type)} opacity-60`}>
@@ -605,7 +605,7 @@ export default function BenefitsPage() {
                               <h3 className="font-semibold text-[var(--text-primary)]">
                                 {benefit.name}
                               </h3>
-                              <Badge variant="default">Available</Badge>
+                              <span className="badge-status status-info">Available</span>
                             </div>
                             <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                               {benefit.description}
@@ -674,15 +674,15 @@ export default function BenefitsPage() {
               </Card>
             ) : (
               enrollments.map((enrollment) => (
-                <Card key={enrollment.id}>
+                <Card key={enrollment.id} className="card-aura">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{enrollment.benefitPlanName}</h3>
-                          <Badge variant={enrollment.status === 'ACTIVE' ? 'success' : 'default'}>
+                          <span className={`badge-status ${enrollment.status === 'ACTIVE' ? 'status-success' : 'status-neutral'}`}>
                             {enrollment.status}
-                          </Badge>
+                          </span>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
@@ -750,13 +750,13 @@ export default function BenefitsPage() {
               </Card>
             ) : (
               claims.map((claim) => (
-                <Card key={claim.id}>
+                <Card key={claim.id} className="card-aura">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${claimStatusColors[claim.status] || ''}`}>
+                          <span className={`badge-status ${claim.status === 'APPROVED' || claim.status === 'PAID' ? 'status-success' : claim.status === 'REJECTED' ? 'status-danger' : claim.status === 'UNDER_REVIEW' || claim.status === 'APPEALED' ? 'status-warning' : 'status-info'}`}>
                             {claim.status}
                           </span>
                         </div>
@@ -788,7 +788,7 @@ export default function BenefitsPage() {
                         )}
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-[var(--text-primary)]">
+                        <div className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                           ${claim.claimAmount.toFixed(2)}
                         </div>
                       </div>
@@ -844,15 +844,15 @@ export default function BenefitsPage() {
                 </p>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)]">Monthly Premium</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <div className="p-4 skeuo-card rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] skeuo-deboss">Monthly Premium</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                       ${selectedBenefit.monthlyPremium.toLocaleString()}
                     </p>
                   </div>
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)]">Coverage Amount</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <div className="p-4 skeuo-card rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] skeuo-deboss">Coverage Amount</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                       ${selectedBenefit.coverage.toLocaleString()}
                     </p>
                   </div>
@@ -866,7 +866,7 @@ export default function BenefitsPage() {
                         Coverage Level
                       </label>
                       <select
-                        className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                        className="w-full input-aura rounded-lg p-2"
                         {...registerEnrollment('coverageLevel')}
                       >
                         <option value="EMPLOYEE_ONLY">Employee Only</option>
@@ -884,7 +884,7 @@ export default function BenefitsPage() {
                       </label>
                       <input
                         type="date"
-                        className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                        className="w-full input-aura rounded-lg p-2"
                         {...registerEnrollment('effectiveDate')}
                       />
                       {enrollmentErrors.effectiveDate && <span className="text-red-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
@@ -939,7 +939,7 @@ export default function BenefitsPage() {
                   Benefit Plan
                 </label>
                 <select
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="w-full input-aura rounded-lg p-2"
                   {...registerClaim('enrollmentId')}
                 >
                   <option value="">Select a plan</option>
@@ -957,7 +957,7 @@ export default function BenefitsPage() {
                   Claim Type
                 </label>
                 <select
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="w-full input-aura rounded-lg p-2"
                   {...registerClaim('claimType')}
                 >
                   <option value="MEDICAL">Medical</option>
@@ -976,7 +976,7 @@ export default function BenefitsPage() {
                   </label>
                   <input
                     type="date"
-                    className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                    className="w-full input-aura rounded-lg p-2"
                     {...registerClaim('serviceDate')}
                   />
                   {claimErrors.serviceDate && <span className="text-red-500 text-sm">{claimErrors.serviceDate.message}</span>}
@@ -989,7 +989,7 @@ export default function BenefitsPage() {
                     type="number"
                     step="0.01"
                     min="0"
-                    className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                    className="w-full input-aura rounded-lg p-2"
                     placeholder="0.00"
                     {...registerClaim('claimAmount')}
                   />
@@ -1003,7 +1003,7 @@ export default function BenefitsPage() {
                 </label>
                 <input
                   type="text"
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="w-full input-aura rounded-lg p-2"
                   placeholder="Doctor/Hospital name"
                   {...registerClaim('serviceProvider')}
                 />
@@ -1015,7 +1015,7 @@ export default function BenefitsPage() {
                   Description
                 </label>
                 <textarea
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="w-full input-aura rounded-lg p-2"
                   rows={3}
                   placeholder="Describe the service/treatment..."
                   {...registerClaim('description')}
@@ -1028,7 +1028,7 @@ export default function BenefitsPage() {
                 </label>
                 <input
                   type="url"
-                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
+                  className="w-full input-aura rounded-lg p-2"
                   placeholder="https://..."
                   {...registerClaim('receiptUrl')}
                 />

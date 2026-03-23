@@ -95,7 +95,7 @@ export function ViewProgramModal({
                   {enrollments.map((enrollment) => (
                     <div
                       key={enrollment.id}
-                      className="flex items-center justify-between p-2 bg-[var(--bg-secondary)] rounded-lg"
+                      className="flex items-center justify-between p-2 card-aura rounded-lg"
                     >
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">

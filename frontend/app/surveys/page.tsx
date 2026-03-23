@@ -275,67 +275,67 @@ export default function SurveysPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <ClipboardList className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Surveys</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Surveys</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Active</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.active}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Active</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-[var(--bg-surface)] p-4 dark:bg-[var(--bg-secondary)]">
                   <FileText className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Drafts</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Drafts</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.draft}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <CheckCircle className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Users className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Responses</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalResponses}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Responses</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalResponses}</p>
                 </div>
               </div>
             </CardContent>
@@ -343,7 +343,7 @@ export default function SurveysPage() {
         </div>
 
         {/* Filters */}
-        <Card>
+        <Card className="card-aura">
           <CardContent className="p-4">
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="relative flex-1">
@@ -353,13 +353,13 @@ export default function SurveysPage() {
                   placeholder="Search surveys..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 input-aura"
                 />
               </div>
               <Select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full sm:w-40"
+                className="w-full sm:w-40 input-aura"
               >
                 <option value="">All Status</option>
                 {statusOptions.map((option) => (
@@ -371,7 +371,7 @@ export default function SurveysPage() {
               <Select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full sm:w-40"
+                className="w-full sm:w-40 input-aura"
               >
                 <option value="">All Types</option>
                 {surveyTypeOptions.map((option) => (
@@ -410,7 +410,7 @@ export default function SurveysPage() {
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredSurveys.map((survey) => (
-              <Card key={survey.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card key={survey.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
                   <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 text-white">
                     <div className="flex items-start justify-between">
@@ -425,11 +425,11 @@ export default function SurveysPage() {
                   </div>
                   <div className="p-4 space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(survey.surveyType)}`}>
+                      <span className="badge-status status-info">
                         {survey.surveyType}
                       </span>
                       {survey.isAnonymous && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-200">
+                        <span className="badge-status status-neutral">
                           Anonymous
                         </span>
                       )}
@@ -549,6 +549,7 @@ export default function SurveysPage() {
                   <Input
                     {...register('surveyCode')}
                     placeholder="e.g., SRV-2024-001"
+                    className="input-aura"
                   />
                   {errors.surveyCode && (
                     <p className="mt-1 text-sm text-red-600">{errors.surveyCode.message}</p>
@@ -578,6 +579,7 @@ export default function SurveysPage() {
                   <Input
                     {...register('title')}
                     placeholder="Enter survey title"
+                    className="input-aura"
                   />
                   {errors.title && (
                     <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>

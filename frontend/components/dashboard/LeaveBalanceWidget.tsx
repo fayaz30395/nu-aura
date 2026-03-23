@@ -64,11 +64,11 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
   const current = balances[selectedIndex];
 
   return (
-    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+    <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
+          <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
         </div>
         <a
           href="/leaves"

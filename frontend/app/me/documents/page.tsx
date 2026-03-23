@@ -246,7 +246,7 @@ export default function MyDocumentsPage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Card padding="md">
+          <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                 <Clock className="h-5 w-5" />
@@ -259,7 +259,7 @@ export default function MyDocumentsPage() {
               </div>
             </div>
           </Card>
-          <Card padding="md">
+          <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
                 <AlertCircle className="h-5 w-5" />
@@ -272,7 +272,7 @@ export default function MyDocumentsPage() {
               </div>
             </div>
           </Card>
-          <Card padding="md">
+          <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                 <CheckCircle className="h-5 w-5" />
@@ -285,7 +285,7 @@ export default function MyDocumentsPage() {
               </div>
             </div>
           </Card>
-          <Card padding="md">
+          <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                 <FileText className="h-5 w-5" />
@@ -309,7 +309,7 @@ export default function MyDocumentsPage() {
         ) : (
           <div className="space-y-4">
             {requests.map((request) => (
-              <Card key={request.id} hover>
+              <Card key={request.id} hover className="card-aura">
                 <CardContent>
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* Icon and Status */}
@@ -324,7 +324,13 @@ export default function MyDocumentsPage() {
                           {request.documentTypeDisplayName}
                         </h3>
                         <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_CONFIG[request.status].bgColor} ${STATUS_CONFIG[request.status].color}`}>
+                          <span className={`badge-status gap-1.5 ${
+                            request.status === 'PENDING' ? 'status-warning'
+                            : request.status === 'IN_PROGRESS' ? 'status-info'
+                            : request.status === 'GENERATED' || request.status === 'DELIVERED' ? 'status-success'
+                            : request.status === 'REJECTED' ? 'status-danger'
+                            : 'status-neutral'
+                          }`}>
                             {STATUS_CONFIG[request.status].icon}
                             {request.statusDisplayName}
                           </span>
@@ -392,7 +398,7 @@ export default function MyDocumentsPage() {
                 </label>
                 <select
                   {...register('documentType')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                 >
                   {documentTypeOptions.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -414,7 +420,7 @@ export default function MyDocumentsPage() {
                   {...register('purpose')}
                   placeholder="Why do you need this document?"
                   rows={3}
-                  className={`w-full px-3 py-2 border ${errors.purpose ? 'border-red-500' : 'border-[var(--border-main)]'} dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]`}
+                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.purpose ? 'border-red-500' : ''}`}
                 />
                 {errors.purpose && (
                   <p className="mt-1 text-xs text-red-500">{errors.purpose.message}</p>
@@ -430,7 +436,7 @@ export default function MyDocumentsPage() {
                   type="text"
                   {...register('addressedTo')}
                   placeholder="e.g., Immigration Department, Bank Name"
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                 />
               </div>
 
@@ -443,7 +449,7 @@ export default function MyDocumentsPage() {
                   type="date"
                   {...register('requiredByDate')}
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className={`w-full px-3 py-2 border ${errors.requiredByDate ? 'border-red-500' : 'border-[var(--border-main)]'} dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]`}
+                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.requiredByDate ? 'border-red-500' : ''}`}
                 />
                 {errors.requiredByDate && (
                   <p className="mt-1 text-xs text-red-500">{errors.requiredByDate.message}</p>
@@ -482,7 +488,7 @@ export default function MyDocumentsPage() {
                     {...register('deliveryAddress')}
                     placeholder="Enter delivery address"
                     rows={2}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                 </div>
               )}
@@ -494,7 +500,7 @@ export default function MyDocumentsPage() {
                 </label>
                 <select
                   {...register('priority', { valueAsNumber: true })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                 >
                   <option value={1}>High - Urgent</option>
                   <option value={2}>Normal</option>

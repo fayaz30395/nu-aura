@@ -203,7 +203,7 @@ export default function MyDashboardPage() {
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
         <div className="text-center py-12">
           <User className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+          <h2 className="skeuo-emboss text-xl font-semibold text-[var(--text-primary)] mb-2">
             No Employee Profile Linked
           </h2>
           <p className="text-[var(--text-muted)] max-w-md mx-auto">

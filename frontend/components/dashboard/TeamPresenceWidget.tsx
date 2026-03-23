@@ -82,10 +82,10 @@ export function TeamPresenceWidget({
     ?? (apiRemote ? apiRemote.map(mapRemoteToPresence) : []);
 
   return (
-    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+    <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
       {/* On Leave Today */}
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2.5">
+        <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-2.5">
           On Leave Today
         </h3>
         {onLeaveLoading && !propOnLeave ? (
@@ -111,7 +111,7 @@ export function TeamPresenceWidget({
       <div className="border-t border-[var(--border-subtle)] pt-4">
         <div className="flex items-center gap-1.5 mb-2.5">
           <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)]" />
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+          <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">
             Working Remotely
           </h3>
           {!remoteLoading && (

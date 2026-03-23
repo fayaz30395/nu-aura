@@ -129,17 +129,17 @@ const getCategoryColor = (category: AssetCategory) => {
 const getStatusColor = (status: AssetStatus) => {
   switch (status) {
     case AssetStatus.AVAILABLE:
-      return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      return 'badge-status status-success';
     case AssetStatus.ASSIGNED:
-      return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      return 'badge-status status-info';
     case AssetStatus.IN_MAINTENANCE:
-      return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
+      return 'badge-status status-warning';
     case AssetStatus.RETIRED:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+      return 'badge-status status-neutral';
     case AssetStatus.LOST:
-      return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+      return 'badge-status status-danger';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+      return 'badge-status status-neutral';
   }
 };
 
@@ -465,7 +465,7 @@ export default function AssetManagementPage() {
               placeholder="Search assets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus-visible:ring-2 focus-visible:ring-[var(--border-focus)]"
+              className="input-aura pl-10"
             />
           </div>
           <select
@@ -503,35 +503,35 @@ export default function AssetManagementPage() {
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-[var(--bg-secondary)]">
+                <table className="table-aura">
+                  <thead>
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Asset
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Category
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Assigned To
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Value
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Location
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody>
                     {filteredAssets.map((asset) => (
-                      <tr key={asset.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                      <tr key={asset.id}>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-4">
                             <div className={`rounded-lg p-2 ${getCategoryColor(asset.category)}`}>
@@ -549,7 +549,7 @@ export default function AssetManagementPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(asset.status)}`}>
+                          <span className={getStatusColor(asset.status)}>
                             {asset.status.replace('_', ' ')}
                           </span>
                         </td>
@@ -686,7 +686,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="AST001"
                       {...register('assetCode')}
                     />
@@ -698,7 +698,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="MacBook Pro 16"
                       {...register('assetName')}
                     />
@@ -712,7 +712,7 @@ export default function AssetManagementPage() {
                       Category *
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('category')}
                     >
                       <option value={AssetCategory.LAPTOP}>Laptop</option>
@@ -732,7 +732,7 @@ export default function AssetManagementPage() {
                       Status
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('status')}
                     >
                       <option value={AssetStatus.AVAILABLE}>Available</option>
@@ -752,7 +752,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="Apple"
                       {...register('brand')}
                     />
@@ -763,7 +763,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="MacBook Pro 16 M3"
                       {...register('model')}
                     />
@@ -776,7 +776,7 @@ export default function AssetManagementPage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="C02XG2JHH7JY"
                     {...register('serialNumber')}
                   />
@@ -789,7 +789,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('purchaseDate')}
                     />
                   </div>
@@ -799,7 +799,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('warrantyExpiry')}
                     />
                   </div>
@@ -813,7 +813,7 @@ export default function AssetManagementPage() {
                     <input
                       type="number"
                       step="0.01"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="0.00"
                       {...register('purchaseCost')}
                     />
@@ -825,7 +825,7 @@ export default function AssetManagementPage() {
                     <input
                       type="number"
                       step="0.01"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="0.00"
                       {...register('currentValue')}
                     />
@@ -838,7 +838,7 @@ export default function AssetManagementPage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="Main Office - Floor 3"
                     {...register('location')}
                   />
@@ -850,7 +850,7 @@ export default function AssetManagementPage() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="Additional notes..."
                     {...register('notes')}
                   />
@@ -900,7 +900,7 @@ export default function AssetManagementPage() {
             {selectedAsset && (
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(selectedAsset.status)}`}>
+                  <span className={getStatusColor(selectedAsset.status)}>
                     {selectedAsset.status.replace('_', ' ')}
                   </span>
                   <span className={`px-3 py-1 text-sm font-medium rounded-full ${getCategoryColor(selectedAsset.category)}`}>
@@ -910,7 +910,7 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   {selectedAsset.brand && (
-                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <div className="p-4 card-aura">
                       <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                         <Tag className="h-4 w-4" />
                         Brand
@@ -921,7 +921,7 @@ export default function AssetManagementPage() {
                     </div>
                   )}
                   {selectedAsset.model && (
-                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <div className="p-4 card-aura">
                       <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                         <Package className="h-4 w-4" />
                         Model
@@ -934,7 +934,7 @@ export default function AssetManagementPage() {
                 </div>
 
                 {selectedAsset.serialNumber && (
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)]">Serial Number</p>
                     <p className="text-lg font-mono font-semibold text-[var(--text-primary)]">
                       {selectedAsset.serialNumber}
@@ -943,7 +943,7 @@ export default function AssetManagementPage() {
                 )}
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
                       Purchase Cost
@@ -952,7 +952,7 @@ export default function AssetManagementPage() {
                       {formatCurrency(selectedAsset.purchaseCost)}
                     </p>
                   </div>
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
                       Current Value
@@ -964,7 +964,7 @@ export default function AssetManagementPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Purchase Date
@@ -973,7 +973,7 @@ export default function AssetManagementPage() {
                       {formatDate(selectedAsset.purchaseDate)}
                     </p>
                   </div>
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Warranty Expiry
@@ -985,7 +985,7 @@ export default function AssetManagementPage() {
                 </div>
 
                 {selectedAsset.assignedToName && (
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <User className="h-4 w-4" />
                       Assigned To
@@ -997,7 +997,7 @@ export default function AssetManagementPage() {
                 )}
 
                 {selectedAsset.location && (
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       Location
@@ -1083,7 +1083,7 @@ export default function AssetManagementPage() {
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura"
                   placeholder="Enter employee ID"
                   {...registerAssign('assignEmployeeId')}
                 />

@@ -39,7 +39,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
   return (
     <div className="space-y-4">
       {enrollments.map((enrollment) => (
-        <Card key={enrollment.id}>
+        <Card key={enrollment.id} className="card-aura">
           <CardContent className="p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
