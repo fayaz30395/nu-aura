@@ -32,10 +32,10 @@ export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({ data, 
               <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-700" />
               <XAxis
                 dataKey="date"
-                className="text-xs text-slate-600 dark:text-slate-400"
+                className="text-xs text-[var(--text-muted)]"
                 tick={{ fill: 'currentColor' }}
               />
-              <YAxis className="text-xs text-slate-600 dark:text-slate-400" tick={{ fill: 'currentColor' }} />
+              <YAxis className="text-xs text-[var(--text-muted)]" tick={{ fill: 'currentColor' }} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -59,7 +59,7 @@ export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({ data, 
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-slate-400 dark:text-slate-500">
+            <div className="text-center text-[var(--text-muted)]">
               <p className="text-sm font-medium">No headcount data available</p>
               <p className="text-xs mt-1">Employee count history will appear here</p>
             </div>

@@ -28,11 +28,11 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ da
               <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-700" />
               <XAxis
                 dataKey="month"
-                className="text-xs text-slate-600 dark:text-slate-400"
+                className="text-xs text-[var(--text-muted)]"
                 tick={{ fill: 'currentColor' }}
               />
               <YAxis
-                className="text-xs text-slate-600 dark:text-slate-400"
+                className="text-xs text-[var(--text-muted)]"
                 tick={{ fill: 'currentColor' }}
                 tickFormatter={(value) => `₹${(value / 100000).toFixed(0)}L`}
               />
@@ -51,7 +51,7 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ da
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-slate-400 dark:text-slate-500">
+            <div className="text-center text-[var(--text-muted)]">
               <p className="text-sm font-medium">No payroll data available</p>
               <p className="text-xs mt-1">Payroll history will appear here once processed</p>
             </div>
