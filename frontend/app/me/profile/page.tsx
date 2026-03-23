@@ -176,7 +176,7 @@ export default function MyProfilePage() {
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg"
             >
               <Edit2 className="h-4 w-4" />
               Edit Profile
@@ -186,7 +186,7 @@ export default function MyProfilePage() {
               <button
                 onClick={handleCancel}
                 disabled={updateMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors disabled:opacity-50"
+                className="btn-secondary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
               >
                 <X className="h-4 w-4" />
                 Cancel
@@ -194,7 +194,7 @@ export default function MyProfilePage() {
               <button
                 onClick={handleSave}
                 disabled={updateMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+                className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
               >
                 {updateMutation.isPending ? (
                   <>
@@ -231,7 +231,7 @@ export default function MyProfilePage() {
         )}
 
         {/* Profile Header Card */}
-        <Card className="overflow-hidden">
+        <Card className="card-aura overflow-hidden">
           <div className="h-32 bg-gradient-to-r from-primary-500 to-primary-700" />
           <CardContent className="relative pt-0">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
@@ -280,9 +280,9 @@ export default function MyProfilePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Information */}
-          <Card>
+          <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="skeuo-emboss flex items-center gap-2">
                 <User className="h-5 w-5" />
                 Personal Information
               </CardTitle>
@@ -315,9 +315,9 @@ export default function MyProfilePage() {
           </Card>
 
           {/* Contact Information */}
-          <Card>
+          <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="skeuo-emboss flex items-center gap-2">
                 <Phone className="h-5 w-5" />
                 Contact Information
               </CardTitle>
@@ -339,7 +339,7 @@ export default function MyProfilePage() {
                     type="email"
                     value={editData.personalEmail || ''}
                     onChange={(e) => setEditData({ ...editData, personalEmail: e.target.value })}
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -356,7 +356,7 @@ export default function MyProfilePage() {
                     type="tel"
                     value={editData.phoneNumber || ''}
                     onChange={(e) => setEditData({ ...editData, phoneNumber: e.target.value })}
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -375,7 +375,7 @@ export default function MyProfilePage() {
                     onChange={(e) =>
                       setEditData({ ...editData, emergencyContactNumber: e.target.value })
                     }
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -387,9 +387,9 @@ export default function MyProfilePage() {
           </Card>
 
           {/* Address */}
-          <Card>
+          <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="skeuo-emboss flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
                 Address
               </CardTitle>
@@ -405,7 +405,7 @@ export default function MyProfilePage() {
                     value={editData.address || ''}
                     onChange={(e) => setEditData({ ...editData, address: e.target.value })}
                     rows={2}
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -423,7 +423,7 @@ export default function MyProfilePage() {
                       type="text"
                       value={editData.city || ''}
                       onChange={(e) => setEditData({ ...editData, city: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -440,7 +440,7 @@ export default function MyProfilePage() {
                       type="text"
                       value={editData.state || ''}
                       onChange={(e) => setEditData({ ...editData, state: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -459,7 +459,7 @@ export default function MyProfilePage() {
                       type="text"
                       value={editData.postalCode || ''}
                       onChange={(e) => setEditData({ ...editData, postalCode: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -476,7 +476,7 @@ export default function MyProfilePage() {
                       type="text"
                       value={editData.country || ''}
                       onChange={(e) => setEditData({ ...editData, country: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-slate-900 dark:text-slate-50 mt-1">
@@ -489,9 +489,9 @@ export default function MyProfilePage() {
           </Card>
 
           {/* Employment Details */}
-          <Card>
+          <Card className="card-aura">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="skeuo-emboss flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
                 Employment Details
               </CardTitle>
@@ -535,9 +535,9 @@ export default function MyProfilePage() {
                   Status
                 </label>
                 <span
-                  className={`inline-flex mt-1 px-2 py-1 text-xs font-semibold rounded-full ${employee.status === 'ACTIVE'
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                      : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
+                  className={`badge-status mt-1 ${employee.status === 'ACTIVE'
+                      ? 'status-success'
+                      : 'status-neutral'
                     }`}
                 >
                   {employee.status}
@@ -547,9 +547,9 @@ export default function MyProfilePage() {
           </Card>
 
           {/* Bank Details */}
-          <Card className="lg:col-span-2">
+          <Card className="card-aura lg:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="skeuo-emboss flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
                 Bank Details
               </CardTitle>
@@ -586,9 +586,9 @@ export default function MyProfilePage() {
           </Card>
 
           {/* Tax Details */}
-          <Card className="lg:col-span-2">
+          <Card className="card-aura lg:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="skeuo-emboss flex items-center gap-2">
                 <Shield className="h-5 w-5" />
                 Tax Information
               </CardTitle>

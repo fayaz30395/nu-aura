@@ -71,10 +71,10 @@ export default function OnboardingPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
-                        <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
+                        <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                             Talent <span className="text-primary-600">Onboarding</span>
                         </h1>
-                        <p className="text-[var(--text-muted)] font-bold max-w-md">
+                        <p className="text-[var(--text-muted)] font-bold max-w-md skeuo-deboss">
                             Orchestrate the first 90 days of your new joiners with precision and care.
                         </p>
                     </div>
@@ -83,7 +83,7 @@ export default function OnboardingPage() {
                         <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                             <Button
                                 variant="outline"
-                                className="font-black tracking-widest uppercase text-xs rounded-2xl"
+                                className="btn-secondary font-black tracking-widest uppercase text-xs rounded-2xl"
                                 leftIcon={<Layout className="h-3.5 w-3.5" />}
                                 onClick={() => router.push('/onboarding/templates')}
                             >
@@ -93,7 +93,7 @@ export default function OnboardingPage() {
                         <PermissionGate permission={Permissions.ONBOARDING_CREATE}>
                             <Button
                                 variant="primary"
-                                className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
+                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
                                 leftIcon={<UserPlus className="h-4 w-4" />}
                                 onClick={() => router.push('/onboarding/new')}
                             >
@@ -112,16 +112,16 @@ export default function OnboardingPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
                         >
-                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
-                                <CardContent className="p-6">
+                            <Card className="skeuo-card border-0 shadow-2xl">
+                                <CardContent className="p-6 relative z-10">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className={`p-4 rounded-2xl ${stat.bg} ${stat.color}`}>
                                             <stat.icon className="h-6 w-6" />
                                         </div>
                                         <TrendingUp className="h-4 w-4 text-emerald-500" />
                                     </div>
-                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1">{stat.label}</p>
-                                    <p className="text-3xl font-black text-[var(--text-primary)]">{stat.value}</p>
+                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1 skeuo-deboss">{stat.label}</p>
+                                    <p className="text-3xl font-black text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -130,13 +130,13 @@ export default function OnboardingPage() {
 
                 {/* Filters and List */}
                 <div className="space-y-6">
-                    <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+                    <Card className="card-aura border-0 shadow-2xl overflow-hidden">
                         <div className="p-6 border-b border-[var(--border-main)] flex flex-col md:flex-row gap-6 justify-between items-center">
                             <div className="relative w-full md:w-1/3">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                                 <Input
                                     placeholder="Search joiners by name or ID..."
-                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-primary-500"
+                                    className="input-aura pl-12 rounded-2xl font-bold"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />

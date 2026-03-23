@@ -62,9 +62,9 @@ export function HolidayCarousel({
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+      <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
+          <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
         </div>
         <div className="rounded-lg bg-[var(--bg-surface)] p-4 animate-pulse">
           <div className="flex items-start gap-2">
@@ -82,9 +82,9 @@ export function HolidayCarousel({
 
   if (displayedHolidays.length === 0) {
     return (
-      <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+      <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
+          <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
         </div>
         <div className="text-center py-4">
           <CalendarDays className="w-6 h-6 text-gray-300 dark:text-gray-600 mx-auto mb-1" />
@@ -98,12 +98,12 @@ export function HolidayCarousel({
 
   return (
     <div
-      className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4"
+      className="skeuo-card rounded-xl border border-[var(--border-main)] p-4"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+        <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">
           Upcoming Holidays
         </h3>
         <a

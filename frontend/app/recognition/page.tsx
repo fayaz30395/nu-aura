@@ -225,54 +225,54 @@ export default function RecognitionPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 border-yellow-200 dark:border-yellow-800">
+          <Card className="skeuo-card bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 border-yellow-200 dark:border-yellow-800">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-yellow-500 p-4">
                   <Trophy className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-300">My Points</p>
-                  <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-100">{stats.myPoints}</p>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300 skeuo-deboss">My Points</p>
+                  <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-100 skeuo-emboss">{stats.myPoints}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Received</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.recognitionsReceived}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Received</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsReceived}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <Gift className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Given</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.recognitionsGiven}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Given</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsGiven}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Activity</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalRecognitions}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Activity</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalRecognitions}</p>
                 </div>
               </div>
             </CardContent>
@@ -346,7 +346,7 @@ export default function RecognitionPage() {
             ) : (
               <div className="space-y-4">
                 {recognitions.map((recognition) => (
-                  <Card key={recognition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card key={recognition.id} className="card-aura overflow-hidden">
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
                         <div className={`rounded-full p-4 flex-shrink-0 ${getTypeColor(recognition.type)}`} aria-label={`Recognition type: ${recognition.type}`}>
@@ -366,11 +366,11 @@ export default function RecognitionPage() {
                               </p>
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
-                              <span className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getTypeColor(recognition.type)}`}>
+                              <span className="badge-status status-info whitespace-nowrap">
                                 {recognition.type.replace('_', ' ')}
                               </span>
                               {recognition.pointsAwarded > 0 && (
-                                <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 whitespace-nowrap">
+                                <span className="badge-status status-warning flex items-center gap-1 whitespace-nowrap">
                                   <Star className="h-3 w-3" />
                                   {recognition.pointsAwarded}
                                 </span>
@@ -416,9 +416,9 @@ export default function RecognitionPage() {
 
           {/* Leaderboard Sidebar */}
           <div className="space-y-4">
-            <Card>
+            <Card className="skeuo-card">
               <CardContent className="p-4">
-                <h3 className="flex items-center gap-2 text-lg font-semibold text-[var(--text-primary)] mb-4">
+                <h3 className="flex items-center gap-2 text-lg font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
                   <Crown className="h-5 w-5 text-yellow-500" />
                   Top Contributors
                 </h3>
@@ -438,7 +438,7 @@ export default function RecognitionPage() {
                     {leaderboard.map((employee, index) => (
                       <div
                         key={employee.id}
-                        className="flex items-center gap-4 p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                        className="flex items-center gap-4 p-2 rounded-lg card-aura transition-colors"
                       >
                         <div className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-yellow-500 text-white' :
                             index === 1 ? 'bg-gray-400 text-white' :
@@ -471,9 +471,9 @@ export default function RecognitionPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="skeuo-card">
               <CardContent className="p-4">
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
                   Quick Recognize
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
@@ -486,7 +486,7 @@ export default function RecognitionPage() {
                             reset({ ...watch(), type: type.value });
                             setIsModalOpen(true);
                           }}
-                          className="flex flex-col items-center gap-2 p-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                          className="flex flex-col items-center gap-2 p-4 rounded-lg card-interactive"
                         >
                           <Icon className="h-6 w-6 text-primary-500" />
                           <span className="text-xs text-[var(--text-secondary)]">{type.label}</span>

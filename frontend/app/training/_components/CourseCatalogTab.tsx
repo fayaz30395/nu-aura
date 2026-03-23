@@ -82,7 +82,7 @@ export function CourseCatalogTab({
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <Card>
+      <Card className="card-aura">
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="relative flex-1">
@@ -92,13 +92,13 @@ export function CourseCatalogTab({
                 placeholder="Search programs..."
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-10"
+                className="pl-10 input-aura"
               />
             </div>
             <Select
               value={categoryFilter}
               onChange={(e) => onCategoryFilterChange(e.target.value)}
-              className="w-full sm:w-48"
+              className="w-full sm:w-48 input-aura"
             >
               <option value="">All Categories</option>
               {categoryOptions.map((option) => (
@@ -133,7 +133,7 @@ export function CourseCatalogTab({
           {availablePrograms.map((program) => {
             const enrolled = isEnrolled(program.id);
             return (
-              <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card key={program.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
                   <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
                     <div className="flex items-start justify-between">

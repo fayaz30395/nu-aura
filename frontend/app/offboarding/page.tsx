@@ -90,41 +90,41 @@ const getExitTypeLabel = (type: ExitType | string | null | undefined) => {
 
 const getStatusColor = (status: ExitStatus | string | null | undefined) => {
   if (!status) {
-    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+    return 'badge-status status-neutral';
   }
   switch (status) {
     case ExitStatus.INITIATED:
-      return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      return 'badge-status status-info';
     case ExitStatus.IN_PROGRESS:
-      return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
+      return 'badge-status status-warning';
     case ExitStatus.CLEARANCE_PENDING:
-      return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
+      return 'badge-status status-warning';
     case ExitStatus.COMPLETED:
-      return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      return 'badge-status status-success';
     case ExitStatus.CANCELLED:
-      return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+      return 'badge-status status-danger';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+      return 'badge-status status-neutral';
   }
 };
 
 const getExitTypeColor = (type: ExitType | string | null | undefined) => {
   if (!type) {
-    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+    return 'badge-status status-neutral';
   }
   switch (type) {
     case ExitType.RESIGNATION:
-      return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      return 'badge-status status-info';
     case ExitType.TERMINATION:
-      return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+      return 'badge-status status-danger';
     case ExitType.RETIREMENT:
-      return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      return 'badge-status status-success';
     case ExitType.END_OF_CONTRACT:
-      return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
+      return 'badge-status status-warning';
     case ExitType.ABSCONDING:
-      return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
+      return 'badge-status status-danger';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
+      return 'badge-status status-neutral';
   }
 };
 
@@ -356,10 +356,10 @@ export default function OffboardingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Exit Management
             </h1>
-            <p className="text-[var(--text-secondary)]">
+            <p className="text-[var(--text-secondary)] skeuo-deboss">
               Manage employee offboarding and exit processes
             </p>
           </div>
@@ -385,67 +385,67 @@ export default function OffboardingPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Card>
-            <CardContent className="p-4">
+          <Card className="skeuo-card">
+            <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
                   <UserMinus className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Exits</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Exits</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-4">
+          <Card className="skeuo-card">
+            <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Initiated</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.initiated}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Initiated</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.initiated}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-4">
+          <Card className="skeuo-card">
+            <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">In Progress</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.inProgress}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Progress</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.inProgress}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-4">
+          <Card className="skeuo-card">
+            <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Clearance Pending</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.clearancePending}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Clearance Pending</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.clearancePending}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-4">
+          <Card className="skeuo-card">
+            <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -461,13 +461,13 @@ export default function OffboardingPage() {
               placeholder="Search by employee name, company..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="input-aura pl-10"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="input-aura"
           >
             <option value="">All Status</option>
             <option value={ExitStatus.INITIATED}>Initiated</option>
@@ -479,7 +479,7 @@ export default function OffboardingPage() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="input-aura"
           >
             <option value="">All Types</option>
             <option value={ExitType.RESIGNATION}>Resignation</option>
@@ -495,35 +495,35 @@ export default function OffboardingPage() {
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-[var(--bg-secondary)]">
+                <table className="table-aura">
+                  <thead>
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Employee
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Exit Type
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Last Working Day
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Notice Period
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Rehire Eligible
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody>
                     {filteredProcesses.map((process: ExitProcess) => (
-                      <tr key={process.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                      <tr key={process.id}>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-4">
                             <div className="rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-2">
@@ -540,12 +540,12 @@ export default function OffboardingPage() {
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getExitTypeColor(process.exitType)}`}>
+                          <span className={getExitTypeColor(process.exitType)}>
                             {getExitTypeLabel(process.exitType)}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(process.status)}`}>
+                          <span className={getStatusColor(process.status)}>
                             {formatStatusLabel(process.status)}
                           </span>
                         </td>
@@ -682,7 +682,7 @@ export default function OffboardingPage() {
                   <input
                     type="text"
                     disabled={isEditing}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                    className="input-aura disabled:opacity-50"
                     placeholder="Enter employee ID"
                     {...register('employeeId')}
                   />
@@ -695,7 +695,7 @@ export default function OffboardingPage() {
                       Exit Type *
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('exitType')}
                     >
                       <option value={ExitType.RESIGNATION}>Resignation</option>
@@ -711,7 +711,7 @@ export default function OffboardingPage() {
                       Status
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('status')}
                     >
                       <option value={ExitStatus.INITIATED}>Initiated</option>
@@ -731,7 +731,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('resignationDate')}
                     />
                   </div>
@@ -741,7 +741,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       {...register('lastWorkingDate')}
                     />
                   </div>
@@ -753,7 +753,7 @@ export default function OffboardingPage() {
                   </label>
                   <input
                     type="number"
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="30"
                     {...register('noticePeriodDays')}
                   />
@@ -766,7 +766,7 @@ export default function OffboardingPage() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="Reason for leaving..."
                     {...register('reasonForLeaving')}
                   />
@@ -779,7 +779,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="New company name"
                       {...register('newCompany')}
                     />
@@ -790,7 +790,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="New designation"
                       {...register('newDesignation')}
                     />
@@ -815,7 +815,7 @@ export default function OffboardingPage() {
                   </label>
                   <textarea
                     rows={2}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="Additional notes..."
                     {...register('notes')}
                   />
@@ -861,21 +861,21 @@ export default function OffboardingPage() {
             {selectedProcess && (
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(selectedProcess.status)}`}>
+                  <span className={getStatusColor(selectedProcess.status)}>
                     {formatStatusLabel(selectedProcess.status)}
                   </span>
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${getExitTypeColor(selectedProcess.exitType)}`}>
+                  <span className={getExitTypeColor(selectedProcess.exitType)}>
                     {getExitTypeLabel(selectedProcess.exitType)}
                   </span>
                   {selectedProcess.rehireEligible && (
-                    <span className="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                    <span className="badge-status status-success">
                       Rehire Eligible
                     </span>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Resignation Date
@@ -884,7 +884,7 @@ export default function OffboardingPage() {
                       {formatDate(selectedProcess.resignationDate)}
                     </p>
                   </div>
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Last Working Day
@@ -896,7 +896,7 @@ export default function OffboardingPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <div className="p-4 card-aura">
                     <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       Notice Period
@@ -906,7 +906,7 @@ export default function OffboardingPage() {
                     </p>
                   </div>
                   {selectedProcess.finalSettlementAmount && (
-                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <div className="p-4 card-aura">
                       <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                         <DollarSign className="h-4 w-4" />
                         Settlement Amount
@@ -930,7 +930,7 @@ export default function OffboardingPage() {
                 {(selectedProcess.newCompany || selectedProcess.newDesignation) && (
                   <div className="grid grid-cols-2 gap-4">
                     {selectedProcess.newCompany && (
-                      <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                      <div className="p-4 card-aura">
                         <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                           <Building className="h-4 w-4" />
                           New Company
@@ -941,7 +941,7 @@ export default function OffboardingPage() {
                       </div>
                     )}
                     {selectedProcess.newDesignation && (
-                      <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                      <div className="p-4 card-aura">
                         <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                           <Briefcase className="h-4 w-4" />
                           New Designation

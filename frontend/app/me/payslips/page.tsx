@@ -206,7 +206,7 @@ export default function MyPayslipsPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
+          <Card className="card-aura">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -223,7 +223,7 @@ export default function MyPayslipsPage() {
           </Card>
 
           {isAdminView && (
-            <Card>
+            <Card className="card-aura">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -240,7 +240,7 @@ export default function MyPayslipsPage() {
             </Card>
           )}
 
-          <Card>
+          <Card className="card-aura">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -258,7 +258,7 @@ export default function MyPayslipsPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-aura">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -278,7 +278,7 @@ export default function MyPayslipsPage() {
         </div>
 
         {/* Filters */}
-        <Card>
+        <Card className="card-aura">
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
@@ -288,7 +288,7 @@ export default function MyPayslipsPage() {
                   placeholder={isAdminView ? "Search by employee name, month, or status..." : "Search payslips..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                  className="input-aura w-full pl-10 pr-4 py-2 rounded-lg"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -296,7 +296,7 @@ export default function MyPayslipsPage() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
-                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
+                  className="input-aura px-4 py-2 rounded-lg"
                 >
                   <option value={0}>All Years</option>
                   {years.map((year) => (
@@ -320,7 +320,7 @@ export default function MyPayslipsPage() {
 
         {/* Payslips List */}
         {filteredPayslips.length === 0 ? (
-          <Card>
+          <Card className="card-aura">
             <CardContent className="py-16 text-center">
               <FileText className="h-16 w-16 mx-auto text-slate-300 dark:text-slate-700 mb-4" />
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
@@ -337,7 +337,7 @@ export default function MyPayslipsPage() {
           <div className="grid grid-cols-1 gap-4">
             {filteredPayslips.map((payslip) => (
               <div key={payslip.id}>
-                <Card className="overflow-hidden hover:shadow-lg transition-all hover:scale-[1.01]">
+                <Card className="card-aura card-interactive overflow-hidden">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex items-start gap-4">
@@ -358,12 +358,12 @@ export default function MyPayslipsPage() {
                           </p>
                           <div className="flex items-center gap-2 mt-2">
                             <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              className={`badge-status ${
                                 payslip.status === 'PAID'
-                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                  ? 'status-success'
                                   : payslip.status === 'FINALIZED'
-                                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                  ? 'status-info'
+                                  : 'status-warning'
                               }`}
                             >
                               {payslip.status}
@@ -387,7 +387,7 @@ export default function MyPayslipsPage() {
                         <button
                           onClick={() => downloadPayslipPDF(payslip)}
                           disabled={downloadingId === payslip.id}
-                          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {downloadingId === payslip.id ? (
                             <>
