@@ -1,6 +1,7 @@
 package com.hrms.application.notification.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.resilience.CircuitBreaker;
 import com.hrms.common.resilience.CircuitBreakerRegistry;
 import com.hrms.common.security.TenantContext;
@@ -114,12 +115,14 @@ public class SlackNotificationService {
                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() != 200 || !"ok".equals(response.body())) {
-                    throw new RuntimeException("Slack API error: " + response.statusCode() + " - " + response.body());
+                    log.error("Slack API error: status={} body={}", response.statusCode(), response.body());
+                    throw new BusinessException("Failed to send Slack notification");
                 }
 
                 log.debug("Slack message sent successfully");
             } catch (IOException | InterruptedException e) {
-                throw new RuntimeException("Error sending Slack message", e);
+                log.error("Error sending Slack message", e);
+                throw new BusinessException("Failed to send Slack notification");
             }
         });
     }

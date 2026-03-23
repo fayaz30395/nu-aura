@@ -125,4 +125,6 @@ public interface CustomFieldDefinitionRepository extends JpaRepository<CustomFie
             @Param("tenantId") UUID tenantId,
             @Param("entityType") EntityType entityType,
             @Param("fieldGroup") String fieldGroup);
+
+    Optional<CustomFieldDefinition> findByIdAndTenantId(UUID id, UUID tenantId);
 }

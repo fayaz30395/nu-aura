@@ -651,7 +651,6 @@ describe('LeaveService', () => {
   describe('rejectLeaveRequest', () => {
     it('should reject a leave request', async () => {
       const leaveRequestId = 'lr-1';
-      const approverId = 'approver-1';
       const reason = 'Insufficient leave balance';
       const mockLeaveRequest: MockLeaveRequest = {
         id: leaveRequestId,
@@ -664,26 +663,25 @@ describe('LeaveService', () => {
 
       mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveRequest });
 
-      const result = await leaveService.rejectLeaveRequest(leaveRequestId, approverId, reason);
+      const result = await leaveService.rejectLeaveRequest(leaveRequestId, reason);
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
         `/leave-requests/${leaveRequestId}/reject`,
         null,
-        { params: { approverId, reason } }
+        { params: { reason } }
       );
       expect(result).toEqual(mockLeaveRequest);
     });
 
     it('should handle errors when rejecting a leave request', async () => {
       const leaveRequestId = 'lr-1';
-      const approverId = 'approver-1';
       const reason = 'Insufficient leave balance';
       const error = new Error('Rejection failed');
 
       mockApiClient.post.mockRejectedValueOnce(error);
 
       await expect(
-        leaveService.rejectLeaveRequest(leaveRequestId, approverId, reason)
+        leaveService.rejectLeaveRequest(leaveRequestId, reason)
       ).rejects.toThrow('Rejection failed');
     });
   });

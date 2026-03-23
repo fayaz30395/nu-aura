@@ -10,7 +10,7 @@ import {
   LetterCategory,
 } from '../types/letter';
 
-const BASE_URL = '/api/v1/letters';
+const BASE_URL = '/letters';
 
 export const letterService = {
   // ==================== Templates ====================

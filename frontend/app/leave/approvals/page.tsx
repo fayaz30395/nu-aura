@@ -82,7 +82,7 @@ export default function LeaveApprovalsPage() {
 
     try {
       setIsProcessing(true);
-      await rejectLeaveRequest.mutateAsync({ id: selectedRequestId, approverId: user?.employeeId || '', reason: rejectReason });
+      await rejectLeaveRequest.mutateAsync({ id: selectedRequestId, reason: rejectReason });
       toast.success('Leave request rejected');
       setShowRejectReasonModal(false);
       setRejectReason('');

@@ -38,7 +38,7 @@ const createEmployeeFormSchema = z.object({
   postalCode: z.string().optional().or(z.literal('')),
   country: z.string().optional().or(z.literal('')),
   designation: z.string().min(1, 'Designation is required'),
-  level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional(),
+  level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'SENIOR_MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional(),
   jobRole: z.string().optional().or(z.literal('')),
   departmentId: z.string().min(1, 'Department is required'),
   employmentType: z.enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN']).default('FULL_TIME'),
@@ -71,7 +71,10 @@ export default function EmployeesPage() {
   const PAGE_SIZE = 20;
 
   // React Query - fetch employees, managers, and departments
-  const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(currentPage, PAGE_SIZE);
+  const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(
+    currentPage, PAGE_SIZE, 'createdAt', 'DESC',
+    searchQuery || undefined, statusFilter || undefined
+  );
   const { data: managers = [], isLoading: managersLoading } = useManagers();
   const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
 
@@ -186,9 +189,10 @@ export default function EmployeesPage() {
     }
   };
 
-  const handleSearch = async () => {
-    // Search is handled by React Query - just update searchQuery state
-    // The query will automatically refetch with updated filters
+  const handleSearch = () => {
+    // Reset to first page when searching - React Query automatically refetches
+    // because searchQuery is included in the useEmployees query key
+    setCurrentPage(0);
   };
 
   const handleDelete = async () => {
@@ -279,7 +283,7 @@ export default function EmployeesPage() {
           </div>
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(0); }}
             className="h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all skeuo-input"
           >
             <option value="">All Status</option>
@@ -680,7 +684,7 @@ export default function EmployeesPage() {
                         <textarea
                           rows={2}
                           {...register('address')}
-                          className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
+                          className="w-full min-h-[80px] px-4 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           placeholder="Street address"
                         />
                         {errors.address && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.address.message}</p>}
@@ -816,13 +820,16 @@ export default function EmployeesPage() {
                                 className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                               >
                                 <option value="">Select Level</option>
-                                <option value="JUNIOR">Junior</option>
+                                <option value="ENTRY">Entry</option>
+                                <option value="MID">Mid</option>
                                 <option value="SENIOR">Senior</option>
                                 <option value="LEAD">Lead</option>
                                 <option value="MANAGER">Manager</option>
                                 <option value="SENIOR_MANAGER">Senior Manager</option>
                                 <option value="DIRECTOR">Director</option>
-                                <option value="EXECUTIVE">Executive</option>
+                                <option value="VP">Vice President</option>
+                                <option value="SVP">Senior Vice President</option>
+                                <option value="CXO">C-Level Executive</option>
                               </select>
                             )}
                           />

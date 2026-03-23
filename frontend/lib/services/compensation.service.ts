@@ -9,7 +9,7 @@ import type {
 } from '../types/compensation';
 import type { PaginatedResponse } from '../types/common';
 
-const BASE_URL = '/api/v1/compensation';
+const BASE_URL = '/compensation';
 
 export const compensationService = {
   // Review Cycles

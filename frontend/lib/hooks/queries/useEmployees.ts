@@ -8,8 +8,8 @@ import { CreateEmployeeRequest, UpdateEmployeeRequest, Employee } from '@/lib/ty
 export const employeeKeys = {
   all: ['employees'] as const,
   lists: () => [...employeeKeys.all, 'list'] as const,
-  list: (page: number, size: number, sortBy: string, sortDirection: string) =>
-    [...employeeKeys.lists(), { page, size, sortBy, sortDirection }] as const,
+  list: (page: number, size: number, sortBy: string, sortDirection: string, search?: string, status?: string) =>
+    [...employeeKeys.lists(), { page, size, sortBy, sortDirection, search, status }] as const,
   search: (query: string, page: number, size: number) =>
     [...employeeKeys.all, 'search', { query, page, size }] as const,
   details: () => [...employeeKeys.all, 'detail'] as const,
@@ -21,16 +21,18 @@ export const employeeKeys = {
   dottedReports: (id: string) => [...employeeKeys.all, 'dotted-reports', id] as const,
 };
 
-// Get paginated list of employees
+// Get paginated list of employees with optional search and status filter
 export function useEmployees(
   page: number = 0,
   size: number = 20,
   sortBy: string = 'createdAt',
-  sortDirection: 'ASC' | 'DESC' = 'DESC'
+  sortDirection: 'ASC' | 'DESC' = 'DESC',
+  search?: string,
+  status?: string
 ) {
   return useQuery({
-    queryKey: employeeKeys.list(page, size, sortBy, sortDirection),
-    queryFn: () => employeeService.getAllEmployees(page, size, sortBy, sortDirection),
+    queryKey: employeeKeys.list(page, size, sortBy, sortDirection, search, status),
+    queryFn: () => employeeService.getAllEmployees(page, size, sortBy, sortDirection, search, status),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 }

@@ -59,7 +59,7 @@ public class LeaveBalanceService {
                 // yearly / no-accrual types so employees start the year with their
                 // full entitlement already visible.
                 BigDecimal opening = BigDecimal.ZERO;
-                LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId).orElse(null);
+                LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId).orElse(null);
                 if (leaveType != null && leaveType.getAnnualQuota() != null) {
                     LeaveType.AccrualType accrualType = leaveType.getAccrualType();
                     if (accrualType == null
@@ -166,7 +166,7 @@ public class LeaveBalanceService {
         List<LeaveBalance> allBalances = leaveBalanceRepository.findAllByTenantIdAndYear(tenantId, fromYear);
 
         for (LeaveBalance oldBalance : allBalances) {
-            LeaveType leaveType = leaveTypeRepository.findById(oldBalance.getLeaveTypeId()).orElse(null);
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(oldBalance.getLeaveTypeId(), tenantId).orElse(null);
             if (leaveType == null || !Boolean.TRUE.equals(leaveType.getIsCarryForwardAllowed())) {
                 continue;
             }
@@ -208,7 +208,7 @@ public class LeaveBalanceService {
         return leaveBalanceRepository.findForUpdate(employeeId, leaveTypeId, year, tenantId)
             .orElseGet(() -> {
                 BigDecimal opening = BigDecimal.ZERO;
-                LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId).orElse(null);
+                LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId).orElse(null);
                 if (leaveType != null && leaveType.getAnnualQuota() != null) {
                     LeaveType.AccrualType accrualType = leaveType.getAccrualType();
                     if (accrualType == null

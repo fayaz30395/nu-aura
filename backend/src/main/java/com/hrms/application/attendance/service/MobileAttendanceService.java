@@ -34,7 +34,7 @@ public class MobileAttendanceService {
     // ==================== MOBILE CHECK-IN/OUT ====================
 
     public MobileCheckInResponse mobileCheckIn(MobileCheckInRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentUserId();
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = LocalDate.now();
@@ -123,7 +123,7 @@ public class MobileAttendanceService {
     }
 
     public MobileCheckInResponse mobileCheckOut(MobileCheckInRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentUserId();
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = LocalDate.now();
@@ -208,7 +208,7 @@ public class MobileAttendanceService {
 
     @Transactional(readOnly = true)
     public MobileAttendanceDashboard getDashboard(BigDecimal latitude, BigDecimal longitude) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentUserId();
         LocalDate today = LocalDate.now();
 

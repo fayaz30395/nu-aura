@@ -88,7 +88,6 @@ export default function AdminLeaveRequestsPage() {
     rejectMutation.mutate(
       {
         id: selectedRequest.id,
-        approverId: user.employeeId,
         reason: rejectionReason,
       },
       {

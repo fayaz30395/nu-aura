@@ -48,7 +48,7 @@ public class BlogPostController {
 
         // Fetch author info
         if (post.getCreatedBy() != null) {
-            UUID tenantId = TenantContext.getCurrentTenant();
+            UUID tenantId = TenantContext.requireCurrentTenant();
             Employee author = employeeRepository.findByUserIdWithUser(post.getCreatedBy(), tenantId)
                 .orElse(null);
 

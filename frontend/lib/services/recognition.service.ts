@@ -9,7 +9,7 @@ import type {
   ReactionType,
 } from '../types/recognition';
 
-const BASE_URL = '/api/v1/recognition';
+const BASE_URL = '/recognition';
 
 export interface PagedResponse<T> {
   content: T[];

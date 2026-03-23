@@ -222,6 +222,35 @@ public class PerformanceReviewService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void deleteReview(UUID reviewId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (review.getStatus() != PerformanceReview.ReviewStatus.DRAFT) {
+            throw new IllegalStateException(
+                    "Only reviews in DRAFT status can be deleted. Current status: " + review.getStatus());
+        }
+
+        // Delete associated competencies first
+        competencyRepository.deleteAllByReviewId(reviewId);
+        reviewRepository.delete(review);
+        log.info("Deleted review {} for tenant {}", reviewId, tenantId);
+    }
+
+    @Transactional
+    public void deleteCompetency(UUID competencyId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        ReviewCompetency competency = competencyRepository.findByIdAndTenantId(competencyId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Competency not found"));
+
+        competencyRepository.delete(competency);
+        log.info("Deleted competency {} for tenant {}", competencyId, tenantId);
+    }
+
     private ReviewResponse mapToResponse(PerformanceReview review) {
         ReviewResponse response = ReviewResponse.builder()
                 .id(review.getId())

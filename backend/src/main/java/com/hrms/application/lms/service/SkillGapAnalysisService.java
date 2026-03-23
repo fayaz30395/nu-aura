@@ -1,6 +1,7 @@
 package com.hrms.application.lms.service;
 
 import com.hrms.api.lms.dto.SkillGapReport;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.employee.EmployeeSkill;
 import com.hrms.domain.lms.Course;
@@ -28,7 +29,7 @@ public class SkillGapAnalysisService {
 
         public SkillGapReport analyzeGaps(UUID tenantId, UUID employeeId) {
                 Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
-                                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
 
                 // Get employee's current skills from persistent storage
                 List<EmployeeSkill> currentSkills = employeeSkillRepository.findByEmployeeIdAndTenantId(employeeId,

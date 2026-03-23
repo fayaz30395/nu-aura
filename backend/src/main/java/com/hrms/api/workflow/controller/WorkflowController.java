@@ -9,9 +9,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -163,11 +165,15 @@ public class WorkflowController {
     public ResponseEntity<Page<WorkflowExecutionResponse>> getApprovalInbox(
             @RequestParam(defaultValue = "PENDING") String status,
             @RequestParam(required = false) String module,
-            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime fromDate,
-            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime toDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
             @RequestParam(required = false) String search,
             Pageable pageable) {
-        return ResponseEntity.ok(workflowService.getApprovalInbox(status, module, fromDate, toDate, search, pageable));
+        return ResponseEntity.ok(workflowService.getApprovalInbox(
+                status, module,
+                fromDate != null ? fromDate.atStartOfDay() : null,
+                toDate != null ? toDate.atTime(23, 59, 59) : null,
+                search, pageable));
     }
 
     @GetMapping("/inbox/count")

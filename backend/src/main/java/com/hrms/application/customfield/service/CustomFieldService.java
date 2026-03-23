@@ -102,8 +102,7 @@ public class CustomFieldService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating custom field definition: {} for tenant: {}", id, tenantId);
 
-        CustomFieldDefinition definition = definitionRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        CustomFieldDefinition definition = definitionRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Field definition not found: " + id));
 
         // Check for duplicate field code (excluding current)
@@ -169,8 +168,7 @@ public class CustomFieldService {
     @Transactional(readOnly = true)
     public CustomFieldDefinitionResponse getFieldDefinition(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        CustomFieldDefinition definition = definitionRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        CustomFieldDefinition definition = definitionRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Field definition not found: " + id));
         return CustomFieldDefinitionResponse.fromEntity(definition);
     }
@@ -273,8 +271,7 @@ public class CustomFieldService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Deactivating custom field definition: {} for tenant: {}", id, tenantId);
 
-        CustomFieldDefinition definition = definitionRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        CustomFieldDefinition definition = definitionRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Field definition not found: " + id));
 
         definition.setIsActive(false);
@@ -290,8 +287,7 @@ public class CustomFieldService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Activating custom field definition: {} for tenant: {}", id, tenantId);
 
-        CustomFieldDefinition definition = definitionRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        CustomFieldDefinition definition = definitionRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Field definition not found: " + id));
 
         definition.setIsActive(true);
@@ -307,8 +303,7 @@ public class CustomFieldService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Deleting custom field definition: {} for tenant: {}", id, tenantId);
 
-        CustomFieldDefinition definition = definitionRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        CustomFieldDefinition definition = definitionRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Field definition not found: " + id));
 
         // Delete all values for this field
@@ -329,8 +324,8 @@ public class CustomFieldService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.debug("Setting custom field value for entity: {} ({})", entityId, entityType);
 
-        CustomFieldDefinition definition = definitionRepository.findById(request.getFieldDefinitionId())
-                .filter(d -> d.getTenantId().equals(tenantId) && d.getIsActive())
+        CustomFieldDefinition definition = definitionRepository.findByIdAndTenantId(request.getFieldDefinitionId(), tenantId)
+                .filter(CustomFieldDefinition::getIsActive)
                 .orElseThrow(() -> new IllegalArgumentException("Field definition not found or inactive"));
 
         // Validate entity type matches

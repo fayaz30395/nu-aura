@@ -24,4 +24,6 @@ public interface LeaveTypeRepository extends JpaRepository<LeaveType, UUID> {
     Page<LeaveType> findAllByTenantIdAndIsActive(UUID tenantId, Boolean isActive, Pageable pageable);
 
     List<LeaveType> findAllByTenantIdAndIsActive(UUID tenantId, Boolean isActive);
+
+    Optional<LeaveType> findByIdAndTenantId(UUID id, UUID tenantId);
 }

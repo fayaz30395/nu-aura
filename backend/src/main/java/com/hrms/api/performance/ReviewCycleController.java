@@ -76,6 +76,13 @@ public class ReviewCycleController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    @RequiresPermission(Permission.REVIEW_CREATE)
+    public ResponseEntity<Void> deleteCycle(@PathVariable UUID id) {
+        reviewCycleService.deleteCycle(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{id}/complete")
     @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<ReviewCycleResponse> completeCycle(@PathVariable UUID id) {

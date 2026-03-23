@@ -8,7 +8,7 @@ import {
   ExitDashboard,
 } from '../types/exit';
 
-const BASE_URL = '/api/v1/exit';
+const BASE_URL = '/exit';
 
 export const exitService = {
   // Get all exit processes with pagination

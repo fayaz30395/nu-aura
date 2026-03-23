@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class GlobalPayrollService {
 
         private final CurrencyRepository currencyRepository;
@@ -149,6 +148,7 @@ public class GlobalPayrollService {
                 throw new IllegalArgumentException("No exchange rate found for " + fromCurrency + " to " + toCurrency);
         }
 
+        @Transactional(readOnly = true)
         public BigDecimal convertAmount(BigDecimal amount, String fromCurrency, String toCurrency, LocalDate date) {
                 BigDecimal rate = getExchangeRate(fromCurrency, toCurrency, date);
                 return amount.multiply(rate).setScale(2, RoundingMode.HALF_UP);
