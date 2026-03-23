@@ -235,7 +235,7 @@ export function AuthGuard({
       <div className="flex flex-col items-center justify-center min-h-screen bg-surface-50">
         <div className="text-center p-8">
           <div className="text-6xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Access Denied</h1>
           <p className="text-[var(--text-secondary)] mb-6">
             You don&apos;t have permission to access this page.
           </p>

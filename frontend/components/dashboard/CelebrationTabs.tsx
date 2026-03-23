@@ -9,7 +9,7 @@ type TabType = 'birthdays' | 'anniversaries' | 'newJoiners';
 function AvatarInitials({ name }: { name: string }) {
   const initials = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-secondary)] dark:bg-gray-700 ">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-secondary)]  ">
       {initials}
     </div>
   );

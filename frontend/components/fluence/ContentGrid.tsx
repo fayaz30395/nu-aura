@@ -55,7 +55,7 @@ export function ContentGrid({
       case 'BLOG':
         return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300';
       default:
-        return 'bg-gray-100 dark:bg-gray-900/30';
+        return 'bg-[var(--bg-surface)]';
     }
   };
 

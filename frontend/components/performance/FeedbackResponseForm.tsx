@@ -87,7 +87,7 @@ const RatingStars = ({
         >
           <Star
             className={`h-6 w-6 ${
-              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--text-muted)]'
             }`}
           />
         </button>
@@ -204,7 +204,7 @@ export default function FeedbackResponseForm({
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="mt-3 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
           <div
             className="h-full bg-blue-500 transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}

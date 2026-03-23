@@ -26,10 +26,10 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({ data
               <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-700" />
               <XAxis
                 dataKey="date"
-                className="text-xs text-slate-600 dark:text-slate-400"
+                className="text-xs text-[var(--text-muted)]"
                 tick={{ fill: 'currentColor' }}
               />
-              <YAxis className="text-xs text-slate-600 dark:text-slate-400" tick={{ fill: 'currentColor' }} />
+              <YAxis className="text-xs text-[var(--text-muted)]" tick={{ fill: 'currentColor' }} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -53,7 +53,7 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({ data
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <div className="text-center text-slate-400 dark:text-slate-500">
+            <div className="text-center text-[var(--text-muted)]">
               <p className="text-sm font-medium">No attendance data available</p>
               <p className="text-xs mt-1">Attendance records will appear here once logged</p>
             </div>

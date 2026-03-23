@@ -162,7 +162,7 @@ export function TaskDetailsModal({
       case 'phase':
         return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300';
       default:
-        return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300';
+        return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
   };
 
