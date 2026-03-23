@@ -218,8 +218,8 @@ export default function DepartmentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Departments</h1>
-            <p className="text-[var(--text-muted)] mt-1">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Departments</h1>
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
               Manage your organization&apos;s departments and structure
             </p>
           </div>
@@ -238,12 +238,12 @@ export default function DepartmentsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="bg-[var(--bg-card)]">
+          <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)]">Total Departments</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{departments.length}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Departments</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{departments.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                   <Building2 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
@@ -252,12 +252,12 @@ export default function DepartmentsPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-[var(--bg-card)]">
+          <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)]">Active Departments</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{activeDepartments}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Active Departments</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{activeDepartments}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
                   <ToggleRight className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -266,12 +266,12 @@ export default function DepartmentsPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-[var(--bg-card)]">
+          <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-muted)]">Total Employees</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{totalEmployees}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Employees</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{totalEmployees}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
                   <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />

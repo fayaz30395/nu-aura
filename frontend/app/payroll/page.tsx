@@ -108,9 +108,9 @@ export default function PayrollPage() {
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)]">Payroll Management</h1>
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Payroll Management</h1>
             </div>
-            <p className="text-[var(--text-secondary)] mt-2 ml-1">
+            <p className="text-[var(--text-secondary)] mt-2 ml-1 skeuo-deboss">
               Manage payroll runs, payslips, and salary structures for your organisation
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function PayrollPage() {
               <button
                 key={href}
                 onClick={() => router.push(href)}
-                className={`group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg ${hoverBorder} transition-all duration-200 text-left`}
+                className={`group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg ${hoverBorder} transition-all duration-200 text-left skeuo-card`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient} group-hover:scale-110 transition-transform duration-200`}>
@@ -129,7 +129,7 @@ export default function PayrollPage() {
                   </div>
                   <ChevronRight className={`h-5 w-5 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`} />
                 </div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">{label}</h3>
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1 skeuo-emboss">{label}</h3>
                 <p className="text-sm text-[var(--text-secondary)]">{description}</p>
               </button>
             ))}

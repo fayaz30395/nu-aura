@@ -1,5 +1,7 @@
 package com.hrms.domain.notification;
 
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.RequiresPermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +17,9 @@ public class WebSocketNotificationController {
 
     private final WebSocketNotificationService notificationService;
 
+    // SEC-011 FIX: Added RBAC — broadcasting notifications is an admin-level action
     @PostMapping("/broadcast")
+    @RequiresPermission(Permission.NOTIFICATION_MANAGE)
     public ResponseEntity<Void> broadcastNotification(@Valid @RequestBody NotificationMessage message) {
         message.setTimestamp(System.currentTimeMillis());
         notificationService.broadcast(message);

@@ -511,12 +511,12 @@ export default function DashboardPage() {
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
       <div className="space-y-8">
         {/* Header with greeting and time */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden skeuo-card">
           <CardContent className="p-6 sm:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-page-title">
+                  <h1 className="text-page-title skeuo-emboss">
                     Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
                   </h1>
                   <span className={`badge-status ${viewBadgeClass}`}>{analytics.viewLabel}</span>
@@ -547,7 +547,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Attendance Widget */}
-        <Card className="relative overflow-hidden">
+        <Card className="relative overflow-hidden skeuo-card">
           <div className="absolute left-0 top-0 h-full w-1.5 bg-[var(--accent-primary)]" />
           <CardContent className="p-6 pl-7 sm:p-8 sm:pl-9">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">

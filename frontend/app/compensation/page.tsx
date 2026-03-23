@@ -252,10 +252,10 @@ export default function CompensationPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Compensation Planning
             </h1>
-            <p className="text-[var(--text-secondary)]">
+            <p className="text-[var(--text-secondary)] skeuo-deboss">
               Manage compensation review cycles and salary revisions
             </p>
           </div>

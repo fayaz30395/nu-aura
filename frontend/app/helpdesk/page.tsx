@@ -69,8 +69,8 @@ export default function HelpdeskPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Helpdesk</h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1">Manage SLA policies, escalations, and support metrics</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Helpdesk</h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1 skeuo-deboss">Manage SLA policies, escalations, and support metrics</p>
         </div>
 
         {/* Stat Cards */}

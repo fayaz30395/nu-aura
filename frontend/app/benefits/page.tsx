@@ -414,10 +414,10 @@ export default function BenefitsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Benefits Management
             </h1>
-            <p className="text-[var(--text-secondary)]">
+            <p className="text-[var(--text-secondary)] skeuo-deboss">
               View and manage your employee benefits enrollment
             </p>
           </div>
@@ -431,69 +431,69 @@ export default function BenefitsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Enrolled Plans</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalEnrolled}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Enrolled Plans</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalEnrolled}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <DollarSign className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Monthly Premium</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">${stats.monthlyPremium.toLocaleString()}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Monthly Premium</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">${stats.monthlyPremium.toLocaleString()}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <Gift className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Available Plans</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.availablePlans}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Available Plans</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.availablePlans}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Shield className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Coverage</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Coverage</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                     ${stats.totalCoverage.toLocaleString()}
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-cyan-100 p-4 dark:bg-cyan-900">
                   <CreditCard className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Flex Credits</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Flex Credits</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                     ${stats.flexCredits.toLocaleString()}
                   </p>
                 </div>

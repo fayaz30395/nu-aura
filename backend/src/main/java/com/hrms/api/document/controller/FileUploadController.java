@@ -99,6 +99,13 @@ public class FileUploadController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get download URL", description = "Get a pre-signed URL for downloading a file")
     public ResponseEntity<DownloadUrlResponse> getDownloadUrl(@RequestParam("objectName") String objectName) {
+        // SEC-008 FIX: Verify the objectName belongs to the current tenant
+        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
+        if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Access denied: file does not belong to your tenant");
+        }
+
         String url = fileStorageService.getDownloadUrl(objectName);
         return ResponseEntity.ok(new DownloadUrlResponse(url));
     }
@@ -110,13 +117,29 @@ public class FileUploadController {
             @RequestParam("objectName") String objectName,
             @RequestParam(value = "filename", required = false) String filename) {
 
+        // SEC-008 FIX: Verify the objectName belongs to the current tenant
+        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
+        if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Access denied: file does not belong to your tenant");
+        }
+
         InputStream inputStream = fileStorageService.getFile(objectName);
 
         String downloadFilename = filename != null ? filename :
                 objectName.substring(objectName.lastIndexOf('/') + 1);
 
+        // SEC-007 FIX: Sanitize filename to prevent Content-Disposition header injection.
+        // Remove any characters that could be used for header injection (CR, LF, quotes, backslashes).
+        String sanitizedFilename = downloadFilename
+                .replaceAll("[\\r\\n\"\\\\]", "_")
+                .replaceAll("[^a-zA-Z0-9._\\-]", "_");
+        if (sanitizedFilename.isEmpty()) {
+            sanitizedFilename = "download";
+        }
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadFilename + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + sanitizedFilename + "\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(new InputStreamResource(inputStream));
     }
@@ -125,6 +148,13 @@ public class FileUploadController {
     @PreAuthorize("hasPermission('HRMS:DOCUMENT:DELETE')")
     @Operation(summary = "Delete a file", description = "Delete a file from storage")
     public ResponseEntity<Void> deleteFile(@RequestParam("objectName") String objectName) {
+        // SEC-008 FIX: Verify the objectName belongs to the current tenant
+        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
+        if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Access denied: file does not belong to your tenant");
+        }
+
         fileStorageService.deleteFile(objectName);
         return ResponseEntity.noContent().build();
     }
@@ -133,6 +163,13 @@ public class FileUploadController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Check if file exists", description = "Check if a file exists in storage")
     public ResponseEntity<FileExistsResponse> fileExists(@RequestParam("objectName") String objectName) {
+        // SEC-008 FIX: Verify the objectName belongs to the current tenant
+        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
+        if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Access denied: file does not belong to your tenant");
+        }
+
         boolean exists = fileStorageService.fileExists(objectName);
         return ResponseEntity.ok(new FileExistsResponse(exists));
     }

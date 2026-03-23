@@ -48,6 +48,8 @@ export function useMyExpenseClaims(
       return expenseService.getMyClaims('', page, size);
     },
     staleTime: 60 * 1000, // 1 minute
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -57,6 +59,8 @@ export function useAllExpenseClaims(page: number = 0, size: number = 20) {
     queryKey: expenseKeys.allClaimsList(page, size),
     queryFn: () => expenseService.getAllClaims(page, size),
     staleTime: 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -66,6 +70,8 @@ export function usePendingExpenseClaims(page: number = 0, size: number = 50) {
     queryKey: expenseKeys.pendingClaimsList(page, size),
     queryFn: () => expenseService.getPendingClaims(page, size),
     staleTime: 30 * 1000, // 30 seconds - pending items change frequently
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -76,6 +82,8 @@ export function useExpenseStatistics(employeeId?: string) {
     queryFn: () => expenseService.getEmployeeStatistics(employeeId || '', new Date().getFullYear()),
     enabled: !!employeeId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

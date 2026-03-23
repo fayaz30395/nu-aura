@@ -281,8 +281,8 @@ export default function MyAttendancePage() {
     <AppLayout activeMenuItem="my-attendance">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">My Attendance</h1>
-          <p className="text-slate-600 mt-1">Track your attendance and working hours</p>
+          <h1 className="text-3xl font-bold text-slate-900 skeuo-emboss">My Attendance</h1>
+          <p className="text-slate-600 mt-1 skeuo-deboss">Track your attendance and working hours</p>
         </div>
 
         {error && (

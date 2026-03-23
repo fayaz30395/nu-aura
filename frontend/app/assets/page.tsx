@@ -370,10 +370,10 @@ export default function AssetManagementPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Asset Management
             </h1>
-            <p className="text-[var(--text-secondary)]">
+            <p className="text-[var(--text-secondary)] skeuo-deboss">
               Manage and track company assets
             </p>
           </div>
@@ -402,54 +402,54 @@ export default function AssetManagementPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
                   <Package className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Assets</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Assets</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <Package className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Available</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.available}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Available</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.available}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Assigned</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.assigned}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Assigned</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.assigned}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">In Maintenance</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.maintenance}</p>
+                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Maintenance</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.maintenance}</p>
                 </div>
               </div>
             </CardContent>

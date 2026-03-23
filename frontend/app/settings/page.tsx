@@ -192,8 +192,8 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Settings</h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-1">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Settings</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
             Manage your account settings and preferences
           </p>
         </div>
@@ -218,9 +218,9 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Account Settings */}
-          <Card>
+          <Card className="skeuo-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 skeuo-emboss">
                 <Mail className="h-5 w-5" />
                 Account Information
               </CardTitle>
@@ -245,9 +245,9 @@ export default function SettingsPage() {
           </Card>
 
           {/* Appearance Settings */}
-          <Card>
+          <Card className="skeuo-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 skeuo-emboss">
                 {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                 Appearance
               </CardTitle>
@@ -280,16 +280,16 @@ export default function SettingsPage() {
           </Card>
 
           {/* Authentication Info — Google SSO */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 skeuo-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 skeuo-emboss">
                 <Shield className="h-5 w-5" />
                 Authentication
               </CardTitle>
               <CardDescription>Your account authentication method</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] skeuo-surface">
                 <div className="h-10 w-10 rounded-lg bg-white flex items-center justify-center shadow-sm">
                   <svg viewBox="0 0 24 24" width="24" height="24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -318,9 +318,9 @@ export default function SettingsPage() {
           </Card>
 
           {/* Notification Preferences */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 skeuo-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 skeuo-emboss">
                 <Bell className="h-5 w-5" />
                 Notification Preferences
               </CardTitle>
@@ -469,7 +469,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleNotificationSave}
                   disabled={isSavingNotifications}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 skeuo-button"
                 >
                   {isSavingNotifications ? (
                     <>
@@ -488,9 +488,9 @@ export default function SettingsPage() {
           </Card>
 
           {/* Security Information */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 skeuo-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 skeuo-emboss">
                 <Shield className="h-5 w-5" />
                 Security
               </CardTitle>

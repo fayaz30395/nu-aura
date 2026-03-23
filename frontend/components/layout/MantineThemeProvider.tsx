@@ -16,12 +16,14 @@ export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
   const { resolvedTheme } = useDarkMode();
 
   return (
-    <MantineProvider
-      theme={theme}
-      forceColorScheme={resolvedTheme}
-    >
-      {children}
-    </MantineProvider>
+    <div suppressHydrationWarning>
+      <MantineProvider
+        theme={theme}
+        forceColorScheme={resolvedTheme}
+      >
+        {children}
+      </MantineProvider>
+    </div>
   );
 }
 

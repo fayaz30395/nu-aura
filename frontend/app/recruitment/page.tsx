@@ -272,10 +272,10 @@ export default function RecruitmentDashboard() {
         {/* Page Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Recruitment Dashboard
             </h1>
-            <p className="text-[var(--text-muted)] mt-2">
+            <p className="text-[var(--text-muted)] mt-2 skeuo-deboss">
               Track job openings, candidates, and interviews
             </p>
           </div>

@@ -18,6 +18,8 @@ export function usePerformanceActiveCycles() {
     queryKey: performanceKeys.activeCycles(),
     queryFn: () => reviewCycleService.getActiveCycles(),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -26,6 +28,8 @@ export function usePerformanceAllCycles(page: number = 0, size: number = 20) {
     queryKey: performanceKeys.allCycles(page, size),
     queryFn: () => reviewCycleService.getAllCycles(page, size),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -35,6 +39,8 @@ export function usePerformanceCycleDetail(id: string, enabled: boolean = true) {
     queryFn: () => reviewCycleService.getCycleById(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

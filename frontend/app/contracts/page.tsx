@@ -61,8 +61,8 @@ export default function ContractsPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Contracts</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Manage employment, vendor, and other contracts</p>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Contracts</h1>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage employment, vendor, and other contracts</p>
           </div>
           <PermissionGate permission={Permissions.CONTRACT_CREATE}>
             <Button

@@ -13,6 +13,8 @@ export function useAllGoals(page: number = 0, size: number = 20) {
     queryKey: performanceKeys.allGoals(page, size),
     queryFn: () => goalService.getAllGoals(page, size),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -22,6 +24,8 @@ export function useEmployeeGoals(employeeId: string) {
     queryFn: () => goalService.getByEmployee(employeeId),
     enabled: !!employeeId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -31,6 +35,8 @@ export function useTeamGoals(managerId: string) {
     queryFn: () => goalService.getTeamGoals(managerId),
     enabled: !!managerId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -40,6 +46,8 @@ export function useGoalDetail(id: string, enabled: boolean = true) {
     queryFn: () => goalService.getGoalById(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -48,6 +56,8 @@ export function useGoalAnalytics() {
     queryKey: performanceKeys.goalAnalytics(),
     queryFn: () => goalService.getGoalAnalytics(),
     staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

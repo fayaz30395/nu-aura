@@ -158,10 +158,10 @@ export default function CalendarPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Calendar
             </h1>
-            <p className="text-[var(--text-muted)] mt-1">
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
               Manage your events and schedule
             </p>
           </div>

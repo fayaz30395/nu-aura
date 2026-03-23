@@ -98,11 +98,11 @@ export default function LinkedInPostsPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
                   <Linkedin className="w-8 h-8 text-blue-600" />
                   LinkedIn Posts
                 </h1>
-                <p className="text-[var(--text-secondary)] mt-2">
+                <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
                   Curate and manage LinkedIn posts for your company feed
                 </p>
               </div>

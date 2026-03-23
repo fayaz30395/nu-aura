@@ -185,17 +185,17 @@ export default function LeavePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Leave Management
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Track your leave balance and requests
             </p>
           </div>
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30 skeuo-button"
             >
               <Plus className="h-5 w-5" />
               Apply for Leave
@@ -219,7 +219,7 @@ export default function LeavePage() {
               return (
                 <div
                   key={balance.id}
-                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200"
+                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200 skeuo-card"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient}`}>
@@ -235,7 +235,7 @@ export default function LeavePage() {
                   </h3>
 
                   <div className="flex items-baseline gap-1 mb-3">
-                    <span className="text-3xl font-bold text-[var(--text-primary)]">
+                    <span className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
                       {balance.available.toFixed(1)}
                     </span>
                     <span className="text-sm text-[var(--text-muted)]">

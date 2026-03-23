@@ -60,6 +60,8 @@ export function useJobOpenings(page: number = 0, size: number = 20) {
     queryKey: recruitmentKeys.jobsList(page, size),
     queryFn: () => recruitmentService.getAllJobOpenings(page, size),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -68,6 +70,8 @@ export function useJobOpeningsByStatus(status: JobStatus) {
     queryKey: recruitmentKeys.jobsByStatus(status),
     queryFn: () => recruitmentService.getJobOpeningsByStatus(status),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -77,6 +81,8 @@ export function useJobOpening(id: string, enabled: boolean = true) {
     queryFn: () => recruitmentService.getJobOpening(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -120,6 +126,8 @@ export function useCandidates(page: number = 0, size: number = 20) {
     queryKey: recruitmentKeys.candidatesList(page, size),
     queryFn: () => recruitmentService.getAllCandidates(page, size),
     staleTime: 3 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -129,6 +137,8 @@ export function useCandidatesByJob(jobId: string, enabled: boolean = true) {
     queryFn: () => recruitmentService.getCandidatesByJobOpening(jobId),
     enabled: enabled && !!jobId,
     staleTime: 3 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -138,6 +148,8 @@ export function useCandidate(id: string, enabled: boolean = true) {
     queryFn: () => recruitmentService.getCandidate(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -215,6 +227,8 @@ export function useAllInterviews(page: number = 0, size: number = 100) {
     queryKey: [...recruitmentKeys.interviews(), 'list', { page, size }],
     queryFn: () => recruitmentService.getAllInterviews(page, size),
     staleTime: 3 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -227,6 +241,8 @@ export function useInterviewsByCandidate(
     queryFn: () => recruitmentService.getInterviewsByCandidate(candidateId),
     enabled: enabled && !!candidateId,
     staleTime: 3 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -302,6 +318,8 @@ export function useRankedCandidates(jobOpeningId: string, enabled = true) {
     queryFn: () => aiRecruitmentService.rankCandidatesForJob(jobOpeningId),
     enabled: enabled && !!jobOpeningId,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
