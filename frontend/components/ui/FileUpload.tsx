@@ -190,7 +190,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           transition-all cursor-pointer
           ${isDragging
             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-            : 'border-gray-300 dark:border-surface-600 hover:border-blue-400 dark:hover:border-blue-500'
+            : 'border-[var(--border-main)] dark:border-surface-600 hover:border-blue-400 dark:hover:border-blue-500'
           }
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           ${uploading ? 'pointer-events-none' : ''}
@@ -219,12 +219,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   e.stopPropagation();
                   cancelUpload();
                 }}
-                className="p-1 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700 rounded"
+                className="p-1 hover:bg-[var(--bg-surface)]  rounded"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="relative h-2 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
+            <div className="relative h-2 bg-[var(--border-main)] dark:bg-surface-700 rounded-full overflow-hidden">
               <div
                 className="absolute inset-y-0 left-0 bg-blue-500 transition-all duration-300"
                 style={{ width: `${progress}%` }}
@@ -238,7 +238,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         ) : (
           <>
             <Upload className="h-12 w-12 text-[var(--text-muted)] mb-4" />
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               {isDragging ? 'Drop files here' : 'Click to upload or drag and drop'}
             </p>
             <p className="text-xs text-[var(--text-muted)]">

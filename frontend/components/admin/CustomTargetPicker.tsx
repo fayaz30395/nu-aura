@@ -248,14 +248,14 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
   return (
     <div className="space-y-4 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Scope Targets</p>
+        <p className="text-sm font-medium text-[var(--text-secondary)]">Custom Scope Targets</p>
         <span className="text-xs text-[var(--text-muted)]">
           {targets.length} selected
         </span>
       </div>
 
       {/* Target Type Tabs */}
-      <div className="flex gap-1 p-1 bg-gray-200 dark:bg-surface-700 rounded-lg">
+      <div className="flex gap-1 p-1 bg-[var(--bg-surface)] dark:bg-surface-700 rounded-lg">
         {(['EMPLOYEE', 'DEPARTMENT', 'LOCATION'] as TargetType[]).map((type) => (
           <button
             key={type}
@@ -288,7 +288,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             onFocus={() => setShowDropdown(true)}
             placeholder={`Search ${getTargetTypeLabel(targetType).toLowerCase()}s...`}
             disabled={disabled}
-            className="w-full px-3 py-2 pl-9 text-sm border border-gray-300 dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-3 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[var(--text-muted)]">
             {isSearching ? (
@@ -313,7 +313,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                   key={`${result.type}-${result.id}`}
                   type="button"
                   onClick={() => addTarget(result)}
-                  className="w-full px-3 py-2 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-gray-600 transition-colors"
+                  className="w-full px-3 py-2 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <span className={`p-1 rounded ${getTargetTypeBadgeColor(result.type)}`}>

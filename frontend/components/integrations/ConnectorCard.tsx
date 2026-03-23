@@ -21,9 +21,9 @@ export function ConnectorCard({ connector, status, onConfigure, isLoading }: Con
       icon: 'text-emerald-600 dark:text-emerald-400',
     },
     INACTIVE: {
-      bg: 'bg-slate-50 dark:bg-slate-900/20',
-      text: 'text-slate-700 dark:text-slate-300',
-      icon: 'text-slate-600 dark:text-slate-400',
+      bg: 'bg-[var(--bg-surface)]',
+      text: 'text-[var(--text-secondary)]',
+      icon: 'text-[var(--text-muted)]',
     },
     ERROR: {
       bg: 'bg-red-50 dark:bg-red-900/20',
