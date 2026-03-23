@@ -25,6 +25,7 @@ import {
   IntegrationTestResponse,
   SmsSendResponse,
 } from '@/lib/types/integration';
+import { isProduction } from '@/lib/config/env';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { useToast } from '@/components/notifications/ToastProvider';
@@ -102,6 +103,11 @@ export default function AdminIntegrationsPage() {
   }
 
   const handleTestSms = () => {
+    if (isProduction) {
+      toast.error('SMS testing is disabled in production. Use a staging environment.');
+      return;
+    }
+
     if (!testPhoneNumber) {
       toast.warning('Please enter a phone number');
       return;
@@ -124,6 +130,11 @@ export default function AdminIntegrationsPage() {
   };
 
   const handleSendSms = () => {
+    if (isProduction) {
+      toast.error('Direct SMS sending is disabled in production. Use the notification service instead.');
+      return;
+    }
+
     if (!sendPhoneNumber) {
       toast.warning('Please enter a phone number');
       return;
@@ -158,6 +169,11 @@ export default function AdminIntegrationsPage() {
   };
 
   const handleTestPayment = () => {
+    if (isProduction) {
+      toast.error('Payment gateway testing is disabled in production. Use a staging environment.');
+      return;
+    }
+
     setPaymentTestResult(null);
     testPaymentMutation.mutate(undefined, {
       onSuccess: (result) => {
@@ -201,14 +217,14 @@ export default function AdminIntegrationsPage() {
     return (
       <div className="flex items-center gap-2">
         {isActive ? (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
+          <div className="badge-status flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
             <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
               Active
             </span>
           </div>
         ) : (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-100 dark:bg-rose-900/30">
+          <div className="badge-status flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-100 dark:bg-rose-900/30">
             <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />
             <span className="text-sm font-medium text-rose-700 dark:text-rose-300">
               Inactive
@@ -232,7 +248,7 @@ export default function AdminIntegrationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25">
+          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25">
             <Settings className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -341,21 +357,21 @@ export default function AdminIntegrationsPage() {
         <CardContent className="space-y-6">
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="text-sm text-[var(--text-muted)]">Provider</p>
-              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
+            <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Provider</p>
+              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.provider || 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="text-sm text-[var(--text-muted)]">Status</p>
-              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
+            <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Status</p>
+              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="text-sm text-[var(--text-muted)]">Last Checked</p>
-              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
+            <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Last Checked</p>
+              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.lastChecked
                   ? new Date(smsStatus.lastChecked).toLocaleTimeString()
                   : 'Never'}
@@ -364,7 +380,7 @@ export default function AdminIntegrationsPage() {
           </div>
 
           {/* Test SMS */}
-          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+          <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
               <TestTube className="h-4 w-4" />
               Test SMS Service
@@ -411,7 +427,7 @@ export default function AdminIntegrationsPage() {
           </div>
 
           {/* Send SMS */}
-          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+          <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
               <Send className="h-4 w-4" />
               Send SMS
@@ -429,7 +445,7 @@ export default function AdminIntegrationsPage() {
               <div>
                 <Label>Template (Optional)</Label>
                 <select
-                  className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-card)]"
+                  className="input-aura w-full px-3 py-2 rounded-lg"
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
                   disabled={sendSmsMutation.isPending}
@@ -446,7 +462,7 @@ export default function AdminIntegrationsPage() {
                 <div>
                   <Label>Message</Label>
                   <textarea
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-card)]"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
                     placeholder="Enter your message here..."
                     value={sendMessage}
                     onChange={(e) => setSendMessage(e.target.value)}
@@ -506,8 +522,8 @@ export default function AdminIntegrationsPage() {
                   SMS Integration Not Configured
                 </p>
                 <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                  To enable SMS notifications, configure the environment variables:
-                  TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+                  To enable SMS notifications, configure the required SMS provider
+                  credentials in the server environment. Contact your system administrator for details.
                 </p>
               </div>
             </div>
@@ -534,28 +550,28 @@ export default function AdminIntegrationsPage() {
         <CardContent className="space-y-6">
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="text-sm text-[var(--text-muted)]">Provider</p>
-              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
+            <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Provider</p>
+              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.provider || 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="text-sm text-[var(--text-muted)]">Status</p>
-              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
+            <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Status</p>
+              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="text-sm text-[var(--text-muted)]">Supported Methods</p>
-              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
+            <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Supported Methods</p>
+              <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.supportedMethods?.length || 0}
               </p>
             </div>
           </div>
 
           {/* Test Payment Gateway */}
-          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+          <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
               <TestTube className="h-4 w-4" />
               Test Payment Gateway
@@ -593,7 +609,7 @@ export default function AdminIntegrationsPage() {
 
           {/* Supported Payment Methods */}
           {paymentStatus?.supportedMethods && paymentStatus.supportedMethods.length > 0 && (
-            <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+            <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
               <h3 className="font-semibold text-[var(--text-primary)] mb-3">
                 Supported Payment Methods
               </h3>
@@ -601,7 +617,7 @@ export default function AdminIntegrationsPage() {
                 {paymentStatus.supportedMethods.map((method) => (
                   <span
                     key={method}
-                    className="px-3 py-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-sm text-[var(--text-secondary)]"
+                    className="badge-status px-3 py-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-sm text-[var(--text-secondary)]"
                   >
                     {method}
                   </span>
@@ -619,8 +635,8 @@ export default function AdminIntegrationsPage() {
                   Payment Gateway Not Configured
                 </p>
                 <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                  To enable payment processing, configure the environment variables:
-                  STRIPE_API_KEY, STRIPE_PUBLISHABLE_KEY
+                  To enable payment processing, configure the required payment gateway
+                  credentials in the server environment. Contact your system administrator for details.
                 </p>
               </div>
             </div>

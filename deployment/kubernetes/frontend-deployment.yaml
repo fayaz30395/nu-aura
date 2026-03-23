@@ -39,8 +39,10 @@ spec:
 
       containers:
       - name: frontend
-        image: gcr.io/PROJECT_ID/hrms-frontend:latest
-        imagePullPolicy: Always
+        # IMAGE_TAG is replaced by CI/CD pipeline (e.g., git SHA or semver).
+        # Do NOT deploy with :latest in production.
+        image: gcr.io/PROJECT_ID/hrms-frontend:IMAGE_TAG
+        imagePullPolicy: IfNotPresent
 
         ports:
         - name: http

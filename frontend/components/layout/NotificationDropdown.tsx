@@ -39,6 +39,7 @@ import { Button } from '@/components/ui/Button';
 import { getNotificationRoute } from '@/lib/utils/notificationRoutes';
 import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
 import { createLogger } from '@/lib/utils/logger';
+import { safeWindowOpen } from '@/lib/utils/url';
 
 const logger = createLogger('NotificationDropdown');
 
@@ -650,11 +651,11 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             </div>
             <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
               {selectedEvent.calendarEvent.hangoutLink && (
-                <Button onClick={() => window.open(selectedEvent.calendarEvent!.hangoutLink, '_blank')} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
                   <Video className="h-4 w-4 mr-2" /> Join Meeting
                 </Button>
               )}
-              <Button variant="outline" onClick={() => window.open(selectedEvent.calendarEvent!.htmlLink, '_blank')} className="flex-1">
+              <Button variant="outline" onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.htmlLink, '_blank')} className="flex-1">
                 <ExternalLink className="h-4 w-4 mr-2" /> Open in Calendar
               </Button>
             </div>
@@ -695,7 +696,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
               )}
             </div>
             <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
-              <Button onClick={() => window.open(`https://mail.google.com/mail/u/0/#inbox/${selectedEmail.emailData!.threadId}`, '_blank')} className="flex-1">
+              <Button onClick={() => safeWindowOpen(`https://mail.google.com/mail/u/0/#inbox/${selectedEmail.emailData!.threadId}`, '_blank')} className="flex-1">
                 <ExternalLink className="h-4 w-4 mr-2" /> Open in Gmail
               </Button>
               <Button variant="outline" onClick={() => router.push('/nu-mail')}>Go to Nu-Mail</Button>
@@ -742,7 +743,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
               )}
             </div>
             <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
-              <Button onClick={() => window.open(selectedFile.driveFile!.webViewLink, '_blank')} className="flex-1">
+              <Button onClick={() => safeWindowOpen(selectedFile.driveFile!.webViewLink, '_blank')} className="flex-1">
                 <ExternalLink className="h-4 w-4 mr-2" /> Open in Drive
               </Button>
               <Button variant="outline" onClick={() => router.push('/nu-drive')}>Go to Nu-Drive</Button>

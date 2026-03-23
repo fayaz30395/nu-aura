@@ -45,7 +45,7 @@ export function PayrollRunsTab({
             <select
               value={payrollRunFilter}
               onChange={(e) => onFilterChange(e.target.value as PayrollRunStatus | 'ALL')}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="input-aura px-3 py-2 rounded-lg"
             >
               <option value="ALL">All Status</option>
               <option value="DRAFT">Draft</option>
@@ -59,7 +59,7 @@ export function PayrollRunsTab({
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreateRun}
-            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+            className="btn-primary px-4 py-2 rounded-lg"
           >
             Create Payroll Run
           </button>
@@ -77,16 +77,16 @@ export function PayrollRunsTab({
           iconColor="blue"
         />
       ) : (
-        <div className="overflow-x-auto bg-[var(--bg-card)] rounded-lg shadow-md">
-          <table className="w-full">
-            <thead className="bg-[var(--bg-secondary)]/50 border-b">
+        <div className="skeuo-card overflow-x-auto rounded-xl border border-[var(--border-main)]">
+          <table className="table-aura w-full">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Run Name</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Period</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Status</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Employees</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Gross Amount</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Actions</th>
+                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Run Name</th>
+                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Period</th>
+                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Status</th>
+                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Employees</th>
+                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Gross Amount</th>
+                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -97,7 +97,7 @@ export function PayrollRunsTab({
                     {formatDate(run.payrollPeriodStart)} - {formatDate(run.payrollPeriodEnd)}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(run.status)}`}>
+                    <span className={`badge-status px-2 py-1 rounded text-xs font-medium ${getStatusColor(run.status)}`}>
                       {run.status}
                     </span>
                   </td>

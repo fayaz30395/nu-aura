@@ -15,9 +15,9 @@ const Card = React.forwardRef<
 >(({ className, variant = 'default', hover = false, isClickable = false, padding = 'none', ...props }, ref) => {
   const isHoverable = hover || isClickable;
   const variantStyles = {
-    default: 'border shadow-card',
-    bordered: 'border-2 shadow-card',
-    elevated: 'border shadow-elevated',
+    default: 'skeuo-card border shadow-card',
+    bordered: 'skeuo-card border-2 shadow-card',
+    elevated: 'skeuo-card border shadow-elevated',
   };
 
   const paddingStyles = {

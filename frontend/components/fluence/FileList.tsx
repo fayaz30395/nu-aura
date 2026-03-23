@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { FluenceAttachment } from '@/lib/types/fluence';
 import { fluenceService } from '@/lib/services/fluence.service';
 import { cn } from '@/lib/utils';
+import { safeWindowOpen } from '@/lib/utils/url';
 
 interface FileListProps {
   attachments: FluenceAttachment[];
@@ -53,11 +54,11 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
   const handleDownload = async (attachment: FluenceAttachment) => {
     try {
       const downloadUrl = await fluenceService.getAttachmentDownloadUrl(attachment.id);
-      window.open(downloadUrl, '_blank');
+      safeWindowOpen(downloadUrl, '_blank');
     } catch {
       // If pre-signed URL fails, try direct downloadUrl from the attachment
       if (attachment.downloadUrl) {
-        window.open(attachment.downloadUrl, '_blank');
+        safeWindowOpen(attachment.downloadUrl, '_blank');
       }
     }
   };

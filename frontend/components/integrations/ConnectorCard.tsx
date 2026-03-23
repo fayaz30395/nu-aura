@@ -36,7 +36,7 @@ export function ConnectorCard({ connector, status, onConfigure, isLoading }: Con
   const isActive = status === 'ACTIVE';
 
   return (
-    <Card variant="default" hover isClickable padding="md" className="h-full flex flex-col">
+    <Card variant="default" hover isClickable padding="md" className="card-interactive h-full flex flex-col">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
@@ -60,14 +60,14 @@ export function ConnectorCard({ connector, status, onConfigure, isLoading }: Con
       <CardContent className="flex-1 flex flex-col gap-4">
         {/* Type Badge */}
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+          <span className="badge-status inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
             {connector.type}
           </span>
         </div>
 
         {/* Status */}
         {status && (
-          <div className={`px-3 py-1.5 rounded-lg ${colors.bg} ${colors.text} text-sm font-medium`}>
+          <div className={`badge-status px-3 py-1.5 rounded-lg ${colors.bg} ${colors.text} text-sm font-medium`}>
             {status === 'ACTIVE' ? 'Connected' : status === 'ERROR' ? 'Error' : 'Not Configured'}
           </div>
         )}

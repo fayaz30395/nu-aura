@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
 import { createLogger } from '@/lib/utils/logger';
+import { safeWindowOpen } from '@/lib/utils/url';
 
 import {
   DriveOAuthPanel,
@@ -429,7 +430,7 @@ function DriveContent() {
       document.body.removeChild(a);
     } catch (_downloadError) {
       if (file.webViewLink) {
-        window.open(file.webViewLink, '_blank');
+        safeWindowOpen(file.webViewLink, '_blank');
       }
     }
 
@@ -692,7 +693,7 @@ function DriveContent() {
           position={contextMenuPos}
           menuRef={contextMenuRef}
           onOpen={(file) => { openPreview(file); setShowContextMenu(false); }}
-          onOpenInDrive={(file) => { window.open(file.webViewLink, '_blank'); setShowContextMenu(false); }}
+          onOpenInDrive={(file) => { safeWindowOpen(file.webViewLink, '_blank'); setShowContextMenu(false); }}
           onDownload={downloadFile}
           onShare={openShareModal}
           onToggleStar={toggleStar}
