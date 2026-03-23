@@ -3,23 +3,23 @@ import type { FeatureFlag, FeatureFlagRequest, FeatureFlagMap } from '@/lib/type
 
 export const featureFlagService = {
   getAll: () =>
-    apiClient.get<FeatureFlag[]>('/api/v1/feature-flags'),
+    apiClient.get<FeatureFlag[]>('/feature-flags'),
 
   getMap: () =>
-    apiClient.get<FeatureFlagMap>('/api/v1/feature-flags/map'),
+    apiClient.get<FeatureFlagMap>('/feature-flags/map'),
 
   getEnabled: () =>
-    apiClient.get<string[]>('/api/v1/feature-flags/enabled'),
+    apiClient.get<string[]>('/feature-flags/enabled'),
 
   check: (featureKey: string) =>
-    apiClient.get<{ featureKey: string; enabled: boolean }>(`/api/v1/feature-flags/check/${featureKey}`),
+    apiClient.get<{ featureKey: string; enabled: boolean }>(`/feature-flags/check/${featureKey}`),
 
   getByCategory: (category: string) =>
-    apiClient.get<FeatureFlag[]>(`/api/v1/feature-flags/category/${category}`),
+    apiClient.get<FeatureFlag[]>(`/feature-flags/category/${category}`),
 
   set: (data: FeatureFlagRequest) =>
-    apiClient.post<FeatureFlag>('/api/v1/feature-flags', data),
+    apiClient.post<FeatureFlag>('/feature-flags', data),
 
   toggle: (featureKey: string) =>
-    apiClient.post<FeatureFlag>(`/api/v1/feature-flags/${featureKey}/toggle`),
+    apiClient.post<FeatureFlag>(`/feature-flags/${featureKey}/toggle`),
 };

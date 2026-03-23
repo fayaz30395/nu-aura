@@ -20,7 +20,7 @@ import {
   SyncResponse,
 } from '../types/mobile-api';
 
-const MOBILE_API_BASE = '/api/v1/mobile';
+const MOBILE_API_BASE = '/mobile';
 
 /**
  * Mobile Dashboard Service

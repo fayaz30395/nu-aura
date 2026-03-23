@@ -98,7 +98,12 @@ public class LlmStreamingService {
 
             int status = connection.getResponseCode();
             if (status != 200) {
-                String errorBody = new String(connection.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
+                String errorBody = "";
+                try (java.io.InputStream errorStream = connection.getErrorStream()) {
+                    if (errorStream != null) {
+                        errorBody = new String(errorStream.readAllBytes(), StandardCharsets.UTF_8);
+                    }
+                }
                 log.error("LLM API returned {}: {}", status, errorBody);
                 onError.accept("LLM API error: " + status);
                 return;
