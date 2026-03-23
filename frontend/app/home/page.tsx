@@ -172,9 +172,9 @@ export default function HomePage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
           {/* Attendance */}
-          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Attendance</h3>
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide skeuo-deboss">Attendance</h3>
               <button onClick={() => router.push('/attendance')} className="text-xs text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
                 View
               </button>
@@ -212,15 +212,15 @@ export default function HomePage() {
           </div>
 
           {/* Leave Balance */}
-          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Leave</h3>
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide skeuo-deboss">Leave</h3>
               <button onClick={() => router.push('/leave')} className="text-xs text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
                 Details
               </button>
             </div>
             <div className="mb-3">
-              <span className="text-2xl font-bold text-[var(--text-primary)]">{totalLeave > 0 ? totalLeave.toFixed(1) : '0'}</span>
+              <span className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{totalLeave > 0 ? totalLeave.toFixed(1) : '0'}</span>
               <span className="text-xs text-[var(--text-muted)] ml-1">days left</span>
             </div>
             {dashboardData.leaveBalances.length > 0 && (
@@ -264,9 +264,9 @@ export default function HomePage() {
           </div>
 
           {/* Who's Out */}
-          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Who&apos;s Out</h3>
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide skeuo-deboss">Who&apos;s Out</h3>
               <span className="text-xs status-success px-1.5 py-0.5 rounded font-medium">
                 {dashboardData.onLeaveToday.length}
               </span>
@@ -308,7 +308,7 @@ export default function HomePage() {
           <div className="lg:col-span-2 space-y-4">
 
             {/* Composer */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="card-aura rounded-xl border border-[var(--border-main)] p-4">
               <div className="flex gap-4 border-b border-[var(--border-main)] dark:border-[var(--border-main)] pb-2.5 mb-3">
                 {(['Post', 'Poll', 'Praise'] as WallTab[]).map((tab) => {
                   const icons = { Post: MessageSquare, Poll: BarChart3, Praise: Heart };
@@ -360,9 +360,9 @@ export default function HomePage() {
             </div>
 
             {/* Announcements */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="card-aura rounded-xl border border-[var(--border-main)] p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Announcements</h3>
+                <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide skeuo-emboss">Announcements</h3>
                 <button className="w-6 h-6 rounded-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] flex items-center justify-center hover:bg-gray-200 dark:hover:bg-[var(--bg-secondary)] transition-colors">
                   <Plus className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                 </button>
@@ -379,14 +379,14 @@ export default function HomePage() {
                 <Skeleton className="h-48 rounded-xl" />
               </>
             ) : dashboardData.wallPosts.length === 0 ? (
-              <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
+              <div className="card-aura rounded-xl border border-[var(--border-main)] p-6 text-center">
                 <MessageSquare className="w-8 h-8 text-gray-300 dark:text-[var(--text-secondary)] mx-auto mb-2" />
                 <p className="text-sm text-[var(--text-secondary)]">No posts yet</p>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5">Be the first to share something</p>
               </div>
             ) : (
               dashboardData.wallPosts.map((post) => (
-                <div key={post.id} className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+                <div key={post.id} className="card-aura rounded-xl border border-[var(--border-main)] p-4">
                   <div className="flex items-start gap-2.5">
                     <div className="w-8 h-8 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-primary-400 text-xs font-bold shrink-0">
                       {getInitials(post.author?.fullName)}
@@ -428,8 +428,8 @@ export default function HomePage() {
           <div className="lg:col-span-1 space-y-4">
 
             {/* Celebrations */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
-              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide mb-3">Celebrations</h3>
+            <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide mb-3 skeuo-emboss">Celebrations</h3>
 
               {todayBirthdays.length > 0 && (
                 <div className="mb-3">
@@ -504,9 +504,9 @@ export default function HomePage() {
             </div>
 
             {/* New Joinees */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">New Joinees</h3>
+                <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide skeuo-emboss">New Joinees</h3>
                 <span className="text-xs status-info px-1.5 py-0.5 rounded font-medium">
                   {newJoinees.length}
                 </span>
@@ -534,8 +534,8 @@ export default function HomePage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
-              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide mb-3">Quick Actions</h3>
+            <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide mb-3 skeuo-emboss">Quick Actions</h3>
               <div className="grid grid-cols-3 gap-1.5">
                 {[
                   { label: 'Attendance', icon: Clock, path: '/attendance' },

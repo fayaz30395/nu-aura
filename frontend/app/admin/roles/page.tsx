@@ -328,7 +328,7 @@ export default function RolesPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Role Management</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Role Management</h1>
           <p className="text-[var(--text-secondary)] mt-1">Manage user roles and permissions</p>
         </div>
 
@@ -338,19 +338,19 @@ export default function RolesPage() {
           placeholder="Search roles..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="input-aura px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         />
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500"
+          className="btn-primary px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500"
         >
           Create Role
         </button>
       </div>
 
-      <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full divide-y divide-[var(--border-main)]">
-          <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]">
+      <div className="skeuo-card rounded-xl overflow-x-auto">
+        <table className="table-aura">
+          <thead className="skeuo-table-header">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Code
@@ -397,11 +397,11 @@ export default function RolesPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {role.isSystemRole ? (
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[var(--bg-muted)] text-[var(--text-secondary)]">
+                    <span className="badge-status status-neutral">
                       System
                     </span>
                   ) : (
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[var(--bg-success)] text-[var(--text-success)]">
+                    <span className="badge-status status-success">
                       Custom
                     </span>
                   )}

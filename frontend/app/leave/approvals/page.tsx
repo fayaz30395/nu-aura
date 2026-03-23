@@ -115,7 +115,7 @@ export default function LeaveApprovalsPage() {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)]">Leave Approvals</h1>
+        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)] skeuo-emboss">Leave Approvals</h1>
 
         {/* Error State */}
         {error && (
@@ -135,24 +135,24 @@ export default function LeaveApprovalsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-[var(--text-secondary)] mb-1">Pending Requests</div>
-            <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">{requests.length}</div>
+          <div className="skeuo-card rounded-xl p-6">
+            <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Pending Requests</div>
+            <div className="skeuo-emboss text-3xl font-bold text-yellow-600 dark:text-yellow-500">{requests.length}</div>
           </div>
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-[var(--text-secondary)] mb-1">Approved (This Month)</div>
-            <div className="text-3xl font-bold text-green-600 dark:text-green-500">0</div>
+          <div className="skeuo-card rounded-xl p-6">
+            <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Approved (This Month)</div>
+            <div className="skeuo-emboss text-3xl font-bold text-green-600 dark:text-green-500">0</div>
             <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
           </div>
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-[var(--text-secondary)] mb-1">Rejected (This Month)</div>
-            <div className="text-3xl font-bold text-red-600 dark:text-red-500">0</div>
+          <div className="skeuo-card rounded-xl p-6">
+            <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Rejected (This Month)</div>
+            <div className="skeuo-emboss text-3xl font-bold text-red-600 dark:text-red-500">0</div>
             <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
           </div>
         </div>
 
         {/* Requests Table */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
+        <div className="card-aura overflow-hidden">
           {!pendingData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
@@ -172,8 +172,8 @@ export default function LeaveApprovalsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-[var(--bg-secondary)]/50">
+              <table className="table-aura">
+                <thead className="skeuo-table-header">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
@@ -217,7 +217,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleApproveClick(request.id)}
                               disabled={isProcessing}
-                              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-primary px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-xs font-medium"
                             >
                               {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
                             </button>
@@ -226,7 +226,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleRejectClick(request.id)}
                               disabled={isProcessing}
-                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-secondary px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 text-xs font-medium"
                             >
                               Reject
                             </button>

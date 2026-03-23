@@ -6,17 +6,17 @@ import { CandidateStatus, RecruitmentStage } from '@/lib/types/recruitment';
  */
 export function getStatusColor(status: CandidateStatus): string {
   const colorMap: Record<CandidateStatus, string> = {
-    NEW: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
-    SCREENING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
-    INTERVIEW: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
-    SELECTED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
-    OFFER_EXTENDED: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300',
-    OFFER_ACCEPTED: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300',
-    OFFER_DECLINED: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
-    REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-    WITHDRAWN: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]',
+    NEW: 'badge-status status-info',
+    SCREENING: 'badge-status status-info',
+    INTERVIEW: 'badge-status status-warning',
+    SELECTED: 'badge-status status-success',
+    OFFER_EXTENDED: 'badge-status status-info',
+    OFFER_ACCEPTED: 'badge-status status-success',
+    OFFER_DECLINED: 'badge-status status-danger',
+    REJECTED: 'badge-status status-danger',
+    WITHDRAWN: 'badge-status status-neutral',
   };
-  return colorMap[status] || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+  return colorMap[status] || 'badge-status status-neutral';
 }
 
 /**
@@ -24,30 +24,30 @@ export function getStatusColor(status: CandidateStatus): string {
  */
 export function getStageColor(stage?: RecruitmentStage): string {
   const colorMap: Record<RecruitmentStage, string> = {
-    RECRUITERS_PHONE_CALL: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
-    PANEL_REVIEW: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
-    PANEL_REJECT: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-    PANEL_SHORTLISTED: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300',
-    TECHNICAL_INTERVIEW_SCHEDULED: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
-    TECHNICAL_INTERVIEW_COMPLETED: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
-    MANAGEMENT_INTERVIEW_SCHEDULED: 'bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300',
-    MANAGEMENT_INTERVIEW_COMPLETED: 'bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300',
-    CLIENT_INTERVIEW_SCHEDULED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
-    CLIENT_INTERVIEW_COMPLETED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
-    HR_FINAL_INTERVIEW_COMPLETED: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300',
-    CANDIDATE_REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-    OFFER_NDA_TO_BE_RELEASED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+    RECRUITERS_PHONE_CALL: 'badge-status status-info',
+    PANEL_REVIEW: 'badge-status status-info',
+    PANEL_REJECT: 'badge-status status-danger',
+    PANEL_SHORTLISTED: 'badge-status status-success',
+    TECHNICAL_INTERVIEW_SCHEDULED: 'badge-status status-warning',
+    TECHNICAL_INTERVIEW_COMPLETED: 'badge-status status-info',
+    MANAGEMENT_INTERVIEW_SCHEDULED: 'badge-status status-warning',
+    MANAGEMENT_INTERVIEW_COMPLETED: 'badge-status status-info',
+    CLIENT_INTERVIEW_SCHEDULED: 'badge-status status-warning',
+    CLIENT_INTERVIEW_COMPLETED: 'badge-status status-info',
+    HR_FINAL_INTERVIEW_COMPLETED: 'badge-status status-success',
+    CANDIDATE_REJECTED: 'badge-status status-danger',
+    OFFER_NDA_TO_BE_RELEASED: 'badge-status status-success',
   };
-  return colorMap[stage || 'RECRUITERS_PHONE_CALL'] || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+  return colorMap[stage || 'RECRUITERS_PHONE_CALL'] || 'badge-status status-neutral';
 }
 
 /**
  * Match score color mapping for AI-generated match percentages.
  */
 export function getMatchScoreColor(score: number): string {
-  if (score >= 70) return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-  if (score >= 50) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-  return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+  if (score >= 70) return 'badge-status status-success';
+  if (score >= 50) return 'badge-status status-warning';
+  return 'badge-status status-danger';
 }
 
 /**

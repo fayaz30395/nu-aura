@@ -299,7 +299,7 @@ export default function PerformancePage() {
           <Link
             href={module.href}
             aria-label={`Go to ${module.title} management`}
-            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
+            className="group card-interactive rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
           >
             <div className="p-6">
               <div className="flex items-start gap-4">
@@ -321,7 +321,7 @@ export default function PerformancePage() {
       </div>
 
       {/* Getting Started Section */}
-      <div className="mt-8 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6 skeuo-surface">
+      <div className="mt-8 skeuo-card rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6">
         <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4 skeuo-emboss">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">

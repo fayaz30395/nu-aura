@@ -93,7 +93,7 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
   attendanceRate,
 }: AttendanceWeeklyChartProps) {
   return (
-    <Card className="lg:col-span-2 card-aura border border-[var(--border-main)] shadow-md">
+    <Card className="lg:col-span-2 skeuo-card card-aura border border-[var(--border-main)] shadow-md">
       <CardHeader className="border-b border-[var(--border-main)] pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">

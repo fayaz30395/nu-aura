@@ -205,7 +205,7 @@ export default function LeavePage() {
 
         {/* Leave Balance Cards */}
         <div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 skeuo-emboss">
             Leave Balance ({new Date().getFullYear()})
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -268,9 +268,9 @@ export default function LeavePage() {
         </div>
 
         {/* Recent Leave Requests */}
-        <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden">
+        <div className="skeuo-card rounded-xl border border-[var(--border-main)] overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
               Recent Leave Requests
             </h2>
             <button
@@ -290,9 +290,9 @@ export default function LeavePage() {
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-[var(--bg-secondary)]/50">
+              <table className="table-aura w-full">
+                <thead className="skeuo-table-header">
+                  <tr>
                     <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Request #
                     </th>
@@ -358,7 +358,7 @@ export default function LeavePage() {
                         </td>
                         <td className="px-5 py-4">
                           <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+                            className={`badge-status ${request.status === 'APPROVED' ? 'status-success' : request.status === 'PENDING' ? 'status-warning' : request.status === 'REJECTED' ? 'status-danger' : request.status === 'CANCELLED' ? 'status-neutral' : 'status-info'} inline-flex items-center gap-1.5`}
                           >
                             <StatusIcon className="h-3.5 w-3.5" />
                             {request.status}
@@ -386,7 +386,7 @@ export default function LeavePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
@@ -404,7 +404,7 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
@@ -422,7 +422,7 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/calendar')}
-            className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 transition-transform">

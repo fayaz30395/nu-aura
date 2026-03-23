@@ -46,7 +46,7 @@ export const CandidateFilters = memo(function CandidateFilters({
   jobOpenings,
 }: CandidateFiltersProps) {
   return (
-    <Card className="bg-[var(--bg-card)]">
+    <Card className="skeuo-card">
       <CardContent className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
@@ -56,13 +56,13 @@ export const CandidateFilters = memo(function CandidateFilters({
               placeholder="Search candidates..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full input-aura pl-10 pr-4 py-2.5 rounded-xl"
             />
           </div>
           <select
             value={jobFilter}
             onChange={(e) => onJobChange(e.target.value)}
-            className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+            className="input-aura px-4 py-2.5 rounded-xl"
           >
             <option value="">All Job Openings</option>
             {jobOpenings.map((job) => (
@@ -72,7 +72,7 @@ export const CandidateFilters = memo(function CandidateFilters({
           <select
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+            className="input-aura px-4 py-2.5 rounded-xl"
           >
             {STATUS_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
