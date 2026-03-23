@@ -23,8 +23,8 @@ const variantConfig = {
     inner: 'stroke-primary-600 dark:stroke-primary-400',
   },
   secondary: {
-    outer: 'stroke-gray-200 dark:stroke-gray-700',
-    inner: 'stroke-gray-600 dark:stroke-gray-400',
+    outer: 'stroke-[var(--border-main)]',
+    inner: 'stroke-[var(--text-secondary)]',
   },
   white: {
     outer: 'stroke-white/20',

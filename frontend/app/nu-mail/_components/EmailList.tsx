@@ -89,7 +89,7 @@ export function EmailList({
         /* Empty State */
         <div className="py-16">
           <div className="text-center">
-            <MailOpen className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+            <MailOpen className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
             <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
               {searchQuery ? 'No emails found' : 'No emails here'}
             </h3>
@@ -107,8 +107,8 @@ export function EmailList({
             <div
               key={email.id}
               onClick={() => onEmailClick(email.id)}
-              className={`flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors ${
-                !email.isRead ? 'bg-blue-50/50 dark:bg-blue-950/20' : ''
+              className={`flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors ${
+                !email.isRead ? 'bg-blue-50/50' : ''
               }`}
             >
               <button

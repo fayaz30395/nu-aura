@@ -201,13 +201,13 @@ export const taskService = {
    */
   getStatusBadge(status: TaskStatus): { bg: string; text: string } {
     const badges: Record<TaskStatus, { bg: string; text: string }> = {
-      BACKLOG: { bg: 'bg-[var(--bg-surface)] dark:bg-surface-800', text: 'text-gray-700 dark:text-gray-300' },
-      TODO: { bg: 'bg-slate-100 dark:bg-slate-800', text: 'text-slate-700 dark:text-slate-300' },
+      BACKLOG: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
+      TODO: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
       IN_PROGRESS: { bg: 'bg-blue-100 dark:bg-blue-900', text: 'text-blue-700 dark:text-blue-300' },
       IN_REVIEW: { bg: 'bg-purple-100 dark:bg-purple-900', text: 'text-purple-700 dark:text-purple-300' },
       BLOCKED: { bg: 'bg-red-100 dark:bg-red-900', text: 'text-red-700 dark:text-red-300' },
       DONE: { bg: 'bg-green-100 dark:bg-green-900', text: 'text-green-700 dark:text-green-300' },
-      CANCELLED: { bg: 'bg-gray-200 dark:bg-surface-700', text: 'text-[var(--text-muted)]' },
+      CANCELLED: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-muted)]' },
     };
     return badges[status] || badges.TODO;
   },

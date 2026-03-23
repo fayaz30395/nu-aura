@@ -628,7 +628,7 @@ export default function SignPage() {
               <button
                 onClick={() => setShowDeclineModal(true)}
                 disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
-                className="flex-1 py-2.5 px-4 border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50"
+                className="flex-1 py-2.5 px-4 border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--border-main)] focus:ring-offset-2 disabled:opacity-50"
               >
                 I Decline
               </button>

@@ -123,7 +123,7 @@ class TimeTrackingService {
   // Helpers
   getStatusColor(status: TimeEntryStatus): string {
     const colors: Record<TimeEntryStatus, string> = {
-      DRAFT: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300',
+      DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
       SUBMITTED: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
       APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
       REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',

@@ -119,7 +119,7 @@ class LoanService {
       ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
       CLOSED: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
       DEFAULTED: 'bg-red-200 text-red-800 dark:bg-red-900 dark:text-red-200',
-      CANCELLED: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300',
+      CANCELLED: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
     };
     return colors[status] || colors.PENDING;
   }
