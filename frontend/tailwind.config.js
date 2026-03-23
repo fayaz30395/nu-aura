@@ -1,64 +1,66 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * NU-AURA Theme - Tailwind CSS Configuration
- * Aesthetic: Civic Canvas (Warm, crafted enterprise)
+ * Aesthetic: Precision Blue (Professional, elegant enterprise)
  * Philosophy: Human clarity + tactical depth + calm momentum
  *
  * Design Principles:
- * - Warm surfaces with high legibility
+ * - Neutral surfaces with maximum clarity
  * - Purposeful hierarchy (serif headings, mono metrics)
- * - Signal teal accent (used sparingly)
- * - Soft material depth
+ * - Pure blue accent (bold, decisive)
+ * - Minimal material depth
  * - Meaningful motion (page + stagger)
  */
 
-const {
-  amber,
-  blue,
-  grass,
-  tomato,
-} = require('@radix-ui/colors');
-
-const toScale = (scale, prefix) => ({
-  50: scale[`${prefix}1`],
-  100: scale[`${prefix}2`],
-  200: scale[`${prefix}3`],
-  300: scale[`${prefix}4`],
-  400: scale[`${prefix}5`],
-  500: scale[`${prefix}6`],
-  600: scale[`${prefix}7`],
-  700: scale[`${prefix}8`],
-  800: scale[`${prefix}9`],
-  900: scale[`${prefix}10`],
-  950: scale[`${prefix}12`],
-});
-
-const sand = {
-  50: '#faf7f1',
-  100: '#f3eee6',
-  200: '#e7dfd4',
-  300: '#d7cdbf',
-  400: '#c5b8a7',
-  500: '#a89482',
-  600: '#8a7868',
-  700: '#6b5b4d',
-  800: '#4c4036',
-  900: '#332b24',
-  950: '#1f1914',
+const gray = {
+  50: '#F9F9F9',
+  100: '#F0F0F0',
+  200: '#E8E8E8',
+  300: '#DCDCDC',
+  400: '#C0C0C0',
+  500: '#909090',
+  600: '#707070',
+  700: '#505050',
+  800: '#303030',
+  900: '#191919',
+  950: '#0D0D0D',
 };
 
-const teal = {
-  50: '#f0fdfa',
-  100: '#ccfbf1',
-  200: '#99f6e4',
-  300: '#5eead4',
-  400: '#2dd4bf',
-  500: '#14b8a6',
-  600: '#0d9488',
-  700: '#0f766e',
-  800: '#115e59',
-  900: '#134e4a',
-  950: '#042f2e',
+const blue = {
+  50: '#EBF0FF',
+  100: '#D6E0FF',
+  200: '#ADC2FF',
+  300: '#85A3FF',
+  400: '#5C85FF',
+  500: '#0057FF',
+  600: '#004ACC',
+  700: '#003ECB',
+  800: '#002F9A',
+  900: '#001F66',
+  950: '#001033',
+};
+
+const semanticColors = {
+  success: {
+    50: '#F0FDF4', 100: '#DCFCE7', 200: '#BBF7D0', 300: '#86EFAC',
+    400: '#4ADE80', 500: '#22C55E', 600: '#16A34A', 700: '#15803D',
+    800: '#166534', 900: '#14532D', 950: '#052E16',
+  },
+  danger: {
+    50: '#FEF2F2', 100: '#FEE2E2', 200: '#FECACA', 300: '#FCA5A5',
+    400: '#F87171', 500: '#EF4444', 600: '#DC2626', 700: '#B91C1C',
+    800: '#991B1B', 900: '#7F1D1D', 950: '#450A0A',
+  },
+  warning: {
+    50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D',
+    400: '#FBBF24', 500: '#F59E0B', 600: '#D97706', 700: '#B45309',
+    800: '#92400E', 900: '#78350F', 950: '#451A03',
+  },
+  info: {
+    50: '#EFF6FF', 100: '#DBEAFE', 200: '#BFDBFE', 300: '#93C5FD',
+    400: '#60A5FA', 500: '#3B82F6', 600: '#2563EB', 700: '#1D4ED8',
+    800: '#1E40AF', 900: '#1E3A8A', 950: '#172554',
+  },
 };
 
 module.exports = {
@@ -128,37 +130,37 @@ module.exports = {
           divider: 'var(--dropdown-divider)',
         },
 
-        // ── Accent (Signal Teal) ─────────────────────────────────
+        // ── Accent (Pure Blue) ───────────────────────────────────
         accent: {
           DEFAULT: 'var(--accent-primary)',
           hover: 'var(--accent-primary-hover)',
           subtle: 'var(--accent-primary-subtle)',
-          ...teal,
+          ...blue,
         },
 
         // ── Primary (Alias for accent for backward compatibility) ──
         primary: {
           DEFAULT: 'var(--accent-primary)',
-          ...teal,
+          ...blue,
         },
 
-        // ── Neutrals (Warm Sand) ─────────────────────────────────
-        secondary: sand,
-        surface: sand,
-        slate: sand,
+        // ── Neutrals (Neutral Gray) ────────────────────────────
+        secondary: gray,
+        surface: gray,
+        slate: gray,
 
-        // ── Semantic Colors (Professional, Muted) ───────────────
-        success: toScale(grass, 'grass'),
-        danger: toScale(tomato, 'tomato'),
-        warning: toScale(amber, 'amber'),
-        info: toScale(blue, 'blue'),
+        // ── Semantic Colors (Professional, Crisp) ───────────────
+        success: semanticColors.success,
+        danger: semanticColors.danger,
+        warning: semanticColors.warning,
+        info: semanticColors.info,
 
         // ── Legacy Color Aliases (Backward Compatibility) ───────
-        blue: toScale(blue, 'blue'),
-        green: toScale(grass, 'grass'),
-        red: toScale(tomato, 'tomato'),
-        yellow: toScale(amber, 'amber'),
-        amber: toScale(amber, 'amber'),
+        blue: semanticColors.info,
+        green: semanticColors.success,
+        red: semanticColors.danger,
+        yellow: semanticColors.warning,
+        amber: semanticColors.warning,
       },
       boxShadow: {
         // Soft material depth

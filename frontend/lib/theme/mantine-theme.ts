@@ -21,34 +21,34 @@ const toMantineTuple = (scale: Record<string, string>, name: string): MantineCol
   scale[`${name}10`],
 ];
 
-// ─── New Design System (Civic Canvas) ─────────────────────────────────────
+// ─── New Design System (Blue/Gray) ────────────────────────────────────────
 
-// Primary/Accent - Signal teal
+// Primary/Accent - Pure blue
 const accent: MantineColorsTuple = [
-  '#f0fdfa',
-  '#ccfbf1',
-  '#99f6e4',
-  '#5eead4',
-  '#2dd4bf',
-  '#14b8a6',
-  '#0d9488',
-  '#0f766e',
-  '#115e59',
-  '#134e4a',
+  '#EBF0FF',
+  '#D6E0FF',
+  '#ADC2FF',
+  '#85A3FF',
+  '#5C85FF',
+  '#4D8AFF',
+  '#0057FF',
+  '#003ECB',
+  '#002F9A',
+  '#001F66',
 ];
 
-// Neutrals - Warm sand
+// Neutrals - Neutral gray
 const secondary: MantineColorsTuple = [
-  '#faf7f1',
-  '#f3eee6',
-  '#e7dfd4',
-  '#d7cdbf',
-  '#c5b8a7',
-  '#a89482',
-  '#8a7868',
-  '#6b5b4d',
-  '#4c4036',
-  '#332b24',
+  '#F9F9F9',
+  '#F0F0F0',
+  '#E8E8E8',
+  '#DCDCDC',
+  '#C0C0C0',
+  '#909090',
+  '#707070',
+  '#505050',
+  '#303030',
+  '#191919',
 ];
 
 // Semantic colors (professional, muted)
@@ -57,7 +57,7 @@ const warning = toMantineTuple(amber, 'amber');
 const danger = toMantineTuple(tomato, 'tomato');
 const info = toMantineTuple(blue, 'blue');
 
-// Surface - same as secondary (sand)
+// Surface - same as secondary (slate)
 const surface = secondary;
 
 export const theme = createTheme({
@@ -82,7 +82,7 @@ export const theme = createTheme({
   },
 
   primaryColor: 'accent',
-  primaryShade: { light: 6, dark: 4 },
+  primaryShade: { light: 6, dark: 5 },
 
   // Typography - IBM Plex (humanist + editorial)
   fontFamily: 'var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',

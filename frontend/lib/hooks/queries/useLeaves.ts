@@ -1,8 +1,9 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { leaveService } from '@/lib/services/leave.service';
+import { leaveService, LeaveEncashmentRequest } from '@/lib/services/leave.service';
 import { LeaveRequestRequest, LeaveRequestStatus, LeaveType, LeaveTypeRequest } from '@/lib/types/leave';
+import { notifications } from '@mantine/notifications';
 
 // Query keys for cache management
 export const leaveKeys = {
@@ -275,6 +276,31 @@ export function useDeactivateLeaveType() {
     mutationFn: (id: string) => leaveService.deactivateLeaveType(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+    },
+  });
+}
+
+// ========== Leave Encashment ==========
+
+export function useRequestLeaveEncashment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: LeaveEncashmentRequest) => leaveService.requestLeaveEncashment(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: leaveKeys.balances() });
+      notifications.show({
+        title: 'Encashment Requested',
+        message: 'Your leave encashment request has been submitted for approval.',
+        color: 'green',
+      });
+    },
+    onError: (error: unknown) => {
+      notifications.show({
+        title: 'Encashment Failed',
+        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit encashment request',
+        color: 'red',
+      });
     },
   });
 }

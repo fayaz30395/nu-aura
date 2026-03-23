@@ -82,7 +82,7 @@ export function TeamPresenceWidget({
     ?? (apiRemote ? apiRemote.map(mapRemoteToPresence) : []);
 
   return (
-    <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
       {/* On Leave Today */}
       <div className="mb-4">
         <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-2.5">

@@ -1,7 +1,7 @@
 /**
  * nu-aura Dark Theme - Global Styles
  *
- * Modern, executive-grade dark theme inspired by CEO dashboard
+ * Professional dark theme — pure blue/neutral gray palette matching Behance HRMS Design System
  * Apply this theme by adding class="dark" to <html> or <body>
  */
 
@@ -21,22 +21,22 @@
 
 :root {
   /* Background Colors */
-  --aura-bg: #0B0F19;
-  --aura-surface: #111827;
-  --aura-card: #151D2E;
-  --aura-hover: #1A2235;
-  --aura-border: #1E293B;
+  --aura-bg: #191919;
+  --aura-surface: #232323;
+  --aura-card: #232323;
+  --aura-hover: #303030;
+  --aura-border: #404040;
 
   /* Text Colors */
-  --aura-text-primary: #F1F5F9;
-  --aura-text-secondary: #94A3B8;
-  --aura-text-muted: #64748B;
+  --aura-text-primary: #FFFFFF;
+  --aura-text-secondary: #A0A0A0;
+  --aura-text-muted: #707070;
   --aura-text-disabled: #475569;
 
-  /* Primary - Blue */
-  --aura-primary: #3B82F6;
-  --aura-primary-hover: #2563eb;
-  --aura-primary-glow: rgba(59, 130, 246, 0.15);
+  /* Primary - Pure Blue */
+  --aura-primary: #0057FF;
+  --aura-primary-hover: #003ECB;
+  --aura-primary-glow: rgba(0, 87, 255, 0.15);
 
   /* Success - Green */
   --aura-success: #10B981;
@@ -57,10 +57,10 @@
   --aura-info: #06B6D4;
   --aura-info-hover: #0891b2;
 
-  /* Accent - Purple */
-  --aura-accent: #8B5CF6;
-  --aura-accent-hover: #7c3aed;
-  --aura-accent-glow: rgba(139, 92, 246, 0.15);
+  /* Accent - Blue Light */
+  --aura-accent: #4D8AFF;
+  --aura-accent-hover: #7AABFF;
+  --aura-accent-glow: rgba(0, 87, 255, 0.15);
 
   /* Font Families */
   --font-sans: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -373,7 +373,7 @@ code, kbd, samp, pre {
     box-shadow: 0 0 20px var(--aura-primary-glow);
   }
   50% {
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 30px rgba(0, 87, 255, 0.25);
   }
 }
 

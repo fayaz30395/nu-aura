@@ -62,7 +62,7 @@ export function HolidayCarousel({
 
   if (isLoading) {
     return (
-      <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
+      <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
         </div>
@@ -82,7 +82,7 @@ export function HolidayCarousel({
 
   if (displayedHolidays.length === 0) {
     return (
-      <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
+      <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
         </div>
@@ -98,7 +98,7 @@ export function HolidayCarousel({
 
   return (
     <div
-      className="skeuo-card rounded-xl border border-[var(--border-main)] p-4"
+      className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

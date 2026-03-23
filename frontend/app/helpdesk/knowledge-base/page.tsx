@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useKnowledgeBaseArticles, useArticleFeedback } from '@/lib/hooks/queries/useKnowledgeBase';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useKnowledgeBaseArticles, useArticleFeedback, useCreateArticle, useCreateTicketFromKB } from '@/lib/hooks/queries/useKnowledgeBase';
 import {
   Search,
   ThumbsUp,
@@ -24,6 +27,24 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Moda
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
+
+// ─── Zod Schemas ──────────────────────────────────────────────────────────────
+
+const createArticleSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(255, 'Title must be less than 255 characters'),
+  category: z.string().min(1, 'Category is required'),
+  content: z.string().min(10, 'Content must be at least 10 characters').max(50000, 'Content is too long'),
+});
+
+type CreateArticleFormData = z.infer<typeof createArticleSchema>;
+
+const createTicketSchema = z.object({
+  subject: z.string().min(1, 'Subject is required').max(255, 'Subject must be less than 255 characters'),
+  description: z.string().min(1, 'Description is required').max(5000, 'Description is too long'),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const),
+});
+
+type CreateTicketFormData = z.infer<typeof createTicketSchema>;
 
 interface Article {
   id: string;
@@ -267,6 +288,8 @@ export default function KnowledgeBasePage() {
   const [showDetail, setShowDetail] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showTicketModal, setShowTicketModal] = useState(false);
+  const [createArticleSuccess, setCreateArticleSuccess] = useState(false);
+  const [createTicketSuccess, setCreateTicketSuccess] = useState(false);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -286,6 +309,69 @@ export default function KnowledgeBasePage() {
     category: selectedCategory || undefined,
     q: searchQuery || undefined,
   });
+
+  // Mutations
+  const createArticleMutation = useCreateArticle();
+  const createTicketMutation = useCreateTicketFromKB();
+
+  // Create Article form
+  const {
+    register: registerArticle,
+    handleSubmit: handleArticleSubmit,
+    reset: resetArticleForm,
+    formState: { errors: articleErrors },
+  } = useForm<CreateArticleFormData>({
+    resolver: zodResolver(createArticleSchema),
+    defaultValues: {
+      title: '',
+      category: 'HR Policies',
+      content: '',
+    },
+  });
+
+  // Create Ticket form
+  const {
+    register: registerTicket,
+    handleSubmit: handleTicketSubmit,
+    reset: resetTicketForm,
+    formState: { errors: ticketErrors },
+  } = useForm<CreateTicketFormData>({
+    resolver: zodResolver(createTicketSchema),
+    defaultValues: {
+      subject: '',
+      description: '',
+      priority: 'MEDIUM',
+    },
+  });
+
+  const onArticleSubmit = async (data: CreateArticleFormData) => {
+    await createArticleMutation.mutateAsync({
+      title: data.title,
+      category: data.category,
+      content: data.content,
+    });
+    setCreateArticleSuccess(true);
+    setTimeout(() => {
+      setShowCreateModal(false);
+      setCreateArticleSuccess(false);
+      resetArticleForm();
+    }, 1500);
+  };
+
+  const onTicketSubmit = async (data: CreateTicketFormData) => {
+    await createTicketMutation.mutateAsync({
+      subject: data.subject,
+      description: data.description,
+      priority: data.priority,
+      relatedArticleId: selectedArticle?.id,
+    });
+    setCreateTicketSuccess(true);
+    setTimeout(() => {
+      setShowTicketModal(false);
+      setCreateTicketSuccess(false);
+      resetTicketForm();
+    }, 1500);
+  };
 
   const handleViewArticle = (article: Article) => {
     setSelectedArticle(article);
@@ -457,8 +543,8 @@ export default function KnowledgeBasePage() {
 
       {/* Create Article Modal (Admin Only) */}
       {isAdmin && (
-        <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="lg">
-          <ModalHeader onClose={() => setShowCreateModal(false)}>
+        <Modal isOpen={showCreateModal} onClose={() => { setShowCreateModal(false); resetArticleForm(); }} size="lg">
+          <ModalHeader onClose={() => { setShowCreateModal(false); resetArticleForm(); }}>
             <div>
               <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                 Create New Article
@@ -469,64 +555,94 @@ export default function KnowledgeBasePage() {
             </div>
           </ModalHeader>
 
-          <ModalBody>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Title
-                </label>
-                <Input
-                  type="text"
-                  placeholder="Article title"
-                  className="w-full"
-                />
+          {createArticleSuccess ? (
+            <ModalBody>
+              <div className="py-8 text-center">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  Article Created
+                </h3>
+                <p className="text-[var(--text-secondary)] mt-2">
+                  The article has been published to the knowledge base.
+                </p>
               </div>
+            </ModalBody>
+          ) : (
+            <form onSubmit={handleArticleSubmit(onArticleSubmit)}>
+              <ModalBody>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                      Title *
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Article title"
+                      className="w-full"
+                      {...registerArticle('title')}
+                    />
+                    {articleErrors.title && (
+                      <p className="text-sm text-red-500 mt-1">{articleErrors.title.message}</p>
+                    )}
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Category
-                </label>
-                <select className="input-aura">
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                      Category *
+                    </label>
+                    <select className="input-aura w-full" {...registerArticle('category')}>
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                    {articleErrors.category && (
+                      <p className="text-sm text-red-500 mt-1">{articleErrors.category.message}</p>
+                    )}
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Content
-                </label>
-                <textarea
-                  placeholder="Write the article content here..."
-                  rows={8}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
-                />
-              </div>
-            </div>
-          </ModalBody>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                      Content *
+                    </label>
+                    <textarea
+                      placeholder="Write the article content here..."
+                      rows={8}
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
+                      {...registerArticle('content')}
+                    />
+                    {articleErrors.content && (
+                      <p className="text-sm text-red-500 mt-1">{articleErrors.content.message}</p>
+                    )}
+                  </div>
+                </div>
+              </ModalBody>
 
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setShowCreateModal(false)}>
-              Cancel
-            </Button>
-            <PermissionGate permission={Permissions.HELPDESK_KB_CREATE}>
-              <Button
-                onClick={() => setShowCreateModal(false)}
-                variant="primary"
-              >
-                Create Article
-              </Button>
-            </PermissionGate>
-          </ModalFooter>
+              <ModalFooter>
+                <Button variant="outline" onClick={() => { setShowCreateModal(false); resetArticleForm(); }}>
+                  Cancel
+                </Button>
+                <PermissionGate permission={Permissions.HELPDESK_KB_CREATE}>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={createArticleMutation.isPending}
+                  >
+                    {createArticleMutation.isPending ? 'Creating...' : 'Create Article'}
+                  </Button>
+                </PermissionGate>
+              </ModalFooter>
+            </form>
+          )}
         </Modal>
       )}
 
       {/* Submit Ticket Modal */}
-      <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} size="lg">
-        <ModalHeader onClose={() => setShowTicketModal(false)}>
+      <Modal isOpen={showTicketModal} onClose={() => { setShowTicketModal(false); resetTicketForm(); }} size="lg">
+        <ModalHeader onClose={() => { setShowTicketModal(false); resetTicketForm(); }}>
           <div>
             <h2 className="text-2xl font-bold text-[var(--text-primary)]">
               Submit a Support Ticket
@@ -537,58 +653,89 @@ export default function KnowledgeBasePage() {
           </div>
         </ModalHeader>
 
-        <ModalBody>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Subject
-              </label>
-              <Input
-                type="text"
-                placeholder="Brief description of your issue"
-                className="w-full"
-              />
+        {createTicketSuccess ? (
+          <ModalBody>
+            <div className="py-8 text-center">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                Ticket Submitted
+              </h3>
+              <p className="text-[var(--text-secondary)] mt-2">
+                Your support ticket has been created. You will receive a notification when it is assigned.
+              </p>
             </div>
+          </ModalBody>
+        ) : (
+          <form onSubmit={handleTicketSubmit(onTicketSubmit)}>
+            <ModalBody>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    Subject *
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Brief description of your issue"
+                    className="w-full"
+                    {...registerTicket('subject')}
+                  />
+                  {ticketErrors.subject && (
+                    <p className="text-sm text-red-500 mt-1">{ticketErrors.subject.message}</p>
+                  )}
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Description
-              </label>
-              <textarea
-                placeholder="Provide more details about your issue..."
-                rows={6}
-                className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
-              />
-            </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    Description *
+                  </label>
+                  <textarea
+                    placeholder="Provide more details about your issue..."
+                    rows={6}
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
+                    {...registerTicket('description')}
+                  />
+                  {ticketErrors.description && (
+                    <p className="text-sm text-red-500 mt-1">{ticketErrors.description.message}</p>
+                  )}
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Priority
-              </label>
-              <select className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg">
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
-                <option>Urgent</option>
-              </select>
-            </div>
-          </div>
-        </ModalBody>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    Priority
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg"
+                    {...registerTicket('priority')}
+                  >
+                    <option value="LOW">Low</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HIGH">High</option>
+                    <option value="URGENT">Urgent</option>
+                  </select>
+                  {ticketErrors.priority && (
+                    <p className="text-sm text-red-500 mt-1">{ticketErrors.priority.message}</p>
+                  )}
+                </div>
+              </div>
+            </ModalBody>
 
-        <ModalFooter>
-          <Button variant="outline" onClick={() => setShowTicketModal(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              setShowTicketModal(false);
-            }}
-            variant="primary"
-            leftIcon={<MessageSquare className="h-4 w-4" />}
-          >
-            Submit Ticket
-          </Button>
-        </ModalFooter>
+            <ModalFooter>
+              <Button variant="outline" onClick={() => { setShowTicketModal(false); resetTicketForm(); }}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                leftIcon={<MessageSquare className="h-4 w-4" />}
+                disabled={createTicketMutation.isPending}
+              >
+                {createTicketMutation.isPending ? 'Submitting...' : 'Submit Ticket'}
+              </Button>
+            </ModalFooter>
+          </form>
+        )}
       </Modal>
     </AppLayout>
   );

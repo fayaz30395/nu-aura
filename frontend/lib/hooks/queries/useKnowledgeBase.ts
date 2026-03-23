@@ -68,3 +68,48 @@ export function useArticleFeedback() {
     },
   });
 }
+
+export interface CreateArticleRequest {
+  title: string;
+  category: string;
+  content: string;
+}
+
+/**
+ * Mutation to create a new knowledge base article
+ */
+export function useCreateArticle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateArticleRequest) => {
+      const response = await apiClient.post<Article>(
+        '/helpdesk/knowledge-base',
+        data
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: knowledgeBaseKeys.articles() });
+    },
+  });
+}
+
+/**
+ * Mutation to create a helpdesk ticket from knowledge base
+ */
+export interface CreateTicketFromKBRequest {
+  subject: string;
+  description: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  relatedArticleId?: string;
+}
+
+export function useCreateTicketFromKB() {
+  return useMutation({
+    mutationFn: async (data: CreateTicketFromKBRequest) => {
+      const response = await apiClient.post('/helpdesk/tickets', data);
+      return response.data;
+    },
+  });
+}

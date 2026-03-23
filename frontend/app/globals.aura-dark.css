@@ -1,5 +1,5 @@
 /**
- * nu-aura Global Styles - Dark Theme Edition
+ * nu-aura Global Styles - Dark Theme — Pure Blue/Gray Edition
  *
  * This replaces your current globals.css to enable the Aura dark theme
  */
@@ -17,14 +17,14 @@
 
 :root {
   /* Aura Dark Background Colors */
-  --foreground: #F1F5F9;
-  --background: #0B0F19;
-  --surface: #151D2E;
+  --foreground: #FFFFFF;
+  --background: #191919;
+  --surface: #232323;
 
   /* Primary Blue */
-  --primary: #3B82F6;
-  --primary-hover: #2563eb;
-  --primary-light: rgba(59, 130, 246, 0.15);
+  --primary: #0057FF;
+  --primary-hover: #003ECB;
+  --primary-light: rgba(0, 87, 255, 0.15);
 
   /* Semantic Colors */
   --success: #10B981;
@@ -33,20 +33,20 @@
   --info: #06B6D4;
 
   /* Text Colors (Dark Theme) */
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-muted: #707070;
   --text-placeholder: #475569;
 
   /* Border Colors */
-  --border: #1E293B;
-  --border-hover: #334155;
-  --border-focus: #3B82F6;
+  --border: #404040;
+  --border-hover: #505050;
+  --border-focus: #0057FF;
 
   /* Input Styling */
-  --input-bg: #151D2E;
-  --input-border: #1E293B;
-  --input-focus-ring: rgba(59, 130, 246, 0.15);
+  --input-bg: #232323;
+  --input-border: #404040;
+  --input-focus-ring: rgba(0, 87, 255, 0.15);
 
   /* Shadows (Dark theme - more prominent) */
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
@@ -98,18 +98,18 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: #404040;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #505050;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(59, 130, 246, 0.3);
-  color: #F1F5F9;
+  background: rgba(0, 87, 255, 0.3);
+  color: #FFFFFF;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -145,7 +145,7 @@ body {
   }
 
   .form-control:disabled {
-    background-color: #1A2235;
+    background-color: #303030;
     opacity: 0.65;
     cursor: not-allowed;
   }
@@ -282,41 +282,41 @@ body {
   /* Button Variants - Dark Theme */
   .btn-primary {
     color: #ffffff;
-    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-    border-color: #3b82f6;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+    background: linear-gradient(180deg, #0057FF 0%, #003ECB 100%);
+    border-color: #0057FF;
+    box-shadow: 0 0 20px rgba(0, 87, 255, 0.15);
   }
 
   .btn-primary:hover {
-    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
-    border-color: #2563eb;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+    background: linear-gradient(180deg, #003ECB 0%, #002F9A 100%);
+    border-color: #003ECB;
+    box-shadow: 0 0 25px rgba(0, 87, 255, 0.25);
   }
 
   .btn-primary:focus {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 0 3px rgba(0, 87, 255, 0.25);
   }
 
   .btn-secondary {
     color: #e5e7eb;
-    background-color: #1A2235;
-    border-color: #1E293B;
+    background-color: #303030;
+    border-color: #404040;
   }
 
   .btn-secondary:hover {
-    background-color: #334155;
-    border-color: #475569;
+    background-color: #404040;
+    border-color: #505050;
   }
 
   .btn-outline-primary {
-    color: #3b82f6;
+    color: #0057FF;
     background-color: transparent;
-    border-color: #3b82f6;
+    border-color: #0057FF;
   }
 
   .btn-outline-primary:hover {
     color: #ffffff;
-    background-color: #3b82f6;
+    background-color: #0057FF;
   }
 
   .btn-success {
@@ -369,8 +369,8 @@ body {
   }
 
   .badge-primary {
-    color: #93c5fd;
-    background-color: rgba(59, 130, 246, 0.2);
+    color: #7AABFF;
+    background-color: rgba(0, 87, 255, 0.2);
   }
 
   .badge-success {
@@ -395,7 +395,7 @@ body {
 
   .badge-secondary {
     color: #d1d5db;
-    background-color: #1A2235;
+    background-color: #303030;
   }
 
   /* Alert - Dark Theme */
@@ -408,9 +408,9 @@ body {
   }
 
   .alert-primary {
-    color: #93c5fd;
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.2);
+    color: #7AABFF;
+    background-color: rgba(0, 87, 255, 0.1);
+    border-color: rgba(0, 87, 255, 0.2);
   }
 
   .alert-success {
@@ -489,7 +489,7 @@ body {
 
   .dropdown-item:hover {
     color: var(--text-primary);
-    background-color: #1A2235;
+    background-color: #303030;
   }
 
   .dropdown-divider {
@@ -547,12 +547,12 @@ body {
     gap: 0.75rem;
     padding: 1rem 1.5rem;
     border-top: 1px solid var(--border);
-    background-color: #111827;
+    background-color: #232323;
   }
 
   /* Stat Gradients - Dark Theme */
   .stat-gradient-blue {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(0, 87, 255, 0.15) 0%, rgba(0, 62, 203, 0.1) 100%);
   }
 
   .stat-gradient-green {
@@ -564,7 +564,7 @@ body {
   }
 
   .stat-gradient-purple {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(124, 58, 237, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(77, 138, 255, 0.15) 0%, rgba(0, 87, 255, 0.1) 100%);
   }
 
   .stat-gradient-teal {
@@ -577,7 +577,7 @@ body {
 
   /* Page Header Gradient */
   .page-header-gradient {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 64, 175, 0.05) 50%, transparent 100%);
+    background: linear-gradient(135deg, rgba(0, 87, 255, 0.08) 0%, rgba(0, 62, 203, 0.05) 50%, transparent 100%);
   }
 }
 

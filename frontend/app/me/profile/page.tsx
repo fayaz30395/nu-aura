@@ -18,6 +18,8 @@ import {
   Shield,
   AlertCircle,
   Check,
+  SendHorizonal,
+  Clock,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -26,8 +28,16 @@ import { useMyEmployee, useUpdateEmployee } from '@/lib/hooks/queries';
 import { UpdateEmployeeRequest } from '@/lib/types/employee';
 import { getInitials } from '@/lib/utils';
 import { createLogger } from '@/lib/utils/logger';
+import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
 
 const log = createLogger('ProfilePage');
+
+interface BankChangeRequestData {
+  bankName: string;
+  bankAccountNumber: string;
+  bankIfscCode: string;
+  reason: string;
+}
 
 export default function MyProfilePage() {
   const router = useRouter();
@@ -37,6 +47,17 @@ export default function MyProfilePage() {
   const [editData, setEditData] = useState<UpdateEmployeeRequest>({});
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Bank change request state
+  const [showBankChangeModal, setShowBankChangeModal] = useState(false);
+  const [bankChangeData, setBankChangeData] = useState<BankChangeRequestData>({
+    bankName: '',
+    bankAccountNumber: '',
+    bankIfscCode: '',
+    reason: '',
+  });
+  const [bankChangeSubmitting, setBankChangeSubmitting] = useState(false);
+  const [bankChangeSuccess, setBankChangeSuccess] = useState(false);
 
   // React Query hooks — use /employees/me (no ID needed)
   const { data: employee, isLoading } = useMyEmployee(hasHydrated && isAuthenticated);
@@ -105,6 +126,29 @@ export default function MyProfilePage() {
     }
     setIsEditing(false);
     setError(null);
+  };
+
+  const handleBankChangeRequest = async () => {
+    if (!employee || !bankChangeData.reason.trim()) return;
+
+    setBankChangeSubmitting(true);
+    try {
+      await employmentChangeRequestService.createChangeRequest({
+        employeeId: employee.id,
+        reason: `Bank Details Change Request: ${bankChangeData.reason}\n\nNew Bank Name: ${bankChangeData.bankName}\nNew Account Number: ****${bankChangeData.bankAccountNumber.slice(-4)}\nNew IFSC: ${bankChangeData.bankIfscCode}`,
+      });
+      setBankChangeSuccess(true);
+      setTimeout(() => {
+        setShowBankChangeModal(false);
+        setBankChangeSuccess(false);
+        setBankChangeData({ bankName: '', bankAccountNumber: '', bankIfscCode: '', reason: '' });
+      }, 2000);
+    } catch (err: unknown) {
+      log.error('Failed to submit bank change request:', err);
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit change request');
+    } finally {
+      setBankChangeSubmitting(false);
+    }
   };
 
   if (isLoading) {
@@ -549,11 +593,30 @@ export default function MyProfilePage() {
           {/* Bank Details */}
           <Card className="card-aura lg:col-span-2">
             <CardHeader>
-              <CardTitle className="skeuo-emboss flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                Bank Details
-              </CardTitle>
-              <CardDescription>Your salary account information</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="skeuo-emboss flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Bank Details
+                  </CardTitle>
+                  <CardDescription>Your salary account information</CardDescription>
+                </div>
+                <button
+                  onClick={() => {
+                    setBankChangeData({
+                      bankName: employee.bankName || '',
+                      bankAccountNumber: '',
+                      bankIfscCode: employee.bankIfscCode || '',
+                      reason: '',
+                    });
+                    setShowBankChangeModal(true);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-950/50 transition-colors"
+                >
+                  <SendHorizonal className="h-3.5 w-3.5" />
+                  Request Change
+                </button>
+              </div>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -606,6 +669,138 @@ export default function MyProfilePage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Bank Change Request Modal */}
+        {showBankChangeModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-xl">
+              <div className="p-6 border-b border-[var(--border-main)]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                      <SendHorizonal className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                        Request Bank Details Change
+                      </h2>
+                      <p className="text-sm text-[var(--text-secondary)]">
+                        Changes to bank details require HR approval
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowBankChangeModal(false)}
+                    className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                  >
+                    <X className="h-5 w-5 text-[var(--text-muted)]" />
+                  </button>
+                </div>
+              </div>
+
+              {bankChangeSuccess ? (
+                <div className="p-8 text-center">
+                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                    Request Submitted
+                  </h3>
+                  <p className="text-[var(--text-secondary)] mt-2">
+                    Your bank details change request has been submitted for HR approval.
+                    You will be notified once it is processed.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-6 space-y-4">
+                  <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-amber-800 dark:text-amber-300">
+                      Bank detail changes are sensitive and go through an approval workflow. Your current details will remain active until the change is approved.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                      New Bank Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={bankChangeData.bankName}
+                      onChange={(e) => setBankChangeData({ ...bankChangeData, bankName: e.target.value })}
+                      placeholder="e.g., State Bank of India"
+                      className="input-aura w-full px-3 py-2 rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                      New Account Number *
+                    </label>
+                    <input
+                      type="text"
+                      value={bankChangeData.bankAccountNumber}
+                      onChange={(e) => setBankChangeData({ ...bankChangeData, bankAccountNumber: e.target.value })}
+                      placeholder="Enter full account number"
+                      className="input-aura w-full px-3 py-2 rounded-lg font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                      New IFSC Code *
+                    </label>
+                    <input
+                      type="text"
+                      value={bankChangeData.bankIfscCode}
+                      onChange={(e) => setBankChangeData({ ...bankChangeData, bankIfscCode: e.target.value.toUpperCase() })}
+                      placeholder="e.g., SBIN0001234"
+                      className="input-aura w-full px-3 py-2 rounded-lg font-mono uppercase"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                      Reason for Change *
+                    </label>
+                    <textarea
+                      value={bankChangeData.reason}
+                      onChange={(e) => setBankChangeData({ ...bankChangeData, reason: e.target.value })}
+                      rows={3}
+                      placeholder="e.g., Changed salary account to new bank"
+                      className="input-aura w-full px-3 py-2 rounded-lg"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {!bankChangeSuccess && (
+                <div className="p-6 border-t border-[var(--border-main)] flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowBankChangeModal(false)}
+                    className="btn-secondary px-4 py-2 rounded-lg"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleBankChangeRequest}
+                    disabled={bankChangeSubmitting || !bankChangeData.bankName || !bankChangeData.bankAccountNumber || !bankChangeData.bankIfscCode || !bankChangeData.reason.trim()}
+                    className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
+                  >
+                    {bankChangeSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <SendHorizonal className="h-4 w-4" />
+                        Submit Request
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </AppLayout>
   );
