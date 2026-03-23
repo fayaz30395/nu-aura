@@ -27,7 +27,7 @@ function mapLeaveToPresence(emp: OnLeaveEmployeeResponse): EmployeePresence {
     employeeId: emp.employeeId,
     employeeName: emp.employeeName,
     initials,
-    avatarColor: 'bg-slate-500',
+    avatarColor: 'bg-[var(--text-muted)]',
   };
 }
 
@@ -37,7 +37,7 @@ function mapRemoteToPresence(emp: RemoteWorkerResponse): EmployeePresence {
     employeeId: emp.employeeId,
     employeeName: emp.employeeName,
     initials,
-    avatarColor: 'bg-slate-500',
+    avatarColor: 'bg-[var(--text-muted)]',
   };
 }
 
@@ -45,7 +45,7 @@ function Avatar({ name }: { name: string }) {
   const initials = getInitials(name);
   return (
     <div
-      className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+      className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-secondary)]"
       title={name}
     >
       {initials}
@@ -58,8 +58,8 @@ function SkeletonChips() {
     <div className="flex flex-wrap gap-2">
       {[1, 2, 3].map((i) => (
         <div key={i} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
-          <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
-          <div className="h-3 w-12 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+          <div className="h-8 w-8 animate-pulse rounded-full bg-[var(--bg-surface)]" />
+          <div className="h-3 w-12 animate-pulse rounded bg-[var(--bg-surface)]" />
         </div>
       ))}
     </div>
@@ -131,7 +131,7 @@ export function TeamPresenceWidget({
               <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
                 <div className="relative">
                   <Avatar name={e.employeeName} />
-                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500 dark:border-gray-950" />
+                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500 dark:border-[var(--bg-main)]" />
                 </div>
                 <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
               </div>

@@ -144,10 +144,10 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
           {[1, 2, 3].map(i => (
             <div key={i} className="flex items-start gap-2.5 p-4 rounded-lg bg-[var(--bg-surface)] relative overflow-hidden">
               <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              <div className="w-8 h-8 rounded-full bg-gray-200/50 dark:bg-gray-700/50 animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-[var(--bg-surface)] animate-pulse" />
               <div className="flex-1 space-y-1.5">
-                <div className="h-3.5 bg-gray-200/50 dark:bg-gray-700/50 rounded w-1/3 animate-pulse" style={{ animationDelay: '0.1s' }} />
-                <div className="h-3 bg-gray-200/50 dark:bg-gray-700/50 rounded w-2/3 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                <div className="h-3.5 bg-[var(--bg-surface)] rounded w-1/3 animate-pulse" style={{ animationDelay: '0.1s' }} />
+                <div className="h-3 bg-[var(--bg-surface)] rounded w-2/3 animate-pulse" style={{ animationDelay: '0.2s' }} />
               </div>
             </div>
           ))}
@@ -166,7 +166,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
         <button
           onClick={() => loadFeed(true)}
           disabled={isRefreshing}
-          className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 transition-colors"
+          className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
           title="Refresh"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -182,7 +182,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
             className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors ${
               activeFilter === option.value
                 ? 'bg-[var(--text-primary)] text-[var(--text-inverse)]'
-                : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-gray-200 dark:bg-gray-800 dark:text-[var(--text-muted)] dark:hover:bg-gray-700'
+                : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-[var(--bg-card-hover)]'
             }`}
           >
             {option.label}
