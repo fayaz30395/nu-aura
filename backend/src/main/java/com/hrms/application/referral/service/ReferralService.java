@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -368,12 +369,18 @@ public class ReferralService {
 
         // Top referrers
         List<Object[]> topReferrersData = referralRepository.getTopReferrers(tenantId, PageRequest.of(0, 10));
+        List<UUID> referrerIds = topReferrersData.stream()
+                .map(row -> (UUID) row[0])
+                .collect(Collectors.toList());
+        Map<UUID, User> referrerMap = userRepository.findAllById(referrerIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
         List<ReferralDashboard.TopReferrer> topReferrers = new ArrayList<>();
         for (Object[] row : topReferrersData) {
             UUID referrerId = (UUID) row[0];
             Long count = (Long) row[1];
-            String name = userRepository.findById(referrerId)
-                    .map(User::getFullName).orElse("Unknown");
+            User referrer = referrerMap.get(referrerId);
+            String name = referrer != null ? referrer.getFullName() : "Unknown";
             topReferrers.add(ReferralDashboard.TopReferrer.builder()
                     .employeeId(referrerId)
                     .employeeName(name)
