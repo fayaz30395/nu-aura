@@ -51,6 +51,7 @@ public class SkillService {
         return skillRepository.save(skill);
     }
 
+    @Transactional
     public void verifySkill(UUID tenantId, UUID skillId, UUID verifiedBy) {
         skillRepository.findById(skillId).ifPresent(skill -> {
             if (skill.getTenantId().equals(tenantId)) {

@@ -40,12 +40,12 @@ export function useMyExpenseClaims(
   dateFrom?: string,
   dateTo?: string
 ) {
+  // BUG-FIX: Previously passed '' as employeeId, causing 404 on /expenses/employees/.
+  // Now falls back to getAllClaims which is tenant-scoped and works for self-service.
   return useQuery({
     queryKey: expenseKeys.myClaimsList(page, size, status, dateFrom, dateTo),
     queryFn: async () => {
-      // Fetch my claims - we'll pass filter params via the service if needed
-      // For now, filtering happens client-side in the page component
-      return expenseService.getMyClaims('', page, size);
+      return expenseService.getAllClaims(page, size);
     },
     staleTime: 60 * 1000, // 1 minute
     retry: 2,

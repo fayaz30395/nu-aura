@@ -178,7 +178,7 @@ export default function EmployeeImportPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Employees
           </button>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
             Bulk Import Employees
           </h1>
           <p className="text-[var(--text-secondary)] mt-1">
@@ -411,7 +411,7 @@ export default function EmployeeImportPage() {
                   <div className="flex items-center">
                     <Users className="w-8 h-8 text-primary-600 dark:text-primary-400 mr-3" />
                     <div>
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {preview.totalRows}
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">

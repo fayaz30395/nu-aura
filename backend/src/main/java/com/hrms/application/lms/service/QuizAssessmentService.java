@@ -106,8 +106,8 @@ public class QuizAssessmentService {
         try {
             attempt.setAnswers(objectMapper.writeValueAsString(request.getAnswers()));
         } catch (JsonProcessingException e) {
-            log.error("Failed to serialize answers", e);
-            attempt.setAnswers("{}");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to serialize quiz answers: " + e.getMessage());
         }
 
         // Grade the quiz

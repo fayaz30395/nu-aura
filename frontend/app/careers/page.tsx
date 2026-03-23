@@ -86,7 +86,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
   };
 
   return (
-    <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer group"
+    <Card className="card-interactive p-6 hover:shadow-lg transition-shadow cursor-pointer group"
           onClick={() => onViewDetails(job)}>
       <div className="flex flex-col gap-4">
         <div>
@@ -226,7 +226,7 @@ const JobDetailModal: React.FC<{
         </Button>
         <Button
           onClick={() => onApply(job)}
-          className="bg-primary-600 hover:bg-primary-700 text-white"
+          className="btn-primary bg-primary-600 hover:bg-primary-700 text-white"
         >
           Apply Now
           <Send className="h-4 w-4 ml-2" />
@@ -405,7 +405,7 @@ const ApplicationModal: React.FC<{
             <textarea
               placeholder="Tell us why you're interested in this position..."
               rows={4}
-              className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="input-aura"
               {...register('coverLetter')}
             />
             {errors.coverLetter && <p className="text-red-500 text-sm mt-1">{errors.coverLetter.message}</p>}
@@ -433,7 +433,7 @@ const ApplicationModal: React.FC<{
         <Button
           onClick={handleSubmit(handleFormSubmit)}
           disabled={isSubmitting}
-          className="bg-primary-600 hover:bg-primary-700 text-white"
+          className="btn-primary bg-primary-600 hover:bg-primary-700 text-white"
         >
           {isSubmitting ? (
             <>
@@ -534,7 +534,7 @@ export default function CareersPage() {
               We&apos;re Hiring
             </span>
           </div>
-          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6">
+          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 skeuo-emboss">
             Join Our Talented Team
           </h1>
           <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
@@ -550,7 +550,7 @@ export default function CareersPage() {
                 placeholder="Search job titles or keywords..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
+                className="input-aura pl-12"
               />
             </div>
           </div>
@@ -562,7 +562,7 @@ export default function CareersPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
-            <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-24 shadow-sm">
+            <div className="skeuo-card p-6 sticky top-24">
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-5">Filters</h3>
 
               {/* Department Filter */}
@@ -576,7 +576,7 @@ export default function CareersPage() {
                     setSelectedDepartment(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-aura"
                 >
                   <option value="">All Departments</option>
                   {departments.map((dept) => (
@@ -598,7 +598,7 @@ export default function CareersPage() {
                     setSelectedLocation(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-aura"
                 >
                   <option value="">All Locations</option>
                   {locations.map((loc) => (
@@ -620,7 +620,7 @@ export default function CareersPage() {
                     setSelectedType(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-aura"
                 >
                   <option value="">All Types</option>
                   {types.map((type) => (
@@ -642,7 +642,7 @@ export default function CareersPage() {
                     setSelectedExperience(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-aura"
                 >
                   <option value="">All Levels</option>
                   {experiences.map((exp) => (
@@ -682,7 +682,7 @@ export default function CareersPage() {
                 ))}
               </div>
             ) : paginatedJobs.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
+              <div className="text-center py-20 skeuo-card">
                 <Briefcase className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   No jobs found

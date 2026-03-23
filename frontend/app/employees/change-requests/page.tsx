@@ -171,7 +171,7 @@ export default function EmploymentChangeRequestsPage() {
         </div>
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white skeuo-emboss">
             Employment Change Requests
           </h1>
           <div className="flex gap-2">
@@ -200,7 +200,7 @@ export default function EmploymentChangeRequestsPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-[var(--bg-input)] rounded-lg shadow-sm p-6">
+          <div className="skeuo-card p-6">
             <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
               {filter === 'pending' ? 'Pending Requests' : 'Total Requests'}
             </div>
@@ -215,7 +215,7 @@ export default function EmploymentChangeRequestsPage() {
           {loading ? (
             <div className="text-center py-12 text-slate-600 dark:text-slate-400">Loading...</div>
           ) : requests.length === 0 ? (
-            <div className="bg-[var(--bg-input)] rounded-lg shadow-sm p-12 text-center">
+            <div className="skeuo-card p-12 text-center">
               <User className="h-12 w-12 mx-auto text-slate-400 mb-4" />
               <p className="text-slate-600 dark:text-slate-400">
                 {filter === 'pending' ? 'No pending change requests' : 'No change requests found'}
@@ -225,7 +225,7 @@ export default function EmploymentChangeRequestsPage() {
             requests.map((request) => (
               <div
                 key={request.id}
-                className="bg-[var(--bg-input)] rounded-lg shadow-sm overflow-hidden"
+                className="skeuo-card overflow-hidden"
               >
                 {/* Header */}
                 <div
@@ -404,8 +404,8 @@ export default function EmploymentChangeRequestsPage() {
 
       {/* Reject Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)]">
-          <div className="bg-[var(--bg-input)] rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none">
+          <div className="skeuo-card max-w-md w-full mx-4 p-6">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
               Reject Change Request
             </h3>
@@ -417,7 +417,7 @@ export default function EmploymentChangeRequestsPage() {
               onChange={(e) => setRejectionReason(e.target.value)}
               placeholder="Enter rejection reason..."
               rows={4}
-              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 text-slate-900 dark:text-white"
+              className="input-aura"
             />
             <div className="flex gap-4 mt-4">
               <button
@@ -425,7 +425,7 @@ export default function EmploymentChangeRequestsPage() {
                   setShowRejectModal(null);
                   setRejectionReason('');
                 }}
-                className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 font-medium"
+                className="flex-1 btn-secondary"
               >
                 Cancel
               </button>

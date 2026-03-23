@@ -151,10 +151,10 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-50">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">
               Analytics Dashboard
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
               Comprehensive HR metrics and insights
             </p>
           </div>
@@ -181,7 +181,7 @@ export default function AnalyticsPage() {
                   value={customStart}
                   max={customEnd || undefined}
                   onChange={(e) => setCustomStart(e.target.value)}
-                  className="px-3 py-1.5 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-[var(--bg-input)] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura px-3 py-1.5 text-sm"
                   aria-label="Start date"
                 />
                 <span className="text-sm text-slate-400">to</span>
@@ -190,7 +190,7 @@ export default function AnalyticsPage() {
                   value={customEnd}
                   min={customStart || undefined}
                   onChange={(e) => setCustomEnd(e.target.value)}
-                  className="px-3 py-1.5 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-[var(--bg-input)] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-aura px-3 py-1.5 text-sm"
                   aria-label="End date"
                 />
               </div>

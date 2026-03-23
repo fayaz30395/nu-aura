@@ -100,7 +100,7 @@ export default function HeadcountReportPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Headcount Report</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Headcount Report</h1>
             <p className="text-sm text-[var(--text-muted)] mt-1">Organization headcount by department, type, and trend</p>
           </div>
           <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export default function HeadcountReportPage() {
               <button
                 onClick={exportCSV}
                 disabled={!metrics}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="btn-primary !h-auto !rounded-md"
               >
                 <Download className="h-4 w-4" />
                 Export CSV
@@ -137,7 +137,7 @@ export default function HeadcountReportPage() {
           <>
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <div className="skeuo-card p-4">
                 <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Total Employees</p>
                 <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{metrics?.totalEmployees ?? '—'}</p>
                 {orgHealth?.healthScore && (
@@ -146,18 +146,18 @@ export default function HeadcountReportPage() {
                   </span>
                 )}
               </div>
-              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <div className="skeuo-card p-4">
                 <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Active Employees</p>
                 <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{metrics?.activeEmployees ?? '—'}</p>
               </div>
-              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <div className="skeuo-card p-4">
                 <div className="flex items-center gap-1 mb-1">
                   <TrendingUp className="h-3.5 w-3.5 text-green-500" />
                   <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">New Hires (Month)</p>
                 </div>
                 <p className="text-3xl font-bold text-green-600 mt-1">{metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}</p>
               </div>
-              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <div className="skeuo-card p-4">
                 <div className="flex items-center gap-1 mb-1">
                   <TrendingDown className="h-3.5 w-3.5 text-red-500" />
                   <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Exits (Month)</p>
@@ -171,7 +171,7 @@ export default function HeadcountReportPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               {/* By Department */}
-              <div className="bg-white border border-[var(--border-main)] rounded-lg p-5">
+              <div className="skeuo-card p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Building2 className="h-4 w-4 text-blue-600" />
                   <h2 className="text-sm font-semibold text-gray-800">Headcount by Department</h2>
@@ -220,7 +220,7 @@ export default function HeadcountReportPage() {
               </div>
 
               {/* Headcount Trend */}
-              <div className="bg-white border border-[var(--border-main)] rounded-lg p-5">
+              <div className="skeuo-card p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Users className="h-4 w-4 text-indigo-600" />
                   <h2 className="text-sm font-semibold text-gray-800">12-Month Headcount Trend</h2>
@@ -248,7 +248,7 @@ export default function HeadcountReportPage() {
 
             {/* By Employment Type */}
             {metrics?.byEmploymentType && Object.keys(metrics.byEmploymentType).length > 0 && (
-              <div className="bg-white border border-[var(--border-main)] rounded-lg p-5">
+              <div className="skeuo-card p-5">
                 <h2 className="text-sm font-semibold text-gray-800 mb-4">By Employment Type</h2>
                 <div className="flex flex-wrap gap-4">
                   {Object.entries(metrics.byEmploymentType).map(([type, count]) => (

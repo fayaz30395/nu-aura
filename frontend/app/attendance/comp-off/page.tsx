@@ -103,8 +103,8 @@ export default function CompOffPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Compensatory Off</h1>
-            <p className="text-[var(--text-muted)] mt-1">Request and manage comp-off credits for overtime work</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Compensatory Off</h1>
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request and manage comp-off credits for overtime work</p>
           </div>
           <Button onClick={() => setShowRequestModal(true)}>
             <PlusCircle className="w-4 h-4 mr-2" />
@@ -113,7 +113,7 @@ export default function CompOffPage() {
         </div>
 
         {/* Info card */}
-        <Card className="border-blue-200 tint-info">
+        <Card className="border-blue-200 tint-info skeuo-card">
           <CardContent className="pt-4">
             <div className="flex gap-4">
               <AlertCircle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
@@ -143,7 +143,7 @@ export default function CompOffPage() {
         </div>
 
         {/* Requests table */}
-        <Card>
+        <Card className="skeuo-card">
           <CardContent className="p-0">
             {isLoading ? (
               <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
@@ -153,7 +153,7 @@ export default function CompOffPage() {
                 <p>No comp-off requests found.</p>
               </div>
             ) : (
-              <table className="w-full text-sm">
+              <table className="w-full text-sm table-aura">
                 <thead>
                   <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                     <th className="px-4 py-3 text-left font-medium">Date</th>
@@ -179,7 +179,7 @@ export default function CompOffPage() {
                         <td className="px-4 py-3 font-semibold text-blue-700">{req.compOffDays}</td>
                         <td className="px-4 py-3 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.color}`}>
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium badge-status ${cfg.color}`}>
                             <Icon className="w-3.5 h-3.5" />
                             {cfg.label}
                           </span>
@@ -230,7 +230,7 @@ export default function CompOffPage() {
                   <input
                     type="date"
                     {...register('attendanceDate')}
-                    className={`w-full border ${errors.attendanceDate ? 'border-red-500' : 'border-[var(--border-strong)]'} rounded-md px-3 py-2 text-sm`}
+                    className={`input-aura ${errors.attendanceDate ? 'border-red-500' : ''}`}
                   />
                   {errors.attendanceDate && (
                     <p className="mt-1 text-xs text-red-500">{errors.attendanceDate.message}</p>
@@ -243,12 +243,12 @@ export default function CompOffPage() {
                     {...register('reason')}
                     rows={3}
                     placeholder="Optional: why you worked overtime"
-                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                    className="input-aura"
                   />
                 </div>
                 <div className="flex gap-4 justify-end pt-2">
-                  <Button type="button" variant="outline" onClick={handleModalClose}>Cancel</Button>
-                  <Button type="submit" disabled={requestMutation.isPending}>
+                  <Button type="button" variant="outline" onClick={handleModalClose} className="btn-secondary">Cancel</Button>
+                  <Button type="submit" disabled={requestMutation.isPending} className="btn-primary">
                     {requestMutation.isPending ? 'Submitting...' : 'Submit Request'}
                   </Button>
                 </div>

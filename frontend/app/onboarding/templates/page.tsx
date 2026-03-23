@@ -47,7 +47,7 @@ export default function TemplatesPage() {
                             <div className="p-2 bg-primary-500/10 rounded-xl">
                                 <Layout className="h-6 w-6 text-primary-600" />
                             </div>
-                            <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
+                            <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                                 Checklist <span className="text-primary-600">Templates</span>
                             </h1>
                         </div>
@@ -59,7 +59,7 @@ export default function TemplatesPage() {
                     <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                         <Button
                             variant="primary"
-                            className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
+                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
                             leftIcon={<Plus className="h-4 w-4" />}
                             onClick={() => router.push('/onboarding/templates/new')}
                         >

@@ -70,7 +70,7 @@ export default function NewTemplatePage() {
                         <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-600 transition-colors" />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">
+                        <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                             New <span className="text-primary-600">Template</span>
                         </h1>
                         <p className="text-[var(--text-muted)] font-bold">Define the core metadata for your onboarding blueprint.</p>
@@ -91,7 +91,7 @@ export default function NewTemplatePage() {
                                     </label>
                                     <Input
                                         placeholder="e.g., Engineering Onboarding - Standard"
-                                        className="rounded-2xl bg-[var(--bg-input)] border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-primary-500"
+                                        className="input-aura rounded-2xl bg-[var(--bg-input)] border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-primary-500"
                                         {...register('name')}
                                     />
                                     {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
@@ -117,7 +117,7 @@ export default function NewTemplatePage() {
                                             type="submit"
                                             isLoading={isSubmitting}
                                             disabled={isSubmitting}
-                                            className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
+                                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
                                             leftIcon={<Save className="h-4 w-4" />}
                                         >
                                             Create & Configure Tasks

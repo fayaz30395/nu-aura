@@ -233,7 +233,7 @@ export default function ScheduledReportsPage() {
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Scheduled Reports</h1>
+            <h1 className="text-3xl font-bold skeuo-emboss">Scheduled Reports</h1>
             <p className="text-[var(--text-secondary)] mt-1">
               Configure automated report delivery to your team
             </p>

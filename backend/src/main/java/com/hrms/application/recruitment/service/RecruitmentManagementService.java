@@ -237,6 +237,7 @@ public class RecruitmentManagementService {
      * Process candidate's acceptance of an offer.
      * Updates candidate status to OFFER_ACCEPTED and records the acceptance date.
      */
+    @Transactional
     public CandidateResponse acceptOffer(UUID candidateId, java.time.LocalDate confirmedJoiningDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Processing offer acceptance for candidate {} in tenant {}", candidateId, tenantId);
@@ -277,6 +278,7 @@ public class RecruitmentManagementService {
      * Process candidate's decline of an offer.
      * Updates candidate status to OFFER_DECLINED and records the reason.
      */
+    @Transactional
     public CandidateResponse declineOffer(UUID candidateId, String declineReason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Processing offer decline for candidate {} in tenant {}", candidateId, tenantId);
@@ -313,6 +315,7 @@ public class RecruitmentManagementService {
     /**
      * Move a candidate to a different recruitment stage.
      */
+    @Transactional
     public CandidateResponse moveCandidateStage(UUID candidateId, Candidate.RecruitmentStage stage, String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Moving candidate {} to stage {} for tenant {}", candidateId, stage, tenantId);

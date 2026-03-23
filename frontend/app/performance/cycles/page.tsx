@@ -237,7 +237,7 @@ export default function ReviewCyclesPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Review Cycles</h1>
+          <h1 className="text-3xl font-bold skeuo-emboss">Review Cycles</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {

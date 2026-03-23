@@ -90,7 +90,7 @@ export default function SearchPage() {
       >
         {/* Header */}
         <div>
-          <h1 className={`${typography.pageTitle} flex items-center gap-4`}>
+          <h1 className={`${typography.pageTitle} skeuo-emboss flex items-center gap-4`}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--primary-500)] to-[var(--primary-700)] flex items-center justify-center flex-shrink-0">
               <Search className={`${iconSize.pageHeader} text-white`} />
             </div>

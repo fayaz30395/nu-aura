@@ -220,7 +220,7 @@ export default function ProjectDetailPage() {
             </Button>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+                <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                   {project?.name || 'Project'}
                 </h1>
                 {project && (() => {

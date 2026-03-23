@@ -138,7 +138,7 @@ export default function PublicExitInterviewPage() {
   return (
     <Center mih="100vh" bg="gray.0" p="md">
       <Paper withBorder p="xl" w="100%" maw={640}>
-        <Title order={2} mb={4}>Exit Interview</Title>
+        <Title order={2} mb={4} className="skeuo-emboss">Exit Interview</Title>
         <Text c="dimmed" size="sm" mb="lg">
           Hi {data?.employeeName}, please share your honest feedback. This is confidential.
         </Text>
@@ -240,6 +240,7 @@ export default function PublicExitInterviewPage() {
               color="green"
               loading={submitMutation.isPending}
               onClick={() => submitMutation.mutate()}
+              className="btn-primary"
             >
               Submit Interview
             </Button>

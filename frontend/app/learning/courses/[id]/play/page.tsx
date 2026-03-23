@@ -198,7 +198,7 @@ export default function CoursePlayerPage() {
       case 'TEXT':
         return (
           <div className="flex flex-col gap-4">
-            <div className="prose max-w-none bg-white rounded-lg border border-[var(--border-main)] p-6">
+            <div className="prose max-w-none skeuo-card p-6">
               {sanitizedTextContent ? (
                 <div dangerouslySetInnerHTML={{ __html: sanitizedTextContent }} />
               ) : (
@@ -225,7 +225,7 @@ export default function CoursePlayerPage() {
         return (
           <div className="flex flex-col gap-4">
             {activeContent.documentUrl ? (
-              <div className="bg-white rounded-lg border border-[var(--border-main)] overflow-hidden">
+              <div className="skeuo-card overflow-hidden">
                 <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
                   <span className="text-sm font-medium text-[var(--text-primary)]">{activeContent.title}</span>
                   <a
@@ -533,13 +533,13 @@ export default function CoursePlayerPage() {
       {/* Completion overlay */}
       {showCompletion && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+          <div className="skeuo-card p-8 max-w-sm w-full mx-4 text-center">
             <div className="flex justify-center mb-4">
               <div className="p-4 bg-green-100 rounded-full">
                 <Award className="h-12 w-12 text-green-600" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Course Complete!</h2>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Course Complete!</h2>
             <p className="text-[var(--text-muted)] text-sm mb-6">
               You&apos;ve completed <span className="font-semibold text-[var(--text-primary)]">{course.title}</span>.
               {enrollment?.certificateId && ' Your certificate has been issued.'}

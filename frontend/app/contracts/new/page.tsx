@@ -68,7 +68,7 @@ export default function CreateContractPage() {
           <button onClick={() => router.back()} className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 rounded">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-3xl font-bold">Create Contract</h1>
+          <h1 className="text-3xl font-bold skeuo-emboss">Create Contract</h1>
         </div>
 
         <Card>

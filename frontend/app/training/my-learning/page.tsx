@@ -147,7 +147,7 @@ export default function MyLearningPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">My Learning</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">My Learning</h1>
             <p className="text-[var(--text-muted)] mt-1 text-sm">
               Track your enrolled courses and progress
             </p>

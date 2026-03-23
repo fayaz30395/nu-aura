@@ -2,38 +2,31 @@ package com.hrms.application.document.service;
 
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.security.TenantContext;
-import io.minio.*;
-import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.minio.errors.MinioException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service for file storage operations using MinIO.
- * Supports uploading, downloading, and managing files for various HRMS modules.
+ * Service for file storage operations.
+ * Delegates to a StorageProvider implementation (MinIO or Google Drive)
+ * based on the active profile configuration.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class FileStorageService {
 
-    private final MinioClient minioClient;
-
-    @Value("${app.minio.bucket:hrms-files}")
-    private String defaultBucket;
+    private final StorageProvider storageProvider;
 
     @Value("${app.minio.url-expiry-hours:24}")
     private int urlExpiryHours;
@@ -70,7 +63,7 @@ public class FileStorageService {
         String objectName = generateObjectName(tenantId, category, entityId, file.getOriginalFilename());
 
         try {
-            ensureBucketExists();
+            storageProvider.ensureStorageReady();
 
             Map<String, String> metadata = new HashMap<>();
             metadata.put("tenant-id", tenantId.toString());
@@ -79,19 +72,14 @@ public class FileStorageService {
             metadata.put("original-filename", file.getOriginalFilename());
             metadata.put("uploaded-at", LocalDateTime.now().toString());
 
-            minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(defaultBucket)
-                    .object(objectName)
-                    .stream(file.getInputStream(), file.getSize(), -1)
-                    .contentType(file.getContentType())
-                    .userMetadata(metadata)
-                    .build());
+            String storageId = storageProvider.upload(objectName, file.getInputStream(), file.getSize(),
+                    file.getContentType(), metadata);
 
-            log.info("File uploaded: {} to bucket: {}", objectName, defaultBucket);
+            log.info("File uploaded: {} (storageId: {})", objectName, storageId);
 
             return FileUploadResult.builder()
-                    .objectName(objectName)
-                    .bucket(defaultBucket)
+                    .objectName(storageId)
+                    .bucket("storage")
                     .originalFilename(file.getOriginalFilename())
                     .contentType(file.getContentType())
                     .size(file.getSize())
@@ -100,6 +88,8 @@ public class FileStorageService {
                     .uploadedAt(LocalDateTime.now())
                     .build();
 
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to upload file: {}", file.getOriginalFilename(), e);
             throw new BusinessException("Failed to upload file: " + e.getMessage());
@@ -115,7 +105,7 @@ public class FileStorageService {
         String objectName = generateObjectName(tenantId, category, entityId, filename);
 
         try {
-            ensureBucketExists();
+            storageProvider.ensureStorageReady();
 
             Map<String, String> metadata = new HashMap<>();
             metadata.put("tenant-id", tenantId.toString());
@@ -124,19 +114,13 @@ public class FileStorageService {
             metadata.put("original-filename", filename);
             metadata.put("uploaded-at", LocalDateTime.now().toString());
 
-            minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(defaultBucket)
-                    .object(objectName)
-                    .stream(inputStream, size, -1)
-                    .contentType(contentType)
-                    .userMetadata(metadata)
-                    .build());
+            String storageId = storageProvider.upload(objectName, inputStream, size, contentType, metadata);
 
-            log.info("File uploaded from stream: {} to bucket: {}", objectName, defaultBucket);
+            log.info("File uploaded from stream: {} (storageId: {})", objectName, storageId);
 
             return FileUploadResult.builder()
-                    .objectName(objectName)
-                    .bucket(defaultBucket)
+                    .objectName(storageId)
+                    .bucket("storage")
                     .originalFilename(filename)
                     .contentType(contentType)
                     .size(size)
@@ -145,6 +129,8 @@ public class FileStorageService {
                     .uploadedAt(LocalDateTime.now())
                     .build();
 
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to upload file from stream: {}", filename, e);
             throw new BusinessException("Failed to upload file: " + e.getMessage());
@@ -157,12 +143,9 @@ public class FileStorageService {
     @Transactional(readOnly = true)
     public String getDownloadUrl(String objectName) {
         try {
-            return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                    .bucket(defaultBucket)
-                    .object(objectName)
-                    .method(Method.GET)
-                    .expiry(urlExpiryHours, TimeUnit.HOURS)
-                    .build());
+            return storageProvider.getDownloadUrl(objectName, urlExpiryHours);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to generate download URL for: {}", objectName, e);
             throw new BusinessException("Failed to generate download URL");
@@ -175,10 +158,9 @@ public class FileStorageService {
     @Transactional(readOnly = true)
     public InputStream getFile(String objectName) {
         try {
-            return minioClient.getObject(GetObjectArgs.builder()
-                    .bucket(defaultBucket)
-                    .object(objectName)
-                    .build());
+            return storageProvider.download(objectName);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to get file: {}", objectName, e);
             throw new BusinessException("Failed to retrieve file");
@@ -191,11 +173,10 @@ public class FileStorageService {
     @Transactional
     public void deleteFile(String objectName) {
         try {
-            minioClient.removeObject(RemoveObjectArgs.builder()
-                    .bucket(defaultBucket)
-                    .object(objectName)
-                    .build());
+            storageProvider.delete(objectName);
             log.info("File deleted: {}", objectName);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to delete file: {}", objectName, e);
             throw new BusinessException("Failed to delete file");
@@ -206,15 +187,7 @@ public class FileStorageService {
      * Check if a file exists.
      */
     public boolean fileExists(String objectName) {
-        try {
-            minioClient.statObject(StatObjectArgs.builder()
-                    .bucket(defaultBucket)
-                    .object(objectName)
-                    .build());
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return storageProvider.exists(objectName);
     }
 
     /**
@@ -226,17 +199,11 @@ public class FileStorageService {
                 sourceObjectName.substring(sourceObjectName.lastIndexOf('/') + 1));
 
         try {
-            minioClient.copyObject(CopyObjectArgs.builder()
-                    .bucket(defaultBucket)
-                    .object(destinationObjectName)
-                    .source(CopySource.builder()
-                            .bucket(defaultBucket)
-                            .object(sourceObjectName)
-                            .build())
-                    .build());
-
-            log.info("File copied from {} to {}", sourceObjectName, destinationObjectName);
-            return destinationObjectName;
+            String storageId = storageProvider.copy(sourceObjectName, destinationObjectName);
+            log.info("File copied from {} to {} (storageId: {})", sourceObjectName, destinationObjectName, storageId);
+            return storageId;
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to copy file: {}", sourceObjectName, e);
             throw new BusinessException("Failed to copy file");
@@ -278,24 +245,6 @@ public class FileStorageService {
             return "";
         }
         return filename.substring(filename.lastIndexOf("."));
-    }
-
-    private void ensureBucketExists() {
-        try {
-            boolean exists = minioClient.bucketExists(BucketExistsArgs.builder()
-                    .bucket(defaultBucket)
-                    .build());
-
-            if (!exists) {
-                minioClient.makeBucket(MakeBucketArgs.builder()
-                        .bucket(defaultBucket)
-                        .build());
-                log.info("Created bucket: {}", defaultBucket);
-            }
-        } catch (Exception e) {
-            log.error("Failed to ensure bucket exists: {}", defaultBucket, e);
-            throw new BusinessException("Failed to initialize storage");
-        }
     }
 
     /**

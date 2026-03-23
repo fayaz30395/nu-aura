@@ -148,7 +148,7 @@ function OfferPortalPage() {
             <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
             </div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
               Unable to Load Offer
             </h1>
             <p className="text-[var(--text-muted)]">{error}</p>
@@ -175,7 +175,7 @@ function OfferPortalPage() {
           <div className="w-20 h-20 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <FileText className="h-10 w-10 text-primary-600 dark:text-primary-400" />
           </div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
             Your Offer Letter
           </h1>
           <p className="text-[var(--text-secondary)]">
@@ -235,7 +235,7 @@ function OfferPortalPage() {
         )}
 
         {/* Candidate Info */}
-        <Card>
+        <Card className="skeuo-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
@@ -340,7 +340,7 @@ function OfferPortalPage() {
               <div className="flex gap-4">
                 <Button
                   onClick={() => setShowAcceptModal(true)}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="btn-primary flex-1 bg-green-600 hover:bg-green-700"
                   disabled={acceptMutation.isPending || declineMutation.isPending}
                 >
                   <CheckCircle className="h-5 w-5 mr-2" />
@@ -383,7 +383,7 @@ function OfferPortalPage() {
                 <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
                   Accept Offer
                 </h2>
                 <p className="text-[var(--text-secondary)]">
@@ -444,7 +444,7 @@ function OfferPortalPage() {
                 <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
                 </div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
                   Decline Offer
                 </h2>
                 <p className="text-[var(--text-secondary)]">

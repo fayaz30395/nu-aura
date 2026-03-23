@@ -63,7 +63,7 @@ export default function LeaveReportsPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Leave Reports</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">Leave Reports</h1>
             <p className="text-slate-600 dark:text-slate-400 mt-1">
               Generate leave request reports with customizable filters
             </p>
@@ -111,7 +111,7 @@ export default function LeaveReportsPage() {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-slate-800"
+                      className="input-aura"
                     />
                   </div>
                   <div>
@@ -120,7 +120,7 @@ export default function LeaveReportsPage() {
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-slate-800"
+                      className="input-aura"
                     />
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export default function LeaveReportsPage() {
                     <select
                       value={leaveStatus}
                       onChange={(e) => setLeaveStatus(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-slate-800"
+                      className="input-aura"
                     >
                       <option value="">All Statuses</option>
                       <option value="PENDING">Pending</option>
@@ -190,7 +190,7 @@ export default function LeaveReportsPage() {
                 <button
                   onClick={handleDownload}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full btn-primary !h-auto disabled:opacity-50"
                 >
                   {loading ? (
                     <>

@@ -165,9 +165,9 @@ export default function SignupPage() {
         </div>
 
         {/* Signup Card */}
-        <Card className="bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
+        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Create your account</CardTitle>
+            <CardTitle className="text-xl skeuo-emboss">Create your account</CardTitle>
             <CardDescription>Start your free trial — no credit card required</CardDescription>
           </CardHeader>
           <CardContent>
@@ -198,7 +198,7 @@ export default function SignupPage() {
                     })}
                     type="text"
                     placeholder="Acme Corporation"
-                    className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                       errors.companyName
                         ? 'border-red-500 dark:border-red-500'
                         : 'border-[var(--border-main)]'
@@ -223,7 +223,7 @@ export default function SignupPage() {
                       {...register('companyCode')}
                       type="text"
                       placeholder="acme-corp"
-                      className={`block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-mono text-sm ${
+                      className={`input-aura block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-mono text-sm ${
                         errors.companyCode
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -253,7 +253,7 @@ export default function SignupPage() {
                       {...register('adminFirstName')}
                       type="text"
                       placeholder="John"
-                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -271,7 +271,7 @@ export default function SignupPage() {
                       {...register('adminLastName')}
                       type="text"
                       placeholder="Doe"
-                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminLastName
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -297,7 +297,7 @@ export default function SignupPage() {
                       type="email"
                       autoComplete="email"
                       placeholder="john@acmecorp.com"
-                      className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminEmail
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -324,7 +324,7 @@ export default function SignupPage() {
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       placeholder="Create a strong password"
-                      className={`block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.password
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -349,7 +349,7 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="w-full py-3 mt-2"
+                className="btn-primary w-full py-3 mt-2"
                 isLoading={isLoading}
                 disabled={isLoading}
               >

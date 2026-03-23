@@ -78,7 +78,7 @@ export default function HelpdeskPage() {
           {statCards.map((card) => (
             <div
               key={card.label}
-              className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 shadow-soft"
+              className="skeuo-card p-4"
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${card.bg}`}>
@@ -131,7 +131,7 @@ export default function HelpdeskPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/helpdesk/sla')}
-            className="flex items-center justify-between bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 shadow-soft hover:shadow-md transition-shadow text-left"
+            className="flex items-center justify-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-3">
               <Settings className="w-5 h-5 text-[var(--text-muted)]" />
@@ -145,7 +145,7 @@ export default function HelpdeskPage() {
 
           <button
             onClick={() => router.push('/helpdesk/sla')}
-            className="flex items-center justify-between bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 shadow-soft hover:shadow-md transition-shadow text-left"
+            className="flex items-center justify-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-3">
               <Bell className="w-5 h-5 text-[var(--text-muted)]" />
@@ -159,7 +159,7 @@ export default function HelpdeskPage() {
 
           <button
             onClick={() => router.push('/helpdesk/sla')}
-            className="flex items-center justify-between bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 shadow-soft hover:shadow-md transition-shadow text-left"
+            className="flex items-center justify-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-3">
               <BarChart3 className="w-5 h-5 text-[var(--text-muted)]" />
@@ -174,7 +174,7 @@ export default function HelpdeskPage() {
 
         {/* Summary Stats */}
         {dashboard && (
-          <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 shadow-soft">
+          <div className="skeuo-card p-4">
             <h3 className="font-semibold text-[var(--text-primary)] mb-3">Overview</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>

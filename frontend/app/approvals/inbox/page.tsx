@@ -290,7 +290,7 @@ export default function ApprovalInboxPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Approval Inbox
             </h1>
             <p className="mt-1 text-sm text-[var(--text-muted)]">
@@ -398,7 +398,7 @@ export default function ApprovalInboxPage() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              className="w-full rounded-lg border border-[var(--border-main)] bg-white py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900 dark:text-[var(--text-primary)]"
+              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-white py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900 dark:text-[var(--text-primary)]"
             />
           </div>
         </div>
@@ -744,7 +744,7 @@ function SummaryCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className={`flex items-center gap-4 rounded-xl p-4 ${color}`}>
+    <div className={`flex items-center gap-4 rounded-xl p-4 skeuo-card ${color}`}>
       <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${textColor} bg-[var(--bg-surface)]`}>
         {icon}
       </div>

@@ -141,8 +141,8 @@ export default function ShiftSwapPage() {
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Shift Swap</h1>
-            <p className="text-[var(--text-muted)] mt-1">Request shift swaps, give-aways, and pick-ups</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Shift Swap</h1>
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request shift swaps, give-aways, and pick-ups</p>
           </div>
           <Button onClick={() => setShowModal(true)}>
             <PlusCircle className="w-4 h-4 mr-2" />
@@ -167,7 +167,7 @@ export default function ShiftSwapPage() {
           ))}
         </div>
 
-        <Card>
+        <Card className="skeuo-card">
           <CardContent className="p-0">
             {isLoading ? (
               <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
@@ -177,7 +177,7 @@ export default function ShiftSwapPage() {
                 <p>No shift swap requests found.</p>
               </div>
             ) : (
-              <table className="w-full text-sm">
+              <table className="w-full text-sm table-aura">
                 <thead>
                   <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                     <th className="px-4 py-3 text-left font-medium">Type</th>
@@ -201,7 +201,7 @@ export default function ShiftSwapPage() {
                       <td className="px-4 py-3">{req.targetShiftDate ?? '—'}</td>
                       <td className="px-4 py-3 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[req.status]}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium badge-status ${statusColors[req.status]}`}>
                           {req.status.replace(/_/g, ' ')}
                         </span>
                       </td>
@@ -259,7 +259,7 @@ export default function ShiftSwapPage() {
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Type *</label>
                   <select
                     {...register('swapType')}
-                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                    className="input-aura"
                   >
                     <option value="SWAP">Shift Swap (exchange with another employee)</option>
                     <option value="GIVE_AWAY">Give Away (transfer shift to another employee)</option>
@@ -275,7 +275,7 @@ export default function ShiftSwapPage() {
                     <input
                       type="date"
                       {...register('requesterShiftDate')}
-                      className={`w-full border ${errors.requesterShiftDate ? 'border-red-500' : 'border-[var(--border-strong)]'} rounded-md px-3 py-2 text-sm`}
+                      className={`input-aura ${errors.requesterShiftDate ? 'border-red-500' : ''}`}
                     />
                     {errors.requesterShiftDate && (
                       <p className="mt-1 text-xs text-red-500">{errors.requesterShiftDate.message}</p>
@@ -287,7 +287,7 @@ export default function ShiftSwapPage() {
                       <input
                         type="date"
                         {...register('targetShiftDate')}
-                        className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                        className="input-aura"
                       />
                     </div>
                   )}
@@ -298,7 +298,7 @@ export default function ShiftSwapPage() {
                     type="text"
                     {...register('requesterAssignmentId')}
                     placeholder="UUID of your shift assignment"
-                    className={`w-full border ${errors.requesterAssignmentId ? 'border-red-500' : 'border-[var(--border-strong)]'} rounded-md px-3 py-2 text-sm`}
+                    className={`input-aura ${errors.requesterAssignmentId ? 'border-red-500' : ''}`}
                   />
                   {errors.requesterAssignmentId && (
                     <p className="mt-1 text-xs text-red-500">{errors.requesterAssignmentId.message}</p>
@@ -311,7 +311,7 @@ export default function ShiftSwapPage() {
                       type="text"
                       {...register('targetEmployeeId')}
                       placeholder="UUID of the other employee"
-                      className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                      className="input-aura"
                     />
                   </div>
                 )}
@@ -321,7 +321,7 @@ export default function ShiftSwapPage() {
                     {...register('reason')}
                     rows={2}
                     placeholder="Optional reason for the swap"
-                    className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                    className="input-aura"
                   />
                 </div>
                 <div className="flex gap-4 justify-end pt-2">

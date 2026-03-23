@@ -3,20 +3,26 @@ package com.hrms.common.config;
 import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * MinIO client configuration.
+ * Activated only when app.storage.provider=minio (or when the property is absent, for backward compatibility).
+ */
 @Configuration
+@ConditionalOnProperty(name = "app.storage.provider", havingValue = "minio", matchIfMissing = true)
 @Slf4j
 public class MinioConfig {
 
-    @Value("${minio.endpoint:http://localhost:9000}")
+    @Value("${app.minio.endpoint:http://localhost:9000}")
     private String endpoint;
 
-    @Value("${minio.access-key:minioadmin}")
+    @Value("${app.minio.access-key:minioadmin}")
     private String accessKey;
 
-    @Value("${minio.secret-key:minioadmin}")
+    @Value("${app.minio.secret-key:minioadmin}")
     private String secretKey;
 
     @Bean

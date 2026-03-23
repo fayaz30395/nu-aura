@@ -159,7 +159,7 @@ export default function ManagerDashboardPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">Live Insights</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl">
-              Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Pulse</span>
+              Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400 skeuo-emboss">Pulse</span>
             </h1>
             <p className="text-[var(--text-secondary)] mt-2 text-lg">
               Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
@@ -179,7 +179,7 @@ export default function ManagerDashboardPage() {
         {/* Global Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative skeuo-card">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Users className="h-16 w-16 text-primary-500" />
               </div>
@@ -200,7 +200,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative skeuo-card">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <UserCheck className="h-16 w-16 text-emerald-500" />
               </div>
@@ -221,7 +221,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative skeuo-card">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Calendar className="h-16 w-16 text-amber-500" />
               </div>
@@ -242,7 +242,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative skeuo-card">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Zap className="h-16 w-16 text-indigo-500" />
               </div>

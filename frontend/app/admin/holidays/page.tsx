@@ -214,8 +214,8 @@ export default function HolidayCalendarManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Holiday Calendar Management</h1>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Holiday Calendar Management</h1>
+            <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
               Manage organizational holidays and events
             </p>
           </div>
@@ -224,7 +224,7 @@ export default function HolidayCalendarManagementPage() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="input-aura"
             >
               {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2].map((year) => (
                 <option key={year} value={year}>
@@ -239,7 +239,7 @@ export default function HolidayCalendarManagementPage() {
                 setEditingHoliday(null);
                 setShowModal(true);
               }}
-              className="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 transition-colors"
+              className="btn-primary !h-auto"
             >
               + Add Holiday
             </button>
@@ -261,23 +261,23 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Statistics */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
+          <div className="skeuo-card p-4">
             <div className="text-sm text-[var(--text-secondary)]">Total Holidays</div>
             <div className="text-2xl font-bold text-[var(--text-primary)]">{holidays.length}</div>
           </div>
-          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
+          <div className="skeuo-card p-4">
             <div className="text-sm text-[var(--text-secondary)]">National</div>
             <div className="text-2xl font-bold text-red-600">
               {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
             </div>
           </div>
-          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
+          <div className="skeuo-card p-4">
             <div className="text-sm text-[var(--text-secondary)]">Optional</div>
             <div className="text-2xl font-bold text-yellow-600">
               {holidays.filter((h) => h.isOptional).length}
             </div>
           </div>
-          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
+          <div className="skeuo-card p-4">
             <div className="text-sm text-[var(--text-secondary)]">Restricted</div>
             <div className="text-2xl font-bold text-orange-600">
               {holidays.filter((h) => h.isRestricted).length}
@@ -286,7 +286,7 @@ export default function HolidayCalendarManagementPage() {
         </div>
 
         {/* Holidays List */}
-        <div className="bg-[var(--bg-card)] rounded-lg shadow dark:shadow-surface-950/50">
+        <div className="skeuo-card">
           {loading ? (
             <div className="px-6 py-12 text-center text-[var(--text-muted)]">
               Loading holidays for {selectedYear}...
@@ -390,8 +390,8 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Add/Edit Holiday Modal */}
         {showModal && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] dark:bg-black/70 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
+            <div className="skeuo-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -421,7 +421,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="text"
                           {...form.register('holidayName')}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                           placeholder="New Year's Day, Independence Day"
                         />
                         {form.formState.errors.holidayName && (
@@ -437,7 +437,7 @@ export default function HolidayCalendarManagementPage() {
                           <input
                             type="date"
                             {...form.register('holidayDate')}
-                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="input-aura"
                           />
                           {form.formState.errors.holidayDate && (
                             <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayDate.message}</p>
@@ -449,7 +449,7 @@ export default function HolidayCalendarManagementPage() {
                           </label>
                           <select
                             {...form.register('holidayType')}
-                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="input-aura"
                           >
                             {holidayTypes.map((type) => (
                               <option key={type} value={type}>
@@ -467,7 +467,7 @@ export default function HolidayCalendarManagementPage() {
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                           placeholder="Brief description of the holiday..."
                         />
                       </div>
@@ -511,7 +511,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="text"
                           {...form.register('applicableLocations')}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                           placeholder="e.g., New York, California (comma-separated)"
                         />
                         <p className="text-xs text-[var(--text-muted)] mt-1">Leave empty for all locations</p>
@@ -524,7 +524,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="text"
                           {...form.register('applicableDepartments')}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                           placeholder="e.g., Engineering, Sales (comma-separated)"
                         />
                         <p className="text-xs text-[var(--text-muted)] mt-1">Leave empty for all departments</p>
@@ -541,14 +541,14 @@ export default function HolidayCalendarManagementPage() {
                         setEditingHoliday(null);
                         resetForm();
                       }}
-                      className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                      className="btn-secondary"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                      className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50"
+                      className="btn-primary !h-auto disabled:opacity-50"
                     >
                       {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingHoliday ? 'Update' : 'Create')} Holiday
                     </button>

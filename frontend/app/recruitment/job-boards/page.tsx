@@ -108,8 +108,8 @@ export default function JobBoardsPage() {
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Job Board Management</h1>
-            <p className="text-[var(--text-muted)] mt-1">Post jobs to Naukri, Indeed, LinkedIn and track applications</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Board Management</h1>
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Post jobs to Naukri, Indeed, LinkedIn and track applications</p>
           </div>
           <Button onClick={() => setShowPostModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
@@ -240,7 +240,7 @@ export default function JobBoardsPage() {
                 <select
                   value={selectedJobId}
                   onChange={e => setSelectedJobId(e.target.value)}
-                  className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
+                  className="input-aura"
                 >
                   <option value="">— Select a job —</option>
                   {openJobs?.content?.map((job: JobOpening) => (

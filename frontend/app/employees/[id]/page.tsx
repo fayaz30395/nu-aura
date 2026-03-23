@@ -171,7 +171,7 @@ export default function EmployeeDetailPage() {
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">{employee.fullName}</h2>
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{employee.fullName}</h2>
                   <p className="text-sm text-[var(--text-secondary)]">{employee.designation}</p>
                   <p className="text-sm text-[var(--text-muted)]">{employee.employeeCode}</p>
                 </div>

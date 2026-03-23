@@ -458,7 +458,7 @@ function LoginPage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
+            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] skeuo-emboss leading-tight mb-6 tracking-tight">
               Your People.
               <br />
               <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 dark:from-primary-400 dark:via-primary-300 dark:to-primary-500 bg-clip-text text-transparent">
@@ -527,7 +527,7 @@ function LoginPage() {
 
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
                 Welcome to <span className="text-primary-600 dark:text-primary-400 font-extrabold">NU-AURA</span>
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
@@ -536,9 +536,9 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] p-8 shadow-elevated">
+            <div className="skeuo-card rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] p-8 shadow-elevated">
               <div className="text-center mb-7">
-                <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
+                <h3 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
                   Sign In
                 </h3>
                 <p className="text-[var(--text-secondary)] text-sm">

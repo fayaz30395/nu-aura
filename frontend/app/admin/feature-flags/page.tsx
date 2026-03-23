@@ -85,8 +85,8 @@ export default function FeatureFlagsPage() {
       {/* Header */}
       <Group justify="space-between">
         <div>
-          <Title order={2}>Feature Flags</Title>
-          <Text size="sm" c="dimmed">
+          <Title order={2} className="skeuo-emboss">Feature Flags</Title>
+          <Text size="sm" c="dimmed" className="skeuo-deboss">
             {enabledCount} of {totalCount} features enabled for your organization
           </Text>
         </div>
@@ -120,7 +120,7 @@ export default function FeatureFlagsPage() {
       {/* Feature Flag Cards */}
       <Stack gap="sm">
         {filteredFlags.map((flag: FeatureFlag) => (
-          <Card key={flag.id} withBorder padding="md" radius="md">
+          <Card key={flag.id} withBorder padding="md" radius="md" className="skeuo-card">
             <Group justify="space-between" wrap="nowrap">
               <Group gap="md" wrap="nowrap" style={{ flex: 1 }}>
                 <ToggleLeft
@@ -178,7 +178,7 @@ export default function FeatureFlagsPage() {
         ))}
 
         {filteredFlags.length === 0 && (
-          <Card withBorder padding="xl" radius="md">
+          <Card withBorder padding="xl" radius="md" className="skeuo-card">
             <Stack align="center" gap="sm">
               <ToggleLeft size={48} className="text-gray-400" />
               <Text size="sm" c="dimmed">

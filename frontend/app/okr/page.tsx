@@ -5,12 +5,18 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function OkrRedirectPage(): null {
+export default function OkrRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
     router.replace('/performance/okr');
   }, [router]);
 
-  return null;
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="skeuo-card p-8 text-center">
+        <p className="text-[var(--text-muted)]">Redirecting...</p>
+      </div>
+    </div>
+  );
 }

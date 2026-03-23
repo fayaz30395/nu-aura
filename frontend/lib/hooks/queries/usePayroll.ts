@@ -182,12 +182,8 @@ export function usePayslips(
       if (employeeId) {
         return payrollService.getPayslipsByEmployee(employeeId, page, size);
       }
-      if (month) {
-        const [year, monthNum] = month.split('-');
-        const startDate = `${year}-${monthNum}-01`;
-        const endDate = new Date(parseInt(year), parseInt(monthNum), 0).toISOString().split('T')[0];
-        return payrollService.getPayslipsByPeriod(startDate, endDate, page, size);
-      }
+      // CRIT-003: getPayslipsByPeriod is not implemented on the backend.
+      // Fetch all payslips and let the page filter client-side for now.
       return payrollService.getAllPayslips(page, size);
     },
     staleTime: 2 * 60 * 1000, // 2 minutes

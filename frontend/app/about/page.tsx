@@ -102,7 +102,7 @@ export default function AboutPage() {
           <Badge size="lg" variant="primary" className="mb-6">
             About Us
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
             Building the future of HR technology
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -154,7 +154,7 @@ export default function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
               Our Core Values
             </h2>
             <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
@@ -192,7 +192,7 @@ export default function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
               Our Journey
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
@@ -241,7 +241,7 @@ export default function AboutPage() {
                 className="text-center"
               >
                 <stat.icon className="h-10 w-10 text-primary-600 dark:text-primary-400 mx-auto mb-3" />
-                <div className="text-4xl font-bold text-[var(--text-primary)] mb-1">
+                <div className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-1">
                   {stat.value}
                 </div>
                 <div className="text-sm text-[var(--text-muted)]">{stat.label}</div>

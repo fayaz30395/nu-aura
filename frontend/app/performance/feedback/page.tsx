@@ -167,7 +167,7 @@ export default function FeedbackPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Feedback</h1>
+          <h1 className="text-3xl font-bold skeuo-emboss">Feedback</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {

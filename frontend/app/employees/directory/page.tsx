@@ -222,11 +222,11 @@ export default function TeamDirectory() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
                 <Users className="w-7 h-7 text-primary-600 dark:text-primary-400" />
                 Team Directory
               </h1>
-              <p className="text-[var(--text-muted)] mt-1">
+              <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
                 Search and connect with colleagues across the organization
               </p>
             </div>
@@ -269,7 +269,7 @@ export default function TeamDirectory() {
                   <input
                     type="text"
                     placeholder="Search by name, email, phone, or employee code..."
-                    className="w-full pl-12 pr-4 py-3 border border-[var(--border-main)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-all"
+                    className="input-aura pl-12"
                     value={filters.searchTerm}
                     onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -277,7 +277,7 @@ export default function TeamDirectory() {
                 </div>
                 <button
                   onClick={handleSearch}
-                  className="px-6 py-3 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors font-medium shadow-sm hover:shadow-md"
+                  className="btn-primary px-6 py-3"
                 >
                   Search
                 </button>
@@ -315,7 +315,7 @@ export default function TeamDirectory() {
                             Department
                           </label>
                           <select
-                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                            className="input-aura"
                             value={filters.departmentIds[0] || ''}
                             onChange={(e) =>
                               handleFilterChange(
@@ -339,7 +339,7 @@ export default function TeamDirectory() {
                             Job Role
                           </label>
                           <select
-                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                            className="input-aura"
                             value={filters.jobRoles[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('jobRoles', e.target.value ? [e.target.value] : [])
@@ -360,7 +360,7 @@ export default function TeamDirectory() {
                             Level
                           </label>
                           <select
-                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                            className="input-aura"
                             value={filters.levels[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('levels', e.target.value ? [e.target.value] : [])
@@ -381,7 +381,7 @@ export default function TeamDirectory() {
                             Status
                           </label>
                           <select
-                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
+                            className="input-aura"
                             value={filters.statuses[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('statuses', e.target.value ? [e.target.value] : [])
@@ -530,8 +530,8 @@ export default function TeamDirectory() {
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <Card className="bg-[var(--bg-card)] overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-[var(--bg-secondary)]/50">
+                  <table className="table-aura">
+                    <thead className="skeuo-table-header">
                       <tr>
                         <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                           Employee
@@ -703,14 +703,14 @@ export default function TeamDirectory() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
+              className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
               onClick={() => setSelectedEmployee(null)}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
+                className="skeuo-card rounded-2xl max-w-lg w-full overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
@@ -779,7 +779,7 @@ export default function TeamDirectory() {
                         </div>
                         <a
                           href={`mailto:${selectedEmployee.personalEmail}`}
-                          className="px-3 py-1.5 bg-primary-500 text-white text-sm rounded-lg hover:bg-primary-600 transition-colors"
+                          className="btn-primary px-3 py-1.5 text-sm !h-auto"
                         >
                           Send Email
                         </a>
@@ -836,13 +836,13 @@ export default function TeamDirectory() {
                   <div className="mt-6 flex gap-4">
                     <button
                       onClick={() => setSelectedEmployee(null)}
-                      className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors font-medium"
+                      className="flex-1 btn-secondary"
                     >
                       Close
                     </button>
                     <a
                       href={`/employees/${selectedEmployee.id}`}
-                      className="flex-1 px-4 py-2.5 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors font-medium text-center"
+                      className="flex-1 btn-primary text-center"
                     >
                       View Full Profile
                     </a>

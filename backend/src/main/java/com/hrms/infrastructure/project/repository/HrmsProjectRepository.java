@@ -14,6 +14,8 @@ import java.util.UUID;
 @Repository
 public interface HrmsProjectRepository extends JpaRepository<Project, UUID> {
 
+    Optional<Project> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<Project> findByProjectCodeAndTenantId(String projectCode, UUID tenantId);
 
     boolean existsByProjectCodeAndTenantId(String projectCode, UUID tenantId);

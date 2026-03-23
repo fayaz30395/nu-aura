@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl mb-4 shadow-lg shadow-primary-500/25">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent skeuo-emboss">
               NU-AURA
             </h1>
           </div>
@@ -186,7 +186,7 @@ export default function ForgotPasswordPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl mb-4 shadow-lg shadow-primary-500/25">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent skeuo-emboss">
             NU-AURA
           </h1>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
@@ -195,9 +195,9 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Forgot Password Card */}
-        <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
+        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Forgot Password</CardTitle>
+            <CardTitle className="text-xl skeuo-emboss">Forgot Password</CardTitle>
             <CardDescription>
               Enter your email address and we&apos;ll send you a link to reset your password.
             </CardDescription>
@@ -231,7 +231,7 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     disabled={isLoading}
                     placeholder="Enter your email"
-                    className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                       errors.email
                         ? 'border-red-500 dark:border-red-500'
                         : 'border-[var(--border-main)]'
@@ -249,7 +249,7 @@ export default function ForgotPasswordPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="w-full py-3"
+                className="btn-primary w-full py-3"
                 isLoading={isLoading}
                 disabled={isLoading}
               >

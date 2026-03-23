@@ -116,9 +116,9 @@ export default function ApplyLeavePage() {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)]">Apply for Leave</h1>
+        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)] skeuo-emboss">Apply for Leave</h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="skeuo-card p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Leave Type */}
             <div className="md:col-span-2">
@@ -127,7 +127,7 @@ export default function ApplyLeavePage() {
               </label>
               <select
                 {...register('leaveTypeId')}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="input-aura"
               >
                 <option value="">Select Leave Type</option>
                 {leaveTypes.map((type) => (
@@ -152,7 +152,7 @@ export default function ApplyLeavePage() {
               <input
                 type="date"
                 {...register('startDate')}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="input-aura"
               />
               {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
@@ -166,7 +166,7 @@ export default function ApplyLeavePage() {
                 type="date"
                 {...register('endDate')}
                 min={startDate}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="input-aura"
               />
               {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>
@@ -227,7 +227,7 @@ export default function ApplyLeavePage() {
               <textarea
                 {...register('reason')}
                 rows={4}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="input-aura"
                 placeholder="Please provide a reason for your leave..."
               />
               {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}
@@ -240,7 +240,7 @@ export default function ApplyLeavePage() {
               <button
                 type="submit"
                 disabled={createLeaveRequest.isPending || isSubmitting || !leaveTypeId}
-                className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 font-semibold"
+                className="btn-primary !h-auto disabled:opacity-50"
               >
                 {createLeaveRequest.isPending || isSubmitting ? 'Submitting...' : 'Submit Leave Request'}
               </button>
@@ -248,7 +248,7 @@ export default function ApplyLeavePage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 font-semibold"
+              className="btn-secondary"
             >
               Cancel
             </button>

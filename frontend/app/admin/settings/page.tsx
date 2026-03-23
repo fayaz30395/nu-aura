@@ -136,7 +136,7 @@ export default function AdminSettingsPage() {
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
             Admin Settings
           </h1>
           <p className="text-[var(--text-secondary)] mt-1">

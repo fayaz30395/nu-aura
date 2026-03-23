@@ -538,8 +538,8 @@ const formatDateTime = (dateString?: string): string => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Interviews</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Schedule and manage candidate interviews</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Interviews</h1>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Schedule and manage candidate interviews</p>
           </div>
           <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
@@ -549,7 +549,7 @@ const formatDateTime = (dateString?: string): string => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-[var(--bg-card)]">
+          <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
@@ -562,7 +562,7 @@ const formatDateTime = (dateString?: string): string => {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[var(--bg-card)]">
+          <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
@@ -575,7 +575,7 @@ const formatDateTime = (dateString?: string): string => {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[var(--bg-card)]">
+          <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -588,7 +588,7 @@ const formatDateTime = (dateString?: string): string => {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[var(--bg-card)]">
+          <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
@@ -646,7 +646,7 @@ const formatDateTime = (dateString?: string): string => {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full table-aura">
                   <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
@@ -806,7 +806,7 @@ const formatDateTime = (dateString?: string): string => {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview Round</label>
                       <select
                         {...registerCreate('interviewRound')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       >
                         <option value="SCREENING">Screening</option>
                         <option value="TECHNICAL_1">Technical 1</option>
@@ -820,7 +820,7 @@ const formatDateTime = (dateString?: string): string => {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview Type</label>
                       <select
                         {...registerCreate('interviewType')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       >
                         <option value="VIDEO">Video Call</option>
                         <option value="PHONE">Phone</option>
@@ -835,7 +835,7 @@ const formatDateTime = (dateString?: string): string => {
                       <input
                         type="datetime-local"
                         {...registerCreate('scheduledAt')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       />
                       {errorsCreate.scheduledAt && <p className="text-red-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
                     </div>
@@ -846,7 +846,7 @@ const formatDateTime = (dateString?: string): string => {
                         min="15"
                         step="15"
                         {...registerCreate('durationMinutes')}
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       />
                       {errorsCreate.durationMinutes && <p className="text-red-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
                     </div>
@@ -945,7 +945,7 @@ const formatDateTime = (dateString?: string): string => {
                         type="text"
                         {...registerCreate('location')}
                         placeholder="Conference Room A"
-                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="input-aura"
                       />
                     </div>
                   </div>
@@ -967,7 +967,7 @@ const formatDateTime = (dateString?: string): string => {
                       rows={3}
                       {...registerCreate('notes')}
                       placeholder="Additional notes..."
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="input-aura"
                     />
                   </div>
 
@@ -1028,7 +1028,7 @@ const formatDateTime = (dateString?: string): string => {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Result</label>
                     <select
                       {...registerFeedback('result')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="input-aura"
                     >
                       <option value="PENDING">Pending</option>
                       <option value="SELECTED">Selected</option>
@@ -1043,7 +1043,7 @@ const formatDateTime = (dateString?: string): string => {
                       rows={4}
                       {...registerFeedback('feedback')}
                       placeholder="Provide detailed feedback about the candidate's performance..."
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="input-aura"
                     />
                     {errorsFeedback.feedback && <p className="text-red-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
                   </div>

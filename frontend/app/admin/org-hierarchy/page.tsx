@@ -259,7 +259,7 @@ export default function OrgHierarchyPage() {
       <div className="max-w-full mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center space-x-4">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss flex items-center space-x-4">
             <svg className="h-8 w-8 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
             </svg>
@@ -271,7 +271,7 @@ export default function OrgHierarchyPage() {
         </div>
 
         {/* Controls */}
-        <div className="bg-[var(--bg-card)] rounded-xl shadow-md p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
+        <div className="skeuo-card bg-[var(--bg-card)] rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => {
@@ -320,7 +320,7 @@ export default function OrgHierarchyPage() {
         </div>
 
         {/* Content */}
-        <div className="bg-[var(--bg-card)] rounded-xl shadow-md p-8 overflow-x-auto">
+        <div className="skeuo-card bg-[var(--bg-card)] rounded-xl p-8 overflow-x-auto">
           {loading ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">

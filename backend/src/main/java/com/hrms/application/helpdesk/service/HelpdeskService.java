@@ -34,11 +34,11 @@ public class HelpdeskService {
 
     @Transactional
     public TicketResponse createTicket(TicketRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating ticket for employee {} in tenant {}", request.getEmployeeId(), tenantId);
 
-        // Verify employee exists
-        employeeRepository.findById(request.getEmployeeId())
+        // Verify employee exists within tenant
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         Ticket ticket = new Ticket();
@@ -76,7 +76,7 @@ public class HelpdeskService {
 
     @Transactional
     public TicketResponse updateTicket(UUID ticketId, TicketRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating ticket {} for tenant {}", ticketId, tenantId);
 
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
@@ -102,7 +102,7 @@ public class HelpdeskService {
 
     @Transactional
     public TicketResponse updateTicketStatus(UUID ticketId, Ticket.TicketStatus status) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating ticket {} status to {} for tenant {}", ticketId, status, tenantId);
 
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
@@ -123,14 +123,14 @@ public class HelpdeskService {
 
     @Transactional
     public TicketResponse assignTicket(UUID ticketId, UUID assigneeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Assigning ticket {} to {} for tenant {}", ticketId, assigneeId, tenantId);
 
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
 
-        // Verify assignee exists
-        employeeRepository.findById(assigneeId)
+        // Verify assignee exists within tenant
+        employeeRepository.findByIdAndTenantId(assigneeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Assignee not found"));
 
         ticket.setAssignedTo(assigneeId);
@@ -147,7 +147,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public TicketResponse getTicketById(UUID ticketId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
         return mapToTicketResponse(ticket);
@@ -155,7 +155,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public TicketResponse getTicketByNumber(String ticketNumber) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Ticket ticket = ticketRepository.findByTicketNumberAndTenantId(ticketNumber, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
         return mapToTicketResponse(ticket);
@@ -163,7 +163,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public Page<TicketResponse> getAllTickets(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketRepository.findAll(
                 (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
                 pageable
@@ -172,7 +172,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByEmployee(UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
                 .map(this::mapToTicketResponse)
                 .collect(Collectors.toList());
@@ -180,7 +180,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByAssignee(UUID assigneeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketRepository.findByTenantIdAndAssignedTo(tenantId, assigneeId).stream()
                 .map(this::mapToTicketResponse)
                 .collect(Collectors.toList());
@@ -188,7 +188,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByStatus(Ticket.TicketStatus status) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketRepository.findByTenantIdAndStatus(tenantId, status).stream()
                 .map(this::mapToTicketResponse)
                 .collect(Collectors.toList());
@@ -196,7 +196,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByCategory(UUID categoryId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketRepository.findByTenantIdAndCategoryId(tenantId, categoryId).stream()
                 .map(this::mapToTicketResponse)
                 .collect(Collectors.toList());
@@ -204,7 +204,7 @@ public class HelpdeskService {
 
     @Transactional
     public void deleteTicket(UUID ticketId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
         ticketRepository.delete(ticket);
@@ -214,7 +214,7 @@ public class HelpdeskService {
 
     @Transactional
     public TicketCommentResponse addComment(TicketCommentRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Adding comment to ticket {} by {} in tenant {}",
                 request.getTicketId(), request.getCommenterId(), tenantId);
 
@@ -222,8 +222,8 @@ public class HelpdeskService {
         ticketRepository.findByIdAndTenantId(request.getTicketId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
 
-        // Verify commenter exists
-        employeeRepository.findById(request.getCommenterId())
+        // Verify commenter exists within tenant
+        employeeRepository.findByIdAndTenantId(request.getCommenterId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Commenter not found"));
 
         TicketComment comment = new TicketComment();
@@ -241,7 +241,7 @@ public class HelpdeskService {
 
     @Transactional
     public TicketCommentResponse updateComment(UUID commentId, TicketCommentRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating comment {} for tenant {}", commentId, tenantId);
 
         TicketComment comment = ticketCommentRepository.findByIdAndTenantId(commentId, tenantId)
@@ -257,7 +257,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public List<TicketCommentResponse> getCommentsByTicket(UUID ticketId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketCommentRepository.findByTenantIdAndTicketId(tenantId, ticketId).stream()
                 .map(this::mapToTicketCommentResponse)
                 .collect(Collectors.toList());
@@ -265,7 +265,7 @@ public class HelpdeskService {
 
     @Transactional
     public void deleteComment(UUID commentId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         TicketComment comment = ticketCommentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
         ticketCommentRepository.delete(comment);
@@ -275,7 +275,7 @@ public class HelpdeskService {
 
     @Transactional
     public TicketCategoryResponse createCategory(TicketCategoryRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating ticket category {} in tenant {}", request.getName(), tenantId);
 
         TicketCategory category = new TicketCategory();
@@ -294,7 +294,7 @@ public class HelpdeskService {
 
     @Transactional
     public TicketCategoryResponse updateCategory(UUID categoryId, TicketCategoryRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating ticket category {} for tenant {}", categoryId, tenantId);
 
         TicketCategory category = ticketCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
@@ -313,7 +313,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public TicketCategoryResponse getCategoryById(UUID categoryId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         TicketCategory category = ticketCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         return mapToTicketCategoryResponse(category);
@@ -321,7 +321,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public List<TicketCategoryResponse> getAllCategories() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketCategoryRepository.findByTenantIdOrderByDisplayOrder(tenantId).stream()
                 .map(this::mapToTicketCategoryResponse)
                 .collect(Collectors.toList());
@@ -329,7 +329,7 @@ public class HelpdeskService {
 
     @Transactional(readOnly = true)
     public List<TicketCategoryResponse> getActiveCategories() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return ticketCategoryRepository.findByTenantIdAndIsActive(tenantId, true).stream()
                 .map(this::mapToTicketCategoryResponse)
                 .collect(Collectors.toList());
@@ -337,7 +337,7 @@ public class HelpdeskService {
 
     @Transactional
     public void deleteCategory(UUID categoryId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         TicketCategory category = ticketCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         ticketCategoryRepository.delete(category);

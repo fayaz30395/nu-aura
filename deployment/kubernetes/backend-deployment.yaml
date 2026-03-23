@@ -157,30 +157,18 @@ spec:
               name: hrms-secrets
               key: APP_SECURITY_ENCRYPTION_KEY
 
-        # ── MinIO ──────────────────────────────────────────────────────────────────
-        - name: MINIO_ENDPOINT
-          valueFrom:
-            secretKeyRef:
-              name: hrms-secrets
-              key: MINIO_ENDPOINT
+        # ── Storage (Google Drive) ────────────────────────────────────────────────
+        - name: STORAGE_PROVIDER
+          value: "google-drive"
 
-        - name: MINIO_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hrms-secrets
-              key: MINIO_ACCESS_KEY
+        - name: GOOGLE_DRIVE_CREDENTIALS_PATH
+          value: "/etc/secrets/google-drive/credentials.json"
 
-        - name: MINIO_SECRET_KEY
+        - name: GOOGLE_DRIVE_ROOT_FOLDER_ID
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
-              key: MINIO_SECRET_KEY
-
-        - name: MINIO_BUCKET
-          valueFrom:
-            secretKeyRef:
-              name: hrms-secrets
-              key: MINIO_BUCKET
+              key: GOOGLE_DRIVE_ROOT_FOLDER_ID
 
         # ── Email ──────────────────────────────────────────────────────────────────
         - name: MAIL_HOST
@@ -385,12 +373,18 @@ spec:
           mountPath: /tmp
         - name: logs
           mountPath: /app/logs
+        - name: google-drive-credentials
+          mountPath: /etc/secrets/google-drive
+          readOnly: true
 
       volumes:
       - name: tmp
         emptyDir: {}
       - name: logs
         emptyDir: {}
+      - name: google-drive-credentials
+        secret:
+          secretName: hrms-google-drive-credentials
 
       affinity:
         podAntiAffinity:

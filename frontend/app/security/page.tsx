@@ -171,7 +171,7 @@ export default function SecurityPage() {
           <Badge size="lg" variant="success" className="mb-6">
             Security & Compliance
           </Badge>
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
             Enterprise-grade security you can trust
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
@@ -217,7 +217,7 @@ export default function SecurityPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
               Comprehensive security architecture
             </h2>
             <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
@@ -348,7 +348,7 @@ export default function SecurityPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/contact">
-              <Button size="lg">Contact Security Team</Button>
+              <Button size="lg" className="btn-primary">Contact Security Team</Button>
             </Link>
             <Button size="lg" variant="outline" className="gap-2">
               <Download className="h-5 w-5" />

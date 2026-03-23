@@ -97,8 +97,8 @@ export function useCreateLoan() {
   return useMutation({
     mutationFn: (data: CreateLoanRequest) => loanService.createLoan(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.myLoans(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.summary() });
+      // BUG-FIX: Use broader key prefix to invalidate all paginated loan lists
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -112,10 +112,8 @@ export function useUpdateLoan() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: CreateLoanRequest }) =>
       loanService.updateLoan(id, data),
-    onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.myLoans(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.summary() });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -129,8 +127,7 @@ export function useDeleteLoan() {
   return useMutation({
     mutationFn: (id: string) => loanService.deleteLoan(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.myLoans(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.summary() });
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -143,10 +140,8 @@ export function useSubmitLoan() {
 
   return useMutation({
     mutationFn: (id: string) => loanService.submitLoan(id),
-    onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.myLoans(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.pending(0, 20) });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -160,10 +155,8 @@ export function useApproveLoan() {
   return useMutation({
     mutationFn: ({ id, approvedAmount }: { id: string; approvedAmount?: number }) =>
       loanService.approveLoan(id, approvedAmount),
-    onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.pending(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.allLoans(0, 20) });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -177,10 +170,8 @@ export function useRejectLoan() {
   return useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
       loanService.rejectLoan(id, reason),
-    onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.pending(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.allLoans(0, 20) });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -193,10 +184,8 @@ export function useDisburseLoan() {
 
   return useMutation({
     mutationFn: (id: string) => loanService.disburseLoan(id),
-    onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.myLoans(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.summary() });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -210,10 +199,8 @@ export function useRecordLoanPayment() {
   return useMutation({
     mutationFn: ({ id, amount }: { id: string; amount: number }) =>
       loanService.recordPayment(id, amount),
-    onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.myLoans(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.summary() });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }
@@ -226,10 +213,8 @@ export function useCloseLoan() {
 
   return useMutation({
     mutationFn: (id: string) => loanService.closeLoan(id),
-    onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.myLoans(0, 20) });
-      queryClient.invalidateQueries({ queryKey: loanKeys.summary() });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: loanKeys.all });
     },
   });
 }

@@ -163,7 +163,7 @@ export default function CourseDetailPage() {
               Mandatory
             </span>
           )}
-          <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
+          <h1 className="text-3xl font-bold skeuo-emboss mb-2">{course.title}</h1>
           {course.shortDescription && (
             <p className="text-blue-100 text-base mb-4">{course.shortDescription}</p>
           )}
@@ -400,7 +400,7 @@ export default function CourseDetailPage() {
 
                 <Link
                   href={`/learning/courses/${id}/play`}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors mb-2"
+                  className="btn-primary flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors mb-2"
                 >
                   <Play className="h-4 w-4" />
                   {progress > 0 ? 'Continue Learning' : 'Start Course'}
@@ -439,7 +439,7 @@ export default function CourseDetailPage() {
                 <button
                   onClick={handleEnroll}
                   disabled={enrollMutation.isPending}
-                  className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="btn-primary w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {enrollMutation.isPending ? (
                     <><div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> Enrolling...</>

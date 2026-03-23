@@ -42,7 +42,7 @@ export default function WallPage() {
       <Group gap="sm" mb="lg">
         <IconActivity size={28} />
         <div>
-          <Title order={2}>Activity Wall</Title>
+          <Title order={2} className="skeuo-emboss">Activity Wall</Title>
           <Text size="sm" c="dimmed">
             See what is happening across your knowledge base
           </Text>

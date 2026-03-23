@@ -172,7 +172,7 @@ export default function OrgChartPage() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.entries(deptGroups).map(([deptName, emps]) => (
-          <div key={deptName} className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm">
+          <div key={deptName} className="skeuo-card">
             <div className="bg-[var(--bg-secondary)]/50 px-4 py-3 border-b border-[var(--border-main)]">
               <h3 className="font-semibold text-[var(--text-primary)]">{deptName}</h3>
               <p className="text-sm text-[var(--text-secondary)]">{emps.length} employees</p>
@@ -208,20 +208,20 @@ export default function OrgChartPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Organization Chart</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Organization Chart</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
             Visualize your company structure and reporting relationships
           </p>
         </div>
 
         {/* Controls */}
-        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-center">
+        <div className="skeuo-card p-4 mb-6 flex flex-wrap gap-4 items-center">
           <div className="flex items-center space-x-2">
             <label className="text-sm font-medium text-[var(--text-secondary)]">View:</label>
             <select
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value as 'hierarchy' | 'department')}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="input-aura"
             >
               <option value="hierarchy">Hierarchy View</option>
               <option value="department">Department View</option>
@@ -234,7 +234,7 @@ export default function OrgChartPage() {
               <select
                 value={selectedDepartment}
                 onChange={(e) => setSelectedDepartment(e.target.value)}
-                className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="input-aura"
               >
                 <option value="">All Departments</option>
                 {departments.map((dept) => (
@@ -255,7 +255,7 @@ export default function OrgChartPage() {
         </div>
 
         {/* Content */}
-        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
+        <div className="skeuo-card p-6">
           {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">

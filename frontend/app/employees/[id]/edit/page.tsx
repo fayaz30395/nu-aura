@@ -325,7 +325,7 @@ export default function EditEmployeePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                   </button>
-                  <h1 className="text-xl font-bold text-[var(--text-primary)]">Edit Employee</h1>
+                  <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Edit Employee</h1>
                 </div>
               </div>
             </div>
@@ -356,7 +356,7 @@ export default function EditEmployeePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                 </button>
-                <h1 className="text-xl font-bold text-[var(--text-primary)]">Edit Employee</h1>
+                <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Edit Employee</h1>
               </div>
             </div>
           </div>
@@ -406,7 +406,7 @@ export default function EditEmployeePage() {
         )}
 
         {/* Employee Header */}
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 mb-6">
+        <div className="skeuo-card p-6 mb-6">
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0 h-16 w-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
               <span className="text-xl font-medium text-primary-700 dark:text-primary-400">
@@ -421,7 +421,7 @@ export default function EditEmployeePage() {
         </div>
 
         {/* Form */}
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm">
+        <div className="skeuo-card">
           {/* Tabs */}
           <div className="border-b border-[var(--border-main)]">
             <nav className="-mb-px flex space-x-8 px-6">
@@ -496,7 +496,7 @@ export default function EditEmployeePage() {
                     type="text"
                     required
                     {...register('employeeCode')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                    className="input-aura"
                     placeholder="EMP001"
                   />
                   {errors.employeeCode && <p className="text-red-500 text-sm mt-1">{errors.employeeCode.message}</p>}
@@ -514,7 +514,7 @@ export default function EditEmployeePage() {
                       type="text"
                       required
                       {...register('firstName')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
                   </div>
@@ -525,7 +525,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('middleName')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.middleName && <p className="text-red-500 text-sm mt-1">{errors.middleName.message}</p>}
                   </div>
@@ -536,7 +536,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('lastName')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
                   </div>
@@ -555,7 +555,7 @@ export default function EditEmployeePage() {
                         {...field}
                         value={field.value || ''}
                         onChange={(e) => field.onChange(toEmployeeStatus(e.target.value) || undefined)}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="input-aura"
                       >
                         <option value="">Select Status</option>
                         <option value="ACTIVE">Active</option>
@@ -582,7 +582,7 @@ export default function EditEmployeePage() {
                     <input
                       type="email"
                       {...register('personalEmail')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="personal@email.com"
                     />
                     {errors.personalEmail && <p className="text-red-500 text-sm mt-1">{errors.personalEmail.message}</p>}
@@ -594,7 +594,7 @@ export default function EditEmployeePage() {
                     <input
                       type="tel"
                       {...register('phoneNumber')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="+1 234 567 8900"
                     />
                     {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
@@ -609,7 +609,7 @@ export default function EditEmployeePage() {
                     <input
                       type="tel"
                       {...register('emergencyContactNumber')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="+1 234 567 8900"
                     />
                     {errors.emergencyContactNumber && <p className="text-red-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
@@ -621,7 +621,7 @@ export default function EditEmployeePage() {
                     <input
                       type="date"
                       {...register('dateOfBirth')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
                   </div>
@@ -639,7 +639,7 @@ export default function EditEmployeePage() {
                         {...field}
                         value={field.value || ''}
                         onChange={(e) => field.onChange(toGender(e.target.value) || undefined)}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="input-aura"
                       >
                         <option value="">Select Gender</option>
                         <option value="MALE">Male</option>
@@ -659,7 +659,7 @@ export default function EditEmployeePage() {
                   <textarea
                     rows={2}
                     {...register('address')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="Street address"
                   />
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
@@ -673,7 +673,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('city')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
                   </div>
@@ -684,7 +684,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('state')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
                   </div>
@@ -698,7 +698,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('postalCode')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
                   </div>
@@ -709,7 +709,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('country')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
                   </div>
@@ -744,7 +744,7 @@ export default function EditEmployeePage() {
                   <textarea
                     {...register('changeRequestReason')}
                     rows={2}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="input-aura"
                     placeholder="Please provide a reason for the employment changes (e.g., Promotion, Role change, Transfer)"
                   />
                   {errors.changeRequestReason && <p className="text-red-500 text-sm mt-1">{errors.changeRequestReason.message}</p>}
@@ -759,7 +759,7 @@ export default function EditEmployeePage() {
                       type="text"
                       required
                       {...register('designation')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="Senior Software Engineer"
                     />
                     {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>}
@@ -777,7 +777,7 @@ export default function EditEmployeePage() {
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toEmploymentType(e.target.value) || undefined)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         >
                           <option value="">Select Type</option>
                           <option value="FULL_TIME">Full Time</option>
@@ -803,7 +803,7 @@ export default function EditEmployeePage() {
                       <select
                         {...field}
                         value={field.value || ''}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="input-aura"
                       >
                         <option value="">Select Department</option>
                         {departments.map((dept) => (
@@ -830,7 +830,7 @@ export default function EditEmployeePage() {
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toEmployeeLevel(e.target.value) || undefined)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         >
                           <option value="">Select Level</option>
                           <option value="ENTRY">Entry (Junior/Associate)</option>
@@ -860,7 +860,7 @@ export default function EditEmployeePage() {
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toJobRole(e.target.value) || undefined)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="input-aura"
                         >
                       <option value="">Select Role</option>
                       <optgroup label="Engineering">
@@ -952,7 +952,7 @@ export default function EditEmployeePage() {
                     <input
                       type="date"
                       {...register('confirmationDate')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                     />
                     {errors.confirmationDate && <p className="text-red-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                   </div>
@@ -967,7 +967,7 @@ export default function EditEmployeePage() {
                         <select
                           required
                           {...field}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                          className="input-aura"
                         >
                           <option value="">Select Manager</option>
                           <option value={employeeId}>Self (No Reporting Manager)</option>
@@ -998,7 +998,7 @@ export default function EditEmployeePage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                          className="input-aura"
                         >
                           <option value="">None</option>
                           {managers.filter(m => m.id !== employeeId).map((manager) => (
@@ -1020,7 +1020,7 @@ export default function EditEmployeePage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                          className="input-aura"
                         >
                           <option value="">None</option>
                           {managers.filter(m => m.id !== employeeId).map((manager) => (
@@ -1050,7 +1050,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('bankAccountNumber')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="1234567890"
                     />
                     {errors.bankAccountNumber && <p className="text-red-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
@@ -1062,7 +1062,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('bankName')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="Bank of America"
                     />
                     {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName.message}</p>}
@@ -1077,7 +1077,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('bankIfscCode')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="HDFC0001234"
                     />
                     {errors.bankIfscCode && <p className="text-red-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
@@ -1089,7 +1089,7 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       {...register('taxId')}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="input-aura"
                       placeholder="XXX-XX-XXXX"
                     />
                     {errors.taxId && <p className="text-red-500 text-sm mt-1">{errors.taxId.message}</p>}
@@ -1123,14 +1123,14 @@ export default function EditEmployeePage() {
                 type="button"
                 onClick={() => router.push(`/employees/${employeeId}`)}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50"
+                className="flex-1 btn-secondary"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+                className="flex-1 btn-primary !h-auto disabled:opacity-50"
               >
                 {isSubmitting ? 'Saving...' : 'Save Changes'}
               </button>

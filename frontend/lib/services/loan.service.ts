@@ -69,14 +69,16 @@ class LoanService {
     return response.data;
   }
 
+  // BUG-FIX: Backend expects @RequestBody ApproveLoanRequest, not query params.
   async approveLoan(id: string, approvedAmount?: number): Promise<EmployeeLoan> {
-    const params: Record<string, unknown> = {};
-    if (approvedAmount !== undefined) params.approvedAmount = approvedAmount;
+    const body: { approvedAmount?: number } = {};
+    if (approvedAmount !== undefined) body.approvedAmount = approvedAmount;
 
-    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/approve`, null, { params });
+    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/approve`, body);
     return response.data;
   }
 
+  // BUG-FIX: Backend expects @RequestBody RejectLoanRequest with 'reason' field.
   async rejectLoan(id: string, reason: string): Promise<EmployeeLoan> {
     const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/reject`, { reason });
     return response.data;
@@ -110,16 +112,16 @@ class LoanService {
   // Helpers
   getStatusColor(status: LoanStatus): string {
     const colors: Record<LoanStatus, string> = {
-      DRAFT: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300',
-      PENDING_APPROVAL: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
+      PENDING: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
       APPROVED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
       REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
       DISBURSED: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
       ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
       CLOSED: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
       DEFAULTED: 'bg-red-200 text-red-800 dark:bg-red-900 dark:text-red-200',
+      CANCELLED: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300',
     };
-    return colors[status] || colors.DRAFT;
+    return colors[status] || colors.PENDING;
   }
 
   formatCurrency(amount: number): string {

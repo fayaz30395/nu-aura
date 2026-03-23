@@ -237,7 +237,7 @@ public class DocumentWorkflowService {
             throw new BusinessException("Expiry date must be in the future");
         }
 
-        DocumentExpiryTracking tracking = expiryTrackingRepository.findByDocumentId(documentId)
+        DocumentExpiryTracking tracking = expiryTrackingRepository.findByTenantIdAndDocumentId(tenantId, documentId)
             .orElse(DocumentExpiryTracking.builder()
                 .tenantId(tenantId)
                 .documentId(documentId)
@@ -275,8 +275,15 @@ public class DocumentWorkflowService {
      */
     @Transactional
     public void markReminderSent(UUID expiryTrackingId) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+
         DocumentExpiryTracking tracking = expiryTrackingRepository.findById(expiryTrackingId)
             .orElseThrow(() -> new ResourceNotFoundException("Expiry tracking not found"));
+
+        // Tenant isolation check to prevent cross-tenant reminder manipulation
+        if (!tracking.getTenantId().equals(tenantId)) {
+            throw new BusinessException("Unauthorized access to expiry tracking");
+        }
 
         tracking.setIsNotified(true);
         tracking.setNotifiedAt(LocalDateTime.now());
@@ -320,7 +327,7 @@ public class DocumentWorkflowService {
             SecurityContext.getCurrentTenantId(), documentId);
 
         return accesses.stream()
-            .filter(access -> access.getUserId().equals(userId))
+            .filter(access -> userId.equals(access.getUserId()))
             .filter(access -> Boolean.TRUE.equals(access.getIsActive()))
             .filter(access -> !access.isExpired())
             .anyMatch(access -> hasRequiredAccessLevel(access.getAccessLevel(), requiredLevel));

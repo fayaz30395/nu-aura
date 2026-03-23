@@ -371,7 +371,7 @@ export default function PerformanceReviewsPage() {
         )}
 
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50 overflow-y-auto">
             <div className="skeuo-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6 skeuo-emboss text-[var(--text-primary)]">
@@ -564,7 +564,7 @@ export default function PerformanceReviewsPage() {
         )}
 
         {showDeleteConfirm && selectedReview && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
             <div className="skeuo-card rounded-lg border border-[var(--border-main)] max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4 skeuo-emboss text-[var(--text-primary)]">Delete Review</h2>
               <p className="text-[var(--text-secondary)] mb-6">

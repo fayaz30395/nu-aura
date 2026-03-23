@@ -145,7 +145,7 @@ function FluenceDriveContent() {
             <HardDrive className="h-8 w-8 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               NU-Fluence Drive
             </h1>
             <p className="text-[var(--text-muted)]">

@@ -119,7 +119,7 @@ export default function SystemDashboard() {
             <Server className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">
               System Dashboard
             </h1>
             <p className="text-slate-600 dark:text-slate-400 mt-1">
@@ -147,7 +147,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -173,7 +173,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -197,7 +197,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -221,7 +221,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+          className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -246,7 +246,7 @@ export default function SystemDashboard() {
       <Paper
         p="lg"
         radius="md"
-        className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+        className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">
@@ -313,7 +313,7 @@ export default function SystemDashboard() {
       <Paper
         p="lg"
         radius="md"
-        className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
+        className="skeuo-card bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">

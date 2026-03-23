@@ -341,7 +341,7 @@ export default function AnnouncementsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-[var(--bg-card)] rounded-xl shadow-sm p-4 mb-6"
+          className="skeuo-card p-4 mb-6"
         >
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px] relative">
@@ -351,13 +351,13 @@ export default function AnnouncementsPage() {
                 placeholder="Search announcements..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-[var(--bg-secondary)]/50 dark:text-white"
+                className="input-aura pl-10"
               />
             </div>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-4 py-2.5 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] dark:text-white"
+              className="input-aura"
             >
               <option value="">All Categories</option>
               {Object.keys(categoryIcons).map((cat) => (
@@ -369,7 +369,7 @@ export default function AnnouncementsPage() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="px-4 py-2.5 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] dark:text-white"
+              className="input-aura"
             >
               <option value="">All Priorities</option>
               {Object.entries(priorityLabels).map(([key, label]) => (
@@ -529,14 +529,14 @@ export default function AnnouncementsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
+              className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
               onClick={() => setSelectedAnnouncement(null)}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+                className="skeuo-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
@@ -789,14 +789,14 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="skeuo-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -823,8 +823,8 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
               <input
                 type="text"
                 {...register('title')}
-                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white ${
-                  errors.title ? 'border-red-500' : 'border-[var(--border-main)]'
+                className={`input-aura ${
+                  errors.title ? '!border-red-500' : ''
                 }`}
                 placeholder="Enter announcement title"
               />
@@ -839,8 +839,8 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
               <textarea
                 {...register('content')}
                 rows={5}
-                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none ${
-                  errors.content ? 'border-red-500' : 'border-[var(--border-main)]'
+                className={`input-aura resize-none ${
+                  errors.content ? '!border-red-500' : ''
                 }`}
                 placeholder="Enter announcement content"
               />
@@ -855,7 +855,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 </label>
                 <select
                   {...register('category')}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
+                  className="input-aura"
                 >
                   {Object.keys(categoryIcons).map((cat) => (
                     <option key={cat} value={cat}>
@@ -870,7 +870,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 </label>
                 <select
                   {...register('priority')}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
+                  className="input-aura"
                 >
                   {Object.entries(priorityLabels).map(([key, label]) => (
                     <option key={key} value={key}>
@@ -975,14 +975,14 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
+              className="flex-1 btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createMutation.isPending || updateMutation.isPending}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createMutation.isPending || updateMutation.isPending ? (
                 <>

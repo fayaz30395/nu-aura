@@ -86,7 +86,7 @@ export default function CalibrationPage() {
       <Stack gap="lg" p="md">
       <Group justify="space-between">
         <div>
-          <Title order={2}>Calibration</Title>
+          <Title order={2} className="skeuo-emboss">Calibration</Title>
           <Text c="dimmed" size="sm">{data.cycleName} — {totalEmployees} employees</Text>
         </div>
       </Group>
@@ -98,7 +98,7 @@ export default function CalibrationPage() {
           const pct = totalEmployees > 0 ? Math.round((count / totalEmployees) * 100) : 0;
           const meta = RATING_LABELS[rating];
           return (
-            <Card key={rating} withBorder padding="sm">
+            <Card key={rating} withBorder padding="sm" className="skeuo-card">
               <Stack gap={4}>
                 <Group justify="space-between">
                   <Badge color={meta.color} variant="light" size="sm">{rating}</Badge>
@@ -115,7 +115,7 @@ export default function CalibrationPage() {
 
       {/* Calibration Table */}
       <Paper withBorder>
-        <Table striped highlightOnHover>
+        <Table striped highlightOnHover className="table-aura">
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Employee</Table.Th>

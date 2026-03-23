@@ -38,7 +38,7 @@ public class ProjectService {
 
         @Transactional
         public ProjectResponse createProject(CreateProjectRequest request) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 // Check if project code already exists
                 if (projectRepository.existsByProjectCodeAndTenantId(request.getProjectCode(), tenantId)) {
@@ -67,10 +67,9 @@ public class ProjectService {
 
         @Transactional
         public ProjectResponse updateProject(UUID projectId, UpdateProjectRequest request) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
-                Project project = projectRepository.findById(projectId)
-                                .filter(p -> p.getTenantId().equals(tenantId))
+                Project project = projectRepository.findByIdAndTenantId(projectId, tenantId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
                 // Update fields if provided
@@ -103,17 +102,16 @@ public class ProjectService {
 
         @Transactional(readOnly = true)
         public ProjectResponse getProject(UUID projectId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
-                Project project = projectRepository.findById(projectId)
-                                .filter(p -> p.getTenantId().equals(tenantId))
+                Project project = projectRepository.findByIdAndTenantId(projectId, tenantId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
                 ProjectResponse response = ProjectResponse.fromProject(project);
 
-                // Add project manager name if exists
+                // Add project manager name if exists - tenant-scoped to prevent cross-tenant data leak
                 if (project.getProjectManagerId() != null) {
-                        employeeRepository.findById(project.getProjectManagerId())
+                        employeeRepository.findByIdAndTenantId(project.getProjectManagerId(), tenantId)
                                         .ifPresent(manager -> response.setProjectManagerName(manager.getFullName()));
                 }
 
@@ -127,7 +125,7 @@ public class ProjectService {
         @Transactional(readOnly = true)
         public Page<ProjectResponse> getAllProjects(Project.ProjectStatus status, Project.Priority priority,
                         Pageable pageable) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 Page<Project> projects;
 
                 if (status != null && priority != null) {
@@ -146,23 +144,21 @@ public class ProjectService {
 
         @Transactional(readOnly = true)
         public Page<ProjectResponse> searchProjects(String search, Pageable pageable) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
                 return projectRepository.searchProjects(tenantId, search, pageable)
                                 .map(ProjectResponse::fromProject);
         }
 
         @Transactional
         public ProjectEmployeeResponse assignEmployee(UUID projectId, AssignEmployeeRequest request) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 // Verify project exists
-                Project project = projectRepository.findById(projectId)
-                                .filter(p -> p.getTenantId().equals(tenantId))
+                Project project = projectRepository.findByIdAndTenantId(projectId, tenantId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
                 // Verify employee exists
-                Employee employee = employeeRepository.findById(request.getEmployeeId())
-                                .filter(e -> e.getTenantId().equals(tenantId))
+                Employee employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
                 // Check if already assigned
@@ -196,7 +192,7 @@ public class ProjectService {
 
         @Transactional
         public void removeEmployeeFromProject(UUID projectId, UUID employeeId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 ProjectEmployee projectEmployee = projectEmployeeRepository
                                 .findByProjectIdAndEmployeeIdAndTenantId(projectId, employeeId, tenantId)
@@ -208,7 +204,7 @@ public class ProjectService {
 
         @Transactional(readOnly = true)
         public List<ProjectEmployeeResponse> getProjectTeamMembers(UUID projectId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 List<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByProjectIdAndTenantIdAndIsActive(projectId, tenantId, true);
@@ -235,7 +231,7 @@ public class ProjectService {
 
         @Transactional(readOnly = true)
         public List<ProjectResponse> getEmployeeProjects(UUID employeeId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 List<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true);
@@ -260,7 +256,7 @@ public class ProjectService {
          */
         @Transactional(readOnly = true)
         public List<ProjectEmployeeResponse> getEmployeeAllocations(UUID employeeId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 List<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByEmployeeIdAndTenantId(employeeId, tenantId);
@@ -287,7 +283,7 @@ public class ProjectService {
 
         @Transactional(readOnly = true)
         public Page<ProjectEmployeeResponse> getProjectAllocations(UUID projectId, Pageable pageable) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 Page<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByProjectIdAndTenantId(projectId, tenantId, pageable);
@@ -311,7 +307,7 @@ public class ProjectService {
 
         @Transactional
         public ProjectEmployeeResponse endAllocation(UUID projectId, UUID memberId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
                 ProjectEmployee projectEmployee = projectEmployeeRepository.findById(memberId)
                                 .filter(pe -> pe.getTenantId().equals(tenantId)
@@ -322,7 +318,7 @@ public class ProjectService {
                 projectEmployee = projectEmployeeRepository.save(projectEmployee);
 
                 ProjectEmployeeResponse response = ProjectEmployeeResponse.fromProjectEmployee(projectEmployee);
-                employeeRepository.findById(projectEmployee.getEmployeeId())
+                employeeRepository.findByIdAndTenantId(projectEmployee.getEmployeeId(), tenantId)
                                 .ifPresent(emp -> {
                                         response.setEmployeeName(emp.getFullName());
                                         response.setEmployeeCode(emp.getEmployeeCode());
@@ -332,10 +328,9 @@ public class ProjectService {
 
         @Transactional
         public void deleteProject(UUID projectId) {
-                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID tenantId = TenantContext.requireCurrentTenant();
 
-                Project project = projectRepository.findById(projectId)
-                                .filter(p -> p.getTenantId().equals(tenantId))
+                Project project = projectRepository.findByIdAndTenantId(projectId, tenantId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
                 // Soft delete - mark as cancelled

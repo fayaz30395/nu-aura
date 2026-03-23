@@ -9,21 +9,26 @@ export type LoanType =
   | 'EMERGENCY'
   | 'OTHER';
 
+// BUG-FIX: LoanStatus values must match backend EmployeeLoan.LoanStatus enum exactly.
+// Backend enum: PENDING, APPROVED, REJECTED, DISBURSED, ACTIVE, CLOSED, DEFAULTED, CANCELLED.
 export type LoanStatus =
-  | 'DRAFT'
-  | 'PENDING_APPROVAL'
+  | 'PENDING'
   | 'APPROVED'
   | 'REJECTED'
   | 'DISBURSED'
   | 'ACTIVE'
   | 'CLOSED'
-  | 'DEFAULTED';
+  | 'DEFAULTED'
+  | 'CANCELLED';
 
 export type RepaymentFrequency =
   | 'MONTHLY'
   | 'BI_WEEKLY'
   | 'WEEKLY';
 
+// BUG-FIX: Field names must match backend EmployeeLoanDto exactly.
+// Previously used requestedAmount/termMonths/monthlyPayment/remainingBalance/amountRepaid
+// which did not match the DTO's principalAmount/tenureMonths/emiAmount/outstandingAmount/paidAmount.
 export interface EmployeeLoan {
   id: string;
   tenantId: string;
@@ -31,37 +36,44 @@ export interface EmployeeLoan {
   employeeName?: string;
   loanType: LoanType;
   loanNumber?: string;
-  requestedAmount: number;
-  approvedAmount?: number;
+  principalAmount: number;
   interestRate: number;
-  termMonths: number;
-  monthlyPayment?: number;
-  totalPayable?: number;
+  totalAmount?: number;
+  outstandingAmount?: number;
+  emiAmount?: number;
+  tenureMonths: number;
   purpose: string;
   status: LoanStatus;
-  requestDate: string;
+  requestedDate?: string;
   approvedDate?: string;
-  disbursedDate?: string;
+  disbursementDate?: string;
+  firstEmiDate?: string;
+  lastEmiDate?: string;
   approvedBy?: string;
   approverName?: string;
-  rejectionReason?: string;
-  repaymentFrequency: RepaymentFrequency;
-  amountRepaid: number;
-  remainingBalance: number;
-  nextPaymentDate?: string;
-  notes?: string;
+  rejectedReason?: string;
+  isSalaryDeduction?: boolean;
+  guarantorName?: string;
+  guarantorEmployeeId?: string;
+  remarks?: string;
+  paidEmis?: number;
+  remainingEmis?: number;
+  paidAmount?: number;
   createdAt: string;
   updatedAt: string;
 }
 
+// BUG-FIX: Fields must match backend CreateLoanRequest DTO.
 export interface CreateLoanRequest {
   loanType: LoanType;
-  requestedAmount: number;
+  principalAmount: number;
   interestRate?: number;
-  termMonths: number;
-  purpose: string;
-  repaymentFrequency?: RepaymentFrequency;
-  notes?: string;
+  tenureMonths: number;
+  purpose?: string;
+  isSalaryDeduction?: boolean;
+  guarantorName?: string;
+  guarantorEmployeeId?: string;
+  remarks?: string;
 }
 
 export interface LoanSummary {

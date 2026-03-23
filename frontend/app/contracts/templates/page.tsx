@@ -45,7 +45,7 @@ export default function ContractTemplatesPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Contract Templates</h1>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Contract Templates</h1>
             <p className="text-[var(--text-secondary)] mt-1">Manage reusable contract templates</p>
           </div>
           <Button

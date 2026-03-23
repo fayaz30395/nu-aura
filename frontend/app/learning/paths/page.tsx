@@ -117,7 +117,7 @@ export default function LearningPathsPage() {
           <Link href="/learning" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-2">Learning Paths</h1>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
           <p className="text-[var(--text-secondary)]">Structured learning journeys to develop specific skills and competencies</p>
         </div>
 
@@ -132,7 +132,7 @@ export default function LearningPathsPage() {
                 placeholder="Search learning paths..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               />
             </div>
 
@@ -164,7 +164,7 @@ export default function LearningPathsPage() {
         ) : filteredPaths.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPaths.map((path) => (
-              <div key={path.id} className="bg-[var(--bg-input)] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+              <div key={path.id} className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                 {/* Thumbnail */}
                 {path.thumbnailUrl ? (
                   <div className="relative w-full h-40">
@@ -221,7 +221,7 @@ export default function LearningPathsPage() {
 
                   {/* Difficulty Badge */}
                   <div className="mb-4">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
+                    <span className={`badge-status inline-block px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
                       {path.difficulty}
                     </span>
                   </div>
@@ -246,7 +246,7 @@ export default function LearningPathsPage() {
                   {path.isEnrolled ? (
                     <button
                       onClick={() => router.push(`/learning/paths/${path.id}`)}
-                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center justify-center gap-2"
+                      className="btn-primary w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center justify-center gap-2"
                     >
                       {path.status === 'COMPLETED' ? (
                         <>
@@ -262,7 +262,7 @@ export default function LearningPathsPage() {
                     <button
                       onClick={() => handleEnrollPath(path.id)}
                       disabled={enrollPathMutation.isPending}
-                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+                      className="btn-primary w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
                     >
                       {enrollPathMutation.isPending ? (
                         <>

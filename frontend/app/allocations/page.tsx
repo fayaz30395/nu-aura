@@ -15,8 +15,10 @@ export default function AllocationsPage() {
   return (
     <AppLayout>
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-3 text-muted-foreground">Loading Allocations...</span>
+        <div className="skeuo-card p-8 flex items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="text-muted-foreground">Loading Allocations...</span>
+        </div>
       </div>
     </AppLayout>
   );

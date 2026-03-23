@@ -41,7 +41,7 @@ public class DepartmentService {
     @Transactional
     @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse createDepartment(DepartmentRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         if (departmentRepository.existsByCodeAndTenantId(request.getCode(), tenantId)) {
             throw new DuplicateResourceException("Department code already exists");
@@ -68,10 +68,9 @@ public class DepartmentService {
     @Transactional
     @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse updateDepartment(UUID id, DepartmentRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Department department = departmentRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        Department department = departmentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         if (request.getCode() != null && !request.getCode().equals(department.getCode())) {
@@ -105,10 +104,9 @@ public class DepartmentService {
 
     @Transactional(readOnly = true)
     public DepartmentResponse getDepartment(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Department department = departmentRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        Department department = departmentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         return enrichDepartmentResponse(department);
@@ -116,15 +114,15 @@ public class DepartmentService {
 
     @Transactional(readOnly = true)
     public Page<DepartmentResponse> getAllDepartments(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return departmentRepository.findAllByTenantId(tenantId, pageable)
                 .map(this::enrichDepartmentResponse);
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheConfig.DEPARTMENTS, key = "'active:' + T(com.hrms.common.security.TenantContext).getCurrentTenant()")
+    @Cacheable(value = CacheConfig.DEPARTMENTS, key = "'active:' + T(com.hrms.common.security.TenantContext).requireCurrentTenant()")
     public List<DepartmentResponse> getActiveDepartments() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return departmentRepository.findAllByTenantIdAndIsActive(tenantId, true)
                 .stream()
                 .map(this::enrichDepartmentResponse)
@@ -133,7 +131,7 @@ public class DepartmentService {
 
     @Transactional(readOnly = true)
     public List<DepartmentResponse> getDepartmentHierarchy() {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         List<Department> rootDepartments = departmentRepository.findRootDepartments(tenantId);
 
@@ -143,7 +141,7 @@ public class DepartmentService {
     }
 
     private DepartmentResponse buildDepartmentTree(Department department) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         DepartmentResponse response = enrichDepartmentResponse(department);
 
@@ -161,7 +159,7 @@ public class DepartmentService {
 
     @Transactional(readOnly = true)
     public Page<DepartmentResponse> searchDepartments(String search, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return departmentRepository.searchDepartments(tenantId, search, pageable)
                 .map(this::enrichDepartmentResponse);
     }
@@ -169,10 +167,9 @@ public class DepartmentService {
     @Transactional
     @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public void deleteDepartment(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Department department = departmentRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        Department department = departmentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         long employeeCount = employeeRepository.countByDepartmentIdAndTenantId(department.getId(), tenantId);
@@ -201,10 +198,9 @@ public class DepartmentService {
     @Transactional
     @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse deactivateDepartment(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Department department = departmentRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        Department department = departmentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         department.setIsActive(false);
@@ -216,10 +212,9 @@ public class DepartmentService {
     @Transactional
     @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse activateDepartment(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
-        Department department = departmentRepository.findById(id)
-                .filter(d -> d.getTenantId().equals(tenantId))
+        Department department = departmentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         department.setIsActive(true);
@@ -229,19 +224,19 @@ public class DepartmentService {
     }
 
     private DepartmentResponse enrichDepartmentResponse(Department department) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         DepartmentResponse response = DepartmentResponse.fromDepartment(department);
 
-        // Add parent department name
+        // Add parent department name - tenant-scoped to prevent cross-tenant data leak
         if (department.getParentDepartmentId() != null) {
-            departmentRepository.findById(department.getParentDepartmentId())
+            departmentRepository.findByIdAndTenantId(department.getParentDepartmentId(), tenantId)
                     .ifPresent(parent -> response.setParentDepartmentName(parent.getName()));
         }
 
-        // Add manager name
+        // Add manager name - tenant-scoped to prevent cross-tenant data leak
         if (department.getManagerId() != null) {
-            employeeRepository.findById(department.getManagerId())
+            employeeRepository.findByIdAndTenantId(department.getManagerId(), tenantId)
                     .ifPresent(manager -> response.setManagerName(manager.getFullName()));
         }
 

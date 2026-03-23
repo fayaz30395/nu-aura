@@ -168,7 +168,7 @@ export default function ExecutiveDashboardPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)]">Executive Dashboard</h1>
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Executive Dashboard</h1>
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function ExecutiveDashboardPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Executive Dashboard</h1>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Executive Dashboard</h1>
             <p className="text-[var(--text-secondary)] mt-1">
               Comprehensive C-suite insights and analytics
             </p>
