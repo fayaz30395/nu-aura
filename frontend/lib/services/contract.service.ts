@@ -248,7 +248,7 @@ class ContractService {
 
   getStatusColor(status: ContractStatus): string {
     const colors: Record<ContractStatus, string> = {
-      DRAFT: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300',
+      DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
       PENDING_REVIEW: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
       PENDING_SIGNATURES: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
       ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',

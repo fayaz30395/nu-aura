@@ -134,16 +134,16 @@ export function getCategoryColor(category: AnnouncementCategory): string {
     BENEFIT: 'bg-indigo-100 text-indigo-800',
     TRAINING: 'bg-cyan-100 text-cyan-800',
     SOCIAL: 'bg-orange-100 text-orange-800',
-    IT_MAINTENANCE: 'bg-[var(--bg-surface)] text-gray-800',
+    IT_MAINTENANCE: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
     HEALTH_SAFETY: 'bg-emerald-100 text-emerald-800',
-    OTHER: 'bg-slate-100 text-slate-800',
+    OTHER: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   };
   return colors[category] || colors.OTHER;
 }
 
 export function getPriorityColor(priority: AnnouncementPriority): string {
   const colors: Record<AnnouncementPriority, string> = {
-    LOW: 'bg-[var(--bg-surface)] text-gray-800',
+    LOW: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
     MEDIUM: 'bg-blue-100 text-blue-800',
     HIGH: 'bg-orange-100 text-orange-800',
     CRITICAL: 'bg-red-100 text-red-800',

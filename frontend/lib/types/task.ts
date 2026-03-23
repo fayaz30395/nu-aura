@@ -161,17 +161,17 @@ export interface TaskFilterOptions {
 
 // Utility constants
 export const TASK_STATUS_OPTIONS: { value: TaskStatus; label: string; color: string }[] = [
-  { value: 'BACKLOG', label: 'Backlog', color: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300' },
-  { value: 'TODO', label: 'To Do', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' },
+  { value: 'BACKLOG', label: 'Backlog', color: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]' },
+  { value: 'TODO', label: 'To Do', color: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]' },
   { value: 'IN_PROGRESS', label: 'In Progress', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' },
   { value: 'IN_REVIEW', label: 'In Review', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' },
   { value: 'BLOCKED', label: 'Blocked', color: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
   { value: 'DONE', label: 'Done', color: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
-  { value: 'CANCELLED', label: 'Cancelled', color: 'bg-gray-200 text-gray-500 dark:bg-surface-700 dark:text-[var(--text-muted)]' },
+  { value: 'CANCELLED', label: 'Cancelled', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]' },
 ];
 
 export const TASK_PRIORITY_OPTIONS: { value: TaskPriority; label: string; color: string }[] = [
-  { value: 'LOW', label: 'Low', color: 'bg-[var(--bg-surface)] text-gray-600 dark:bg-surface-800 dark:text-[var(--text-muted)]' },
+  { value: 'LOW', label: 'Low', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]' },
   { value: 'MEDIUM', label: 'Medium', color: 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400' },
   { value: 'HIGH', label: 'High', color: 'bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-400' },
   { value: 'CRITICAL', label: 'Critical', color: 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400' },

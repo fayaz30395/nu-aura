@@ -34,7 +34,7 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
         <circle
           cx="64" cy="64" r={radius}
           fill="none" strokeWidth="6"
-          className="stroke-gray-200 dark:stroke-gray-700"
+          className="stroke-[var(--border-main)]"
         />
         <circle
           cx="64" cy="64" r={radius}
@@ -42,7 +42,7 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          className="stroke-slate-600 dark:stroke-slate-400 transition-all duration-500"
+          className="stroke-[var(--text-secondary)] transition-all duration-500"
           transform="rotate(-90 64 64)"
         />
       </svg>
