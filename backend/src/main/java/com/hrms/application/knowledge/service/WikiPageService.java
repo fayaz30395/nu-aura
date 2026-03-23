@@ -85,7 +85,7 @@ public class WikiPageService {
         return updated;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public WikiPage getPageById(UUID pageId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         WikiPage page = wikiPageRepository.findById(pageId)
@@ -101,7 +101,7 @@ public class WikiPageService {
         return page;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public WikiPage getPageBySlug(UUID spaceId, String slug) {
         UUID tenantId = TenantContext.getCurrentTenant();
         WikiPage page = wikiPageRepository.findByTenantIdAndSpaceIdAndSlug(tenantId, spaceId, slug)

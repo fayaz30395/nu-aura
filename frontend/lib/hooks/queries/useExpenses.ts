@@ -99,6 +99,7 @@ export function useCreateExpenseClaim() {
     onSuccess: () => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
       queryClient.invalidateQueries({ queryKey: expenseKeys.statistics() });
     },
   });
@@ -172,6 +173,8 @@ export function useRejectExpenseClaim() {
       queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(data.id) });
       queryClient.invalidateQueries({ queryKey: expenseKeys.pendingClaims() });
       queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
+      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+      queryClient.invalidateQueries({ queryKey: expenseKeys.statistics() });
     },
   });
 }
