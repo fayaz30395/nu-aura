@@ -74,32 +74,47 @@ export function TimeClockWidget({
     return () => clearInterval(interval);
   }, [isCheckedIn, checkInTime]);
 
+  // Split time into parts for styled display
+  const timeParts = currentTime.split(' ');
+  const timeValue = timeParts[0] || '';
+  const timePeriod = timeParts[1] || '';
+
   return (
-    <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-[var(--text-muted)]" />
-          <span className="text-xs text-[var(--text-muted)]">
+          <div className="flex items-center justify-center w-6 h-6 rounded-md" style={{ background: 'var(--accent-primary-subtle)' }}>
+            <Clock className="h-3.5 w-3.5" style={{ color: 'var(--accent-primary)' }} />
+          </div>
+          <span className="text-xs font-medium text-[var(--text-muted)]">
             {dateDisplay}
           </span>
         </div>
         <a
           href="/attendance"
-          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)]  transition-colors"
+          className="text-xs font-medium text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors"
         >
           View All
         </a>
       </div>
 
-      {/* Time Display */}
-      <div className="mb-4">
-        <div className="skeuo-emboss text-3xl font-semibold text-[var(--text-primary)] tracking-tight font-mono relative z-10">
-          {currentTime}
+      {/* Time Display — large monospace with accent period */}
+      <div className="mb-5">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-4xl font-bold text-[var(--text-primary)] tracking-tight font-mono tabular-nums leading-none">
+            {timeValue}
+          </span>
+          <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--accent-primary)' }}>
+            {timePeriod}
+          </span>
         </div>
         {elapsedTime && (
-          <div className="mt-1 text-xs text-[var(--text-muted)]">
-            Working: {elapsedTime}
+          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg" style={{ background: 'var(--status-success-bg)', border: '1px solid var(--status-success-border)' }}>
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs font-medium" style={{ color: 'var(--status-success-text)' }}>
+              Working: {elapsedTime}
+            </span>
           </div>
         )}
       </div>
@@ -108,11 +123,15 @@ export function TimeClockWidget({
       <button
         onClick={isCheckedIn ? onCheckOut : onCheckIn}
         disabled={isLoading}
-        className={`skeuo-button relative z-10 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 px-4 text-sm font-medium transition-colors ${
+        className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-3 px-4 text-sm font-semibold transition-all duration-200 ${
           isCheckedIn
-            ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]'
-            : 'bg-primary-600 text-white hover:bg-primary-700'
-        } disabled:opacity-50 disabled:cursor-not-allowed`}
+            ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
+            : 'text-white border-0'
+        } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
+        style={!isCheckedIn ? {
+          background: 'linear-gradient(135deg, #0057FF 0%, #003ECB 100%)',
+          boxShadow: '0 4px 14px rgba(0, 87, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+        } : undefined}
       >
         {isCheckedIn ? (
           <>

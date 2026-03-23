@@ -16,22 +16,22 @@ export const chartColors = {
   /**
    * Primary chart colors - maps to Recharts color palette
    */
-  primary: () => getCSSVariable('--chart-primary', '#0d9488'),
-  secondary: () => getCSSVariable('--chart-secondary', '#2563eb'),
+  primary: () => getCSSVariable('--chart-primary', '#0057FF'),
+  secondary: () => getCSSVariable('--chart-secondary', '#4D8AFF'),
   success: () => getCSSVariable('--chart-success', '#16a34a'),
   warning: () => getCSSVariable('--chart-warning', '#f59e0b'),
   danger: () => getCSSVariable('--chart-danger', '#dc2626'),
   info: () => getCSSVariable('--chart-info', '#1d4ed8'),
   accent: () => getCSSVariable('--chart-accent', '#f97316'),
-  muted: () => getCSSVariable('--chart-muted', '#c4b9a7'),
+  muted: () => getCSSVariable('--chart-muted', '#DCDCDC'),
 
   /**
    * Chart infrastructure colors
    */
-  grid: () => getCSSVariable('--chart-grid', '#ede6d9'),
+  grid: () => getCSSVariable('--chart-grid', '#E8E8E8'),
   tooltipBg: () => getCSSVariable('--chart-tooltip-bg', '#ffffff'),
-  tooltipBorder: () => getCSSVariable('--chart-tooltip-border', '#e3dcd1'),
-  tooltipText: () => getCSSVariable('--chart-tooltip-text', '#1c1b19'),
+  tooltipBorder: () => getCSSVariable('--chart-tooltip-border', '#DCDCDC'),
+  tooltipText: () => getCSSVariable('--chart-tooltip-text', '#191919'),
 
   /**
    * Palette for multi-series charts

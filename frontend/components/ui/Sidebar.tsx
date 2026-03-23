@@ -289,19 +289,19 @@ const SidebarMenuItem: React.FC<{
 
   const commonClasses = cn(
     'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium',
-    'transition-colors duration-100',
+    'transition-all duration-150 ease-out',
     isActive || isFlyoverOpen
       ? 'font-semibold shadow-sm border-l-[3px]'
-      : '',
+      : 'hover:bg-[var(--sidebar-hover-bg)]',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
-  // Active state styling with CSS variables (dark sidebar aware) + skeuomorphic depth
+  // Active state styling with CSS variables (dark sidebar aware) + glow accent
   const activeStyles = isActive || isFlyoverOpen ? {
     backgroundColor: 'var(--sidebar-active-bg)',
     borderLeftColor: 'var(--sidebar-active-border)',
     color: 'var(--sidebar-text-active)',
-    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15)',
+    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 87, 255, 0.08)',
   } : {
     color: 'var(--sidebar-text)',
   };
@@ -722,22 +722,22 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             style={{ borderTop: '1px solid var(--sidebar-border)' }}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all duration-200" style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)', boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)' }}>
-                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/20 transition-colors duration-200">
-                  <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
+              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200" style={{ background: 'linear-gradient(135deg, rgba(0, 87, 255, 0.12) 0%, rgba(77, 138, 255, 0.08) 100%)', border: '1px solid rgba(0, 87, 255, 0.20)', boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)' }}>
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-200" style={{ background: 'linear-gradient(135deg, rgba(0, 87, 255, 0.25), rgba(77, 138, 255, 0.15))' }}>
+                  <Sparkles className="h-4 w-4 text-blue-300 transition-transform duration-200" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate" style={{ color: 'var(--sidebar-text-active)' }}>
+                  <p className="text-xs font-semibold truncate" style={{ color: 'var(--sidebar-text-active)' }}>
                     Pro Features
                   </p>
-                  <p className="text-xs" style={{ color: 'var(--sidebar-text-muted)' }}>
+                  <p className="text-[10px]" style={{ color: 'var(--sidebar-text-muted)' }}>
                     All modules active
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-md bg-primary-500/20 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-500/30 shadow-sm">
-                <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center group relative transition-all duration-200 hover:scale-105" style={{ background: 'linear-gradient(135deg, rgba(0, 87, 255, 0.25), rgba(77, 138, 255, 0.15))' }}>
+                <Sparkles className="h-4 w-4 text-blue-300 transition-transform duration-200" />
                 <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl">
                   Pro Features Active
                 </div>

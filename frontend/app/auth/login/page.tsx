@@ -80,22 +80,24 @@ function AnimatedBackground() {
     <div className="fixed inset-0" style={{ zIndex: 0 }}>
       {/* Base */}
       <div className="absolute inset-0 bg-[var(--bg-main)]" />
-      {/* Light-mode: subtle purple gradient orbs (Keka-inspired) */}
+      {/* Light-mode: elegant blue gradient mesh */}
       <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-primary-200/25 blur-[120px]" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary-300/20 blur-[100px]" />
-        <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full bg-primary-100/15 blur-[80px]" />
+        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(0, 87, 255, 0.10)' }} />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(77, 138, 255, 0.08)' }} />
+        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'rgba(0, 62, 203, 0.06)' }} />
       </div>
-      {/* Dark-mode: deep navy mesh with subtle grid */}
+      {/* Dark-mode: deep navy mesh with subtle grid lines */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0 bg-[#0a0e1a]" />
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-primary-800/20 blur-[120px]" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-info-800/15 blur-[100px]" />
+        <div className="absolute inset-0" style={{ background: '#0B0F1A' }} />
+        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(0, 87, 255, 0.12)' }} />
+        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(77, 138, 255, 0.08)' }} />
+        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'rgba(0, 62, 203, 0.06)' }} />
+        {/* Subtle grid overlay */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
-            backgroundImage: 'linear-gradient(var(--border-main) 1px, transparent 1px), linear-gradient(90deg, var(--border-main) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
           }}
         />
       </div>
@@ -194,7 +196,7 @@ function DemoLoginPanel({
               type="button"
               disabled={isLoading}
               onClick={() => handleClick(account.email)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 group text-left"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-[var(--border-strong)] transition-all duration-200 group text-left hover:translate-x-0.5"
             >
               <div
                 className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm`}
@@ -458,39 +460,43 @@ function LoginPage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] skeuo-emboss leading-tight mb-6 tracking-tight">
+            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
               Your People.
               <br />
-              <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 dark:from-primary-400 dark:via-primary-300 dark:to-primary-500 bg-clip-text text-transparent">
+              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #0057FF 0%, #4D8AFF 50%, #003ECB 100%)' }}>
                 Amplified.
               </span>
             </h1>
 
-            <p className="text-lg text-[var(--text-primary)] opacity-80 leading-relaxed mb-8">
+            <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8">
               One platform for HR, Recruitment, Performance, and Knowledge
               Management. Built for teams that move fast.
             </p>
 
-            {/* App icons row */}
-            <div className="flex gap-4 mb-8">
+            {/* App icons row — refined with consistent blue-based palette */}
+            <div className="flex gap-5 mb-8">
               {[
-                { name: 'HRMS', color: 'from-blue-400 to-blue-500', icon: '👥' },
-                { name: 'Hire', color: 'from-primary-500 to-primary-700', icon: '🎯' },
-                { name: 'Grow', color: 'from-amber-400 to-amber-500', icon: '📈' },
-                { name: 'Fluence', color: 'from-yellow-400 to-amber-500', icon: '💡' },
+                { name: 'HRMS', bg: 'linear-gradient(135deg, #0057FF, #003ECB)', icon: '👥' },
+                { name: 'Hire', bg: 'linear-gradient(135deg, #4D8AFF, #0057FF)', icon: '🎯' },
+                { name: 'Grow', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', icon: '📈' },
+                { name: 'Fluence', bg: 'linear-gradient(135deg, #06B6D4, #0891B2)', icon: '💡' },
               ].map((app, i) => (
                 <div
                   key={app.name}
-                  className="group flex flex-col items-center gap-2"
+                  className="group flex flex-col items-center gap-2.5"
                   style={{ animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both` }}
                 >
                   <div
-                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                    style={{ animation: `float ${3 + i * 0.5}s ease-in-out infinite` }}
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:shadow-xl transition-all duration-300"
+                    style={{
+                      background: app.bg,
+                      boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                      animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
+                    }}
                   >
                     {app.icon}
                   </div>
-                  <span className="text-[var(--text-secondary)] text-xs font-medium">
+                  <span className="text-[var(--text-secondary)] text-xs font-semibold tracking-wide">
                     NU-{app.name}
                   </span>
                 </div>
@@ -536,9 +542,9 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="skeuo-card rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] p-8 shadow-elevated">
+            <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] p-8" style={{ boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)' }}>
               <div className="text-center mb-7">
-                <h3 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
+                <h3 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
                   Sign In
                 </h3>
                 <p className="text-[var(--text-secondary)] text-sm">

@@ -165,6 +165,29 @@ class LeaveService {
     );
     return response.data;
   }
+
+  // Leave Encashment
+  async requestLeaveEncashment(data: LeaveEncashmentRequest): Promise<LeaveEncashmentResponse> {
+    const response = await apiClient.post<LeaveEncashmentResponse>(
+      '/leave-balances/encash',
+      data
+    );
+    return response.data;
+  }
+}
+
+export interface LeaveEncashmentRequest {
+  leaveBalanceId: string;
+  daysToEncash: number;
+  reason?: string;
+}
+
+export interface LeaveEncashmentResponse {
+  id: string;
+  leaveBalanceId: string;
+  daysEncashed: number;
+  status: string;
+  message: string;
 }
 
 export const leaveService = new LeaveService();

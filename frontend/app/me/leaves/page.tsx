@@ -19,15 +19,17 @@ import {
   User,
   Ban,
   Filter,
+  Banknote,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useEmployeeLeaveRequests, useEmployeeBalances, useActiveLeaveTypes, useCreateLeaveRequest, useUpdateLeaveRequest, useCancelLeaveRequest } from '@/lib/hooks/queries/useLeaves';
+import { useEmployeeLeaveRequests, useEmployeeBalances, useActiveLeaveTypes, useCreateLeaveRequest, useUpdateLeaveRequest, useCancelLeaveRequest, useRequestLeaveEncashment } from '@/lib/hooks/queries/useLeaves';
 import {
   LeaveRequest,
   LeaveRequestRequest,
   LeaveRequestStatus,
+  LeaveBalance,
 } from '@/lib/types/leave';
 
 const leaveFormSchema = z.object({
@@ -90,6 +92,13 @@ export default function MyLeavesPage() {
   const createLeaveRequest = useCreateLeaveRequest();
   const updateLeaveRequest = useUpdateLeaveRequest();
   const cancelLeaveRequest = useCancelLeaveRequest();
+  const encashmentMutation = useRequestLeaveEncashment();
+
+  // Encashment state
+  const [showEncashModal, setShowEncashModal] = useState(false);
+  const [encashBalance, setEncashBalance] = useState<LeaveBalance | null>(null);
+  const [encashDays, setEncashDays] = useState<number>(0);
+  const [encashReason, setEncashReason] = useState('');
 
   const leaveRequests = leaveRequestsData?.content ?? [];
   const leaveTypes = leaveTypesData;
@@ -345,6 +354,7 @@ export default function MyLeavesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {leaveBalances.map((balance) => {
             const leaveType = leaveTypes.find((lt) => lt.id === balance.leaveTypeId);
+            const isEncashable = leaveType?.isEncashable && balance.available > 0;
             return (
               <Card key={balance.id} className="skeuo-card">
                 <CardContent className="pt-6">
@@ -358,6 +368,21 @@ export default function MyLeavesPage() {
                         style={{ color: leaveType?.colorCode || '#6b7280' }}
                       />
                     </div>
+                    {isEncashable && (
+                      <button
+                        onClick={() => {
+                          setEncashBalance(balance);
+                          setEncashDays(1);
+                          setEncashReason('');
+                          setShowEncashModal(true);
+                        }}
+                        className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-950/50 transition-colors"
+                        title="Encash available leaves"
+                      >
+                        <Banknote className="h-3 w-3" />
+                        Encash
+                      </button>
+                    )}
                   </div>
                   <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                     {leaveType?.leaveName || 'Unknown'}
@@ -381,6 +406,14 @@ export default function MyLeavesPage() {
                         {balance.pending}
                       </span>
                     </div>
+                    {balance.encashed > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-[var(--text-secondary)]">Encashed</span>
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-400 skeuo-emboss">
+                          {balance.encashed}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   {/* Progress Bar */}
                   <div className="mt-4">
@@ -799,6 +832,127 @@ export default function MyLeavesPage() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Leave Encashment Modal */}
+        {showEncashModal && encashBalance && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-md w-full shadow-xl">
+              <div className="p-6 border-b border-[var(--border-main)]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                      <Banknote className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                        Leave Encashment
+                      </h2>
+                      <p className="text-sm text-[var(--text-secondary)]">
+                        Convert leave balance to salary payout
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowEncashModal(false)}
+                    className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                  >
+                    <X className="h-5 w-5 text-[var(--text-muted)]" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {/* Balance Summary */}
+                <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+                      {leaveTypes.find((lt) => lt.id === encashBalance.leaveTypeId)?.leaveName || 'Leave Type'}
+                    </span>
+                    <span className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
+                      {encashBalance.available} days available
+                    </span>
+                  </div>
+                  {encashBalance.encashed > 0 && (
+                    <p className="text-xs text-emerald-600 dark:text-emerald-500">
+                      Previously encashed: {encashBalance.encashed} days
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    Days to Encash *
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={encashBalance.available}
+                    value={encashDays}
+                    onChange={(e) => setEncashDays(Math.min(Number(e.target.value), encashBalance.available))}
+                    className="input-aura w-full px-3 py-2 rounded-lg"
+                  />
+                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                    Maximum encashable: {encashBalance.available} days
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    Reason (optional)
+                  </label>
+                  <textarea
+                    value={encashReason}
+                    onChange={(e) => setEncashReason(e.target.value)}
+                    rows={2}
+                    placeholder="Reason for encashment request"
+                    className="input-aura w-full px-3 py-2 rounded-lg"
+                  />
+                </div>
+
+                <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-amber-800 dark:text-amber-300">
+                    Encashment will be processed as part of your next payroll cycle. The amount will be calculated based on your current basic salary and applicable tax deductions.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-[var(--border-main)] flex justify-end gap-3">
+                <button
+                  onClick={() => setShowEncashModal(false)}
+                  className="btn-secondary px-4 py-2 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    await encashmentMutation.mutateAsync({
+                      leaveBalanceId: encashBalance.id,
+                      daysToEncash: encashDays,
+                      reason: encashReason || undefined,
+                    });
+                    setShowEncashModal(false);
+                    setEncashBalance(null);
+                  }}
+                  disabled={encashmentMutation.isPending || encashDays < 1 || encashDays > encashBalance.available}
+                  className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
+                >
+                  {encashmentMutation.isPending ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Banknote className="h-4 w-4" />
+                      Request Encashment
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}

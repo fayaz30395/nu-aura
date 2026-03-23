@@ -27,28 +27,40 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const remaining = total - used;
+
+  // Color based on usage percentage
+  const getStrokeColor = () => {
+    if (percentage > 80) return '#EF4444'; // danger
+    if (percentage > 60) return '#F59E0B'; // warning
+    return '#0057FF'; // primary blue
+  };
 
   return (
     <div className="relative h-32 w-32">
-      <svg className="h-full w-full" viewBox="0 0 128 128">
+      <svg className="h-full w-full -rotate-90" viewBox="0 0 128 128">
+        {/* Background track */}
         <circle
           cx="64" cy="64" r={radius}
-          fill="none" strokeWidth="6"
+          fill="none" strokeWidth="8"
           className="stroke-[var(--border-main)]"
+          opacity="0.5"
         />
+        {/* Progress arc with gradient color */}
         <circle
           cx="64" cy="64" r={radius}
-          fill="none" strokeWidth="6"
+          fill="none" strokeWidth="8"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          className="stroke-[var(--text-secondary)] transition-all duration-500"
-          transform="rotate(-90 64 64)"
+          stroke={getStrokeColor()}
+          className="transition-all duration-700 ease-out"
+          style={{ filter: `drop-shadow(0 0 4px ${getStrokeColor()}40)` }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-2xl font-semibold text-[var(--text-primary)]">{total - used}</div>
-        <div className="text-xs text-[var(--text-muted)] uppercase tracking-wider">Days Left</div>
+        <div className="text-3xl font-bold text-[var(--text-primary)] tabular-nums leading-none">{remaining}</div>
+        <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.1em] mt-1 font-medium">Days Left</div>
       </div>
     </div>
   );
@@ -64,7 +76,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
   const current = balances[selectedIndex];
 
   return (
-    <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
@@ -109,16 +121,20 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
       )}
 
       {/* Actions */}
-      <div className="space-y-1.5 pt-3 border-t border-[var(--border-subtle)]">
+      <div className="space-y-2 pt-3 border-t border-[var(--border-subtle)]">
         <a
           href="/leaves/request"
-          className="block w-full rounded-lg bg-primary-600 py-2 text-center text-xs font-medium text-white hover:bg-primary-700 transition-colors"
+          className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
+          style={{
+            background: 'linear-gradient(135deg, #0057FF 0%, #003ECB 100%)',
+            boxShadow: '0 2px 8px rgba(0, 87, 255, 0.25)',
+          }}
         >
           Request Leave
         </a>
         <a
           href="/leaves/balance"
-          className="block w-full rounded-lg border border-[var(--border-main)] py-2 text-center text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors "
+          className="block w-full rounded-xl border border-[var(--border-main)] py-2.5 text-center text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:border-[var(--border-strong)] transition-all duration-200"
         >
           View All Balances
         </a>

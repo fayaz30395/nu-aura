@@ -46,7 +46,10 @@ import {
   useLeaderboard,
   useMyPoints,
   useGiveRecognition,
+  useAddReaction,
+  useRemoveReaction,
 } from '@/lib/hooks/queries/useRecognition';
+import { ReactionType } from '@/lib/types/recognition';
 
 // Zod schema for recognition form
 const recognitionFormSchema = z.object({
@@ -130,6 +133,43 @@ export default function RecognitionPage() {
   const leaderboardQuery = useLeaderboard(5);
   const myPointsQuery = useMyPoints();
   const giveRecognitionMutation = useGiveRecognition();
+  const addReactionMutation = useAddReaction();
+  const removeReactionMutation = useRemoveReaction();
+
+  // Reaction picker state
+  const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
+  // Comment state
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [commentText, setCommentText] = useState<Record<string, string>>({});
+
+  const reactionEmojis: { type: ReactionType; emoji: string; label: string }[] = [
+    { type: ReactionType.LIKE, emoji: '\uD83D\uDC4D', label: 'Like' },
+    { type: ReactionType.LOVE, emoji: '\u2764\uFE0F', label: 'Love' },
+    { type: ReactionType.CELEBRATE, emoji: '\uD83C\uDF89', label: 'Celebrate' },
+    { type: ReactionType.SUPPORT, emoji: '\uD83D\uDE4F', label: 'Support' },
+    { type: ReactionType.INSIGHTFUL, emoji: '\uD83D\uDCA1', label: 'Insightful' },
+  ];
+
+  const handleReaction = (recognitionId: string, reactionType: ReactionType, hasReacted: boolean | undefined) => {
+    if (hasReacted) {
+      removeReactionMutation.mutate({ recognitionId, reactionType });
+    } else {
+      addReactionMutation.mutate({ recognitionId, reactionType });
+    }
+    setShowReactionPicker(null);
+  };
+
+  const toggleComments = (recognitionId: string) => {
+    setExpandedComments((prev) => {
+      const next = new Set(prev);
+      if (next.has(recognitionId)) {
+        next.delete(recognitionId);
+      } else {
+        next.add(recognitionId);
+      }
+      return next;
+    });
+  };
 
   // Form setup with React Hook Form
   const {
@@ -393,11 +433,42 @@ export default function RecognitionPage() {
                           )}
 
                           <div className="mt-3 flex items-center gap-4 text-sm text-[var(--text-muted)] flex-wrap">
-                            <button className="flex items-center gap-1 hover:text-red-500 dark:hover:text-red-400 transition-colors" aria-label={`Like recognition (${recognition.likesCount} likes)`}>
-                              <Heart className="h-4 w-4" />
-                              {recognition.likesCount}
-                            </button>
-                            <button className="flex items-center gap-1 hover:text-blue-500 dark:hover:text-blue-400 transition-colors" aria-label={`Comment on recognition (${recognition.commentsCount} comments)`}>
+                            {/* Reaction button with picker */}
+                            <div className="relative">
+                              <button
+                                className={`flex items-center gap-1 transition-colors ${recognition.hasReacted ? 'text-red-500 dark:text-red-400' : 'hover:text-red-500 dark:hover:text-red-400'}`}
+                                aria-label={`React to recognition (${recognition.likesCount} reactions)`}
+                                onClick={() => {
+                                  if (recognition.hasReacted) {
+                                    handleReaction(recognition.id, ReactionType.LIKE, true);
+                                  } else {
+                                    setShowReactionPicker(showReactionPicker === recognition.id ? null : recognition.id);
+                                  }
+                                }}
+                              >
+                                <Heart className={`h-4 w-4 ${recognition.hasReacted ? 'fill-current' : ''}`} />
+                                {recognition.likesCount}
+                              </button>
+                              {showReactionPicker === recognition.id && (
+                                <div className="absolute bottom-full left-0 mb-2 p-1.5 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-lg shadow-lg flex gap-1 z-10">
+                                  {reactionEmojis.map((reaction) => (
+                                    <button
+                                      key={reaction.type}
+                                      onClick={() => handleReaction(recognition.id, reaction.type, false)}
+                                      className="p-1.5 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-primary)] rounded-md transition-colors text-lg"
+                                      title={reaction.label}
+                                    >
+                                      {reaction.emoji}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <button
+                              className="flex items-center gap-1 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                              aria-label={`Comment on recognition (${recognition.commentsCount} comments)`}
+                              onClick={() => toggleComments(recognition.id)}
+                            >
                               <MessageCircle className="h-4 w-4" />
                               {recognition.commentsCount}
                             </button>
@@ -405,6 +476,37 @@ export default function RecognitionPage() {
                               {new Date(recognition.recognizedAt || recognition.createdAt).toLocaleDateString()}
                             </span>
                           </div>
+
+                          {/* Comment Section */}
+                          {expandedComments.has(recognition.id) && (
+                            <div className="mt-3 pt-3 border-t border-[var(--border-main)]">
+                              <div className="flex gap-2">
+                                <input
+                                  type="text"
+                                  placeholder="Write a comment..."
+                                  value={commentText[recognition.id] || ''}
+                                  onChange={(e) =>
+                                    setCommentText((prev) => ({
+                                      ...prev,
+                                      [recognition.id]: e.target.value,
+                                    }))
+                                  }
+                                  className="flex-1 px-3 py-1.5 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                                />
+                                <button
+                                  className="px-3 py-1.5 bg-sky-700 text-white text-sm rounded-lg hover:bg-sky-800 transition-colors disabled:opacity-50"
+                                  disabled={!commentText[recognition.id]?.trim()}
+                                >
+                                  <Send className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                              {recognition.commentsCount > 0 && (
+                                <p className="text-xs text-[var(--text-muted)] mt-2">
+                                  {recognition.commentsCount} comment{recognition.commentsCount !== 1 ? 's' : ''} - view all
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </CardContent>

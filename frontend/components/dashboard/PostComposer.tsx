@@ -197,7 +197,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   const canSubmitPraise = !!selectedRecipient && !!praiseCategory;
 
   return (
-    <div className="skeuo-card rounded-xl border border-[var(--border-main)]">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)]">
       {/* Tabs */}
       <div className="flex items-center border-b border-[var(--border-main)]">
         {([
