@@ -9,6 +9,8 @@ import com.hrms.common.config.CacheConfig;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
@@ -24,6 +26,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +55,9 @@ public class EmployeeService {
 
     @Autowired
     private AuditLogService auditLogService;
+
+    @Autowired
+    private DataScopeService dataScopeService;
 
     @Transactional
     @Caching(evict = {
@@ -406,23 +412,57 @@ public class EmployeeService {
         return response;
     }
 
+    /**
+     * CRIT-001 FIX: Apply DataScope filtering to employee list.
+     * SuperAdmin/ALL scope see all employees; DEPARTMENT/TEAM/SELF scopes see
+     * only the rows their permission level allows. This prevents an EMPLOYEE
+     * role user from listing all 22 employees with PII.
+     */
     @Transactional(readOnly = true)
     public Page<EmployeeResponse> getAllEmployees(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
 
-        Page<Employee> employeePage = employeeRepository.findAllByTenantId(tenantId, pageable);
+        // Build a tenant filter + data-scope filter via JPA Specifications
+        Specification<Employee> tenantSpec = (root, query, cb) ->
+                cb.equal(root.get("tenantId"), tenantId);
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.EMPLOYEE_VIEW_ALL);
+        Specification<Employee> combinedSpec = Specification.where(tenantSpec).and(scopeSpec);
+
+        Page<Employee> employeePage = employeeRepository.findAll(combinedSpec, pageable);
         Map<UUID, String> empNames = buildEmployeeNameMap(employeePage.getContent());
 
         return employeePage.map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames));
     }
 
+    /**
+     * CRIT-001 FIX: Apply DataScope filtering to employee search.
+     * Same scope rules as getAllEmployees — search results are intersected
+     * with the caller's visible data scope.
+     */
     @Transactional(readOnly = true)
     public Page<EmployeeResponse> searchEmployees(String search, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
 
-        Page<Employee> employeePage = employeeRepository.searchEmployees(tenantId, search, pageable);
+        // Build tenant + search + scope specification
+        Specification<Employee> tenantSpec = (root, query, cb) ->
+                cb.equal(root.get("tenantId"), tenantId);
+        Specification<Employee> searchSpec = (root, query, cb) -> {
+            if (search == null || search.isBlank()) {
+                return cb.conjunction();
+            }
+            String pattern = "%" + search.toLowerCase() + "%";
+            return cb.or(
+                    cb.like(cb.lower(root.get("firstName")), pattern),
+                    cb.like(cb.lower(root.get("lastName")), pattern),
+                    cb.like(cb.lower(root.get("employeeCode")), pattern)
+            );
+        };
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.EMPLOYEE_VIEW_ALL);
+        Specification<Employee> combinedSpec = Specification.where(tenantSpec).and(searchSpec).and(scopeSpec);
+
+        Page<Employee> employeePage = employeeRepository.findAll(combinedSpec, pageable);
         Map<UUID, String> empNames = buildEmployeeNameMap(employeePage.getContent());
 
         return employeePage.map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames));

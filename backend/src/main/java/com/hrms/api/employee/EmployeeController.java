@@ -53,10 +53,9 @@ public class EmployeeController {
     @RequiresPermission({
         Permission.EMPLOYEE_VIEW_ALL,
         Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+        Permission.EMPLOYEE_VIEW_TEAM
     })
-    @Operation(summary = "Get all employees", description = "Returns a paginated list of employees")
+    @Operation(summary = "Get all employees", description = "Returns a paginated list of employees filtered by caller's data scope")
     @ApiResponse(responseCode = "200", description = "Employees retrieved successfully")
     public ResponseEntity<Page<EmployeeResponse>> getAllEmployees(
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
@@ -74,8 +73,7 @@ public class EmployeeController {
     @RequiresPermission({
         Permission.EMPLOYEE_VIEW_ALL,
         Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+        Permission.EMPLOYEE_VIEW_TEAM
     })
     @Operation(summary = "Search employees", description = "Search employees by name, email, or employee code")
     @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
@@ -166,7 +164,8 @@ public class EmployeeController {
         Permission.EMPLOYEE_VIEW_ALL,
         Permission.EMPLOYEE_VIEW_DEPARTMENT,
         Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+        Permission.EMPLOYEE_CREATE,
+        Permission.EMPLOYEE_UPDATE
     })
     @Operation(summary = "Get eligible managers",
                description = "Returns active employees at LEAD level and above, for manager-picker dropdowns")
