@@ -23,7 +23,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Cake className="h-4 w-4 text-pink-600" />
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Birthdays</h4>
+              <h4 className="text-sm font-semibold text-[var(--text-primary)]">Birthdays</h4>
             </div>
             <div className="space-y-2">
               {data.birthdays.slice(0, 5).map((birthday, index) => (
@@ -32,10 +32,10 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
                   className="flex items-center justify-between p-4 bg-pink-50 dark:bg-pink-950/20 rounded-lg"
                 >
                   <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-50">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">
                       {birthday.employeeName}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{birthday.department}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{birthday.department}</p>
                   </div>
                   <span className="text-xs font-semibold text-pink-600 dark:text-pink-400">{birthday.date}</span>
                 </div>
@@ -49,7 +49,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Gift className="h-4 w-4 text-purple-600" />
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Work Anniversaries</h4>
+              <h4 className="text-sm font-semibold text-[var(--text-primary)]">Work Anniversaries</h4>
             </div>
             <div className="space-y-2">
               {data.anniversaries.slice(0, 5).map((anniversary, index) => (
@@ -58,10 +58,10 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
                   className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg"
                 >
                   <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-50">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">
                       {anniversary.employeeName}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {anniversary.department} • {anniversary.years} years
                     </p>
                   </div>
@@ -79,7 +79,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Calendar className="h-4 w-4 text-blue-600" />
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Holidays</h4>
+              <h4 className="text-sm font-semibold text-[var(--text-primary)]">Holidays</h4>
             </div>
             <div className="space-y-2">
               {data.holidays.slice(0, 5).map((holiday, index) => (
@@ -88,8 +88,8 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
                   className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg"
                 >
                   <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-50">{holiday.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{holiday.type}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{holiday.name}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{holiday.type}</p>
                   </div>
                   <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">{holiday.date}</span>
                 </div>
@@ -99,7 +99,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
         )}
 
         {data.birthdays.length === 0 && data.anniversaries.length === 0 && data.holidays.length === 0 && (
-          <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+          <div className="text-center py-8 text-[var(--text-muted)]">
             <Calendar className="h-12 w-12 mx-auto mb-2 opacity-20" />
             <p className="text-sm">No upcoming events</p>
           </div>
