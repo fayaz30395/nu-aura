@@ -334,8 +334,8 @@ export default function TrainingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Training Programs</h1>
-            <p className="text-[var(--text-secondary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Training Programs</h1>
+            <p className="text-[var(--text-secondary)] skeuo-deboss">
               Enroll in courses and track your learning progress
             </p>
           </div>

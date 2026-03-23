@@ -147,11 +147,11 @@ const StatCard = ({
   icon: React.ElementType;
   color: string;
 }) => (
-  <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-sm">
+  <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-sm skeuo-card">
     <div className="flex items-start justify-between">
       <div>
-        <p className="text-sm font-medium text-gray-500 dark:text-[var(--text-muted)]">{title}</p>
-        <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1">{value}</p>
+        <p className="text-sm font-medium text-gray-500 dark:text-[var(--text-muted)] skeuo-deboss">{title}</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">{value}</p>
         {subtitle && <p className="text-xs text-gray-500 dark:text-[var(--text-muted)] mt-1">{subtitle}</p>}
       </div>
       <div className={`p-2 rounded-lg ${color}`}>
@@ -216,8 +216,8 @@ export default function PerformancePage() {
     <AppLayout activeMenuItem="performance">
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">Performance Management</h1>
-        <p className="text-sm text-gray-500 dark:text-[var(--text-muted)] mt-1">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">Performance Management</h1>
+        <p className="text-sm text-gray-500 dark:text-[var(--text-muted)] mt-1 skeuo-deboss">
           Track goals, conduct reviews, and manage employee performance
         </p>
       </div>
@@ -299,7 +299,7 @@ export default function PerformancePage() {
           <Link
             href={module.href}
             aria-label={`Go to ${module.title} management`}
-            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
           >
             <div className="p-6">
               <div className="flex items-start gap-4">
@@ -321,8 +321,8 @@ export default function PerformancePage() {
       </div>
 
       {/* Getting Started Section */}
-      <div className="mt-8 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4">Getting Started</h2>
+      <div className="mt-8 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6 skeuo-surface">
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4 skeuo-emboss">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />

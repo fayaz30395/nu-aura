@@ -13,6 +13,8 @@ export function useAllReviews(page: number = 0, size: number = 20) {
     queryKey: performanceKeys.allReviews(page, size),
     queryFn: () => reviewService.getAllReviews(page, size),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -22,6 +24,8 @@ export function useEmployeeReviews(employeeId: string) {
     queryFn: () => reviewService.getByEmployee(employeeId),
     enabled: !!employeeId,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -31,6 +35,8 @@ export function usePendingReviews(reviewerId: string) {
     queryFn: () => reviewService.getPendingReviews(reviewerId),
     enabled: !!reviewerId,
     staleTime: 2 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -40,6 +46,8 @@ export function useReviewDetail(id: string, enabled: boolean = true) {
     queryFn: () => reviewService.getReviewById(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

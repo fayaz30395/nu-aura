@@ -394,15 +394,15 @@ export default function ExpenseClaims() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
               <DollarSign className="w-7 h-7 sm:w-8 sm:h-8" />
               Expense Claims
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1">Submit and manage your expense claims</p>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Submit and manage your expense claims</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2"
+            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2 skeuo-button"
           >
             <Plus className="w-5 h-5" />
             New Claim
@@ -411,46 +411,46 @@ export default function ExpenseClaims() {
 
         {/* Statistics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                 <AlertCircle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">{statistics.pendingCount}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.pendingCount}</p>
                 <p className="text-sm text-[var(--text-muted)]">Pending</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                 <CheckCircle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">{statistics.approvedCount}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.approvedCount}</p>
                 <p className="text-sm text-[var(--text-muted)]">Approved</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
                 <DollarSign className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">{formatCurrency(statistics.totalPendingAmount)}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatCurrency(statistics.totalPendingAmount)}</p>
                 <p className="text-sm text-[var(--text-muted)]">Pending Amount</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">{statistics.totalClaims}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.totalClaims}</p>
                 <p className="text-sm text-[var(--text-muted)]">Total Claims</p>
               </div>
             </div>

@@ -309,14 +309,14 @@ export default function MyLeavesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">My Leaves</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">My Leaves</h1>
+            <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
               Manage your leave requests and balances
             </p>
           </div>
           <button
             onClick={() => setShowApplyModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors skeuo-button"
           >
             <Plus className="h-4 w-4" />
             Apply for Leave
@@ -346,7 +346,7 @@ export default function MyLeavesPage() {
           {leaveBalances.map((balance) => {
             const leaveType = leaveTypes.find((lt) => lt.id === balance.leaveTypeId);
             return (
-              <Card key={balance.id}>
+              <Card key={balance.id} className="skeuo-card">
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between mb-4">
                     <div
@@ -365,19 +365,19 @@ export default function MyLeavesPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600 dark:text-slate-400">Available</span>
-                      <span className="font-semibold text-green-600 dark:text-green-400">
+                      <span className="font-semibold text-green-600 dark:text-green-400 skeuo-emboss">
                         {balance.available}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600 dark:text-slate-400">Used</span>
-                      <span className="font-semibold text-slate-900 dark:text-slate-50">
+                      <span className="font-semibold text-slate-900 dark:text-slate-50 skeuo-emboss">
                         {balance.used}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600 dark:text-slate-400">Pending</span>
-                      <span className="font-semibold text-yellow-600 dark:text-yellow-400">
+                      <span className="font-semibold text-yellow-600 dark:text-yellow-400 skeuo-emboss">
                         {balance.pending}
                       </span>
                     </div>
@@ -400,11 +400,11 @@ export default function MyLeavesPage() {
         </div>
 
         {/* Leave Requests */}
-        <Card>
+        <Card className="skeuo-card">
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 skeuo-emboss">
                   <FileText className="h-5 w-5" />
                   Leave History
                 </CardTitle>
@@ -424,7 +424,7 @@ export default function MyLeavesPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
-                    className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 skeuo-input"
                   >
                     <option value="ALL">All Status</option>
                     <option value="PENDING">Pending</option>
@@ -436,7 +436,7 @@ export default function MyLeavesPage() {
                 <select
                   value={leaveTypeFilter}
                   onChange={(e) => setLeaveTypeFilter(e.target.value)}
-                  className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 skeuo-input"
                 >
                   <option value="ALL">All Leave Types</option>
                   {leaveTypes.map((type) => (
@@ -599,7 +599,7 @@ export default function MyLeavesPage() {
         {/* Apply/Edit Leave Modal */}
         {showApplyModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
                 <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
                     {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
@@ -732,7 +732,7 @@ export default function MyLeavesPage() {
         {/* Cancel Leave Modal */}
         {showCancelModal && cancellingRequest && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
               <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
                   Cancel Leave Request

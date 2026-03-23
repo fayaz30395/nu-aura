@@ -76,7 +76,7 @@ export default function LearningPage() {
   return (
     <AppLayout activeMenuItem="learning">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)]">Learning Management</h1>
+        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)] skeuo-emboss">Learning Management</h1>
 
         {/* Dashboard Cards */}
         {dashboardLoading ? (

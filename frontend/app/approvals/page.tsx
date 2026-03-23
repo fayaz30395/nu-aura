@@ -96,7 +96,7 @@ function ApprovalCard({ approval, onApprove, onReject, isLoading }: {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="border border-[var(--border-main)] hover:border-primary-400 transition-colors">
+      <Card className="border border-[var(--border-main)] hover:border-primary-400 transition-colors skeuo-card">
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -240,8 +240,8 @@ export default function ApprovalsPage() {
       >
         {/* Header */}
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)]">Approvals</h1>
-          <p className="text-[var(--text-muted)] mt-1">Review and manage pending approvals</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Approvals</h1>
+          <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Review and manage pending approvals</p>
         </div>
 
         {/* Tabs */}
@@ -276,7 +276,7 @@ export default function ApprovalsPage() {
               setSearch(e.target.value);
               setPage(0);
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500/50 skeuo-input"
           />
         </div>
 

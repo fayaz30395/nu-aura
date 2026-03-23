@@ -55,6 +55,8 @@ export function usePayrollRuns(
       return payrollService.getAllPayrollRuns(page, size);
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     enabled,
   });
 }
@@ -68,6 +70,8 @@ export function usePayrollRun(id: string, enabled: boolean = true) {
     queryFn: () => payrollService.getPayrollRunById(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -187,6 +191,8 @@ export function usePayslips(
       return payrollService.getAllPayslips(page, size);
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     enabled,
   });
 }
@@ -200,6 +206,8 @@ export function usePayslip(id: string, enabled: boolean = true) {
     queryFn: () => payrollService.getPayslipById(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -217,6 +225,8 @@ export function usePayslipsByEmployee(
     queryFn: () => payrollService.getPayslipsByEmployee(employeeId, page, size),
     enabled: enabled && !!employeeId,
     staleTime: 2 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -234,6 +244,8 @@ export function usePayslipsByPayrollRun(
     queryFn: () => payrollService.getPayslipsByPayrollRun(payrollRunId, page, size),
     enabled: enabled && !!payrollRunId,
     staleTime: 2 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -326,6 +338,8 @@ export function useSalaryStructures(
     queryKey: payrollKeys.structuresList(page, size),
     queryFn: () => payrollService.getAllSalaryStructures(page, size),
     staleTime: 5 * 60 * 1000, // 5 minutes (less frequently changing data)
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     enabled,
   });
 }
@@ -339,6 +353,8 @@ export function useSalaryStructure(id: string, enabled: boolean = true) {
     queryFn: () => payrollService.getSalaryStructureById(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -354,6 +370,8 @@ export function useSalaryStructureByEmployee(
     queryFn: () => payrollService.getSalaryStructureByEmployee(employeeId),
     enabled: enabled && !!employeeId,
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -461,6 +479,8 @@ export function useBulkProcessingStatus(
     queryFn: () => payrollService.getBulkProcessingStatus(payrollRunId),
     enabled: enabled && !!payrollRunId,
     staleTime: 30 * 1000, // 30 seconds for status polling
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

@@ -53,6 +53,8 @@ export function useEmployeeAttendance(
     queryFn: () => attendanceService.getEmployeeAttendance(employeeId, page, size),
     enabled: enabled && !!employeeId,
     staleTime: 60 * 1000, // 1 minute
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -67,6 +69,8 @@ export function useAttendanceByDateRange(
     queryFn: () => attendanceService.getAttendanceByDateRange(startDate, endDate),
     enabled: enabled && !!startDate && !!endDate,
     staleTime: 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -82,6 +86,8 @@ export function useAttendanceByDate(
     queryFn: () => attendanceService.getAttendanceByDate(date, page, size),
     enabled: enabled && !!date,
     staleTime: 30 * 1000, // 30 seconds for real-time view
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -91,6 +97,8 @@ export function usePendingRegularizations(page: number = 0, size: number = 20) {
     queryKey: attendanceKeys.pendingRegularizations(page, size),
     queryFn: () => attendanceService.getPendingRegularizations(page, size),
     staleTime: 30 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -101,6 +109,8 @@ export function useMyTimeEntries(date: string, enabled: boolean = true) {
     queryFn: () => attendanceService.getMyTimeEntries(date),
     enabled: enabled && !!date,
     staleTime: 30 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -112,6 +122,8 @@ export function useShifts(page: number = 0, size: number = 20) {
     queryKey: attendanceKeys.shiftsList(page, size),
     queryFn: () => attendanceService.getAllShifts(page, size),
     staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -121,6 +133,8 @@ export function useActiveShifts() {
     queryKey: attendanceKeys.shiftsActive(),
     queryFn: () => attendanceService.getActiveShifts(),
     staleTime: 10 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -131,6 +145,8 @@ export function useShift(id: string, enabled: boolean = true) {
     queryFn: () => attendanceService.getShiftById(id),
     enabled: enabled && !!id,
     staleTime: 10 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -142,6 +158,8 @@ export function useHolidaysByYear(year: number) {
     queryKey: attendanceKeys.holidaysByYear(year),
     queryFn: () => attendanceService.getHolidaysByYear(year),
     staleTime: 60 * 60 * 1000, // 1 hour - holidays rarely change
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -152,6 +170,8 @@ export function useHoliday(id: string, enabled: boolean = true) {
     queryFn: () => attendanceService.getHolidayById(id),
     enabled: enabled && !!id,
     staleTime: 60 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

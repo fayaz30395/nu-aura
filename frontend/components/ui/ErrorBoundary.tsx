@@ -109,8 +109,14 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <div className="flex gap-2">
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => this.setState({ hasError: false, error: undefined, errorId: undefined })}
                 className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 font-medium transition-colors"
+              >
+                Try Again
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-surface-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors"
               >
                 Refresh Page
               </button>

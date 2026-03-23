@@ -842,10 +842,10 @@ export default function ProjectsPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Projects & Allocations
             </h1>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-sm text-[var(--text-muted)] skeuo-deboss">
               Track projects and manage team allocations.
             </p>
           </div>

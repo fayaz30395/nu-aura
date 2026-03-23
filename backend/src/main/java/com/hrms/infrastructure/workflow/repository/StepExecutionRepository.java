@@ -19,8 +19,18 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
 
     Optional<StepExecution> findByIdAndTenantId(UUID id, UUID tenantId);
 
+    /**
+     * @deprecated SEC-003: No tenantId filter. Use tenant-safe alternatives.
+     * Steps are scoped via workflowExecutionId which itself is tenant-scoped,
+     * but direct tenant filtering is safer for defense-in-depth.
+     */
+    @Deprecated
     List<StepExecution> findByWorkflowExecutionIdOrderByStepOrderAsc(UUID workflowExecutionId);
 
+    /**
+     * @deprecated SEC-003: No tenantId filter. Use {@link #findPendingStepsWithExecution(UUID)} instead.
+     */
+    @Deprecated
     @Query("SELECT s FROM StepExecution s WHERE s.workflowExecution.id = :executionId AND s.status = 'PENDING'")
     List<StepExecution> findPendingSteps(@Param("executionId") UUID executionId);
 
@@ -33,6 +43,10 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
     @Query("SELECT s FROM StepExecution s WHERE s.tenantId = :tenantId AND s.status = 'PENDING' AND s.deadline < :now")
     List<StepExecution> findOverdueSteps(@Param("tenantId") UUID tenantId, @Param("now") LocalDateTime now);
 
+    /**
+     * @deprecated SEC-003: No tenantId filter. Steps should be queried with tenant context.
+     */
+    @Deprecated
     @Query("SELECT s FROM StepExecution s WHERE s.workflowExecution.id = :executionId AND s.stepOrder = :stepOrder")
     Optional<StepExecution> findByExecutionAndStepOrder(@Param("executionId") UUID executionId, @Param("stepOrder") int stepOrder);
 
@@ -42,6 +56,11 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
     @Query("SELECT COUNT(s) FROM StepExecution s WHERE s.tenantId = :tenantId AND s.assignedToUserId = :userId AND s.status = 'PENDING'")
     long countPendingForUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId);
 
+    /**
+     * @deprecated SEC-003: No tenantId filter. The executionId is itself tenant-scoped,
+     * but defense-in-depth recommends explicit tenant filtering.
+     */
+    @Deprecated
     @Query("SELECT COUNT(s) FROM StepExecution s WHERE s.workflowExecution.id = :executionId AND s.status = 'APPROVED'")
     long countApprovedSteps(@Param("executionId") UUID executionId);
 

@@ -448,10 +448,10 @@ export default function LettersPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Letter Generation
             </h1>
-            <p className="text-[var(--text-secondary)]">
+            <p className="text-[var(--text-secondary)] skeuo-deboss">
               Generate and manage employee letters
             </p>
           </div>

@@ -43,24 +43,37 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
                     // Extract JWT token from headers
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
 
-                    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                        String token = authHeader.substring(7);
+                    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                        // SEC-006 FIX: Reject unauthenticated WebSocket connections
+                        log.warn("WebSocket CONNECT rejected: missing or invalid Authorization header");
+                        throw new org.springframework.messaging.MessageDeliveryException(
+                                "Authentication required for WebSocket connections");
+                    }
 
-                        try {
-                            if (jwtTokenProvider.validateToken(token)) {
-                                String username = jwtTokenProvider.getUsernameFromToken(token);
+                    String token = authHeader.substring(7);
 
-                                UsernamePasswordAuthenticationToken auth =
-                                        new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+                    try {
+                        if (jwtTokenProvider.validateToken(token)) {
+                            String username = jwtTokenProvider.getUsernameFromToken(token);
 
-                                SecurityContextHolder.getContext().setAuthentication(auth);
-                                accessor.setUser(auth);
+                            UsernamePasswordAuthenticationToken auth =
+                                    new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
 
-                                log.debug("WebSocket connection authenticated for user: {}", username);
-                            }
-                        } catch (JwtException | IllegalArgumentException e) {
-                            log.warn("WebSocket authentication failed: {}", e.getMessage());
+                            SecurityContextHolder.getContext().setAuthentication(auth);
+                            accessor.setUser(auth);
+
+                            log.debug("WebSocket connection authenticated for user: {}", username);
+                        } else {
+                            // SEC-006 FIX: Reject connections with invalid tokens
+                            log.warn("WebSocket CONNECT rejected: token validation failed");
+                            throw new org.springframework.messaging.MessageDeliveryException(
+                                    "Invalid authentication token");
                         }
+                    } catch (JwtException | IllegalArgumentException e) {
+                        // SEC-006 FIX: Reject connections with malformed tokens
+                        log.warn("WebSocket authentication failed: {}", e.getMessage());
+                        throw new org.springframework.messaging.MessageDeliveryException(
+                                "Authentication failed: " + e.getMessage());
                     }
                 }
 

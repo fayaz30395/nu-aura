@@ -168,8 +168,8 @@ export default function MyProfilePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">My Profile</h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 skeuo-emboss">My Profile</h1>
+            <p className="text-slate-600 dark:text-slate-400 mt-1 skeuo-deboss">
               Manage your personal information
             </p>
           </div>

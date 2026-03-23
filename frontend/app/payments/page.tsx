@@ -145,11 +145,11 @@ export default function PaymentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
               <CreditCard className="w-7 h-7 sm:w-8 sm:h-8" />
               Payment Gateway
             </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Monitor and manage payment transactions
             </p>
           </div>

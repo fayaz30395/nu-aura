@@ -423,6 +423,7 @@ const SectionDivider: React.FC<{
       <span
         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
         style={{ color: 'var(--sidebar-section-text)' }}
+        suppressHydrationWarning
       >
         {label}
       </span>
@@ -675,6 +676,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       <span
                         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
                         style={{ color: 'var(--sidebar-section-text)' }}
+                        suppressHydrationWarning
                       >
                         {section.label}
                       </span>

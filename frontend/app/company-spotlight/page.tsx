@@ -147,11 +147,11 @@ export default function CompanySpotlightPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
                   <Lightbulb className="w-8 h-8 text-amber-500" />
                   Company Spotlight
                 </h1>
-                <p className="text-[var(--text-secondary)] mt-2">
+                <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
                   Create carousel slides to highlight company news and culture
                 </p>
               </div>

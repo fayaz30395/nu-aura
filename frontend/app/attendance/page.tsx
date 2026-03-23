@@ -158,7 +158,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
               <Clock className="h-4 w-4 text-white" />
             </div>
-            <h1 className="text-page-title text-[var(--text-primary)]">Attendance</h1>
+            <h1 className="text-page-title text-[var(--text-primary)] skeuo-emboss">Attendance</h1>
           </div>
           <p className="text-sm ml-10">
             <span className="font-medium text-[var(--text-primary)]">{greeting}, {userName || 'there'}</span>
@@ -310,7 +310,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
         {/* Progress Ring + Today Stats */}
         <div className="space-y-4">
           {/* Work Progress */}
-          <Card className="card-aura border border-[var(--border-main)] shadow-md overflow-hidden">
+          <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-md overflow-hidden">
             <CardContent className="p-6 flex items-center gap-6 relative">
               <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-amber-500 to-orange-500' : workProgress >= 100 ? 'bg-gradient-to-br from-emerald-500 to-green-500' : 'bg-gradient-to-br from-primary-500 to-violet-500'}`} />
               <ProgressRing
@@ -320,7 +320,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 color={isOvertime ? '#f59e0b' : workProgress >= 100 ? '#22c55e' : '#6366f1'}
               >
                 <div className="text-center">
-                  <div className="text-stat-medium text-[var(--text-primary)] tabular-nums leading-none">
+                  <div className="text-stat-medium text-[var(--text-primary)] tabular-nums leading-none skeuo-emboss">
                     {currentWorkHours.toFixed(1)}
                   </div>
                   <div className="text-xs font-medium text-[var(--text-muted)] mt-0.5">/ {STANDARD_WORK_HOURS}h</div>
@@ -355,7 +355,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
           </Card>
 
           {/* Weekly Averages */}
-          <Card className="card-aura border border-[var(--border-main)] shadow-md">
+          <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-md">
             <CardContent className="p-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -365,7 +365,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                     </div>
                     <p className="text-micro text-purple-600 dark:text-purple-400">Avg In</p>
                   </div>
-                  <p className="text-stat-medium text-[var(--text-primary)] tabular-nums">{weekStats.avgCheckIn}</p>
+                  <p className="text-stat-medium text-[var(--text-primary)] tabular-nums skeuo-emboss">{weekStats.avgCheckIn}</p>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
@@ -374,7 +374,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                     </div>
                     <p className="text-micro text-amber-600 dark:text-amber-400">Avg Hrs</p>
                   </div>
-                  <p className="text-stat-medium text-[var(--text-primary)] tabular-nums">{weekStats.avgHours}h</p>
+                  <p className="text-stat-medium text-[var(--text-primary)] tabular-nums skeuo-emboss">{weekStats.avgHours}h</p>
                 </div>
               </div>
             </CardContent>

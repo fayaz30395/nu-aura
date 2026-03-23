@@ -251,11 +251,11 @@ export default function AnnouncementsPage() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
                 <Megaphone className="w-8 h-8 text-purple-600" />
                 Announcements
               </h1>
-              <p className="text-[var(--text-secondary)] mt-2">
+              <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
                 Stay updated with company news and important updates
               </p>
             </div>
