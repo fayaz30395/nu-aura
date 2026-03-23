@@ -5,8 +5,12 @@ spring:
 
   datasource:
     hikari:
-      maximum-pool-size: ${DB_POOL_MAX:50}
-      minimum-idle: ${DB_POOL_MIN:10}
+      # Neon cloud PostgreSQL limits: 100 connections per endpoint (free tier).
+      # With N pods, each pod gets max-pool-size connections = N * 20 total.
+      # Safe for up to 5 pods; upgrade Neon plan before scaling beyond 5.
+      # Use PgBouncer for higher pod counts.
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN:5}
       connection-timeout: 30000
       idle-timeout: 300000
       max-lifetime: 600000

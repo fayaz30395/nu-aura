@@ -84,8 +84,8 @@ export default function MyLeavesPage() {
     },
   });
 
-  const { data: leaveRequestsData } = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId));
-  const { data: balancesData = [] } = useEmployeeBalances(user?.employeeId || '', Boolean(hasHydrated && user?.employeeId));
+  const { data: leaveRequestsData, isError: isLeaveRequestsError, error: leaveRequestsError } = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId));
+  const { data: balancesData = [], isError: isBalancesError } = useEmployeeBalances(user?.employeeId || '', Boolean(hasHydrated && user?.employeeId));
   const { data: leaveTypesData = [] } = useActiveLeaveTypes();
   const createLeaveRequest = useCreateLeaveRequest();
   const updateLeaveRequest = useUpdateLeaveRequest();
@@ -94,7 +94,7 @@ export default function MyLeavesPage() {
   const leaveRequests = leaveRequestsData?.content ?? [];
   const leaveTypes = leaveTypesData;
   const leaveBalances = balancesData;
-  const isLoading = !leaveRequestsData;
+  const isLoading = !leaveRequestsData && !isLeaveRequestsError;
 
   useEffect(() => {
     // Wait for auth store to hydrate before checking authentication
@@ -259,6 +259,25 @@ export default function MyLeavesPage() {
       <AppLayout activeMenuItem="leaves">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (isLeaveRequestsError) {
+    const is403 = (leaveRequestsError as { response?: { status?: number } })?.response?.status === 403;
+    return (
+      <AppLayout activeMenuItem="leaves">
+        <div className="text-center py-12">
+          <AlertCircle className="h-16 w-16 mx-auto text-amber-400 mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            {is403 ? 'Access Restricted' : 'Unable to Load Leave Data'}
+          </h2>
+          <p className="text-slate-500 max-w-md mx-auto">
+            {is403
+              ? 'You don\'t have permission to view leave requests. Please contact your administrator to grant leave management access.'
+              : 'There was an error loading your leave data. Please try refreshing the page or contact support if the issue persists.'}
+          </p>
         </div>
       </AppLayout>
     );

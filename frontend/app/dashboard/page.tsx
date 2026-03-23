@@ -104,7 +104,7 @@ export default function DashboardPage() {
   const { hasPermission, isReady: permissionsReady } = usePermissions();
   const [isClockingIn, setIsClockingIn] = useState(false);
   const [clockError, setClockError] = useState<string | null>(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   // Google Notifications State
   const [notifications, setNotifications] = useState<GoogleNotification[]>([]);
@@ -119,6 +119,8 @@ export default function DashboardPage() {
   const [emailLoading, setEmailLoading] = useState(false);
 
   useEffect(() => {
+    // Initialize on client only to prevent SSR hydration mismatch
+    setCurrentTime(new Date());
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -520,7 +522,7 @@ export default function DashboardPage() {
                   <span className={`badge-status ${viewBadgeClass}`}>{analytics.viewLabel}</span>
                 </div>
                 <p className="text-body-secondary">
-                  {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                  {currentTime?.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) ?? ''}
                   {analytics.viewType !== 'EMPLOYEE' && (
                     <span className="ml-2 text-caption">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
                   )}
@@ -528,8 +530,8 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3 min-w-[140px]">
-                  <p className="text-stat-medium">
-                    {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                  <p className="text-stat-medium" suppressHydrationWarning>
+                    {currentTime?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) ?? '--:--'}
                   </p>
                   <p className="text-caption">Current time</p>
                 </div>

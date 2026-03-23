@@ -10,6 +10,5 @@
     "skill-creator@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true
   },
-  "teammateDisplayMode": "iterm2",
-  "teammateMode": "in-process"
+  "teammateDisplayMode": "iterm2"
 }

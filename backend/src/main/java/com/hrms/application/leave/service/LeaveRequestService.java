@@ -61,7 +61,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional
     public LeaveRequest createLeaveRequest(LeaveRequest leaveRequest) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         // Check for overlapping leaves
         Iterable<LeaveRequest> overlapping = leaveRequestRepository.findOverlappingLeaves(
@@ -72,8 +72,10 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             throw new IllegalArgumentException("Leave request overlaps with existing approved leave");
         }
 
-        // Generate request number
-        String requestNumber = "LR-" + System.currentTimeMillis();
+        // HIGH-004 FIX: Use UUID suffix to guarantee uniqueness under concurrent requests.
+        // System.currentTimeMillis() alone can produce duplicates when two requests
+        // arrive within the same millisecond.
+        String requestNumber = "LR-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 8);
         leaveRequest.setRequestNumber(requestNumber);
         leaveRequest.setTenantId(tenantId);
 
@@ -99,7 +101,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional
     public LeaveRequest approveLeaveRequest(UUID id, UUID approverId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
@@ -139,7 +141,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional
     public LeaveRequest rejectLeaveRequest(UUID id, UUID approverId, String reason) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
@@ -179,7 +181,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional
     public LeaveRequest cancelLeaveRequest(UUID id, String reason) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
@@ -202,7 +204,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional
     public LeaveRequest updateLeaveRequest(UUID id, LeaveRequest leaveRequestData) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
@@ -238,7 +240,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public LeaveRequest getLeaveRequestById(UUID id) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Leave request not found"));
@@ -246,14 +248,14 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<LeaveRequest> getAllLeaveRequests(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return leaveRequestRepository.findAllByTenantId(tenantId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<LeaveRequest> getAllLeaveRequests(org.springframework.data.jpa.domain.Specification<LeaveRequest> spec,
             Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         org.springframework.data.jpa.domain.Specification<LeaveRequest> tenantSpec = (root, query, cb) -> cb
                 .equal(root.get("tenantId"), tenantId);
 
@@ -262,13 +264,13 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<LeaveRequest> getLeaveRequestsByEmployee(UUID employeeId, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return leaveRequestRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<LeaveRequest> getLeaveRequestsByStatus(LeaveRequest.LeaveRequestStatus status, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return leaveRequestRepository.findAllByTenantIdAndStatus(tenantId, status, pageable);
     }
 
@@ -418,7 +420,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     private void notifyLeaveRequestCreated(LeaveRequest leaveRequest) {
         try {
-            UUID tenantId = TenantContext.getCurrentTenant();
+            UUID tenantId = TenantContext.requireCurrentTenant();
             Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId)
                     .orElse(null);
             LeaveType leaveType = leaveTypeRepository.findById(leaveRequest.getLeaveTypeId()).orElse(null);

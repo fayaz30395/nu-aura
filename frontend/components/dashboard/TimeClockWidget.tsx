@@ -75,7 +75,7 @@ export function TimeClockWidget({
   }, [isCheckedIn, checkInTime]);
 
   return (
-    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+    <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ export function TimeClockWidget({
 
       {/* Time Display */}
       <div className="mb-4">
-        <div className="text-3xl font-semibold text-[var(--text-primary)] tracking-tight font-mono">
+        <div className="skeuo-emboss text-3xl font-semibold text-[var(--text-primary)] tracking-tight font-mono relative z-10">
           {currentTime}
         </div>
         {elapsedTime && (
@@ -108,7 +108,7 @@ export function TimeClockWidget({
       <button
         onClick={isCheckedIn ? onCheckOut : onCheckIn}
         disabled={isLoading}
-        className={`flex w-full items-center justify-center gap-2 rounded-lg py-2.5 px-4 text-sm font-medium transition-colors ${
+        className={`skeuo-button relative z-10 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 px-4 text-sm font-medium transition-colors ${
           isCheckedIn
             ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
             : 'bg-primary-600 text-white hover:bg-primary-700'

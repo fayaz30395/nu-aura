@@ -14,7 +14,7 @@ spring:
     # Use environment variables for database credentials
     url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms}
     username: ${DEV_DATABASE_USERNAME:hrms}
-    password: ${DEV_DATABASE_PASSWORD:hrms_dev_password}
+    password: ${DEV_DATABASE_PASSWORD}
 
   data:
     redis:
@@ -52,7 +52,7 @@ spring:
     out-of-order: true
     # Baseline on existing database if Flyway hasn't run before
     baseline-on-migrate: true
-    baseline-version: 0
+    baseline-version: 18
 
 app:
   jwt:
@@ -109,15 +109,19 @@ server:
     # Show detailed error information in development
     include-message: always
     include-binding-errors: always
-    include-stacktrace: always
+    include-stacktrace: never
 
 logging:
   level:
     com.hrms: DEBUG
-    org.springframework.security: DEBUG
+    # Security DEBUG generates hundreds of lines during startup — use INFO
+    org.springframework.security: INFO
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
     org.hibernate.stat: WARN
     org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: ERROR
     org.springframework.kafka: WARN
     org.apache.kafka: WARN
+    # Suppress noisy startup logs
+    org.springframework.boot.autoconfigure: INFO
+    org.springframework.data.repository.config: WARN

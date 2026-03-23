@@ -108,6 +108,7 @@ export default function AdminDashboardPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
       className="p-4 sm:p-6 space-y-6"
+      suppressHydrationWarning
     >
       <div>
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -151,7 +152,7 @@ export default function AdminDashboardPage() {
       <SystemHealthCard isLoading={healthLoading} health={health} onRefresh={refetchHealth} />
 
       {/* All employees table */}
-      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)]">
+      <div className="skeuo-card rounded-xl border border-[var(--border-main)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 py-3 border-b border-[var(--border-main)]">
           <div>
             <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
@@ -173,7 +174,7 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={handleSearchApply}
-              className="px-3 py-2 text-sm font-medium rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="px-3 py-2 text-sm font-medium rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Search
             </button>
@@ -220,13 +221,13 @@ export default function AdminDashboardPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {user.firstName && (user.firstName + (user.lastName ? ' ' + user.lastName : '')) || user.email?.split('@')[0] || '—'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
                       {user.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
                       {user.tenantName}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
                       {user.departmentName?.trim() ? user.departmentName : '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -237,12 +238,12 @@ export default function AdminDashboardPage() {
                           ? 'bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300'
                           : user.userStatus === 'SUSPENDED'
                           ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-                          : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200'
+                          : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
                       }`}>
                         {user.userStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
                       {Array.isArray(user.roles) && user.roles.length > 0
                         ? user.roles.map((role) => role.name).join(', ')
                         : '—'}
@@ -264,7 +265,7 @@ export default function AdminDashboardPage() {
               type="button"
               disabled={!canPrevious}
               onClick={() => canPrevious && setPage((p) => p - 1)}
-              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Previous
             </button>
@@ -272,7 +273,7 @@ export default function AdminDashboardPage() {
               type="button"
               disabled={!canNext}
               onClick={() => canNext && setPage((p) => p + 1)}
-              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Next
             </button>
@@ -283,7 +284,7 @@ export default function AdminDashboardPage() {
       {/* Role Management Panel */}
       <form
         onSubmit={handleRoleSubmit(handleAssignRole)}
-        className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)] p-4 sm:p-6 space-y-4"
+        className="skeuo-card rounded-xl border border-[var(--border-main)] p-4 sm:p-6 space-y-4"
       >
         <div>
           <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
@@ -331,7 +332,7 @@ export default function AdminDashboardPage() {
           <button
             type="submit"
             disabled={updateRoleMutation.isPending}
-            className="px-4 py-2 text-sm font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 shadow-md shadow-primary-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {updateRoleMutation.isPending ? 'Updating...' : 'Assign / Update Role'}
           </button>
@@ -358,15 +359,15 @@ export default function AdminDashboardPage() {
 function StatCard(props: { title: string; value: number | string; description?: string }) {
   const { title, value, description } = props;
   return (
-    <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-5 sm:py-5 shadow-soft">
-      <div className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
+    <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-5 sm:py-5">
+      <div className="skeuo-deboss text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
         {title}
       </div>
-      <div className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+      <div className="skeuo-emboss mt-2 text-2xl font-semibold text-[var(--text-primary)] relative z-10">
         {value}
       </div>
       {description && (
-        <div className="mt-1 text-xs text-[var(--text-muted)]">{description}</div>
+        <div className="mt-1 text-xs text-[var(--text-muted)] relative z-10">{description}</div>
       )}
     </div>
   );
@@ -412,11 +413,11 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
-      className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 sm:p-6 shadow-soft"
+      className="skeuo-card rounded-xl border border-[var(--border-main)] p-4 sm:p-6"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
-          <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
+          <h2 className="skeuo-emboss text-base sm:text-lg font-semibold text-[var(--text-primary)]">
             System Health
           </h2>
           <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
@@ -537,7 +538,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
 
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+    <th className="skeuo-table-header px-6 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
       {children}
     </th>
   );

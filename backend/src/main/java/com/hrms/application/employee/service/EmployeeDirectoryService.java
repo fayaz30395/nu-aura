@@ -86,13 +86,14 @@ public class EmployeeDirectoryService {
             // Search term filter
             if (request.getSearchTerm() != null && !request.getSearchTerm().trim().isEmpty()) {
                 String searchPattern = "%" + request.getSearchTerm().toLowerCase() + "%";
-                Predicate namePredicate = cb.like(cb.lower(root.get("fullName")), searchPattern);
+                // Employee entity has firstName + lastName, not fullName or workEmail
+                Predicate firstNamePredicate = cb.like(cb.lower(root.get("firstName")), searchPattern);
+                Predicate lastNamePredicate = cb.like(cb.lower(root.get("lastName")), searchPattern);
                 Predicate emailPredicate = cb.like(cb.lower(root.get("personalEmail")), searchPattern);
-                Predicate workEmailPredicate = cb.like(cb.lower(root.get("workEmail")), searchPattern);
                 Predicate phonePredicate = cb.like(cb.lower(root.get("phoneNumber")), searchPattern);
                 Predicate codePredicate = cb.like(cb.lower(root.get("employeeCode")), searchPattern);
 
-                predicates.add(cb.or(namePredicate, emailPredicate, workEmailPredicate, phonePredicate, codePredicate));
+                predicates.add(cb.or(firstNamePredicate, lastNamePredicate, emailPredicate, phonePredicate, codePredicate));
             }
 
             // Department filter
@@ -166,7 +167,15 @@ public class EmployeeDirectoryService {
             ? Sort.Direction.DESC
             : Sort.Direction.ASC;
 
-        return Sort.by(direction, sortBy);
+        // Map sortBy fields that don't exist on Employee entity to valid fields
+        String resolvedSortBy = sortBy;
+        if ("fullName".equals(sortBy) || "name".equals(sortBy)) {
+            resolvedSortBy = "firstName";
+        } else if ("workEmail".equals(sortBy)) {
+            resolvedSortBy = "personalEmail";
+        }
+
+        return Sort.by(direction, resolvedSortBy != null ? resolvedSortBy : "firstName");
     }
 
     private EmployeeDirectoryResponse mapToDirectoryResponse(
@@ -182,12 +191,18 @@ public class EmployeeDirectoryService {
             ? managerMap.get(employee.getManagerId())
             : null;
 
+        // Build full name from firstName + lastName since Employee entity has no fullName field
+        String fullName = employee.getFirstName() != null ? employee.getFirstName() : "";
+        if (employee.getLastName() != null && !employee.getLastName().isEmpty()) {
+            fullName = fullName.isEmpty() ? employee.getLastName() : fullName + " " + employee.getLastName();
+        }
+
         return EmployeeDirectoryResponse.builder()
             .id(employee.getId())
             .employeeCode(employee.getEmployeeCode())
-            .fullName(employee.getFullName())
+            .fullName(fullName)
             .personalEmail(employee.getPersonalEmail())
-            .workEmail(employee.getPersonalEmail()) // Using personal email as work email
+            .workEmail(employee.getPersonalEmail()) // Employee entity has no workEmail; fallback to personalEmail
             .phoneNumber(employee.getPhoneNumber())
             .departmentId(employee.getDepartmentId())
             .departmentName(department != null ? department.getName() : null)

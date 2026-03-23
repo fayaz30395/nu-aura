@@ -112,6 +112,15 @@ public class BlogPostController {
         return ResponseEntity.ok(posts.map(this::toDto));
     }
 
+    @GetMapping("/active")
+    @Operation(summary = "Get active (published, non-archived) blog posts")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_BLOG_READ)
+    public ResponseEntity<Page<BlogPostDto>> getActivePosts(Pageable pageable) {
+        Page<BlogPost> posts = blogPostService.getPublishedPosts(pageable);
+        return ResponseEntity.ok(posts.map(this::toDto));
+    }
+
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "Get posts by category")
     @ApiResponses.GetList

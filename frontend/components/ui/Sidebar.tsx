@@ -296,11 +296,12 @@ const SidebarMenuItem: React.FC<{
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
-  // Active state styling with CSS variables (dark sidebar aware)
+  // Active state styling with CSS variables (dark sidebar aware) + skeuomorphic depth
   const activeStyles = isActive || isFlyoverOpen ? {
     backgroundColor: 'var(--sidebar-active-bg)',
     borderLeftColor: 'var(--sidebar-active-border)',
     color: 'var(--sidebar-text-active)',
+    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15)',
   } : {
     color: 'var(--sidebar-text)',
   };
@@ -420,7 +421,7 @@ const SectionDivider: React.FC<{
       className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
     >
       <span
-        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
+        className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
         style={{ color: 'var(--sidebar-section-text)' }}
       >
         {label}
@@ -576,6 +577,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             borderColor: 'var(--sidebar-border)',
             width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
             minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+            boxShadow: 'inset -1px 0 0 rgba(255, 255, 255, 0.04)',
           }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
@@ -671,7 +673,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200"
                     >
                       <span
-                        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
+                        className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
                         style={{ color: 'var(--sidebar-section-text)' }}
                       >
                         {section.label}
@@ -718,7 +720,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             style={{ borderTop: '1px solid var(--sidebar-border)' }}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg shadow-sm transition-all duration-200" style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)' }}>
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all duration-200" style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)', boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)' }}>
                 <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/20 transition-colors duration-200">
                   <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
                 </div>

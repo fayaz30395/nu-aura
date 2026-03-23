@@ -30,6 +30,8 @@ export function useActiveLinkedInPosts(page: number = 0, size: number = 10, enab
     queryFn: () => linkedinService.getActiveLinkedInPosts(page, size),
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+    retryDelay: 2000,
   });
 }
 
@@ -43,6 +45,8 @@ export function useAllLinkedInPosts(page: number = 0, size: number = 10, enabled
     queryFn: () => linkedinService.getAllLinkedInPosts(page, size),
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+    retryDelay: 2000,
   });
 }
 

@@ -174,6 +174,13 @@ module.exports = {
         'card-hover': 'var(--shadow-card-hover)',
         'elevated': 'var(--shadow-elevated)',
         'dropdown': 'var(--shadow-dropdown)',
+        // Skeuomorphic shadows (auto-adapt via CSS vars)
+        'skeuo-card': 'var(--shadow-skeuo-card)',
+        'skeuo-card-hover': 'var(--shadow-skeuo-card-hover)',
+        'skeuo-button': 'var(--shadow-skeuo-button)',
+        'skeuo-pressed': 'var(--shadow-skeuo-pressed)',
+        'skeuo-input': 'var(--shadow-skeuo-input)',
+        'skeuo-emboss': 'var(--shadow-skeuo-emboss)',
         'none': 'none',
       },
       // Refined Animation Configuration (Fast, Purposeful)
@@ -257,9 +264,8 @@ module.exports = {
     },
   },
   plugins: [
-    // Minimal utility plugins
+    // Utility plugins
     function({ addUtilities }) {
-      // No glassmorphism — clean, solid surfaces
       addUtilities({
         '.surface-hover': {
           transition: 'background-color 150ms ease-out, border-color 150ms ease-out',
@@ -267,6 +273,27 @@ module.exports = {
         '.surface-hover:hover': {
           backgroundColor: 'var(--bg-card-hover)',
           borderColor: 'var(--border-strong)',
+        },
+        // Skeuomorphic glass background utilities
+        '.glass-bg': {
+          background: 'var(--glass-bg)',
+          backdropFilter: 'blur(var(--glass-blur))',
+          '-webkit-backdrop-filter': 'blur(var(--glass-blur))',
+          border: '1px solid var(--glass-border)',
+        },
+        // Noise texture overlay
+        '.noise-texture': {
+          position: 'relative',
+        },
+        '.noise-texture::after': {
+          content: '""',
+          position: 'absolute',
+          inset: '0',
+          borderRadius: 'inherit',
+          backgroundImage: 'var(--skeuo-noise)',
+          backgroundRepeat: 'repeat',
+          pointerEvents: 'none',
+          opacity: '0.35',
         },
       });
     },

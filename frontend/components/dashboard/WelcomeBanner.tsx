@@ -25,9 +25,9 @@ export function WelcomeBanner({
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
 
   return (
-    <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 px-6 py-5 dark:from-primary-700 dark:via-primary-600 dark:to-primary-800 flex flex-col justify-center">
+    <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 px-6 py-5 dark:from-primary-700 dark:via-primary-600 dark:to-primary-800 flex flex-col justify-center" style={{ boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(13, 148, 136, 0.25), 0 8px 24px rgba(13, 148, 136, 0.15)' }}>
       {/* Subtle texture overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.06),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.08),transparent_60%)]" />
 
       <div className="relative z-10 flex items-center justify-between">
         <div>
@@ -55,7 +55,7 @@ export function QuickAccessWidget({
   const hasNoPending = totalPending === 0;
 
   return (
-    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+    <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold text-[var(--text-primary)]">
           Quick Access

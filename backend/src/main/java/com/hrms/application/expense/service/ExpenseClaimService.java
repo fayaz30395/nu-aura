@@ -54,7 +54,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse createExpenseClaim(UUID employeeId, ExpenseClaimRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         // Validate employee exists
         if (!employeeRepository.existsByIdAndTenantId(employeeId, tenantId)) {
@@ -84,7 +84,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse updateExpenseClaim(UUID claimId, ExpenseClaimRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
@@ -111,7 +111,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse submitExpenseClaim(UUID claimId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
@@ -128,7 +128,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse approveExpenseClaim(UUID claimId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID approverId = SecurityContext.getCurrentEmployeeId();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
@@ -146,7 +146,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse rejectExpenseClaim(UUID claimId, String reason) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         UUID rejecterId = SecurityContext.getCurrentEmployeeId();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
@@ -164,7 +164,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse markAsPaid(UUID claimId, LocalDate paymentDate, String paymentReference) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
@@ -178,7 +178,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public void cancelExpenseClaim(UUID claimId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
@@ -190,7 +190,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public ExpenseClaimResponse getExpenseClaim(UUID claimId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
@@ -210,10 +210,12 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getAllExpenseClaims(Specification<ExpenseClaim> spec, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        return expenseClaimRepository.findAll(tenantSpec.and(spec), pageable)
-                .map(claim -> enrichResponse(ExpenseClaimResponse.fromEntity(claim)));
+        Page<ExpenseClaim> page = expenseClaimRepository.findAll(tenantSpec.and(spec), pageable);
+        List<ExpenseClaimResponse> enriched = enrichResponses(
+                page.getContent().stream().map(ExpenseClaimResponse::fromEntity).collect(java.util.stream.Collectors.toList()));
+        return new org.springframework.data.domain.PageImpl<>(enriched, pageable, page.getTotalElements());
     }
 
     @Transactional(readOnly = true)
@@ -224,9 +226,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         // Validate user has access to this employee's expense claims
         validateEmployeeAccess(employeeId, permission);
 
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return expenseClaimRepository.findAllByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
-                .map(claim -> enrichResponse(ExpenseClaimResponse.fromEntity(claim)));
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Page<ExpenseClaim> page = expenseClaimRepository.findAllByEmployeeIdAndTenantId(employeeId, tenantId, pageable);
+        List<ExpenseClaimResponse> enriched = enrichResponses(
+                page.getContent().stream().map(ExpenseClaimResponse::fromEntity).collect(java.util.stream.Collectors.toList()));
+        return new org.springframework.data.domain.PageImpl<>(enriched, pageable, page.getTotalElements());
     }
 
     @Transactional(readOnly = true)
@@ -239,11 +243,13 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getExpenseClaimsByStatus(ExpenseClaim.ExpenseStatus status,
             Specification<ExpenseClaim> spec, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), status);
-        return expenseClaimRepository.findAll(tenantSpec.and(statusSpec).and(spec), pageable)
-                .map(claim -> enrichResponse(ExpenseClaimResponse.fromEntity(claim)));
+        Page<ExpenseClaim> page = expenseClaimRepository.findAll(tenantSpec.and(statusSpec).and(spec), pageable);
+        List<ExpenseClaimResponse> enriched = enrichResponses(
+                page.getContent().stream().map(ExpenseClaimResponse::fromEntity).collect(java.util.stream.Collectors.toList()));
+        return new org.springframework.data.domain.PageImpl<>(enriched, pageable, page.getTotalElements());
     }
 
     @Transactional(readOnly = true)
@@ -254,15 +260,17 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getPendingApprovals(Specification<ExpenseClaim> spec, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<ExpenseClaim.ExpenseStatus> pendingStatuses = List.of(
                 ExpenseClaim.ExpenseStatus.SUBMITTED,
                 ExpenseClaim.ExpenseStatus.PENDING_APPROVAL
         );
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> statusSpec = (root, query, cb) -> root.get("status").in(pendingStatuses);
-        return expenseClaimRepository.findAll(tenantSpec.and(statusSpec).and(spec), pageable)
-                .map(claim -> enrichResponse(ExpenseClaimResponse.fromEntity(claim)));
+        Page<ExpenseClaim> page = expenseClaimRepository.findAll(tenantSpec.and(statusSpec).and(spec), pageable);
+        List<ExpenseClaimResponse> enriched = enrichResponses(
+                page.getContent().stream().map(ExpenseClaimResponse::fromEntity).collect(java.util.stream.Collectors.toList()));
+        return new org.springframework.data.domain.PageImpl<>(enriched, pageable, page.getTotalElements());
     }
 
     @Transactional(readOnly = true)
@@ -275,11 +283,13 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getExpenseClaimsByDateRange(LocalDate startDate, LocalDate endDate,
             Specification<ExpenseClaim> spec, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> dateSpec = (root, query, cb) -> cb.between(root.get("claimDate"), startDate, endDate);
-        return expenseClaimRepository.findAll(tenantSpec.and(dateSpec).and(spec), pageable)
-                .map(claim -> enrichResponse(ExpenseClaimResponse.fromEntity(claim)));
+        Page<ExpenseClaim> page = expenseClaimRepository.findAll(tenantSpec.and(dateSpec).and(spec), pageable);
+        List<ExpenseClaimResponse> enriched = enrichResponses(
+                page.getContent().stream().map(ExpenseClaimResponse::fromEntity).collect(java.util.stream.Collectors.toList()));
+        return new org.springframework.data.domain.PageImpl<>(enriched, pageable, page.getTotalElements());
     }
 
     @Transactional(readOnly = true)
@@ -292,7 +302,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Map<String, Object> getExpenseSummary(LocalDate startDate, LocalDate endDate,
             Specification<ExpenseClaim> spec) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> dateSpec = (root, query, cb) -> cb.between(root.get("claimDate"), startDate, endDate);
 
@@ -402,19 +412,27 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     // ======================== Claim Number Generation ========================
 
-    private String generateClaimNumber(UUID tenantId) {
+    /**
+     * HIGH-003 FIX: Generates a unique claim number using synchronized block to prevent
+     * race conditions where concurrent requests could read the same max number and
+     * produce duplicate claim numbers.
+     *
+     * Additionally appends a UUID fragment as a safety net for edge cases where
+     * two JVM instances could generate the same number.
+     */
+    private synchronized String generateClaimNumber(UUID tenantId) {
         String prefix = "EXP-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "-";
         String maxNumber = expenseClaimRepository.findMaxClaimNumber(tenantId);
 
         int nextNumber = 1;
         if (maxNumber != null && maxNumber.startsWith(prefix)) {
             try {
-                String numPart = maxNumber.substring(prefix.length());
+                // Extract only the numeric part (first 4 chars after prefix) to handle
+                // claim numbers that may have a UUID suffix appended
+                String afterPrefix = maxNumber.substring(prefix.length());
+                String numPart = afterPrefix.length() > 4 ? afterPrefix.substring(0, 4) : afterPrefix;
                 nextNumber = Integer.parseInt(numPart) + 1;
             } catch (NumberFormatException e) {
-                // The stored max claim number has an unexpected suffix format.
-                // Fall back to sequence restart (1) so the insert can proceed,
-                // but log a warning so the issue is visible in monitoring.
                 log.warn("generateClaimNumber: could not parse numeric suffix from '{}' (prefix='{}') — " +
                         "resetting sequence to 1 for tenant {}. Check for data corruption.", maxNumber, prefix, tenantId);
             }
@@ -423,24 +441,50 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         return prefix + String.format("%04d", nextNumber);
     }
 
+    /**
+     * Enrich a single response with employee names. Used for single-entity endpoints.
+     * For paginated results, use {@link #enrichResponses(List)} to avoid N+1 queries.
+     */
     private ExpenseClaimResponse enrichResponse(ExpenseClaimResponse response) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        return enrichResponses(List.of(response)).get(0);
+    }
 
-        // Enrich with employee name
-        employeeRepository.findByIdAndTenantId(response.getEmployeeId(), tenantId)
-                .ifPresent(emp -> response.setEmployeeName(emp.getFirstName() + " " + emp.getLastName()));
+    /**
+     * Batch-enrich multiple responses with employee names using a single query
+     * instead of N individual lookups (N+1 query fix for paginated endpoints).
+     */
+    private List<ExpenseClaimResponse> enrichResponses(List<ExpenseClaimResponse> responses) {
+        if (responses.isEmpty()) return responses;
 
-        // Enrich with approver/rejecter names if applicable
-        if (response.getApprovedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getApprovedBy(), tenantId)
-                    .ifPresent(emp -> response.setApprovedByName(emp.getFirstName() + " " + emp.getLastName()));
+        // Collect all employee IDs needed for enrichment
+        Set<UUID> employeeIds = new HashSet<>();
+        for (ExpenseClaimResponse r : responses) {
+            if (r.getEmployeeId() != null) employeeIds.add(r.getEmployeeId());
+            if (r.getApprovedBy() != null) employeeIds.add(r.getApprovedBy());
+            if (r.getRejectedBy() != null) employeeIds.add(r.getRejectedBy());
         }
-        if (response.getRejectedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getRejectedBy(), tenantId)
-                    .ifPresent(emp -> response.setRejectedByName(emp.getFirstName() + " " + emp.getLastName()));
+
+        if (employeeIds.isEmpty()) return responses;
+
+        // Single batch query
+        Map<UUID, String> nameMap = new HashMap<>();
+        employeeRepository.findAllById(employeeIds)
+                .forEach(emp -> nameMap.put(emp.getId(), emp.getFirstName() + " " + emp.getLastName()));
+
+        // Enrich all responses from the map
+        for (ExpenseClaimResponse r : responses) {
+            if (r.getEmployeeId() != null && nameMap.containsKey(r.getEmployeeId())) {
+                r.setEmployeeName(nameMap.get(r.getEmployeeId()));
+            }
+            if (r.getApprovedBy() != null && nameMap.containsKey(r.getApprovedBy())) {
+                r.setApprovedByName(nameMap.get(r.getApprovedBy()));
+            }
+            if (r.getRejectedBy() != null && nameMap.containsKey(r.getRejectedBy())) {
+                r.setRejectedByName(nameMap.get(r.getRejectedBy()));
+            }
         }
 
-        return response;
+        return responses;
     }
 
     // ==================== Scope Validation Helpers ====================
@@ -549,7 +593,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         if (locationIds == null || locationIds.isEmpty()) {
             return false;
         }
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .map(emp -> emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId()))
                 .orElse(false);
@@ -560,7 +604,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         if (departmentId == null) {
             return false;
         }
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .map(emp -> departmentId.equals(emp.getDepartmentId()))
                 .orElse(false);
@@ -573,25 +617,26 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             return true;
         }
 
-        // Check if employee's department is in custom department targets
         Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
-        if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
-            UUID tenantId = TenantContext.getCurrentTenant();
-            Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
-            if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
-                    && customDepartmentIds.contains(empOpt.get().getDepartmentId())) {
-                return true;
-            }
-        }
-
-        // Check if employee's location is in custom location targets
         Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
-        if (customLocationIds != null && !customLocationIds.isEmpty()) {
-            UUID tenantId = TenantContext.getCurrentTenant();
+
+        boolean needsDeptCheck = customDepartmentIds != null && !customDepartmentIds.isEmpty();
+        boolean needsLocCheck = customLocationIds != null && !customLocationIds.isEmpty();
+
+        // Single DB lookup for both department and location checks
+        if (needsDeptCheck || needsLocCheck) {
+            UUID tenantId = TenantContext.requireCurrentTenant();
             Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
-            if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
-                    && customLocationIds.contains(empOpt.get().getOfficeLocationId())) {
-                return true;
+            if (empOpt.isPresent()) {
+                Employee emp = empOpt.get();
+                if (needsDeptCheck && emp.getDepartmentId() != null
+                        && customDepartmentIds.contains(emp.getDepartmentId())) {
+                    return true;
+                }
+                if (needsLocCheck && emp.getOfficeLocationId() != null
+                        && customLocationIds.contains(emp.getOfficeLocationId())) {
+                    return true;
+                }
             }
         }
 

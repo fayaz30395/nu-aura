@@ -35,8 +35,11 @@ public class ExpenseClaimController {
     @PostMapping("/employees/{employeeId}")
     @RequiresPermission(Permission.EXPENSE_CREATE)
     public ResponseEntity<ExpenseClaimResponse> createExpenseClaim(
-            @PathVariable UUID employeeId,
+            @PathVariable("employeeId") UUID employeeId,
             @Valid @RequestBody ExpenseClaimRequest request) {
+        if (employeeId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         log.info("Creating expense claim for employee: {}", employeeId);
         ExpenseClaimResponse response = expenseClaimService.createExpenseClaim(employeeId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -123,8 +126,11 @@ public class ExpenseClaimController {
             Permission.EXPENSE_MANAGE
     })
     public ResponseEntity<Page<ExpenseClaimResponse>> getExpenseClaimsByEmployee(
-            @PathVariable UUID employeeId,
+            @PathVariable("employeeId") UUID employeeId,
             Pageable pageable) {
+        if (employeeId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(expenseClaimService.getExpenseClaimsByEmployee(employeeId, pageable));
     }
 
