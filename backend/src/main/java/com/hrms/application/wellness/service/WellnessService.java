@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -235,10 +236,16 @@ public class WellnessService {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<WellnessPoints> topPoints = pointsRepository.findTopByPoints(tenantId, PageRequest.of(0, limit));
 
+        List<UUID> employeeIds = topPoints.stream()
+                .map(WellnessPoints::getEmployeeId)
+                .collect(Collectors.toList());
+        Map<UUID, User> userMap = userRepository.findAllById(employeeIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
         List<WellnessDashboard.LeaderboardEntry> leaderboard = new ArrayList<>();
         int rank = 1;
         for (WellnessPoints wp : topPoints) {
-            User user = userRepository.findById(wp.getEmployeeId()).orElse(null);
+            User user = userMap.get(wp.getEmployeeId());
             leaderboard.add(WellnessDashboard.LeaderboardEntry.builder()
                     .rank(rank++)
                     .id(wp.getEmployeeId())
@@ -253,10 +260,16 @@ public class WellnessService {
     public List<WellnessDashboard.LeaderboardEntry> getChallengeLeaderboard(UUID challengeId, int limit) {
         List<ChallengeParticipant> participants = participantRepository.findLeaderboard(challengeId, PageRequest.of(0, limit));
 
+        List<UUID> employeeIds = participants.stream()
+                .map(ChallengeParticipant::getEmployeeId)
+                .collect(Collectors.toList());
+        Map<UUID, User> userMap = userRepository.findAllById(employeeIds).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+
         List<WellnessDashboard.LeaderboardEntry> leaderboard = new ArrayList<>();
         int rank = 1;
         for (ChallengeParticipant p : participants) {
-            User user = userRepository.findById(p.getEmployeeId()).orElse(null);
+            User user = userMap.get(p.getEmployeeId());
             leaderboard.add(WellnessDashboard.LeaderboardEntry.builder()
                     .rank(rank++)
                     .id(p.getEmployeeId())

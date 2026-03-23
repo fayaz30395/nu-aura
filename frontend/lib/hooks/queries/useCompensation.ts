@@ -234,8 +234,10 @@ export function useApproveRevision() {
       queryClient.setQueryData(compensationKeys.revisionDetail(data.id), data);
       // Invalidate revision lists to refresh status
       queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
-      // Invalidate pending approvals
-      queryClient.invalidateQueries({ queryKey: compensationKeys.pendingApprovals(0, 10) });
+      // Invalidate ALL pending approval pages (not just page 0/size 10)
+      queryClient.invalidateQueries({
+        queryKey: [...compensationKeys.revisions(), 'pending'],
+      });
     },
   });
 }
@@ -254,8 +256,10 @@ export function useRejectRevision() {
       queryClient.setQueryData(compensationKeys.revisionDetail(data.id), data);
       // Invalidate revision lists to refresh status
       queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
-      // Invalidate pending approvals
-      queryClient.invalidateQueries({ queryKey: compensationKeys.pendingApprovals(0, 10) });
+      // Invalidate ALL pending approval pages (not just page 0/size 10)
+      queryClient.invalidateQueries({
+        queryKey: [...compensationKeys.revisions(), 'pending'],
+      });
     },
   });
 }
