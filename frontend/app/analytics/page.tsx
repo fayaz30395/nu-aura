@@ -99,7 +99,7 @@ export default function AnalyticsPage() {
 
   if (!hasHydrated || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
           <p className="text-[var(--text-muted)] font-medium">Loading analytics...</p>

@@ -340,7 +340,7 @@ export default function HomePage() {
                       : activeWallTab === 'Praise' ? 'Give a shout-out to a colleague...'
                       : 'Ask a question to your team...'
                     }
-                    className="w-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]900 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-brand-200 dark:focus:ring-primary-700 focus:border-brand-300 dark:focus:border-primary-600 resize-none"
+                    className="w-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-brand-200 dark:focus:ring-primary-700 focus:border-brand-300 dark:focus:border-primary-600 resize-none"
                     rows={2}
                     value={postContent}
                     onChange={(e) => setPostContent(e.target.value)}

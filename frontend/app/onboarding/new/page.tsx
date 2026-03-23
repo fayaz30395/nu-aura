@@ -123,7 +123,7 @@ export default function NewOnboardingPage() {
                             <div key={step.id} className="flex items-center">
                                 <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${currentStep >= step.id
                                         ? 'bg-primary-600 border-primary-600 text-white shadow-lg'
-                                        : 'bg-white border-[var(--border-main)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)]900'
+                                        : 'bg-white border-[var(--border-main)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)]'
                                     }`}>
                                     <step.icon className="h-5 w-5" />
                                 </div>
@@ -242,7 +242,7 @@ export default function NewOnboardingPage() {
                                             type="date"
                                             value={formData.startDate}
                                             onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                            className="rounded-2xl border-0 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 font-bold"
+                                            className="rounded-2xl border-0 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-bold"
                                         />
                                     </div>
                                     <div>
