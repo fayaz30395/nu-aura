@@ -316,7 +316,6 @@ public class PermissionMigrationService {
             this.success = success;
         }
 
-        @Transactional(readOnly = true)
         public String getErrorMessage() {
             return errorMessage;
         }
@@ -325,7 +324,6 @@ public class PermissionMigrationService {
             this.errorMessage = errorMessage;
         }
 
-        @Transactional(readOnly = true)
         public int getPermissionsMigrated() {
             return permissionsMigrated;
         }
@@ -334,7 +332,6 @@ public class PermissionMigrationService {
             this.permissionsMigrated = permissionsMigrated;
         }
 
-        @Transactional(readOnly = true)
         public int getRolesMigrated() {
             return rolesMigrated;
         }
@@ -343,7 +340,6 @@ public class PermissionMigrationService {
             this.rolesMigrated = rolesMigrated;
         }
 
-        @Transactional(readOnly = true)
         public int getUsersProcessed() {
             return usersProcessed;
         }
@@ -352,32 +348,26 @@ public class PermissionMigrationService {
             this.usersProcessed = usersProcessed;
         }
 
-        @Transactional(readOnly = true)
         public Map<String, String> getMappedPermissions() {
             return mappedPermissions;
         }
 
-        @Transactional(readOnly = true)
         public Map<String, Integer> getMappedRoles() {
             return mappedRoles;
         }
 
-        @Transactional(readOnly = true)
         public Map<String, List<String>> getProcessedUsers() {
             return processedUsers;
         }
 
-        @Transactional
         public void addMappedPermission(String oldCode, String newCode) {
             mappedPermissions.put(oldCode, newCode);
         }
 
-        @Transactional
         public void addMappedRole(String roleCode, int permissionCount) {
             mappedRoles.put(roleCode, permissionCount);
         }
 
-        @Transactional
         public void addProcessedUser(String email, List<String> roles) {
             processedUsers.put(email, roles);
         }

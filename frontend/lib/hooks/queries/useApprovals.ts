@@ -133,7 +133,8 @@ export function useApproveExecution() {
     mutationFn: ({ executionId, comments }: { executionId: string; comments?: string }) =>
       workflowService.approveExecution(executionId, comments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: approvalKeys.all });
+      queryClient.invalidateQueries({ queryKey: approvalKeys.inbox() });
+      queryClient.invalidateQueries({ queryKey: approvalKeys.inboxCount() });
     },
   });
 }
@@ -145,7 +146,8 @@ export function useRejectExecution() {
     mutationFn: ({ executionId, comments }: { executionId: string; comments?: string }) =>
       workflowService.rejectExecution(executionId, comments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: approvalKeys.all });
+      queryClient.invalidateQueries({ queryKey: approvalKeys.inbox() });
+      queryClient.invalidateQueries({ queryKey: approvalKeys.inboxCount() });
     },
   });
 }
