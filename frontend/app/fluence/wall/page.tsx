@@ -7,11 +7,11 @@ import {
   Grid,
   Paper,
   Stack,
-  Skeleton,
   Group,
   Badge,
 } from '@mantine/core';
-import { IconTrendingUp, IconActivity } from '@tabler/icons-react';
+import { IconTrendingUp, IconActivity, IconFlame } from '@tabler/icons-react';
+import { AppLayout } from '@/components/layout';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
 
 function TrendingSidebar() {
@@ -23,13 +23,10 @@ function TrendingSidebar() {
           Trending Content
         </Text>
       </Group>
-      <Stack gap="sm">
-        <Skeleton height={16} width="80%" />
-        <Skeleton height={16} width="65%" />
-        <Skeleton height={16} width="90%" />
-        <Skeleton height={16} width="70%" />
-        <Text size="xs" c="dimmed" mt="xs">
-          Trending content coming soon...
+      <Stack gap="sm" align="center" py="md">
+        <IconFlame size={32} stroke={1.5} style={{ color: 'var(--mantine-color-dimmed)' }} />
+        <Text size="xs" c="dimmed" ta="center">
+          No trending content yet. Start creating and sharing to see what is popular.
         </Text>
       </Stack>
     </Paper>
@@ -38,6 +35,7 @@ function TrendingSidebar() {
 
 export default function WallPage() {
   return (
+    <AppLayout>
     <Container size="xl" py="lg">
       <Group gap="sm" mb="lg">
         <IconActivity size={28} />
@@ -62,5 +60,6 @@ export default function WallPage() {
         </Grid.Col>
       </Grid>
     </Container>
+    </AppLayout>
   );
 }

@@ -367,7 +367,7 @@ export default function OnboardingDetailPage() {
                                         </div>
                                     </div>
                                     {process.notes && (
-                                        <div className="p-4 rounded-2xl bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900/50">
+                                        <div className="p-4 rounded-2xl bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50">
                                             <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1 flex items-center gap-1">
                                                 <MessageSquare className="h-3 w-3" /> Note
                                             </p>

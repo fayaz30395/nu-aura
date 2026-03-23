@@ -341,7 +341,7 @@ export default function ApprovalInboxPage() {
         </div>
 
         {/* Filters Row */}
-        <div className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900/40 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/40 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-4">
             {/* Status toggle */}
             <div className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
