@@ -81,6 +81,7 @@ describe('useAnimation hooks', () => {
 
   describe('useStaggerDelay', () => {
     it('returns delay based on index', () => {
+      vi.mocked(framerMotionModule.useReducedMotion).mockReturnValue(false);
       const { result: result0 } = renderHook(() => useStaggerDelay(0));
       const { result: result1 } = renderHook(() => useStaggerDelay(1));
       const { result: result2 } = renderHook(() => useStaggerDelay(2));
@@ -91,6 +92,7 @@ describe('useAnimation hooks', () => {
     });
 
     it('accepts custom base delay', () => {
+      vi.mocked(framerMotionModule.useReducedMotion).mockReturnValue(false);
       const { result: result0 } = renderHook(() => useStaggerDelay(0, 100));
       const { result: result1 } = renderHook(() => useStaggerDelay(1, 100));
 

@@ -85,6 +85,7 @@ class RoleManagementServiceTest {
         role.setDescription("Developer role");
         role.setIsSystemRole(false);
         role.setTenantId(tenantId);
+        role.setParentRoleId(UUID.randomUUID());
 
         // Create RolePermission objects for each permission
         RolePermission rp1 = RolePermission.builder()

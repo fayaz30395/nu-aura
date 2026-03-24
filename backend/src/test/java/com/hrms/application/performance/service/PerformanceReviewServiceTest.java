@@ -85,6 +85,7 @@ class PerformanceReviewServiceTest {
         reviewCycleId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         // Setup employee
         employee = new Employee();

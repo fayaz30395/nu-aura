@@ -75,6 +75,7 @@ class InterviewGenerationServiceTest {
         candidateId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         jobOpening = new JobOpening();
         jobOpening.setId(jobOpeningId);

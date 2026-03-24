@@ -79,6 +79,7 @@ class ScheduledReportServiceTest {
         tenantId = UUID.randomUUID();
         createdBy = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         // Setup ObjectMapper mock with TypeFactory
         TypeFactory typeFactory = mock(TypeFactory.class);

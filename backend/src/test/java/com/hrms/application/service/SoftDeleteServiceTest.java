@@ -99,7 +99,7 @@ class SoftDeleteServiceTest {
             dept.setId(ENTITY_ID);
             dept.setTenantId(TENANT_ID);
 
-            when(departmentRepository.findById(ENTITY_ID)).thenReturn(Optional.of(dept));
+            when(departmentRepository.findByIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(Optional.of(dept));
             when(employeeRepository.countByDepartmentIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(0L);
             when(departmentRepository.countByTenantIdAndParentDepartmentId(TENANT_ID, ENTITY_ID)).thenReturn(0L);
             when(departmentRepository.save(any(Department.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -268,7 +268,7 @@ class SoftDeleteServiceTest {
             leaveType.setId(ENTITY_ID);
             leaveType.setTenantId(TENANT_ID);
 
-            when(leaveTypeRepository.findById(ENTITY_ID)).thenReturn(Optional.of(leaveType));
+            when(leaveTypeRepository.findByIdAndTenantId(ENTITY_ID, TENANT_ID)).thenReturn(Optional.of(leaveType));
             when(leaveTypeRepository.save(any(LeaveType.class))).thenAnswer(inv -> inv.getArgument(0));
             when(auditLogService.logAction(anyString(), any(), any(), any(), any(), anyString()))
                     .thenReturn(new AuditLog());

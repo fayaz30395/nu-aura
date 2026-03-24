@@ -512,7 +512,7 @@ describe('WellnessService', () => {
       const result = await wellnessService.getHealthLogs(startDate, endDate);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        `/api/v1/wellness/health-logs?startDate=${startDate}&endDate=${endDate}`
+        `/wellness/health-logs?startDate=${startDate}&endDate=${endDate}`
       );
       expect(result).toHaveLength(2);
     });

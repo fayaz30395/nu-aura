@@ -58,6 +58,7 @@ class PayrollRunServiceTest {
         userId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         payrollRun = PayrollRun.builder()
                 .payPeriodYear(2025)

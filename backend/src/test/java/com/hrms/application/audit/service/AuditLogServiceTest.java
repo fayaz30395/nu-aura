@@ -73,6 +73,7 @@ class AuditLogServiceTest {
         entityId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
         securityContextMock.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 

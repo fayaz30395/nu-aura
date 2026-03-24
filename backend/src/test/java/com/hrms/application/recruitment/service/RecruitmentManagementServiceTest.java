@@ -102,6 +102,7 @@ class RecruitmentManagementServiceTest {
         interviewerId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(hiringManagerId);
         securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_ALL))

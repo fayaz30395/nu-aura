@@ -67,6 +67,7 @@ class AttendanceRecordServiceTest {
         checkOutTime = LocalDateTime.now().withHour(18).withMinute(0);
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         attendanceRecord = AttendanceRecord.builder()
                 .employeeId(employeeId)
@@ -235,6 +236,7 @@ class AttendanceRecordServiceTest {
         @BeforeEach
         void resetTenantContext() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         }
 
         @Test
@@ -433,6 +435,7 @@ class AttendanceRecordServiceTest {
         @BeforeEach
         void resetTenantContext() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         }
 
         @Test
@@ -544,6 +547,7 @@ class AttendanceRecordServiceTest {
         @BeforeEach
         void resetTenantContext() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         }
 
         @Test
@@ -624,6 +628,7 @@ class AttendanceRecordServiceTest {
         @BeforeEach
         void resetTenantContext() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         }
 
         @Test
@@ -770,6 +775,7 @@ class AttendanceRecordServiceTest {
         @BeforeEach
         void resetTenantContext() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         }
 
         @Test
