@@ -1,5 +1,0 @@
-com/nulogic/common/entity/TenantAware.class
-com/nulogic/common/security/RequiresPermission.class
-com/nulogic/common/entity/BaseEntity.class
-com/nulogic/common/security/Permission.class
-com/nulogic/common/security/TenantContext.class
