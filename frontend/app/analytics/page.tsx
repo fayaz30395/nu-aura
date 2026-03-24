@@ -101,7 +101,7 @@ export default function AnalyticsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
           <p className="text-[var(--text-muted)] font-medium">Loading analytics...</p>
         </div>
       </div>
@@ -166,7 +166,7 @@ export default function AnalyticsPage() {
                   onClick={() => setTimeRange(range)}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     timeRange === range
-                      ? 'bg-primary-600 text-white'
+                      ? 'bg-sky-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
                   }`}
                 >
@@ -232,8 +232,8 @@ export default function AnalyticsPage() {
                     <span className="text-xs text-[var(--text-muted)]">vs last month</span>
                   </div>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-sky-700 dark:text-sky-400" />
                 </div>
               </div>
             </CardContent>
@@ -310,7 +310,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-primary-600" />
+                <Activity className="h-5 w-5 text-sky-700" />
                 Attendance Trend
               </CardTitle>
               <CardDescription>Daily attendance over time</CardDescription>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Stack,
   SegmentedControl,
@@ -27,12 +27,21 @@ export default function ActivityFeed() {
   const [contentType, setContentType] = useState('');
   const [page, setPage] = useState(0);
 
-  const { data, isLoading, isError } = useActivityFeed(
+  // Safety: stop showing spinner after 8s if the API is slow/unreachable
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  useEffect(() => {
+    setLoadingTimedOut(false);
+    const timer = setTimeout(() => setLoadingTimedOut(true), 8000);
+    return () => clearTimeout(timer);
+  }, [page, contentType]);
+
+  const { data, isLoading: queryLoading, isError } = useActivityFeed(
     page,
     PAGE_SIZE,
     contentType || undefined
   );
 
+  const isLoading = queryLoading && !loadingTimedOut;
   const activities = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
 
@@ -62,12 +71,14 @@ export default function ActivityFeed() {
         </Center>
       )}
 
-      {!isLoading && !isError && activities.length === 0 && (
+      {!isLoading && activities.length === 0 && (
         <Center py="xl">
           <Stack align="center" gap="xs">
             <IconActivity size={48} color="var(--mantine-color-dimmed)" />
             <Text c="dimmed" size="sm">
-              No activity yet. Create or edit content to see it here.
+              {isError || loadingTimedOut
+                ? 'Unable to load activity feed. The service may be temporarily unavailable.'
+                : 'No activity yet. Create or edit content to see it here.'}
             </Text>
           </Stack>
         </Center>

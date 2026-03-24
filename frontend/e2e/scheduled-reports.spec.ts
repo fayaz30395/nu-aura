@@ -24,15 +24,15 @@ test.describe('Scheduled Reports Page', () => {
 
     // Click Active filter
     await activeButton.click();
-    await expect(activeButton).toHaveClass(/bg-primary-600/);
+    await expect(activeButton).toHaveClass(/bg-sky-700/);
 
     // Click Inactive filter
     await inactiveButton.click();
-    await expect(inactiveButton).toHaveClass(/bg-primary-600/);
+    await expect(inactiveButton).toHaveClass(/bg-sky-700/);
 
     // Click All filter
     await allButton.click();
-    await expect(allButton).toHaveClass(/bg-primary-600/);
+    await expect(allButton).toHaveClass(/bg-sky-700/);
   });
 
   test('should open create schedule modal', async ({ page }) => {

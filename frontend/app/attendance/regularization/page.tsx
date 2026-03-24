@@ -256,7 +256,7 @@ export default function RegularizationPage() {
                 Request corrections for your attendance records
               </p>
             </div>
-            <Button onClick={handleOpenCreate} className="bg-primary-500 hover:bg-primary-600 text-white">
+            <Button onClick={handleOpenCreate} className="bg-sky-500 hover:bg-sky-700 text-white">
               <Plus className="h-4 w-4 mr-2" />
               Request Regularization
             </Button>

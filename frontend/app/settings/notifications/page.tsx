@@ -123,7 +123,7 @@ export default function NotificationSettingsPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading preferences...</span>
         </div>
       </AppLayout>
@@ -175,7 +175,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'email')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.email ? 'bg-primary-600' : 'bg-[var(--border-main)]'
+                        pref.email ? 'bg-sky-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -190,7 +190,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'push')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.push ? 'bg-primary-600' : 'bg-[var(--border-main)]'
+                        pref.push ? 'bg-sky-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -205,7 +205,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'inApp')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.inApp ? 'bg-primary-600' : 'bg-[var(--border-main)]'
+                        pref.inApp ? 'bg-sky-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span

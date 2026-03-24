@@ -74,7 +74,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('my-drive')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'my-drive'
-              ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+              ? 'border-sky-500 text-sky-700 dark:text-sky-400'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -85,7 +85,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('shared')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'shared'
-              ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+              ? 'border-sky-500 text-sky-700 dark:text-sky-400'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -96,7 +96,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('starred')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'starred'
-              ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+              ? 'border-sky-500 text-sky-700 dark:text-sky-400'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -107,7 +107,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('recent')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'recent'
-              ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+              ? 'border-sky-500 text-sky-700 dark:text-sky-400'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -131,13 +131,13 @@ export function DriveToolbar({
           <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
             <button
               onClick={() => onViewModeChange('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
+              className={`p-2 ${viewMode === 'grid' ? 'bg-sky-50 dark:bg-sky-950 text-sky-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
               <Grid className="h-4 w-4" />
             </button>
             <button
               onClick={() => onViewModeChange('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
+              className={`p-2 ${viewMode === 'list' ? 'bg-sky-50 dark:bg-sky-950 text-sky-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
               <List className="h-4 w-4" />
             </button>
@@ -153,7 +153,7 @@ export function DriveToolbar({
               {index > 0 && <span className="text-[var(--text-muted)]">/</span>}
               <button
                 onClick={() => onNavigateToFolder(crumb.id, crumb.name)}
-                className={`hover:text-primary-600 ${index === breadcrumbs.length - 1
+                className={`hover:text-sky-700 ${index === breadcrumbs.length - 1
                     ? 'text-[var(--text-primary)] font-medium'
                     : 'text-[var(--text-muted)]'
                   }`}
@@ -179,7 +179,7 @@ export function DriveToolbar({
           </Button>
           <label className="cursor-pointer">
             <input type="file" className="hidden" onChange={onFileSelect} />
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-sky-700 hover:bg-sky-700 text-white text-sm font-medium rounded-lg transition-colors">
               <UploadCloud className="h-4 w-4" />
               Upload File
             </span>
@@ -240,7 +240,7 @@ export function DriveEmptyState({
               </Button>
               <label className="cursor-pointer">
                 <input type="file" className="hidden" onChange={onFileSelect} />
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-sky-700 hover:bg-sky-700 text-white text-sm font-medium rounded-lg transition-colors">
                   <UploadCloud className="h-4 w-4" />
                   Upload File
                 </span>

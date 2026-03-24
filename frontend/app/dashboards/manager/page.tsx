@@ -155,11 +155,11 @@ export default function ManagerDashboardPage() {
         <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">Live Insights</span>
+              <div className="h-2 w-2 rounded-full bg-sky-500 animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400">Live Insights</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl">
-              Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400 skeuo-emboss">Pulse</span>
+              Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-700 to-indigo-600 dark:from-sky-400 dark:to-indigo-400 skeuo-emboss">Pulse</span>
             </h1>
             <p className="text-[var(--text-secondary)] mt-2 text-lg">
               Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
@@ -181,17 +181,17 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative skeuo-card">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Users className="h-16 w-16 text-primary-500" />
+                <Users className="h-16 w-16 text-sky-500" />
               </div>
               <CardContent className="p-8">
                 <div className="flex flex-col gap-4">
                   <p className="text-sm font-bold uppercase tracking-widest text-[var(--text-muted)]">Team Force</p>
                   <div className="flex items-center gap-4">
                     <span className="text-5xl font-black text-[var(--text-primary)]">{teamOverview.totalTeamSize}</span>
-                    <div className="h-10 w-1 rounded-full bg-primary-500" />
+                    <div className="h-10 w-1 rounded-full bg-sky-500" />
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-[var(--text-muted)]">Reports</span>
-                      <span className="text-sm font-bold text-primary-600">{teamOverview.directReports} Direct</span>
+                      <span className="text-sm font-bold text-sky-700">{teamOverview.directReports} Direct</span>
                     </div>
                   </div>
                 </div>
@@ -392,10 +392,10 @@ export default function ManagerDashboardPage() {
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <FileText className="h-6 w-6 text-primary-500" />
+                    <FileText className="h-6 w-6 text-sky-500" />
                     <span>Approval Pipeline</span>
                   </div>
-                  <Badge className="bg-primary-500/10 text-primary-600 dark:text-primary-400 border-primary-500/20">
+                  <Badge className="bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-500/20">
                     {teamLeave.pendingLeaveRequests.length} Active
                   </Badge>
                 </CardTitle>
@@ -409,12 +409,12 @@ export default function ManagerDashboardPage() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary-500 to-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-lg">
+                          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-lg">
                             {leave.employeeName?.charAt(0)}
                           </div>
                           <div>
                             <div className="flex items-center gap-4">
-                              <span className="font-extrabold text-[var(--text-primary)] group-hover:text-primary-500 transition-colors">{leave.employeeName}</span>
+                              <span className="font-extrabold text-[var(--text-primary)] group-hover:text-sky-500 transition-colors">{leave.employeeName}</span>
                               {leave.urgency === 'HIGH' && (
                                 <span className="animate-pulse flex h-2 w-2 rounded-full bg-red-500" />
                               )}
@@ -517,7 +517,7 @@ export default function ManagerDashboardPage() {
                         <h4 className="font-extrabold text-[var(--text-primary)] mb-2">{alert.title}</h4>
                         <p className="text-sm font-bold text-[var(--text-muted)] leading-relaxed">{alert.description}</p>
                         <div className="mt-6 pt-6 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 flex items-center justify-between">
-                          <span className="text-xs font-black uppercase text-primary-500">Action: {alert.actionRequired}</span>
+                          <span className="text-xs font-black uppercase text-sky-500">Action: {alert.actionRequired}</span>
                           <Button variant="ghost" size="sm" className="font-black">RESOLVE</Button>
                         </div>
                       </div>

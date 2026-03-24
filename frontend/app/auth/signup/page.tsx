@@ -105,7 +105,7 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-primary-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-[var(--bg-surface)] to-sky-50 dark:from-surface-950 dark:via-surface-900 dark:to-sky-950/30 py-12 px-4">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
@@ -145,7 +145,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-primary-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-[var(--bg-surface)] to-sky-50 dark:from-surface-950 dark:via-surface-900 dark:to-sky-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
       <div className="max-w-lg w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -198,7 +198,7 @@ export default function SignupPage() {
                     })}
                     type="text"
                     placeholder="Acme Corporation"
-                    className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
                       errors.companyName
                         ? 'border-red-500 dark:border-red-500'
                         : 'border-[var(--border-main)]'
@@ -223,7 +223,7 @@ export default function SignupPage() {
                       {...register('companyCode')}
                       type="text"
                       placeholder="acme-corp"
-                      className={`input-aura block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-mono text-sm ${
+                      className={`input-aura block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all font-mono text-sm ${
                         errors.companyCode
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -253,7 +253,7 @@ export default function SignupPage() {
                       {...register('adminFirstName')}
                       type="text"
                       placeholder="John"
-                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -271,7 +271,7 @@ export default function SignupPage() {
                       {...register('adminLastName')}
                       type="text"
                       placeholder="Doe"
-                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
                         errors.adminLastName
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -297,7 +297,7 @@ export default function SignupPage() {
                       type="email"
                       autoComplete="email"
                       placeholder="john@acmecorp.com"
-                      className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
                         errors.adminEmail
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -324,7 +324,7 @@ export default function SignupPage() {
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       placeholder="Create a strong password"
-                      className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
                         errors.password
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-[var(--border-main)]'
@@ -358,11 +358,11 @@ export default function SignupPage() {
 
               <p className="text-xs text-center text-[var(--text-muted)]">
                 By creating an account, you agree to our{' '}
-                <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:underline">
+                <Link href="/terms" className="text-sky-700 dark:text-sky-400 hover:underline">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:underline">
+                <Link href="/privacy" className="text-sky-700 dark:text-sky-400 hover:underline">
                   Privacy Policy
                 </Link>
               </p>
@@ -374,7 +374,7 @@ export default function SignupPage() {
           Already have an account?{' '}
           <Link
             href="/auth/login"
-            className="font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+            className="font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 transition-colors"
           >
             Sign in
           </Link>

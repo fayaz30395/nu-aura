@@ -54,7 +54,7 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
   if (isLoading && !data) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
+        <Loader2 className="h-6 w-6 animate-spin text-sky-700" />
       </div>
     );
   }

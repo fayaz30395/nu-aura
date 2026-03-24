@@ -91,18 +91,18 @@ export default function OrganizationHealthPage() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                     >
-                        <Card className="h-full bg-gradient-to-br from-primary-600 to-primary-800 text-white overflow-hidden relative">
+                        <Card className="h-full bg-gradient-to-br from-sky-700 to-sky-800 text-white overflow-hidden relative">
                             <div className="absolute top-0 right-0 p-8 opacity-10">
                                 <ShieldCheck className="h-48 w-48" />
                             </div>
                             <CardContent className="p-8 flex flex-col items-center justify-center text-center h-full relative z-10">
-                                <span className="text-primary-100 text-sm font-medium tracking-wider uppercase mb-2">Organization Pulse</span>
+                                <span className="text-sky-100 text-sm font-medium tracking-wider uppercase mb-2">Organization Pulse</span>
                                 <div className="text-8xl font-black mb-4">{healthScore.score}</div>
                                 <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-elevated)] rounded-full mb-6">
                                     <Zap className="h-5 w-5 text-yellow-300" />
                                     <span className="font-bold text-lg">{healthScore.status}</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-primary-100 italic">
+                                <div className="flex items-center gap-2 text-sky-100 italic">
                                     {healthScore.trend >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                                     <span>{Math.abs(healthScore.trend)}% Improvement since last quarter</span>
                                 </div>
@@ -111,7 +111,7 @@ export default function OrganizationHealthPage() {
                     </motion.div>
 
                     <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-primary-100/20">
+                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-sky-100/20">
                             <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Staff Retention</CardTitle>
@@ -147,7 +147,7 @@ export default function OrganizationHealthPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-primary-100/20">
+                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-sky-100/20">
                             <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Engagement Intensity</CardTitle>
@@ -161,7 +161,7 @@ export default function OrganizationHealthPage() {
                                         <div className="text-sm text-[var(--text-muted)]">Avg Engagement Score</div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-primary-600 font-medium">{engagement.participationRate}%</div>
+                                        <div className="text-sky-700 font-medium">{engagement.participationRate}%</div>
                                         <div className="text-xs text-[var(--text-muted)]">Participation</div>
                                     </div>
                                 </div>
@@ -182,7 +182,7 @@ export default function OrganizationHealthPage() {
                     <Card className="bg-[var(--bg-card)]">
                         <CardHeader>
                             <CardTitle className="text-lg flex items-center gap-2">
-                                <PieChartIcon className="h-5 w-5 text-primary-500" /> Diversity & Inclusion
+                                <PieChartIcon className="h-5 w-5 text-sky-500" /> Diversity & Inclusion
                             </CardTitle>
                             <CardDescription>Workforce makeup by gender</CardDescription>
                         </CardHeader>
@@ -313,7 +313,7 @@ export default function OrganizationHealthPage() {
                                             <td className="py-4">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-24 h-1.5 bg-[var(--bg-secondary)] rounded-full">
-                                                        <div className="h-full bg-primary-500 rounded-full" style={{ width: `${85 - idx * 3}%` }} />
+                                                        <div className="h-full bg-sky-500 rounded-full" style={{ width: `${85 - idx * 3}%` }} />
                                                     </div>
                                                     <span>{85 - idx * 3}%</span>
                                                 </div>
@@ -322,7 +322,7 @@ export default function OrganizationHealthPage() {
                                             <td className="py-4">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase ${idx === 0 ? 'bg-green-100 text-green-700 dark:bg-green-950/30' :
                                                         idx === 4 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30' :
-                                                            'bg-primary-100 text-primary-700 dark:bg-primary-950/30'
+                                                            'bg-sky-100 text-sky-700 dark:bg-sky-950/30'
                                                     }`}>
                                                     {idx === 0 ? 'Peak' : idx === 4 ? 'Monitor' : 'Stable'}
                                                 </span>

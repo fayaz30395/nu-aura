@@ -109,7 +109,7 @@ export function AllocationApprovalModal({
               <p className="text-xs uppercase tracking-wide text-surface-500 dark:text-surface-400">
                 Proposed Addition
               </p>
-              <p className="mt-1 text-2xl font-bold text-primary-600 dark:text-primary-400">
+              <p className="mt-1 text-2xl font-bold text-sky-700 dark:text-sky-400">
                 +{formatAllocationPercentage(proposedAllocation)}
               </p>
             </div>
@@ -132,8 +132,8 @@ export function AllocationApprovalModal({
         {/* Project details */}
         <div className="rounded-lg border border-surface-200 p-4 dark:border-surface-700">
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900">
-              <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900">
+              <Briefcase className="h-5 w-5 text-sky-700 dark:text-sky-400" />
             </div>
             <div>
               <p className="font-medium text-surface-900 dark:text-surface-50">
@@ -192,14 +192,14 @@ export function AllocationApprovalModal({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explain why this over-allocation is necessary..."
-              className="w-full rounded-lg border border-surface-200 bg-white p-4 text-sm placeholder:text-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800 dark:placeholder:text-surface-500"
+              className="w-full rounded-lg border border-surface-200 bg-white p-4 text-sm placeholder:text-surface-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-surface-700 dark:bg-surface-800 dark:placeholder:text-surface-500"
               rows={3}
             />
           </div>
         ) : (
           <button
             onClick={() => setShowReasonInput(true)}
-            className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+            className="text-sm text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300"
           >
             + Add reason for this allocation
           </button>

@@ -109,7 +109,7 @@ export default function LeaveApprovalsPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-2"
+            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -156,7 +156,7 @@ export default function LeaveApprovalsPage() {
           {!pendingData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-8 h-8 border-4 border-primary-200 dark:border-primary-900/30 border-t-primary-500 rounded-full animate-spin" aria-label="Loading leave requests" />
+                <div className="w-8 h-8 border-4 border-sky-200 dark:border-sky-900/30 border-t-sky-500 rounded-full animate-spin" aria-label="Loading leave requests" />
                 <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>
             </div>

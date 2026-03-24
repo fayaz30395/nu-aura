@@ -80,7 +80,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
           <motion.div
             key={i}
             className={`absolute w-1 h-1 ${
-              i % 2 === 0 ? 'bg-primary-400' : 'bg-violet-400'
+              i % 2 === 0 ? 'bg-sky-400' : 'bg-violet-400'
             } rounded-full opacity-40`}
             initial={{
               x: Math.random() * 100 + '%',

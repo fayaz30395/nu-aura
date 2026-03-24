@@ -49,7 +49,7 @@ const GRADIENT_PRESETS: Record<string, { name: string; value: string }> = {
   },
   'emerald-teal': {
     name: 'Emerald Teal',
-    value: 'from-primary-600 to-primary-800',
+    value: 'from-sky-700 to-sky-800',
   },
   'blue-cyan': {
     name: 'Blue Cyan',

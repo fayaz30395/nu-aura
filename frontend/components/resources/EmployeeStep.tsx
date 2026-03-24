@@ -87,16 +87,16 @@ export function EmployeeStep({
   return (
     <>
       {/* Project Summary */}
-      <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 border border-primary-200 dark:border-primary-800">
+      <div className="bg-sky-50 dark:bg-sky-900/20 rounded-lg p-4 border border-sky-200 dark:border-sky-800">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h4 className="font-medium text-primary-800 dark:text-primary-200">{createdProject?.name}</h4>
-            <p className="text-sm text-primary-600 dark:text-primary-400">
+            <h4 className="font-medium text-sky-800 dark:text-sky-200">{createdProject?.name}</h4>
+            <p className="text-sm text-sky-700 dark:text-sky-400">
               {createdProject?.projectCode} | {createdProject?.clientName || 'No Client'}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-primary-600 dark:text-primary-400">
+            <div className="text-sm text-sky-700 dark:text-sky-400">
               {createdProject?.startDate} - {createdProject?.expectedEndDate || 'Ongoing'}
             </div>
           </div>
@@ -105,22 +105,22 @@ export function EmployeeStep({
         {/* Allocation Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-primary-700 dark:text-primary-300">
+            <span className="text-sky-700 dark:text-sky-300">
               {resourcesNeeded} Resource{resourcesNeeded !== 1 ? 's' : ''} Needed = {totalAllocationNeeded}% Total Allocation
             </span>
-            <span className={isComplete ? (isOverAllocated ? 'text-amber-600 font-medium' : 'text-green-600 font-medium') : 'text-primary-600'}>
+            <span className={isComplete ? (isOverAllocated ? 'text-amber-600 font-medium' : 'text-green-600 font-medium') : 'text-sky-700'}>
               {currentAllocation}% / {totalAllocationNeeded}%
             </span>
           </div>
-          <div className="w-full bg-primary-200 dark:bg-primary-800 rounded-full h-2.5">
+          <div className="w-full bg-sky-200 dark:bg-sky-800 rounded-full h-2.5">
             <div
               className={`h-2.5 rounded-full transition-all ${
-                isOverAllocated ? 'bg-amber-500' : isComplete ? 'bg-green-500' : 'bg-primary-600'
+                isOverAllocated ? 'bg-amber-500' : isComplete ? 'bg-green-500' : 'bg-sky-700'
               }`}
               style={{ width: `${Math.min(100, allocationProgress)}%` }}
             />
           </div>
-          <div className="text-xs text-primary-500 dark:text-primary-400">
+          <div className="text-xs text-sky-500 dark:text-sky-400">
             {allocations.length} employee{allocations.length !== 1 ? 's' : ''} added
           </div>
         </div>
@@ -213,7 +213,7 @@ export function EmployeeStep({
                     </div>
                     <div className="text-right">
                       {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                        <Loader2 className="h-4 w-4 animate-spin text-sky-500" />
                       ) : availableCapacity !== null ? (
                         <div className={`text-xs font-medium ${
                           isFullyAllocated
@@ -272,7 +272,7 @@ export function EmployeeStep({
                           <div className="h-full flex">
                             <div className="h-full bg-surface-400 dark:bg-surface-500" style={{ width: `${allocation.existingAllocations}%` }} />
                             <div
-                              className={`h-full ${isAtCapacity ? 'bg-amber-500' : isNearCapacity ? 'bg-yellow-500' : 'bg-primary-500'}`}
+                              className={`h-full ${isAtCapacity ? 'bg-amber-500' : isNearCapacity ? 'bg-yellow-500' : 'bg-sky-500'}`}
                               style={{ width: `${allocation.allocationPercentage}%` }}
                             />
                           </div>

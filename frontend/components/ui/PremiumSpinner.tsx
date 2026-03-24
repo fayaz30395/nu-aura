@@ -28,7 +28,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
     <div className={cn('relative', className)} style={{ width: dimension, height: dimension }}>
       {/* Center core - pulsing */}
       <motion.div
-        className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-gradient-to-br from-primary-500 to-primary-700"
+        className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-gradient-to-br from-sky-500 to-sky-700"
         animate={{
           scale: [1, 1.3, 1],
           opacity: [0.8, 1, 0.8],
@@ -46,7 +46,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: 360 }}
         transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 shadow-lg shadow-primary-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-br from-sky-400 to-sky-700 shadow-lg shadow-sky-500/50" />
       </motion.div>
 
       {/* Orbit ring 2 - middle */}
@@ -64,7 +64,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: 360 }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 shadow-lg shadow-purple-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-br from-sky-400 to-sky-700 shadow-lg shadow-sky-500/50" />
       </motion.div>
 
       {/* Orbiting particles */}
@@ -81,7 +81,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
           }}
         >
           <div
-            className="absolute w-0.5 h-0.5 rounded-full bg-primary-300"
+            className="absolute w-0.5 h-0.5 rounded-full bg-sky-300"
             style={{
               top: '10%',
               left: '50%',
@@ -135,9 +135,9 @@ export function GradientRingSpinner({ size = 'md', className }: Omit<PremiumSpin
         {/* Gradient definition */}
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#6358A8" />
-            <stop offset="50%" stopColor="#8577D3" />
-            <stop offset="100%" stopColor="#5AC8C5" />
+            <stop offset="0%" stopColor="#0369A1" />
+            <stop offset="50%" stopColor="#0284C7" />
+            <stop offset="100%" stopColor="#38BDF8" />
           </linearGradient>
         </defs>
       </svg>
@@ -156,7 +156,7 @@ export function PulseDotsSpinner({ size = 'md', className }: Omit<PremiumSpinner
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="rounded-full bg-gradient-to-br from-primary-500 to-primary-700"
+          className="rounded-full bg-gradient-to-br from-sky-500 to-sky-700"
           style={{ width: dotSize, height: dotSize }}
           animate={{
             scale: [1, 1.5, 1],
@@ -186,7 +186,7 @@ export function WaveBarsSpinner({ size = 'md', className }: Omit<PremiumSpinnerP
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.div
           key={i}
-          className="rounded-full bg-gradient-to-t from-primary-600 to-primary-400"
+          className="rounded-full bg-gradient-to-t from-sky-700 to-sky-400"
           style={{ width: barWidth }}
           animate={{
             height: [maxHeight * 0.3, maxHeight, maxHeight * 0.3],
@@ -214,7 +214,7 @@ export function ExpandingRingSpinner({ size = 'md', className }: Omit<PremiumSpi
       {[0, 1].map((i) => (
         <motion.div
           key={i}
-          className="absolute inset-0 rounded-full border-4 border-primary-500"
+          className="absolute inset-0 rounded-full border-4 border-sky-500"
           initial={{ scale: 0.5, opacity: 1 }}
           animate={{
             scale: [0.5, 1.5],

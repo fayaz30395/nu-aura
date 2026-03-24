@@ -9,7 +9,7 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
     if (type === 'goal') {
       switch (status) {
         case 'ACTIVE':
-          return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400 border-primary-200 dark:border-primary-500';
+          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
         case 'COMPLETED':
           return 'bg-green-100 text-green-800 border-green-200';
         case 'DRAFT':
@@ -29,7 +29,7 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
         case 'DRAFT':
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
         case 'SUBMITTED':
-          return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400 border-primary-200 dark:border-primary-500';
+          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
         case 'IN_REVIEW':
           return 'bg-yellow-100 text-yellow-800 border-yellow-200';
         case 'COMPLETED':
@@ -49,7 +49,7 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
         case 'ACTIVE':
           return 'bg-green-100 text-green-800 border-green-200';
         case 'COMPLETED':
-          return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400 border-primary-200 dark:border-primary-500';
+          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
         case 'CANCELLED':
           return 'bg-red-100 text-red-800 border-red-200';
         default:
@@ -65,7 +65,7 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
         case 'CONSTRUCTIVE':
           return 'bg-yellow-100 text-yellow-800 border-yellow-200';
         case 'GENERAL':
-          return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400 border-primary-200 dark:border-primary-500';
+          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
         case 'REQUEST':
           return 'bg-purple-100 text-purple-800 border-purple-200';
         default:

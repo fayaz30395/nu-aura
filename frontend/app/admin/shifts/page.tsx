@@ -232,7 +232,7 @@ export default function ShiftsManagementPage() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
-                <Clock className="h-8 w-8 text-primary-600" />
+                <Clock className="h-8 w-8 text-sky-700" />
                 Shift Management
               </h1>
               <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
@@ -269,7 +269,7 @@ export default function ShiftsManagementPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoading ? (
               <div className="col-span-full flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700"></div>
               </div>
             ) : shifts.length === 0 ? (
               <div className="col-span-full flex flex-col items-center py-12 text-[var(--text-muted)]">
@@ -343,7 +343,7 @@ export default function ShiftsManagementPage() {
                     <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-main)]">
                       <button
                         onClick={() => handleEdit(shift)}
-                        className="p-2 text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/30 rounded-lg transition-colors"
+                        className="p-2 text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/30 rounded-lg transition-colors"
                         title="Edit"
                       >
                         <Edit className="h-4 w-4" />
@@ -473,7 +473,7 @@ export default function ShiftsManagementPage() {
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
                           placeholder="Brief description of this shift..."
                         />
                       </div>
@@ -592,7 +592,7 @@ export default function ShiftsManagementPage() {
                             <input
                               type="checkbox"
                               {...form.register('isNightShift')}
-                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                              className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
                             <span className="ml-2 text-sm text-[var(--text-secondary)]">Night Shift</span>
                           </label>
@@ -601,7 +601,7 @@ export default function ShiftsManagementPage() {
                             <input
                               type="checkbox"
                               {...form.register('allowsOvertime')}
-                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                              className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
                             <span className="ml-2 text-sm text-[var(--text-secondary)]">Allows Overtime</span>
                           </label>
@@ -610,7 +610,7 @@ export default function ShiftsManagementPage() {
                             <input
                               type="checkbox"
                               {...form.register('isActive')}
-                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                              className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
                             <span className="ml-2 text-sm text-[var(--text-secondary)]">Active</span>
                           </label>

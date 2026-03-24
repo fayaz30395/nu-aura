@@ -623,7 +623,7 @@ export default function CustomFieldsPage() {
                           type="checkbox"
                           checked={value}
                           onChange={(e) => onChange(e.target.checked)}
-                          className="rounded text-primary-600 focus:ring-blue-500"
+                          className="rounded text-sky-700 focus:ring-blue-500"
                         />
                         <span className="text-sm text-[var(--text-secondary)]">Required</span>
                       </label>
@@ -638,7 +638,7 @@ export default function CustomFieldsPage() {
                           type="checkbox"
                           checked={value}
                           onChange={(e) => onChange(e.target.checked)}
-                          className="rounded text-primary-600 focus:ring-blue-500"
+                          className="rounded text-sky-700 focus:ring-blue-500"
                         />
                         <span className="text-sm text-[var(--text-secondary)]">Searchable</span>
                       </label>
@@ -653,7 +653,7 @@ export default function CustomFieldsPage() {
                           type="checkbox"
                           checked={value}
                           onChange={(e) => onChange(e.target.checked)}
-                          className="rounded text-primary-600 focus:ring-blue-500"
+                          className="rounded text-sky-700 focus:ring-blue-500"
                         />
                         <span className="text-sm text-[var(--text-secondary)]">Show in List View</span>
                       </label>

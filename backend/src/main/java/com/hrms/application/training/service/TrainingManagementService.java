@@ -43,7 +43,9 @@ public class TrainingManagementService {
         }
 
         TrainingProgram program = new TrainingProgram();
-        program.setId(UUID.randomUUID());
+        // BUG-FIX: Do NOT set ID manually — entity uses @GeneratedValue(strategy = UUID)
+        // Setting ID manually causes Hibernate to treat this as a merge (update) instead of persist,
+        // which fails with OptimisticLockingFailureException since the row doesn't exist yet.
         program.setTenantId(tenantId);
         program.setProgramCode(request.getProgramCode());
         program.setProgramName(request.getProgramName());

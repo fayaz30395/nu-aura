@@ -21,9 +21,9 @@ const SUB_PAGES = [
     label: 'Payroll Runs',
     description: 'Create and manage payroll processing runs for each pay period',
     icon: Banknote,
-    gradient: 'from-primary-500 to-primary-600',
-    hoverBorder: 'hover:border-primary-300 dark:hover:border-primary-700',
-    hoverText: 'group-hover:text-primary-500',
+    gradient: 'from-sky-500 to-sky-700',
+    hoverBorder: 'hover:border-sky-300 dark:hover:border-sky-700',
+    hoverText: 'group-hover:text-sky-500',
   },
   {
     href: '/payroll/payslips',
@@ -105,7 +105,7 @@ export default function PayrollPage() {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Payroll Management</h1>

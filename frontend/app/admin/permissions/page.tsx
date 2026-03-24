@@ -223,7 +223,7 @@ export default function PermissionsPage() {
           <button
             onClick={() => setActiveTab('roles')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${activeTab === 'roles'
-              ? 'border-primary-500 text-primary-600'
+              ? 'border-sky-500 text-sky-700'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
           >
@@ -235,7 +235,7 @@ export default function PermissionsPage() {
           <button
             onClick={() => setActiveTab('users')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${activeTab === 'users'
-              ? 'border-primary-500 text-primary-600'
+              ? 'border-sky-500 text-sky-700'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
           >
@@ -261,7 +261,7 @@ export default function PermissionsPage() {
         {/* Content */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500" />
           </div>
         ) : (
           <AnimatePresence mode="wait">
@@ -298,7 +298,7 @@ export default function PermissionsPage() {
                             }`}>
                             <ShieldCheck className={`w-5 h-5 ${role.isSystemRole
                               ? 'text-purple-600 dark:text-purple-400'
-                              : 'text-primary-600 dark:text-blue-400'
+                              : 'text-sky-700 dark:text-blue-400'
                               }`} />
                           </div>
                           <div>
@@ -325,7 +325,7 @@ export default function PermissionsPage() {
                                   e.stopPropagation();
                                   openEditRoleModal(role);
                                 }}
-                                className="p-2 text-[var(--text-muted)] hover:text-primary-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-sky-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                               >
                                 <Pencil className="w-4 h-4" />
                               </button>
@@ -415,7 +415,7 @@ export default function PermissionsPage() {
                           <tr key={user.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-4">
-                                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-medium">
+                                <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-sky-700 dark:text-sky-400 font-medium">
                                   {user.firstName[0]}
                                 </div>
                                 <span className="font-medium text-[var(--text-primary)]">
@@ -442,7 +442,7 @@ export default function PermissionsPage() {
                             <td className="px-6 py-4 text-right">
                               <button
                                 onClick={() => openEditUserModal(user)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-sky-700 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg transition-colors"
                               >
                                 <Pencil className="w-4 h-4" />
                                 Edit Roles
@@ -666,7 +666,7 @@ function EditRoleModal({
                               onClick={toggle}
                               className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
                             >
-                              <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
+                              <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-sky-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
                                 {isChecked && <Check className="w-3 h-3" />}
                               </div>
                               <div className="flex-1 min-w-0">
@@ -825,7 +825,7 @@ function CreateRoleModal({
                                 onClick={toggle}
                                 className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
                               >
-                                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-primary-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
+                                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-sky-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
                                   {isChecked && <Check className="w-3 h-3" />}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -947,7 +947,7 @@ function EditUserModal({
                           }`}
                       >
                         <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked
-                            ? 'bg-primary-500 text-white'
+                            ? 'bg-sky-500 text-white'
                             : 'bg-[var(--bg-surface)]'
                           }`}>
                           {isChecked && <Check className="w-3 h-3" />}

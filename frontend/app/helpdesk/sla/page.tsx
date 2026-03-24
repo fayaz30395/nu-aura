@@ -226,7 +226,7 @@ export default function HelpdeskSLAPage() {
               </div>
             </div>
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
+              <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg First Response</div>
             </div>
             <div className="skeuo-card p-6">
@@ -246,19 +246,19 @@ export default function HelpdeskSLAPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('dashboard')}
           >
             Dashboard
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'slas' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'slas' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('slas')}
           >
             SLA Policies
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('escalations')}
           >
             Pending Escalations
@@ -457,7 +457,7 @@ export default function HelpdeskSLAPage() {
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-sm text-[var(--text-secondary)] mb-1">First Contact Resolutions</div>
-                      <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">{dashboardData.firstContactResolutions}</div>
+                      <div className="text-2xl font-bold text-sky-700 dark:text-sky-400">{dashboardData.firstContactResolutions}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-sm text-[var(--text-secondary)] mb-1">Customer Satisfaction</div>
@@ -521,7 +521,7 @@ export default function HelpdeskSLAPage() {
                           <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
                             <button
                               onClick={() => handleEdit(sla)}
-                              className="text-primary-600 dark:text-primary-400 hover:text-primary-600 mr-4"
+                              className="text-sky-700 dark:text-sky-400 hover:text-sky-700 mr-4"
                             >
                               Edit
                             </button>
@@ -563,7 +563,7 @@ export default function HelpdeskSLAPage() {
                               {escalation.escalationReason.replace('_', ' ')}
                             </span>
                             {escalation.isAutoEscalated && (
-                              <span className="px-2 py-1 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded-full text-xs">
+                              <span className="px-2 py-1 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded-full text-xs">
                                 Auto-Escalated
                               </span>
                             )}

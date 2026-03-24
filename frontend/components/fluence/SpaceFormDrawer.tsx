@@ -231,7 +231,7 @@ export function SpaceFormDrawer({
                     onClick={() => field.onChange(emoji)}
                     className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all duration-150 border ${
                       field.value === emoji
-                        ? 'border-[var(--primary-600)] bg-[var(--primary-600)]/10 ring-2 ring-[var(--primary-600)]/30'
+                        ? 'border-[var(--sky-700)] bg-[var(--sky-700)]/10 ring-2 ring-[var(--sky-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'
                     }`}
                   >
@@ -299,7 +299,7 @@ export function SpaceFormDrawer({
                     onClick={() => field.onChange(opt.value)}
                     className={`w-full text-left px-4 py-3 rounded-lg border transition-all duration-150 ${
                       field.value === opt.value
-                        ? 'border-[var(--primary-600)] bg-[var(--primary-600)]/5 ring-1 ring-[var(--primary-600)]/30'
+                        ? 'border-[var(--sky-700)] bg-[var(--sky-700)]/5 ring-1 ring-[var(--sky-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'
                     }`}
                   >

@@ -211,7 +211,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             className={cn(
               'flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors border-b-2',
               activeTab === tab.key
-                ? 'border-primary-600 text-[var(--text-primary)]'
+                ? 'border-sky-700 text-[var(--text-primary)]'
                 : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             )}
           >
@@ -252,7 +252,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handlePost}
               disabled={!postContent.trim() || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-700 active:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
               {isSubmitting ? 'Posting...' : 'Post'}
@@ -304,7 +304,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               <button
                 type="button"
                 onClick={addPollOption}
-                className="flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors pl-7"
+                className="flex items-center gap-1.5 text-xs font-medium text-sky-700 hover:text-sky-700 transition-colors pl-7"
               >
                 <Plus size={12} />
                 Add option
@@ -317,7 +317,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleCreatePoll}
               disabled={!canSubmitPoll || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-700 active:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} />}
               {isSubmitting ? 'Creating...' : 'Create Poll'}
@@ -333,8 +333,8 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           <div className="relative">
             <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Who do you want to recognize?</p>
             {selectedRecipient ? (
-              <div className="flex items-center gap-2 p-2 rounded-lg border border-primary-200 bg-primary-50 dark:bg-primary-950 dark:border-primary-800">
-                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-700 dark:text-primary-300 overflow-hidden shrink-0">
+              <div className="flex items-center gap-2 p-2 rounded-lg border border-sky-200 bg-sky-50 dark:bg-sky-950 dark:border-sky-800">
+                <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center text-sm font-semibold text-sky-700 dark:text-sky-300 overflow-hidden shrink-0">
                   {selectedRecipient.avatarUrl ? (
                     <NextImage src={selectedRecipient.avatarUrl} alt="" width={32} height={32} className="w-full h-full object-cover" unoptimized />
                   ) : (
@@ -421,7 +421,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                   className={cn(
                     'inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-all',
                     praiseCategory === cat.id
-                      ? `${cat.color} ring-2 ring-primary-400 ring-offset-1 dark:ring-offset-[var(--bg-card)]`
+                      ? `${cat.color} ring-2 ring-sky-400 ring-offset-1 dark:ring-offset-[var(--bg-card)]`
                       : 'border-[var(--border-main)] text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:bg-[var(--bg-secondary)]'
                   )}
                 >
@@ -447,7 +447,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleSendPraise}
               disabled={!canSubmitPraise || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-700 active:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Trophy size={14} />}
               {isSubmitting ? 'Sending...' : 'Send Praise'}

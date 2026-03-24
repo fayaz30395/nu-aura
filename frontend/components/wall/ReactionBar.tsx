@@ -95,7 +95,7 @@ export function ReactionBar({
           }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
             hasReacted
-              ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200'
+              ? 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-200'
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
           }`}
         >
@@ -124,7 +124,7 @@ export function ReactionBar({
                   onClick={() => handleReactionClick(type)}
                   className={`flex items-center justify-center w-8 h-8 rounded-md transition-colors ${
                     userReactionType === type
-                      ? 'bg-primary-100 dark:bg-primary-900'
+                      ? 'bg-sky-100 dark:bg-sky-900'
                       : 'hover:bg-[var(--bg-secondary)]'
                   }`}
                   title={reactionEmojis[type].label}

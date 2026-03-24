@@ -301,7 +301,7 @@ export default function EditEmployeePage() {
       <AppLayout activeMenuItem="employees">
         <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700"></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
           </div>
         </div>
@@ -408,8 +408,8 @@ export default function EditEmployeePage() {
         {/* Employee Header */}
         <div className="skeuo-card p-6 mb-6">
           <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0 h-16 w-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-              <span className="text-xl font-medium text-primary-700 dark:text-primary-400">
+            <div className="flex-shrink-0 h-16 w-16 bg-sky-100 dark:bg-sky-900/30 rounded-full flex items-center justify-center">
+              <span className="text-xl font-medium text-sky-700 dark:text-sky-400">
                 {employee?.firstName.charAt(0)}{employee?.lastName?.charAt(0) || ''}
               </span>
             </div>
@@ -429,7 +429,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('basic')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'basic'
-                    ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -439,7 +439,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('personal')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'personal'
-                    ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -449,7 +449,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('employment')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'employment'
-                    ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -459,7 +459,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('bank')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'bank'
-                    ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -469,7 +469,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('custom')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'custom'
-                    ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -482,8 +482,8 @@ export default function EditEmployeePage() {
             {/* Basic Info Tab */}
             {currentTab === 'basic' && (
               <div className="space-y-4">
-                <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-500 dark:border-primary-500 rounded-md p-4">
-                  <p className="text-sm text-primary-600 dark:text-primary-400">
+                <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-500 dark:border-sky-500 rounded-md p-4">
+                  <p className="text-sm text-sky-700 dark:text-sky-400">
                     <strong>Note:</strong> Work Email cannot be changed after creation.
                   </p>
                 </div>
@@ -1096,8 +1096,8 @@ export default function EditEmployeePage() {
                   </div>
                 </div>
 
-                <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-500 dark:border-primary-500 rounded-md p-4">
-                  <p className="text-sm text-primary-600 dark:text-primary-400">
+                <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-500 dark:border-sky-500 rounded-md p-4">
+                  <p className="text-sm text-sky-700 dark:text-sky-400">
                     <strong>Note:</strong> Banking and tax information is encrypted and stored securely. This information will be used for payroll processing.
                   </p>
                 </div>

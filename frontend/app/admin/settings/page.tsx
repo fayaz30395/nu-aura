@@ -38,8 +38,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Manage user roles and access permissions',
     icon: Shield,
     href: '/admin/roles',
-    color: 'text-primary-600 dark:text-primary-400',
-    bgColor: 'bg-primary-100 dark:bg-primary-900/30',
+    color: 'text-sky-700 dark:text-sky-400',
+    bgColor: 'bg-sky-100 dark:bg-sky-900/30',
   },
   {
     id: 'permissions',
@@ -132,7 +132,7 @@ export default function AdminSettingsPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25">
+        <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 shadow-lg shadow-sky-500/25">
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
@@ -152,7 +152,7 @@ export default function AdminSettingsPage() {
           return (
             <Card
               key={card.id}
-              className="group cursor-pointer hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200"
+              className="group cursor-pointer hover:shadow-lg hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200"
               onClick={() => handleCardClick(card.href)}
             >
               <CardContent className="p-5">
@@ -160,9 +160,9 @@ export default function AdminSettingsPage() {
                   <div className={`p-4 rounded-xl ${card.bgColor}`}>
                     <Icon className={`h-6 w-6 ${card.color}`} />
                   </div>
-                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors">
                   {card.title}
                 </h3>
                 <p className="mt-1 text-sm text-[var(--text-secondary)]">

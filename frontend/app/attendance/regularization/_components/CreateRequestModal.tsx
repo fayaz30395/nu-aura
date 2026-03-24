@@ -113,7 +113,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           step.completed
                             ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] ring-2 ring-[var(--status-success-border)]'
                             : step.active
-                              ? 'bg-primary-500 text-white ring-4 ring-primary-500/30'
+                              ? 'bg-sky-500 text-white ring-4 ring-sky-500/30'
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                         }`}
                         animate={step.active ? { scale: [1, 1.08, 1] } : {}}
@@ -125,7 +125,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         <p
                           className={`text-xs font-semibold ${
                             step.active
-                              ? 'text-primary-600 dark:text-primary-400'
+                              ? 'text-sky-700 dark:text-sky-400'
                               : step.completed
                                 ? 'text-[var(--status-success-text)]'
                                 : 'text-[var(--text-muted)]'
@@ -322,7 +322,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                                 onClick={() => onQuickReason(template)}
                                 whileHover={{ scale: 1.05, y: -1 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="px-3 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
+                                className="px-3 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-sky-400 hover:text-sky-700 dark:hover:text-sky-400 transition-all"
                               >
                                 {template}
                               </motion.button>
@@ -359,7 +359,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                       <Button
                         type="button"
                         onClick={onNext}
-                        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium"
+                        className="w-full bg-sky-500 hover:bg-sky-700 text-white font-medium"
                       >
                         Next
                       </Button>
@@ -368,7 +368,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         type="submit"
                         disabled={isPending || isSubmitting}
                         onClick={handleSubmit(onSubmit)}
-                        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-sky-500 hover:bg-sky-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className="h-4 w-4 mr-2" />
                         {isPending || isSubmitting ? 'Submitting...' : 'Submit Request'}

@@ -37,7 +37,7 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
                     <h3 className={`text-sm font-bold text-[var(--text-primary)] ${action.hoverColor} transition-colors`}>{action.title}</h3>
                     <p className="text-xs text-[var(--text-muted)] mt-0.5">{action.desc}</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                  <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
                 </div>
               </CardContent>
             </Card>
@@ -137,13 +137,13 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="font-medium text-[var(--text-secondary)]">Total Hours</span>
-              <span className="font-bold text-primary-600 dark:text-primary-400">
+              <span className="font-bold text-sky-700 dark:text-sky-400">
                 {totalWeekHours.toFixed(1)}h / {STANDARD_WORK_HOURS * 5}h
               </span>
             </div>
             <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-primary-500 to-blue-500 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-sky-500 to-blue-500 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, (totalWeekHours / (STANDARD_WORK_HOURS * 5)) * 100)}%` }}
               />
             </div>

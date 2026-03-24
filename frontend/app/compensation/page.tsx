@@ -269,7 +269,7 @@ export default function CompensationPage() {
         {loading && (
           <Card>
             <CardContent className="p-12 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto mb-4" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500 mx-auto mb-4" />
               <p className="text-[var(--text-secondary)]">Loading compensation data...</p>
             </CardContent>
           </Card>
@@ -372,7 +372,7 @@ export default function CompensationPage() {
               onClick={() => setActiveTab('cycles')}
               className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'cycles'
-                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
               }`}
             >
@@ -382,7 +382,7 @@ export default function CompensationPage() {
               onClick={() => setActiveTab('revisions')}
               className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'revisions'
-                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
               }`}
             >
@@ -392,7 +392,7 @@ export default function CompensationPage() {
               onClick={() => setActiveTab('pending')}
               className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
                 activeTab === 'pending'
-                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
               }`}
             >
@@ -413,7 +413,7 @@ export default function CompensationPage() {
           <div className="space-y-4">
             {/* Active Cycle Banner */}
             {activeCycle && (
-              <Card className="bg-gradient-to-r from-primary-500 to-primary-600">
+              <Card className="bg-gradient-to-r from-sky-500 to-sky-700">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="text-white">
@@ -479,7 +479,7 @@ export default function CompensationPage() {
                       {cycle.budgetAmount && cycle.utilizedAmount !== undefined && (
                         <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                           <div
-                            className="bg-primary-500 h-2 rounded-full"
+                            className="bg-sky-500 h-2 rounded-full"
                             style={{ width: `${Math.min((cycle.utilizedAmount / cycle.budgetAmount) * 100, 100)}%` }}
                           />
                         </div>
@@ -724,8 +724,8 @@ export default function CompensationPage() {
             <div className="flex items-center gap-4">
               {selectedCycle && (
                 <>
-                  <div className="rounded-lg bg-primary-100 dark:bg-primary-900 p-2">
-                    <PieChart className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  <div className="rounded-lg bg-sky-100 dark:bg-sky-900 p-2">
+                    <PieChart className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -792,8 +792,8 @@ export default function CompensationPage() {
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Minimum</p>
                     </div>
-                    <div className="text-center p-4 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
-                      <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                    <div className="text-center p-4 bg-sky-50 dark:bg-sky-900/30 rounded-lg">
+                      <p className="text-2xl font-bold text-sky-700 dark:text-sky-400">
                         {selectedCycle.averageIncrementTarget || 0}%
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Target Avg</p>

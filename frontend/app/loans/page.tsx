@@ -114,7 +114,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
             <p className="text-[var(--text-secondary)]">Loading loans data...</p>
           </div>
         </div>
@@ -319,7 +319,7 @@ export default function LoansPage() {
                               e.stopPropagation();
                               router.push(`/loans/${loan.id}`);
                             }}
-                            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 text-sm font-medium"
+                            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 text-sm font-medium"
                           >
                             View Details
                           </button>
@@ -341,10 +341,10 @@ export default function LoansPage() {
               className="group card-interactive p-6 text-left"
             >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Apply for Loan

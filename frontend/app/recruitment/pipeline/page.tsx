@@ -71,7 +71,7 @@ const STAGE_LABELS: Record<ApplicationStatus, string> = {
 
 const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; badge: string; bg: string }> = {
   [ApplicationStatus.APPLIED]:        { col: 'border-t-blue-500',    header: 'bg-blue-50',    badge: 'bg-blue-100 text-blue-700',       bg: 'bg-blue-50/50' },
-  [ApplicationStatus.SCREENING]:      { col: 'border-t-primary-500',    header: 'bg-primary-50',    badge: 'bg-primary-100 text-primary-700',       bg: 'bg-primary-50/50' },
+  [ApplicationStatus.SCREENING]:      { col: 'border-t-sky-500',    header: 'bg-sky-50',    badge: 'bg-sky-100 text-sky-700',       bg: 'bg-sky-50/50' },
   [ApplicationStatus.PHONE_SCREEN]:   { col: 'border-t-cyan-500',    header: 'bg-cyan-50',    badge: 'bg-cyan-100 text-cyan-700',       bg: 'bg-cyan-50/50' },
   [ApplicationStatus.INTERVIEW]:      { col: 'border-t-purple-500',  header: 'bg-purple-50',  badge: 'bg-purple-100 text-purple-700',   bg: 'bg-purple-50/50' },
   [ApplicationStatus.TECHNICAL_ROUND]:{ col: 'border-t-indigo-500',  header: 'bg-indigo-50',  badge: 'bg-indigo-100 text-indigo-700',   bg: 'bg-indigo-50/50' },
@@ -85,7 +85,7 @@ const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; bad
 
 const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
   [ApplicationSource.WEBSITE]:  'tint-info text-blue-600',
-  [ApplicationSource.REFERRAL]: 'tint-success text-primary-600',
+  [ApplicationSource.REFERRAL]: 'tint-success text-sky-700',
   [ApplicationSource.JOB_BOARD]:'tint-info text-indigo-600',
   [ApplicationSource.LINKEDIN]: 'tint-info text-sky-600',
   [ApplicationSource.CAMPUS]:   'tint-purple text-purple-600',
@@ -308,7 +308,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       {/* Total Active */}
       <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <User size={14} className="text-primary-500" />
+          <User size={14} className="text-sky-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Active Pipeline</span>
         </div>
         <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{totalActive}</p>
@@ -377,7 +377,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
   return (
     <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
       <p className="text-xs font-semibold text-[var(--text-secondary)] mb-3 flex items-center gap-1.5">
-        <TrendingUp size={13} className="text-primary-500" />
+        <TrendingUp size={13} className="text-sky-500" />
         Hiring Funnel
       </p>
       <div className="flex items-end gap-1.5 h-14">
@@ -840,7 +840,7 @@ export default function ApplicantPipelinePage() {
           </div>
         ) : pipelineLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 size={32} className="animate-spin text-primary-500" />
+            <Loader2 size={32} className="animate-spin text-sky-500" />
             <span className="ml-3 text-[var(--text-muted)]">
               Loading pipeline for {selectedJob?.jobTitle ?? 'selected job'}...
             </span>
@@ -886,7 +886,7 @@ export default function ApplicantPipelinePage() {
                   placeholder="Search by candidate name..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
                 />
                 {searchQuery && (
                   <button
@@ -902,14 +902,14 @@ export default function ApplicantPipelinePage() {
                 onClick={() => setShowFilters(v => !v)}
                 className={`flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg transition-colors ${
                   hasActiveFilters
-                    ? 'border-primary-300 bg-primary-50 text-primary-700'
+                    ? 'border-sky-300 bg-sky-50 text-sky-700'
                     : 'border-[var(--border-main)] bg-white text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
                 <Filter size={14} />
                 Filters
                 {hasActiveFilters && (
-                  <span className="bg-primary-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  <span className="bg-sky-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                     {(sourceFilter ? 1 : 0) + (minRating > 0 ? 1 : 0)}
                   </span>
                 )}
@@ -919,7 +919,7 @@ export default function ApplicantPipelinePage() {
               {hasActiveFilters && (
                 <button
                   onClick={() => { setSearchQuery(''); setSourceFilter(''); setMinRating(0); }}
-                  className="text-xs text-primary-600 hover:text-primary-800 font-medium"
+                  className="text-xs text-sky-700 hover:text-sky-800 font-medium"
                 >
                   Clear all
                 </button>
@@ -934,7 +934,7 @@ export default function ApplicantPipelinePage() {
                   <select
                     value={sourceFilter}
                     onChange={e => setSourceFilter(e.target.value as ApplicationSource | '')}
-                    className="w-full px-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                    className="w-full px-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                   >
                     <option value="">All sources</option>
                     {Object.values(ApplicationSource).map(src => (
@@ -979,7 +979,7 @@ export default function ApplicantPipelinePage() {
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                             className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-4 ${colors.col} overflow-hidden transition-colors ${
-                              snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-primary-300` : 'bg-white'
+                              snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-sky-300` : 'bg-white'
                             }`}
                             style={{ maxHeight: 'calc(100vh - 380px)' }}
                           >
@@ -1015,7 +1015,7 @@ export default function ApplicantPipelinePage() {
                                           {...dragProvided.draggableProps}
                                           className={`bg-white border rounded-lg p-4 transition-all cursor-pointer group ${
                                             dragSnapshot.isDragging
-                                              ? 'shadow-lg border-primary-300 ring-2 ring-primary-200 rotate-1'
+                                              ? 'shadow-lg border-sky-300 ring-2 ring-sky-200 rotate-1'
                                               : 'border-[var(--border-main)] shadow-sm hover:shadow-md hover:border-[var(--border-main)]'
                                           } ${isMoving ? 'opacity-50' : ''}`}
                                           onClick={() => !dragSnapshot.isDragging && openDetailModal(applicant)}
@@ -1103,7 +1103,7 @@ export default function ApplicantPipelinePage() {
                                               type="button"
                                               disabled={isMoving}
                                               onClick={e => { e.stopPropagation(); handleMoveToNextStage(applicant); }}
-                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-primary-50 text-[var(--text-muted)] hover:text-primary-600 border border-[var(--border-main)] hover:border-primary-200 transition-all"
+                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-sky-50 text-[var(--text-muted)] hover:text-sky-700 border border-[var(--border-main)] hover:border-sky-200 transition-all"
                                             >
                                               {isMoving ? (
                                                 <Loader2 size={10} className="animate-spin" />
@@ -1442,7 +1442,7 @@ export default function ApplicantPipelinePage() {
                 onChange={e => setOfferForm(prev => ({ ...prev, proposedJoiningDate: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
                 disabled={offerLoading}
-                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
+                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
               />
             </div>
 

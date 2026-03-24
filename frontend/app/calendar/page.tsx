@@ -121,7 +121,7 @@ export default function CalendarPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
             <p className="text-[var(--text-secondary)]">Loading calendar...</p>
           </div>
         </div>
@@ -168,7 +168,7 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-sky-500/30"
             >
               <Plus className="h-5 w-5" />
               New Event
@@ -193,7 +193,7 @@ export default function CalendarPage() {
             </button>
             <button
               onClick={goToToday}
-              className="px-3 py-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+              className="px-3 py-1.5 text-sm font-medium text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-lg transition-colors"
             >
               Today
             </button>
@@ -236,7 +236,7 @@ export default function CalendarPage() {
 
         {/* Today's Events */}
         {todayEvents.length > 0 && (
-          <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 text-white">
+          <div className="bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl p-6 text-white">
             <div className="flex items-center gap-4 mb-4">
               <CalendarDays className="h-6 w-6" />
               <h2 className="text-lg font-semibold">Today&apos;s Events</h2>
@@ -290,7 +290,7 @@ export default function CalendarPage() {
               <PermissionGate permission={Permissions.CALENDAR_CREATE}>
                 <button
                   onClick={() => router.push('/calendar/new')}
-                  className="mt-4 text-primary-600 dark:text-primary-400 hover:text-primary-700 text-sm font-medium"
+                  className="mt-4 text-sky-700 dark:text-sky-400 hover:text-sky-700 text-sm font-medium"
                 >
                   Create your first event
                 </button>
@@ -351,7 +351,7 @@ export default function CalendarPage() {
                               </span>
                             )}
                             {event.meetingLink && (
-                              <span className="text-xs text-primary-500 flex items-center gap-1">
+                              <span className="text-xs text-sky-500 flex items-center gap-1">
                                 <Video className="h-3 w-3" />
                                 Online
                               </span>
@@ -385,13 +385,13 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200 text-left"
             >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Schedule Event

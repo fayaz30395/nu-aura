@@ -105,7 +105,7 @@ function PermissionPreview({ roleCodes }: { roleCodes: string[] }) {
         className="flex items-center justify-between w-full text-left"
       >
         <div className="flex items-center gap-2">
-          <Eye className="h-4 w-4 text-primary-500" />
+          <Eye className="h-4 w-4 text-sky-500" />
           <span className="text-sm font-medium text-[var(--text-primary)]">
             Permission Summary — {allPerms.size} capability areas
           </span>
@@ -203,12 +203,12 @@ function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: 
             onClick={() => toggleRole(role.value)}
             className={`flex items-center gap-2 p-2 rounded-lg border text-left text-xs transition-all ${
               selectedRoles.includes(role.value)
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10'
+                ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
                 : 'border-[var(--border-main)] hover:border-[var(--border-subtle)]'
             }`}
           >
             <div className={`h-3 w-3 rounded border flex items-center justify-center flex-shrink-0 ${
-              selectedRoles.includes(role.value) ? 'border-primary-500 bg-primary-500' : 'border-[var(--border-main)]'
+              selectedRoles.includes(role.value) ? 'border-sky-500 bg-sky-500' : 'border-[var(--border-main)]'
             }`}>
               {selectedRoles.includes(role.value) && <CheckCircle className="h-2 w-2 text-white" />}
             </div>
@@ -349,7 +349,7 @@ export default function AdminEmployeesPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.05 }}
         className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Users, value: totalElements, label: 'Total Employees', tint: 'tint-info', iconColor: 'text-primary-600' },
+          { icon: Users, value: totalElements, label: 'Total Employees', tint: 'tint-info', iconColor: 'text-sky-700' },
           { icon: CheckCircle, value: employees.filter((e: Employee) => e.status === 'ACTIVE').length, label: 'Active', tint: 'tint-success', iconColor: 'text-emerald-600' },
           { icon: Shield, value: rolesData?.length ?? 0, label: 'Roles Defined', tint: 'tint-warning', iconColor: 'text-amber-600' },
           { icon: Building2, value: departments?.content?.length ?? 0, label: 'Departments', tint: '', iconColor: 'text-[var(--text-secondary)]' },
@@ -415,7 +415,7 @@ export default function AdminEmployeesPage() {
                         <tr key={emp.id} className="hover:bg-[var(--bg-card-hover)] transition-colors">
                           <td>
                             <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-xs font-semibold text-primary-700 dark:text-primary-300">
+                              <div className="h-8 w-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-xs font-semibold text-sky-700 dark:text-sky-300">
                                 {emp.firstName?.[0]}{emp.lastName?.[0]}
                               </div>
                               <div>
@@ -468,7 +468,7 @@ export default function AdminEmployeesPage() {
       <Modal isOpen={!!editingRoleForEmployee} onClose={() => setEditingRoleForEmployee(null)} size="md">
         <ModalHeader onClose={() => setEditingRoleForEmployee(null)}>
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary-500" />
+            <Shield className="h-5 w-5 text-sky-500" />
             <span>Edit Roles</span>
           </div>
         </ModalHeader>
@@ -484,7 +484,7 @@ export default function AdminEmployeesPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader onClose={handleCloseModal}>
             <div className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5 text-primary-500" />
+              <UserPlus className="h-5 w-5 text-sky-500" />
               <span>Create Employee & Assign Roles</span>
             </div>
           </ModalHeader>
@@ -498,10 +498,10 @@ export default function AdminEmployeesPage() {
               ].map(({ step, num, label }) => (
                 <button key={step} type="button" onClick={() => setFormStep(step)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    formStep === step ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300' : 'text-[var(--text-muted)]'
+                    formStep === step ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300' : 'text-[var(--text-muted)]'
                   }`}>
                   <div className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                    formStep === step ? 'bg-primary-500 text-white' : 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
+                    formStep === step ? 'bg-sky-500 text-white' : 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
                   }`}>{num}</div>
                   {label}
                 </button>
@@ -617,13 +617,13 @@ export default function AdminEmployeesPage() {
                             }}
                             className={`flex items-start gap-4 p-4 rounded-xl border-2 transition-all text-left ${
                               isSelected
-                                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10'
+                                ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
                                 : 'border-[var(--border-main)] hover:border-[var(--border-subtle)] bg-[var(--bg-card)]'
                             }`}
                           >
                             {/* Checkbox */}
                             <div className={`mt-0.5 h-4 w-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                              isSelected ? 'border-primary-500 bg-primary-500' : 'border-[var(--border-main)]'
+                              isSelected ? 'border-sky-500 bg-sky-500' : 'border-[var(--border-main)]'
                             }`}>
                               {isSelected && <CheckCircle className="h-2.5 w-2.5 text-white" />}
                             </div>

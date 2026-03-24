@@ -169,7 +169,7 @@ export default function PaymentConfigPage() {
     return (
       <AppLayout activeMenuItem="payments">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500" />
         </div>
       </AppLayout>
     );
@@ -180,7 +180,7 @@ export default function PaymentConfigPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <Settings className="w-8 h-8 text-primary-600" />
+          <Settings className="w-8 h-8 text-sky-700" />
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Payment Configuration
@@ -218,8 +218,8 @@ export default function PaymentConfigPage() {
                   onClick={() => setSelectedProvider(provider)}
                   className={`p-4 rounded-lg border-2 transition-colors text-left ${
                     isSelected
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                      : 'border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-600'
+                      ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20'
+                      : 'border-[var(--border-main)] hover:border-sky-300 dark:hover:border-sky-700'
                   }`}
                 >
                   <div className="flex justify-between items-center">
@@ -256,7 +256,7 @@ export default function PaymentConfigPage() {
                 <input
                   type="checkbox"
                   {...register('testMode')}
-                  className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                  className="w-5 h-5 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
                 />
                 <span className="text-sm font-medium text-[var(--text-secondary)]">
                   Test Mode (use sandbox credentials)
@@ -320,7 +320,7 @@ export default function PaymentConfigPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || saveConfigMutation.isPending}
-                className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
               >
                 {isSubmitting || saveConfigMutation.isPending ? (
                   <>
@@ -336,7 +336,7 @@ export default function PaymentConfigPage() {
                 type="button"
                 onClick={handleTestConnection}
                 disabled={testingConnection || testConnectionMutation.isPending}
-                className="px-6 py-2 border border-primary-500 text-primary-600 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                className="px-6 py-2 border border-sky-500 text-sky-700 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
               >
                 {testingConnection || testConnectionMutation.isPending ? (
                   <>
@@ -408,7 +408,7 @@ export default function PaymentConfigPage() {
                         handleToggleActive(config.provider, e.target.checked)
                       }
                       disabled={toggleConfigMutation.isPending}
-                      className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500 disabled:opacity-50"
+                      className="w-5 h-5 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500 disabled:opacity-50"
                     />
                     <span className="text-sm font-medium text-[var(--text-secondary)]">
                       {config.isActive ? 'Active' : 'Inactive'}

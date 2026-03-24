@@ -357,7 +357,7 @@ export default function ExpenseClaims() {
     return (
       <AppLayout activeMenuItem="expenses">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
         </div>
       </AppLayout>
     );
@@ -403,7 +403,7 @@ export default function ExpenseClaims() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2 skeuo-button"
+            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-700 transition-colors flex items-center gap-2 skeuo-button"
           >
             <Plus className="w-5 h-5" />
             New Claim
@@ -436,7 +436,7 @@ export default function ExpenseClaims() {
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
+              <div className="p-2 rounded-lg bg-sky-100 dark:bg-sky-900/30 text-sky-700">
                 <DollarSign className="w-5 h-5" />
               </div>
               <div>
@@ -478,7 +478,7 @@ export default function ExpenseClaims() {
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
                 showFilters
-                  ? 'border-primary-500 text-primary-600 bg-primary-50 dark:bg-primary-900/20'
+                  ? 'border-sky-500 text-sky-700 bg-sky-50 dark:bg-sky-900/20'
                   : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
@@ -682,15 +682,15 @@ export default function ExpenseClaims() {
 
         {/* Bulk Action Toolbar */}
         {selectedClaims.size > 0 && activeTab === 'pending' && (
-          <div className="bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="bg-sky-50 dark:bg-sky-900/30 border border-sky-200 dark:border-sky-800 rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <input
                 type="checkbox"
                 checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length}
                 onChange={handleSelectAll}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                className="w-5 h-5 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
               />
-              <span className="font-medium text-primary-900 dark:text-primary-100">
+              <span className="font-medium text-sky-900 dark:text-sky-100">
                 {selectedClaims.size} claim{selectedClaims.size !== 1 ? 's' : ''} selected
               </span>
             </div>
@@ -732,7 +732,7 @@ export default function ExpenseClaims() {
               onClick={() => { setActiveTab('my-claims'); setSelectedClaims(new Set()); }}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'my-claims'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -742,7 +742,7 @@ export default function ExpenseClaims() {
               onClick={() => { setActiveTab('pending'); setSelectedClaims(new Set()); }}
               className={`px-6 py-3 font-medium transition-colors relative ${
                 activeTab === 'pending'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -757,7 +757,7 @@ export default function ExpenseClaims() {
               onClick={() => { setActiveTab('all'); setSelectedClaims(new Set()); }}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'all'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -767,7 +767,7 @@ export default function ExpenseClaims() {
               onClick={() => { setActiveTab('analytics'); setSelectedClaims(new Set()); }}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'analytics'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -790,7 +790,7 @@ export default function ExpenseClaims() {
                 type="checkbox"
                 checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length && selectedClaims.size > 0}
                 onChange={handleSelectAll}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                className="w-5 h-5 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
               />
               <span className="text-sm text-[var(--text-secondary)]">
                 Select all ({filteredClaims.filter(c => c.status === 'SUBMITTED').length} claims)
@@ -800,7 +800,7 @@ export default function ExpenseClaims() {
 
           {((activeTab === 'my-claims' && myClaimsQuery.isLoading) || (activeTab === 'pending' && pendingClaimsQuery.isLoading) || (activeTab === 'all' && allClaimsQuery.isLoading)) ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
             </div>
           ) : myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error ? (
             <div className="flex flex-col items-center justify-center h-64">
@@ -814,7 +814,7 @@ export default function ExpenseClaims() {
                   else if (activeTab === 'pending') pendingClaimsQuery.refetch();
                   else if (activeTab === 'all') allClaimsQuery.refetch();
                 }}
-                className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                className="mt-4 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 transition-colors"
               >
                 Retry
               </button>
@@ -833,7 +833,7 @@ export default function ExpenseClaims() {
                   key={claim.id}
                   className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
                     selectedClaims.has(claim.id)
-                      ? 'border-primary-400 bg-primary-50/50 dark:bg-primary-900/20'
+                      ? 'border-sky-400 bg-sky-50/50 dark:bg-sky-900/20'
                       : 'border-[var(--border-main)]'
                   }`}
                 >
@@ -845,7 +845,7 @@ export default function ExpenseClaims() {
                           type="checkbox"
                           checked={selectedClaims.has(claim.id)}
                           onChange={() => handleSelectClaim(claim.id)}
-                          className="w-5 h-5 mt-1 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                          className="w-5 h-5 mt-1 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
                         />
                       )}
                       <div>
@@ -903,7 +903,7 @@ export default function ExpenseClaims() {
                         <PermissionGate permission={Permissions.EXPENSE_CREATE}>
                           <button
                             onClick={() => handleSubmitClaim(claim.id)}
-                            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm transition-colors"
+                            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 text-sm transition-colors"
                           >
                             Submit for Approval
                           </button>

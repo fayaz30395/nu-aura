@@ -128,7 +128,7 @@ export default function EmploymentChangeRequestsPage() {
       ROLE_CHANGE: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
       MANAGER_CHANGE: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
       STATUS_CHANGE: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
-      CONFIRMATION: 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400',
+      CONFIRMATION: 'bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-400',
       MULTIPLE: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
     };
 
@@ -153,7 +153,7 @@ export default function EmploymentChangeRequestsPage() {
         <span className="text-sm font-medium text-[var(--text-secondary)] w-40">{label}:</span>
         <span className="text-sm text-[var(--text-muted)]">{currentValue || 'N/A'}</span>
         <ArrowRight className="h-4 w-4 text-[var(--text-muted)]" />
-        <span className="text-sm font-medium text-primary-600 dark:text-primary-400">{newValue || 'N/A'}</span>
+        <span className="text-sm font-medium text-sky-700 dark:text-sky-400">{newValue || 'N/A'}</span>
       </div>
     );
   };
@@ -164,7 +164,7 @@ export default function EmploymentChangeRequestsPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-2"
+            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -179,7 +179,7 @@ export default function EmploymentChangeRequestsPage() {
               onClick={() => setFilter('pending')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'pending'
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-sky-700 text-white'
                   : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
@@ -189,7 +189,7 @@ export default function EmploymentChangeRequestsPage() {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'all'
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-sky-700 text-white'
                   : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
@@ -234,8 +234,8 @@ export default function EmploymentChangeRequestsPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                        <span className="text-sm font-medium text-primary-700 dark:text-primary-400">
+                      <div className="h-10 w-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                        <span className="text-sm font-medium text-sky-700 dark:text-sky-400">
                           {request.employeeName?.charAt(0) || 'E'}
                         </span>
                       </div>

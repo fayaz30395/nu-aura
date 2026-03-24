@@ -28,7 +28,7 @@ export function Loading({ size = 'md', text, fullScreen = false, variant = 'orbi
       <div className="fixed inset-0 bg-[var(--bg-overlay)] backdrop-blur-md flex items-center justify-center z-50">
         <div className="relative">
           {/* Glow effect behind spinner */}
-          <div className="absolute inset-0 blur-3xl bg-primary-500/20 rounded-full scale-150" />
+          <div className="absolute inset-0 blur-3xl bg-sky-500/20 rounded-full scale-150" />
           {spinner}
         </div>
       </div>
@@ -153,22 +153,22 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
         {/* Animated Logo Container */}
         <div className="relative w-24 h-24">
           {/* Outer orbit ring */}
-          <div className="absolute inset-0 rounded-full border-2 border-primary-400 dark:border-primary-500 animate-[spin_3s_linear_infinite]">
-            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-primary-500 dark:bg-primary-400 shadow-lg shadow-primary-500/60" />
+          <div className="absolute inset-0 rounded-full border-2 border-sky-400 dark:border-sky-500 animate-[spin_3s_linear_infinite]">
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-sky-500 dark:bg-sky-400 shadow-lg shadow-sky-500/60" />
           </div>
           {/* Middle orbit ring */}
           <div className="absolute inset-4 rounded-full border-2 border-info-400 dark:border-info-500 animate-[spin_2s_linear_infinite_reverse]">
             <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-info-500 dark:bg-info-400 shadow-lg shadow-info-500/60" />
           </div>
           {/* Inner pulsing core */}
-          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-primary-500 to-info-600 shadow-xl shadow-primary-500/40 dark:shadow-primary-400/30 animate-pulse flex items-center justify-center">
+          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-sky-500 to-info-600 shadow-xl shadow-sky-500/40 dark:shadow-sky-400/30 animate-pulse flex items-center justify-center">
             <span className="text-white font-bold text-lg tracking-tight">N</span>
           </div>
         </div>
 
         {/* Brand text */}
         <div className="text-center space-y-2">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-info-600 dark:from-primary-300 dark:to-info-300 bg-clip-text text-transparent">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-sky-700 to-info-600 dark:from-sky-300 dark:to-info-300 bg-clip-text text-transparent">
             NU-AURA
           </h2>
           {/* Loading text — no shimmer overlay to avoid washing out */}
@@ -182,7 +182,7 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400"
+              className="w-2 h-2 rounded-full bg-sky-500 dark:bg-sky-400"
               style={{
                 animation: `nuaura-dot 1.4s ease-in-out ${i * 0.16}s infinite both`,
               }}

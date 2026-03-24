@@ -180,8 +180,8 @@ export default function OrgChartPage() {
             <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
               {emps.map(emp => (
                 <div key={emp.id} className="flex items-center space-x-4 p-2 hover:bg-[var(--bg-secondary)]/50 rounded">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                    <span className="text-xs font-medium text-primary-700">
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-sky-100 flex items-center justify-center">
+                    <span className="text-xs font-medium text-sky-700">
                       {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) || ''}
                     </span>
                   </div>
@@ -259,7 +259,7 @@ export default function OrgChartPage() {
           {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700 mx-auto"></div>
                 <p className="mt-4 text-[var(--text-secondary)]">Loading organization chart...</p>
               </div>
             </div>

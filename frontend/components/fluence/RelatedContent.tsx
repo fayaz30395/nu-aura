@@ -88,7 +88,7 @@ export function RelatedContent({
                     {item.type === 'WIKI' ? 'Wiki' : item.type === 'BLOG' ? 'Blog' : 'Template'}
                   </span>
                 </div>
-                <CardTitle className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--primary-600)] transition-colors`}>
+                <CardTitle className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--sky-700)] transition-colors`}>
                   {item.title}
                 </CardTitle>
               </CardHeader>

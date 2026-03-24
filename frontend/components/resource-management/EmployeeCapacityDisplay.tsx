@@ -56,7 +56,7 @@ export function EmployeeCapacityDisplay({
       {/* Header with employee info */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-400">
             <User className="h-5 w-5" />
           </div>
           <div>
@@ -177,7 +177,7 @@ export function EmployeeCapacityDisplay({
       {onViewDetails && (
         <button
           onClick={onViewDetails}
-          className="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+          className="text-sm font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300"
         >
           View full availability →
         </button>

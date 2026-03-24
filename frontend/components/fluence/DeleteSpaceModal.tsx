@@ -213,7 +213,7 @@ export function DeleteSpaceModal({
                     onClick={() => setSelectedTargetId(s.id)}
                     className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-150 text-left ${
                       selectedTargetId === s.id
-                        ? 'border-[var(--primary-600)] bg-[var(--primary-600)]/5 ring-1 ring-[var(--primary-600)]/30'
+                        ? 'border-[var(--sky-700)] bg-[var(--sky-700)]/5 ring-1 ring-[var(--sky-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'
                     }`}
                   >
@@ -232,7 +232,7 @@ export function DeleteSpaceModal({
                       </p>
                     </div>
                     {selectedTargetId === s.id && (
-                      <CheckCircle2 className="h-5 w-5 text-[var(--primary-600)] flex-shrink-0" />
+                      <CheckCircle2 className="h-5 w-5 text-[var(--sky-700)] flex-shrink-0" />
                     )}
                   </motion.button>
                 ))

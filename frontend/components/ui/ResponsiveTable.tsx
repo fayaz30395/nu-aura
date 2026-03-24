@@ -149,7 +149,7 @@ function ResponsiveTable<T>({
                     type="checkbox"
                     checked={selectedKeys.size === data.length && data.length > 0}
                     onChange={handleSelectAll}
-                    className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-surface-300 text-sky-700 focus:ring-sky-500"
                   />
                 </th>
               )}
@@ -188,7 +188,7 @@ function ResponsiveTable<T>({
                   className={cn(
                     'border-b border-surface-100 dark:border-surface-800 transition-colors',
                     onRowClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50',
-                    isSelected && 'bg-primary-50 dark:bg-primary-900/20',
+                    isSelected && 'bg-sky-50 dark:bg-sky-900/20',
                     computedRowClassName
                   )}
                   onClick={() => onRowClick?.(row)}
@@ -199,7 +199,7 @@ function ResponsiveTable<T>({
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => handleSelectRow(key)}
-                        className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                        className="rounded border-surface-300 text-sky-700 focus:ring-sky-500"
                       />
                     </td>
                   )}
@@ -253,7 +253,7 @@ function ResponsiveTable<T>({
                 'bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4',
                 'transition-all duration-200',
                 onRowClick && 'cursor-pointer active:scale-[0.98]',
-                isSelected && 'ring-2 ring-primary-500 border-primary-500'
+                isSelected && 'ring-2 ring-sky-500 border-sky-500'
               )}
               onClick={() => onRowClick?.(row)}
             >
@@ -298,7 +298,7 @@ function ResponsiveTable<T>({
                         handleSelectRow(key);
                       }}
                       onClick={(e) => e.stopPropagation()}
-                      className="rounded border-surface-300 text-primary-600 focus:ring-primary-500 mt-1"
+                      className="rounded border-surface-300 text-sky-700 focus:ring-sky-500 mt-1"
                     />
                   )}
                   {renderRowActions && (

@@ -143,7 +143,7 @@ function getSystemNotificationIcon(type: string): React.ReactNode {
     case 'SYSTEM_ALERT':
       return <Info className="h-4 w-4 text-red-500" />;
     default:
-      return <ClipboardCheck className="h-4 w-4 text-primary-500" />;
+      return <ClipboardCheck className="h-4 w-4 text-sky-500" />;
   }
 }
 
@@ -374,13 +374,13 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             className={cn(
               "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
               notificationTab === 'google'
-                ? "text-primary-500 dark:text-primary-400 border-b-2 border-primary-500"
+                ? "text-sky-500 dark:text-sky-400 border-b-2 border-sky-500"
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
             )}
           >
             Google
             {googleNotifications.length > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-500/15 text-primary-600 dark:text-primary-300 rounded-full">
+              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-sky-500/15 text-sky-700 dark:text-sky-300 rounded-full">
                 {googleNotifications.length}
               </span>
             )}
@@ -390,13 +390,13 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             className={cn(
               "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
               notificationTab === 'system'
-                ? "text-primary-500 dark:text-primary-400 border-b-2 border-primary-500"
+                ? "text-sky-500 dark:text-sky-400 border-b-2 border-sky-500"
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
             )}
           >
             System
             {systemUnreadCount > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-500/20 text-primary-300 rounded-full">
+              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-sky-500/20 text-sky-300 rounded-full">
                 {systemUnreadCount}
               </span>
             )}
@@ -418,7 +418,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 </div>
               ) : googleNotificationsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
                 </div>
               ) : googleNotifications.length === 0 ? (
                 <div className="p-8 text-center text-surface-500 dark:text-surface-300">
@@ -489,7 +489,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 {systemUnreadCount > 0 && (
                   <button
                     onClick={() => { markAllReadMutation.mutate(); wsMarkAllAsRead(); }}
-                    className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400"
+                    className="text-xs font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400"
                   >
                     Mark all read
                   </button>
@@ -497,7 +497,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
               </div>
               {notificationsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
                 </div>
               ) : persistedNotifications.length === 0 && wsNotifications.length === 0 ? (
                 <div className="p-8 text-center text-surface-500 dark:text-surface-300">
@@ -514,9 +514,9 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                         onClose();
                         router.push(getNotificationRoute(notification));
                       }}
-                      className="flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-primary-50/50 dark:bg-primary-900/10"
+                      className="flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-sky-50/50 dark:bg-sky-900/10"
                     >
-                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
                         {getSystemNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -538,12 +538,12 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                       }}
                       className={cn(
                         "flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
-                        !notification.isRead && "bg-primary-50/50 dark:bg-primary-900/10"
+                        !notification.isRead && "bg-sky-50/50 dark:bg-sky-900/10"
                       )}
                     >
                       <div className={cn(
                         "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center",
-                        !notification.isRead ? "bg-primary-100 dark:bg-primary-900/30" : "bg-surface-100 dark:bg-surface-800"
+                        !notification.isRead ? "bg-sky-100 dark:bg-sky-900/30" : "bg-surface-100 dark:bg-surface-800"
                       )}>
                         {getSystemNotificationIcon(notification.type)}
                       </div>
@@ -685,7 +685,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             <div className="p-6 overflow-y-auto max-h-[50vh]">
               {emailLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+                  <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
                 </div>
               ) : emailContent.includes('<') ? (
                 <div className="prose dark:prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailContent) }} />

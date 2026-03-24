@@ -152,7 +152,7 @@ export default function MyProfilePage() {
     return (
       <AppLayout activeMenuItem="profile">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
         </div>
       </AppLayout>
     );
@@ -273,7 +273,7 @@ export default function MyProfilePage() {
 
         {/* Profile Header Card */}
         <Card className="card-aura overflow-hidden">
-          <div className="h-32 bg-gradient-to-r from-primary-500 to-primary-700" />
+          <div className="h-32 bg-gradient-to-r from-sky-500 to-sky-700" />
           <CardContent className="relative pt-0">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               <div className="relative">
@@ -287,7 +287,7 @@ export default function MyProfilePage() {
                     onError={() => setPhotoLoadError(true)}
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">
+                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-sky-700 shadow-lg">
                     {getInitials(displayName)}
                   </div>
                 )}

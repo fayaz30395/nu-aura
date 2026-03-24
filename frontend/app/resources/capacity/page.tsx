@@ -215,7 +215,7 @@ export default function CapacityTimelinePage() {
                 onClick={() => setViewMode('week')}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   viewMode === 'week'
-                    ? 'bg-primary-500 text-white'
+                    ? 'bg-sky-500 text-white'
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -225,7 +225,7 @@ export default function CapacityTimelinePage() {
                 onClick={() => setViewMode('month')}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   viewMode === 'month'
-                    ? 'bg-primary-500 text-white'
+                    ? 'bg-sky-500 text-white'
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -279,12 +279,12 @@ export default function CapacityTimelinePage() {
             placeholder="Search employee..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 w-52"
+            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 w-52"
           />
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => <option key={d} value={d}>{d}</option>)}

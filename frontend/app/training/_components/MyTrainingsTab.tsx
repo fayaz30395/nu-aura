@@ -17,7 +17,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
       </div>
     );
   }
@@ -66,7 +66,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
                     </div>
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
-                        className="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                        className="bg-sky-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${enrollment.attendancePercentage || 0}%` }}
                       />
                     </div>

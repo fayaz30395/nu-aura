@@ -353,7 +353,7 @@ export default function HolidayCalendarManagementPage() {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleEdit(holiday)}
-                            className="text-primary-600 hover:text-blue-900 px-3 py-1"
+                            className="text-sky-700 hover:text-blue-900 px-3 py-1"
                           >
                             Edit
                           </button>
@@ -482,7 +482,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isOptional')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">Optional Holiday</span>
                         <span className="ml-2 text-xs text-[var(--text-muted)]">(Employees can choose to work)</span>
@@ -492,7 +492,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isRestricted')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">Restricted Holiday</span>
                         <span className="ml-2 text-xs text-[var(--text-muted)]">(Limited to certain employees)</span>

@@ -175,7 +175,7 @@ export default function SettingsPage() {
       <button
         onClick={() => onChange(!enabled)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          enabled ? 'bg-primary-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
+          enabled ? 'bg-sky-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
         }`}
       >
         <span
@@ -266,7 +266,7 @@ export default function SettingsPage() {
                 <button
                   onClick={toggleDarkMode}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    isDark ? 'bg-primary-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
+                    isDark ? 'bg-sky-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
                   }`}
                 >
                   <span
@@ -333,7 +333,7 @@ export default function SettingsPage() {
                   onClick={() => setActiveNotificationTab('channels')}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeNotificationTab === 'channels'
-                      ? 'border-primary-600 text-primary-600'
+                      ? 'border-sky-700 text-sky-700'
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
@@ -346,7 +346,7 @@ export default function SettingsPage() {
                   onClick={() => setActiveNotificationTab('categories')}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeNotificationTab === 'categories'
-                      ? 'border-primary-600 text-primary-600'
+                      ? 'border-sky-700 text-sky-700'
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
@@ -469,7 +469,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleNotificationSave}
                   disabled={isSavingNotifications}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 skeuo-button"
+                  className="flex items-center gap-2 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 skeuo-button"
                 >
                   {isSavingNotifications ? (
                     <>

@@ -119,7 +119,7 @@ export default function OnboardingDetailPage() {
         return (
             <AppLayout activeMenuItem="recruitment">
                 <div className="flex flex-col justify-center items-center h-[60vh] gap-4">
-                    <div className="h-16 w-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+                    <div className="h-16 w-16 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin" />
                     <p className="text-[var(--text-muted)] font-bold animate-pulse">Initializing Dashboard...</p>
                 </div>
             </AppLayout>
@@ -151,12 +151,12 @@ export default function OnboardingDetailPage() {
                             size="sm"
                             onClick={() => router.back()}
                             leftIcon={<ArrowLeft className="h-4 w-4" />}
-                            className="hover:bg-primary-500/10 text-primary-600 font-bold"
+                            className="hover:bg-sky-500/10 text-sky-700 font-bold"
                         >
                             Back to List
                         </Button>
                         <div className="flex items-center gap-6">
-                            <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-primary-500 to-indigo-600 text-white flex items-center justify-center font-black text-4xl shadow-2xl shadow-primary-500/30 ring-4 ring-white dark:ring-surface-900">
+                            <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-4xl shadow-2xl shadow-sky-500/30 ring-4 ring-white dark:ring-surface-900">
                                 {process.employeeName?.charAt(0)}
                             </div>
                             <div>
@@ -188,10 +188,10 @@ export default function OnboardingDetailPage() {
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${process.completionPercentage}%` }}
-                                        className="h-full bg-gradient-to-r from-primary-500 to-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                                        className="h-full bg-gradient-to-r from-sky-500 to-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
                                     />
                                 </div>
-                                <span className="text-2xl font-black text-primary-600 dark:text-primary-400">{process.completionPercentage}%</span>
+                                <span className="text-2xl font-black text-sky-700 dark:text-sky-400">{process.completionPercentage}%</span>
                             </div>
                         </div>
                     </div>
@@ -244,7 +244,7 @@ export default function OnboardingDetailPage() {
                                                             <div className="flex items-center gap-4 flex-1">
                                                                 <button
                                                                     onClick={() => handleTaskStatusUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
-                                                                    className={`flex-shrink-0 transition-all ${task.status === 'COMPLETED' ? 'text-emerald-500' : 'text-[var(--text-muted)] group-hover:text-primary-400'
+                                                                    className={`flex-shrink-0 transition-all ${task.status === 'COMPLETED' ? 'text-emerald-500' : 'text-[var(--text-muted)] group-hover:text-sky-400'
                                                                         }`}
                                                                 >
                                                                     {task.status === 'COMPLETED' ? (
@@ -269,7 +269,7 @@ export default function OnboardingDetailPage() {
                                                                 <select
                                                                     value={task.status}
                                                                     onChange={(e) => handleTaskStatusUpdate(task.id, e.target.value)}
-                                                                    className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] outline-none cursor-pointer hover:text-primary-500"
+                                                                    className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] outline-none cursor-pointer hover:text-sky-500"
                                                                 >
                                                                     <option value="PENDING">Pending</option>
                                                                     <option value="IN_PROGRESS">In Progress</option>
@@ -277,7 +277,7 @@ export default function OnboardingDetailPage() {
                                                                     <option value="SKIPPED">Skipped</option>
                                                                     <option value="BLOCKED">Blocked</option>
                                                                 </select>
-                                                                {isUpdating && <Loader2 className="h-4 w-4 animate-spin text-primary-500" />}
+                                                                {isUpdating && <Loader2 className="h-4 w-4 animate-spin text-sky-500" />}
                                                             </div>
                                                         </div>
                                                     ))}
@@ -338,7 +338,7 @@ export default function OnboardingDetailPage() {
                                         </div>
                                         <label className="block">
                                             <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && uploadFileToDrive(e.target.files[0])} disabled={uploading} />
-                                            <div className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl border-2 border-dashed border-[var(--border-main)] hover:border-primary-500 cursor-pointer transition-all">
+                                            <div className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl border-2 border-dashed border-[var(--border-main)] hover:border-sky-500 cursor-pointer transition-all">
                                                 {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <UploadCloud className="h-5 w-5 text-[var(--text-muted)]" />}
                                                 <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Upload Doc</span>
                                             </div>
@@ -359,7 +359,7 @@ export default function OnboardingDetailPage() {
                                 <div className="px-6 pb-6 space-y-4">
                                     <div className="flex gap-4">
                                         <div className="w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] relative">
-                                            <div className="absolute top-2 -left-1 w-2.5 h-2.5 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
+                                            <div className="absolute top-2 -left-1 w-2.5 h-2.5 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
                                         </div>
                                         <div className="pb-4">
                                             <p className="text-xs font-black text-[var(--text-primary)]">Process Initiated</p>

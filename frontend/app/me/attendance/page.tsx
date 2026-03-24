@@ -251,7 +251,7 @@ export default function MyAttendancePage() {
     return (
       <AppLayout activeMenuItem="my-attendance">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
         </div>
       </AppLayout>
     );
@@ -268,7 +268,7 @@ export default function MyAttendancePage() {
           </p>
           <button
             onClick={() => router.push('/attendance/team')}
-            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
           >
             View Team Attendance
           </button>
@@ -477,14 +477,14 @@ export default function MyAttendancePage() {
                       onClick={() => handleDateSelect(day)}
                       className={`aspect-square p-1 rounded-md border transition-all ${
                         isSelected
-                          ? 'border-primary-500 bg-primary-50 shadow-sm'
+                          ? 'border-sky-500 bg-sky-50 shadow-sm'
                           : 'border-[var(--border-subtle)] hover:border-[var(--border-main)] hover:bg-[var(--bg-surface)]'
-                      } ${isToday ? 'ring-2 ring-primary-300' : ''}`}
+                      } ${isToday ? 'ring-2 ring-sky-300' : ''}`}
                     >
                       <div className="flex flex-col items-center justify-center h-full gap-0.5">
                         <span
                           className={`text-xs font-medium ${
-                            isToday ? 'text-primary-600' : 'text-[var(--text-secondary)]'
+                            isToday ? 'text-sky-700' : 'text-[var(--text-secondary)]'
                           }`}
                         >
                           {day.getDate()}
@@ -567,7 +567,7 @@ export default function MyAttendancePage() {
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-sm font-medium text-[var(--text-secondary)]">Sessions</p>
                       {selectedDateTimeEntries.length > 0 && (
-                        <span className="text-sm font-bold text-primary-600">
+                        <span className="text-sm font-bold text-sky-700">
                           Total: {formatDuration(
                             selectedDateTimeEntries
                               .filter(e => e.entryType === 'REGULAR')
@@ -578,7 +578,7 @@ export default function MyAttendancePage() {
                     </div>
                     {isLoadingTimeEntries ? (
                       <div className="flex items-center justify-center py-4">
-                        <div className="w-6 h-6 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
                       </div>
                     ) : selectedDateTimeEntries.length === 0 ? (
                       <p className="text-sm text-[var(--text-muted)] py-2">No sessions recorded</p>
@@ -662,7 +662,7 @@ export default function MyAttendancePage() {
               <textarea
                 value={regularizationReason}
                 onChange={(e) => setRegularizationReason(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 rows={4}
                 placeholder="Please explain why you need regularization..."
               />
@@ -681,7 +681,7 @@ export default function MyAttendancePage() {
               <button
                 onClick={handleRequestRegularization}
                 disabled={!regularizationReason.trim()}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Submit Request
               </button>

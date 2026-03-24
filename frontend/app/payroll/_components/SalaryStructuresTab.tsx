@@ -41,7 +41,7 @@ export function SalaryStructuresTab({
             <select
               value={structureFilter}
               onChange={(e) => onFilterChange(e.target.value as 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'ALL')}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
               <option value="ALL">All Status</option>
               <option value="ACTIVE">Active</option>
@@ -53,7 +53,7 @@ export function SalaryStructuresTab({
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreateStructure}
-            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
           >
             Create Structure
           </button>
@@ -131,7 +131,7 @@ export function SalaryStructuresTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onEditStructure(structure)}
-                    className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                    className="flex-1 px-3 py-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100 text-sm font-medium"
                   >
                     Edit
                   </button>

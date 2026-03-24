@@ -267,7 +267,7 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary-500" />
+                  <BarChart3 className="h-5 w-5 text-sky-500" />
                   Headcount Trend
                 </CardTitle>
               </CardHeader>
@@ -309,7 +309,7 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <PieChart className="h-5 w-5 text-primary-500" />
+                  <PieChart className="h-5 w-5 text-sky-500" />
                   Department Distribution
                 </CardTitle>
               </CardHeader>
@@ -400,7 +400,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-md">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Users className="h-5 w-5 text-primary-500" />
+                    <Users className="h-5 w-5 text-sky-500" />
                     Workforce Overview
                   </CardTitle>
                 </CardHeader>
@@ -424,7 +424,7 @@ export default function ExecutiveDashboardPage() {
                     </div>
                     <div className="flex items-center justify-between pt-3 border-t border-[var(--border-main)]">
                       <span className="text-sm font-medium text-[var(--text-secondary)]">Retention Rate</span>
-                      <span className="text-xl font-bold text-primary-600">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
+                      <span className="text-xl font-bold text-sky-700">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
                     </div>
                   </div>
                 </CardContent>
@@ -436,7 +436,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-md">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Activity className="h-5 w-5 text-primary-500" />
+                    <Activity className="h-5 w-5 text-sky-500" />
                     Productivity
                   </CardTitle>
                 </CardHeader>
@@ -448,7 +448,7 @@ export default function ExecutiveDashboardPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-[var(--text-secondary)]">Performance Rating</span>
-                      <span className="text-lg font-bold text-primary-600">{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
+                      <span className="text-lg font-bold text-sky-700">{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-[var(--text-secondary)]">Engagement Score</span>
@@ -504,7 +504,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
-                  <DollarSign className="h-5 w-5 text-primary-500" />
+                  <DollarSign className="h-5 w-5 text-sky-500" />
                 </div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.monthlyPayrollCost || 0)}

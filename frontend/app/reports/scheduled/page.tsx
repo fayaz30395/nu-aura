@@ -244,7 +244,7 @@ export default function ScheduledReportsPage() {
               setSelectedReport(null);
               setShowModal(true);
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center gap-2"
+            className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
             New Schedule
@@ -264,7 +264,7 @@ export default function ScheduledReportsPage() {
                   onClick={() => setFilterActive(status)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     filterActive === status
-                      ? 'bg-primary-600 text-white'
+                      ? 'bg-sky-700 text-white'
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
                 >
@@ -293,7 +293,7 @@ export default function ScheduledReportsPage() {
                   setSelectedReport(null);
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
               >
                 Create Your First Schedule
               </button>
@@ -388,7 +388,7 @@ export default function ScheduledReportsPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => openEditModal(report)}
-                        className="p-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100"
+                        className="p-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100"
                         title="Edit"
                       >
                         <Edit className="h-4 w-4" />
@@ -427,7 +427,7 @@ export default function ScheduledReportsPage() {
                         type="text"
                         placeholder="e.g., Weekly Attendance Report"
                         {...register('scheduleName')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                       />
                       {errors.scheduleName && <p className="text-red-500 text-sm mt-1">{errors.scheduleName.message}</p>}
                     </div>
@@ -439,7 +439,7 @@ export default function ScheduledReportsPage() {
                       </label>
                       <select
                         {...register('reportType')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                       >
                         {Object.entries(REPORT_TYPE_LABELS).map(([value, label]) => (
                           <option key={value} value={value}>{label}</option>
@@ -456,7 +456,7 @@ export default function ScheduledReportsPage() {
                         </label>
                         <select
                           {...register('frequency')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                         >
                           {Object.entries(FREQUENCY_LABELS).map(([value, label]) => (
                             <option key={value} value={value}>{label}</option>
@@ -473,7 +473,7 @@ export default function ScheduledReportsPage() {
                           </label>
                           <select
                             {...register('dayOfWeek', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                           >
                             {Object.entries(DAY_OF_WEEK_LABELS).map(([value, label]) => (
                               <option key={value} value={value}>{label}</option>
@@ -490,7 +490,7 @@ export default function ScheduledReportsPage() {
                           </label>
                           <select
                             {...register('dayOfMonth', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                           >
                             {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
                               <option key={day} value={day}>{day}</option>
@@ -510,7 +510,7 @@ export default function ScheduledReportsPage() {
                         <input
                           type="time"
                           {...register('timeOfDay')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                         />
                         {errors.timeOfDay && <p className="text-red-500 text-sm mt-1">{errors.timeOfDay.message}</p>}
                       </div>
@@ -522,7 +522,7 @@ export default function ScheduledReportsPage() {
                         </label>
                         <select
                           {...register('exportFormat')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                         >
                           <option value="EXCEL">Excel (.xlsx)</option>
                           <option value="PDF">PDF</option>
@@ -539,7 +539,7 @@ export default function ScheduledReportsPage() {
                       </label>
                       <select
                         {...register('departmentId')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                       >
                         <option value="">All Departments</option>
                         {departments.map((dept) => (
@@ -560,7 +560,7 @@ export default function ScheduledReportsPage() {
                               type="email"
                               placeholder="email@example.com"
                               {...register(`recipients.${index}.email`)}
-                              className="flex-1 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                              className="flex-1 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
                             />
                             {recipientFields.length > 1 && (
                               <button
@@ -576,7 +576,7 @@ export default function ScheduledReportsPage() {
                         <button
                           type="button"
                           onClick={() => appendRecipient({ email: '' })}
-                          className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                          className="text-sm text-sky-700 hover:text-sky-700 flex items-center gap-1"
                         >
                           <Plus className="h-4 w-4" />
                           Add another recipient
@@ -601,7 +601,7 @@ export default function ScheduledReportsPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
                     >
                       {loading ? 'Saving...' : selectedReport ? 'Update' : 'Create'}
                     </button>

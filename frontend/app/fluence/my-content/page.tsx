@@ -122,7 +122,7 @@ export default function MyContentPage() {
                 relative px-4 py-3 text-sm font-medium whitespace-nowrap
                 transition-colors duration-200 flex items-center gap-2
                 ${activeTab === tab.id
-                  ? 'text-[var(--primary-600)] dark:text-[var(--primary-400)]'
+                  ? 'text-[var(--sky-700)] dark:text-[var(--sky-400)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }
               `}
@@ -133,7 +133,7 @@ export default function MyContentPage() {
               <motion.span
                 className={`px-2 py-0.5 text-xs font-medium rounded-full transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-[var(--primary-100)] text-[var(--primary-700)] dark:bg-[var(--primary-900)] dark:text-[var(--primary-300)]'
+                    ? 'bg-[var(--sky-100)] text-[var(--sky-800)] dark:bg-[var(--sky-950)] dark:text-[var(--sky-300)]'
                     : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                 }`}
                 initial={false}
@@ -146,7 +146,7 @@ export default function MyContentPage() {
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="tab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--primary-600)] dark:bg-[var(--primary-400)]"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--sky-700)] dark:bg-[var(--sky-400)]"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}

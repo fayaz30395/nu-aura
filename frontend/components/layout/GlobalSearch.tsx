@@ -333,14 +333,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         className={cn(
           'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
           globalIndex === selectedIndex
-            ? 'bg-primary-50 dark:bg-primary-950/30'
+            ? 'bg-sky-50 dark:bg-sky-950/30'
             : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'
         )}
       >
         <div className={cn(
           'flex items-center justify-center w-9 h-9 rounded-lg',
           globalIndex === selectedIndex
-            ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400'
+            ? 'bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-400'
             : 'bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400'
         )}>
           <Icon className="h-4 w-4" />
@@ -349,7 +349,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           <p className={cn(
             'text-sm font-medium truncate',
             globalIndex === selectedIndex
-              ? 'text-primary-700 dark:text-primary-300'
+              ? 'text-sky-700 dark:text-sky-300'
               : 'text-surface-900 dark:text-surface-100'
           )}>
             {item.title}
@@ -359,7 +359,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           </p>
         </div>
         {globalIndex === selectedIndex && (
-          <ArrowRight className="h-4 w-4 text-primary-500 dark:text-primary-400" />
+          <ArrowRight className="h-4 w-4 text-sky-500 dark:text-sky-400" />
         )}
       </button>
     );
@@ -375,14 +375,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         className={cn(
           'w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors',
           globalIndex === selectedIndex
-            ? 'bg-primary-50 dark:bg-primary-950/30'
+            ? 'bg-sky-50 dark:bg-sky-950/30'
             : 'hover:bg-surface-50 dark:hover:bg-surface-800/50'
         )}
       >
         <div className={cn(
           'flex items-center justify-center w-9 h-9 rounded-lg',
           globalIndex === selectedIndex
-            ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400'
+            ? 'bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-400'
             : 'bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400'
         )}>
           <Icon className="h-4 w-4" />
@@ -391,7 +391,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           <p className={cn(
             'text-sm font-medium truncate',
             globalIndex === selectedIndex
-              ? 'text-primary-700 dark:text-primary-300'
+              ? 'text-sky-700 dark:text-sky-300'
               : 'text-surface-900 dark:text-surface-100'
           )}>
             {result.title}
@@ -404,7 +404,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           </p>
         </div>
         {globalIndex === selectedIndex && (
-          <ArrowRight className="h-4 w-4 text-primary-500 dark:text-primary-400" />
+          <ArrowRight className="h-4 w-4 text-sky-500 dark:text-sky-400" />
         )}
       </button>
     );
@@ -450,13 +450,13 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         className={cn(
           'relative flex items-center rounded-xl border transition-all duration-200 cursor-pointer',
           isOpen
-            ? 'w-full sm:w-80 lg:w-96 border-[var(--border-focus)] bg-[var(--bg-elevated)] shadow-lg shadow-primary-500/10 dark:shadow-primary-500/5'
+            ? 'w-full sm:w-80 lg:w-96 border-[var(--border-focus)] bg-[var(--bg-elevated)] shadow-lg shadow-sky-500/10 dark:shadow-sky-500/5'
             : 'w-full sm:w-64 lg:w-72 border-[var(--border-main)] bg-[var(--bg-input)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
         )}
       >
         <Search className={cn(
           'absolute left-3 h-4 w-4 transition-colors',
-          isOpen ? 'text-primary-500 dark:text-primary-400' : 'text-[var(--text-muted)]'
+          isOpen ? 'text-sky-500 dark:text-sky-400' : 'text-[var(--text-muted)]'
         )} />
         <input
           ref={inputRef}
@@ -472,7 +472,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)]"
         />
         <div className="absolute right-3 flex items-center gap-1 text-[var(--text-muted)]">
-          {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary-500" />}
+          {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-500" />}
           <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium bg-[var(--bg-surface)] dark:bg-[var(--bg-surface)] rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
             <Command className="h-2.5 w-2.5" />
             <span>K</span>
@@ -561,7 +561,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                 {/* Loading indicator */}
                 {isSearching && (
                   <div className="px-4 py-3 text-center">
-                    <Loader2 className="h-5 w-5 animate-spin text-primary-500 mx-auto" />
+                    <Loader2 className="h-5 w-5 animate-spin text-sky-500 mx-auto" />
                     <p className="text-xs text-surface-400 mt-1">Searching...</p>
                   </div>
                 )}

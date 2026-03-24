@@ -221,7 +221,7 @@ export default function PerformanceReviewsPage() {
           </p>
           <button
             onClick={() => window.history.back()}
-            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
           >
             Go Back
           </button>
@@ -257,7 +257,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as ReviewType | 'ALL')}
-                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="SELF">Self Review</option>
@@ -274,7 +274,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as ReviewStatus | 'ALL')}
-                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -351,7 +351,7 @@ export default function PerformanceReviewsPage() {
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(review)}
-                      className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-3 py-2 tint-info text-sky-700 dark:text-sky-400 rounded hover:opacity-80 text-sm font-medium"
                     >
                       View/Edit
                     </button>

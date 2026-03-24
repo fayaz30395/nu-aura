@@ -69,7 +69,7 @@ export function formatDate(dateString: string) {
 export function getStatusColor(status: string) {
   const colors: { [key: string]: string } = {
     DRAFT: 'bg-[var(--bg-secondary)] text-[var(--text-primary)]',
-    PROCESSING: 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400',
+    PROCESSING: 'bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400',
     PROCESSED: 'bg-cyan-100 text-cyan-800',
     APPROVED: 'bg-green-100 text-green-800',
     LOCKED: 'bg-red-100 text-red-800',

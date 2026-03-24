@@ -64,7 +64,7 @@ export function DriveOAuthPanel({
                 onChange={onFileSelect}
                 disabled={uploading}
               />
-              <div className={`cursor-pointer inline-flex items-center gap-2 h-8 px-3 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 disabled:opacity-50 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+              <div className={`cursor-pointer inline-flex items-center gap-2 h-8 px-3 text-sm font-medium text-white bg-sky-700 rounded-md hover:bg-sky-700 disabled:opacity-50 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                 {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
                 <span>Upload</span>
               </div>

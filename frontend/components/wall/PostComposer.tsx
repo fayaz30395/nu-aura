@@ -155,7 +155,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
               className={cn(
                 'flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors relative',
                 activeTab === tab.id
-                  ? 'text-primary-600 dark:text-primary-400'
+                  ? 'text-sky-700 dark:text-sky-400'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               )}
             >
@@ -164,7 +164,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="composerActiveTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-700 dark:bg-sky-400"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
@@ -307,7 +307,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     <button
                       type="button"
                       onClick={() => append({ value: '' })}
-                      className="mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950 rounded-lg transition-colors"
+                      className="mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950 rounded-lg transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                       Add Option

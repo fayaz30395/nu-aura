@@ -122,7 +122,7 @@ export default function NewTravelRequestPage() {
     return (
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
         </div>
       </AppLayout>
     );
@@ -214,12 +214,12 @@ export default function NewTravelRequestPage() {
   const inputClass = (hasError: boolean) =>
     `w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
       hasError ? 'border-red-500' : 'border-[var(--border-main)]'
-    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`;
+    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all`;
 
   const cardInputClass = (hasError: boolean) =>
     `w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
       hasError ? 'border-red-500' : 'border-[var(--border-main)]'
-    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`;
+    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all`;
 
   return (
     <AppLayout activeMenuItem="travel">
@@ -250,8 +250,8 @@ export default function NewTravelRequestPage() {
           {/* Travel Details */}
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-              <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
+                <Briefcase className="h-5 w-5 text-sky-700 dark:text-sky-400" />
               </div>
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">Travel Details</h2>
             </div>
@@ -381,7 +381,7 @@ export default function NewTravelRequestPage() {
                 <input
                   type="checkbox"
                   {...register('isInternational')}
-                  className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-primary-500"
+                  className="w-4 h-4 text-sky-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-sky-500"
                 />
                 <span className="text-sm text-[var(--text-secondary)]">International Travel</span>
               </label>
@@ -391,7 +391,7 @@ export default function NewTravelRequestPage() {
                   <input
                     type="checkbox"
                     {...register('visaRequired')}
-                    className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-primary-500"
+                    className="w-4 h-4 text-sky-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-sky-500"
                   />
                   <span className="text-sm text-[var(--text-secondary)]">Visa Required</span>
                 </label>
@@ -445,7 +445,7 @@ export default function NewTravelRequestPage() {
               <input
                 type="checkbox"
                 {...register('cabRequired')}
-                className="w-4 h-4 text-primary-600 bg-[var(--bg-secondary)] border-[var(--border-main)] rounded focus:ring-primary-500"
+                className="w-4 h-4 text-sky-700 bg-[var(--bg-secondary)] border-[var(--border-main)] rounded focus:ring-sky-500"
               />
               <span className="text-sm text-[var(--text-secondary)]">Local cab/taxi required</span>
             </label>
@@ -464,7 +464,7 @@ export default function NewTravelRequestPage() {
               <input
                 type="checkbox"
                 {...register('accommodationRequired')}
-                className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-primary-500"
+                className="w-4 h-4 text-sky-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-sky-500"
               />
               <span className="text-sm text-[var(--text-secondary)]">Accommodation required</span>
             </label>
@@ -594,7 +594,7 @@ export default function NewTravelRequestPage() {
             type="button"
             onClick={handleSubmitRequest}
             disabled={isLoading}
-            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
             Submit Request

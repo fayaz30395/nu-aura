@@ -286,8 +286,8 @@ export default function PreboardingPage() {
                   <div key={candidate.id} className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                          <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                        <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                          <span className="text-sm font-medium text-sky-700 dark:text-sky-400">
                             {candidate.firstName[0]}{candidate.lastName?.[0] || ''}
                           </span>
                         </div>
@@ -309,7 +309,7 @@ export default function PreboardingPage() {
                         <div className="flex items-center gap-2">
                           <div className="w-24 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                             <div
-                              className="bg-primary-500 h-2 rounded-full transition-all"
+                              className="bg-sky-500 h-2 rounded-full transition-all"
                               style={{ width: `${candidate.completionPercentage}%` }}
                             />
                           </div>

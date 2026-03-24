@@ -41,7 +41,7 @@ export default function PerformanceRevolutionPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold skeuo-emboss bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">
+                        <h1 className="text-3xl font-bold skeuo-emboss bg-clip-text text-transparent bg-gradient-to-r from-sky-700 to-indigo-600 dark:from-sky-400 dark:to-indigo-400">
                             Performance Revolution
                         </h1>
                         <p className="text-[var(--text-secondary)] mt-1">Advanced OKR visualization and 360° performance insights</p>
@@ -64,12 +64,12 @@ export default function PerformanceRevolutionPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <CardTitle className="text-white flex items-center gap-2">
-                                        <Target className="h-5 w-5 text-primary-400" /> OKR Alignment Galaxy
+                                        <Target className="h-5 w-5 text-sky-400" /> OKR Alignment Galaxy
                                     </CardTitle>
                                     <CardDescription className="text-[var(--text-muted)]">Visual mapping of objectives from Company to Individual</CardDescription>
                                 </div>
                                 <div className="flex items-center gap-4 text-xs">
-                                    <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-primary-500" /> Company</div>
+                                    <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-sky-500" /> Company</div>
                                     <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-indigo-500" /> Team</div>
                                     <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[var(--text-muted)]" /> Personal</div>
                                 </div>
@@ -92,13 +92,13 @@ export default function PerformanceRevolutionPage() {
                                     >
                                         <div className={`
                        relative w-16 h-16 rounded-full flex items-center justify-center border-2 
-                       ${node.type === 'COMPANY' ? 'bg-primary-600/20 border-primary-500 h-24 w-24 shadow-[0_0_20px_rgba(59,130,246,0.5)]' :
+                       ${node.type === 'COMPANY' ? 'bg-sky-700/20 border-sky-500 h-24 w-24 shadow-[0_0_20px_rgba(59,130,246,0.5)]' :
                                                 node.type === 'TEAM' ? 'bg-indigo-600/20 border-indigo-500' : 'bg-[var(--bg-secondary)] border-[var(--border-main)]'}
                      `}>
                                             <div className="text-center">
                                                 <div className="text-xs font-black">{Math.round(node.progress)}%</div>
                                                 <div className="w-8 h-1 bg-white/10 rounded-full mt-1 overflow-hidden mx-auto">
-                                                    <div className="h-full bg-primary-400" style={{ width: `${node.progress}%` }} />
+                                                    <div className="h-full bg-sky-400" style={{ width: `${node.progress}%` }} />
                                                 </div>
                                             </div>
                                             {/* Tooltip on hover */}
@@ -111,7 +111,7 @@ export default function PerformanceRevolutionPage() {
                                 ))}
                                 {/* Center Node */}
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 opacity-20">
-                                    <Hexagon className="h-96 w-96 text-primary-500 animate-pulse" />
+                                    <Hexagon className="h-96 w-96 text-sky-500 animate-pulse" />
                                 </div>
                             </div>
                         </CardContent>
@@ -160,7 +160,7 @@ export default function PerformanceRevolutionPage() {
                             <div className="flex justify-center gap-4 mt-6">
                                 <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-green-500" /> <span className="text-xs">Self</span></div>
                                 <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-purple-500" /> <span className="text-xs">Peers</span></div>
-                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-primary-500" /> <span className="text-xs">Manager</span></div>
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-sky-500" /> <span className="text-xs">Manager</span></div>
                             </div>
                         </CardContent>
                     </Card>
@@ -181,7 +181,7 @@ export default function PerformanceRevolutionPage() {
                                         {i === 1 ? 'JD' : i === 2 ? 'AL' : 'KS'}
                                     </div>
                                     <div>
-                                        <h5 className="text-xs font-bold group-hover:text-primary-600 transition-colors">Amazing Sprint Finish!</h5>
+                                        <h5 className="text-xs font-bold group-hover:text-sky-700 transition-colors">Amazing Sprint Finish!</h5>
                                         <p className="text-xs text-[var(--text-muted)] line-clamp-2">&quot;Thanks to the team for pushing through the last few bugs before release.&quot;</p>
                                         <div className="flex items-center gap-2 mt-1">
                                             <span className="text-[8px] text-[var(--text-muted)] uppercase font-bold">2 hours ago</span>
@@ -192,7 +192,7 @@ export default function PerformanceRevolutionPage() {
                                     </div>
                                 </div>
                             ))}
-                            <Button variant="ghost" className="w-full text-xs text-primary-600 p-0 h-auto">View All Kudos</Button>
+                            <Button variant="ghost" className="w-full text-xs text-sky-700 p-0 h-auto">View All Kudos</Button>
                         </CardContent>
                     </Card>
 

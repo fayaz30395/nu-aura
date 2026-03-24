@@ -89,7 +89,7 @@ export default function TimeEntryDetailPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
             <p className="text-[var(--text-secondary)]">Loading time entry...</p>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function TimeEntryDetailPage() {
             </p>
             <button
               onClick={() => router.push('/time-tracking')}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
+              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
             >
               Back to Time Tracking
             </button>
@@ -159,8 +159,8 @@ export default function TimeEntryDetailPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-4 mb-3">
-              <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                <Timer className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              <div className="p-2 rounded-lg bg-sky-100 dark:bg-sky-900/30">
+                <Timer className="h-5 w-5 text-sky-700 dark:text-sky-400" />
               </div>
               <span className="text-sm text-[var(--text-muted)]">Hours Worked</span>
             </div>
@@ -327,7 +327,7 @@ export default function TimeEntryDetailPage() {
               <button
                 onClick={handleSubmit}
                 disabled={submitMutation.isPending}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 disabled:opacity-50"
               >
                 {submitMutation.isPending ? (
                   <>

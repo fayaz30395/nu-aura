@@ -108,7 +108,7 @@ export function ConnectorConfigPanel({
               type="checkbox"
               id={field.name}
               {...register(field.name as keyof FormData)}
-              className="h-4 w-4 rounded border-[var(--border-main)] text-primary-600"
+              className="h-4 w-4 rounded border-[var(--border-main)] text-sky-700"
             />
             <label htmlFor={field.name} className="text-sm font-medium text-[var(--text-primary)]">
               {field.label}

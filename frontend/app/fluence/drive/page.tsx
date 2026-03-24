@@ -113,7 +113,7 @@ function FluenceDriveContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
           <p className="text-[var(--text-muted)] font-medium">Loading NU-Fluence Drive...</p>
         </div>
       </div>
@@ -201,7 +201,7 @@ function FluenceDriveContent() {
           <Card>
             <CardContent className="py-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
+                <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
                 <p className="text-[var(--text-muted)]">Loading files...</p>
               </div>
             </CardContent>

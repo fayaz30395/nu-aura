@@ -251,7 +251,7 @@ export default function HolidaysPage() {
                 setEditingHoliday(null);
                 setShowModal(true);
               }}
-              className="flex items-center gap-2 bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors text-sm font-medium"
             >
               <Plus className="h-4 w-4" />
               Add Holiday
@@ -295,7 +295,7 @@ export default function HolidaysPage() {
         </div>
         <div className="card-aura p-4">
           <div className="text-caption text-[var(--text-secondary)]">Upcoming (30d)</div>
-          <div className="text-stat-medium text-primary-600 dark:text-primary-400">
+          <div className="text-stat-medium text-sky-700 dark:text-sky-400">
             {upcomingHolidays.length}
           </div>
         </div>
@@ -303,17 +303,17 @@ export default function HolidaysPage() {
 
       {/* Upcoming Holidays Banner */}
       {upcomingHolidays.length > 0 && (
-        <div className="card-aura p-4 mb-6 border-l-4 border-l-primary-500">
+        <div className="card-aura p-4 mb-6 border-l-4 border-l-sky-500">
           <h3 className="text-card-title text-[var(--text-primary)] mb-2">Coming Up</h3>
           <div className="flex flex-wrap gap-4">
             {upcomingHolidays.slice(0, 3).map((h) => (
               <div key={h.id} className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-primary-500" />
+                <CalendarDays className="h-4 w-4 text-sky-500" />
                 <span className="text-sm font-medium text-[var(--text-primary)]">{h.holidayName}</span>
                 <span className="text-xs text-[var(--text-muted)]">
                   {new Date(h.holidayDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </span>
-                <span className="text-xs font-medium text-primary-600 dark:text-primary-400">
+                <span className="text-xs font-medium text-sky-700 dark:text-sky-400">
                   {getDaysUntil(h.holidayDate)}
                 </span>
               </div>
@@ -328,7 +328,7 @@ export default function HolidaysPage() {
           onClick={() => setFilterType('ALL')}
           className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
             filterType === 'ALL'
-              ? 'bg-primary-500 text-white'
+              ? 'bg-sky-500 text-white'
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
           }`}
         >
@@ -343,7 +343,7 @@ export default function HolidaysPage() {
               onClick={() => setFilterType(type)}
               className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
                 filterType === type
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
@@ -437,7 +437,7 @@ export default function HolidaysPage() {
                         <div className="flex items-center gap-1 ml-4">
                           <button
                             onClick={() => handleEdit(holiday)}
-                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors"
                             title="Edit holiday"
                           >
                             <Pencil className="h-4 w-4" />
@@ -563,7 +563,7 @@ export default function HolidaysPage() {
                       <input
                         type="checkbox"
                         {...form.register('isOptional')}
-                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] rounded"
+                        className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] rounded"
                       />
                       <span className="ml-2 text-sm text-[var(--text-secondary)]">Optional Holiday</span>
                       <span className="ml-2 text-xs text-[var(--text-muted)]">(Employees can choose to work)</span>
@@ -572,7 +572,7 @@ export default function HolidaysPage() {
                       <input
                         type="checkbox"
                         {...form.register('isRestricted')}
-                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] rounded"
+                        className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] rounded"
                       />
                       <span className="ml-2 text-sm text-[var(--text-secondary)]">Restricted Holiday</span>
                       <span className="ml-2 text-xs text-[var(--text-muted)]">(Limited to certain employees)</span>
@@ -627,7 +627,7 @@ export default function HolidaysPage() {
                   <button
                     type="submit"
                     disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                    className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 transition-colors text-sm font-medium"
+                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50 transition-colors text-sm font-medium"
                   >
                     {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending
                       ? 'Saving...'
