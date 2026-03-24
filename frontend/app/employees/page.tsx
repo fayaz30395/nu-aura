@@ -381,18 +381,25 @@ export default function EmployeesPage() {
                     <td className="whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button
+                          type="button"
                           variant="ghost"
                           size="xs"
-                          onClick={() => router.push(`/employees/${employee.id}`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            router.push(`/employees/${employee.id}`);
+                          }}
                         >
                           View
                         </Button>
                         <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
                           <Button
+                            type="button"
                             variant="ghost"
                             size="xs"
                             className="text-danger-600 dark:text-danger-400 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/30"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setEmployeeToDelete(employee);
                               setShowDeleteModal(true);
                             }}
