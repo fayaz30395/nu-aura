@@ -41,23 +41,51 @@ public class MonitoringService {
     private final DataSource dataSource;
 
     /**
-     * Get system health status
+     * Get system health status.
+     *
+     * <p>Each subsystem check is wrapped in its own try/catch so that a single
+     * failing service (e.g. Redis down, HikariCP metrics not yet registered)
+     * does not crash the entire health endpoint with a 500. Instead, the
+     * individual component reports DEGRADED/DOWN and the overall status
+     * reflects the worst component.</p>
      */
     @Transactional(readOnly = true)
     public SystemHealthResponse getSystemHealth() {
-        HealthComponent healthComponent = healthEndpoint.health();
-        Status status = healthComponent.getStatus();
+        // 1. Spring Boot aggregate health (may throw if an indicator is broken)
+        String overallStatus;
+        SystemHealthResponse.CacheHealth cacheHealth;
+        try {
+            HealthComponent healthComponent = healthEndpoint.health();
+            overallStatus = healthComponent.getStatus().getCode();
+            cacheHealth = getCacheHealthFromComponent(healthComponent);
+        } catch (Exception e) {
+            log.warn("Spring Boot health aggregation failed — reporting DEGRADED: {}", e.getMessage());
+            overallStatus = "DEGRADED";
+            cacheHealth = SystemHealthResponse.CacheHealth.builder()
+                    .status("UNKNOWN")
+                    .redisAvailable(false)
+                    .build();
+        }
 
-        // Extract cache health from composite health if available
-        SystemHealthResponse.CacheHealth cacheHealth = getCacheHealthFromComponent(healthComponent);
+        // 2. Individual subsystem checks (each resilient)
+        SystemHealthResponse.DatabaseHealth dbHealth = getDatabaseHealth();
+        SystemHealthResponse.JvmHealth jvmHealth = getJvmHealth();
+        SystemHealthResponse.ApiHealth apiHealth = getApiHealth();
+
+        // 3. Derive worst-case overall status
+        if ("DOWN".equals(dbHealth.getStatus())) {
+            overallStatus = "DOWN";
+        } else if ("DOWN".equals(cacheHealth.getStatus()) && !"DOWN".equals(overallStatus)) {
+            overallStatus = "DEGRADED";
+        }
 
         return SystemHealthResponse.builder()
-                .status(status.getCode())
+                .status(overallStatus)
                 .timestamp(Instant.now())
-                .database(getDatabaseHealth())
+                .database(dbHealth)
                 .cache(cacheHealth)
-                .jvm(getJvmHealth())
-                .api(getApiHealth())
+                .jvm(jvmHealth)
+                .api(apiHealth)
                 .build();
     }
 
@@ -75,23 +103,40 @@ public class MonitoringService {
     }
 
     private SystemHealthResponse.DatabaseHealth getDatabaseHealth() {
+        // 1. Verify basic connectivity
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
+            stmt.execute("SELECT 1");
+        } catch (Exception e) {
+            log.error("Database connectivity check failed", e);
+            return SystemHealthResponse.DatabaseHealth.builder()
+                    .status("DOWN")
+                    .activeConnections(0)
+                    .maxConnections(0)
+                    .connectionPoolUsage(0.0)
+                    .build();
+        }
 
-            // Get HikariCP metrics
+        // 2. Try to read HikariCP pool metrics (may not be registered yet)
+        try {
             Double activeConnections = meterRegistry.get("hikaricp.connections.active").gauge().value();
             Double maxConnections = meterRegistry.get("hikaricp.connections.max").gauge().value();
+
+            double poolUsage = (maxConnections > 0) ? (activeConnections / maxConnections) * 100 : 0.0;
 
             return SystemHealthResponse.DatabaseHealth.builder()
                     .status("UP")
                     .activeConnections(activeConnections.intValue())
                     .maxConnections(maxConnections.intValue())
-                    .connectionPoolUsage((activeConnections / maxConnections) * 100)
+                    .connectionPoolUsage(poolUsage)
                     .build();
         } catch (Exception e) {
-            log.error("Error getting database health", e);
+            log.warn("HikariCP metrics not available — DB is UP but pool stats unknown: {}", e.getMessage());
             return SystemHealthResponse.DatabaseHealth.builder()
-                    .status("DOWN")
+                    .status("UP")
+                    .activeConnections(0)
+                    .maxConnections(0)
+                    .connectionPoolUsage(0.0)
                     .build();
         }
     }

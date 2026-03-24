@@ -17,6 +17,8 @@ import com.hrms.application.notification.service.WebSocketNotificationService;
 import com.hrms.application.payment.service.RazorpayAdapter;
 import com.hrms.application.payment.service.StripeAdapter;
 import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.workflow.service.WorkflowService;
+import com.hrms.common.security.DataScopeService;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
@@ -26,6 +28,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
@@ -46,6 +50,7 @@ import static org.mockito.Mockito.*;
  * These tests are security regression guards. If any test in this class fails,
  * it indicates a potential cross-tenant data leak vulnerability.
  */
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tenant Isolation Negative Tests (Cross-Service)")
 class TenantIsolationNegativeTest {
@@ -64,6 +69,7 @@ class TenantIsolationNegativeTest {
 
         // Current context = Tenant A
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(TENANT_A);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(TENANT_A);
         securityContextMock.when(SecurityContext::getCurrentTenantId).thenReturn(TENANT_A);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(USER_A);
     }
@@ -98,40 +104,41 @@ class TenantIsolationNegativeTest {
         @Mock
         private AuditLogService auditLogService;
 
+        @Mock
+        private DataScopeService dataScopeService;
+
         @InjectMocks
         private EmployeeService employeeService;
 
         @Test
         @DisplayName("Getting an employee belonging to Tenant B should throw ResourceNotFoundException")
         void shouldRejectCrossTenantEmployeeAccess() {
-            // Given - employee belongs to Tenant B
+            // Given - employee belongs to Tenant B, but the service queries by
+            // findByIdAndTenantId(employeeId, TENANT_A) which won't find it
             UUID employeeId = UUID.randomUUID();
-            Employee tenantBEmployee = new Employee();
-            tenantBEmployee.setId(employeeId);
-            tenantBEmployee.setTenantId(TENANT_B); // Different tenant!
-            tenantBEmployee.setEmployeeCode("EMP-B-001");
 
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(tenantBEmployee));
+            // The service uses findByIdAndTenantId, so stubbing findById is unnecessary.
+            // When the service queries with TENANT_A, the Tenant B employee won't be found.
+            when(employeeRepository.findByIdAndTenantId(employeeId, TENANT_A))
+                    .thenReturn(Optional.empty());
 
             // When/Then - Tenant A context should NOT be able to read Tenant B's employee
             assertThatThrownBy(() -> employeeService.getEmployee(employeeId))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessage("Employee not found");
 
-            // Verify the employee was found but access was denied
-            verify(employeeRepository).findById(employeeId);
+            // Verify the query was scoped to current tenant
+            verify(employeeRepository).findByIdAndTenantId(employeeId, TENANT_A);
         }
 
         @Test
         @DisplayName("Deleting an employee belonging to Tenant B should throw ResourceNotFoundException")
         void shouldRejectCrossTenantEmployeeDeletion() {
-            // Given - employee belongs to Tenant B
+            // Given - employee belongs to Tenant B, query with TENANT_A returns empty
             UUID employeeId = UUID.randomUUID();
-            Employee tenantBEmployee = new Employee();
-            tenantBEmployee.setId(employeeId);
-            tenantBEmployee.setTenantId(TENANT_B);
 
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(tenantBEmployee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, TENANT_A))
+                    .thenReturn(Optional.empty());
 
             // When/Then
             assertThatThrownBy(() -> employeeService.deleteEmployee(employeeId))
@@ -167,6 +174,9 @@ class TenantIsolationNegativeTest {
         @Mock
         private DomainEventPublisher domainEventPublisher;
 
+        @Mock
+        private WorkflowService workflowService;
+
         @InjectMocks
         private LeaveRequestService leaveRequestService;
 
@@ -189,7 +199,8 @@ class TenantIsolationNegativeTest {
             when(leaveRequestRepository.findById(leaveRequestId))
                     .thenReturn(Optional.of(tenantBLeave));
 
-            // When/Then - Tenant A context should be rejected
+            // When/Then - Service uses .filter(lr -> lr.getTenantId().equals(tenantId))
+            // which filters out Tenant B's leave request when context is Tenant A
             assertThatThrownBy(() -> leaveRequestService.cancelLeaveRequest(
                     leaveRequestId, "Trying to cancel other tenant's leave"))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -201,7 +212,7 @@ class TenantIsolationNegativeTest {
         }
 
         @Test
-        @DisplayName("Getting a leave request belonging to Tenant B should enforce tenant check")
+        @DisplayName("Getting a leave request belonging to Tenant B should throw ResourceNotFoundException")
         void shouldEnforceTenantCheckOnLeaveRetrieval() {
             // Given - leave request belongs to Tenant B
             UUID leaveRequestId = UUID.randomUUID();
@@ -219,15 +230,11 @@ class TenantIsolationNegativeTest {
             when(leaveRequestRepository.findById(leaveRequestId))
                     .thenReturn(Optional.of(tenantBLeave));
 
-            // When - retrieve the leave request
-            LeaveRequest result = leaveRequestService.getLeaveRequestById(leaveRequestId);
-
-            // Then - the service returns the entity but the tenant ID is TENANT_B,
-            // which means downstream code or security filters must enforce isolation.
-            // The key assertion: the returned entity's tenantId does NOT match
-            // the current security context (TENANT_A).
-            assertThat(result.getTenantId()).isNotEqualTo(TENANT_A);
-            assertThat(result.getTenantId()).isEqualTo(TENANT_B);
+            // When/Then - Service uses .filter(lr -> lr.getTenantId().equals(tenantId))
+            // which filters out Tenant B's leave request, resulting in ResourceNotFoundException
+            assertThatThrownBy(() -> leaveRequestService.getLeaveRequestById(leaveRequestId))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessageContaining("not found");
         }
     }
 

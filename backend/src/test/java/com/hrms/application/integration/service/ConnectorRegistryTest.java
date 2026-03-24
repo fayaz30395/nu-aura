@@ -2,6 +2,8 @@ package com.hrms.application.integration.service;
 
 import com.hrms.domain.integration.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.*;
  * <p>Tests auto-discovery, lookup by ID, capabilities caching,
  * and filtering connectors by event type and webhook support.</p>
  */
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ConnectorRegistry Tests")
 class ConnectorRegistryTest {

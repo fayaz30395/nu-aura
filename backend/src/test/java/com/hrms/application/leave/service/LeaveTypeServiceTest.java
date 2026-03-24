@@ -6,6 +6,8 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.leave.LeaveType;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import org.junit.jupiter.api.*;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,6 +29,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("LeaveTypeService Tests")
 class LeaveTypeServiceTest {

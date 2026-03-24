@@ -7,9 +7,13 @@ import com.hrms.application.attendance.service.AttendanceRecordService;
 import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.JwtAuthenticationFilter;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.TenantFilter;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
+import com.hrms.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,6 +32,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -72,6 +78,7 @@ class AttendanceControllerTest {
 
     private UUID attendanceId;
     private UUID employeeId;
+    private UUID tenantId;
     private AttendanceRecord attendanceRecord;
     private AttendanceResponse attendanceResponse;
 
@@ -79,6 +86,20 @@ class AttendanceControllerTest {
     void setUp() {
         attendanceId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
+        tenantId = UUID.randomUUID();
+
+        // Set up SecurityContext so the controller's resolveEmployeeId / validateEmployeeAccess work
+        Map<String, RoleScope> permissions = Map.of(
+                Permission.ATTENDANCE_MARK, RoleScope.ALL,
+                Permission.ATTENDANCE_VIEW_ALL, RoleScope.ALL,
+                Permission.ATTENDANCE_VIEW_TEAM, RoleScope.ALL,
+                Permission.ATTENDANCE_VIEW_SELF, RoleScope.SELF,
+                Permission.ATTENDANCE_APPROVE, RoleScope.ALL,
+                Permission.ATTENDANCE_REGULARIZE, RoleScope.ALL,
+                Permission.ATTENDANCE_MANAGE, RoleScope.ALL
+        );
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("HR_MANAGER"), permissions);
+        TenantContext.setCurrentTenant(tenantId);
 
         attendanceRecord = new AttendanceRecord();
         attendanceRecord.setId(attendanceId);
@@ -95,6 +116,12 @@ class AttendanceControllerTest {
         attendanceResponse.setCheckInTime(attendanceRecord.getCheckInTime());
         attendanceResponse.setCheckOutTime(attendanceRecord.getCheckOutTime());
         attendanceResponse.setStatus("PRESENT");
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
+        TenantContext.clear();
     }
 
     @Nested
@@ -114,8 +141,8 @@ class AttendanceControllerTest {
                     eq(employeeId),
                     any(LocalDateTime.class),
                     anyString(),
-                    anyString(),
-                    anyString(),
+                    any(),
+                    any(),
                     any(LocalDate.class)))
                     .thenReturn(attendanceRecord);
 
@@ -130,23 +157,34 @@ class AttendanceControllerTest {
                     eq(employeeId),
                     any(LocalDateTime.class),
                     anyString(),
-                    anyString(),
-                    anyString(),
+                    any(),
+                    any(),
                     any(LocalDate.class));
         }
 
         @Test
-        @DisplayName("Should return 400 for missing required fields in check-in")
-        void shouldReturn400ForMissingFields() throws Exception {
-            CheckInRequest invalidRequest = new CheckInRequest();
-            // Missing employeeId and other required fields
+        @DisplayName("Should check in with employeeId resolved from SecurityContext when null")
+        void shouldCheckInWithResolvedEmployeeId() throws Exception {
+            CheckInRequest request = new CheckInRequest();
+            // employeeId is null — controller should resolve from SecurityContext
+            request.setCheckInTime(LocalDateTime.now());
+            request.setSource("MOBILE");
+            request.setAttendanceDate(LocalDate.now());
+
+            when(attendanceService.checkIn(
+                    eq(employeeId),
+                    any(LocalDateTime.class),
+                    anyString(),
+                    any(),
+                    any(),
+                    any(LocalDate.class)))
+                    .thenReturn(attendanceRecord);
 
             mockMvc.perform(post("/api/v1/attendance/check-in")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(invalidRequest)))
-                    .andExpect(status().isBadRequest());
-
-            verify(attendanceService, never()).checkIn(any(), any(), any(), any(), any(), any());
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.employeeId").value(employeeId.toString()));
         }
 
         @Test
@@ -162,8 +200,8 @@ class AttendanceControllerTest {
                     eq(employeeId),
                     any(LocalDateTime.class),
                     anyString(),
-                    anyString(),
-                    anyString(),
+                    any(),
+                    any(),
                     any(LocalDate.class)))
                     .thenThrow(new IllegalArgumentException("Employee already checked in today"));
 
@@ -191,8 +229,8 @@ class AttendanceControllerTest {
                     eq(employeeId),
                     any(LocalDateTime.class),
                     anyString(),
-                    anyString(),
-                    anyString(),
+                    any(),
+                    any(),
                     any(LocalDate.class)))
                     .thenReturn(attendanceRecord);
 
@@ -206,8 +244,8 @@ class AttendanceControllerTest {
                     eq(employeeId),
                     any(LocalDateTime.class),
                     anyString(),
-                    anyString(),
-                    anyString(),
+                    any(),
+                    any(),
                     any(LocalDate.class));
         }
 
@@ -224,8 +262,8 @@ class AttendanceControllerTest {
                     eq(employeeId),
                     any(LocalDateTime.class),
                     anyString(),
-                    anyString(),
-                    anyString(),
+                    any(),
+                    any(),
                     any(LocalDate.class)))
                     .thenThrow(new IllegalArgumentException("Employee has not checked in today"));
 
@@ -371,9 +409,9 @@ class AttendanceControllerTest {
                     any(LocalDateTime.class),
                     anyString(),
                     anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString()))
+                    any(),
+                    any(),
+                    any()))
                     .thenReturn(entry);
 
             mockMvc.perform(post("/api/v1/attendance/multi-check-in")
@@ -386,9 +424,9 @@ class AttendanceControllerTest {
                     any(LocalDateTime.class),
                     anyString(),
                     anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString());
+                    any(),
+                    any(),
+                    any());
         }
 
         @Test
@@ -409,8 +447,8 @@ class AttendanceControllerTest {
                     any(UUID.class),
                     any(LocalDateTime.class),
                     anyString(),
-                    anyString(),
-                    anyString()))
+                    any(),
+                    any()))
                     .thenReturn(entry);
 
             mockMvc.perform(post("/api/v1/attendance/multi-check-out")
@@ -495,9 +533,9 @@ class AttendanceControllerTest {
             when(attendanceService.bulkCheckIn(
                     anyList(),
                     any(LocalDateTime.class),
-                    anyString(),
-                    anyString(),
-                    anyString()))
+                    any(),
+                    any(),
+                    any()))
                     .thenReturn(result);
 
             mockMvc.perform(post("/api/v1/attendance/bulk-check-in")
@@ -508,9 +546,9 @@ class AttendanceControllerTest {
             verify(attendanceService).bulkCheckIn(
                     anyList(),
                     any(LocalDateTime.class),
-                    anyString(),
-                    anyString(),
-                    anyString());
+                    any(),
+                    any(),
+                    any());
         }
 
         @Test
@@ -531,9 +569,9 @@ class AttendanceControllerTest {
             when(attendanceService.bulkCheckOut(
                     anyList(),
                     any(LocalDateTime.class),
-                    anyString(),
-                    anyString(),
-                    anyString()))
+                    any(),
+                    any(),
+                    any()))
                     .thenReturn(result);
 
             mockMvc.perform(post("/api/v1/attendance/bulk-check-out")
@@ -544,9 +582,9 @@ class AttendanceControllerTest {
             verify(attendanceService).bulkCheckOut(
                     anyList(),
                     any(LocalDateTime.class),
-                    anyString(),
-                    anyString(),
-                    anyString());
+                    any(),
+                    any(),
+                    any());
         }
     }
 
