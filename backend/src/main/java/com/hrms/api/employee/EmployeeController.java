@@ -107,6 +107,36 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getEmployee(employeeId));
     }
 
+    /**
+     * Self-service: update the authenticated user's own profile.
+     * Only allows personal/contact fields — administrative fields
+     * (department, status, designation, etc.) are silently ignored.
+     */
+    @PutMapping("/me")
+    @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
+    @Operation(summary = "Update current user's own profile (self-service)")
+    public ResponseEntity<EmployeeResponse> updateMyEmployee(
+            @Valid @RequestBody UpdateEmployeeRequest request) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Restrict to self-service fields only — clear admin-only fields
+        UpdateEmployeeRequest selfServiceRequest = new UpdateEmployeeRequest();
+        selfServiceRequest.setPersonalEmail(request.getPersonalEmail());
+        selfServiceRequest.setPhoneNumber(request.getPhoneNumber());
+        selfServiceRequest.setEmergencyContactNumber(request.getEmergencyContactNumber());
+        selfServiceRequest.setAddress(request.getAddress());
+        selfServiceRequest.setCity(request.getCity());
+        selfServiceRequest.setState(request.getState());
+        selfServiceRequest.setPostalCode(request.getPostalCode());
+        selfServiceRequest.setCountry(request.getCountry());
+
+        EmployeeResponse response = employeeService.updateEmployee(employeeId, selfServiceRequest);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     @RequiresPermission({
         Permission.EMPLOYEE_VIEW_ALL,
