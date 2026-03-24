@@ -51,6 +51,7 @@ class PayrollComponentServiceTest {
     void setUp() {
         tenantId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
     }
 
     // ===== Topological Sort Tests =====

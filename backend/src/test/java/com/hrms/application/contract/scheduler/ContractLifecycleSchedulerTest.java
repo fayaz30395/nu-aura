@@ -44,6 +44,7 @@ import static org.mockito.Mockito.*;
  * - Tenant isolation
  * - Edge cases (no end date, already renewed, missing recipient)
  */
+@org.mockito.junit.jupiter.MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 class ContractLifecycleSchedulerTest {
 
@@ -80,6 +81,9 @@ class ContractLifecycleSchedulerTest {
     @BeforeEach
     void setUp() {
         TenantContext.setCurrentTenant(TENANT_A);
+        // Make loadTenantConfig fall back to defaults (no config row in DB)
+        lenient().when(jdbcTemplate.queryForObject(anyString(), any(org.springframework.jdbc.core.RowMapper.class), any()))
+                .thenThrow(new org.springframework.dao.EmptyResultDataAccessException(1));
     }
 
     @AfterEach

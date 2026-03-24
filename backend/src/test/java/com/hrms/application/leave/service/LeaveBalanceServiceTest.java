@@ -61,6 +61,7 @@ class LeaveBalanceServiceTest {
         year = 2024;
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
     }
 
     @Nested

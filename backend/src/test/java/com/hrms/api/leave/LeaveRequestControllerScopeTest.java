@@ -75,6 +75,7 @@ class LeaveRequestControllerScopeTest {
         managerId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         // Create own leave request
         ownLeaveRequest = LeaveRequest.builder()

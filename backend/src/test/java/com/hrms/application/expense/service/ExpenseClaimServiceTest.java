@@ -86,6 +86,7 @@ class ExpenseClaimServiceTest {
         approverId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(approverId);
         securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.EXPENSE_VIEW_ALL))

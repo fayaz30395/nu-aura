@@ -282,7 +282,7 @@ describe('spotlightService', () => {
       const result = await spotlightService.updateSpotlight(spotlightId, updateData);
 
       expect(mockedApiClient.put).toHaveBeenCalledWith(
-        `/api/spotlights/${spotlightId}`,
+        `/spotlights/${spotlightId}`,
         updateData
       );
       expect(result.title).toBe('Updated Title');
@@ -352,7 +352,7 @@ describe('spotlightService', () => {
       const result = await spotlightService.updateSpotlight(spotlightId, updateData);
 
       expect(mockedApiClient.put).toHaveBeenCalledWith(
-        `/api/spotlights/${spotlightId}`,
+        `/spotlights/${spotlightId}`,
         updateData
       );
       expect(result).toEqual(mockResponse);
@@ -376,7 +376,7 @@ describe('spotlightService', () => {
 
       await spotlightService.deleteSpotlight(spotlightId);
 
-      expect(mockedApiClient.delete).toHaveBeenCalledWith(`/api/spotlights/${spotlightId}`);
+      expect(mockedApiClient.delete).toHaveBeenCalledWith(`/spotlights/${spotlightId}`);
     });
 
     it('should handle delete errors', async () => {

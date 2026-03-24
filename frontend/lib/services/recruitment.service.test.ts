@@ -220,13 +220,13 @@ describe('RecruitmentService', () => {
         content: [mockCandidate],
         totalElements: 1,
         totalPages: 1,
-        size: 20,
+        size: 1000,
         number: 0,
       };
       mockApiClient.get.mockResolvedValueOnce({ data: paginatedResponse });
       const result = await recruitmentService.getCandidatesByJob('job-1');
       expect(result).toEqual([mockCandidate]);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/candidates/job-opening/job-1');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/candidates/job-opening/job-1', { params: { size: 1000 } });
     });
 
     it('should handle error when getting candidates by job fails', async () => {

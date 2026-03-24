@@ -228,7 +228,7 @@ describe('letterService', () => {
       const result = await letterService.updateTemplate(templateId, updateData);
 
       expect(mockedApiClient.put).toHaveBeenCalledWith(
-        `/api/v1/letters/templates/${templateId}`,
+        `/letters/templates/${templateId}`,
         updateData
       );
       expect(result).toEqual(mockResponse);
@@ -333,7 +333,7 @@ describe('letterService', () => {
 
       const result = await letterService.getLettersByEmployee(employeeId);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith(`/api/v1/letters/employee/${employeeId}`, {
+      expect(mockedApiClient.get).toHaveBeenCalledWith(`/letters/employee/${employeeId}`, {
         params: { page: 0, size: 20 },
       });
       expect(result).toEqual(mockData);
@@ -369,7 +369,7 @@ describe('letterService', () => {
       const result = await letterService.getIssuedLettersForEmployee(employeeId);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        `/api/v1/letters/employee/${employeeId}/issued`
+        `/letters/employee/${employeeId}/issued`
       );
       expect(result).toEqual(mockData);
     });
@@ -483,7 +483,7 @@ describe('letterService', () => {
       const result = await letterService.issueOfferLetterWithESign(letterId, issuerId);
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        `/api/v1/letters/${letterId}/issue-with-esign`,
+        `/letters/${letterId}/issue-with-esign`,
         null,
         {
           params: { issuerId },
@@ -506,7 +506,7 @@ describe('letterService', () => {
 
       const result = await letterService.generatePdf(letterId);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith(`/api/v1/letters/${letterId}/generate-pdf`);
+      expect(mockedApiClient.post).toHaveBeenCalledWith(`/letters/${letterId}/generate-pdf`);
       expect(result).toEqual(mockResponse);
     });
   });
@@ -526,7 +526,7 @@ describe('letterService', () => {
 
       const result = await letterService.submitForApproval(letterId);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith(`/api/v1/letters/${letterId}/submit`);
+      expect(mockedApiClient.post).toHaveBeenCalledWith(`/letters/${letterId}/submit`);
       expect(result).toEqual(mockResponse);
     });
   });
@@ -548,7 +548,7 @@ describe('letterService', () => {
       const result = await letterService.approveLetter(letterId, approverId);
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        `/api/v1/letters/${letterId}/approve`,
+        `/letters/${letterId}/approve`,
         null,
         {
           params: { approverId, comments: undefined },
@@ -574,7 +574,7 @@ describe('letterService', () => {
       const result = await letterService.approveLetter(letterId, approverId, comments);
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        `/api/v1/letters/${letterId}/approve`,
+        `/letters/${letterId}/approve`,
         null,
         {
           params: { approverId, comments },
@@ -601,7 +601,7 @@ describe('letterService', () => {
       const result = await letterService.issueLetter(letterId, issuerId);
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        `/api/v1/letters/${letterId}/issue`,
+        `/letters/${letterId}/issue`,
         null,
         {
           params: { issuerId },
@@ -626,7 +626,7 @@ describe('letterService', () => {
 
       const result = await letterService.revokeLetter(letterId);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith(`/api/v1/letters/${letterId}/revoke`);
+      expect(mockedApiClient.post).toHaveBeenCalledWith(`/letters/${letterId}/revoke`);
       expect(result).toEqual(mockResponse);
     });
   });
@@ -641,7 +641,7 @@ describe('letterService', () => {
       await letterService.markLetterDownloaded(letterId, employeeId);
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        `/api/v1/letters/${letterId}/downloaded`,
+        `/letters/${letterId}/downloaded`,
         null,
         {
           params: { employeeId },

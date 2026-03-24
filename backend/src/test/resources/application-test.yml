@@ -7,6 +7,10 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+    hikari:
+      # Override the PostgreSQL-specific connection-init-sql from application.yml.
+      # H2 does not support SET app.current_tenant_id; use a no-op SELECT instead.
+      connection-init-sql: SELECT 1
 
   jpa:
     open-in-view: true

@@ -66,6 +66,7 @@ class AnalyticsServiceTest {
     void setUp() {
         tenantId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         when(leaveRequestRepository.countByTenantIdAndDateAndStatus(any(UUID.class), any(LocalDate.class),
                 eq(LeaveRequest.LeaveRequestStatus.APPROVED))).thenReturn(0L);
         when(leaveRequestRepository.countByTenantIdAndStatus(any(UUID.class), any(LeaveRequest.LeaveRequestStatus.class)))

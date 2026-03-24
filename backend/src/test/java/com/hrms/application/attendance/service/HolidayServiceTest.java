@@ -55,6 +55,7 @@ class HolidayServiceTest {
         holidayDate = LocalDate.of(2024, 1, 26); // Republic Day
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         testHoliday = Holiday.builder()
                 .id(holidayId)

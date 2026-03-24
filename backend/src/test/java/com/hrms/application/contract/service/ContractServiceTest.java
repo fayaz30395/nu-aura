@@ -63,6 +63,9 @@ class ContractServiceTest {
     @Mock
     private EmployeeService employeeService;
 
+    @Mock
+    private com.hrms.common.metrics.MetricsService metricsService;
+
     @InjectMocks
     private ContractService contractService;
 

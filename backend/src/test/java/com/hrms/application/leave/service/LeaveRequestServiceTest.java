@@ -80,6 +80,7 @@ class LeaveRequestServiceTest {
         managerId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         // Create employee with manager for L1 approval tests
         employee = new Employee();
