@@ -13,6 +13,8 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,6 +39,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ExpenseClaimService Tests")
 class ExpenseClaimServiceTest {

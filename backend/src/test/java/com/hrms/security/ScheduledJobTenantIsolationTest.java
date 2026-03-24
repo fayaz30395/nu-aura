@@ -4,8 +4,6 @@ import com.hrms.common.security.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
@@ -36,9 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   <li>Throw NullPointerException if TenantContext.requireCurrentTenant() is called</li>
  *   <li>Process data for the wrong tenant</li>
  * </ul>
+ *
+ * <p>Note: These are pure unit tests for TenantContext ThreadLocal behavior.
+ * No Spring context is needed.</p>
  */
-@SpringBootTest
-@ActiveProfiles("test")
 public class ScheduledJobTenantIsolationTest {
 
     @BeforeEach

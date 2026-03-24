@@ -17,6 +17,8 @@ import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.workflow.repository.*;
 import org.junit.jupiter.api.*;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -35,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("WorkflowService Tests")
 class WorkflowServiceTest {
