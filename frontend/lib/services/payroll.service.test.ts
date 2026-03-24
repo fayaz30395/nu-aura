@@ -670,114 +670,39 @@ describe('PayrollService', () => {
     });
   });
 
-  // Bulk Processing
-  describe('Bulk Processing', () => {
+  // Bulk Processing — CRIT-008: Backend not implemented.
+  // Stubs throw errors; UI is gated via BULK_PROCESSING_AVAILABLE flag.
+  describe('Bulk Processing (stubs — CRIT-008)', () => {
     describe('bulkProcessPayroll', () => {
-      it('should process payroll in bulk', async () => {
-        const mockResponse = {
-          payrollRunId: 'run-123',
-          processedCount: 10,
-          failedCount: 0,
-        };
-
-        mockApiClient.post.mockResolvedValue({ data: mockResponse });
-
-        const result = await payrollService.bulkProcessPayroll({
-          employeeIds: ['emp-1', 'emp-2'],
-          payrollPeriodStart: '2026-01-01',
-          payrollPeriodEnd: '2026-01-31',
-          paymentDate: '2026-02-01',
-        });
-
-        expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/bulk-process', {
-          employeeIds: ['emp-1', 'emp-2'],
-          payrollPeriodStart: '2026-01-01',
-          payrollPeriodEnd: '2026-01-31',
-          paymentDate: '2026-02-01',
-        });
-        expect(result.processedCount).toBe(10);
-      });
-
-      it('should handle bulk processing errors', async () => {
-        mockApiClient.post.mockRejectedValue(new Error('Bulk processing failed'));
-
+      it('should throw because backend is not implemented', async () => {
         await expect(
           payrollService.bulkProcessPayroll({
-            employeeIds: [],
+            employeeIds: ['emp-1', 'emp-2'],
             payrollPeriodStart: '2026-01-01',
             payrollPeriodEnd: '2026-01-31',
             paymentDate: '2026-02-01',
           })
-        ).rejects.toThrow('Bulk processing failed');
+        ).rejects.toThrow('Bulk payroll processing is not yet available');
       });
     });
 
     describe('getBulkProcessingStatus', () => {
-      it('should get bulk processing status', async () => {
-        const mockStatus = {
-          status: 'IN_PROGRESS',
-          processedCount: 5,
-          totalCount: 10,
-        };
-
-        mockApiClient.get.mockResolvedValue({ data: mockStatus });
-
-        const result = await payrollService.getBulkProcessingStatus('run-123');
-
-        expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/bulk-process/run-123/status');
-        expect(result.status).toBe('IN_PROGRESS');
-      });
-
-      it('should handle errors when fetching bulk status', async () => {
-        mockApiClient.get.mockRejectedValue(new Error('Status fetch failed'));
-
-        await expect(payrollService.getBulkProcessingStatus('run-123')).rejects.toThrow(
-          'Status fetch failed'
-        );
+      it('should throw because backend is not implemented', async () => {
+        await expect(
+          payrollService.getBulkProcessingStatus('run-123')
+        ).rejects.toThrow('Bulk processing status is not yet available');
       });
     });
 
     describe('previewBulkProcessing', () => {
-      it('should preview bulk processing', async () => {
-        const mockPreview = [
-          {
-            employeeId: 'emp-1',
-            employeeName: 'John Doe',
-            baseSalary: 50000,
-            totalAllowances: 10000,
-            totalDeductions: 5000,
-            grossAmount: 55000,
-            netAmount: 50000,
-          },
-        ];
-
-        mockApiClient.post.mockResolvedValue({ data: mockPreview });
-
-        const result = await payrollService.previewBulkProcessing({
-          employeeIds: ['emp-1'],
-          payrollPeriodStart: '2026-01-01',
-          payrollPeriodEnd: '2026-01-31',
-        });
-
-        expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/bulk-process/preview', {
-          employeeIds: ['emp-1'],
-          payrollPeriodStart: '2026-01-01',
-          payrollPeriodEnd: '2026-01-31',
-        });
-        expect(result).toHaveLength(1);
-        expect(result[0].employeeName).toBe('John Doe');
-      });
-
-      it('should handle preview errors', async () => {
-        mockApiClient.post.mockRejectedValue(new Error('Preview failed'));
-
+      it('should throw because backend is not implemented', async () => {
         await expect(
           payrollService.previewBulkProcessing({
-            employeeIds: [],
+            employeeIds: ['emp-1'],
             payrollPeriodStart: '2026-01-01',
             payrollPeriodEnd: '2026-01-31',
           })
-        ).rejects.toThrow('Preview failed');
+        ).rejects.toThrow('Bulk processing preview is not yet available');
       });
     });
   });

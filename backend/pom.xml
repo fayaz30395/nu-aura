@@ -145,11 +145,14 @@
             <version>v3-rev20231123-2.0.0</version>
         </dependency>
 
-        <!-- Google Drive API for file storage (production) -->
+        <!-- Google Drive API for file storage (production).
+             Optional: only needed when app.storage.provider=google-drive.
+             Marked optional so environments without this jar still boot normally. -->
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
             <version>v3-rev20231128-2.0.0</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- Google Auth Library for service account credentials -->
