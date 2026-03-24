@@ -240,5 +240,8 @@
     "additionalDirectories": [
       "/tmp"
     ]
+  },
+  "enabledPlugins": {
+    "chrome-devtools-mcp@claude-plugins-official": true
   }
 }
