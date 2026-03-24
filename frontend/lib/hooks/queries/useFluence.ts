@@ -20,6 +20,7 @@ import {
   CreateCommentRequest,
   UpdateCommentRequest,
   FavoriteContentType,
+  FluenceActivity,
 } from '@/lib/types/fluence';
 import {
   MOCK_WIKI_PAGES,
@@ -881,7 +882,14 @@ export function useActivityFeed(
 ) {
   return useQuery({
     queryKey: fluenceKeys.activityFeed(page, size, contentType),
-    queryFn: () => fluenceService.getActivityFeed(page, size, contentType),
+    queryFn: async () => {
+      try {
+        return await fluenceService.getActivityFeed(page, size, contentType);
+      } catch {
+        // Fallback to empty page when backend is unavailable
+        return mockPageResponse([] as FluenceActivity[], page, size);
+      }
+    },
     enabled,
     staleTime: 1 * 60 * 1000,
   });
@@ -894,7 +902,14 @@ export function useMyActivity(
 ) {
   return useQuery({
     queryKey: fluenceKeys.myActivity(page, size),
-    queryFn: () => fluenceService.getMyActivity(page, size),
+    queryFn: async () => {
+      try {
+        return await fluenceService.getMyActivity(page, size);
+      } catch {
+        // Fallback to empty page when backend is unavailable
+        return mockPageResponse([] as FluenceActivity[], page, size);
+      }
+    },
     enabled,
     staleTime: 1 * 60 * 1000,
   });
