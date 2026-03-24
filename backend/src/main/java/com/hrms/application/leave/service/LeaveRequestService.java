@@ -23,6 +23,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -86,14 +88,25 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                 saved.getLeaveTypeId(),
                 saved.getStartDate().getYear());
 
-        // Send WebSocket notification to approver/manager
-        notifyLeaveRequestCreated(saved);
+        // FIX: Defer non-critical operations to AFTER_COMMIT to prevent
+        // "Transaction silently rolled back because it has been marked as rollback-only".
+        // WorkflowService.startWorkflow() and WebSocketNotificationService methods are
+        // @Transactional — if they throw, they mark the shared transaction as rollback-only
+        // BEFORE our catch blocks can swallow the exception. Deferring to afterCommit
+        // ensures the leave request is persisted regardless of notification/workflow failures.
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                // Send WebSocket notification to approver/manager
+                notifyLeaveRequestCreated(saved);
 
-        // Publish domain event for downstream consumers (notifications, analytics, audit)
-        publishLeaveRequestedEvent(saved, tenantId);
+                // Publish domain event for downstream consumers (notifications, analytics, audit)
+                publishLeaveRequestedEvent(saved, tenantId);
 
-        // Start approval workflow
-        startLeaveApprovalWorkflow(saved, tenantId);
+                // Start approval workflow
+                startLeaveApprovalWorkflow(saved, tenantId);
+            }
+        });
 
         return saved;
     }
@@ -129,11 +142,17 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                 saved.getLeaveTypeId(),
                 daysToDeduct);
 
-        // Send WebSocket notification to employee
-        notifyLeaveApproved(saved);
+        // Defer non-critical operations to AFTER_COMMIT (same fix as createLeaveRequest)
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                // Send WebSocket notification to employee
+                notifyLeaveApproved(saved);
 
-        // Publish domain event for downstream consumers
-        publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
+                // Publish domain event for downstream consumers
+                publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
+            }
+        });
 
         return saved;
     }
@@ -152,11 +171,17 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         request.reject(approverId, reason);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
-        // Send WebSocket notification to employee
-        notifyLeaveRejected(saved, reason);
+        // Defer non-critical operations to AFTER_COMMIT (same fix as createLeaveRequest)
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                // Send WebSocket notification to employee
+                notifyLeaveRejected(saved, reason);
 
-        // Publish domain event for downstream consumers
-        publishLeaveRejectedEvent(saved, tenantId, approverId, reason);
+                // Publish domain event for downstream consumers
+                publishLeaveRejectedEvent(saved, tenantId, approverId, reason);
+            }
+        });
 
         return saved;
     }

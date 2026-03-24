@@ -70,6 +70,7 @@ spring:
     baseline-version: 18
     out-of-order: true
     validate-on-migrate: false
+    repair-on-migrate: true
     clean-disabled: true
     mixed: true
     # Flyway uses direct (non-pooler) Neon endpoint to avoid PgBouncer transaction-mode issues
