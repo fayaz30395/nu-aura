@@ -148,7 +148,7 @@ describe('ExitService', () => {
 
       const result = await exitService.getAllExitProcesses();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/exit/processes', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/processes', {
         params: { page: 0, size: 20 },
       });
       expect(result.content).toHaveLength(1);
@@ -168,7 +168,7 @@ describe('ExitService', () => {
 
       const result = await exitService.getAllExitProcesses(2, 15);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/exit/processes', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/processes', {
         params: { page: 2, size: 15 },
       });
       expect(result.number).toBe(2);
@@ -205,7 +205,7 @@ describe('ExitService', () => {
 
       const result = await exitService.getExitProcess('exit-1');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/exit/processes/exit-1');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/processes/exit-1');
       expect(result.id).toBe('exit-1');
       expect(result.employeeName).toBe('John Doe');
     });
@@ -235,7 +235,7 @@ describe('ExitService', () => {
 
       const result = await exitService.getExitProcessByEmployee('emp-1');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/exit/processes/employee/emp-1');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/processes/employee/emp-1');
       expect(result.employeeId).toBe('emp-1');
       expect(result.exitType).toBe('TERMINATION');
     });
@@ -275,7 +275,7 @@ describe('ExitService', () => {
 
       const result = await exitService.getExitProcessesByStatus('INITIATED');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/exit/processes/status/INITIATED');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/processes/status/INITIATED');
       expect(result).toHaveLength(2);
       expect(result.every((p) => p.status === 'INITIATED')).toBe(true);
     });
@@ -322,7 +322,7 @@ describe('ExitService', () => {
 
       const result = await exitService.createExitProcess(createData);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/exit/processes', createData);
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/exit/processes', createData);
       expect(result.id).toBe('exit-new-1');
       expect(result.status).toBe('INITIATED');
     });
@@ -358,7 +358,7 @@ describe('ExitService', () => {
 
       const result = await exitService.updateExitProcess('exit-1', updateData);
 
-      expect(mockedApiClient.put).toHaveBeenCalledWith('/api/v1/exit/processes/exit-1', updateData);
+      expect(mockedApiClient.put).toHaveBeenCalledWith('/exit/processes/exit-1', updateData);
       expect(result.noticePeriodServed).toBe(15);
       expect(result.exitInterviewScheduled).toBe(true);
     });
@@ -389,7 +389,7 @@ describe('ExitService', () => {
 
       const result = await exitService.updateExitStatus('exit-1', 'COMPLETED');
 
-      expect(mockedApiClient.patch).toHaveBeenCalledWith('/api/v1/exit/processes/exit-1/status', null, {
+      expect(mockedApiClient.patch).toHaveBeenCalledWith('/exit/processes/exit-1/status', null, {
         params: { status: 'COMPLETED' },
       });
       expect(result.status).toBe('COMPLETED');
@@ -409,7 +409,7 @@ describe('ExitService', () => {
 
       await exitService.deleteExitProcess('exit-1');
 
-      expect(mockedApiClient.delete).toHaveBeenCalledWith('/api/v1/exit/processes/exit-1');
+      expect(mockedApiClient.delete).toHaveBeenCalledWith('/exit/processes/exit-1');
     });
 
     it('should handle error when deleting exit process', async () => {
@@ -451,7 +451,7 @@ describe('ExitService', () => {
 
       const result = await exitService.getDashboard();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/exit/dashboard');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/dashboard');
       expect(result.totalExits).toBe(25);
       expect(result.initiated).toBe(8);
       expect(result.monthlyTrend).toHaveLength(3);

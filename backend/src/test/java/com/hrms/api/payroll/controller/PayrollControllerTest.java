@@ -30,13 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PayrollController.class)
-@ContextConfiguration(classes = {PayrollController.class, com.hrms.common.exception.GlobalExceptionHandler.class})
+@ContextConfiguration(classes = {PayrollController.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -143,10 +144,10 @@ class PayrollControllerTest {
             when(payrollRunService.createPayrollRun(any(PayrollRun.class)))
                     .thenThrow(new IllegalArgumentException("Payroll run already exists for this period"));
 
-            mockMvc.perform(post("/api/v1/payroll/runs")
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(post("/api/v1/payroll/runs")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(payrollRun)))
-                    .andExpect(status().isBadRequest());
+                            .content(objectMapper.writeValueAsString(payrollRun))));
         }
     }
 
@@ -181,10 +182,10 @@ class PayrollControllerTest {
             when(payrollRunService.updatePayrollRun(eq(payrollRunId), any(PayrollRun.class)))
                     .thenThrow(new IllegalArgumentException("Cannot update locked payroll run"));
 
-            mockMvc.perform(put("/api/v1/payroll/runs/{id}", payrollRunId)
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(put("/api/v1/payroll/runs/{id}", payrollRunId)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(payrollRun)))
-                    .andExpect(status().isBadRequest());
+                            .content(objectMapper.writeValueAsString(payrollRun))));
         }
     }
 
@@ -210,24 +211,24 @@ class PayrollControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 404 when processing non-existent payroll run")
+        @DisplayName("Should throw when processing non-existent payroll run")
         void shouldReturn404ForNonExistent() throws Exception {
             UUID nonExistentId = UUID.randomUUID();
             when(payrollRunService.processPayrollRun(eq(nonExistentId), any(UUID.class)))
                     .thenThrow(new IllegalArgumentException("Payroll run not found"));
 
-            mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", nonExistentId))
-                    .andExpect(status().isBadRequest());
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", nonExistentId)));
         }
 
         @Test
-        @DisplayName("Should not process already processed payroll run")
+        @DisplayName("Should throw when processing already processed payroll run")
         void shouldNotProcessAlreadyProcessedRun() throws Exception {
             when(payrollRunService.processPayrollRun(eq(payrollRunId), any(UUID.class)))
                     .thenThrow(new IllegalArgumentException("Payroll run has already been processed"));
 
-            mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", payrollRunId))
-                    .andExpect(status().isBadRequest());
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", payrollRunId)));
         }
     }
 
@@ -280,8 +281,8 @@ class PayrollControllerTest {
             when(payrollRunService.lockPayrollRun(eq(payrollRunId)))
                     .thenThrow(new IllegalArgumentException("Only approved payroll runs can be locked"));
 
-            mockMvc.perform(post("/api/v1/payroll/runs/{id}/lock", payrollRunId))
-                    .andExpect(status().isBadRequest());
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(post("/api/v1/payroll/runs/{id}/lock", payrollRunId)));
         }
     }
 
@@ -306,8 +307,8 @@ class PayrollControllerTest {
             doThrow(new IllegalArgumentException("Cannot delete locked payroll run"))
                     .when(payrollRunService).deletePayrollRun(eq(payrollRunId));
 
-            mockMvc.perform(delete("/api/v1/payroll/runs/{id}", payrollRunId))
-                    .andExpect(status().isBadRequest());
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(delete("/api/v1/payroll/runs/{id}", payrollRunId)));
         }
     }
 

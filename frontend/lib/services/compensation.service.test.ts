@@ -89,7 +89,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.createCycle(request);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/compensation/cycles', request);
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/compensation/cycles', request);
       expect(result.id).toBe('cycle-1');
       expect(result.name).toBe('2024 Q1 Review');
     });
@@ -124,7 +124,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.getCycleById('cycle-1');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/compensation/cycles/cycle-1');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/compensation/cycles/cycle-1');
       expect(result.id).toBe('cycle-1');
       expect(result.status).toBe('ACTIVE');
     });
@@ -162,7 +162,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.getAllCycles();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/compensation/cycles?page=0&size=10');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/compensation/cycles?page=0&size=10');
       expect(result.content).toHaveLength(2);
       expect(result.totalElements).toBe(2);
     });
@@ -178,7 +178,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.getAllCycles(1, 20);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/compensation/cycles?page=1&size=20');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/compensation/cycles?page=1&size=20');
       expect(result.page).toBe(1);
     });
   });
@@ -194,7 +194,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.getActiveCycles();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/compensation/cycles/active');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/compensation/cycles/active');
       expect(result).toHaveLength(2);
       expect(result.every((c) => c.status === 'ACTIVE')).toBe(true);
     });
@@ -221,7 +221,7 @@ describe('compensationService', () => {
       const result = await compensationService.updateCycleStatus('cycle-1', 'ACTIVE');
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        '/api/v1/compensation/cycles/cycle-1/status?status=ACTIVE'
+        '/compensation/cycles/cycle-1/status?status=ACTIVE'
       );
       expect(result.status).toBe('ACTIVE');
     });
@@ -253,7 +253,7 @@ describe('compensationService', () => {
       const result = await compensationService.getCycleStatistics('cycle-1');
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/api/v1/compensation/cycles/cycle-1/statistics'
+        '/compensation/cycles/cycle-1/statistics'
       );
       expect(result.totalEmployees).toBe(150);
       expect(result.salaryIncreasePercentage).toBe(5.5);
@@ -292,7 +292,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.createRevision(request);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/compensation/revisions', request);
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/compensation/revisions', request);
       expect(result.id).toBe('rev-1');
       expect(result.proposedSalary).toBe(80000);
     });
@@ -332,7 +332,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.getRevisionById('rev-1');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/compensation/revisions/rev-1');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/compensation/revisions/rev-1');
       expect(result.id).toBe('rev-1');
       expect(result.status).toBe('PENDING_APPROVAL');
     });
@@ -370,7 +370,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.getAllRevisions();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/compensation/revisions?page=0&size=10');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/compensation/revisions?page=0&size=10');
       expect(result.content).toHaveLength(2);
     });
 
@@ -385,7 +385,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.getAllRevisions(2, 25);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/compensation/revisions?page=2&size=25');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/compensation/revisions?page=2&size=25');
     });
   });
 
@@ -405,7 +405,7 @@ describe('compensationService', () => {
       const result = await compensationService.getRevisionsByCycle('cycle-1');
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/api/v1/compensation/cycles/cycle-1/revisions?page=0&size=10'
+        '/compensation/cycles/cycle-1/revisions?page=0&size=10'
       );
       expect(result.content).toHaveLength(1);
     });
@@ -422,7 +422,7 @@ describe('compensationService', () => {
       const result = await compensationService.getRevisionsByCycle('cycle-1', 1, 20);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/api/v1/compensation/cycles/cycle-1/revisions?page=1&size=20'
+        '/compensation/cycles/cycle-1/revisions?page=1&size=20'
       );
     });
   });
@@ -439,7 +439,7 @@ describe('compensationService', () => {
       const result = await compensationService.getEmployeeRevisionHistory('emp-1');
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/api/v1/compensation/employees/emp-1/revisions'
+        '/compensation/employees/emp-1/revisions'
       );
       expect(result).toHaveLength(2);
       expect(result.every((r) => r.employeeId === 'emp-1')).toBe(true);
@@ -471,7 +471,7 @@ describe('compensationService', () => {
       const result = await compensationService.getPendingApprovals();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/api/v1/compensation/revisions/pending?page=0&size=10'
+        '/compensation/revisions/pending?page=0&size=10'
       );
       expect(result.content.every((r) => r.status === 'PENDING_APPROVAL')).toBe(true);
     });
@@ -488,7 +488,7 @@ describe('compensationService', () => {
       const result = await compensationService.getPendingApprovals(1, 15);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/api/v1/compensation/revisions/pending?page=1&size=15'
+        '/compensation/revisions/pending?page=1&size=15'
       );
     });
   });
@@ -507,7 +507,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.submitRevision('rev-1');
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/compensation/revisions/rev-1/submit');
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/compensation/revisions/rev-1/submit');
       expect(result.status).toBe('SUBMITTED');
     });
 
@@ -542,7 +542,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.reviewRevision('rev-1');
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/compensation/revisions/rev-1/review');
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/compensation/revisions/rev-1/review');
       expect(result.status).toBe('UNDER_REVIEW');
     });
 
@@ -559,7 +559,7 @@ describe('compensationService', () => {
       const result = await compensationService.reviewRevision('rev-2', 'Needs adjustment');
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        '/api/v1/compensation/revisions/rev-2/review?comments=' + encodeURIComponent('Needs adjustment')
+        '/compensation/revisions/rev-2/review?comments=' + encodeURIComponent('Needs adjustment')
       );
       expect(result.status).toBe('UNDER_REVIEW');
     });
@@ -579,7 +579,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.approveRevision('rev-1');
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/compensation/revisions/rev-1/approve');
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/compensation/revisions/rev-1/approve');
       expect(result.status).toBe('APPROVED');
     });
 
@@ -596,7 +596,7 @@ describe('compensationService', () => {
       const result = await compensationService.approveRevision('rev-2', 'Approved as discussed');
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        '/api/v1/compensation/revisions/rev-2/approve?comments=' + encodeURIComponent('Approved as discussed')
+        '/compensation/revisions/rev-2/approve?comments=' + encodeURIComponent('Approved as discussed')
       );
       expect(result.status).toBe('APPROVED');
     });
@@ -617,7 +617,7 @@ describe('compensationService', () => {
       const result = await compensationService.rejectRevision('rev-1', 'Budget exceeded');
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        '/api/v1/compensation/revisions/rev-1/reject?reason=' + encodeURIComponent('Budget exceeded')
+        '/compensation/revisions/rev-1/reject?reason=' + encodeURIComponent('Budget exceeded')
       );
       expect(result.status).toBe('REJECTED');
     });
@@ -652,7 +652,7 @@ describe('compensationService', () => {
 
       const result = await compensationService.applyRevision('rev-1');
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/compensation/revisions/rev-1/apply');
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/compensation/revisions/rev-1/apply');
       expect(result.status).toBe('APPLIED');
     });
 

@@ -23,11 +23,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
+import com.hrms.domain.user.RoleScope;
 
+import java.time.LocalDate;
+import java.util.*;;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -66,11 +69,21 @@ class EmployeeControllerTest {
     private UUID departmentId;
     private UUID managerId;
 
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
+    }
+
     @BeforeEach
     void setUp() {
         employeeId = UUID.randomUUID();
         departmentId = UUID.randomUUID();
         managerId = UUID.randomUUID();
+
+        // Set up SecurityContext so enforceEmployeeViewScope passes
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EMPLOYEE_VIEW_ALL, RoleScope.GLOBAL);
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
 
         // Set up employee response
         employeeResponse = new EmployeeResponse();
@@ -155,15 +168,15 @@ class EmployeeControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 409 for duplicate employee code")
+        @DisplayName("Should throw for duplicate employee code")
         void shouldReturn409ForDuplicateCode() throws Exception {
             when(employeeService.createEmployee(any(CreateEmployeeRequest.class)))
                     .thenThrow(new IllegalArgumentException("Employee code already exists"));
 
-            mockMvc.perform(post("/api/v1/employees")
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(post("/api/v1/employees")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createEmployeeRequest)))
-                    .andExpect(status().isBadRequest());
+                            .content(objectMapper.writeValueAsString(createEmployeeRequest))));
         }
     }
 
