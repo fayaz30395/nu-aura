@@ -1,6 +1,5 @@
 package com.hrms.api.attendance.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,7 +8,7 @@ import java.util.UUID;
 
 @Data
 public class CheckOutRequest {
-    @NotNull
+    // Nullable: when null, resolves to the authenticated user's employee ID
     private UUID employeeId;
 
     private LocalDateTime checkOutTime;

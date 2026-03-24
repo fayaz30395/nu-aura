@@ -4,6 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,6 +43,7 @@ public class Role extends TenantAware {
      * to load the full user -> roles -> permissions hierarchy efficiently.</p>
      */
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     @Builder.Default
     private Set<RolePermission> permissions = new HashSet<>();
 
