@@ -400,7 +400,7 @@ export default function RecognitionPage() {
                               </h3>
                               <p className="text-sm text-[var(--text-secondary)] mt-1">
                                 {recognition.isAnonymous ? 'Someone' : recognition.giverName || 'A colleague'} recognized{' '}
-                                <span className="font-medium text-primary-600 dark:text-primary-400">
+                                <span className="font-medium text-sky-700 dark:text-sky-400">
                                   {recognition.receiverName || 'a team member'}
                                 </span>
                               </p>
@@ -590,7 +590,7 @@ export default function RecognitionPage() {
                           }}
                           className="flex flex-col items-center gap-2 p-4 rounded-lg card-interactive"
                         >
-                          <Icon className="h-6 w-6 text-primary-500" />
+                          <Icon className="h-6 w-6 text-sky-500" />
                           <span className="text-xs text-[var(--text-secondary)]">{type.label}</span>
                         </button>
                       </PermissionGate>
@@ -701,7 +701,7 @@ export default function RecognitionPage() {
                     <input
                       {...register('isPublic')}
                       type="checkbox"
-                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                      className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">
                       Make public
@@ -711,7 +711,7 @@ export default function RecognitionPage() {
                     <input
                       {...register('isAnonymous')}
                       type="checkbox"
-                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                      className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">
                       Send anonymously

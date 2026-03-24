@@ -75,7 +75,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 'absolute left-3 top-1/2 -translate-y-1/2 text-surface-400',
-                isFocused && !error && !success && 'text-primary-500',
+                isFocused && !error && !success && 'text-sky-500',
                 error && 'text-danger-500',
                 success && 'text-success-500'
               )}
@@ -102,7 +102,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               // Hover state
               !error && !success && !disabled && 'hover:border-surface-400 dark:hover:border-surface-500',
               // Focus state
-              !error && !success && 'focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:focus:border-primary-400 dark:focus:ring-primary-400/20',
+              !error && !success && 'focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:focus:border-sky-400 dark:focus:ring-sky-400/20',
               // Error state
               error && 'border-danger-500 focus:border-danger-500 focus:ring-2 focus:ring-danger-500/20',
               // Success state

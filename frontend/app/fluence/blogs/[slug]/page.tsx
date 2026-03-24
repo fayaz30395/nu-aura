@@ -205,7 +205,7 @@ export default function BlogPostDetailPage() {
     <AppLayout>
       {/* Reading Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--primary-500)] to-[var(--primary-700)] origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--sky-500)] to-[var(--sky-800)] origin-left z-50"
         style={{ scaleX: readingProgress / 100 }}
       />
 
@@ -213,7 +213,7 @@ export default function BlogPostDetailPage() {
         {/* Back Button */}
         <motion.button
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-[var(--primary-600)] dark:text-[var(--primary-400)] hover:text-[var(--primary-700)] dark:hover:text-[var(--primary-300)] transition-colors group"
+          className="inline-flex items-center gap-2 text-[var(--sky-700)] dark:text-[var(--sky-400)] hover:text-[var(--sky-800)] dark:hover:text-[var(--sky-300)] transition-colors group"
           whileHover={{ x: -4 }}
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -226,7 +226,7 @@ export default function BlogPostDetailPage() {
             initial={dsMotion.pageEnter.initial}
             animate={dsMotion.pageEnter.animate}
             transition={dsMotion.pageEnter.transition}
-            className="relative rounded-xl overflow-hidden h-96 bg-gradient-to-br from-[var(--primary-300)] to-[var(--primary-500)] group cursor-pointer"
+            className="relative rounded-xl overflow-hidden h-96 bg-gradient-to-br from-[var(--sky-300)] to-[var(--sky-500)] group cursor-pointer"
           >
             <motion.img
               src={post.coverImageUrl}
@@ -280,7 +280,7 @@ export default function BlogPostDetailPage() {
                 {post.categoryName && (
                   <motion.span
                     whileHover={{ scale: 1.05 }}
-                    className="inline-flex items-center gap-1 bg-[var(--primary-100)] dark:bg-[var(--primary-900)]/30 text-[var(--primary-700)] dark:text-[var(--primary-300)] px-3 py-1 rounded-full text-xs font-medium"
+                    className="inline-flex items-center gap-1 bg-[var(--sky-100)] dark:bg-[var(--sky-950)]/30 text-[var(--sky-800)] dark:text-[var(--sky-300)] px-3 py-1 rounded-full text-xs font-medium"
                   >
                     {post.categoryName}
                   </motion.span>
@@ -290,7 +290,7 @@ export default function BlogPostDetailPage() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   onClick={() => setShowViewers(true)}
-                  className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary-600)] transition-colors cursor-pointer"
+                  className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--sky-700)] transition-colors cursor-pointer"
                 >
                   <Eye className="w-4 h-4 flex-shrink-0" />
                   <span>{post.viewCount || 0} views</span>
@@ -313,7 +313,7 @@ export default function BlogPostDetailPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
-                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--primary-600)] dark:text-[var(--primary-300)] transition-colors"
+                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--sky-100)] dark:hover:bg-[var(--sky-950)]/30 text-[var(--sky-700)] dark:text-[var(--sky-300)] transition-colors"
                     title="Edit post"
                   >
                     <Edit className="w-5 h-5" />
@@ -324,7 +324,7 @@ export default function BlogPostDetailPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleCopyLink}
-                className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--primary-600)] dark:text-[var(--primary-300)] transition-colors"
+                className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--sky-100)] dark:hover:bg-[var(--sky-950)]/30 text-[var(--sky-700)] dark:text-[var(--sky-300)] transition-colors"
                 title="Copy link"
               >
                 <Share className="w-5 h-5" />
@@ -430,7 +430,7 @@ export default function BlogPostDetailPage() {
                     const el = document.getElementById('comment-input');
                     el?.focus();
                   }}
-                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--text-secondary)] hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-300)] transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--sky-100)] dark:hover:bg-[var(--sky-950)]/30 text-[var(--text-secondary)] hover:text-[var(--sky-700)] dark:hover:text-[var(--sky-300)] transition-all"
                   title="Comment"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -441,7 +441,7 @@ export default function BlogPostDetailPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleCopyLink}
-                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 text-[var(--text-secondary)] hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-300)] transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--sky-100)] dark:hover:bg-[var(--sky-950)]/30 text-[var(--text-secondary)] hover:text-[var(--sky-700)] dark:hover:text-[var(--sky-300)] transition-all"
                   title="Share"
                 >
                   <Share className="w-4 h-4" />
@@ -532,7 +532,7 @@ export default function BlogPostDetailPage() {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.05 }}
-                      className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--primary-100)] dark:hover:bg-[var(--primary-900)]/30 hover:text-[var(--primary-600)] dark:hover:text-[var(--primary-300)] px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
+                      className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--sky-100)] dark:hover:bg-[var(--sky-950)]/30 hover:text-[var(--sky-700)] dark:hover:text-[var(--sky-300)] px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
                     >
                       <Tag className="w-3 h-3" />
                       {tag}
@@ -552,7 +552,7 @@ export default function BlogPostDetailPage() {
           className={`${card.base} rounded-xl p-8`}
         >
           <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
-            <MessageCircle className="w-6 h-6 text-[var(--primary-600)]" />
+            <MessageCircle className="w-6 h-6 text-[var(--sky-700)]" />
             Comments ({comments.length})
           </h2>
 
@@ -569,7 +569,7 @@ export default function BlogPostDetailPage() {
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   placeholder="Share your thoughts..."
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-500)] text-sm transition-all"
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--sky-500)] text-sm transition-all"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
@@ -582,7 +582,7 @@ export default function BlogPostDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || createComment.isPending}
-                  className="px-4 py-2.5 rounded-lg bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-[var(--sky-700)] hover:bg-[var(--sky-800)] text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send className="w-4 h-4" />
                 </motion.button>

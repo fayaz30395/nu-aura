@@ -52,8 +52,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       {/* Candidate Info */}
       <td className="px-6 py-4">
         <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+          <div className="flex-shrink-0 h-10 w-10 bg-sky-100 dark:bg-sky-900/30 rounded-xl flex items-center justify-center">
+            <span className="text-sm font-medium text-sky-700 dark:text-sky-300">
               {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
             </span>
           </div>
@@ -102,7 +102,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onView(candidate)}
             aria-label={`View ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            className="p-2 text-[var(--text-muted)] hover:text-sky-700 dark:hover:text-sky-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="View"
           >
             <Eye className="h-4 w-4" />
@@ -162,7 +162,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
             aria-label={`Schedule interview for ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            className="p-2 text-[var(--text-muted)] hover:text-sky-700 dark:hover:text-sky-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Schedule Interview"
           >
             <Calendar className="h-4 w-4" />
@@ -206,7 +206,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onEdit(candidate)}
             aria-label={`Edit ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            className="p-2 text-[var(--text-muted)] hover:text-sky-700 dark:hover:text-sky-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Edit"
           >
             <Edit2 className="h-4 w-4" />

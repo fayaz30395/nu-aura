@@ -147,7 +147,7 @@ export default function TravelPage() {
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
             <p className="text-[var(--text-secondary)]">Loading travel requests...</p>
           </div>
         </div>
@@ -171,7 +171,7 @@ export default function TravelPage() {
           <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/travel/new')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-sky-500/30"
             >
               <Plus className="h-5 w-5" />
               New Travel Request
@@ -193,7 +193,7 @@ export default function TravelPage() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
               />
             </div>
 
@@ -206,7 +206,7 @@ export default function TravelPage() {
                   setStatusFilter(e.target.value as TravelStatus | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -230,7 +230,7 @@ export default function TravelPage() {
                   setTypeFilter(e.target.value as TravelType | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Types</option>
                 <option value="BUSINESS">Business</option>
@@ -256,7 +256,7 @@ export default function TravelPage() {
             <p className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
               onClick={() => void refetch()}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
+              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
             >
               Retry
             </button>
@@ -282,14 +282,14 @@ export default function TravelPage() {
                 <div
                   key={request.id}
                   onClick={() => router.push(`/travel/${request.id}`)}
-                  className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 cursor-pointer"
+                  className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200 cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-4">
                       {/* Header */}
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
-                          <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
+                          <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700">
                             <TypeIcon className="h-5 w-5 text-white" />
                           </div>
                           <div>
@@ -309,7 +309,7 @@ export default function TravelPage() {
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
                       </div>
 
                       {/* Details */}

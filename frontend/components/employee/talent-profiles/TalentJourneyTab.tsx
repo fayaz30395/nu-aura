@@ -64,7 +64,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: idx * 0.05 }}
-                            className={`px-4 py-2 rounded-2xl border flex items-center gap-2 shadow-sm ${skill.verified ? 'bg-primary-50 border-primary-100 dark:bg-primary-950/20 dark:border-primary-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
+                            className={`px-4 py-2 rounded-2xl border flex items-center gap-2 shadow-sm ${skill.verified ? 'bg-sky-50 border-sky-100 dark:bg-sky-950/20 dark:border-sky-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
                                 }`}
                         >
                             <span className="font-semibold text-sm">{skill.name}</span>
@@ -72,11 +72,11 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                 {[...Array(5)].map((_, i) => (
                                     <div
                                         key={i}
-                                        className={`h-1.5 w-1.5 rounded-full ${i < skill.level ? 'bg-primary-500' : 'bg-surface-200 dark:bg-surface-700'}`}
+                                        className={`h-1.5 w-1.5 rounded-full ${i < skill.level ? 'bg-sky-500' : 'bg-surface-200 dark:bg-surface-700'}`}
                                     />
                                 ))}
                             </div>
-                            {skill.verified && <CheckCircle2 className="h-3 w-3 text-primary-500" />}
+                            {skill.verified && <CheckCircle2 className="h-3 w-3 text-sky-500" />}
                         </motion.div>
                     ))}
                 </div>
@@ -98,7 +98,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                 viewport={{ once: true }}
                                 className="relative"
                             >
-                                <div className={`absolute -left-[30px] p-1.5 rounded-full border-2 bg-[var(--bg-card)] z-10 ${milestone.status === 'COMPLETED' ? 'border-green-500' : 'border-primary-500 border-dashed animate-pulse'
+                                <div className={`absolute -left-[30px] p-1.5 rounded-full border-2 bg-[var(--bg-card)] z-10 ${milestone.status === 'COMPLETED' ? 'border-green-500' : 'border-sky-500 border-dashed animate-pulse'
                                     }`}>
                                     {getMilestoneIcon(milestone.type)}
                                 </div>
@@ -124,10 +124,10 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                     <div>
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
-                                <Award className="h-5 w-5 text-primary-500" />
+                                <Award className="h-5 w-5 text-sky-500" />
                                 <h3 className="text-lg font-bold">Achievements</h3>
                             </div>
-                            <Button variant="ghost" size="sm" className="text-xs text-primary-600">View All</Button>
+                            <Button variant="ghost" size="sm" className="text-xs text-sky-700">View All</Button>
                         </div>
                         <div className="space-y-4">
                             {profile.achievements.map((achievement, idx) => (
@@ -136,13 +136,13 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                     whileHover={{ scale: 1.02 }}
                                     className="p-4 bg-gradient-to-r from-surface-50 to-white dark:from-surface-800 dark:to-surface-900 rounded-2xl border border-surface-100 dark:border-surface-700 flex gap-4"
                                 >
-                                    <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600">
+                                    <div className="h-12 w-12 rounded-xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-sky-700">
                                         <Sparkles className="h-6 w-6" />
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-sm">{achievement.title}</h4>
                                         <p className="text-xs text-surface-500 mt-1 line-clamp-2">{achievement.description}</p>
-                                        <span className="text-xs text-primary-500 font-semibold mt-2 block uppercase">{achievement.date}</span>
+                                        <span className="text-xs text-sky-500 font-semibold mt-2 block uppercase">{achievement.date}</span>
                                     </div>
                                 </motion.div>
                             ))}
@@ -188,7 +188,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
 function getMilestoneIcon(type: string) {
     switch (type) {
         case 'JOINED': return <Calendar className="h-4 w-4 text-green-500" />;
-        case 'PROMOTION': return <TrendingUp className="h-4 w-4 text-primary-500" />;
+        case 'PROMOTION': return <TrendingUp className="h-4 w-4 text-sky-500" />;
         case 'PROJECT': return <Briefcase className="h-4 w-4 text-indigo-500" />;
         default: return <Star className="h-4 w-4 text-yellow-500" />;
     }

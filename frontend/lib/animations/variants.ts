@@ -282,7 +282,7 @@ export const shadowPresets = {
   /** Modal / dialog */
   xl: 'shadow-xl',
   /** Colored shadows */
-  primary: 'shadow-lg shadow-primary-500/20',
+  primary: 'shadow-lg shadow-sky-500/20',
   success: 'shadow-lg shadow-success-500/20',
   danger: 'shadow-lg shadow-danger-500/20',
   warning: 'shadow-lg shadow-warning-500/20',
@@ -292,7 +292,7 @@ export const shadowPresets = {
 
 export const gradientPresets = {
   /** Primary blue gradient */
-  primary: 'bg-gradient-to-br from-primary-500 to-primary-700',
+  primary: 'bg-gradient-to-br from-sky-500 to-sky-700',
   /** Success green gradient */
   success: 'bg-gradient-to-br from-success-500 to-success-700',
   /** Danger red gradient */

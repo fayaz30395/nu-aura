@@ -106,7 +106,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
           <div className="flex items-start gap-4 mb-3">
             <FileText className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-1" />
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold text-[var(--text-primary)] group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+              <h3 className="text-base font-semibold text-[var(--text-primary)] group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors truncate">
                 {article.title}
               </h3>
               <Badge
@@ -434,7 +434,7 @@ export default function KnowledgeBasePage() {
                   }}
                   className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
                     selectedCategory === ''
-                      ? 'bg-primary-600 text-white'
+                      ? 'bg-sky-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
@@ -451,7 +451,7 @@ export default function KnowledgeBasePage() {
                       }}
                       className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
                         selectedCategory === category
-                          ? 'bg-primary-600 text-white'
+                          ? 'bg-sky-700 text-white'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                       }`}
                     >
@@ -487,7 +487,7 @@ export default function KnowledgeBasePage() {
                   placeholder="Search articles..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700"
                 />
               </div>
             </div>
@@ -611,7 +611,7 @@ export default function KnowledgeBasePage() {
                     <textarea
                       placeholder="Write the article content here..."
                       rows={8}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
                       {...registerArticle('content')}
                     />
                     {articleErrors.content && (
@@ -693,7 +693,7 @@ export default function KnowledgeBasePage() {
                   <textarea
                     placeholder="Provide more details about your issue..."
                     rows={6}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-600"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
                     {...registerTicket('description')}
                   />
                   {ticketErrors.description && (

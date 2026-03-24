@@ -32,7 +32,7 @@ function AuthorAvatar({ author }: { author: AuthorInfo }): JSX.Element {
     .slice(0, 2);
 
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-700 dark:bg-sky-900 dark:text-sky-300">
       {initials}
     </div>
   );
@@ -98,7 +98,7 @@ function CommentItem({
         <div className="mt-2 flex items-center gap-4">
           <button
             onClick={() => onReply(comment.id, comment.author.fullName)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400"
+            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--text-muted)] hover:text-sky-700 dark:hover:text-sky-400"
           >
             <CornerDownRight className="h-3.5 w-3.5" />
             Reply
@@ -174,7 +174,7 @@ export function CommentThread({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={onLoadMore}
-          className="text-center text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+          className="text-center text-sm font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300"
         >
           Load more comments
         </motion.button>
@@ -183,7 +183,7 @@ export function CommentThread({
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-primary-500 dark:border-t-primary-400" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-sky-500 dark:border-t-sky-400" />
         </div>
       )}
 
@@ -221,15 +221,15 @@ export function CommentThread({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="rounded-lg bg-primary-50 p-2 dark:bg-primary-900"
+            className="rounded-lg bg-sky-50 p-2 dark:bg-sky-900"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-primary-700 dark:text-primary-300">
+              <span className="text-xs font-medium text-sky-700 dark:text-sky-300">
                 Replying to {replyingTo.authorName}
               </span>
               <button
                 onClick={() => setReplyingTo(null)}
-                className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                className="text-xs text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300"
               >
                 Cancel
               </button>

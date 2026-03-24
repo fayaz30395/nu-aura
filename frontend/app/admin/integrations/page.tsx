@@ -238,7 +238,7 @@ export default function AdminIntegrationsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-sky-700" />
       </div>
     );
   }
@@ -248,7 +248,7 @@ export default function AdminIntegrationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25">
+          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 shadow-lg shadow-sky-500/25">
             <Settings className="h-6 w-6 text-white" />
           </div>
           <div>

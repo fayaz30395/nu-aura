@@ -343,7 +343,7 @@ export default function OffboardingPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="offboarding">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading exit processes...</span>
         </div>
       </AppLayout>
@@ -388,8 +388,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-primary-100 p-4">
-                  <UserMinus className="h-6 w-6 text-primary-600" />
+                <div className="rounded-lg bg-sky-100 p-4">
+                  <UserMinus className="h-6 w-6 text-sky-700" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Exits</p>
@@ -801,7 +801,7 @@ export default function OffboardingPage() {
                   <input
                     type="checkbox"
                     id="rehireEligible"
-                    className="w-4 h-4 text-primary-600 border-[var(--border-main)] rounded focus:ring-primary-500"
+                    className="w-4 h-4 text-sky-700 border-[var(--border-main)] rounded focus:ring-sky-500"
                     {...register('rehireEligible')}
                   />
                   <label htmlFor="rehireEligible" className="text-sm text-[var(--text-secondary)]">

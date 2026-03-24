@@ -123,7 +123,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
         </CardContent>
       </Card>
     );

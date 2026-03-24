@@ -60,7 +60,7 @@ export function MailSidebar({
               onClick={() => onLabelSelect(label.id)}
               className={`w-full flex items-center justify-between gap-4 px-3 py-2 rounded-lg text-sm transition-colors ${
                 selectedLabel === label.id
-                  ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400'
+                  ? 'bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-400'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >

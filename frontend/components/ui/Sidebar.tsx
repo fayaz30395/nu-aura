@@ -130,14 +130,14 @@ const ChildrenFlyover: React.FC<{
               {item.label}
             </span>
             {item.badge && (
-              <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium bg-primary-500 text-white">
+              <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium bg-sky-500 text-white">
                 {item.badge}
               </span>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-secondary hover:text-primary hover:bg-primary-500/10 transition-colors"
+            className="p-1 rounded-md text-secondary hover:text-primary hover:bg-sky-500/10 transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -150,8 +150,8 @@ const ChildrenFlyover: React.FC<{
             const childClasses = cn(
               'w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
               activeId === child.id
-                ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300 font-medium'
-                : 'text-secondary hover:bg-primary-500/10 hover:text-primary'
+                ? 'bg-sky-500/10 text-sky-700 dark:text-sky-300 font-medium'
+                : 'text-secondary hover:bg-sky-500/10 hover:text-primary'
             );
 
             const childContent = (
@@ -159,7 +159,7 @@ const ChildrenFlyover: React.FC<{
                 {child.icon && (
                   <span className={cn(
                     "w-5 h-5 flex items-center justify-center",
-                    activeId === child.id ? 'text-primary-500' : 'text-secondary'
+                    activeId === child.id ? 'text-sky-500' : 'text-secondary'
                   )}>
                     {child.icon}
                   </span>
@@ -331,7 +331,7 @@ const SidebarMenuItem: React.FC<{
               <span className={cn(
                 'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transition-colors duration-200',
                 isActive || isFlyoverOpen
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'bg-white/10 text-[var(--sidebar-text)]'
               )}>
                 {item.badge}
@@ -355,7 +355,7 @@ const SidebarMenuItem: React.FC<{
         <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
-            <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs text-white">
+            <span className="ml-2 px-1.5 py-0.5 bg-sky-500 rounded-full text-xs text-white">
               {item.badge}
             </span>
           )}

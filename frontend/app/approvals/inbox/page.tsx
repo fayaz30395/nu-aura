@@ -350,7 +350,7 @@ export default function ApprovalInboxPage() {
                 onClick={() => handleStatusChange('PENDING')}
                 className={`rounded-full px-3 py-1 font-medium transition-colors ${
                   statusFilter === 'PENDING'
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-sky-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
@@ -361,7 +361,7 @@ export default function ApprovalInboxPage() {
                 onClick={() => handleStatusChange('ALL')}
                 className={`rounded-full px-3 py-1 font-medium transition-colors ${
                   statusFilter === 'ALL'
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-sky-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
@@ -377,7 +377,7 @@ export default function ApprovalInboxPage() {
                   onClick={() => handleTabChange(tab.key)}
                   className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     activeTab === tab.key
-                      ? `${tab.color} ${tab.textColor} ring-2 ring-primary-400/50`
+                      ? `${tab.color} ${tab.textColor} ring-2 ring-sky-400/50`
                       : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                   }`}
                 >
@@ -398,7 +398,7 @@ export default function ApprovalInboxPage() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
             />
           </div>
         </div>
@@ -553,7 +553,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
               rows={3}
             />
           </div>
@@ -597,7 +597,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being rejected…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
               rows={3}
             />
           </div>
@@ -664,7 +664,7 @@ export default function ApprovalInboxPage() {
               <input
                 type="date"
                 {...delegationForm.register('startDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
               />
               {delegationForm.formState.errors.startDate && (
                 <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
@@ -681,7 +681,7 @@ export default function ApprovalInboxPage() {
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
               />
               {delegationForm.formState.errors.endDate && (
                 <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
@@ -698,7 +698,7 @@ export default function ApprovalInboxPage() {
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                 rows={3}
               />
             </div>
@@ -769,12 +769,12 @@ function InboxListItem({
 
   return (
     <Card
-      className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary-500' : ''}`}
+      className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-sky-500' : ''}`}
       onClick={onClick}
     >
       <CardContent className="flex items-start gap-4 p-4">
         {/* Avatar */}
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
           {getInitials(item.requesterName)}
         </div>
 

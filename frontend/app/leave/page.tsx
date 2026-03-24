@@ -102,8 +102,8 @@ export default function LeavePage() {
         };
       default:
         return {
-          bg: 'bg-primary-100 dark:bg-primary-900/30',
-          text: 'text-primary-700 dark:text-primary-400',
+          bg: 'bg-sky-100 dark:bg-sky-900/30',
+          text: 'text-sky-700 dark:text-sky-400',
           icon: HelpCircle,
         };
     }
@@ -120,7 +120,7 @@ export default function LeavePage() {
 
   const getLeaveTypeGradient = (colorCode: string | undefined, index: number) => {
     const gradients = [
-      'from-primary-500 to-primary-600',
+      'from-sky-500 to-sky-700',
       'from-emerald-500 to-emerald-600',
       'from-amber-500 to-amber-600',
       'from-purple-500 to-purple-600',
@@ -157,7 +157,7 @@ export default function LeavePage() {
             <div className="flex gap-2">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors text-sm font-medium"
               >
                 Retry
               </button>
@@ -195,7 +195,7 @@ export default function LeavePage() {
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30 skeuo-button"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-sky-500/30 skeuo-button"
             >
               <Plus className="h-5 w-5" />
               Apply for Leave
@@ -275,7 +275,7 @@ export default function LeavePage() {
             </h2>
             <button
               onClick={() => router.push('/leave/my-leaves')}
-              className="flex items-center gap-1 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium transition-colors"
+              className="flex items-center gap-1 text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 text-sm font-medium transition-colors"
             >
               View All
               <ChevronRight className="h-4 w-4" />
@@ -386,13 +386,13 @@ export default function LeavePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Apply for Leave

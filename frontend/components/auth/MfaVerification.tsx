@@ -127,7 +127,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
               }}
               onPaste={handlePaste}
               disabled={isVerifying}
-              className={`w-full px-4 py-3 text-center font-mono text-2xl tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all disabled:opacity-50 ${
+              className={`w-full px-4 py-3 text-center font-mono text-2xl tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all disabled:opacity-50 ${
                 error
                   ? 'border-red-500 dark:border-red-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100'
                   : 'border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500'
@@ -156,7 +156,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
                 setCode('');
                 setError(null);
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors group"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors group"
             >
               <HelpCircle className="h-4 w-4" />
               <span>Use a backup code instead</span>

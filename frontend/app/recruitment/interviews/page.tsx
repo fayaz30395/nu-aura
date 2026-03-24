@@ -87,7 +87,7 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           placeholder={selectedOption ? selectedOption.label : placeholder}
-          className="w-full px-3 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+          className="w-full px-3 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
         />
         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
       </div>
@@ -101,8 +101,8 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-primary-50 transition-colors ${
-                  option.value === value ? 'bg-primary-50 text-primary-700' : 'text-[var(--text-primary)]'
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-sky-50 transition-colors ${
+                  option.value === value ? 'bg-sky-50 text-sky-700' : 'text-[var(--text-primary)]'
                 }`}
               >
                 <div className="font-medium">{option.label}</div>
@@ -552,8 +552,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-primary-600" />
+                <div className="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-sky-700" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Total</p>
@@ -614,13 +614,13 @@ const formatDateTime = (dateString?: string): string => {
                   placeholder="Search interviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
               >
                 <option value="">All Status</option>
                 <option value="SCHEDULED">Scheduled</option>
@@ -664,8 +664,8 @@ const formatDateTime = (dateString?: string): string => {
                       <tr key={interview.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                              <User className="h-5 w-5 text-primary-600" />
+                            <div className="flex-shrink-0 h-10 w-10 bg-sky-100 rounded-xl flex items-center justify-center">
+                              <User className="h-5 w-5 text-sky-700" />
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-[var(--text-primary)]">{interview.candidateName || 'Unknown'}</div>
@@ -734,7 +734,7 @@ const formatDateTime = (dateString?: string): string => {
                             )}
                             <button
                               onClick={() => handleEdit(interview)}
-                              className="p-2 text-[var(--text-muted)] hover:text-primary-600 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-sky-700 transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="h-4 w-4" />
@@ -894,7 +894,7 @@ const formatDateTime = (dateString?: string): string => {
                             });
                           }
                         }}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/20 ${
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500/20 ${
                           createMeetToggle ? 'bg-blue-500' : 'bg-[var(--bg-secondary)]'
                         } ${!hasValidGoogleToken() ? 'opacity-50 cursor-not-allowed' : ''}`}
                         disabled={!hasValidGoogleToken()}
@@ -933,7 +933,7 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('meetingLink')}
                         placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}
                         disabled={createMeetToggle}
-                        className={`w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                        className={`w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 ${
                           createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
                         }`}
                       />
@@ -957,7 +957,7 @@ const formatDateTime = (dateString?: string): string => {
                         type="button"
                         onClick={handleGenerateQuestions}
                         disabled={generateQuestionsMutation.isPending}
-                        className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 disabled:opacity-50"
+                        className="flex items-center gap-1 text-xs text-sky-700 hover:text-sky-700 disabled:opacity-50"
                       >
                         <Sparkles className="h-3 w-3" />
                         Generate AI Questions
@@ -1094,7 +1094,7 @@ const formatDateTime = (dateString?: string): string => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-primary-500" />
+                    <Sparkles className="h-5 w-5 text-sky-500" />
                     <h2 className="text-2xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
                   <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">

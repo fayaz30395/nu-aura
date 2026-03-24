@@ -276,8 +276,8 @@ export default function EmployeeDashboardPage() {
                   </p>
                   <p className="text-xs text-[var(--text-muted)] mt-1">Per day</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-sky-700 dark:text-sky-400" />
                 </div>
               </div>
             </CardContent>
@@ -435,8 +435,8 @@ export default function EmployeeDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-primary-50 dark:bg-primary-950/30 rounded-xl">
-                    <Target className="h-8 w-8 text-primary-600 dark:text-primary-400 mx-auto" />
+                  <div className="text-center p-4 bg-sky-50 dark:bg-sky-950/30 rounded-xl">
+                    <Target className="h-8 w-8 text-sky-700 dark:text-sky-400 mx-auto" />
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.currentGoals.length}
                     </p>
@@ -503,7 +503,7 @@ export default function EmployeeDashboardPage() {
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-primary-500 rounded-full transition-all"
+                              className="h-full bg-sky-500 rounded-full transition-all"
                               style={{ width: `${goal.progress}%` }}
                             />
                           </div>

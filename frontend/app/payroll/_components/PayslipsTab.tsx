@@ -49,7 +49,7 @@ export function PayslipsTab({
               type="month"
               value={payslipSearchMonth}
               onChange={(e) => onMonthChange(e.target.value)}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
           </div>
           <div>
@@ -59,14 +59,14 @@ export function PayslipsTab({
               placeholder="Search by employee..."
               value={payslipSearchEmployee}
               onChange={(e) => onEmployeeSearch(e.target.value)}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
           </div>
         </div>
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreatePayslip}
-            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
           >
             Create Payslip
           </button>
@@ -122,7 +122,7 @@ export function PayslipsTab({
                 </div>
                 <div className="border-t pt-3 flex justify-between text-sm font-semibold">
                   <span className="text-[var(--text-primary)]">Net Amount</span>
-                  <span className="text-primary-600 dark:text-primary-400">{formatCurrency(payslip.netAmount)}</span>
+                  <span className="text-sky-700 dark:text-sky-400">{formatCurrency(payslip.netAmount)}</span>
                 </div>
               </div>
 
@@ -130,7 +130,7 @@ export function PayslipsTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onEditPayslip(payslip)}
-                    className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                    className="flex-1 px-3 py-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100 text-sm font-medium"
                   >
                     Edit
                   </button>

@@ -256,7 +256,7 @@ export default function WellnessPage() {
                     }}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                   >
-                    <Icon className="h-5 w-5 text-primary-500" />
+                    <Icon className="h-5 w-5 text-sky-500" />
                     <span className="text-sm font-medium text-[var(--text-secondary)]">{metric.label}</span>
                   </button>
                 );
@@ -288,7 +288,7 @@ export default function WellnessPage() {
 
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
               </div>
             ) : activeTab === 'programs' ? (
               // Programs Grid

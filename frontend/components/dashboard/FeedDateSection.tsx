@@ -83,7 +83,7 @@ export function FeedDateSection({
         <div className="space-y-2 pb-2">
           {isLoading ? (
             <div className="flex items-center justify-center gap-2 py-4">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-primary-500" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-sky-500" />
               <span className="text-xs text-[var(--text-muted)]">Loading {group.label.toLowerCase()} items...</span>
             </div>
           ) : (

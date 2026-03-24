@@ -272,7 +272,7 @@ export default function UtilizationReportsPage() {
               <select
                 value={selectedDateRange}
                 onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               >
                 <option value="thisWeek">This Week</option>
                 <option value="lastWeek">Last Week</option>
@@ -291,14 +291,14 @@ export default function UtilizationReportsPage() {
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
                 <span className="text-[var(--text-muted)]">to</span>
                 <input
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
               </>
             )}
@@ -381,7 +381,7 @@ export default function UtilizationReportsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-1 py-3 border-b-2 transition-colors ${activeTab === tab.id
-                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                   }`}
               >
@@ -485,7 +485,7 @@ export default function UtilizationReportsPage() {
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-primary-500" />
+                    <Building2 className="h-5 w-5 text-sky-500" />
                     Department Utilization
                   </CardTitle>
                 </CardHeader>
@@ -494,7 +494,7 @@ export default function UtilizationReportsPage() {
                     {dashboardData.byDepartment.map((dept) => (
                       <div
                         key={dept.departmentId}
-                        className="p-4 rounded-lg border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
+                        className="p-4 rounded-lg border border-[var(--border-main)] hover:border-sky-300 dark:hover:border-sky-700 transition-colors"
                       >
                         <div className="flex items-center justify-between mb-3">
                           <h4 className="font-medium text-[var(--text-primary)]">
@@ -527,7 +527,7 @@ export default function UtilizationReportsPage() {
                       placeholder="Search employees..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="pl-10 pr-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                     />
                   </div>
                 </div>
@@ -553,7 +553,7 @@ export default function UtilizationReportsPage() {
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-700 dark:text-primary-300 text-sm font-medium">
+                              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-sky-700 dark:text-sky-300 text-sm font-medium">
                                 {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                               </div>
                               <div>
@@ -669,8 +669,8 @@ export default function UtilizationReportsPage() {
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                                <FolderOpen className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                              <div className="w-10 h-10 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                                <FolderOpen className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                               </div>
                               <span className="font-medium text-[var(--text-primary)]">
                                 {project.projectName}

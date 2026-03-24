@@ -271,8 +271,8 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-primary-600" />
+                <div className="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-sky-700" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Total Jobs</p>
@@ -361,13 +361,13 @@ export default function JobOpeningsPage() {
                   placeholder="Search job openings..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
               >
                 <option value="">All Status</option>
                 <option value="OPEN">Open</option>
@@ -468,14 +468,14 @@ export default function JobOpeningsPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => router.push(`/recruitment/candidates?jobId=${job.id}`)}
-                        className="p-2 text-[var(--text-muted)] hover:text-primary-600 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-sky-700 transition-colors"
                         title="View Candidates"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleEdit(job)}
-                        className="p-2 text-[var(--text-muted)] hover:text-primary-600 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-sky-700 transition-colors"
                         title="Edit"
                       >
                         <Edit2 className="h-4 w-4" />
@@ -681,7 +681,7 @@ export default function JobOpeningsPage() {
                         type="button"
                         onClick={handleGenerateJobDescription}
                         disabled={generateJDMutation.isPending}
-                        className="flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50"
+                        className="flex items-center gap-1 text-xs font-medium text-sky-700 hover:text-sky-700 disabled:opacity-50"
                       >
                         <Sparkles className="h-3.5 w-3.5" />
                         Generate with AI
@@ -690,7 +690,7 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={4}
                       {...register('jobDescription')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                       placeholder="Describe the job role and responsibilities..."
                     />
                     {errors.jobDescription && <p className="text-xs text-red-600 mt-1">{errors.jobDescription.message}</p>}
@@ -701,7 +701,7 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={3}
                       {...register('requirements')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                       placeholder="List the requirements..."
                     />
                     {errors.requirements && <p className="text-xs text-red-600 mt-1">{errors.requirements.message}</p>}
@@ -712,7 +712,7 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={2}
                       {...register('skillsRequired')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                       placeholder="React, TypeScript, Node.js..."
                     />
                     {errors.skillsRequired && <p className="text-xs text-red-600 mt-1">{errors.skillsRequired.message}</p>}
@@ -783,7 +783,7 @@ export default function JobOpeningsPage() {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                    <Sparkles className="h-6 w-6 text-primary-600" />
+                    <Sparkles className="h-6 w-6 text-sky-700" />
                     Generated Job Description
                   </h2>
                   <button
@@ -796,7 +796,7 @@ export default function JobOpeningsPage() {
 
                 {generateJDMutation.isPending ? (
                   <div className="py-12 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700 mx-auto mb-4"></div>
                     <p className="text-[var(--text-muted)]">Generating job description with AI...</p>
                   </div>
                 ) : aiGeneratedJD ? (

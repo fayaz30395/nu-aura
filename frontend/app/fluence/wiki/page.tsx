@@ -240,7 +240,7 @@ export default function WikiPage() {
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-2">
-                <div className="flex items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 p-2">
+                <div className="flex items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-sky-700 p-2">
                   <BookOpen className={`${iconSize.pageHeader} text-white`} />
                 </div>
                 <h1 className={typography.pageTitle}>Wiki Pages</h1>
@@ -278,7 +278,7 @@ export default function WikiPage() {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={handleOpenCreateSpace}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white transition-colors"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--sky-700)] hover:bg-[var(--sky-800)] text-white transition-colors"
                       >
                         <Plus className="h-4 w-4" />
                       </motion.button>
@@ -317,7 +317,7 @@ export default function WikiPage() {
                       onClick={() => setSelectedSpaceId(undefined)}
                       className={`w-full text-left px-3 py-2 rounded-lg transition-all ${
                         selectedSpaceId === undefined
-                          ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
+                          ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 font-medium'
                           : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                       }`}
                       whileHover={{ x: 4 }}
@@ -341,7 +341,7 @@ export default function WikiPage() {
                           onClick={() => setSelectedSpaceId(space.id)}
                           className={`w-full text-left px-3 py-2.5 rounded-lg transition-all ${
                             selectedSpaceId === space.id
-                              ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                              ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
                               : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                           }`}
                         >
@@ -371,7 +371,7 @@ export default function WikiPage() {
                                 whileHover={{ scale: 1.15 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={(e) => handleOpenEditSpace(space, e)}
-                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--primary-600)] hover:border-[var(--primary-600)] transition-colors"
+                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--sky-700)] hover:border-[var(--sky-700)] transition-colors"
                               >
                                 <Pencil className="h-3 w-3" />
                               </motion.button>
@@ -545,7 +545,7 @@ export default function WikiPage() {
                                   }}
                                 />
                               ) : null}
-                              <div className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
+                              <div className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-sky-500 to-sky-700 text-white text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {authorInitials}
                               </div>
                               <span

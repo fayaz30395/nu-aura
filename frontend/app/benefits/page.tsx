@@ -371,7 +371,7 @@ export default function BenefitsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading benefits...</span>
         </div>
       </AppLayout>
@@ -508,7 +508,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('plans')}
               className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
@@ -518,7 +518,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('enrollments')}
               className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
@@ -528,7 +528,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('claims')}
               className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
-                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
@@ -801,7 +801,7 @@ export default function BenefitsPage() {
         )}
 
         {/* Open Enrollment Banner */}
-        <Card className="bg-gradient-to-r from-primary-500 to-primary-600">
+        <Card className="bg-gradient-to-r from-sky-500 to-sky-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="text-white">

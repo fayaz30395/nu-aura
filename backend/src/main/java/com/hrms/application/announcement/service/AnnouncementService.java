@@ -49,12 +49,13 @@ public class AnnouncementService {
     public AnnouncementDto createAnnouncement(CreateAnnouncementRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
+        // BUG-FIX: Use employeeId for employee table lookups (userId != employeeId)
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        UUID lookupId = employeeId != null ? employeeId : userId;
 
         String publisherName = "System";
-        if (userId != null) {
-            employeeRepository.findByIdAndTenantId(userId, tenantId)
-                    .ifPresent(emp -> {});
-            publisherName = employeeRepository.findByIdAndTenantId(userId, tenantId)
+        if (lookupId != null) {
+            publisherName = employeeRepository.findByIdAndTenantId(lookupId, tenantId)
                     .map(emp -> emp.getFirstName() + " " + emp.getLastName())
                     .orElse("System");
         }
@@ -80,13 +81,14 @@ public class AnnouncementService {
         announcement = announcementRepository.save(announcement);
 
         // Create wall post for social features (reactions/comments)
+        // BUG-FIX: Use employeeId (not userId) since WallService looks up the employee table
         try {
             CreatePostRequest wallPostRequest = new CreatePostRequest();
             wallPostRequest.setType(WallPost.PostType.POST);
             wallPostRequest.setContent(announcement.getContent());
             wallPostRequest.setVisibility(WallPost.PostVisibility.ORGANIZATION);
 
-            WallPostResponse wallPost = wallService.createPost(wallPostRequest, userId);
+            WallPostResponse wallPost = wallService.createPost(wallPostRequest, lookupId);
             announcement.setWallPostId(wallPost.getId());
             announcement = announcementRepository.save(announcement);
             log.info("Created wall post {} for announcement {}", wallPost.getId(), announcement.getId());

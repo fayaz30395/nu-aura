@@ -424,7 +424,7 @@ export default function FeaturesPage() {
                 onClick={() => setActiveTab(module.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === module.id
-                    ? 'bg-primary-500 text-white shadow-lg'
+                    ? 'bg-sky-500 text-white shadow-lg'
                     : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-main)]'
                 }`}
               >
@@ -491,8 +491,8 @@ export default function FeaturesPage() {
                 key={index}
                 className="flex flex-col items-center gap-4 group cursor-pointer"
               >
-                <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-primary-500 group-hover:shadow-card-hover transition-all">
-                  <integration.icon className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-primary-500 transition-colors" />
+                <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-sky-500 group-hover:shadow-card-hover transition-all">
+                  <integration.icon className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-sky-500 transition-colors" />
                 </div>
                 <span className="text-sm font-medium text-[var(--text-muted)]">
                   {integration.name}

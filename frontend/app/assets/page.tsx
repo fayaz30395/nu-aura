@@ -114,7 +114,7 @@ const getCategoryColor = (category: AssetCategory) => {
     case AssetCategory.PHONE:
       return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
     case AssetCategory.TABLET:
-      return 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300';
+      return 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300';
     case AssetCategory.FURNITURE:
       return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
     case AssetCategory.VEHICLE:
@@ -357,7 +357,7 @@ export default function AssetManagementPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="assets">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading assets...</span>
         </div>
       </AppLayout>
@@ -405,8 +405,8 @@ export default function AssetManagementPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
-                  <Package className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                <div className="rounded-lg bg-sky-100 p-4 dark:bg-sky-900">
+                  <Package className="h-6 w-6 text-sky-700 dark:text-sky-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Assets</p>

@@ -114,7 +114,7 @@ export function CourseCatalogTab({
       {/* Programs Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
         </div>
       ) : availablePrograms.length === 0 ? (
         <Card>
@@ -135,7 +135,7 @@ export function CourseCatalogTab({
             return (
               <Card key={program.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
+                  <div className="bg-gradient-to-r from-sky-500 to-sky-700 p-4 text-white">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm opacity-80">{program.programCode}</p>

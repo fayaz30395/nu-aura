@@ -204,7 +204,7 @@ export default function TeamDirectory() {
       'bg-purple-500',
       'bg-pink-500',
       'bg-indigo-500',
-      'bg-primary-500',
+      'bg-sky-500',
       'bg-orange-500',
       'bg-cyan-500',
     ];
@@ -223,7 +223,7 @@ export default function TeamDirectory() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
-                <Users className="w-7 h-7 text-primary-600 dark:text-primary-400" />
+                <Users className="w-7 h-7 text-sky-700 dark:text-sky-400" />
                 Team Directory
               </h1>
               <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -235,7 +235,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('grid')}
                 aria-label="Grid view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'grid'
-                    ? 'bg-primary-100 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
+                    ? 'bg-sky-100 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
               >
@@ -245,7 +245,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('list')}
                 aria-label="List view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'list'
-                    ? 'bg-primary-100 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
+                    ? 'bg-sky-100 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
               >
@@ -284,7 +284,7 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`px-4 py-3 border rounded-xl transition-colors flex items-center gap-2 ${showFilters
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
+                      ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400'
                       : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                     }`}
                 >
@@ -293,7 +293,7 @@ export default function TeamDirectory() {
                   {(filters.departmentIds.length > 0 ||
                     filters.jobRoles.length > 0 ||
                     filters.levels.length > 0) && (
-                      <span className="w-2 h-2 bg-primary-600 rounded-full" />
+                      <span className="w-2 h-2 bg-sky-700 rounded-full" />
                     )}
                 </button>
               </div>
@@ -436,7 +436,7 @@ export default function TeamDirectory() {
         {/* Employee Grid/List */}
         {isPending ? (
           <div className="flex justify-center items-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-sky-700" />
           </div>
         ) : (
           <>
@@ -661,7 +661,7 @@ export default function TeamDirectory() {
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
                       className={`w-10 h-10 rounded-xl font-medium transition-colors ${filters.page === pageNum
-                          ? 'bg-primary-500 text-white'
+                          ? 'bg-sky-500 text-white'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                     >

@@ -205,7 +205,7 @@ export default function TravelRequestDetailsPage() {
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
             <p className="text-[var(--text-secondary)]">Loading travel request...</p>
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function TravelRequestDetailsPage() {
             <p className="text-[var(--text-secondary)]">{error || 'Travel request not found'}</p>
             <button
               onClick={() => router.push('/travel')}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
+              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
             >
               Back to Travel Requests
             </button>
@@ -321,8 +321,8 @@ export default function TravelRequestDetailsPage() {
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                    <Plane className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
+                    <Plane className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                   </div>
                   <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                     Travel Information
@@ -347,8 +347,8 @@ export default function TravelRequestDetailsPage() {
                       </p>
                     </div>
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                        <ArrowLeft className="h-4 w-4 text-primary-600 dark:text-primary-400 rotate-180" />
+                      <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                        <ArrowLeft className="h-4 w-4 text-sky-700 dark:text-sky-400 rotate-180" />
                       </div>
                     </div>
                     <div className="flex-1">
@@ -523,7 +523,7 @@ export default function TravelRequestDetailsPage() {
                 {isOwner && travelRequest.status === 'COMPLETED' && (
                   <button
                     onClick={() => router.push(`/travel/${travelRequest.id}/expenses/new`)}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                     Add Expense
@@ -702,8 +702,8 @@ export default function TravelRequestDetailsPage() {
             {/* Employee Info */}
             <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-                <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                  <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
+                  <User className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                 </div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                   Employee Details

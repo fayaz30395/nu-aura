@@ -123,7 +123,7 @@ function FeaturePills() {
             animation: `fadeSlideUp 0.6s ease-out ${delay} both`,
           }}
         >
-          <Icon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+          <Icon className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
           {label}
         </div>
       ))}
@@ -136,7 +136,7 @@ function LoginPageLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-2 border-primary-300/30 border-t-primary-500 rounded-full animate-spin" />
+        <div className="w-12 h-12 border-2 border-sky-300/30 border-t-sky-500 rounded-full animate-spin" />
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
       </div>
     </div>
@@ -208,7 +208,7 @@ function DemoLoginPanel({
                   <span className="text-sm font-medium text-[var(--text-primary)] truncate">
                     {account.name}
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium flex-shrink-0">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 font-medium flex-shrink-0">
                     {account.role.replace(/_/g, ' ')}
                   </span>
                 </div>
@@ -218,7 +218,7 @@ function DemoLoginPanel({
               </div>
               <LogIn className="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
               {isLoading && loadingEmail === account.email && (
-                <div className="w-4 h-4 border-2 border-primary-300 border-t-primary-600 rounded-full animate-spin flex-shrink-0" />
+                <div className="w-4 h-4 border-2 border-sky-300 border-t-sky-700 rounded-full animate-spin flex-shrink-0" />
               )}
             </button>
           ))}
@@ -452,9 +452,9 @@ function LoginPage() {
             style={{ animation: 'fadeSlideUp 0.8s ease-out 0.1s both' }}
           >
             {/* Platform badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-100/60 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800/40 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/40 mb-8">
               <div className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse" />
-              <span className="text-primary-700 dark:text-primary-300 text-xs font-medium tracking-wider uppercase">
+              <span className="text-sky-700 dark:text-sky-300 text-xs font-medium tracking-wider uppercase">
                 NU-AURA Platform v1.0
               </span>
             </div>
@@ -517,7 +517,7 @@ function LoginPage() {
             <div className="flex justify-center mb-10 lg:mb-8">
               <div className="relative">
                 <div
-                  className="absolute -inset-4 rounded-full bg-primary-500/10 blur-xl"
+                  className="absolute -inset-4 rounded-full bg-sky-500/10 blur-xl"
                   style={{ animation: 'pulse-ring 4s ease-in-out infinite' }}
                 />
                 <Image
@@ -534,7 +534,7 @@ function LoginPage() {
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
               <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
-                Welcome to <span className="text-primary-600 dark:text-primary-400 font-extrabold">NU-AURA</span>
+                Welcome to <span className="text-sky-700 dark:text-sky-400 font-extrabold">NU-AURA</span>
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
                 Your unified people platform
@@ -578,7 +578,7 @@ function LoginPage() {
                 disabled={isGoogleLoading}
               >
                 {isGoogleLoading ? (
-                  <div className="w-5 h-5 border-2 border-[var(--border-main)] border-t-primary-600 rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-[var(--border-main)] border-t-sky-700 rounded-full animate-spin" />
                 ) : (
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -605,7 +605,7 @@ function LoginPage() {
 
               {/* Domain notice */}
               <p className="text-center text-[var(--text-secondary)] text-xs mt-4 leading-relaxed">
-                Restricted to <span className="text-primary-600 dark:text-primary-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
+                Restricted to <span className="text-sky-700 dark:text-sky-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
                 <br />
                 <span className="text-[var(--text-muted)]">Includes NU-Drive and NU-Mail access.</span>
               </p>
@@ -630,19 +630,19 @@ function LoginPage() {
               {/* Trust badges */}
               <div className="flex items-center justify-center gap-6 text-[var(--text-secondary)] text-xs font-medium">
                 <div className="flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                  <Shield className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
                   <span>SOC 2</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                   <span>Encrypted</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                  <Globe className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
                   <span>GDPR</span>
                 </div>
               </div>
@@ -652,11 +652,11 @@ function LoginPage() {
             <div className="text-center mt-8 space-y-2">
               <p className="text-xs text-[var(--text-secondary)]">
                 By signing in, you agree to our{' '}
-                <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors font-medium">
+                <Link href="/terms" className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors font-medium">
                   Terms
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors font-medium">
+                <Link href="/privacy" className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors font-medium">
                   Privacy Policy
                 </Link>
               </p>

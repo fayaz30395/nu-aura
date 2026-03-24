@@ -45,11 +45,11 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
     <Card variant="elevated" hover className="overflow-hidden">
       <CardContent className="p-0">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
+        <div className="bg-gradient-to-r from-sky-500 to-sky-700 p-4 text-white">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="text-lg font-semibold truncate">{payslip.employeeName}</h3>
-              <p className="text-sm text-primary-100 truncate mt-1">
+              <p className="text-sm text-sky-100 truncate mt-1">
                 {payslip.payrollRunName}
               </p>
             </div>
@@ -110,12 +110,12 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
             {/* Net Amount */}
             <div className="flex justify-between items-center pt-3 border-t-2 border-surface-300 dark:border-surface-600">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-primary-500" />
+                <DollarSign className="h-5 w-5 text-sky-500" />
                 <span className="font-semibold text-surface-900 dark:text-surface-50">
                   Net Amount
                 </span>
               </div>
-              <span className="text-xl font-bold text-primary-600 dark:text-primary-400">
+              <span className="text-xl font-bold text-sky-700 dark:text-sky-400">
                 {formatCurrency(payslip.netAmount)}
               </span>
             </div>

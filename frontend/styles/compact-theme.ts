@@ -63,7 +63,7 @@ export const compactTheme = {
 
   // ── Gradients (semantic color names — NOT aliased) ─
   gradients: {
-    primary: 'from-primary-500 to-primary-700',
+    primary: 'from-sky-500 to-sky-700',
     success: 'from-success-500 to-success-700',
     warning: 'from-warning-500 to-accent-600',
     danger: 'from-danger-500 to-danger-700',
@@ -73,7 +73,7 @@ export const compactTheme = {
 
   // ── Background Gradients (with dark variants) ──────
   bgGradients: {
-    primary: 'from-primary-50 to-primary-100/60 dark:from-primary-950/30 dark:to-primary-900/20',
+    primary: 'from-sky-50 to-sky-100/60 dark:from-sky-950/30 dark:to-sky-900/20',
     success: 'from-success-50 to-success-100/60 dark:from-success-950/30 dark:to-success-900/20',
     warning: 'from-warning-50 to-accent-50 dark:from-warning-950/30 dark:to-accent-900/20',
     danger: 'from-danger-50 to-danger-100/60 dark:from-danger-950/30 dark:to-danger-900/20',

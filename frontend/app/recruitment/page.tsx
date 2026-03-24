@@ -218,11 +218,19 @@ export default function RecruitmentDashboard() {
     );
   }, [interviewsQuery.data]);
 
-  const hasError =
+  // Safety-net: if loading takes longer than 15 seconds, stop showing skeletons
+  // and render whatever data (or empty states) we have so the page is not stuck.
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setLoadingTimedOut(true), 15000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const allQueriesErrored =
     jobOpeningsQuery.isError && candidatesQuery.isError && openJobsQuery.isError && interviewsQuery.isError;
 
   // Show full-page error only if ALL queries failed (partial failures render available data)
-  if (hasError) {
+  if (allQueriesErrored) {
     return (
       <AppLayout>
         <PageErrorFallback
@@ -235,12 +243,14 @@ export default function RecruitmentDashboard() {
   }
 
   // Show page skeleton on initial page load while ANY critical query is still loading for the first time.
-  // Uses isLoading (pending + fetching) which is true only before first successful fetch.
+  // Uses isLoading (isPending + isFetching) which is true only before the first successful fetch.
+  // Falls through after 15 seconds to prevent perpetual skeleton if the backend is slow/unreachable.
   const isInitialLoad =
-    jobOpeningsQuery.isLoading ||
-    candidatesQuery.isLoading ||
-    openJobsQuery.isLoading ||
-    interviewsQuery.isLoading;
+    !loadingTimedOut &&
+    (jobOpeningsQuery.isLoading ||
+     candidatesQuery.isLoading ||
+     openJobsQuery.isLoading ||
+     interviewsQuery.isLoading);
 
   if (isInitialLoad) {
     return (
@@ -257,6 +267,42 @@ export default function RecruitmentDashboard() {
             <SkeletonCard />
             <SkeletonCard />
           </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Show a full-page empty state when all queries resolved but there is zero data
+  const hasNoData =
+    !jobOpeningsQuery.isLoading &&
+    !candidatesQuery.isLoading &&
+    (jobOpeningsQuery.data?.content?.length ?? 0) === 0 &&
+    (candidatesQuery.data?.content?.length ?? 0) === 0 &&
+    (openJobsQuery.data?.length ?? 0) === 0;
+
+  if (hasNoData) {
+    return (
+      <AppLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+          <div className="h-16 w-16 rounded-2xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-6">
+            <Briefcase className="h-8 w-8 text-sky-700 dark:text-sky-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
+            Welcome to Recruitment
+          </h2>
+          <p className="text-[var(--text-muted)] max-w-md mb-8">
+            Get started by posting your first job opening. You can then track candidates,
+            schedule interviews, and manage the entire hiring pipeline from here.
+          </p>
+          <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
+            <Button
+              onClick={() => router.push('/recruitment/jobs')}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Create First Job Opening
+            </Button>
+          </PermissionGate>
         </div>
       </AppLayout>
     );
@@ -374,8 +420,8 @@ export default function RecruitmentDashboard() {
                       transition={{ delay: index * 0.1 }}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                          <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                        <div className="h-10 w-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                          <User className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                         </div>
                         <div className="flex-1">
                           <h4 className="font-semibold text-[var(--text-primary)]">
@@ -409,7 +455,7 @@ export default function RecruitmentDashboard() {
           <Card className="h-fit">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                <Briefcase className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                 Active Job Openings
               </CardTitle>
             </CardHeader>
@@ -528,7 +574,7 @@ export default function RecruitmentDashboard() {
                   {/* Lazy-load sentinel with spinner */}
                   {hasMore && (
                     <div ref={loadMoreRef} className="flex justify-center items-center py-4">
-                      <Loader2 className="h-4 w-4 animate-spin text-primary-600 dark:text-primary-400 mr-2" />
+                      <Loader2 className="h-4 w-4 animate-spin text-sky-700 dark:text-sky-400 mr-2" />
                       <span className="text-xs text-[var(--text-muted)]">
                         Loading more candidates...
                       </span>

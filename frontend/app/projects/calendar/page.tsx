@@ -380,7 +380,7 @@ export default function ProjectCalendarPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="projects">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading calendar...</span>
         </div>
       </AppLayout>
@@ -414,7 +414,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('timeline')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
-                  ? 'bg-[var(--bg-surface)] text-primary-600 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-sky-700 shadow-sm'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
               >
@@ -424,7 +424,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('calendar')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
-                  ? 'bg-[var(--bg-surface)] text-primary-600 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-sky-700 shadow-sm'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
               >
@@ -464,7 +464,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
                   <option value="">All Status</option>
                   <option value="PLANNED">Planned</option>
@@ -476,7 +476,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
                   <option value="">All Priority</option>
                   <option value="LOW">Low</option>
@@ -515,7 +515,7 @@ export default function ProjectCalendarPage() {
                         key={level}
                         onClick={() => setZoomLevel(level)}
                         className={`px-3 py-1.5 text-sm rounded capitalize ${zoomLevel === level
-                          ? 'bg-[var(--bg-surface)] shadow text-primary-600 dark:text-primary-400'
+                          ? 'bg-[var(--bg-surface)] shadow text-sky-700 dark:text-sky-400'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                           }`}
                       >
@@ -567,7 +567,7 @@ export default function ProjectCalendarPage() {
                       {timelineColumns.map((col, idx) => (
                         <div
                           key={idx}
-                          className={`flex-1 p-4 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'
+                          className={`flex-1 p-4 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? 'bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'
                             }`}
                         >
                           {col.label}
@@ -682,10 +682,10 @@ export default function ProjectCalendarPage() {
                         const position = calculatePosition(today, today);
                         return (
                           <div
-                            className="absolute top-0 bottom-0 w-0.5 bg-primary-500 pointer-events-none z-20"
+                            className="absolute top-0 bottom-0 w-0.5 bg-sky-500 pointer-events-none z-20"
                             style={{ left: position.left }}
                           >
-                            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary-500 rounded-full" />
+                            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-sky-500 rounded-full" />
                           </div>
                         );
                       }

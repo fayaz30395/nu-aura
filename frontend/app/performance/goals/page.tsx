@@ -149,7 +149,7 @@ export default function GoalsPage() {
   const getStatusColor = (status: GoalStatus) => {
     switch (status) {
       case 'DRAFT': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      case 'ACTIVE': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
+      case 'ACTIVE': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
       case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800';
       case 'COMPLETED': return 'bg-green-100 text-green-800';
       case 'CANCELLED': return 'bg-red-100 text-red-800';
@@ -163,7 +163,7 @@ export default function GoalsPage() {
       case 'OKR': return 'bg-purple-100 text-purple-800';
       case 'KPI': return 'bg-indigo-100 text-indigo-800';
       case 'PERSONAL': return 'bg-green-100 text-green-800';
-      case 'TEAM': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
+      case 'TEAM': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
       case 'DEPARTMENT': return 'bg-pink-100 text-pink-800';
       case 'ORGANIZATION': return 'bg-red-100 text-red-800';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
@@ -314,7 +314,7 @@ export default function GoalsPage() {
                     </div>
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
-                        className="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                        className="bg-sky-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: progress + '%' }}
                       ></div>
                     </div>
@@ -333,7 +333,7 @@ export default function GoalsPage() {
                     <PermissionGate permission={Permissions.GOAL_UPDATE}>
                       <button
                         onClick={() => openEditModal(goal)}
-                        className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                        className="flex-1 px-3 py-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100 text-sm font-medium"
                       >
                         Edit
                       </button>

@@ -135,7 +135,7 @@ export default function AdminLeaveRequestsPage() {
       <>
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700 mx-auto"></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading leave requests...</p>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default function AdminLeaveRequestsPage() {
               onClick={() => setSelectedStatus(status)}
               className={`px-6 py-3 font-medium transition-colors ${
                 selectedStatus === status
-                  ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400'
+                  ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
               }`}
             >
@@ -289,7 +289,7 @@ export default function AdminLeaveRequestsPage() {
                 value={approvalComments}
                 onChange={(e) => setApprovalComments(e.target.value)}
                 rows={3}
-                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
                 placeholder="Add any comments..."
               />
             </div>
@@ -333,7 +333,7 @@ export default function AdminLeaveRequestsPage() {
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
                 placeholder="Explain why this request is being rejected..."
                 required
               />

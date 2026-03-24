@@ -126,7 +126,7 @@ export function EmployeeAllocationDetailModal({
             className={`flex h-12 w-12 items-center justify-center rounded-full ${
               isOverAllocated
                 ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-                : 'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400'
+                : 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-400'
             }`}
           >
             <User className="h-6 w-6" />
@@ -248,7 +248,7 @@ export function EmployeeAllocationDetailModal({
               onClick={() => setActiveTab('current')}
               className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === 'current'
-                  ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                  ? 'border-sky-700 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                   : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
               }`}
             >
@@ -261,7 +261,7 @@ export function EmployeeAllocationDetailModal({
               onClick={() => setActiveTab('history')}
               className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === 'history'
-                  ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                  ? 'border-sky-700 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                   : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
               }`}
             >
@@ -459,7 +459,7 @@ function AllocationCard({
 
   if (isEditing) {
     return (
-      <div className="rounded-lg border border-primary-300 bg-primary-50 p-4 dark:border-primary-700 dark:bg-primary-900/20">
+      <div className="rounded-lg border border-sky-300 bg-sky-50 p-4 dark:border-sky-700 dark:bg-sky-900/20">
         <div className="flex items-start gap-2">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${statusStyle.icon}`}
@@ -544,7 +544,7 @@ function AllocationCard({
   return (
     <div
       className={`rounded-lg border p-4 transition-all ${
-        onClick ? 'cursor-pointer hover:border-primary-300 hover:shadow-sm dark:hover:border-primary-700' : ''
+        onClick ? 'cursor-pointer hover:border-sky-300 hover:shadow-sm dark:hover:border-sky-700' : ''
       } ${
         allocation.isPendingApproval
           ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20'

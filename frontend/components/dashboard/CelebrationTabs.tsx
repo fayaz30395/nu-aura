@@ -102,7 +102,7 @@ export function CelebrationTabs() {
               <p className="text-xs text-[var(--text-muted)]">Failed to load celebrations</p>
               <button
                 onClick={() => window.location.reload()}
-                className="text-xs text-primary-500 hover:text-primary-400 font-medium transition-colors"
+                className="text-xs text-sky-500 hover:text-sky-400 font-medium transition-colors"
               >
                 Try again
               </button>

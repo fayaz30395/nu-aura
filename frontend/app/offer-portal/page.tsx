@@ -27,9 +27,9 @@ import { formatCurrency } from '@/lib/utils';
 
 function OfferPortalLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center">
       <div className="animate-pulse text-center">
-        <Loader2 className="h-12 w-12 text-primary-500 animate-spin mx-auto mb-4" />
+        <Loader2 className="h-12 w-12 text-sky-500 animate-spin mx-auto mb-4" />
         <p className="text-[var(--text-secondary)]">Loading offer details...</p>
       </div>
     </div>
@@ -142,7 +142,7 @@ function OfferPortalPage() {
 
   if (error && !offer) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
             <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -168,12 +168,12 @@ function OfferPortalPage() {
   const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1]?.charAt(0) : '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <FileText className="h-10 w-10 text-primary-600 dark:text-primary-400" />
+          <div className="w-20 h-20 bg-sky-100 dark:bg-sky-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <FileText className="h-10 w-10 text-sky-700 dark:text-sky-400" />
           </div>
           <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
             Your Offer Letter
@@ -238,8 +238,8 @@ function OfferPortalPage() {
         <Card className="skeuo-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-primary-700 dark:text-primary-300">
+              <div className="w-16 h-16 bg-sky-100 dark:bg-sky-900/30 rounded-xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-sky-700 dark:text-sky-300">
                   {firstInitial}{lastInitial}
                 </span>
               </div>
@@ -297,7 +297,7 @@ function OfferPortalPage() {
           <Card>
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary-500" />
+                <FileText className="h-5 w-5 text-sky-500" />
                 Offer Letter Document
               </h3>
               <div className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -316,7 +316,7 @@ function OfferPortalPage() {
                     href={offer.offerLetterUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
                   >
                     <Download className="h-4 w-4" />
                     Download PDF
@@ -366,7 +366,7 @@ function OfferPortalPage() {
             <Mail className="h-6 w-6 text-[var(--text-muted)] mx-auto mb-2" />
             <p className="text-[var(--text-secondary)]">
               Have questions? Contact HR at{' '}
-              <a href="mailto:hr@company.com" className="text-primary-600 hover:underline">
+              <a href="mailto:hr@company.com" className="text-sky-700 hover:underline">
                 hr@company.com
               </a>
             </p>
@@ -399,7 +399,7 @@ function OfferPortalPage() {
                   type="date"
                   value={confirmedJoiningDate}
                   onChange={(e) => setConfirmedJoiningDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
                 <p className="text-xs text-[var(--text-muted)] mt-1">
                   Please confirm your expected joining date
@@ -461,7 +461,7 @@ function OfferPortalPage() {
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder="Please share your reason..."
-                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
               </div>
 

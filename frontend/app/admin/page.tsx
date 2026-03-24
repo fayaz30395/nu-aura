@@ -332,7 +332,7 @@ export default function AdminDashboardPage() {
           <button
             type="submit"
             disabled={updateRoleMutation.isPending}
-            className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-sky-700 text-white hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {updateRoleMutation.isPending ? 'Updating...' : 'Assign / Update Role'}
           </button>

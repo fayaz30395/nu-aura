@@ -414,7 +414,7 @@ function CalendarContent() {
       '10': 'bg-basil-500',
       '11': 'bg-tomato-500',
     };
-    return colors[event.colorId || ''] || 'bg-primary-500';
+    return colors[event.colorId || ''] || 'bg-sky-500';
   };
 
   const handleConnectClick = () => {
@@ -435,7 +435,7 @@ function CalendarContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
           <p className="text-[var(--text-muted)] font-medium">Loading NU-Calendar...</p>
         </div>
       </div>
@@ -573,7 +573,7 @@ function CalendarContent() {
                         onClick={() => setViewMode(mode)}
                         className={`px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
                           viewMode === mode
-                            ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400'
+                            ? 'bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-400'
                             : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                       >
@@ -619,7 +619,7 @@ function CalendarContent() {
                           <div
                             className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1 ${
                               isToday
-                                ? 'bg-primary-500 text-white'
+                                ? 'bg-sky-500 text-white'
                                 : isCurrentMonth
                                   ? 'text-[var(--text-primary)]'
                                   : 'text-[var(--text-muted)]'
@@ -981,7 +981,7 @@ function CalendarContent() {
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                   placeholder="Add description"
                   rows={3}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                 />
               </div>
 

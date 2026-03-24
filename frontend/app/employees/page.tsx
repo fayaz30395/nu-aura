@@ -341,8 +341,8 @@ export default function EmployeesPage() {
                   <tr key={employee.id}>
                     <td className="whitespace-nowrap">
                       <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
-                          <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+                        <div className="flex-shrink-0 h-10 w-10 bg-sky-100 dark:bg-sky-900/30 rounded-lg flex items-center justify-center">
+                          <span className="text-sm font-medium text-sky-700 dark:text-sky-300">
                             {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
                           </span>
                         </div>
@@ -363,7 +363,7 @@ export default function EmployeesPage() {
                     </td>
                     <td className="whitespace-nowrap">
                       {employee.level ? (
-                        <span className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
+                        <span className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300">
                           {employee.level.replace('_', ' ')}
                         </span>
                       ) : (
@@ -476,7 +476,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('basic')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'basic'
-                          ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -486,7 +486,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('personal')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'personal'
-                          ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -496,7 +496,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('employment')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'employment'
-                          ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -506,7 +506,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('bank')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'bank'
-                          ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >

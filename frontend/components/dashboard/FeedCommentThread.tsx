@@ -160,14 +160,14 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
                   }
                 }}
                 placeholder="Write a reply..."
-                className="flex-1 px-2 py-1 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="flex-1 px-2 py-1 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-sky-500"
                 disabled={isSubmittingReply}
                 autoFocus
               />
               <button
                 onClick={handleSubmitReply}
                 disabled={!replyText.trim() || isSubmittingReply}
-                className="px-2 py-1 text-xs font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1 text-xs font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Send className="h-3 w-3" />
               </button>
@@ -179,7 +179,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
             <button
               onClick={handleLoadReplies}
               disabled={isLoadingReplies}
-              className="text-[10px] font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 mt-1 transition-colors disabled:opacity-50"
+              className="text-[10px] font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 mt-1 transition-colors disabled:opacity-50"
             >
               {isLoadingReplies ? 'Loading...' : `View ${comment.replyCount || childReplies.length} ${(comment.replyCount || childReplies.length) === 1 ? 'reply' : 'replies'}`}
             </button>

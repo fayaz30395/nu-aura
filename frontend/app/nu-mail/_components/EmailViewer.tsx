@@ -51,7 +51,7 @@ export function EmailViewer({
     return (
       <div className="p-6 flex items-center justify-center py-16">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 text-primary-500 animate-spin" />
+          <Loader2 className="w-10 h-10 text-sky-500 animate-spin" />
           <p className="text-[var(--text-muted)]">Loading email content...</p>
         </div>
       </div>
@@ -130,8 +130,8 @@ export function EmailViewer({
         </div>
 
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
-            <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+          <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center flex-shrink-0">
+            <User className="h-5 w-5 text-sky-700 dark:text-sky-400" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">

@@ -472,7 +472,7 @@ export default function TeamAttendancePage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm"
+              className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-sm"
             >
               <option value="all">All Statuses</option>
               <option value="PRESENT">Present</option>
@@ -658,7 +658,7 @@ export default function TeamAttendancePage() {
                     }`}>
                       <CardContent className="p-6 flex flex-col gap-4">
                         <div className="flex items-start justify-between gap-2">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-sky-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             {record.employeeId.substring(0, 2).toUpperCase()}
                           </div>
                           <span className={`badge-status ${
@@ -747,11 +747,11 @@ export default function TeamAttendancePage() {
             <Card
               isClickable
               onClick={() => router.push('/attendance')}
-              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-primary-500"
+              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-sky-500"
             >
               <CardContent className="p-6">
-                <div className="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center mb-4">
-                  <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                <div className="w-10 h-10 rounded-lg bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center mb-4">
+                  <Clock className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">My Attendance</h3>
                 <p className="text-xs text-[var(--text-muted)]">View your own records</p>

@@ -88,9 +88,9 @@ const performanceModules = [
     description: 'Give and receive ongoing feedback throughout the year',
     href: '/performance/feedback',
     icon: MessageSquare,
-    color: 'bg-primary-500',
-    lightColor: 'bg-primary-50',
-    textColor: 'text-primary-600',
+    color: 'bg-sky-500',
+    lightColor: 'bg-sky-50',
+    textColor: 'text-sky-700',
   },
   {
     id: 'cycles',

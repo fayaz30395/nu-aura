@@ -143,7 +143,7 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
         </div>
       </AppLayout>
     );
@@ -160,7 +160,7 @@ export default function MyPayslipsPage() {
           </p>
           <button
             onClick={() => router.push('/payroll')}
-            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
           >
             Go to Payroll Management
           </button>
@@ -187,7 +187,7 @@ export default function MyPayslipsPage() {
           {isAdmin && user?.employeeId && !isAdminView && (
             <button
               onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-lg hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 rounded-lg hover:bg-sky-200 dark:hover:bg-sky-900/50 transition-colors"
             >
               <Users className="h-4 w-4" />
               View All Employees
@@ -196,7 +196,7 @@ export default function MyPayslipsPage() {
           {isAdminView && user?.employeeId && (
             <button
               onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-lg hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 rounded-lg hover:bg-sky-200 dark:hover:bg-sky-900/50 transition-colors"
             >
               <FileText className="h-4 w-4" />
               View My Payslips
@@ -341,12 +341,12 @@ export default function MyPayslipsPage() {
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-primary-100 dark:bg-primary-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                        <div className="w-12 h-12 bg-sky-100 dark:bg-sky-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Calendar className="h-6 w-6 text-sky-700 dark:text-sky-400" />
                         </div>
                         <div>
                           {isAdminView && payslip.employeeName && (
-                            <p className="text-sm font-medium text-primary-600 dark:text-primary-400 mb-1">
+                            <p className="text-sm font-medium text-sky-700 dark:text-sky-400 mb-1">
                               {payslip.employeeName}
                             </p>
                           )}

@@ -338,11 +338,11 @@ export default function RolesPage() {
           placeholder="Search roles..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="input-aura px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="input-aura px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
         />
         <button
           onClick={() => setShowCreateModal(true)}
-          className="btn-primary px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+          className="btn-primary px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
         >
           Create Role
         </button>
@@ -409,7 +409,7 @@ export default function RolesPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
                     onClick={() => openPermissionsModal(role)}
-                    className="text-primary-600 hover:text-primary-700 mr-3"
+                    className="text-sky-700 hover:text-sky-700 mr-3"
                   >
                     Permissions
                   </button>
@@ -451,7 +451,7 @@ export default function RolesPage() {
                   <input
                     type="text"
                     {...createForm.register('code')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-primary-400"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-sky-400"
                     placeholder="e.g., MANAGER"
                   />
                   {createForm.formState.errors.code && (
@@ -470,7 +470,7 @@ export default function RolesPage() {
                   <input
                     type="text"
                     {...createForm.register('name')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-primary-400"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-sky-400"
                     placeholder="e.g., Manager"
                   />
                   {createForm.formState.errors.name && (
@@ -488,7 +488,7 @@ export default function RolesPage() {
                 </label>
                 <textarea
                   {...createForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-primary-400"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-sky-400"
                   rows={3}
                   placeholder="Optional description of this role..."
                 />
@@ -508,7 +508,7 @@ export default function RolesPage() {
                     value={permissionSearch}
                     onChange={(e) => setPermissionSearch(e.target.value)}
                     onFocus={() => setShowPermissionDropdown(true)}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-primary-400"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-sky-400"
                     placeholder="Search and select permissions..."
                   />
                   {showPermissionDropdown && permissions.length > 0 && (
@@ -531,7 +531,7 @@ export default function RolesPage() {
                                   // Not part of the create form
                                 }}
                                 className={`px-4 py-2 cursor-pointer hover:bg-[var(--bg-surface)] ${
-                                  isSelected ? 'bg-primary-50' : ''
+                                  isSelected ? 'bg-sky-50' : ''
                                 }`}
                               >
                                 <div className="flex items-center justify-between">
@@ -544,7 +544,7 @@ export default function RolesPage() {
                                     </div>
                                   </div>
                                   {isSelected && (
-                                    <svg className="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="w-5 h-5 text-sky-700" fill="currentColor" viewBox="0 0 20 20">
                                       <path
                                         fillRule="evenodd"
                                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -592,7 +592,7 @@ export default function RolesPage() {
                 <button
                   type="submit"
                   disabled={createForm.formState.isSubmitting || createRoleMutation.isPending}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                  className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
                 >
                   {createForm.formState.isSubmitting || createRoleMutation.isPending ? 'Creating...' : 'Create Role'}
                 </button>
@@ -626,7 +626,7 @@ export default function RolesPage() {
                 <input
                   type="text"
                   {...editForm.register('name')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-primary-400"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-sky-400"
                 />
                 {editForm.formState.errors.name && (
                   <p className="mt-1 text-xs text-red-500">{editForm.formState.errors.name.message}</p>
@@ -638,7 +638,7 @@ export default function RolesPage() {
                 </label>
                 <textarea
                   {...editForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-primary-400"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-sky-400"
                   rows={3}
                 />
                 {editForm.formState.errors.description && (
@@ -657,7 +657,7 @@ export default function RolesPage() {
                     setSelectedParentRoleId(value);
                     editForm.setValue('parentRoleId', value);
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-primary-400"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-sky-400"
                 >
                   <option value="">None</option>
                   {getAvailableParentRoles().map((option) => (
@@ -708,7 +708,7 @@ export default function RolesPage() {
                 <button
                   type="submit"
                   disabled={editForm.formState.isSubmitting || updateRoleMutation.isPending}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                  className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
                 >
                   {editForm.formState.isSubmitting || updateRoleMutation.isPending ? 'Updating...' : 'Update'}
                 </button>
@@ -743,7 +743,7 @@ export default function RolesPage() {
                           key={permission.id}
                           className={`p-4 rounded-lg border transition-colors ${
                             isSelected
-                              ? 'border-primary-300 bg-primary-50'
+                              ? 'border-sky-300 bg-sky-50'
                               : 'border-[var(--border-main)] hover:border-[var(--border-focus)]'
                           }`}
                         >
@@ -754,7 +754,7 @@ export default function RolesPage() {
                                 checked={isSelected}
                                 onChange={() => togglePermission(permission.code)}
                                 disabled={selectedRole.isSystemRole}
-                                className="mt-1 rounded text-primary-600 focus:ring-primary-500"
+                                className="mt-1 rounded text-sky-700 focus:ring-sky-500"
                               />
                               <div>
                                 <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -846,7 +846,7 @@ export default function RolesPage() {
                     className={`px-4 py-2 rounded-lg ${
                       hasInvalidCustomScopes
                         ? 'bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed'
-                        : 'bg-primary-500 text-white hover:bg-primary-600'
+                        : 'bg-sky-500 text-white hover:bg-sky-700'
                     }`}
                   >
                     Save Permissions

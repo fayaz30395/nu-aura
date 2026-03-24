@@ -32,7 +32,7 @@ const BOX_CONFIG: Record<string, { label: string; sublabel: string; bg: string; 
   '1-2': { label: 'Inconsistent Player', sublabel: 'Low Performance • Medium Potential', bg: 'bg-amber-50 dark:bg-amber-900/10', border: 'border-amber-200 dark:border-amber-800', text: 'text-amber-700 dark:text-amber-400' },
   '2-2': { label: 'Core Player', sublabel: 'Medium Performance • Medium Potential', bg: 'bg-blue-50 dark:bg-blue-900/10', border: 'border-blue-200 dark:border-blue-800', text: 'text-blue-700 dark:text-blue-400' },
   '3-2': { label: 'High Performer', sublabel: 'High Performance • Medium Potential', bg: 'bg-indigo-50 dark:bg-indigo-900/10', border: 'border-indigo-200 dark:border-indigo-800', text: 'text-indigo-700 dark:text-indigo-400' },
-  '1-3': { label: 'Growth Employee', sublabel: 'Low Performance • High Potential', bg: 'bg-primary-50 dark:bg-primary-900/10', border: 'border-primary-200 dark:border-primary-800', text: 'text-primary-700 dark:text-primary-400' },
+  '1-3': { label: 'Growth Employee', sublabel: 'Low Performance • High Potential', bg: 'bg-sky-50 dark:bg-sky-900/10', border: 'border-sky-200 dark:border-sky-800', text: 'text-sky-700 dark:text-sky-400' },
   '2-3': { label: 'Future Star', sublabel: 'Medium Performance • High Potential', bg: 'bg-green-50 dark:bg-green-900/10', border: 'border-green-200 dark:border-green-800', text: 'text-green-700 dark:text-green-400' },
   '3-3': { label: 'Star', sublabel: 'High Performance • High Potential', bg: 'bg-emerald-50 dark:bg-emerald-900/10', border: 'border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-400' },
 };
@@ -105,7 +105,7 @@ function NineBoxGrid({
                     onClick={() => onSelectBox(isSelected ? null : key)}
                     className={`flex-1 min-w-[140px] min-h-[140px] rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-lg ${meta.bg} ${meta.border} ${
                       isSelected
-                        ? 'ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-surface-800'
+                        ? 'ring-2 ring-sky-500 ring-offset-2 dark:ring-offset-surface-800'
                         : ''
                     }`}
                   >
@@ -349,7 +349,7 @@ export default function NineBoxPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -429,7 +429,7 @@ export default function NineBoxPage() {
 
         {reviewsLoading ? (
           <div className="flex items-center justify-center py-20">
-            <RefreshCw size={24} className="animate-spin text-primary-500 mr-3" />
+            <RefreshCw size={24} className="animate-spin text-sky-500 mr-3" />
             <span className="text-[var(--text-muted)]">Loading reviews...</span>
           </div>
         ) : points.length === 0 && selectedCycleId ? (
@@ -514,7 +514,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                             />
                           </td>
                         </tr>
@@ -544,7 +544,7 @@ export default function NineBoxPage() {
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                 </div>
               </div>
@@ -610,7 +610,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                             />
                           </td>
                           <td className="px-4 py-2.5 text-center">

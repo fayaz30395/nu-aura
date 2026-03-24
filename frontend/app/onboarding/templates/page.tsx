@@ -44,11 +44,11 @@ export default function TemplatesPage() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
                         <div className="flex items-center gap-4">
-                            <div className="p-2 bg-primary-500/10 rounded-xl">
-                                <Layout className="h-6 w-6 text-primary-600" />
+                            <div className="p-2 bg-sky-500/10 rounded-xl">
+                                <Layout className="h-6 w-6 text-sky-700" />
                             </div>
                             <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
-                                Checklist <span className="text-primary-600">Templates</span>
+                                Checklist <span className="text-sky-700">Templates</span>
                             </h1>
                         </div>
                         <p className="text-[var(--text-muted)] font-bold max-w-md">
@@ -59,7 +59,7 @@ export default function TemplatesPage() {
                     <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                         <Button
                             variant="primary"
-                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
+                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-sky-700 to-indigo-600 border-0 shadow-xl shadow-sky-500/20 rounded-2xl py-6 px-8"
                             leftIcon={<Plus className="h-4 w-4" />}
                             onClick={() => router.push('/onboarding/templates/new')}
                         >
@@ -76,7 +76,7 @@ export default function TemplatesPage() {
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                                 <Input
                                     placeholder="Search templates..."
-                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-primary-500"
+                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-sky-500"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -120,7 +120,7 @@ export default function TemplatesPage() {
                                                         </Badge>
                                                     </div>
 
-                                                    <h3 className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-primary-600 transition-colors">
+                                                    <h3 className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-sky-700 transition-colors">
                                                         {template.name}
                                                     </h3>
                                                     <p className="text-sm text-[var(--text-muted)] font-bold mb-6 flex-grow line-clamp-2">

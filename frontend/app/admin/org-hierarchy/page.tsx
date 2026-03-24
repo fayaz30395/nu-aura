@@ -98,7 +98,7 @@ export default function OrgHierarchyPage() {
       'SVP': { bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700' },
       'VP': { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-700' },
       'DIRECTOR': { bg: 'bg-cyan-50', border: 'border-cyan-300', text: 'text-cyan-700' },
-      'SENIOR_MANAGER': { bg: 'bg-primary-50', border: 'border-primary-300', text: 'text-primary-700' },
+      'SENIOR_MANAGER': { bg: 'bg-sky-50', border: 'border-sky-300', text: 'text-sky-700' },
       'MANAGER': { bg: 'bg-green-50', border: 'border-green-300', text: 'text-green-700' },
       'LEAD': { bg: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-700' },
       'SENIOR': { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-700' },
@@ -260,7 +260,7 @@ export default function OrgHierarchyPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss flex items-center space-x-4">
-            <svg className="h-8 w-8 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="h-8 w-8 text-sky-700" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
             </svg>
             <span>Organization Chart</span>
@@ -324,7 +324,7 @@ export default function OrgHierarchyPage() {
           {loading ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-700 mx-auto"></div>
                 <p className="mt-6 text-[var(--text-secondary)] font-medium">Loading organization chart...</p>
               </div>
             </div>

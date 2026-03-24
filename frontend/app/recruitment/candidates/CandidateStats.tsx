@@ -22,7 +22,7 @@ export const CandidateStats = memo(function CandidateStats({
   selected,
 }: CandidateStatsProps) {
   const cards = [
-    { label: 'Total Candidates', value: total, bg: 'bg-primary-50 dark:bg-primary-950/30', text: 'text-primary-600 dark:text-primary-400' },
+    { label: 'Total Candidates', value: total, bg: 'bg-sky-50 dark:bg-sky-950/30', text: 'text-sky-700 dark:text-sky-400' },
     { label: 'New', value: newCount, bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-600 dark:text-blue-400' },
     { label: 'In Interview', value: interview, bg: 'bg-yellow-50 dark:bg-yellow-950/30', text: 'text-yellow-600 dark:text-yellow-400' },
     { label: 'Selected', value: selected, bg: 'bg-green-50 dark:bg-green-950/30', text: 'text-green-600 dark:text-green-400' },

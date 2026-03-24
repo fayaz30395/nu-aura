@@ -77,7 +77,7 @@ export function ResourceAvailabilityCalendar({
                       weekend
                         ? 'bg-surface-50 text-surface-400 dark:bg-surface-800/50'
                         : 'text-surface-600 dark:text-surface-400',
-                      isToday && 'bg-primary-50 dark:bg-primary-900/20'
+                      isToday && 'bg-sky-50 dark:bg-sky-900/20'
                     )}
                   >
                     <div className="flex flex-col items-center">
@@ -87,7 +87,7 @@ export function ResourceAvailabilityCalendar({
                       <span
                         className={cn(
                           'mt-0.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
-                          isToday && 'bg-primary-600 text-white'
+                          isToday && 'bg-sky-700 text-white'
                         )}
                       >
                         {format(date, 'd')}
@@ -177,7 +177,7 @@ function EmployeeRow({
               unoptimized
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-400">
               <User className="h-4 w-4" />
             </div>
           )}
@@ -264,7 +264,7 @@ function AvailabilityCell({
       <div
         className={cn(
           'mx-auto flex h-8 w-8 items-center justify-center rounded text-xs font-medium transition-all',
-          'hover:ring-2 hover:ring-primary-500 hover:ring-offset-1',
+          'hover:ring-2 hover:ring-sky-500 hover:ring-offset-1',
           isWeekend && !availability?.isHoliday && 'opacity-50'
         )}
         style={{

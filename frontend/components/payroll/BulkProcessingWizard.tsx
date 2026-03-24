@@ -194,7 +194,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       className={cn(
                         'w-12 h-12 rounded-full flex items-center justify-center transition-all',
                         isCompleted && 'bg-success-500 text-white',
-                        isActive && 'bg-primary-500 text-white ring-4 ring-primary-100 dark:ring-primary-900',
+                        isActive && 'bg-sky-500 text-white ring-4 ring-sky-100 dark:ring-sky-900',
                         !isActive && !isCompleted && 'bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
                       )}
                     >
@@ -208,7 +208,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       <p
                         className={cn(
                           'text-sm font-medium',
-                          isActive && 'text-primary-600 dark:text-primary-400',
+                          isActive && 'text-sky-700 dark:text-sky-400',
                           !isActive && 'text-surface-600 dark:text-surface-400'
                         )}
                       >
@@ -272,7 +272,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search employees..."
-                    className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
                 <Button
@@ -297,7 +297,7 @@ export const BulkProcessingWizard: React.FC = () => {
                 <div className="max-h-[400px] overflow-y-auto">
                   {loading ? (
                     <div className="flex items-center justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+                      <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
                     </div>
                   ) : filteredEmployees.length === 0 ? (
                     <div className="text-center py-12 text-surface-600 dark:text-surface-400">
@@ -314,12 +314,12 @@ export const BulkProcessingWizard: React.FC = () => {
                             className={cn(
                               'flex items-center gap-4 p-4 cursor-pointer transition-colors',
                               'hover:bg-surface-50 dark:hover:bg-surface-800/50',
-                              isSelected && 'bg-primary-50 dark:bg-primary-950/30'
+                              isSelected && 'bg-sky-50 dark:bg-sky-950/30'
                             )}
                           >
                             <div className="flex-shrink-0">
                               {isSelected ? (
-                                <CheckCircle2 className="h-6 w-6 text-primary-500" />
+                                <CheckCircle2 className="h-6 w-6 text-sky-500" />
                               ) : (
                                 <Circle className="h-6 w-6 text-surface-400" />
                               )}
@@ -376,7 +376,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     value={runName}
                     onChange={(e) => setRunName(e.target.value)}
                     placeholder="e.g., December 2024 Payroll"
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
 
@@ -389,7 +389,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       type="date"
                       value={payrollPeriodStart}
                       onChange={(e) => setPayrollPeriodStart(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                     />
                   </div>
 
@@ -401,7 +401,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       type="date"
                       value={payrollPeriodEnd}
                       onChange={(e) => setPayrollPeriodEnd(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                     />
                   </div>
                 </div>
@@ -414,7 +414,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     type="date"
                     value={paymentDate}
                     onChange={(e) => setPaymentDate(e.target.value)}
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
 
@@ -475,11 +475,11 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {/* Total Summary */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-lg">
-                  <p className="text-sm text-primary-600 dark:text-primary-400 mb-1">
+                <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-lg">
+                  <p className="text-sm text-sky-700 dark:text-sky-400 mb-1">
                     Total Employees
                   </p>
-                  <p className="text-2xl font-bold text-primary-700 dark:text-primary-300">
+                  <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">
                     {previewData.length}
                   </p>
                 </div>
@@ -553,7 +553,7 @@ export const BulkProcessingWizard: React.FC = () => {
                           <td className="px-4 py-3 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
                             {formatCurrency(emp.grossAmount)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right font-bold text-primary-600 dark:text-primary-400">
+                          <td className="px-4 py-3 text-sm text-right font-bold text-sky-700 dark:text-sky-400">
                             {formatCurrency(emp.netAmount)}
                           </td>
                         </tr>
@@ -571,7 +571,7 @@ export const BulkProcessingWizard: React.FC = () => {
               <div className="text-center">
                 {processingStatus === 'processing' ? (
                   <>
-                    <Loader2 className="h-16 w-16 animate-spin text-primary-500 mx-auto mb-4" />
+                    <Loader2 className="h-16 w-16 animate-spin text-sky-500 mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
                       Processing Payroll
                     </h2>
@@ -604,11 +604,11 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {processingResult && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-lg text-center">
-                    <p className="text-sm text-primary-600 dark:text-primary-400 mb-1">
+                  <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-lg text-center">
+                    <p className="text-sm text-sky-700 dark:text-sky-400 mb-1">
                       Payroll Run ID
                     </p>
-                    <p className="text-lg font-bold text-primary-700 dark:text-primary-300">
+                    <p className="text-lg font-bold text-sky-700 dark:text-sky-300">
                       {processingResult.payrollRunId}
                     </p>
                   </div>

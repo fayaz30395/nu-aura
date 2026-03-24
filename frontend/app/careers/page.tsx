@@ -90,7 +90,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           onClick={() => onViewDetails(job)}>
       <div className="flex flex-col gap-4">
         <div>
-          <h3 className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          <h3 className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors">
             {job.title}
           </h3>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -116,7 +116,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           <span className="text-xs text-[var(--text-muted)]">
             {formatDate(job.postedDate)}
           </span>
-          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-primary-600 transition-colors" />
+          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-sky-700 transition-colors" />
         </div>
       </div>
     </Card>
@@ -196,7 +196,7 @@ const JobDetailModal: React.FC<{
             <ul className="space-y-2">
               {job.responsibilities.map((resp, idx) => (
                 <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
-                  <span className="text-primary-600 dark:text-primary-400 font-bold">•</span>
+                  <span className="text-sky-700 dark:text-sky-400 font-bold">•</span>
                   {resp}
                 </li>
               ))}
@@ -211,7 +211,7 @@ const JobDetailModal: React.FC<{
             <ul className="space-y-2">
               {job.requirements.map((req, idx) => (
                 <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
-                  <span className="text-primary-600 dark:text-primary-400 font-bold">•</span>
+                  <span className="text-sky-700 dark:text-sky-400 font-bold">•</span>
                   {req}
                 </li>
               ))}
@@ -226,7 +226,7 @@ const JobDetailModal: React.FC<{
         </Button>
         <Button
           onClick={() => onApply(job)}
-          className="btn-primary bg-primary-600 hover:bg-primary-700 text-white"
+          className="btn-primary bg-sky-700 hover:bg-sky-700 text-white"
         >
           Apply Now
           <Send className="h-4 w-4 ml-2" />
@@ -433,7 +433,7 @@ const ApplicationModal: React.FC<{
         <Button
           onClick={handleSubmit(handleFormSubmit)}
           disabled={isSubmitting}
-          className="btn-primary bg-primary-600 hover:bg-primary-700 text-white"
+          className="btn-primary bg-sky-700 hover:bg-sky-700 text-white"
         >
           {isSubmitting ? (
             <>
@@ -698,7 +698,7 @@ export default function CareersPage() {
                     setSelectedType('');
                     setSelectedExperience('');
                   }}
-                  className="bg-primary-600 hover:bg-primary-700"
+                  className="bg-sky-700 hover:bg-sky-700"
                 >
                   Clear Filters
                 </Button>
@@ -737,7 +737,7 @@ export default function CareersPage() {
                           onClick={() => setCurrentPage(page)}
                           className={
                             page === currentPage
-                              ? 'bg-primary-600 hover:bg-primary-700'
+                              ? 'bg-sky-700 hover:bg-sky-700'
                               : ''
                           }
                         >

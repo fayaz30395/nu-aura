@@ -119,7 +119,7 @@ function renderBodyWithMentions(body: string): React.ReactNode {
     parts.push(
       <span
         key={`${match.index}-${match[1]}`}
-        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[var(--primary-600)]/10 text-[var(--primary-600)] dark:text-[var(--primary-400)] text-xs font-medium cursor-pointer hover:bg-[var(--primary-600)]/20 transition-colors"
+        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[var(--sky-700)]/10 text-[var(--sky-700)] dark:text-[var(--sky-400)] text-xs font-medium cursor-pointer hover:bg-[var(--sky-700)]/20 transition-colors"
       >
         @{match[1]}
       </span>
@@ -221,7 +221,7 @@ function CommentThread({
               onClick={handleLike}
               className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 ${
                 liked
-                  ? 'text-[var(--primary-600)]'
+                  ? 'text-[var(--sky-700)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -253,7 +253,7 @@ function CommentThread({
             <div className="mt-4">
               <button
                 onClick={() => setShowReplies(!showReplies)}
-                className="flex items-center gap-1.5 text-xs font-medium text-[var(--primary-600)] hover:text-[var(--primary-700)] transition-colors mb-2"
+                className="flex items-center gap-1.5 text-xs font-medium text-[var(--sky-700)] hover:text-[var(--sky-800)] transition-colors mb-2"
               >
                 <CornerDownRight className="h-3.5 w-3.5" />
                 {showReplies ? (
@@ -316,7 +316,7 @@ function CommentThread({
                   whileTap={{ scale: 0.95 }}
                   onClick={onSubmitReply}
                   disabled={!replyText.trim()}
-                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--sky-700)] hover:bg-[var(--sky-800)] text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Send className="h-4 w-4" />
                 </motion.button>
@@ -373,7 +373,7 @@ function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
             }}
             className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 ${
               liked
-                ? 'text-[var(--primary-600)]'
+                ? 'text-[var(--sky-700)]'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
             }`}
           >
@@ -588,7 +588,7 @@ export default function WikiPageDetailPage() {
         >
           <button
             onClick={() => router.back()}
-            className="mb-6 inline-flex items-center gap-2 text-[var(--primary-600)] hover:text-[var(--primary-700)] transition-colors duration-200 group"
+            className="mb-6 inline-flex items-center gap-2 text-[var(--sky-700)] hover:text-[var(--sky-800)] transition-colors duration-200 group"
           >
             <ArrowLeft
               className={`${iconSize.button} group-hover:-translate-x-1 transition-transform`}
@@ -648,7 +648,7 @@ export default function WikiPageDetailPage() {
                   </Tooltip>
 
                   {page.spaceName && (
-                    <Badge variant="light" size="lg" color="var(--primary-600)">
+                    <Badge variant="light" size="lg" color="var(--sky-700)">
                       {page.spaceName}
                     </Badge>
                   )}
@@ -985,7 +985,7 @@ export default function WikiPageDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || createComment.isPending}
-                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white font-medium text-sm transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--sky-700)] hover:bg-[var(--sky-800)] text-white font-medium text-sm transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Send className="h-4 w-4" />
                 </motion.button>
@@ -1155,7 +1155,7 @@ export default function WikiPageDetailPage() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRestoreRevision(rev.id)}
                       disabled={restoreRevision.isPending}
-                      className="ml-4 px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0"
+                      className="ml-4 px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--sky-700)] hover:bg-[var(--sky-800)] text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0"
                     >
                       <RefreshCw className="h-3 w-3" />
                       Restore

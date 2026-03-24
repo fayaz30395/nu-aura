@@ -96,7 +96,7 @@ function ApprovalCard({ approval, onApprove, onReject, isLoading }: {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="border border-[var(--border-main)] hover:border-primary-400 transition-colors skeuo-card">
+      <Card className="border border-[var(--border-main)] hover:border-sky-400 transition-colors skeuo-card">
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -255,7 +255,7 @@ export default function ApprovalsPage() {
               }}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === tab.key
-                  ? 'text-primary-600 dark:text-primary-400 border-primary-600 dark:border-primary-400'
+                  ? 'text-sky-700 dark:text-sky-400 border-sky-700 dark:border-sky-400'
                   : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)]'
               }`}
             >
@@ -276,7 +276,7 @@ export default function ApprovalsPage() {
               setSearch(e.target.value);
               setPage(0);
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500/50 skeuo-input"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500/50 skeuo-input"
           />
         </div>
 

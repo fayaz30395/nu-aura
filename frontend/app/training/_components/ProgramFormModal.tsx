@@ -261,7 +261,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
                 <input
                   type="checkbox"
                   {...register('isMandatory')}
-                  className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                  className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
                 />
                 <span className="text-sm font-medium text-[var(--text-secondary)]">
                   Mandatory Training

@@ -164,7 +164,7 @@ export default function NewLoanPage() {
             </label>
             <select
               {...register('loanType')}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
               {LOAN_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -190,7 +190,7 @@ export default function NewLoanPage() {
                 placeholder="Enter loan amount"
                 className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                   errors.requestedAmount ? 'border-red-500' : 'border-[var(--border-main)]'
-                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500`}
               />
             </div>
             {errors.requestedAmount && (
@@ -210,7 +210,7 @@ export default function NewLoanPage() {
               placeholder="8.5"
               className={`w-full px-4 py-3 bg-[var(--bg-secondary)] border ${
                 errors.interestRate ? 'border-red-500' : 'border-[var(--border-main)]'
-              } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
+              } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500`}
             />
             {errors.interestRate && (
               <p className="mt-1 text-sm text-red-500">{errors.interestRate.message}</p>
@@ -230,7 +230,7 @@ export default function NewLoanPage() {
                 placeholder="12"
                 className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                   errors.termMonths ? 'border-red-500' : 'border-[var(--border-main)]'
-                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500`}
               />
             </div>
             {errors.termMonths && (
@@ -245,7 +245,7 @@ export default function NewLoanPage() {
             </label>
             <select
               {...register('repaymentFrequency')}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
               {REPAYMENT_FREQUENCIES.map((freq) => (
                 <option key={freq.value} value={freq.value}>
@@ -271,7 +271,7 @@ export default function NewLoanPage() {
                 rows={4}
                 className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                   errors.purpose ? 'border-red-500' : 'border-[var(--border-main)]'
-                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none`}
+                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none`}
               />
             </div>
             {errors.purpose && (
@@ -288,7 +288,7 @@ export default function NewLoanPage() {
               {...register('notes')}
               placeholder="Any additional information..."
               rows={3}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
             />
             {errors.notes && (
               <p className="mt-1 text-sm text-red-500">{errors.notes.message}</p>
@@ -297,7 +297,7 @@ export default function NewLoanPage() {
 
           {/* EMI Calculator */}
           {monthlyPayment > 0 && (
-            <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 text-white">
+            <div className="bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl p-6 text-white">
               <div className="flex items-center gap-4 mb-4">
                 <Wallet className="h-6 w-6" />
                 <h3 className="text-lg font-semibold">Estimated Monthly Payment</h3>
@@ -305,7 +305,7 @@ export default function NewLoanPage() {
               <div className="text-4xl font-bold mb-2">
                 {loanService.formatCurrency(monthlyPayment)}
               </div>
-              <p className="text-primary-100 text-sm">
+              <p className="text-sky-100 text-sm">
                 Based on {watchedRate}% interest rate for {watchedTerm} months
               </p>
             </div>
@@ -324,7 +324,7 @@ export default function NewLoanPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 disabled:opacity-50"
               >
                 {isLoading ? (
                   <>

@@ -311,7 +311,7 @@ export function TaskDetailsModal({
                   <button
                     onClick={isEditingProgress ? handleSaveProgress : handleStartEditProgress}
                     disabled={isSaving}
-                    className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                    className="text-sm text-sky-700 hover:text-sky-700 flex items-center gap-1"
                   >
                     {isEditingProgress ? (
                       <>
@@ -339,7 +339,7 @@ export function TaskDetailsModal({
                   />
                   <div className="flex justify-between text-sm text-surface-500">
                     <span>0%</span>
-                    <span className="font-medium text-primary-600">{editProgress}%</span>
+                    <span className="font-medium text-sky-700">{editProgress}%</span>
                     <span>100%</span>
                   </div>
                 </div>
@@ -347,7 +347,7 @@ export function TaskDetailsModal({
                 <div className="space-y-2">
                   <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-primary-500 rounded-full transition-all duration-300"
+                      className="h-full bg-sky-500 rounded-full transition-all duration-300"
                       style={{ width: `${normalizedTask.progress}%` }}
                     />
                   </div>
@@ -421,7 +421,7 @@ export function TaskDetailsModal({
                     className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary-600 font-medium">
+                      <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center text-sky-700 font-medium">
                         {assignee.employeeName
                           .split(' ')
                           .map((n) => n[0])

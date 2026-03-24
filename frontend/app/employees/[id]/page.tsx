@@ -74,7 +74,7 @@ export default function EmployeeDetailPage() {
       <AppLayout activeMenuItem="employees">
         <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700"></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function EmployeeDetailPage() {
                 <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
                   <button
                     onClick={() => router.push(`/employees/${employeeId}/edit`)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+                    className="px-4 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-700 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                   >
                     Edit Employee
                   </button>
@@ -165,8 +165,8 @@ export default function EmployeeDetailPage() {
           <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 mb-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-4">
-                <div className="flex-shrink-0 h-20 w-20 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                  <span className="text-2xl font-medium text-primary-700 dark:text-primary-400">
+                <div className="flex-shrink-0 h-20 w-20 bg-sky-100 dark:bg-sky-900/30 rounded-full flex items-center justify-center">
+                  <span className="text-2xl font-medium text-sky-700 dark:text-sky-400">
                     {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
                   </span>
                 </div>
@@ -189,7 +189,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={() => setCurrentTab('basic')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'basic'
-                      ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                      ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
@@ -198,7 +198,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={() => setCurrentTab('personal')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'personal'
-                      ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                      ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
@@ -207,7 +207,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={() => setCurrentTab('employment')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'employment'
-                      ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                      ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
@@ -216,7 +216,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={() => setCurrentTab('bank')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'bank'
-                      ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                      ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
@@ -225,7 +225,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={() => setCurrentTab('custom')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'custom'
-                      ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                      ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
@@ -234,7 +234,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={() => setCurrentTab('talent')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'talent'
-                      ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                      ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
@@ -244,7 +244,7 @@ export default function EmployeeDetailPage() {
                   <button
                     onClick={() => setCurrentTab('dottedReports')}
                     className={`py-4 px-1 border-b-2 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${currentTab === 'dottedReports'
-                        ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                        ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
                         : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                       }`}
                   >
@@ -410,8 +410,8 @@ export default function EmployeeDetailPage() {
                       <p className="text-base text-[var(--text-primary)]">{employee.taxId || '-'}</p>
                     </div>
                   </div>
-                  <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-500 dark:border-primary-500 rounded-md p-4">
-                    <p className="text-sm text-primary-600 dark:text-primary-400">
+                  <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-500 dark:border-sky-500 rounded-md p-4">
+                    <p className="text-sm text-sky-700 dark:text-sky-400">
                       <strong>Note:</strong> Banking and tax information is encrypted and stored securely.
                     </p>
                   </div>

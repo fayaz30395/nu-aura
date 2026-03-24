@@ -229,7 +229,7 @@ export default function IntegrationsPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   selectedCategory === category.id
-                    ? 'bg-primary-500 text-white shadow-lg'
+                    ? 'bg-sky-500 text-white shadow-lg'
                     : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-main)]'
                 }`}
               >
@@ -316,7 +316,7 @@ export default function IntegrationsPage() {
               },
             ].map((feature, index) => (
               <Card key={index} padding="lg">
-                <feature.icon className="h-8 w-8 text-primary-600 dark:text-primary-400 mb-3" />
+                <feature.icon className="h-8 w-8 text-sky-700 dark:text-sky-400 mb-3" />
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                   {feature.title}
                 </h3>

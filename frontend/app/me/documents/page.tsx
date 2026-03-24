@@ -74,7 +74,7 @@ const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; colo
   PENDING: { icon: <Clock className="h-4 w-4" />, color: 'text-warning-600', bgColor: 'bg-warning-100 dark:bg-warning-900/30' },
   IN_PROGRESS: { icon: <AlertCircle className="h-4 w-4" />, color: 'text-info-600', bgColor: 'bg-info-100 dark:bg-info-900/30' },
   GENERATED: { icon: <CheckCircle className="h-4 w-4" />, color: 'text-success-600', bgColor: 'bg-success-100 dark:bg-success-900/30' },
-  DELIVERED: { icon: <Truck className="h-4 w-4" />, color: 'text-primary-600', bgColor: 'bg-primary-100 dark:bg-primary-900/30' },
+  DELIVERED: { icon: <Truck className="h-4 w-4" />, color: 'text-sky-700', bgColor: 'bg-sky-100 dark:bg-sky-900/30' },
   REJECTED: { icon: <XCircle className="h-4 w-4" />, color: 'text-danger-600', bgColor: 'bg-danger-100 dark:bg-danger-900/30' },
   CANCELLED: { icon: <X className="h-4 w-4" />, color: 'text-[var(--text-muted)]', bgColor: 'bg-[var(--bg-secondary)]' },
 };
@@ -211,7 +211,7 @@ export default function MyDocumentsPage() {
           </p>
           <button
             onClick={() => router.push('/documents')}
-            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
           >
             Go to Document Management
           </button>
@@ -469,7 +469,7 @@ export default function MyDocumentsPage() {
                         type="radio"
                         {...register('deliveryMode')}
                         value={mode}
-                        className="text-primary-600"
+                        className="text-sky-700"
                       />
                       <span className="text-sm text-[var(--text-secondary)] capitalize">
                         {mode.toLowerCase()}

@@ -418,7 +418,7 @@ export default function ImplicitRolesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
                     <button
                       onClick={() => openAffectedUsersModal(rule)}
-                      className="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 underline"
+                      className="text-sky-700 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300 underline"
                     >
                       {rule.affectedUserCount} users
                     </button>

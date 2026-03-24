@@ -378,7 +378,7 @@ export default function LeaveTypesManagementPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => handleEdit(leaveType)}
-                        className="text-primary-600 hover:text-blue-900 mr-3"
+                        className="text-sky-700 hover:text-blue-900 mr-3"
                       >
                         Edit
                       </button>
@@ -501,7 +501,7 @@ export default function LeaveTypesManagementPage() {
                           <input
                             type="checkbox"
                             {...form.register('isPaid')}
-                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                            className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                           />
                           <span className="ml-2 text-sm text-[var(--text-secondary)]">Paid Leave</span>
                         </label>
@@ -629,7 +629,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isCarryForwardAllowed')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">Allow Carry Forward</span>
                       </label>
@@ -653,7 +653,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isEncashable')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">Encashable</span>
                       </label>
@@ -662,7 +662,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('requiresDocument')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">Requires Supporting Document</span>
                       </label>

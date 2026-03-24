@@ -76,7 +76,7 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center justify-between w-full mb-4 group"
       >
-        <h3 className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-600)] transition-colors">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--sky-700)] transition-colors">
           Contents
         </h3>
         {isExpanded ? (
@@ -100,7 +100,7 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
               onClick={() => handleHeadingClick(heading.id)}
               className={`block w-full text-left px-3 py-1.5 rounded-md text-xs transition-all line-clamp-2 ${
                 activeHeadingId === heading.id
-                  ? 'bg-[var(--primary-100)] dark:bg-[var(--primary-900)]/30 text-[var(--primary-700)] dark:text-[var(--primary-300)] font-medium'
+                  ? 'bg-[var(--sky-100)] dark:bg-[var(--sky-950)]/30 text-[var(--sky-800)] dark:text-[var(--sky-300)] font-medium'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
               }`}
               style={{ marginLeft: `${(heading.level - minLevel) * 12}px` }}

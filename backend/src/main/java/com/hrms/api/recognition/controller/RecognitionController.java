@@ -29,8 +29,11 @@ public class RecognitionController {
     @RequiresPermission(Permission.RECOGNITION_CREATE)
     public ResponseEntity<RecognitionResponse> giveRecognition(
             @Valid @RequestBody RecognitionRequest request) {
-        UUID userId = SecurityContext.getCurrentUserId();
-        RecognitionResponse response = recognitionService.giveRecognition(userId, request);
+        // BUG-FIX: Use employeeId (not userId) since Recognition.giverId references the employee table
+        // and WallService.createPost also looks up the employee table by this ID
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        UUID giverId = employeeId != null ? employeeId : SecurityContext.getCurrentUserId();
+        RecognitionResponse response = recognitionService.giveRecognition(giverId, request);
         return ResponseEntity.ok(response);
     }
 

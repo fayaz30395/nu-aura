@@ -228,7 +228,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 type="text"
                 placeholder="Employee name or ID"
                 {...register('employeeId')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
               />
               {errors.employeeId && (
                 <p className="text-red-500 text-sm mt-1">{errors.employeeId.message}</p>
@@ -242,7 +242,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 type="text"
                 placeholder="Manager name or ID"
                 {...register('managerId')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
               />
               {errors.managerId && (
                 <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>
@@ -257,7 +257,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             </label>
             <select
               {...register('reason')}
-              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
             >
               <option value="">Select a reason</option>
               {PIP_REASONS.map(reason => (
@@ -294,7 +294,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 <input
                   type="date"
                   {...register('startDate')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
                 {errors.startDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -305,7 +305,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 <input
                   type="date"
                   {...register('endDate')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
                 {errors.endDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -323,7 +323,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               placeholder="Describe the specific goals and success criteria..."
               rows={4}
               {...register('goals')}
-              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
             />
             {errors.goals && (
               <p className="text-red-500 text-sm mt-1">{errors.goals.message}</p>
@@ -337,7 +337,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             </label>
             <select
               {...register('checkInFrequency')}
-              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
             >
               <option value="WEEKLY">Weekly</option>
               <option value="BIWEEKLY">Bi-weekly</option>
@@ -490,7 +490,7 @@ function PIPDetailModal({
               </div>
               <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                 <div
-                  className="bg-primary-500 h-2 rounded-full transition-all"
+                  className="bg-sky-500 h-2 rounded-full transition-all"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -552,7 +552,7 @@ function PIPDetailModal({
                   placeholder="Employee progress notes..."
                   rows={2}
                   {...registerCheckIn('progressNotes')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
                 {checkInErrors.progressNotes && (
                   <p className="text-red-500 text-sm">{checkInErrors.progressNotes.message}</p>
@@ -561,7 +561,7 @@ function PIPDetailModal({
                   placeholder="Manager comments..."
                   rows={2}
                   {...registerCheckIn('managerComments')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 />
                 {checkInErrors.managerComments && (
                   <p className="text-red-500 text-sm">{checkInErrors.managerComments.message}</p>
@@ -585,7 +585,7 @@ function PIPDetailModal({
               <p className="text-sm font-medium text-[var(--text-secondary)]">Update Status</p>
               <select
                 {...registerClose('status')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
               >
                 <option value="COMPLETED">Mark Complete</option>
                 <option value="EXTENDED">Extend PIP</option>
@@ -598,7 +598,7 @@ function PIPDetailModal({
                 placeholder="Closing notes..."
                 rows={2}
                 {...registerClose('notes')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
               />
               {closeErrors.notes && (
                 <p className="text-red-500 text-sm">{closeErrors.notes.message}</p>
@@ -658,7 +658,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
             <span className="text-xs text-[var(--text-muted)]">{progress}%</span>
           </div>
           <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
-            <div className="bg-primary-500 h-2 rounded-full" style={{ width: `${progress}%` }} />
+            <div className="bg-sky-500 h-2 rounded-full" style={{ width: `${progress}%` }} />
           </div>
           <p className="text-xs text-[var(--text-muted)] mt-1.5">{daysRemaining} days remaining</p>
         </div>
@@ -666,7 +666,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
 
       <button
         onClick={onView}
-        className="w-full px-3 py-2 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+        className="w-full px-3 py-2 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400 rounded-lg hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
       >
         <Eye size={14} />
         View Details
@@ -809,7 +809,7 @@ export default function PIPPage() {
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   activeTab === tab
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-sky-700 text-white'
                     : 'bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -829,7 +829,7 @@ export default function PIPPage() {
                 placeholder="Search by employee name..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full pl-10 pr-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
               />
             </div>
             <button className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2">
@@ -842,7 +842,7 @@ export default function PIPPage() {
         {/* Content */}
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
           </div>
         ) : pips.length === 0 ? (
           <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-12 text-center">

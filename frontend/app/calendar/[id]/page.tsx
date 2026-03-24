@@ -109,7 +109,7 @@ export default function EventDetailPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
             <p className="text-[var(--text-secondary)]">Loading event...</p>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function EventDetailPage() {
             </p>
             <button
               onClick={() => router.push('/calendar')}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
+              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
             >
               Back to Calendar
             </button>
@@ -180,7 +180,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Time Card */}
-        <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 text-white">
+        <div className="bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-4 mb-4">
             <Calendar className="h-6 w-6" />
             <h2 className="text-lg font-semibold">Event Time</h2>
@@ -237,7 +237,7 @@ export default function EventDetailPage() {
                   href={event.meetingLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-600 dark:text-primary-400 font-medium hover:underline flex items-center gap-1"
+                  className="text-sky-700 dark:text-sky-400 font-medium hover:underline flex items-center gap-1"
                 >
                   Join Meeting
                   <ExternalLink className="h-4 w-4" />

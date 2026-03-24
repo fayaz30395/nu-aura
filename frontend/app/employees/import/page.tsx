@@ -192,7 +192,7 @@ export default function EmployeeImportPage() {
             <div
               className={`flex items-center justify-center w-10 h-10 rounded-full ${
                 step === 'upload'
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'bg-green-600 text-white'
               }`}
             >
@@ -211,7 +211,7 @@ export default function EmployeeImportPage() {
             <div
               className={`flex items-center justify-center w-10 h-10 rounded-full ${
                 step === 'preview'
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : step === 'result'
                   ? 'bg-green-600 text-white'
                   : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
@@ -295,7 +295,7 @@ export default function EmployeeImportPage() {
                     disabled={loading}
                     className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
                   >
-                    <FileSpreadsheet className="w-5 h-5 mr-2 text-primary-600 dark:text-primary-400" />
+                    <FileSpreadsheet className="w-5 h-5 mr-2 text-sky-700 dark:text-sky-400" />
                     <span className="text-[var(--text-secondary)]">Excel Template</span>
                   </button>
                 </PermissionGate>
@@ -310,7 +310,7 @@ export default function EmployeeImportPage() {
               <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                   dragActive
-                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
+                    ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30'
                     : selectedFile
                     ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                     : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
@@ -360,7 +360,7 @@ export default function EmployeeImportPage() {
                     </p>
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                      className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
                     >
                       Browse Files
                     </button>
@@ -377,7 +377,7 @@ export default function EmployeeImportPage() {
                     <button
                       onClick={handlePreview}
                       disabled={loading}
-                      className="flex items-center px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                      className="flex items-center px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
                     >
                       {loading ? (
                         <>
@@ -409,7 +409,7 @@ export default function EmployeeImportPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-[var(--bg-secondary)]/50 rounded-lg p-4">
                   <div className="flex items-center">
-                    <Users className="w-8 h-8 text-primary-600 dark:text-primary-400 mr-3" />
+                    <Users className="w-8 h-8 text-sky-700 dark:text-sky-400 mr-3" />
                     <div>
                       <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {preview.totalRows}
@@ -545,7 +545,7 @@ export default function EmployeeImportPage() {
                         type="checkbox"
                         checked={skipInvalid}
                         onChange={(e) => setSkipInvalid(e.target.checked)}
-                        className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-primary-500 focus:ring-primary-500"
+                        className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-sky-500 focus:ring-sky-500"
                       />
                       <span className="ml-2 text-sm text-[var(--text-secondary)]">
                         Skip invalid rows and import only valid employees ({preview.validRows} employees)
@@ -568,7 +568,7 @@ export default function EmployeeImportPage() {
                 <button
                   onClick={handleExecuteImport}
                   disabled={loading || (preview.hasErrors && !skipInvalid) || preview.validRows === 0}
-                  className="flex items-center px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -613,11 +613,11 @@ export default function EmployeeImportPage() {
 
             {/* Result Summary */}
             <div className="grid grid-cols-3 gap-4 mb-8">
-              <div className="bg-primary-50 dark:bg-primary-950/30 rounded-lg p-4 text-center">
-                <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
+              <div className="bg-sky-50 dark:bg-sky-950/30 rounded-lg p-4 text-center">
+                <p className="text-3xl font-bold text-sky-700 dark:text-sky-400">
                   {result.totalProcessed}
                 </p>
-                <p className="text-sm text-primary-600 dark:text-primary-400">
+                <p className="text-sm text-sky-700 dark:text-sky-400">
                   Total Processed
                 </p>
               </div>
@@ -721,7 +721,7 @@ export default function EmployeeImportPage() {
               </button>
               <button
                 onClick={() => router.push('/employees')}
-                className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
               >
                 View Employees
               </button>

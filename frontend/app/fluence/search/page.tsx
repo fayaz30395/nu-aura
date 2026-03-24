@@ -65,9 +65,9 @@ export default function SearchPage() {
   };
 
   const typeColorMap: Record<string, string> = {
-    wiki: 'bg-[var(--primary-100)] dark:bg-[var(--primary-900)]/30 text-[var(--primary-700)] dark:text-[var(--primary-300)]',
-    blog: 'bg-[var(--primary-100)] dark:bg-[var(--primary-900)]/30 text-[var(--primary-700)] dark:text-[var(--primary-300)]',
-    template: 'bg-[var(--primary-100)] dark:bg-[var(--primary-900)]/30 text-[var(--primary-700)] dark:text-[var(--primary-300)]',
+    wiki: 'bg-[var(--sky-100)] dark:bg-[var(--sky-950)]/30 text-[var(--sky-800)] dark:text-[var(--sky-300)]',
+    blog: 'bg-[var(--sky-100)] dark:bg-[var(--sky-950)]/30 text-[var(--sky-800)] dark:text-[var(--sky-300)]',
+    template: 'bg-[var(--sky-100)] dark:bg-[var(--sky-950)]/30 text-[var(--sky-800)] dark:text-[var(--sky-300)]',
   };
 
   const typeDisplayMap: Record<string, string> = {
@@ -91,7 +91,7 @@ export default function SearchPage() {
         {/* Header */}
         <div>
           <h1 className={`${typography.pageTitle} skeuo-emboss flex items-center gap-4`}>
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--primary-500)] to-[var(--primary-700)] flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--sky-500)] to-[var(--sky-800)] flex items-center justify-center flex-shrink-0">
               <Search className={`${iconSize.pageHeader} text-white`} />
             </div>
             Search NU-Fluence
@@ -127,7 +127,7 @@ export default function SearchPage() {
               whileTap={{ scale: 0.95 }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 ${
                 selectedType === type
-                  ? 'bg-[var(--primary-600)] text-white shadow-md'
+                  ? 'bg-[var(--sky-700)] text-white shadow-md'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
@@ -285,7 +285,7 @@ export default function SearchPage() {
                         </div>
                       </div>
 
-                      <ArrowRight className={`${iconSize.cardInline} text-[var(--text-muted)] flex-shrink-0 group-hover:text-[var(--primary-600)] transition-colors duration-150`} />
+                      <ArrowRight className={`${iconSize.cardInline} text-[var(--text-muted)] flex-shrink-0 group-hover:text-[var(--sky-700)] transition-colors duration-150`} />
                     </CardContent>
                   </Card>
                 </motion.div>

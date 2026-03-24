@@ -155,7 +155,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center">
               <Clock className="h-4 w-4 text-white" />
             </div>
             <h1 className="text-page-title text-[var(--text-primary)] skeuo-emboss">Attendance</h1>
@@ -179,11 +179,11 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
           )}
           {/* Live Clock */}
           <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] rounded-lg shadow-sm border border-[var(--border-main)]">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center">
               <Clock className="h-5 w-5 text-white animate-pulse" />
             </div>
             <div>
-              <div className="text-xs font-semibold text-primary-500 dark:text-primary-400 uppercase tracking-wider">Live Time</div>
+              <div className="text-xs font-semibold text-sky-500 dark:text-sky-400 uppercase tracking-wider">Live Time</div>
               <div className="text-xl font-mono font-bold text-[var(--text-primary)] tabular-nums">
                 {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </div>
@@ -283,7 +283,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckIn}
                         isLoading={checkInPending}
-                        className="h-14 px-8 text-base font-semibold bg-white text-primary-600 hover:bg-[var(--bg-surface)] border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-white text-sky-700 hover:bg-[var(--bg-surface)] border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2" />
                         Check In
@@ -312,7 +312,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
           {/* Work Progress */}
           <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-md overflow-hidden">
             <CardContent className="p-6 flex items-center gap-6 relative">
-              <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-amber-500 to-orange-500' : workProgress >= 100 ? 'bg-gradient-to-br from-emerald-500 to-green-500' : 'bg-gradient-to-br from-primary-500 to-violet-500'}`} />
+              <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-amber-500 to-orange-500' : workProgress >= 100 ? 'bg-gradient-to-br from-emerald-500 to-green-500' : 'bg-gradient-to-br from-sky-500 to-violet-500'}`} />
               <ProgressRing
                 progress={workProgress}
                 size={110}
@@ -332,7 +332,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   dayComplete ? 'text-emerald-600 dark:text-emerald-400' :
                   isOvertime ? 'text-amber-600 dark:text-amber-400' :
                   isCheckedIn ? 'text-[var(--text-secondary)]' :
-                  'text-primary-600 dark:text-primary-400'
+                  'text-sky-700 dark:text-sky-400'
                 }`}>
                   {dayComplete
                     ? 'Great work today!'
@@ -344,8 +344,8 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 </div>
                 {isCheckedIn && (
                   <div className="flex items-center gap-1.5">
-                    <div className={`h-2 w-2 rounded-full ${isOvertime ? 'bg-amber-500' : workProgress >= 100 ? 'bg-emerald-500' : 'bg-primary-500'} animate-pulse`} />
-                    <span className={`text-xs font-bold ${isOvertime ? 'text-amber-600 dark:text-amber-400' : workProgress >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-primary-600 dark:text-primary-400'}`}>
+                    <div className={`h-2 w-2 rounded-full ${isOvertime ? 'bg-amber-500' : workProgress >= 100 ? 'bg-emerald-500' : 'bg-sky-500'} animate-pulse`} />
+                    <span className={`text-xs font-bold ${isOvertime ? 'text-amber-600 dark:text-amber-400' : workProgress >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-sky-700 dark:text-sky-400'}`}>
                       {Math.round(workProgress)}% complete
                     </span>
                   </div>

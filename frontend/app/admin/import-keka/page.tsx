@@ -412,7 +412,7 @@ export default function KekaImportPage() {
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
+                      ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30'
                       : selectedFile
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                       : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'

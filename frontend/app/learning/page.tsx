@@ -59,7 +59,7 @@ export default function LearningPage() {
 
   const getStatusColor = (status: string | undefined): string => {
     switch (status) {
-      case 'ENROLLED': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400';
+      case 'ENROLLED': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400';
       case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
       case 'COMPLETED': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
       case 'DROPPED': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
@@ -91,7 +91,7 @@ export default function LearningPage() {
         ) : dashboard ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{dashboard.totalEnrollments}</div>
+              <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">{dashboard.totalEnrollments}</div>
               <div className="text-[var(--text-secondary)]">Total Enrollments</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
@@ -107,7 +107,7 @@ export default function LearningPage() {
               <div className="text-[var(--text-secondary)]">Avg Progress</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{dashboard.certificatesEarned}</div>
+              <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">{dashboard.certificatesEarned}</div>
               <div className="text-[var(--text-secondary)]">Certificates</div>
             </div>
           </div>
@@ -116,19 +116,19 @@ export default function LearningPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'catalog' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'catalog' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('catalog')}
           >
             Course Catalog
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'my-courses' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'my-courses' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('my-courses')}
           >
             My Courses
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'certificates' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'certificates' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('certificates')}
           >
             Certificates
@@ -234,7 +234,7 @@ export default function LearningPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">{enrollment.progressPercentage?.toFixed(0) || 0}%</div>
+                          <div className="text-2xl font-bold text-sky-700 dark:text-sky-400">{enrollment.progressPercentage?.toFixed(0) || 0}%</div>
                           <div className="text-sm text-[var(--text-secondary)]">Progress</div>
                         </div>
                       </div>

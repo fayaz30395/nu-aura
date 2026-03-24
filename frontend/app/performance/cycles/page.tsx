@@ -194,7 +194,7 @@ export default function ReviewCyclesPage() {
   const getStatusColor = (status: CycleStatus) => {
     switch (status) {
       case 'PLANNING': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      case 'ACTIVE': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
+      case 'ACTIVE': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
       case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800';
       case 'COMPLETED': return 'bg-green-100 text-green-800';
       case 'CANCELLED': return 'bg-red-100 text-red-800';
@@ -206,7 +206,7 @@ export default function ReviewCyclesPage() {
     switch (type) {
       case 'ANNUAL': return 'bg-purple-100 text-purple-800';
       case 'SEMI_ANNUAL': return 'bg-indigo-100 text-indigo-800';
-      case 'QUARTERLY': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
+      case 'QUARTERLY': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
       case 'MONTHLY': return 'bg-green-100 text-green-800';
       case 'PROBATION': return 'bg-orange-100 text-orange-800';
       case 'PROJECT_END': return 'bg-pink-100 text-pink-800';
@@ -244,7 +244,7 @@ export default function ReviewCyclesPage() {
                 resetFormHandler();
                 setShowModal(true);
               }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
             >
               Create Cycle
             </button>
@@ -260,7 +260,7 @@ export default function ReviewCyclesPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as CycleType | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="ANNUAL">Annual</option>
@@ -278,7 +278,7 @@ export default function ReviewCyclesPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as CycleStatus | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="PLANNING">Planning</option>
@@ -304,7 +304,7 @@ export default function ReviewCyclesPage() {
                   resetFormHandler();
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
               >
                 Create Your First Cycle
               </button>
@@ -376,7 +376,7 @@ export default function ReviewCyclesPage() {
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(cycle)}
-                      className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-3 py-2 tint-info text-sky-700 dark:text-sky-400 rounded hover:opacity-80 text-sm font-medium"
                     >
                       Edit
                     </button>
@@ -412,7 +412,7 @@ export default function ReviewCyclesPage() {
                         type="text"
                         placeholder="e.g., Annual Review 2024"
                         {...register('name')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                       />
                       {errors.name && (
                         <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -426,7 +426,7 @@ export default function ReviewCyclesPage() {
                       <textarea
                         rows={3}
                         {...register('description')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                       />
                       {errors.description && (
                         <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -440,7 +440,7 @@ export default function ReviewCyclesPage() {
                         </label>
                         <select
                           {...register('cycleType')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                         >
                           <option value="ANNUAL">Annual</option>
                           <option value="SEMI_ANNUAL">Semi-Annual</option>
@@ -460,7 +460,7 @@ export default function ReviewCyclesPage() {
                         </label>
                         <select
                           {...register('status')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                         >
                           <option value="PLANNING">Planning</option>
                           <option value="ACTIVE">Active</option>
@@ -482,7 +482,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('startDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                         />
                         {errors.startDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -496,7 +496,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('endDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                         />
                         {errors.endDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -512,7 +512,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('reviewDeadline')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                         />
                         {errors.reviewDeadline && (
                           <p className="text-red-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
@@ -526,7 +526,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('selfReviewDeadline')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                         />
                         {errors.selfReviewDeadline && (
                           <p className="text-red-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>
@@ -550,7 +550,7 @@ export default function ReviewCyclesPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                        className="flex-1 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
                       >
                         {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
                       </button>
@@ -816,7 +816,7 @@ export default function ReviewCyclesPage() {
                 <div className="w-full bg-[var(--bg-secondary)] rounded-lg p-4 mb-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-primary-600">{activationResult.employeesInScope}</div>
+                      <div className="text-3xl font-bold text-sky-700">{activationResult.employeesInScope}</div>
                       <div className="text-sm text-[var(--text-secondary)]">Employees in Scope</div>
                     </div>
                     <div className="text-center">
@@ -832,7 +832,7 @@ export default function ReviewCyclesPage() {
                     setActivationResult(null);
                     setSelectedCycle(null);
                   }}
-                  className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                  className="w-full px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
                 >
                   Done
                 </button>

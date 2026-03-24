@@ -91,7 +91,7 @@ function CardHeader({
     <div className="flex items-start justify-between">
       <div className="flex gap-4">
         {/* Avatar */}
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700 dark:bg-sky-900 dark:text-sky-300">
           {initials}
         </div>
 
@@ -433,7 +433,7 @@ function PollOption({
             className={cn(
               'h-2 rounded-full transition-colors',
               isSelected
-                ? 'bg-primary-500 dark:bg-primary-400'
+                ? 'bg-sky-500 dark:bg-sky-400'
                 : 'bg-[var(--text-muted)]'
             )}
           />
@@ -449,7 +449,7 @@ function PollOption({
       whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
       onClick={onVote}
-      className="w-full rounded-lg border-2 border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 text-left text-sm font-medium text-[var(--text-secondary)] transition-colors hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950"
+      className="w-full rounded-lg border-2 border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 text-left text-sm font-medium text-[var(--text-secondary)] transition-colors hover:border-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950"
     >
       {option.text}
     </motion.button>
@@ -521,7 +521,7 @@ export function PraiseCard({
           <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-card)] px-4 py-4">
             <Award className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             <span className="text-sm font-semibold text-amber-900 dark:text-amber-200">
-              Praised <span className="text-primary-600 dark:text-primary-300">{recipient.fullName}</span>
+              Praised <span className="text-sky-700 dark:text-sky-300">{recipient.fullName}</span>
             </span>
           </div>
 

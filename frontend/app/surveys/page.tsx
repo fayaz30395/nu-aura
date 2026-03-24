@@ -387,7 +387,7 @@ export default function SurveysPage() {
         {/* Surveys Grid */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
           </div>
         ) : filteredSurveys.length === 0 ? (
           <Card>
@@ -660,7 +660,7 @@ export default function SurveysPage() {
                     <input
                       type="checkbox"
                       {...register('isAnonymous')}
-                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                      className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
                     />
                     <span className="text-sm font-medium text-[var(--text-secondary)]">
                       Anonymous Survey (responses will not be linked to employees)

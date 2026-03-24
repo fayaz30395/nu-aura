@@ -211,7 +211,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
               onClick={() => setTimeRange(range)}
               className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                 timeRange === range
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600'
               }`}
             >
@@ -294,7 +294,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                 </span>
                 <div className="flex-1 h-6 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary-500 rounded-full transition-all duration-500"
+                    className="h-full bg-sky-500 rounded-full transition-all duration-500"
                     style={{ width: `${(data.amount / maxMonthlyAmount) * 100}%` }}
                   />
                 </div>

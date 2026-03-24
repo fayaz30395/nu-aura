@@ -94,9 +94,9 @@ export const FluenceChatWidget: React.FC = () => {
             className={cn(
               'fixed bottom-6 right-6 z-50 flex items-center justify-center',
               'w-14 h-14 rounded-full shadow-lg',
-              'bg-primary-600 hover:bg-primary-700 text-white',
+              'bg-sky-700 hover:bg-sky-700 text-white',
               'transition-colors duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+              'focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2',
               // On mobile, position above the bottom nav
               'md:bottom-6 bottom-20'
             )}
@@ -129,8 +129,8 @@ export const FluenceChatWidget: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
               <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/50">
-                  <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/50">
+                  <Sparkles className="h-4 w-4 text-sky-700 dark:text-sky-400" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -170,8 +170,8 @@ export const FluenceChatWidget: React.FC = () => {
               {messages.length === 0 ? (
                 /* Empty state with suggested questions */
                 <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                  <div className="w-12 h-12 rounded-2xl bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center mb-4">
-                    <Sparkles className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                  <div className="w-12 h-12 rounded-2xl bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center mb-4">
+                    <Sparkles className="h-6 w-6 text-sky-700 dark:text-sky-400" />
                   </div>
                   <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                     Ask NU-Fluence AI
@@ -238,7 +238,7 @@ export const FluenceChatWidget: React.FC = () => {
                   className={cn(
                     'flex-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl',
                     'px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]',
-                    'outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/20',
+                    'outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500/20',
                     'transition-colors disabled:opacity-60'
                   )}
                 />
@@ -260,7 +260,7 @@ export const FluenceChatWidget: React.FC = () => {
                     className={cn(
                       'flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-xl transition-colors',
                       inputValue.trim()
-                        ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                        ? 'bg-sky-700 hover:bg-sky-700 text-white'
                         : 'bg-surface-100 dark:bg-surface-800 text-surface-400 cursor-not-allowed'
                     )}
                     title="Send"

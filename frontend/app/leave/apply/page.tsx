@@ -110,7 +110,7 @@ export default function ApplyLeavePage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-2"
+            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -177,7 +177,7 @@ export default function ApplyLeavePage() {
                 <input
                   type="checkbox"
                   {...register('isHalfDay')}
-                  className="w-4 h-4 text-primary-600"
+                  className="w-4 h-4 text-sky-700"
                 />
                 <span className="text-sm font-medium text-[var(--text-secondary)]">Half Day Leave</span>
               </label>
@@ -195,7 +195,7 @@ export default function ApplyLeavePage() {
                       type="radio"
                       value="MORNING"
                       {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-primary-600"
+                      className="w-4 h-4 text-sky-700"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">First Half (Morning)</span>
                   </label>
@@ -204,7 +204,7 @@ export default function ApplyLeavePage() {
                       type="radio"
                       value="AFTERNOON"
                       {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-primary-600"
+                      className="w-4 h-4 text-sky-700"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">Second Half (Afternoon)</span>
                   </label>
@@ -214,9 +214,9 @@ export default function ApplyLeavePage() {
             )}
 
             {/* Total Days */}
-            <div className="md:col-span-2 bg-primary-50 dark:bg-primary-950/30 p-4 rounded-lg">
+            <div className="md:col-span-2 bg-sky-50 dark:bg-sky-950/30 p-4 rounded-lg">
               <div className="text-sm text-[var(--text-secondary)]">Total Days Requested:</div>
-              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">{totalDays} days</div>
+              <div className="text-2xl font-bold text-sky-700 dark:text-sky-400">{totalDays} days</div>
             </div>
 
             {/* Reason */}

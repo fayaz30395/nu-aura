@@ -353,7 +353,7 @@ export default function CalibrationPage() {
             <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
               <button
                 onClick={publishRatings}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-700 text-white text-sm font-medium hover:bg-sky-700 transition-colors"
               >
                 <TrendingUp size={16} />
                 Publish
@@ -375,7 +375,7 @@ export default function CalibrationPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -508,7 +508,7 @@ export default function CalibrationPage() {
                     placeholder="Search employee..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                 </div>
 
@@ -516,7 +516,7 @@ export default function CalibrationPage() {
                   <select
                     value={departmentFilter}
                     onChange={e => setDepartmentFilter(e.target.value)}
-                    className="px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   >
                     <option value="">All Departments</option>
                     {uniqueDepartments.map(dept => (
@@ -534,7 +534,7 @@ export default function CalibrationPage() {
               <div className="flex items-center justify-center py-16">
                 <RefreshCw
                   size={24}
-                  className="animate-spin text-primary-500 mr-3"
+                  className="animate-spin text-sky-500 mr-3"
                 />
                 <span className="text-[var(--text-muted)]">Loading reviews...</span>
               </div>
@@ -646,7 +646,7 @@ export default function CalibrationPage() {
                                   handleFinalRatingChange(row.employeeId, e.target.value)
                                 }
                                 placeholder="1–5"
-                                className="w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                                className="w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                               />
                             </td>
                             <td className="px-4 py-3 text-center">
@@ -655,7 +655,7 @@ export default function CalibrationPage() {
                                   <button
                                     onClick={() => handleSaveFinal(row)}
                                     disabled={saving === row.employeeId}
-                                    className="px-3 py-1 text-xs font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg disabled:opacity-50 transition-colors"
+                                    className="px-3 py-1 text-xs font-medium text-white bg-sky-700 hover:bg-sky-700 rounded-lg disabled:opacity-50 transition-colors"
                                   >
                                     {saving === row.employeeId ? 'Saving...' : 'Save'}
                                   </button>

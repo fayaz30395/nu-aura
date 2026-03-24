@@ -189,7 +189,7 @@ export function CalendarView({
             <div
               className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full ${
                 isSelected
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : isCurrentMonth
                     ? 'text-surface-900 dark:text-surface-100'
                     : 'text-surface-400 dark:text-surface-600'
@@ -231,7 +231,7 @@ export function CalendarView({
             <div
               className={`text-lg font-medium mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full ${
                 isToday(day)
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'text-surface-900 dark:text-surface-100'
               }`}
             >
@@ -463,7 +463,7 @@ export function CalendarView({
               onClick={() => setViewType(type)}
               className={`px-3 py-1.5 text-sm rounded-md capitalize transition-colors ${
                 viewType === type
-                  ? 'bg-[var(--bg-surface)] text-primary-600 dark:text-primary-400 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-sky-700 dark:text-sky-400 shadow-sm'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
               }`}
             >

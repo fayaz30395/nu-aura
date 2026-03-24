@@ -203,7 +203,7 @@ export default function OfficeLocationsPage() {
               setEditingId(null);
               setShowForm(true);
             }}
-            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
           >
             Add Location
           </button>
@@ -313,7 +313,7 @@ export default function OfficeLocationsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
+                  className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
                 >
                   {isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingId ? 'Update' : 'Create')}
                 </button>
@@ -354,7 +354,7 @@ export default function OfficeLocationsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="font-medium">{location.name}</div>
                       {location.isDefault && (
-                        <span className="text-xs text-primary-600 dark:text-primary-400">Default</span>
+                        <span className="text-xs text-sky-700 dark:text-sky-400">Default</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -379,7 +379,7 @@ export default function OfficeLocationsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleEdit(location)}
-                        className="text-primary-600 dark:text-primary-400 hover:text-primary-800 mr-4"
+                        className="text-sky-700 dark:text-sky-400 hover:text-sky-800 mr-4"
                       >
                         Edit
                       </button>

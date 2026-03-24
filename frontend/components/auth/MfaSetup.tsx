@@ -114,7 +114,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
     <Modal isOpen={isOpen} onClose={handleCancel} size="lg" closeOnEscape={false} closeOnBackdrop={false}>
       <ModalHeader onClose={step !== 'loading' && step !== 'verify' ? handleCancel : undefined} showCloseButton={step !== 'loading' && step !== 'verify'}>
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-primary-600" />
+          <Shield className="h-5 w-5 text-sky-700" />
           <span>Set Up Two-Factor Authentication</span>
         </div>
       </ModalHeader>
@@ -123,7 +123,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {/* Loading State */}
         {step === 'loading' && (
           <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 text-primary-600 animate-spin mb-4" />
+            <Loader2 className="h-8 w-8 text-sky-700 animate-spin mb-4" />
             <p className="text-[var(--text-secondary)]">Loading setup information...</p>
           </div>
         )}
@@ -200,7 +200,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   setVerificationCode(value);
                 }}
                 disabled={isVerifying}
-                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50"
                 autoComplete="off"
               />
             </div>

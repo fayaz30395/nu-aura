@@ -81,7 +81,7 @@ export function MobileBottomNav({
                 'transition-colors duration-200',
                 'touch-manipulation', // Optimize for touch
                 active
-                  ? 'text-primary-600 dark:text-primary-400'
+                  ? 'text-sky-700 dark:text-sky-400'
                   : 'text-surface-500 dark:text-surface-400 active:text-surface-700 dark:active:text-surface-300'
               )}
               aria-current={active ? 'page' : undefined}

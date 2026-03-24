@@ -182,7 +182,7 @@ export default function ResourcePoolPage() {
                 onClick={() => setStatusFilter(statusFilter === stat.filter ? 'ALL' : stat.filter)}
                 className={`rounded-xl border p-4 text-left transition-all hover:shadow-sm ${
                   statusFilter === stat.filter
-                    ? 'border-primary-400 ring-2 ring-primary-200 bg-primary-50'
+                    ? 'border-sky-400 ring-2 ring-sky-200 bg-sky-50'
                     : 'border-[var(--border-main)] bg-[var(--bg-card)]'
                 }`}
               >
@@ -205,14 +205,14 @@ export default function ResourcePoolPage() {
               placeholder="Search by name, code, role..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 w-64"
+              className="pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 w-64"
             />
           </div>
 
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => (
@@ -267,8 +267,8 @@ export default function ResourcePoolPage() {
                       <tr key={emp.employeeId} className="hover:bg-[var(--bg-secondary)] transition-colors">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-4">
-                            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-primary-700">
+                            <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs font-bold text-sky-700">
                                 {(emp.employeeName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                               </span>
                             </div>

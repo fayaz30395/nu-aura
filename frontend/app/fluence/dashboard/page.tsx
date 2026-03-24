@@ -75,7 +75,7 @@ export default function FluenceDashboardPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--primary-600)] via-[var(--primary-500)] to-[var(--primary-400)] dark:from-[var(--primary-900)] dark:via-[var(--primary-800)] dark:to-[var(--primary-700)] p-8 md:p-12"
+          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--sky-700)] via-[var(--sky-500)] to-[var(--sky-400)] dark:from-[var(--sky-950)] dark:via-[var(--sky-900)] dark:to-[var(--sky-800)] p-8 md:p-12"
         >
           <div className="relative z-10">
             <div className="flex items-start justify-between gap-6 mb-6">
@@ -99,7 +99,7 @@ export default function FluenceDashboardPage() {
             <div className="flex flex-wrap gap-4">
               <Button
                 onClick={() => router.push('/fluence/wiki/new')}
-                className="gap-2 bg-[var(--bg-card)] text-[var(--primary-600)] hover:bg-[var(--bg-card-hover)] font-medium shadow-lg hover:shadow-xl transition-all"
+                className="gap-2 bg-[var(--bg-card)] text-[var(--sky-700)] hover:bg-[var(--bg-card-hover)] font-medium shadow-lg hover:shadow-xl transition-all"
               >
                 <Plus className={iconSize.button} />
                 New Wiki Page
@@ -216,7 +216,7 @@ export default function FluenceDashboardPage() {
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
                       whileHover={{ x: 4 }}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--primary-600)]`}>
+                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--sky-700)]`}>
                         {page.title}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -227,7 +227,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/wiki')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--primary-600)] font-medium text-sm hover:text-[var(--primary-700)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--sky-700)] font-medium text-sm hover:text-[var(--sky-800)] transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   View All Pages →
@@ -260,7 +260,7 @@ export default function FluenceDashboardPage() {
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
                       whileHover={{ x: 4 }}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--primary-600)]`}>
+                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--sky-700)]`}>
                         {post.title}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -271,7 +271,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/blogs')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--primary-600)] font-medium text-sm hover:text-[var(--primary-700)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--sky-700)] font-medium text-sm hover:text-[var(--sky-800)] transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   Read All Posts →
@@ -304,7 +304,7 @@ export default function FluenceDashboardPage() {
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
                       whileHover={{ x: 4 }}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--primary-600)]`}>
+                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--sky-700)]`}>
                         {template.name || 'Untitled'}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -315,7 +315,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/templates')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--primary-600)] font-medium text-sm hover:text-[var(--primary-700)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--sky-700)] font-medium text-sm hover:text-[var(--sky-800)] transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   All Templates →

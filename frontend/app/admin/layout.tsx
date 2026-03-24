@@ -303,7 +303,7 @@ export default function AdminLayout({
           <div className="text-center">
             {!isReady ? (
               <div className="space-y-4">
-                <div className="h-12 w-12 rounded-full border-4 border-surface-200 border-t-primary-600 animate-spin mx-auto" />
+                <div className="h-12 w-12 rounded-full border-4 border-surface-200 border-t-sky-700 animate-spin mx-auto" />
                 <p className="text-surface-600">Loading...</p>
               </div>
             ) : (

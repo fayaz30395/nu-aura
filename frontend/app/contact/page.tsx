@@ -156,7 +156,7 @@ export default function ContactPage() {
                     {method.title}
                   </h3>
                   <p className="text-sm text-[var(--text-muted)] mb-3">{method.description}</p>
-                  <p className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                  <p className="text-sm font-medium text-sky-700 dark:text-sky-400">
                     {method.value}
                   </p>
                 </Card>
@@ -294,7 +294,7 @@ export default function ContactPage() {
                     placeholder="Tell us more about your inquiry..."
                     className={`input-aura w-full px-4 py-3 rounded-lg bg-[var(--bg-input)] border ${
                       errors.message ? 'border-danger-500' : 'border-[var(--border-main)]'
-                    } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                    } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500`}
                     {...register('message')}
                   />
                   {errors.message && (
@@ -347,7 +347,7 @@ export default function ContactPage() {
                 ].map((faq, index) => (
                   <Card key={index} padding="md">
                     <div className="flex items-start gap-4">
-                      <HelpCircle className="h-5 w-5 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" />
+                      <HelpCircle className="h-5 w-5 text-sky-700 dark:text-sky-400 flex-shrink-0 mt-0.5" />
                       <div>
                         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                           {faq.question}
@@ -378,8 +378,8 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {offices.map((office, index) => (
               <Card key={index} padding="lg">
-                <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950 flex items-center justify-center mb-4">
-                  <MapPin className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center mb-4">
+                  <MapPin className="h-6 w-6 text-sky-700 dark:text-sky-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}

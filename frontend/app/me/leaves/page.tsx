@@ -267,7 +267,7 @@ export default function MyLeavesPage() {
     return (
       <AppLayout activeMenuItem="leaves">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
         </div>
       </AppLayout>
     );
@@ -303,7 +303,7 @@ export default function MyLeavesPage() {
           </p>
           <button
             onClick={() => router.push('/leave')}
-            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
           >
             View Leave Management
           </button>
@@ -325,7 +325,7 @@ export default function MyLeavesPage() {
           </div>
           <button
             onClick={() => setShowApplyModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors skeuo-button"
+            className="flex items-center gap-2 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors skeuo-button"
           >
             <Plus className="h-4 w-4" />
             Apply for Leave
@@ -419,7 +419,7 @@ export default function MyLeavesPage() {
                   <div className="mt-4">
                     <div className="h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all"
+                        className="h-full bg-gradient-to-r from-sky-500 to-sky-700 rounded-full transition-all"
                         style={{
                           width: `${Math.min((balance.used / (balance.used + balance.available)) * 100, 100)}%`,
                         }}
@@ -444,7 +444,7 @@ export default function MyLeavesPage() {
                 <CardDescription>
                   Your past and current leave requests
                   {hasActiveFilters && (
-                    <span className="ml-2 text-primary-600 dark:text-primary-400">
+                    <span className="ml-2 text-sky-700 dark:text-sky-400">
                       ({filteredLeaveRequests.length} of {leaveRequests.length})
                     </span>
                   )}
@@ -457,7 +457,7 @@ export default function MyLeavesPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
-                    className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="PENDING">Pending</option>
@@ -469,7 +469,7 @@ export default function MyLeavesPage() {
                 <select
                   value={leaveTypeFilter}
                   onChange={(e) => setLeaveTypeFilter(e.target.value)}
-                  className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 >
                   <option value="ALL">All Leave Types</option>
                   {leaveTypes.map((type) => (
@@ -511,7 +511,7 @@ export default function MyLeavesPage() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-4 px-4 py-2 text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-950/30 rounded-lg transition-colors"
+                  className="mt-4 px-4 py-2 text-sm text-sky-700 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/30 rounded-lg transition-colors"
                 >
                   Clear Filters
                 </button>
@@ -593,7 +593,7 @@ export default function MyLeavesPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEdit(request)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-950/30 dark:hover:bg-primary-950/50 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-sky-700 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/30 dark:hover:bg-sky-950/50 rounded-lg transition-colors"
                           >
                             <Edit3 className="h-3 w-3" />
                             Edit
@@ -653,7 +653,7 @@ export default function MyLeavesPage() {
                     </label>
                     <select
                       {...registerLeave('leaveTypeId')}
-                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
                     >
                       <option value="">Select leave type</option>
                       {leaveTypes.map((type) => (
@@ -674,7 +674,7 @@ export default function MyLeavesPage() {
                       <input
                         type="date"
                         {...registerLeave('startDate')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
                       />
                       {leaveErrors.startDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
                     </div>
@@ -686,7 +686,7 @@ export default function MyLeavesPage() {
                         type="date"
                         {...registerLeave('endDate')}
                         min={startDate}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
                       />
                       {leaveErrors.endDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.endDate.message}</p>}
                     </div>
@@ -698,7 +698,7 @@ export default function MyLeavesPage() {
                       type="checkbox"
                       id="halfDay"
                       {...registerLeave('isHalfDay')}
-                      className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
+                      className="w-4 h-4 text-sky-700 rounded focus:ring-sky-500"
                     />
                     <label
                       htmlFor="halfDay"
@@ -709,9 +709,9 @@ export default function MyLeavesPage() {
                   </div>
 
                   {/* Total Days */}
-                  <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-lg">
+                  <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-lg">
                     <p className="text-sm text-[var(--text-secondary)]">
-                      Total Days: <span className="font-bold text-primary-600">{calculateDays()}</span>
+                      Total Days: <span className="font-bold text-sky-700">{calculateDays()}</span>
                     </p>
                   </div>
 
@@ -724,7 +724,7 @@ export default function MyLeavesPage() {
                       {...registerLeave('reason')}
                       rows={4}
                       placeholder="Please provide a reason for your leave..."
-                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-surface)]"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
                     />
                     {leaveErrors.reason && <p className="text-red-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
                   </div>
@@ -742,7 +742,7 @@ export default function MyLeavesPage() {
                     <button
                       type="submit"
                       disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                      className="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-6 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
                     >
                       {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
                         <>

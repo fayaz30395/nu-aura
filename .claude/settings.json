@@ -8,7 +8,9 @@
     "code-review@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
-    "claude-code-setup@claude-plugins-official": true
+    "claude-code-setup@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "chrome-devtools-mcp@claude-plugins-official": true
   },
   "teammateDisplayMode": "iterm2"
 }

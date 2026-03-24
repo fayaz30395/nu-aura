@@ -179,7 +179,7 @@ export default function GanttChartPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-sky-700" />
       </div>
     );
   }
@@ -416,8 +416,8 @@ export default function GanttChartPage() {
 
             {ganttTasks.length === 0 && (
               <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mb-4">
-                  <BarChart3 className="h-8 w-8 text-primary-500" />
+                <div className="w-16 h-16 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-4">
+                  <BarChart3 className="h-8 w-8 text-sky-500" />
                 </div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Gantt View Coming Soon</h2>
                 <p className="text-sm text-[var(--text-muted)] max-w-md">

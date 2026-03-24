@@ -78,7 +78,7 @@ export default function LoanDetailPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
             <p className="text-[var(--text-secondary)]">Loading loan details...</p>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function LoanDetailPage() {
             </p>
             <button
               onClick={() => router.push('/loans')}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
+              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
             >
               Back to Loans
             </button>
@@ -196,13 +196,13 @@ export default function LoanDetailPage() {
               <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                 Repayment Progress
               </h3>
-              <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+              <span className="text-sm font-medium text-sky-700 dark:text-sky-400">
                 {progress.toFixed(1)}% Complete
               </span>
             </div>
             <div className="h-3 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-sky-500 to-sky-700 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>

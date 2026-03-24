@@ -379,7 +379,7 @@ function MultiOwnerTypeahead({
             {values.map((owner, index) => (
               <div
                 key={owner.id}
-                className="flex items-center gap-1.5 rounded-md bg-primary-50 px-2.5 py-1.5 text-sm text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                className="flex items-center gap-1.5 rounded-md bg-sky-50 px-2.5 py-1.5 text-sm text-sky-700 dark:bg-sky-900/30 dark:text-sky-300"
               >
                 <span>
                   {buildEmployeeName(owner)}
@@ -388,7 +388,7 @@ function MultiOwnerTypeahead({
                 <button
                   type="button"
                   onClick={() => handleRemove(owner.id)}
-                  className="ml-1 hover:text-primary-900 dark:hover:text-primary-100"
+                  className="ml-1 hover:text-sky-900 dark:hover:text-sky-100"
                   aria-label={`Remove ${buildEmployeeName(owner)}`}
                 >
                   <X className="h-3.5 w-3.5" />
@@ -713,7 +713,7 @@ export default function ProjectsPage() {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); router.push(`/projects/${project.id}`); }}
-            className="font-semibold text-[var(--text-primary)] hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-left"
+            className="font-semibold text-[var(--text-primary)] hover:text-sky-700 dark:hover:text-sky-400 transition-colors text-left"
           >
             {project.name}
           </button>
@@ -818,7 +818,7 @@ export default function ProjectsPage() {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); router.push(`/projects/${project.id}`); }}
-            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors"
             aria-label={`View ${project.name}`}
           >
             <Eye className="h-4 w-4" />
@@ -826,7 +826,7 @@ export default function ProjectsPage() {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); handleOpenEdit(project); }}
-            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors"
             aria-label={`Edit ${project.name}`}
           >
             <Edit2 className="h-4 w-4" />
@@ -881,7 +881,7 @@ export default function ProjectsPage() {
               onClick={() => handleTabChange(tab.key)}
               className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.key
-                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  ? 'border-sky-500 text-sky-700 dark:text-sky-400'
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)]'
               }`}
             >
@@ -1103,7 +1103,7 @@ export default function ProjectsPage() {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                  className="h-4 w-4 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
                   {...register('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>

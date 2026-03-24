@@ -171,7 +171,7 @@ export default function PreboardingPortalPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-sky-500 border-t-transparent" />
       </div>
     );
   }
@@ -200,11 +200,11 @@ export default function PreboardingPortalPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-primary-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-sky-500 flex items-center justify-center mx-auto mb-4">
             <Building2 className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Welcome, {data.firstName}!</h1>
@@ -216,11 +216,11 @@ export default function PreboardingPortalPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-[var(--text-secondary)]">Overall Progress</span>
-              <span className="text-sm font-bold text-primary-600">{data.completionPercentage}%</span>
+              <span className="text-sm font-bold text-sky-700">{data.completionPercentage}%</span>
             </div>
             <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-3">
               <div
-                className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-sky-500 to-sky-700 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${data.completionPercentage}%` }}
               />
             </div>
@@ -240,7 +240,7 @@ export default function PreboardingPortalPage() {
                   step.complete
                     ? 'bg-green-500 text-white'
                     : idx === activeStep
-                    ? 'bg-primary-500 text-white'
+                    ? 'bg-sky-500 text-white'
                     : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                 }`}>
                   {step.complete ? <CheckCircle2 className="h-5 w-5" /> : <step.icon className="h-5 w-5" />}
@@ -424,7 +424,7 @@ export default function PreboardingPortalPage() {
                   <>
                     <Card className="p-4 bg-[var(--bg-secondary)]/50">
                       <div className="flex items-start gap-4">
-                        <FileText className="h-6 w-6 text-primary-500 mt-1" />
+                        <FileText className="h-6 w-6 text-sky-500 mt-1" />
                         <div>
                           <p className="font-medium">Employment Offer Letter</p>
                           <p className="text-sm text-[var(--text-muted)] mt-1">

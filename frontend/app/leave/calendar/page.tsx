@@ -122,7 +122,7 @@ export default function LeaveCalendarPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-2"
+            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -135,7 +135,7 @@ export default function LeaveCalendarPage() {
               onClick={() => setViewMode('my')}
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'my'
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
@@ -145,7 +145,7 @@ export default function LeaveCalendarPage() {
               onClick={() => setViewMode('team')}
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'team'
-                  ? 'bg-primary-500 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
@@ -230,7 +230,7 @@ export default function LeaveCalendarPage() {
                     key={index}
                     className={`min-h-24 border rounded-lg p-2 ${
                       day.isToday
-                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
+                        ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30'
                         : day.isCurrentMonth
                         ? 'border-[var(--border-main)] bg-[var(--bg-card)]'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)]/50'
@@ -239,7 +239,7 @@ export default function LeaveCalendarPage() {
                     <div
                       className={`text-sm font-medium mb-1 ${
                         day.isToday
-                          ? 'text-primary-600 dark:text-primary-400'
+                          ? 'text-sky-700 dark:text-sky-400'
                           : day.isCurrentMonth
                           ? 'text-[var(--text-primary)]'
                           : 'text-[var(--text-muted)]'
@@ -288,7 +288,7 @@ export default function LeaveCalendarPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
             <div className="text-sm text-[var(--text-secondary)] mb-1">Total Leaves This Month</div>
-            <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">
+            <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">
               {leaves.filter(l => {
                 const leaveStart = new Date(l.startDate);
                 return leaveStart.getMonth() === currentDate.getMonth() &&
@@ -316,7 +316,7 @@ export default function LeaveCalendarPage() {
             onClick={() => router.push('/leave/apply')}
             className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
           >
-            <div className="text-primary-600 dark:text-primary-400 mb-2">
+            <div className="text-sky-700 dark:text-sky-400 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>

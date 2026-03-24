@@ -110,7 +110,7 @@ export function PayrollRunsTab({
                           <button
                             onClick={() => onProcessRun(run)}
                             disabled={loading}
-                            className="px-2 py-1 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded text-xs hover:bg-primary-100 disabled:opacity-50"
+                            className="px-2 py-1 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded text-xs hover:bg-sky-100 disabled:opacity-50"
                           >
                             Process
                           </button>
@@ -130,7 +130,7 @@ export function PayrollRunsTab({
                       <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                         <button
                           onClick={() => onEditRun(run)}
-                          className="px-2 py-1 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded text-xs hover:bg-primary-100"
+                          className="px-2 py-1 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded text-xs hover:bg-sky-100"
                         >
                           Edit
                         </button>
