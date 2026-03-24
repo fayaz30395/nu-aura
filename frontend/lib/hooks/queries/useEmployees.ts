@@ -168,6 +168,20 @@ export function useUpdateEmployee() {
   });
 }
 
+// Self-service: update own profile via PUT /employees/me
+export function useUpdateMyProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateEmployeeRequest) =>
+      employeeService.updateMyProfile(data),
+    onSettled: () => {
+      // Refetch the self-service profile after mutation settles
+      queryClient.invalidateQueries({ queryKey: [...employeeKeys.all, 'me'] });
+    },
+  });
+}
+
 // Delete employee mutation
 export function useDeleteEmployee() {
   const queryClient = useQueryClient();

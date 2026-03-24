@@ -73,6 +73,11 @@ class EmployeeService {
     return response.data;
   }
 
+  async updateMyProfile(data: UpdateEmployeeRequest): Promise<Employee> {
+    const response = await apiClient.put<Employee>('/employees/me', data);
+    return response.data;
+  }
+
   async deleteEmployee(id: string): Promise<void> {
     await apiClient.delete(`/employees/${id}`);
   }

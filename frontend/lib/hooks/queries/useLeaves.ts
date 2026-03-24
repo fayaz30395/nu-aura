@@ -40,10 +40,11 @@ export function useLeaveTypes(page: number = 0, size: number = 20) {
 }
 
 // Get active leave types
-export function useActiveLeaveTypes() {
+export function useActiveLeaveTypes(enabled: boolean = true) {
   return useQuery({
     queryKey: leaveKeys.typesActive(),
     queryFn: () => leaveService.getActiveLeaveTypes(),
+    enabled,
     staleTime: 10 * 60 * 1000,
   });
 }

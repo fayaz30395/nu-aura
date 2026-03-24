@@ -219,9 +219,9 @@ export default function RecruitmentDashboard() {
   }, [interviewsQuery.data]);
 
   const hasError =
-    jobOpeningsQuery.isError || candidatesQuery.isError || openJobsQuery.isError || interviewsQuery.isError;
+    jobOpeningsQuery.isError && candidatesQuery.isError && openJobsQuery.isError && interviewsQuery.isError;
 
-  // Show full-page error immediately if any query errors
+  // Show full-page error only if ALL queries failed (partial failures render available data)
   if (hasError) {
     return (
       <AppLayout>
@@ -234,12 +234,13 @@ export default function RecruitmentDashboard() {
     );
   }
 
-  // Show page skeleton only on initial page load when ALL critical queries are loading
+  // Show page skeleton on initial page load while ANY critical query is still loading for the first time.
+  // Uses isLoading (pending + fetching) which is true only before first successful fetch.
   const isInitialLoad =
-    jobOpeningsQuery.fetchStatus === 'fetching' &&
-    candidatesQuery.fetchStatus === 'fetching' &&
-    openJobsQuery.fetchStatus === 'fetching' &&
-    interviewsQuery.fetchStatus === 'fetching';
+    jobOpeningsQuery.isLoading ||
+    candidatesQuery.isLoading ||
+    openJobsQuery.isLoading ||
+    interviewsQuery.isLoading;
 
   if (isInitialLoad) {
     return (

@@ -24,7 +24,7 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useMyEmployee, useUpdateEmployee } from '@/lib/hooks/queries';
+import { useMyEmployee, useUpdateMyProfile } from '@/lib/hooks/queries';
 import { UpdateEmployeeRequest } from '@/lib/types/employee';
 import { getInitials } from '@/lib/utils';
 import { createLogger } from '@/lib/utils/logger';
@@ -62,7 +62,7 @@ export default function MyProfilePage() {
   // React Query hooks — use /employees/me (no ID needed)
   const { data: employee, isLoading } = useMyEmployee(hasHydrated && isAuthenticated);
 
-  const updateMutation = useUpdateEmployee();
+  const updateMutation = useUpdateMyProfile();
 
   // Initialize edit data when employee data loads
   useEffect(() => {
@@ -98,10 +98,7 @@ export default function MyProfilePage() {
 
     try {
       setError(null);
-      await updateMutation.mutateAsync({
-        id: employee.id,
-        data: editData,
-      });
+      await updateMutation.mutateAsync(editData);
       setIsEditing(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
