@@ -336,6 +336,7 @@ describe('Leave Application Flow Integration Tests', () => {
       mockedLeaveService.createLeaveRequest.mockRejectedValueOnce(
         new Error(errorMessage)
       );
+      const user = userEvent.setup();
 
       render(<MockLeaveForm />);
 
@@ -403,6 +404,7 @@ describe('Leave Application Flow Integration Tests', () => {
             )
           )
       );
+      const user = userEvent.setup();
 
       render(<MockLeaveForm />);
 

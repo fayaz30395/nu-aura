@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = DashboardController.class)
 @ContextConfiguration(classes = {DashboardController.class, DashboardControllerTest.TestConfig.class})
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class DashboardControllerTest {
 
     @Configuration
