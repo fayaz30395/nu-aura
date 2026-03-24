@@ -143,18 +143,27 @@ class PayrollService {
     return response.data;
   }
 
-  // CRIT-003: Backend endpoint not implemented. Guarded to prevent silent 404.
-  // Use getPayslipByEmployeeAndPeriod() or getPayslipsByPayrollRun() instead.
+  /**
+   * @deprecated CRIT-003: Backend endpoint not implemented.
+   * Use getPayslipByEmployeeAndPeriod() or getPayslipsByPayrollRun() instead.
+   * Returns an empty page to avoid UI crashes.
+   */
   async getPayslipsByPeriod(
     _startDate: string,
     _endDate: string,
     _page: number = 0,
     _size: number = 20
   ): Promise<Page<Payslip>> {
-    throw new Error(
-      'getPayslipsByPeriod is not yet implemented on the backend. ' +
-      'Use getPayslipByEmployeeAndPeriod() or getPayslipsByPayrollRun() instead.'
-    );
+    return {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+      number: 0,
+      size: _size,
+      first: true,
+      last: true,
+      empty: true,
+    } as Page<Payslip>;
   }
 
   async deletePayslip(id: string): Promise<void> {
@@ -238,7 +247,9 @@ class PayrollService {
   }
 
   // CRIT-008: Backend endpoints for bulk processing not implemented.
-  // Guarded to prevent silent 404 crashes.
+  // These stubs exist so the BulkProcessingWizard component does not crash.
+  // They are feature-flagged in the UI — the wizard shows a "Coming Soon" banner.
+
   async bulkProcessPayroll(_data: {
     employeeIds: string[];
     payrollPeriodStart: string;
@@ -276,3 +287,9 @@ class PayrollService {
 }
 
 export const payrollService = new PayrollService();
+
+/**
+ * CRIT-008: Bulk payroll processing backend endpoints are not yet implemented.
+ * Use this flag to gate UI features that depend on bulk processing.
+ */
+export const BULK_PROCESSING_AVAILABLE = false;

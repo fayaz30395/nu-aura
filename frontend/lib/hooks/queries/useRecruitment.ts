@@ -51,6 +51,8 @@ export const recruitmentKeys = {
   ai: () => [...recruitmentKeys.all, 'ai'] as const,
   rankedCandidates: (jobId: string) =>
     [...recruitmentKeys.ai(), 'ranked', jobId] as const,
+  interviewQuestions: (jobId: string, candidateId?: string) =>
+    [...recruitmentKeys.ai(), 'interview-questions', jobId, candidateId] as const,
 };
 
 // ==================== Job Opening Hooks ====================
@@ -287,6 +289,13 @@ export function useParseResume() {
   });
 }
 
+export function useParseResumeFromUpload() {
+  return useMutation({
+    mutationFn: (file: File) =>
+      aiRecruitmentService.parseResumeFromUpload(file),
+  });
+}
+
 export function useCalculateMatchScore() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -340,6 +349,26 @@ export function useGenerateInterviewQuestions() {
       candidateId?: string;
     }) =>
       aiRecruitmentService.generateInterviewQuestions(jobOpeningId, candidateId),
+  });
+}
+
+/**
+ * Query-based hook for interview questions (uses GET endpoint).
+ * Prefer this over the mutation when you want cached/auto-fetched results.
+ */
+export function useInterviewQuestions(
+  jobOpeningId: string,
+  candidateId?: string,
+  enabled = true
+) {
+  return useQuery({
+    queryKey: recruitmentKeys.interviewQuestions(jobOpeningId, candidateId),
+    queryFn: () =>
+      aiRecruitmentService.generateInterviewQuestions(jobOpeningId, candidateId),
+    enabled: enabled && !!jobOpeningId,
+    staleTime: 10 * 60 * 1000,
+    retry: 1,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

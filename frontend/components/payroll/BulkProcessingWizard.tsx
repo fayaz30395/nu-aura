@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { employeeService } from '@/lib/services/employee.service';
-import { payrollService } from '@/lib/services/payroll.service';
+import { payrollService, BULK_PROCESSING_AVAILABLE } from '@/lib/services/payroll.service';
 import { Employee } from '@/lib/types/employee';
 import { logger } from '@/lib/utils/logger';
 import { formatCurrency } from '@/lib/utils';
@@ -21,6 +21,7 @@ import {
   Check,
   X,
   Search,
+  Construction,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -175,6 +176,33 @@ export const BulkProcessingWizard: React.FC = () => {
     { number: 3, title: 'Review', icon: DollarSign },
     { number: 4, title: 'Process', icon: CheckCircle2 },
   ];
+
+  if (!BULK_PROCESSING_AVAILABLE) {
+    return (
+      <div className="space-y-6">
+        <Card variant="elevated">
+          <CardContent className="p-8">
+            <div className="flex flex-col items-center justify-center text-center space-y-4">
+              <Construction className="h-16 w-16 text-amber-500" />
+              <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                Coming Soon
+              </h2>
+              <p className="text-surface-600 dark:text-surface-400 max-w-md">
+                Bulk payroll processing is currently under development. Use the standard payroll run
+                workflow to process payroll for individual runs.
+              </p>
+              <Button
+                variant="primary"
+                onClick={() => window.location.href = '/payroll'}
+              >
+                Go to Payroll Runs
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

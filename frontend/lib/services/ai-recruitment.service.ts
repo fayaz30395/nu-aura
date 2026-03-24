@@ -23,6 +23,21 @@ class AIRecruitmentService {
     return response.data;
   }
 
+  /**
+   * Parse resume from a multipart file upload (PDF, DOCX, etc.)
+   * Uses the /parse-resume/upload endpoint with FormData.
+   */
+  async parseResumeFromUpload(file: File): Promise<ResumeParseResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post<ResumeParseResponse>(
+      '/recruitment/ai/parse-resume/upload',
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return response.data;
+  }
+
   // ==================== Candidate Matching ====================
 
   async calculateMatchScore(
