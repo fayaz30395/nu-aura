@@ -30,18 +30,21 @@ public class FeatureFlagController {
     private final FeatureFlagService featureFlagService;
 
     @GetMapping
+    @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get all feature flags for current tenant")
     public ResponseEntity<List<FeatureFlag>> getAllFlags() {
         return ResponseEntity.ok(featureFlagService.getAllFlags());
     }
 
     @GetMapping("/map")
+    @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get feature flags as key-value map")
     public ResponseEntity<Map<String, Boolean>> getFlagsAsMap() {
         return ResponseEntity.ok(featureFlagService.getFlagsAsMap());
     }
 
     @GetMapping("/enabled")
+    @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get list of enabled feature keys")
     public ResponseEntity<List<String>> getEnabledFeatures() {
         return ResponseEntity.ok(featureFlagService.getEnabledFeatures());
@@ -58,6 +61,7 @@ public class FeatureFlagController {
     }
 
     @GetMapping("/category/{category}")
+    @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Get feature flags by category")
     public ResponseEntity<List<FeatureFlag>> getFlagsByCategory(@PathVariable String category) {
         return ResponseEntity.ok(featureFlagService.getFlagsByCategory(category));
