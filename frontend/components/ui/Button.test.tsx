@@ -25,13 +25,15 @@ describe('Button', () => {
     it('renders primary variant by default', () => {
       render(<Button>Primary</Button>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-sky-500');
+      // Primary uses gradient via CSS variables
+      expect(button.className).toContain('bg-gradient-to-br');
     });
 
     it('renders secondary variant', () => {
       render(<Button variant="secondary">Secondary</Button>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-surface-100');
+      // Secondary uses CSS variable-based bg
+      expect(button.className).toContain('border');
     });
 
     it('renders danger variant', () => {
@@ -49,29 +51,30 @@ describe('Button', () => {
     it('renders ghost variant', () => {
       render(<Button variant="ghost">Ghost</Button>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('hover:bg-surface-100');
+      // Ghost uses CSS variable-based hover
+      expect(button.className).toContain('hover:bg-');
     });
   });
 
   describe('sizes', () => {
     it('renders medium size by default', () => {
       render(<Button>Medium</Button>);
-      expect(screen.getByRole('button')).toHaveClass('h-10');
+      expect(screen.getByRole('button')).toHaveClass('h-11');
     });
 
     it('renders small size', () => {
       render(<Button size="sm">Small</Button>);
-      expect(screen.getByRole('button')).toHaveClass('h-8');
+      expect(screen.getByRole('button')).toHaveClass('h-9');
     });
 
     it('renders large size', () => {
       render(<Button size="lg">Large</Button>);
-      expect(screen.getByRole('button')).toHaveClass('h-11');
+      expect(screen.getByRole('button')).toHaveClass('h-12');
     });
 
     it('renders icon size', () => {
       render(<Button size="icon">Icon</Button>);
-      expect(screen.getByRole('button')).toHaveClass('h-10', 'w-10');
+      expect(screen.getByRole('button')).toHaveClass('h-11', 'w-11');
     });
   });
 

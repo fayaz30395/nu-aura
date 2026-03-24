@@ -420,7 +420,17 @@ public class AttendanceController {
     private AttendanceResponse toResponse(AttendanceRecord record) {
         AttendanceResponse response = new AttendanceResponse();
         BeanUtils.copyProperties(record, response);
-        response.setStatus(record.getStatus().name());
+        response.setStatus(record.getStatus() != null ? record.getStatus().name() : "UNKNOWN");
+        // Null-safe defaults for fields that may be null in legacy/imported records
+        if (response.getWorkDurationMinutes() == null) response.setWorkDurationMinutes(0);
+        if (response.getBreakDurationMinutes() == null) response.setBreakDurationMinutes(0);
+        if (response.getOvertimeMinutes() == null) response.setOvertimeMinutes(0);
+        if (response.getIsLate() == null) response.setIsLate(false);
+        if (response.getLateByMinutes() == null) response.setLateByMinutes(0);
+        if (response.getIsEarlyDeparture() == null) response.setIsEarlyDeparture(false);
+        if (response.getEarlyDepartureMinutes() == null) response.setEarlyDepartureMinutes(0);
+        if (response.getRegularizationRequested() == null) response.setRegularizationRequested(false);
+        if (response.getRegularizationApproved() == null) response.setRegularizationApproved(false);
         return response;
     }
 

@@ -36,7 +36,7 @@ describe('AnalyticsService', () => {
       mockedGet.mockResolvedValueOnce({ data: mock });
       const result = await analyticsService.getDashboardAnalytics();
       expect(result).toEqual(mock);
-      expect(mockedGet).toHaveBeenCalledWith('/analytics/dashboard');
+      expect(mockedGet).toHaveBeenCalledWith('/analytics/dashboard', { params: undefined });
     });
 
     it('should throw on error', async () => {

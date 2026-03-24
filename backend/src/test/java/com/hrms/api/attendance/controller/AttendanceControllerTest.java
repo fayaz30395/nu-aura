@@ -11,9 +11,11 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.TenantFilter;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.domain.user.RoleScope;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,7 +44,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AttendanceController.class)
-@ContextConfiguration(classes = {AttendanceController.class})
+@ContextConfiguration(classes = {AttendanceController.class, GlobalExceptionHandler.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -75,6 +77,9 @@ class AttendanceControllerTest {
 
     @MockBean
     private TenantFilter tenantFilter;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     private UUID attendanceId;
     private UUID employeeId;
@@ -403,6 +408,7 @@ class AttendanceControllerTest {
             AttendanceTimeEntry entry = new AttendanceTimeEntry();
             entry.setId(UUID.randomUUID());
             entry.setCheckInTime(LocalDateTime.now());
+            entry.setEntryType(AttendanceTimeEntry.EntryType.REGULAR);
 
             when(attendanceService.multiCheckIn(
                     eq(employeeId),
@@ -441,6 +447,7 @@ class AttendanceControllerTest {
             AttendanceTimeEntry entry = new AttendanceTimeEntry();
             entry.setId(request.getTimeEntryId());
             entry.setCheckOutTime(LocalDateTime.now());
+            entry.setEntryType(AttendanceTimeEntry.EntryType.REGULAR);
 
             when(attendanceService.multiCheckOut(
                     eq(employeeId),

@@ -58,6 +58,9 @@ class PaymentControllerTest {
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
+    @MockBean
+    private io.micrometer.core.instrument.MeterRegistry meterRegistry;
+
     private static final String BASE_URL = "/api/v1/payments";
 
     @Nested
