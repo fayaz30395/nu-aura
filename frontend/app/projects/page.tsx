@@ -12,6 +12,7 @@ import {
   Button,
   Card,
   CardContent,
+  EmptyState,
   Input,
   Modal,
   ModalBody,
@@ -986,13 +987,23 @@ export default function ProjectsPage() {
 
         <Card>
           <CardContent>
-            <ResponsiveTable
-              columns={columns}
-              data={projects}
-              keyExtractor={(project) => project.id}
-              isLoading={loading}
-              emptyMessage="No projects found for the selected filters."
-            />
+            {!loading && totalElements === 0 && projects.length === 0 ? (
+              <EmptyState
+                icon={<Eye className="h-12 w-12" />}
+                title="No Projects Yet"
+                description="Create your first project to start tracking work, assigning tasks, and collaborating with your team."
+                actionLabel="Create Project"
+                onAction={() => setShowCreateModal(true)}
+              />
+            ) : (
+              <ResponsiveTable
+                columns={columns}
+                data={projects}
+                keyExtractor={(project) => project.id}
+                isLoading={loading}
+                emptyMessage="No projects found for the selected filters."
+              />
+            )}
             {totalElements > 0 && (
               <TablePagination
                 currentPage={currentPage}

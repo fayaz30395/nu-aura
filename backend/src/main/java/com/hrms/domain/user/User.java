@@ -4,6 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -101,6 +102,7 @@ public class User extends TenantAware {
             @Index(name = "idx_user_roles_role", columnList = "role_id")
         }
     )
+    @BatchSize(size = 50)
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 

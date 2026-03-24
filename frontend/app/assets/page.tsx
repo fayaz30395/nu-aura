@@ -639,7 +639,9 @@ export default function AssetManagementPage() {
             <EmptyState
               icon={<Package className="h-12 w-12" />}
               title="No Assets Found"
-              description="No assets assigned or available"
+              description="Start tracking company assets by adding your first item. Manage laptops, monitors, furniture, and more."
+              actionLabel="Add Asset"
+              onAction={() => setShowAddModal(true)}
             />
           )
         )}

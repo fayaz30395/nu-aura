@@ -101,6 +101,38 @@ public class AttendanceController {
         return ResponseEntity.ok(toResponse(record));
     }
 
+    // ===================== Today's Attendance =====================
+
+    @GetMapping("/today")
+    @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
+    @Operation(summary = "Get today's attendance", description = "Retrieve the authenticated user's attendance record for today")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Today's attendance record (may be empty if not checked in)"),
+        @ApiResponse(responseCode = "403", description = "Not authorized")
+    })
+    public ResponseEntity<AttendanceResponse> getTodayAttendance() {
+        UUID employeeId = requireCurrentEmployeeId();
+        return attendanceService.getTodayAttendance(employeeId)
+                .map(record -> ResponseEntity.ok(toResponse(record)))
+                .orElseGet(() -> {
+                    // Return an empty response with today's date — no attendance yet
+                    AttendanceResponse empty = new AttendanceResponse();
+                    empty.setEmployeeId(employeeId);
+                    empty.setAttendanceDate(java.time.LocalDate.now());
+                    empty.setStatus("NOT_CHECKED_IN");
+                    empty.setWorkDurationMinutes(0);
+                    empty.setBreakDurationMinutes(0);
+                    empty.setOvertimeMinutes(0);
+                    empty.setIsLate(false);
+                    empty.setLateByMinutes(0);
+                    empty.setIsEarlyDeparture(false);
+                    empty.setEarlyDepartureMinutes(0);
+                    empty.setRegularizationRequested(false);
+                    empty.setRegularizationApproved(false);
+                    return ResponseEntity.ok(empty);
+                });
+    }
+
     // ===================== Self-Service Attendance (My Attendance)
     // =====================
 

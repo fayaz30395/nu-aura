@@ -252,7 +252,7 @@ export default function AnnouncementsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
-                <Megaphone className="w-8 h-8 text-purple-600" />
+                <Megaphone className="w-8 h-8 text-sky-700" />
                 Announcements
               </h1>
               <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -262,7 +262,7 @@ export default function AnnouncementsPage() {
             <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors font-medium shadow-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-sky-700 text-white rounded-xl hover:bg-sky-800 transition-colors font-medium shadow-sm"
               >
                 <Plus className="w-5 h-5" />
                 New Announcement
@@ -388,13 +388,13 @@ export default function AnnouncementsPage() {
           transition={{ delay: 0.3 }}
         >
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-purple-600" />
+            <Bell className="w-5 h-5 text-sky-700" />
             All Announcements
           </h2>
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-sky-700" />
             </div>
           ) : filteredAnnouncements.length === 0 ? (
             <EmptyState
@@ -416,7 +416,7 @@ export default function AnnouncementsPage() {
                     className={`bg-[var(--bg-card)] rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
                       announcement.isRead
                         ? 'border-l-[var(--border-main)]'
-                        : 'border-l-purple-500'
+                        : 'border-l-sky-600'
                     }`}
                   >
                     <div className="flex items-start gap-4">
@@ -432,12 +432,12 @@ export default function AnnouncementsPage() {
                             {priorityLabels[announcement.priority]}
                           </span>
                           {!announcement.isRead && (
-                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-400">
                               New
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-purple-600 transition-colors">
+                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-sky-700 transition-colors">
                           {announcement.title}
                         </h3>
                         <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
@@ -489,7 +489,7 @@ export default function AnnouncementsPage() {
                             </PermissionGate>
                           </div>
                         )}
-                        <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-purple-600 transition-colors" />
+                        <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-sky-700 transition-colors" />
                       </div>
                     </div>
                   </motion.div>
@@ -540,7 +540,7 @@ export default function AnnouncementsPage() {
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 relative">
+                <div className="bg-gradient-to-r from-sky-700 to-sky-800 px-6 py-4 relative">
                   <button
                     onClick={() => setSelectedAnnouncement(null)}
                     className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
@@ -602,7 +602,7 @@ export default function AnnouncementsPage() {
                         href={selectedAnnouncement.attachmentUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-2"
+                        className="text-sky-700 hover:text-sky-800 font-medium flex items-center gap-2"
                       >
                         <BookOpen className="w-4 h-4" />
                         View Attachment
@@ -905,7 +905,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 </label>
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+                    <Loader2 className="w-5 h-5 animate-spin text-sky-700" />
                     <span className="ml-2 text-sm text-[var(--text-muted)]">Loading departments...</span>
                   </div>
                 ) : departments.length === 0 ? (
@@ -917,7 +917,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                         key={dept.id}
                         className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
                           targetDepartmentIds.includes(dept.id)
-                            ? 'bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700'
+                            ? 'bg-sky-100 dark:bg-sky-900/30 border border-sky-300 dark:border-sky-700'
                             : 'hover:bg-[var(--bg-surface)] border border-transparent'
                         }`}
                       >
@@ -925,7 +925,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                           type="checkbox"
                           checked={targetDepartmentIds.includes(dept.id)}
                           onChange={() => toggleDepartment(dept.id)}
-                          className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                          className="w-4 h-4 text-sky-700 rounded focus:ring-sky-600"
                         />
                         <span className="text-sm text-[var(--text-secondary)] truncate">
                           {dept.name}
@@ -935,7 +935,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                   </div>
                 )}
                 {targetDepartmentIds.length > 0 && (
-                  <p className="mt-2 text-xs text-purple-600 dark:text-purple-400">
+                  <p className="mt-2 text-xs text-sky-700 dark:text-sky-400">
                     {targetDepartmentIds.length} department{targetDepartmentIds.length > 1 ? 's' : ''} selected
                   </p>
                 )}
@@ -948,7 +948,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 <input
                   type="checkbox"
                   {...register('isPinned')}
-                  className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                  className="w-4 h-4 text-sky-700 rounded focus:ring-sky-600"
                 />
                 <span className="text-sm text-[var(--text-secondary)]">Pin this announcement</span>
               </label>
@@ -956,7 +956,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 <input
                   type="checkbox"
                   {...register('sendEmail')}
-                  className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                  className="w-4 h-4 text-sky-700 rounded focus:ring-sky-600"
                 />
                 <span className="text-sm text-[var(--text-secondary)]">Send email notification</span>
               </label>
