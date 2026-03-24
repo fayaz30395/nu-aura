@@ -150,13 +150,13 @@ describe('LoanService', () => {
       mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'APPROVED' }) });
       const result = await loanService.approveLoan('l-1');
       expect(result.status).toBe('APPROVED');
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/approve', null, { params: {} });
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/approve', {});
     });
 
     it('should pass approvedAmount when provided', async () => {
       mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'APPROVED', amount: 80000 }) });
       await loanService.approveLoan('l-1', 80000);
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/approve', null, { params: { approvedAmount: 80000 } });
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/approve', { approvedAmount: 80000 });
     });
   });
 

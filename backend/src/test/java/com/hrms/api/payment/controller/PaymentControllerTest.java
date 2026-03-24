@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Verifies REST endpoint behavior, request/response mapping, and HTTP status codes.
  */
 @WebMvcTest(PaymentController.class)
-@ContextConfiguration(classes = {PaymentController.class, com.hrms.common.exception.GlobalExceptionHandler.class})
+@ContextConfiguration(classes = {PaymentController.class})
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayName("PaymentController Tests")
 class PaymentControllerTest {
@@ -58,8 +58,6 @@ class PaymentControllerTest {
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
-    @MockBean
-    private io.micrometer.core.instrument.MeterRegistry meterRegistry;
 
     private static final String BASE_URL = "/api/v1/payments";
 

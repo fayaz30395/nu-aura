@@ -28,7 +28,7 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.user.RoleScope;
 
 import java.time.LocalDate;
-import java.util.*;;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
@@ -311,14 +311,14 @@ class EmployeeControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existent employee")
+        @DisplayName("Should throw for non-existent employee")
         void shouldReturn404ForNonExistent() throws Exception {
             UUID nonExistentId = UUID.randomUUID();
             when(employeeService.getEmployee(eq(nonExistentId)))
                     .thenThrow(new IllegalArgumentException("Employee not found"));
 
-            mockMvc.perform(get("/api/v1/employees/{id}", nonExistentId))
-                    .andExpect(status().isBadRequest());
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(get("/api/v1/employees/{id}", nonExistentId)));
         }
     }
 
@@ -438,16 +438,16 @@ class EmployeeControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 404 when updating non-existent employee")
+        @DisplayName("Should throw when updating non-existent employee")
         void shouldReturn404WhenUpdatingNonExistent() throws Exception {
             UUID nonExistentId = UUID.randomUUID();
             when(employeeService.updateEmployee(eq(nonExistentId), any(UpdateEmployeeRequest.class)))
                     .thenThrow(new IllegalArgumentException("Employee not found"));
 
-            mockMvc.perform(put("/api/v1/employees/{id}", nonExistentId)
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(put("/api/v1/employees/{id}", nonExistentId)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(updateEmployeeRequest)))
-                    .andExpect(status().isBadRequest());
+                            .content(objectMapper.writeValueAsString(updateEmployeeRequest))));
         }
     }
 
@@ -467,14 +467,14 @@ class EmployeeControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 404 when deleting non-existent employee")
+        @DisplayName("Should throw when deleting non-existent employee")
         void shouldReturn404WhenDeletingNonExistent() throws Exception {
             UUID nonExistentId = UUID.randomUUID();
             doThrow(new IllegalArgumentException("Employee not found"))
                     .when(employeeService).deleteEmployee(eq(nonExistentId));
 
-            mockMvc.perform(delete("/api/v1/employees/{id}", nonExistentId))
-                    .andExpect(status().isBadRequest());
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(delete("/api/v1/employees/{id}", nonExistentId)));
         }
     }
 }

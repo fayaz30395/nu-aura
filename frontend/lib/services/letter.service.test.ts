@@ -89,7 +89,7 @@ describe('letterService', () => {
 
       const result = await letterService.getAllTemplates();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/templates', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates', {
         params: { page: 0, size: 20 },
       });
       expect(result).toEqual(mockData);
@@ -106,7 +106,7 @@ describe('letterService', () => {
 
       const result = await letterService.getAllTemplates(2, 50);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/templates', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates', {
         params: { page: 2, size: 50 },
       });
       expect(result).toEqual(mockData);
@@ -131,7 +131,7 @@ describe('letterService', () => {
 
       const result = await letterService.getActiveTemplates();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/templates/active');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates/active');
       expect(result).toEqual(mockData);
     });
   });
@@ -147,7 +147,7 @@ describe('letterService', () => {
 
       const result = await letterService.getTemplatesByCategory('OFFER');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/templates/by-category', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates/by-category', {
         params: { category: 'OFFER' },
       });
       expect(result).toEqual(mockData);
@@ -162,7 +162,7 @@ describe('letterService', () => {
 
       await letterService.getTemplatesByCategory('SALARY');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/templates/by-category', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates/by-category', {
         params: { category: 'SALARY' },
       });
     });
@@ -180,7 +180,7 @@ describe('letterService', () => {
 
       const result = await letterService.getTemplate('template-123');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/templates/template-123');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates/template-123');
       expect(result).toEqual(mockData);
     });
   });
@@ -203,7 +203,7 @@ describe('letterService', () => {
 
       const result = await letterService.createTemplate(createData);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/letters/templates', createData);
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/letters/templates', createData);
       expect(result).toEqual(mockResponse);
     });
   });
@@ -241,7 +241,7 @@ describe('letterService', () => {
 
       await letterService.deleteTemplate('template-123');
 
-      expect(mockedApiClient.delete).toHaveBeenCalledWith('/api/v1/letters/templates/template-123');
+      expect(mockedApiClient.delete).toHaveBeenCalledWith('/letters/templates/template-123');
     });
   });
 
@@ -253,7 +253,7 @@ describe('letterService', () => {
 
       const result = await letterService.getCategories();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/categories');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/categories');
       expect(result).toEqual(mockData);
     });
   });
@@ -275,7 +275,7 @@ describe('letterService', () => {
 
       const result = await letterService.getAllLetters();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters', {
         params: { page: 0, size: 20 },
       });
       expect(result).toEqual(mockData);
@@ -292,7 +292,7 @@ describe('letterService', () => {
 
       const result = await letterService.getAllLetters(1, 10);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters', {
         params: { page: 1, size: 10 },
       });
       expect(result).toEqual(mockData);
@@ -312,7 +312,7 @@ describe('letterService', () => {
 
       const result = await letterService.getLetter('letter-123');
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/letter-123');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/letter-123');
       expect(result).toEqual(mockData);
     });
   });
@@ -350,7 +350,7 @@ describe('letterService', () => {
 
       await letterService.getLettersByEmployee('emp-123', 2, 50);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/employee/emp-123', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/employee/emp-123', {
         params: { page: 2, size: 50 },
       });
     });
@@ -389,7 +389,7 @@ describe('letterService', () => {
 
       const result = await letterService.getPendingApprovals();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/pending-approvals', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/pending-approvals', {
         params: { page: 0, size: 20 },
       });
       expect(result).toEqual(mockData);
@@ -406,7 +406,7 @@ describe('letterService', () => {
 
       await letterService.getPendingApprovals(1, 10);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/api/v1/letters/pending-approvals', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/pending-approvals', {
         params: { page: 1, size: 10 },
       });
     });
@@ -430,7 +430,7 @@ describe('letterService', () => {
 
       const result = await letterService.generateLetter(generateData, 'user-123');
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/api/v1/letters/generate', generateData, {
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/letters/generate', generateData, {
         params: { generatedBy: 'user-123' },
       });
       expect(result).toEqual(mockResponse);
@@ -456,7 +456,7 @@ describe('letterService', () => {
       const result = await letterService.generateOfferLetter(generateData, 'recruiter-1');
 
       expect(mockedApiClient.post).toHaveBeenCalledWith(
-        '/api/v1/letters/generate-offer',
+        '/letters/generate-offer',
         generateData,
         {
           params: { generatedBy: 'recruiter-1' },

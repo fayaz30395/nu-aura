@@ -108,6 +108,7 @@ class DepartmentControllerTest {
         @DisplayName("Should create department successfully")
         void shouldCreateDepartmentSuccessfully() throws Exception {
             DepartmentRequest request = DepartmentRequest.builder()
+                    .code("ENG")
                     .name("Engineering")
                     .description("Software Engineering Department")
                     .build();
@@ -143,6 +144,7 @@ class DepartmentControllerTest {
         void shouldCreateDepartmentWithParent() throws Exception {
             UUID parentDeptId = UUID.randomUUID();
             DepartmentRequest request = DepartmentRequest.builder()
+                    .code("BE")
                     .name("Backend Team")
                     .description("Backend Development Team")
                     .parentDepartmentId(parentDeptId)
@@ -175,6 +177,7 @@ class DepartmentControllerTest {
         @DisplayName("Should update department successfully")
         void shouldUpdateDepartmentSuccessfully() throws Exception {
             DepartmentRequest request = DepartmentRequest.builder()
+                    .code("ENG")
                     .name("Engineering Updated")
                     .description("Updated description")
                     .build();

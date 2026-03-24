@@ -18,7 +18,7 @@ const mock = apiClient as {
   delete: ReturnType<typeof vi.fn>;
 };
 
-const BASE = '/api/v1/training';
+const BASE = '/training';
 
 interface TrainingProgram { id: string; title: string; status: string; }
 interface TrainingEnrollment { id: string; programId: string; employeeId: string; status: string; }

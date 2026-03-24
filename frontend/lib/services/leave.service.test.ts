@@ -597,9 +597,8 @@ describe('LeaveService', () => {
 
   // approveLeaveRequest tests
   describe('approveLeaveRequest', () => {
-    it('should approve a leave request without comments', async () => {
+    it('should approve a leave request', async () => {
       const leaveRequestId = 'lr-1';
-      const approverId = 'approver-1';
       const mockLeaveRequest: MockLeaveRequest = {
         id: leaveRequestId,
         employeeId: 'emp-1',
@@ -611,39 +610,23 @@ describe('LeaveService', () => {
 
       mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveRequest });
 
-      const result = await leaveService.approveLeaveRequest(leaveRequestId, approverId);
+      const result = await leaveService.approveLeaveRequest(leaveRequestId);
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
-        `/leave-requests/${leaveRequestId}/approve`,
-        null,
-        { params: { approverId, comments: undefined } }
+        `/leave-requests/${leaveRequestId}/approve`
       );
       expect(result).toEqual(mockLeaveRequest);
     });
 
-    it('should approve a leave request with comments', async () => {
+    it('should handle errors when approving a leave request', async () => {
       const leaveRequestId = 'lr-1';
-      const approverId = 'approver-1';
-      const comments = 'Approved as per policy';
-      const mockLeaveRequest: MockLeaveRequest = {
-        id: leaveRequestId,
-        employeeId: 'emp-1',
-        leaveTypeId: 'lt-1',
-        startDate: '2026-04-01',
-        endDate: '2026-04-05',
-        status: 'APPROVED',
-      };
+      const error = new Error('Approval failed');
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveRequest });
+      mockApiClient.post.mockRejectedValueOnce(error);
 
-      const result = await leaveService.approveLeaveRequest(leaveRequestId, approverId, comments);
-
-      expect(mockApiClient.post).toHaveBeenCalledWith(
-        `/leave-requests/${leaveRequestId}/approve`,
-        null,
-        { params: { approverId, comments } }
+      await expect(leaveService.approveLeaveRequest(leaveRequestId)).rejects.toThrow(
+        'Approval failed'
       );
-      expect(result).toEqual(mockLeaveRequest);
     });
   });
 
