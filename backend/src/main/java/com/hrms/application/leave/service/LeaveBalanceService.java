@@ -135,6 +135,41 @@ public class LeaveBalanceService {
     }
 
     /**
+     * Encash leave days from an existing balance.
+     *
+     * <p>Validates that:
+     * <ol>
+     *   <li>The balance exists and belongs to the current tenant</li>
+     *   <li>The leave type is encashable ({@code isEncashable == true})</li>
+     *   <li>The employee has sufficient available balance</li>
+     * </ol>
+     *
+     * @param leaveBalanceId the ID of the leave balance record
+     * @param daysToEncash   number of days to encash
+     * @return the updated leave balance after encashment
+     * @throws IllegalStateException if validation fails
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
+    public LeaveBalance encashLeave(UUID leaveBalanceId, int daysToEncash) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        LeaveBalance balance = leaveBalanceRepository.findByIdAndTenantId(leaveBalanceId, tenantId)
+                .orElseThrow(() -> new IllegalStateException("Leave balance not found"));
+
+        // Validate the leave type allows encashment
+        LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(balance.getLeaveTypeId(), tenantId)
+                .orElseThrow(() -> new IllegalStateException("Leave type not found"));
+
+        if (!Boolean.TRUE.equals(leaveType.getIsEncashable())) {
+            throw new IllegalStateException("This leave type does not allow encashment");
+        }
+
+        balance.encashLeave(BigDecimal.valueOf(daysToEncash));
+        return leaveBalanceRepository.save(balance);
+    }
+
+    /**
      * Pessimistic-write variant of {@link #getOrCreateBalance}.
      *
      * <p>Used exclusively by mutation paths ({@code accrueLeave}, {@code deductLeave},

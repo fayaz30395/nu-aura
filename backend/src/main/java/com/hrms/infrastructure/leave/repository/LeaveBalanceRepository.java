@@ -30,6 +30,8 @@ public interface LeaveBalanceRepository extends JpaRepository<LeaveBalance, UUID
 
     boolean existsByEmployeeIdAndLeaveTypeIdAndYear(UUID employeeId, UUID leaveTypeId, Integer year);
 
+    Optional<LeaveBalance> findByIdAndTenantId(UUID id, UUID tenantId);
+
     // BIZ-012: Get all balances for a tenant+year (for carry-forward)
     List<LeaveBalance> findAllByTenantIdAndYear(UUID tenantId, Integer year);
 

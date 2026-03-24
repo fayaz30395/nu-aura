@@ -13,6 +13,9 @@ import {
 import { IconTrendingUp, IconActivity, IconFlame } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
+import { PostComposer } from '@/components/wall';
+import { useCreatePost } from '@/lib/hooks/queries/useWall';
+import { notifications } from '@mantine/notifications';
 
 function TrendingSidebar() {
   return (
@@ -34,6 +37,8 @@ function TrendingSidebar() {
 }
 
 export default function WallPage() {
+  const createPost = useCreatePost();
+
   return (
     <AppLayout>
     <Container size="xl" py="lg">
@@ -52,7 +57,34 @@ export default function WallPage() {
 
       <Grid gutter="lg">
         <Grid.Col span={{ base: 12, md: 8 }}>
-          <ActivityFeed />
+          <Stack gap="md">
+            <PostComposer
+              onSubmit={(data) => {
+                createPost.mutate(data, {
+                  onSuccess: () => {
+                    notifications.show({
+                      title: 'Posted',
+                      message: data.type === 'POLL'
+                        ? 'Your poll has been created.'
+                        : data.type === 'PRAISE'
+                          ? 'Your praise has been sent.'
+                          : 'Your post has been published.',
+                      color: 'green',
+                    });
+                  },
+                  onError: () => {
+                    notifications.show({
+                      title: 'Error',
+                      message: 'Failed to create post. Please try again.',
+                      color: 'red',
+                    });
+                  },
+                });
+              }}
+              isSubmitting={createPost.isPending}
+            />
+            <ActivityFeed />
+          </Stack>
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>

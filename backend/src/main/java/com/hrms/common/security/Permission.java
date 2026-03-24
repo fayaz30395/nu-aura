@@ -383,6 +383,7 @@ public final class Permission {
     public static final String LEAVE_BALANCE_VIEW = "LEAVE_BALANCE:VIEW";
     public static final String LEAVE_BALANCE_VIEW_ALL = "LEAVE_BALANCE:VIEW_ALL";
     public static final String LEAVE_BALANCE_MANAGE = "LEAVE_BALANCE:MANAGE";
+    public static final String LEAVE_BALANCE_ENCASH = "LEAVE_BALANCE:ENCASH";
 
     // Pre-boarding
     public static final String PREBOARDING_VIEW = "PREBOARDING:VIEW";
