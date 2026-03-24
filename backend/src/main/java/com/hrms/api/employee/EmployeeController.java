@@ -22,9 +22,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -112,15 +114,60 @@ public class EmployeeController {
         Permission.EMPLOYEE_VIEW_TEAM,
         Permission.EMPLOYEE_VIEW_SELF
     })
-    @Operation(summary = "Get employee by ID", description = "Returns a single employee by their UUID")
+    @Operation(summary = "Get employee by ID", description = "Returns a single employee by their UUID, enforcing data-scope rules")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Employee found"),
+        @ApiResponse(responseCode = "403", description = "Not authorized to view this employee"),
         @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<EmployeeResponse> getEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {
+        // CRITICAL-04 FIX: Enforce data-scope on single-record GET to prevent IDOR.
+        // SuperAdmin bypass is already handled by PermissionAspect before this code runs.
+        enforceEmployeeViewScope(id);
         EmployeeResponse response = employeeService.getEmployee(id);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Enforces data-scope rules for viewing a single employee record.
+     * Scope hierarchy: VIEW_ALL > VIEW_DEPARTMENT > VIEW_TEAM > VIEW_SELF.
+     * SuperAdmin is already bypassed at the @RequiresPermission aspect level.
+     */
+    private void enforceEmployeeViewScope(UUID targetEmployeeId) {
+        // VIEW_ALL: can see any employee within the tenant
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+            return;
+        }
+
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+
+        // VIEW_SELF: can only see own record
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        // VIEW_DEPARTMENT: can see employees in the same department
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_DEPARTMENT)) {
+            // Fetch target employee to check department — delegated to service layer
+            EmployeeResponse target = employeeService.getEmployee(targetEmployeeId);
+            UUID currentDeptId = SecurityContext.getCurrentDepartmentId();
+            if (currentDeptId != null && target.getDepartmentId() != null
+                    && currentDeptId.equals(target.getDepartmentId())) {
+                return;
+            }
+        }
+
+        // VIEW_TEAM: can see direct/indirect reportees
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) {
+            Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+            if (reporteeIds.contains(targetEmployeeId)) {
+                return;
+            }
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to view this employee record");
     }
 
     @GetMapping("/{id}/hierarchy")
