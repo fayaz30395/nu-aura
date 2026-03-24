@@ -346,6 +346,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
 
     it('should clear form after successful creation', async () => {
       mockedEmployeeService.createEmployee.mockResolvedValueOnce(mockEmployees[0]);
+      const user = userEvent.setup();
 
       render(<MockEmployeeForm />);
 

@@ -196,6 +196,7 @@ describe('Leave Application Flow Integration Tests', () => {
       mockedLeaveService.createLeaveRequest.mockImplementation(() => {
         throw new Error('Start date must be before end date');
       });
+      const user = userEvent.setup();
 
       render(<MockLeaveForm />);
 
