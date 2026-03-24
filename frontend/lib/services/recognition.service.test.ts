@@ -16,7 +16,7 @@ const mock = apiClient as {
   delete: ReturnType<typeof vi.fn>;
 };
 
-const BASE = '/api/v1/recognition';
+const BASE = '/recognition';
 
 interface Recognition { id: string; giverId: string; receiverId: string; message: string; }
 interface EmployeePoints { employeeId: string; points: number; level: string; }

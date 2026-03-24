@@ -97,10 +97,11 @@ describe('RecruitmentService', () => {
     });
 
     it('should get job openings by status successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockJobOpening] });
+      const paginatedData = { content: [mockJobOpening], totalElements: 1, totalPages: 1, size: 1000, number: 0 };
+      mockApiClient.get.mockResolvedValueOnce({ data: paginatedData });
       const result = await recruitmentService.getJobOpeningsByStatus('OPEN');
       expect(result).toEqual([mockJobOpening]);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/job-openings/status/OPEN');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/job-openings/status/OPEN', { params: { size: 1000 } });
     });
 
     it('should handle error when getting job openings by status fails', async () => {
@@ -191,10 +192,11 @@ describe('RecruitmentService', () => {
     });
 
     it('should get candidates by job opening successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockCandidate] });
+      const paginatedData = { content: [mockCandidate], totalElements: 1, totalPages: 1, size: 1000, number: 0 };
+      mockApiClient.get.mockResolvedValueOnce({ data: paginatedData });
       const result = await recruitmentService.getCandidatesByJobOpening('job-1');
       expect(result).toEqual([mockCandidate]);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/candidates/job-opening/job-1');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/candidates/job-opening/job-1', { params: { size: 1000 } });
     });
 
     it('should handle error when getting candidates by job opening fails', async () => {
@@ -375,10 +377,11 @@ describe('RecruitmentService', () => {
     });
 
     it('should get interviews by candidate successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockInterview] });
+      const paginatedData = { content: [mockInterview], totalElements: 1, totalPages: 1, size: 1000, number: 0 };
+      mockApiClient.get.mockResolvedValueOnce({ data: paginatedData });
       const result = await recruitmentService.getInterviewsByCandidate('cand-1');
       expect(result).toEqual([mockInterview]);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/interviews/candidate/cand-1');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/recruitment/interviews/candidate/cand-1', { params: { size: 1000 } });
     });
 
     it('should handle error when getting interviews by candidate fails', async () => {

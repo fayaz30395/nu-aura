@@ -199,8 +199,8 @@ describe('EmployeeService', () => {
 
       const result = await employeeService.searchEmployees(query);
 
-      expect(mockApiClient.get).toHaveBeenCalledWith('/employees', {
-        params: { search: query, page: 0, size: 20 },
+      expect(mockApiClient.get).toHaveBeenCalledWith('/employees/search', {
+        params: { query, page: 0, size: 20 },
       });
       expect(result).toEqual(mockPage);
     });
@@ -218,8 +218,8 @@ describe('EmployeeService', () => {
 
       const result = await employeeService.searchEmployees(query, 2, 30);
 
-      expect(mockApiClient.get).toHaveBeenCalledWith('/employees', {
-        params: { search: query, page: 2, size: 30 },
+      expect(mockApiClient.get).toHaveBeenCalledWith('/employees/search', {
+        params: { query, page: 2, size: 30 },
       });
       expect(result).toEqual(mockPage);
     });

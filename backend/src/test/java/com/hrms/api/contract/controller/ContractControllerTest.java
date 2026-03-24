@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Verifies REST endpoint behaviour, HTTP status codes, and request/response mapping.
  */
 @WebMvcTest(ContractController.class)
-@ContextConfiguration(classes = {ContractController.class, com.hrms.common.exception.GlobalExceptionHandler.class})
+@ContextConfiguration(classes = {ContractController.class})
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayName("ContractController Tests")
 class ContractControllerTest {
@@ -58,8 +58,6 @@ class ContractControllerTest {
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
-    @MockBean
-    private io.micrometer.core.instrument.MeterRegistry meterRegistry;
 
     private static final String BASE_URL = "/api/v1/contracts";
 

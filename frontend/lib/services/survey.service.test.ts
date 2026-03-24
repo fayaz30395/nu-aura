@@ -18,7 +18,7 @@ const mock = apiClient as {
   delete: ReturnType<typeof vi.fn>;
 };
 
-const BASE = '/api/v1/survey-management';
+const BASE = '/survey-management';
 
 interface Survey { id: string; title: string; status: string; tenantId: string; }
 type SurveyStatus = 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CLOSED';

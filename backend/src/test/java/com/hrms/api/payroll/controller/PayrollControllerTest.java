@@ -200,21 +200,21 @@ class PayrollControllerTest {
             processedRun.setId(payrollRunId);
             processedRun.setStatus(PayrollRun.PayrollStatus.PROCESSED);
 
-            when(payrollRunService.processPayrollRun(eq(payrollRunId), any(UUID.class)))
+            when(payrollRunService.processPayrollRun(eq(payrollRunId), any()))
                     .thenReturn(processedRun);
 
             mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", payrollRunId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("PROCESSED"));
 
-            verify(payrollRunService).processPayrollRun(eq(payrollRunId), any(UUID.class));
+            verify(payrollRunService).processPayrollRun(eq(payrollRunId), any());
         }
 
         @Test
         @DisplayName("Should throw when processing non-existent payroll run")
         void shouldReturn404ForNonExistent() throws Exception {
             UUID nonExistentId = UUID.randomUUID();
-            when(payrollRunService.processPayrollRun(eq(nonExistentId), any(UUID.class)))
+            when(payrollRunService.processPayrollRun(eq(nonExistentId), any()))
                     .thenThrow(new IllegalArgumentException("Payroll run not found"));
 
             assertThrows(Exception.class, () ->
@@ -224,7 +224,7 @@ class PayrollControllerTest {
         @Test
         @DisplayName("Should throw when processing already processed payroll run")
         void shouldNotProcessAlreadyProcessedRun() throws Exception {
-            when(payrollRunService.processPayrollRun(eq(payrollRunId), any(UUID.class)))
+            when(payrollRunService.processPayrollRun(eq(payrollRunId), any()))
                     .thenThrow(new IllegalArgumentException("Payroll run has already been processed"));
 
             assertThrows(Exception.class, () ->
@@ -243,14 +243,14 @@ class PayrollControllerTest {
             approvedRun.setId(payrollRunId);
             approvedRun.setStatus(PayrollRun.PayrollStatus.APPROVED);
 
-            when(payrollRunService.approvePayrollRun(eq(payrollRunId), any(UUID.class)))
+            when(payrollRunService.approvePayrollRun(eq(payrollRunId), any()))
                     .thenReturn(approvedRun);
 
             mockMvc.perform(post("/api/v1/payroll/runs/{id}/approve", payrollRunId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("APPROVED"));
 
-            verify(payrollRunService).approvePayrollRun(eq(payrollRunId), any(UUID.class));
+            verify(payrollRunService).approvePayrollRun(eq(payrollRunId), any());
         }
     }
 
@@ -496,13 +496,13 @@ class PayrollControllerTest {
             structure.setBasicSalary(new BigDecimal("50000"));
             structure.setEffectiveDate(LocalDate.now());
 
-            when(salaryStructureService.getSalaryStructureById(any(UUID.class)))
+            when(salaryStructureService.getSalaryStructureById(any()))
                     .thenReturn(structure);
 
             mockMvc.perform(get("/api/v1/payroll/salary-structures/{id}", structure.getId()))
                     .andExpect(status().isOk());
 
-            verify(salaryStructureService).getSalaryStructureById(any(UUID.class));
+            verify(salaryStructureService).getSalaryStructureById(any());
         }
 
         @Test

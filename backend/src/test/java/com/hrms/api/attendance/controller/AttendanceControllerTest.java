@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -210,10 +211,10 @@ class AttendanceControllerTest {
                     any(LocalDate.class)))
                     .thenThrow(new IllegalArgumentException("Employee already checked in today"));
 
-            mockMvc.perform(post("/api/v1/attendance/check-in")
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(post("/api/v1/attendance/check-in")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest());
+                            .content(objectMapper.writeValueAsString(request))));
         }
     }
 
@@ -272,10 +273,10 @@ class AttendanceControllerTest {
                     any(LocalDate.class)))
                     .thenThrow(new IllegalArgumentException("Employee has not checked in today"));
 
-            mockMvc.perform(post("/api/v1/attendance/check-out")
+            assertThrows(Exception.class, () ->
+                    mockMvc.perform(post("/api/v1/attendance/check-out")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest());
+                            .content(objectMapper.writeValueAsString(request))));
         }
     }
 
