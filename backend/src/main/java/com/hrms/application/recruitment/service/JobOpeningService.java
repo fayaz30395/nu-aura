@@ -21,9 +21,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -136,18 +135,20 @@ public class JobOpeningService {
         return mapToJobOpeningResponse(jobOpening);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, timeout = 10)
     public Page<JobOpeningResponse> getAllJobOpenings(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Specification<JobOpening> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<JobOpening> scopeSpec = dataScopeService.getScopeSpecification(Permission.RECRUITMENT_VIEW);
 
-        return jobOpeningRepository.findAll(Specification.where(tenantSpec).and(scopeSpec), pageable)
-                .map(this::mapToJobOpeningResponse);
+        Page<JobOpening> page = jobOpeningRepository.findAll(
+                Specification.where(tenantSpec).and(scopeSpec), pageable);
+
+        return mapJobOpeningPageBatch(page, tenantId);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, timeout = 10)
     public Page<JobOpeningResponse> getJobOpeningsByStatus(JobOpening.JobStatus status, Pageable pageable) {
         String permission = determineViewPermission();
         Specification<JobOpening> scopeSpec = dataScopeService.getScopeSpecification(permission);
@@ -156,9 +157,92 @@ public class JobOpeningService {
         Specification<JobOpening> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<JobOpening> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), status);
 
-        return jobOpeningRepository.findAll(
-                Specification.where(tenantSpec).and(statusSpec).and(scopeSpec),
-                pageable).map(this::mapToJobOpeningResponse);
+        Page<JobOpening> page = jobOpeningRepository.findAll(
+                Specification.where(tenantSpec).and(statusSpec).and(scopeSpec), pageable);
+
+        return mapJobOpeningPageBatch(page, tenantId);
+    }
+
+    /**
+     * Batch-map a page of JobOpening entities to responses.
+     * Fetches hiring-manager names and candidate counts in two bulk queries
+     * instead of 2N individual queries (eliminates N+1).
+     */
+    private Page<JobOpeningResponse> mapJobOpeningPageBatch(Page<JobOpening> page, UUID tenantId) {
+        List<JobOpening> openings = page.getContent();
+        if (openings.isEmpty()) {
+            return page.map(this::mapToJobOpeningResponse);
+        }
+
+        // Batch-fetch candidate counts
+        List<UUID> jobIds = openings.stream().map(JobOpening::getId).toList();
+        Map<UUID, Integer> candidateCounts = new HashMap<>();
+        try {
+            List<Object[]> counts = candidateRepository.countByTenantIdAndJobOpeningIds(tenantId, jobIds);
+            for (Object[] row : counts) {
+                candidateCounts.put((UUID) row[0], ((Number) row[1]).intValue());
+            }
+        } catch (Exception e) {
+            log.warn("Failed to batch-fetch candidate counts, falling back to 0: {}", e.getMessage());
+        }
+
+        // Batch-fetch hiring manager names
+        Set<UUID> managerIds = openings.stream()
+                .map(JobOpening::getHiringManagerId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, String> managerNames = new HashMap<>();
+        if (!managerIds.isEmpty()) {
+            try {
+                List<Employee> managers = employeeRepository.findAllById(managerIds);
+                for (Employee mgr : managers) {
+                    managerNames.put(mgr.getId(), mgr.getFullName());
+                }
+            } catch (Exception e) {
+                log.warn("Failed to batch-fetch hiring manager names: {}", e.getMessage());
+            }
+        }
+
+        return page.map(jo -> mapToJobOpeningResponseBatch(jo, managerNames, candidateCounts));
+    }
+
+    private JobOpeningResponse mapToJobOpeningResponseBatch(JobOpening jobOpening,
+                                                             Map<UUID, String> managerNames,
+                                                             Map<UUID, Integer> candidateCounts) {
+        String hiringManagerName = jobOpening.getHiringManagerId() != null
+                ? managerNames.get(jobOpening.getHiringManagerId()) : null;
+        int candidateCount = candidateCounts.getOrDefault(jobOpening.getId(), 0);
+
+        return JobOpeningResponse.builder()
+                .id(jobOpening.getId())
+                .tenantId(jobOpening.getTenantId())
+                .jobCode(jobOpening.getJobCode())
+                .jobTitle(jobOpening.getJobTitle())
+                .departmentId(jobOpening.getDepartmentId())
+                .departmentName(null)
+                .location(jobOpening.getLocation())
+                .employmentType(jobOpening.getEmploymentType())
+                .experienceRequired(jobOpening.getExperienceRequired())
+                .minSalary(jobOpening.getMinSalary())
+                .maxSalary(jobOpening.getMaxSalary())
+                .numberOfOpenings(jobOpening.getNumberOfOpenings())
+                .jobDescription(jobOpening.getJobDescription())
+                .requirements(jobOpening.getRequirements())
+                .skillsRequired(jobOpening.getSkillsRequired())
+                .hiringManagerId(jobOpening.getHiringManagerId())
+                .hiringManagerName(hiringManagerName)
+                .status(jobOpening.getStatus())
+                .postedDate(jobOpening.getPostedDate())
+                .closingDate(jobOpening.getClosingDate())
+                .priority(jobOpening.getPriority())
+                .isActive(jobOpening.getIsActive())
+                .candidateCount(candidateCount)
+                .createdAt(jobOpening.getCreatedAt())
+                .updatedAt(jobOpening.getUpdatedAt())
+                .createdBy(jobOpening.getCreatedBy())
+                .lastModifiedBy(jobOpening.getLastModifiedBy())
+                .version(jobOpening.getVersion())
+                .build();
     }
 
     @Transactional

@@ -48,7 +48,7 @@ public class FluenceActivityService {
     /**
      * Get the full activity feed for a tenant, ordered by most recent first.
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, timeout = 10)
     public Page<FluenceActivity> getActivityFeed(UUID tenantId, Pageable pageable) {
         return fluenceActivityRepository.findByTenantIdAndIsDeletedFalseOrderByCreatedAtDesc(
                 tenantId, pageable);
@@ -57,7 +57,7 @@ public class FluenceActivityService {
     /**
      * Get activity feed filtered by content type (WIKI, BLOG, TEMPLATE).
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, timeout = 10)
     public Page<FluenceActivity> getActivityFeedByType(UUID tenantId, String contentType, Pageable pageable) {
         return fluenceActivityRepository.findByTenantIdAndContentTypeAndIsDeletedFalseOrderByCreatedAtDesc(
                 tenantId, contentType, pageable);
@@ -66,7 +66,7 @@ public class FluenceActivityService {
     /**
      * Get activity feed for a specific user.
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, timeout = 10)
     public Page<FluenceActivity> getUserActivity(UUID tenantId, UUID actorId, Pageable pageable) {
         return fluenceActivityRepository.findByTenantIdAndActorIdAndIsDeletedFalseOrderByCreatedAtDesc(
                 tenantId, actorId, pageable);

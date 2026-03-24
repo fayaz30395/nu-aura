@@ -29,10 +29,7 @@ import com.hrms.domain.event.recruitment.CandidateHiredEvent;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -188,18 +185,19 @@ public class RecruitmentManagementService {
         return mapToCandidateResponse(candidate);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, timeout = 10)
     public Page<CandidateResponse> getAllCandidates(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Specification<Candidate> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<Candidate> scopeSpec = dataScopeService.getScopeSpecification(Permission.CANDIDATE_VIEW);
 
-        return candidateRepository.findAll(Specification.where(tenantSpec).and(scopeSpec), pageable)
-                .map(this::mapToCandidateResponse);
+        Page<Candidate> page = candidateRepository.findAll(
+                Specification.where(tenantSpec).and(scopeSpec), pageable);
+        return mapCandidatePageBatch(page);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, timeout = 10)
     public Page<CandidateResponse> getCandidatesByJobOpening(UUID jobOpeningId, Pageable pageable) {
         String permission = determineViewPermission();
         Specification<Candidate> scopeSpec = dataScopeService.getScopeSpecification(permission);
@@ -208,9 +206,95 @@ public class RecruitmentManagementService {
         Specification<Candidate> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<Candidate> jobSpec = (root, query, cb) -> cb.equal(root.get("jobOpeningId"), jobOpeningId);
 
-        return candidateRepository.findAll(
-                Specification.where(tenantSpec).and(jobSpec).and(scopeSpec),
-                pageable).map(this::mapToCandidateResponse);
+        Page<Candidate> page = candidateRepository.findAll(
+                Specification.where(tenantSpec).and(jobSpec).and(scopeSpec), pageable);
+        return mapCandidatePageBatch(page);
+    }
+
+    /**
+     * Batch-map a page of Candidate entities to responses.
+     * Fetches job titles and recruiter names in two bulk queries
+     * instead of 2N individual queries (eliminates N+1).
+     */
+    private Page<CandidateResponse> mapCandidatePageBatch(Page<Candidate> page) {
+        List<Candidate> candidates = page.getContent();
+        if (candidates.isEmpty()) {
+            return page.map(this::mapToCandidateResponse);
+        }
+
+        // Batch-fetch job titles
+        Set<UUID> jobIds = candidates.stream()
+                .map(Candidate::getJobOpeningId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, String> jobTitles = new HashMap<>();
+        if (!jobIds.isEmpty()) {
+            try {
+                jobOpeningRepository.findAllById(jobIds).forEach(
+                        jo -> jobTitles.put(jo.getId(), jo.getJobTitle()));
+            } catch (Exception e) {
+                log.warn("Failed to batch-fetch job titles: {}", e.getMessage());
+            }
+        }
+
+        // Batch-fetch recruiter names
+        Set<UUID> recruiterIds = candidates.stream()
+                .map(Candidate::getAssignedRecruiterId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, String> recruiterNames = new HashMap<>();
+        if (!recruiterIds.isEmpty()) {
+            try {
+                employeeRepository.findAllById(recruiterIds).forEach(
+                        emp -> recruiterNames.put(emp.getId(), emp.getFullName()));
+            } catch (Exception e) {
+                log.warn("Failed to batch-fetch recruiter names: {}", e.getMessage());
+            }
+        }
+
+        return page.map(candidate -> mapToCandidateResponseBatch(candidate, jobTitles, recruiterNames));
+    }
+
+    private CandidateResponse mapToCandidateResponseBatch(Candidate candidate,
+                                                            Map<UUID, String> jobTitles,
+                                                            Map<UUID, String> recruiterNames) {
+        String jobTitle = candidate.getJobOpeningId() != null
+                ? jobTitles.get(candidate.getJobOpeningId()) : null;
+        String recruiterName = candidate.getAssignedRecruiterId() != null
+                ? recruiterNames.get(candidate.getAssignedRecruiterId()) : null;
+
+        return CandidateResponse.builder()
+                .id(candidate.getId())
+                .tenantId(candidate.getTenantId())
+                .candidateCode(candidate.getCandidateCode())
+                .jobOpeningId(candidate.getJobOpeningId())
+                .jobTitle(jobTitle)
+                .firstName(candidate.getFirstName())
+                .lastName(candidate.getLastName())
+                .fullName(candidate.getFullName())
+                .email(candidate.getEmail())
+                .phone(candidate.getPhone())
+                .currentLocation(candidate.getCurrentLocation())
+                .currentCompany(candidate.getCurrentCompany())
+                .currentDesignation(candidate.getCurrentDesignation())
+                .totalExperience(candidate.getTotalExperience())
+                .currentCtc(candidate.getCurrentCtc())
+                .expectedCtc(candidate.getExpectedCtc())
+                .noticePeriodDays(candidate.getNoticePeriodDays())
+                .resumeUrl(candidate.getResumeUrl())
+                .source(candidate.getSource())
+                .status(candidate.getStatus())
+                .currentStage(candidate.getCurrentStage())
+                .appliedDate(candidate.getAppliedDate())
+                .notes(candidate.getNotes())
+                .assignedRecruiterId(candidate.getAssignedRecruiterId())
+                .assignedRecruiterName(recruiterName)
+                .createdAt(candidate.getCreatedAt())
+                .updatedAt(candidate.getUpdatedAt())
+                .createdBy(candidate.getCreatedBy())
+                .lastModifiedBy(candidate.getLastModifiedBy())
+                .version(candidate.getVersion())
+                .build();
     }
 
     @Transactional

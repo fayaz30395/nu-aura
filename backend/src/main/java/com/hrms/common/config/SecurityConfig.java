@@ -137,6 +137,8 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
                         // DocuSign webhook (public, HMAC-verified via CRIT-002)
                         .requestMatchers("/api/v1/integrations/docusign/webhook").permitAll()
+                        // Payment provider webhooks (public, signature-verified per provider)
+                        .requestMatchers("/api/v1/payments/webhooks/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
@@ -178,7 +180,9 @@ public class SecurityConfig {
                     // native fetch may not have XSRF token on first request)
                     .ignoringRequestMatchers("/api/v1/fluence/chat")
                     // Ignore CSRF for DocuSign webhook (public, HMAC-verified via CRIT-002)
-                    .ignoringRequestMatchers("/api/v1/integrations/docusign/webhook"));
+                    .ignoringRequestMatchers("/api/v1/integrations/docusign/webhook")
+                    // Ignore CSRF for payment provider webhooks (signature-verified per provider)
+                    .ignoringRequestMatchers("/api/v1/payments/webhooks/**"));
         } else {
             // Only reachable in non-production profiles (dev, test, local)
             http.csrf(AbstractHttpConfigurer::disable);

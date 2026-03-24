@@ -13,7 +13,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "fluence_activities", indexes = {
         @Index(name = "idx_fluence_activities_tenant_created", columnList = "tenantId,createdAt"),
-        @Index(name = "idx_fluence_activities_tenant_actor", columnList = "tenantId,actorId")
+        @Index(name = "idx_fluence_activities_tenant_actor", columnList = "tenantId,actorId"),
+        @Index(name = "idx_fluence_activities_tenant_type_created", columnList = "tenantId,contentType,createdAt")
 })
 @Getter
 @Setter

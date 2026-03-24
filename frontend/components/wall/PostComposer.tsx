@@ -5,10 +5,10 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, BarChart3, Award, X, Plus, Image as ImageIcon, Smile, Paperclip } from 'lucide-react';
+import { Send, BarChart3, Award, X, Plus, Image as ImageIcon, Smile, Paperclip, Star, Heart, Trophy, ThumbsUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/lib/hooks/useAuth';
+import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
 import { CreatePostRequest, PostType } from '@/lib/services/wall.service';
 import { cn } from '@/lib/utils';
 
@@ -34,10 +34,18 @@ const pollSchema = z.object({
   visibility: z.enum(['ORGANIZATION', 'DEPARTMENT', 'TEAM'] as const),
 });
 
+const CELEBRATION_TYPES = [
+  { id: 'STAR', label: 'Star Performer', icon: Star, color: 'text-amber-500' },
+  { id: 'HEART', label: 'Team Player', icon: Heart, color: 'text-rose-500' },
+  { id: 'TROPHY', label: 'Achievement', icon: Trophy, color: 'text-yellow-600' },
+  { id: 'THUMBSUP', label: 'Great Work', icon: ThumbsUp, color: 'text-sky-600' },
+] as const;
+
 const praiseSchema = z.object({
   type: z.literal('PRAISE' as const),
   content: z.string().min(1, 'Praise message is required').max(2000, 'Message must be 2000 characters or less'),
   praiseRecipientId: z.string().min(1, 'Please select an employee'),
+  celebrationType: z.string().optional(),
   visibility: z.enum(['ORGANIZATION', 'DEPARTMENT', 'TEAM'] as const),
 });
 
@@ -69,7 +77,6 @@ interface PostComposerProps {
 // ==================== Component ====================
 
 export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): React.ReactElement {
-  const {} = useAuth();
   const [activeTab, setActiveTab] = useState<PostType>('POST');
 
   // Initialize forms for each tab
@@ -98,9 +105,13 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
       type: 'PRAISE',
       content: '',
       praiseRecipientId: '',
+      celebrationType: '',
       visibility: 'ORGANIZATION',
     },
   });
+
+  // Track the selected employee for the autocomplete display
+  const [selectedEmployee, setSelectedEmployee] = useState<{ id: string; name: string } | null>(null);
 
   // Field array for poll options
   const { fields, append, remove } = useFieldArray({
@@ -137,10 +148,12 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
       type: 'PRAISE',
       content: data.content,
       praiseRecipientId: data.praiseRecipientId,
+      celebrationType: data.celebrationType || undefined,
       visibility: data.visibility,
     };
     onSubmit(request);
     praiseForm.reset();
+    setSelectedEmployee(null);
   };
 
   return (
@@ -199,7 +212,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                   )}
                 </div>
 
-                {/* Footer: media buttons + submit */}
+                {/* Footer: media buttons + visibility + submit */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <button
@@ -223,6 +236,21 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     >
                       <Paperclip className="w-4 h-4" />
                     </button>
+
+                    <Controller
+                      control={postForm.control}
+                      name="visibility"
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="input-aura text-sm py-1.5"
+                        >
+                          <option value="ORGANIZATION">Organization</option>
+                          <option value="DEPARTMENT">Department</option>
+                          <option value="TEAM">Team</option>
+                        </select>
+                      )}
+                    />
                   </div>
 
                   <Button
@@ -360,24 +388,61 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
               transition={{ duration: 0.2 }}
             >
               <form onSubmit={praiseForm.handleSubmit(handlePraiseSubmit)} className="space-y-4 pt-4">
+                {/* Employee Search */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Praise for
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Search employee..."
-                    {...praiseForm.register('praiseRecipientId')}
-                    className={cn(
-                      'input-aura w-full',
-                      praiseForm.formState.errors.praiseRecipientId && 'border-danger-500 focus:ring-danger-500/50'
-                    )}
+                  <EmployeeSearchAutocomplete
+                    value={selectedEmployee}
+                    onChange={(employee) => {
+                      setSelectedEmployee(employee);
+                      praiseForm.setValue('praiseRecipientId', employee?.id || '', { shouldValidate: true });
+                    }}
+                    placeholder="Search for an employee..."
+                    required
                   />
                   {praiseForm.formState.errors.praiseRecipientId && (
                     <p className="mt-1 text-xs text-danger-500">{praiseForm.formState.errors.praiseRecipientId.message}</p>
                   )}
                 </div>
 
+                {/* Celebration Type Badges */}
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Category
+                  </label>
+                  <Controller
+                    control={praiseForm.control}
+                    name="celebrationType"
+                    render={({ field }) => (
+                      <div className="flex flex-wrap gap-2">
+                        {CELEBRATION_TYPES.map((ct) => {
+                          const Icon = ct.icon;
+                          const isSelected = field.value === ct.id;
+                          return (
+                            <button
+                              key={ct.id}
+                              type="button"
+                              onClick={() => field.onChange(isSelected ? '' : ct.id)}
+                              className={cn(
+                                'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border',
+                                isSelected
+                                  ? 'border-sky-400 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-600'
+                                  : 'border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-secondary)]'
+                              )}
+                            >
+                              <Icon className={cn('w-4 h-4', isSelected ? ct.color : 'text-[var(--text-muted)]')} />
+                              {ct.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  />
+                </div>
+
+                {/* Message */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Your Message
