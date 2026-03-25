@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -59,7 +59,9 @@ type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
 
 export default function EmployeesPage() {
   const router = useRouter();
-  const { hasPermission } = usePermissions();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // ALL hooks must be called unconditionally before any returns (React rules)
   const canCreate = hasPermission(Permissions.EMPLOYEE_CREATE);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -142,6 +144,31 @@ export default function EmployeesPage() {
       password: '',
     },
   });
+
+  // Permission check + redirect — AFTER all hooks
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.EMPLOYEE_READ)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
+  // Show skeleton while permissions loading
+  if (!permReady) {
+    return (
+      <AppLayout activeMenuItem="employees">
+        <div className="p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+            </div>
+            <SkeletonTable rows={5} columns={4} />
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   const onSubmit = async (data: CreateEmployeeFormData) => {
     // Clean up empty optional fields

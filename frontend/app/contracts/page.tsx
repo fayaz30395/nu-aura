@@ -78,9 +78,9 @@ export default function ContractsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, idx) => (
-            <div key={idx} className={`${stat.color} rounded-lg p-6`}>
-              <div className={`${stat.textColor} text-sm font-medium mb-2`}>{stat.label}</div>
-              <div className={`${stat.textColor} text-3xl font-bold`}>{stat.value}</div>
+            <div key={idx} className={`${stat.color} rounded-xl p-4`}>
+              <div className={`${stat.textColor} text-xs font-medium mb-1`}>{stat.label}</div>
+              <div className={`${stat.textColor} text-2xl font-bold`}>{stat.value}</div>
             </div>
           ))}
         </div>

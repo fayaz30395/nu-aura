@@ -134,7 +134,7 @@ class ExpenseClaimControllerTest {
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").exists())
-                    .andExpect(jsonPath("$.title").value("Business Trip Expenses"))
+                    .andExpect(jsonPath("$.description").value("Business Trip Expenses"))
                     .andExpect(jsonPath("$.status").value("DRAFT"));
 
             verify(expenseClaimService).createExpenseClaim(eq(employeeId), any(ExpenseClaimRequest.class));
@@ -207,7 +207,7 @@ class ExpenseClaimControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.title").value("Updated Business Trip Expenses"))
+                    .andExpect(jsonPath("$.description").value("Updated Business Trip Expenses"))
                     .andExpect(jsonPath("$.amount").value(2000.0));
 
             verify(expenseClaimService).updateExpenseClaim(eq(claimId), any(ExpenseClaimRequest.class));
@@ -355,7 +355,7 @@ class ExpenseClaimControllerTest {
             mockMvc.perform(get("/api/v1/expenses/{claimId}", claimId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(claimId.toString()))
-                    .andExpect(jsonPath("$.title").value("Business Trip Expenses"));
+                    .andExpect(jsonPath("$.description").value("Business Trip Expenses"));
 
             verify(expenseClaimService).getExpenseClaim(claimId);
         }

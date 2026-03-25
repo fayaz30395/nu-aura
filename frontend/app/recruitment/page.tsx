@@ -263,7 +263,7 @@ export default function RecruitmentDashboard() {
             <SkeletonStatCard />
             <SkeletonStatCard />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <SkeletonCard />
             <SkeletonCard />
           </div>
@@ -319,7 +319,7 @@ export default function RecruitmentDashboard() {
         {/* Page Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Recruitment Dashboard
             </h1>
             <p className="text-[var(--text-muted)] mt-2 skeuo-deboss">
@@ -450,7 +450,7 @@ export default function RecruitmentDashboard() {
         </motion.div>
 
         {/* Main Content Grid */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Active Openings Card */}
           <Card className="h-fit">
             <CardHeader className="pb-4">

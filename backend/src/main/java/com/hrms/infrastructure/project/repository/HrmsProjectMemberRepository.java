@@ -25,4 +25,6 @@ public interface HrmsProjectMemberRepository extends JpaRepository<ProjectMember
     Optional<ProjectMember> findByTenantIdAndProjectIdAndEmployeeId(UUID tenantId, UUID projectId, UUID employeeId);
 
     List<ProjectMember> findByTenantIdAndCanApproveTime(UUID tenantId, Boolean canApproveTime);
+
+    List<ProjectMember> findByTenantIdAndEmployeeIdInAndIsActive(UUID tenantId, List<UUID> employeeIds, Boolean isActive);
 }

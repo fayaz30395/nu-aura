@@ -105,7 +105,7 @@ export default function TaxDeclarationsPage() {
         }
     };
 
-    const declarations = data ?? [];
+    const declarations = Array.isArray(data) ? data : [];
 
     const statusColor = (status: DeclarationStatus) => {
         switch (status) {

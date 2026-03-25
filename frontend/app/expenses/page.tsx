@@ -395,7 +395,7 @@ export default function ExpenseClaims() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+            <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
               <DollarSign className="w-7 h-7 sm:w-8 sm:h-8" />
               Expense Claims
             </h1>
@@ -565,8 +565,8 @@ export default function ExpenseClaims() {
 
         {/* New Claim Form */}
         {showForm && (
-          <div className="skeuo-card p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4 skeuo-emboss">Create New Expense Claim</h2>
+          <div className="skeuo-card p-4 mb-4">
+            <h2 className="text-base font-semibold mb-3 skeuo-emboss">Create New Expense Claim</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim Date</label>
@@ -778,11 +778,11 @@ export default function ExpenseClaims() {
 
         {/* Content Area */}
         {activeTab === 'analytics' ? (
-          <div className="skeuo-card !rounded-t-none p-6">
+          <div className="skeuo-card !rounded-t-none p-4">
             <ExpenseAnalytics claims={currentClaimsData} />
           </div>
         ) : (
-        <div className="skeuo-card !rounded-t-none p-6">
+        <div className="skeuo-card !rounded-t-none p-4">
           {/* Select All Header for Pending Tab */}
           {activeTab === 'pending' && filteredClaims.filter(c => c.status === 'SUBMITTED').length > 0 && (
             <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)]">

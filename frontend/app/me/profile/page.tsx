@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   User,
   Mail,
@@ -25,39 +28,72 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyEmployee, useUpdateMyProfile } from '@/lib/hooks/queries';
-import { UpdateEmployeeRequest } from '@/lib/types/employee';
 import { getInitials } from '@/lib/utils';
 import { createLogger } from '@/lib/utils/logger';
 import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
 
 const log = createLogger('ProfilePage');
 
-interface BankChangeRequestData {
-  bankName: string;
-  bankAccountNumber: string;
-  bankIfscCode: string;
-  reason: string;
-}
+const profileFormSchema = z.object({
+  personalEmail: z.string().email('Invalid email').optional().or(z.literal('')),
+  phoneNumber: z.string().optional().or(z.literal('')),
+  emergencyContactNumber: z.string().optional().or(z.literal('')),
+  address: z.string().optional().or(z.literal('')),
+  city: z.string().optional().or(z.literal('')),
+  state: z.string().optional().or(z.literal('')),
+  postalCode: z.string().optional().or(z.literal('')),
+  country: z.string().optional().or(z.literal('')),
+});
+
+type ProfileFormData = z.infer<typeof profileFormSchema>;
+
+const bankChangeSchema = z.object({
+  bankName: z.string().min(1, 'Bank name is required'),
+  bankAccountNumber: z.string().min(1, 'Account number is required'),
+  bankIfscCode: z.string().min(1, 'IFSC code is required'),
+  reason: z.string().min(1, 'Reason is required'),
+});
+
+type BankChangeFormData = z.infer<typeof bankChangeSchema>;
 
 export default function MyProfilePage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [editData, setEditData] = useState<UpdateEmployeeRequest>({});
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Bank change request state
   const [showBankChangeModal, setShowBankChangeModal] = useState(false);
-  const [bankChangeData, setBankChangeData] = useState<BankChangeRequestData>({
-    bankName: '',
-    bankAccountNumber: '',
-    bankIfscCode: '',
-    reason: '',
-  });
   const [bankChangeSubmitting, setBankChangeSubmitting] = useState(false);
   const [bankChangeSuccess, setBankChangeSuccess] = useState(false);
+
+  // React Hook Form for profile edit
+  const profileForm = useForm<ProfileFormData>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      personalEmail: '',
+      phoneNumber: '',
+      emergencyContactNumber: '',
+      address: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: '',
+    },
+  });
+
+  // React Hook Form for bank change request
+  const bankChangeForm = useForm<BankChangeFormData>({
+    resolver: zodResolver(bankChangeSchema),
+    defaultValues: {
+      bankName: '',
+      bankAccountNumber: '',
+      bankIfscCode: '',
+      reason: '',
+    },
+  });
 
   // React Query hooks — use /employees/me (no ID needed)
   const { data: employee, isLoading } = useMyEmployee(hasHydrated && isAuthenticated);
@@ -67,18 +103,18 @@ export default function MyProfilePage() {
   // Initialize edit data when employee data loads
   useEffect(() => {
     if (employee) {
-      setEditData({
-        personalEmail: employee.personalEmail,
-        phoneNumber: employee.phoneNumber,
-        emergencyContactNumber: employee.emergencyContactNumber,
-        address: employee.address,
-        city: employee.city,
-        state: employee.state,
-        postalCode: employee.postalCode,
-        country: employee.country,
+      profileForm.reset({
+        personalEmail: employee.personalEmail || '',
+        phoneNumber: employee.phoneNumber || '',
+        emergencyContactNumber: employee.emergencyContactNumber || '',
+        address: employee.address || '',
+        city: employee.city || '',
+        state: employee.state || '',
+        postalCode: employee.postalCode || '',
+        country: employee.country || '',
       });
     }
-  }, [employee]);
+  }, [employee, profileForm]);
 
   useEffect(() => {
     // Wait for hydration before checking authentication
@@ -93,12 +129,12 @@ export default function MyProfilePage() {
     }
   }, [isAuthenticated, hasHydrated, router]);
 
-  const handleSave = async () => {
+  const handleSave = async (data: ProfileFormData) => {
     if (!employee) return;
 
     try {
       setError(null);
-      await updateMutation.mutateAsync(editData);
+      await updateMutation.mutateAsync(data);
       setIsEditing(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -110,35 +146,35 @@ export default function MyProfilePage() {
 
   const handleCancel = () => {
     if (employee) {
-      setEditData({
-        personalEmail: employee.personalEmail,
-        phoneNumber: employee.phoneNumber,
-        emergencyContactNumber: employee.emergencyContactNumber,
-        address: employee.address,
-        city: employee.city,
-        state: employee.state,
-        postalCode: employee.postalCode,
-        country: employee.country,
+      profileForm.reset({
+        personalEmail: employee.personalEmail || '',
+        phoneNumber: employee.phoneNumber || '',
+        emergencyContactNumber: employee.emergencyContactNumber || '',
+        address: employee.address || '',
+        city: employee.city || '',
+        state: employee.state || '',
+        postalCode: employee.postalCode || '',
+        country: employee.country || '',
       });
     }
     setIsEditing(false);
     setError(null);
   };
 
-  const handleBankChangeRequest = async () => {
-    if (!employee || !bankChangeData.reason.trim()) return;
+  const handleBankChangeRequest = async (data: BankChangeFormData) => {
+    if (!employee) return;
 
     setBankChangeSubmitting(true);
     try {
       await employmentChangeRequestService.createChangeRequest({
         employeeId: employee.id,
-        reason: `Bank Details Change Request: ${bankChangeData.reason}\n\nNew Bank Name: ${bankChangeData.bankName}\nNew Account Number: ****${bankChangeData.bankAccountNumber.slice(-4)}\nNew IFSC: ${bankChangeData.bankIfscCode}`,
+        reason: `Bank Details Change Request: ${data.reason}\n\nNew Bank Name: ${data.bankName}\nNew Account Number: ****${data.bankAccountNumber.slice(-4)}\nNew IFSC: ${data.bankIfscCode}`,
       });
       setBankChangeSuccess(true);
       setTimeout(() => {
         setShowBankChangeModal(false);
         setBankChangeSuccess(false);
-        setBankChangeData({ bankName: '', bankAccountNumber: '', bankIfscCode: '', reason: '' });
+        bankChangeForm.reset();
       }, 2000);
     } catch (err: unknown) {
       log.error('Failed to submit bank change request:', err);
@@ -233,7 +269,7 @@ export default function MyProfilePage() {
                 Cancel
               </button>
               <button
-                onClick={handleSave}
+                onClick={profileForm.handleSubmit(handleSave)}
                 disabled={updateMutation.isPending}
                 className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
               >
@@ -378,8 +414,7 @@ export default function MyProfilePage() {
                 {isEditing ? (
                   <input
                     type="email"
-                    value={editData.personalEmail || ''}
-                    onChange={(e) => setEditData({ ...editData, personalEmail: e.target.value })}
+                    {...profileForm.register('personalEmail')}
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
@@ -395,8 +430,7 @@ export default function MyProfilePage() {
                 {isEditing ? (
                   <input
                     type="tel"
-                    value={editData.phoneNumber || ''}
-                    onChange={(e) => setEditData({ ...editData, phoneNumber: e.target.value })}
+                    {...profileForm.register('phoneNumber')}
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
@@ -412,10 +446,7 @@ export default function MyProfilePage() {
                 {isEditing ? (
                   <input
                     type="tel"
-                    value={editData.emergencyContactNumber || ''}
-                    onChange={(e) =>
-                      setEditData({ ...editData, emergencyContactNumber: e.target.value })
-                    }
+                    {...profileForm.register('emergencyContactNumber')}
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
                 ) : (
@@ -443,8 +474,7 @@ export default function MyProfilePage() {
                 </label>
                 {isEditing ? (
                   <textarea
-                    value={editData.address || ''}
-                    onChange={(e) => setEditData({ ...editData, address: e.target.value })}
+                    {...profileForm.register('address')}
                     rows={2}
                     className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                   />
@@ -462,8 +492,7 @@ export default function MyProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editData.city || ''}
-                      onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                      {...profileForm.register('city')}
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
@@ -479,8 +508,7 @@ export default function MyProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editData.state || ''}
-                      onChange={(e) => setEditData({ ...editData, state: e.target.value })}
+                      {...profileForm.register('state')}
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
@@ -498,8 +526,7 @@ export default function MyProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editData.postalCode || ''}
-                      onChange={(e) => setEditData({ ...editData, postalCode: e.target.value })}
+                      {...profileForm.register('postalCode')}
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
@@ -515,8 +542,7 @@ export default function MyProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editData.country || ''}
-                      onChange={(e) => setEditData({ ...editData, country: e.target.value })}
+                      {...profileForm.register('country')}
                       className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
                     />
                   ) : (
@@ -600,7 +626,7 @@ export default function MyProfilePage() {
                 </div>
                 <button
                   onClick={() => {
-                    setBankChangeData({
+                    bankChangeForm.reset({
                       bankName: employee.bankName || '',
                       bankAccountNumber: '',
                       bankIfscCode: employee.bankIfscCode || '',
@@ -723,11 +749,13 @@ export default function MyProfilePage() {
                     </label>
                     <input
                       type="text"
-                      value={bankChangeData.bankName}
-                      onChange={(e) => setBankChangeData({ ...bankChangeData, bankName: e.target.value })}
+                      {...bankChangeForm.register('bankName')}
                       placeholder="e.g., State Bank of India"
                       className="input-aura w-full px-3 py-2 rounded-lg"
                     />
+                    {bankChangeForm.formState.errors.bankName && (
+                      <p className="text-red-500 text-xs mt-1">{bankChangeForm.formState.errors.bankName.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -735,11 +763,13 @@ export default function MyProfilePage() {
                     </label>
                     <input
                       type="text"
-                      value={bankChangeData.bankAccountNumber}
-                      onChange={(e) => setBankChangeData({ ...bankChangeData, bankAccountNumber: e.target.value })}
+                      {...bankChangeForm.register('bankAccountNumber')}
                       placeholder="Enter full account number"
                       className="input-aura w-full px-3 py-2 rounded-lg font-mono"
                     />
+                    {bankChangeForm.formState.errors.bankAccountNumber && (
+                      <p className="text-red-500 text-xs mt-1">{bankChangeForm.formState.errors.bankAccountNumber.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -747,23 +777,27 @@ export default function MyProfilePage() {
                     </label>
                     <input
                       type="text"
-                      value={bankChangeData.bankIfscCode}
-                      onChange={(e) => setBankChangeData({ ...bankChangeData, bankIfscCode: e.target.value.toUpperCase() })}
+                      {...bankChangeForm.register('bankIfscCode')}
                       placeholder="e.g., SBIN0001234"
                       className="input-aura w-full px-3 py-2 rounded-lg font-mono uppercase"
                     />
+                    {bankChangeForm.formState.errors.bankIfscCode && (
+                      <p className="text-red-500 text-xs mt-1">{bankChangeForm.formState.errors.bankIfscCode.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Reason for Change *
                     </label>
                     <textarea
-                      value={bankChangeData.reason}
-                      onChange={(e) => setBankChangeData({ ...bankChangeData, reason: e.target.value })}
+                      {...bankChangeForm.register('reason')}
                       rows={3}
                       placeholder="e.g., Changed salary account to new bank"
                       className="input-aura w-full px-3 py-2 rounded-lg"
                     />
+                    {bankChangeForm.formState.errors.reason && (
+                      <p className="text-red-500 text-xs mt-1">{bankChangeForm.formState.errors.reason.message}</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -777,8 +811,8 @@ export default function MyProfilePage() {
                     Cancel
                   </button>
                   <button
-                    onClick={handleBankChangeRequest}
-                    disabled={bankChangeSubmitting || !bankChangeData.bankName || !bankChangeData.bankAccountNumber || !bankChangeData.bankIfscCode || !bankChangeData.reason.trim()}
+                    onClick={bankChangeForm.handleSubmit(handleBankChangeRequest)}
+                    disabled={bankChangeSubmitting}
                     className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
                   >
                     {bankChangeSubmitting ? (

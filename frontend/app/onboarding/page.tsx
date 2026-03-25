@@ -69,11 +69,11 @@ export default function OnboardingPage() {
             activeMenuItem="recruitment"
             breadcrumbs={[{ label: 'Onboarding', href: '/onboarding' }]}
         >
-            <div className="max-w-7xl mx-auto space-y-10 py-6">
+            <div className="max-w-7xl mx-auto space-y-6 py-4">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
-                        <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+                        <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                             Talent <span className="text-sky-700">Onboarding</span>
                         </h1>
                         <p className="text-[var(--text-muted)] font-bold max-w-md skeuo-deboss">
@@ -95,7 +95,7 @@ export default function OnboardingPage() {
                         <PermissionGate permission={Permissions.ONBOARDING_CREATE}>
                             <Button
                                 variant="primary"
-                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-sky-500/20 rounded-2xl py-6 px-8"
+                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-sky-500/20 rounded-xl py-3 px-5"
                                 leftIcon={<UserPlus className="h-4 w-4" />}
                                 onClick={() => router.push('/onboarding/new')}
                             >
@@ -106,7 +106,7 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {stats.map((stat, idx) => (
                         <motion.div
                             key={stat.label}
@@ -115,15 +115,15 @@ export default function OnboardingPage() {
                             transition={{ delay: idx * 0.1 }}
                         >
                             <Card className="skeuo-card border-0 shadow-2xl">
-                                <CardContent className="p-6 relative z-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className={`p-4 rounded-2xl ${stat.bg} ${stat.color}`}>
-                                            <stat.icon className="h-6 w-6" />
+                                <CardContent className="p-4 relative z-10">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color}`}>
+                                            <stat.icon className="h-5 w-5" />
                                         </div>
-                                        <TrendingUp className="h-4 w-4 text-emerald-500" />
+                                        <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
                                     </div>
-                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1 skeuo-deboss">{stat.label}</p>
-                                    <p className="text-3xl font-black text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5 skeuo-deboss">{stat.label}</p>
+                                    <p className="text-2xl font-black text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
                                 </CardContent>
                             </Card>
                         </motion.div>

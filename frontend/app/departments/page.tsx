@@ -11,6 +11,8 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Department, DepartmentRequest, DepartmentType } from '@/lib/types/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { SkeletonTable } from '@/components/ui/Loading';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
@@ -43,9 +45,10 @@ type DepartmentFormData = z.infer<typeof departmentSchema>;
 export default function DepartmentsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const toast = useToast();
 
-  // Form state
+  // Form state — ALL hooks must be called unconditionally before any returns
   const {
     register,
     handleSubmit,
@@ -97,6 +100,31 @@ export default function DepartmentsPage() {
       router.push('/auth/login');
     }
   }, [hasHydrated, isAuthenticated, router]);
+
+  // Redirect users without DEPARTMENT:VIEW permission
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.DEPARTMENT_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
+  // Show skeleton while permissions are loading
+  if (!permReady) {
+    return (
+      <AppLayout activeMenuItem="departments">
+        <div className="p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+            </div>
+            <SkeletonTable rows={5} columns={4} />
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   const onSubmit = async (data: DepartmentFormData) => {
     try {

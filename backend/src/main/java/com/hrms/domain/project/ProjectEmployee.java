@@ -1,48 +1,59 @@
 package com.hrms.domain.project;
 
-import com.hrms.common.entity.TenantAware;
-import com.hrms.domain.employee.Employee;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Entity mapped to the project_employees VIEW.
+ * This view is backed by the project_members table (see V55 migration).
+ * Does NOT extend BaseEntity/TenantAware because the view lacks
+ * created_by, updated_by, version, is_deleted, deleted_at columns.
+ */
 @Entity(name = "HrmsProjectEmployee")
-@Table(name = "project_employees", indexes = {
-    @Index(name = "idx_project_employees_tenant", columnList = "tenantId"),
-    @Index(name = "idx_project_employees_project", columnList = "projectId"),
-    @Index(name = "idx_project_employees_employee", columnList = "employeeId"),
-    @Index(name = "idx_project_employees_unique", columnList = "projectId,employeeId,tenantId", unique = true)
-})
+@Table(name = "project_employees")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class ProjectEmployee extends TenantAware {
+@Builder
+public class ProjectEmployee {
 
-    @Column(nullable = false)
+    @Id
+    @Column(name = "id", nullable = false)
+    private UUID id;
+
+    @Column(name = "tenant_id", nullable = false)
+    private UUID tenantId;
+
+    @Column(name = "project_id", nullable = false)
     private UUID projectId;
 
-    @Column(nullable = false)
+    @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(length = 100)
+    @Column(name = "role", length = 100)
     private String role;
 
-    @Column
+    @Column(name = "allocation_percentage")
     private Integer allocationPercentage;
 
-    @Column(nullable = false)
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public void deactivate() {
         this.isActive = false;

@@ -48,7 +48,10 @@ export const CandidateTableRow = memo(function CandidateTableRow({
   const router = useRouter();
 
   return (
-    <tr className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+    <tr
+      className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+      onClick={() => router.push(`/recruitment/candidates/${candidate.id}`)}
+    >
       {/* Candidate Info */}
       <td className="px-6 py-4">
         <div className="flex items-center">
@@ -97,7 +100,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       </td>
 
       {/* Actions */}
-      <td className="px-6 py-4 text-right">
+      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-end gap-1">
           <button
             onClick={() => onView(candidate)}

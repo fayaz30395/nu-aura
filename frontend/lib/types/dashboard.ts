@@ -452,3 +452,43 @@ export interface TeamAlert {
   createdAt: string;
   actionRequired: string;
 }
+
+// =============================================
+// MANAGER TEAM PROJECTS TYPES
+// =============================================
+
+export interface TeamMemberProjectAllocation {
+  projectId: string;
+  projectName: string;
+  projectCode: string;
+  role: string;
+  allocationPercentage: number;
+  startDate: string;
+  endDate: string | null;
+  projectStatus: 'IN_PROGRESS' | 'PLANNED' | 'DRAFT' | 'COMPLETED' | 'ON_HOLD';
+  projectPriority: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+}
+
+export interface TeamMemberWithProjects {
+  employeeId: string;
+  employeeName: string;
+  employeeCode: string;
+  designation: string;
+  level: string;
+  projects: TeamMemberProjectAllocation[];
+  totalAllocation: number;
+  isOverAllocated: boolean;
+}
+
+export interface TeamProjectsSummary {
+  totalReports: number;
+  allocatedCount: number;
+  unallocatedCount: number;
+  overAllocatedCount: number;
+  avgAllocation: number;
+}
+
+export interface ManagerTeamProjectsResponse {
+  teamMembers: TeamMemberWithProjects[];
+  summary: TeamProjectsSummary;
+}

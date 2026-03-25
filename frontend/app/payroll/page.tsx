@@ -116,21 +116,21 @@ export default function PayrollPage() {
           </div>
 
           {/* Navigation Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {SUB_PAGES.map(({ href, label, description, icon: Icon, gradient, hoverBorder, hoverText }) => (
               <button
                 key={href}
                 onClick={() => router.push(href)}
-                className={`group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg ${hoverBorder} transition-all duration-200 text-left skeuo-card`}
+                className={`group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg ${hoverBorder} transition-all duration-200 text-left skeuo-card`}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient} group-hover:scale-110 transition-transform duration-200`}>
-                    <Icon className="h-6 w-6 text-white" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`p-2.5 rounded-lg bg-gradient-to-br ${gradient} group-hover:scale-110 transition-transform duration-200`}>
+                    <Icon className="h-5 w-5 text-white" />
                   </div>
-                  <ChevronRight className={`h-5 w-5 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`} />
+                  <ChevronRight className={`h-4 w-4 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`} />
                 </div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1 skeuo-emboss">{label}</h3>
-                <p className="text-sm text-[var(--text-secondary)]">{description}</p>
+                <h3 className="text-base font-semibold text-[var(--text-primary)] mb-0.5 skeuo-emboss">{label}</h3>
+                <p className="text-xs text-[var(--text-secondary)]">{description}</p>
               </button>
             ))}
           </div>
