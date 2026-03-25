@@ -802,10 +802,10 @@ export default function BenefitsPage() {
 
         {/* Open Enrollment Banner */}
         <Card className="bg-gradient-to-r from-sky-500 to-sky-700">
-          <CardContent className="p-6">
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="text-white">
-                <h3 className="text-xl font-semibold">Open Enrollment Period</h3>
+                <h3 className="text-base font-semibold">Open Enrollment Period</h3>
                 <p className="mt-1 opacity-90">
                   November 1 - November 30, 2025. Review and update your benefits selections.
                 </p>

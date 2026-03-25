@@ -71,6 +71,7 @@ public class ProjectMember {
     public enum ProjectRole {
         PROJECT_MANAGER,
         TEAM_LEAD,
+        TECHNOLOGY_LEAD,
         DEVELOPER,
         SENIOR_DEVELOPER,
         JUNIOR_DEVELOPER,

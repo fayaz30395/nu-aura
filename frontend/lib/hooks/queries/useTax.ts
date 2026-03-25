@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { taxService } from '@/lib/services/tax.service';
-import { TaxDeclarationRequest } from '@/lib/types/tax';
+import { TaxDeclarationRequest, TaxDeclarationResponse } from '@/lib/types/tax';
 import { notifications } from '@mantine/notifications';
 
 // Query keys for cache management
@@ -21,8 +21,17 @@ export function useTaxDeclarations(
 ) {
   return useQuery({
     queryKey: taxKeys.list(page, size),
-    queryFn: () => taxService.getAll({ page, size }),
+    queryFn: async () => {
+      const result = await taxService.getAll({ page, size });
+      // Defensive: ensure we always return an array regardless of backend response shape
+      if (Array.isArray(result)) return result;
+      if (result && typeof result === 'object' && 'content' in result && Array.isArray((result as Record<string, unknown>).content)) {
+        return (result as Record<string, unknown>).content as TaxDeclarationResponse[];
+      }
+      return [];
+    },
     staleTime: 2 * 60 * 1000, // 2 minutes
+    placeholderData: [] as TaxDeclarationResponse[],
   });
 }
 

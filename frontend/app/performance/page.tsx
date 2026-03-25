@@ -293,24 +293,24 @@ export default function PerformancePage() {
       )}
 
       {/* Module Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {performanceModules.map((module) => (
           <PermissionGate key={module.id} permission={Permissions.REVIEW_VIEW} fallback={null}>
           <Link
             href={module.href}
             aria-label={`Go to ${module.title} management`}
-            className="group card-interactive rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
+            className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
           >
-            <div className="p-6">
-              <div className="flex items-start gap-4">
-                <div className={`p-4 rounded-lg ${module.lightColor}`}>
-                  <module.icon className={`h-6 w-6 ${module.textColor}`} />
+            <div className="p-4">
+              <div className="flex items-start gap-3">
+                <div className={`p-2.5 rounded-lg ${module.lightColor}`}>
+                  <module.icon className={`h-5 w-5 ${module.textColor}`} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {module.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)] mt-1">{module.description}</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5">{module.description}</p>
                 </div>
               </div>
             </div>
@@ -321,8 +321,8 @@ export default function PerformancePage() {
       </div>
 
       {/* Getting Started Section */}
-      <div className="mt-8 skeuo-card rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4 skeuo-emboss">Getting Started</h2>
+      <div className="mt-6 skeuo-card rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4">
+        <h2 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-3 skeuo-emboss">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />

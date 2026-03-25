@@ -1,10 +1,11 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { feedback360Service } from '@/lib/services/feedback360.service';
+import type { CycleRequest, FeedbackResponse } from '@/lib/services/feedback360.service';
 import { performanceKeys } from './performanceKeys';
 
-// ─── 360 Feedback Hooks ───────────────────────────────────────────────────
+// ─── 360 Feedback Query Hooks ────────────────────────────────────────────
 
 export function useActiveFeedback360Cycles() {
   return useQuery({
@@ -27,5 +28,67 @@ export function useMyFeedback360Summaries() {
     queryKey: [...performanceKeys.feedback360(), 'my-summaries'],
     queryFn: () => feedback360Service.getMySummaries(),
     staleTime: 10 * 60 * 1000,
+  });
+}
+
+// ─── 360 Feedback Mutation Hooks ─────────────────────────────────────────
+
+export function useCreateFeedback360Cycle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CycleRequest) => feedback360Service.createCycle(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: performanceKeys.feedback360Cycles() });
+    },
+  });
+}
+
+export function useActivateFeedback360Cycle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => feedback360Service.activateCycle(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: performanceKeys.feedback360Cycles() });
+    },
+  });
+}
+
+export function useCloseFeedback360Cycle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => feedback360Service.closeCycle(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: performanceKeys.feedback360Cycles() });
+    },
+  });
+}
+
+export function useDeleteFeedback360Cycle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => feedback360Service.deleteCycle(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: performanceKeys.feedback360Cycles() });
+    },
+  });
+}
+
+export function useSubmitFeedback360Response() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: FeedbackResponse) => feedback360Service.submitResponse(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: performanceKeys.feedback360() });
+    },
+  });
+}
+
+export function useShareFeedback360Summary() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (summaryId: string) => feedback360Service.shareWithEmployee(summaryId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: performanceKeys.feedback360() });
+    },
   });
 }

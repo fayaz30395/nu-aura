@@ -161,9 +161,9 @@ export default function LoansPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="skeuo-card p-5">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600">
+          <div className="skeuo-card p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600">
                 <CreditCard className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -171,15 +171,15 @@ export default function LoansPage() {
               Active Loans
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
+              <span className="text-2xl font-bold text-[var(--text-primary)]">
                 {summary.activeLoans}
               </span>
             </div>
           </div>
 
-          <div className="skeuo-card p-5">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
+          <div className="skeuo-card p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-red-500 to-red-600">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -187,15 +187,15 @@ export default function LoansPage() {
               Outstanding Balance
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
+              <span className="text-2xl font-bold text-[var(--text-primary)]">
                 {loanService.formatCurrency(summary.totalOutstanding)}
               </span>
             </div>
           </div>
 
-          <div className="skeuo-card p-5">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
+          <div className="skeuo-card p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-green-500 to-green-600">
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -203,15 +203,15 @@ export default function LoansPage() {
               Total Repaid
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
+              <span className="text-2xl font-bold text-[var(--text-primary)]">
                 {loanService.formatCurrency(summary.totalRepaid)}
               </span>
             </div>
           </div>
 
-          <div className="skeuo-card p-5">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
+          <div className="skeuo-card p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600">
                 <Clock className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -219,7 +219,7 @@ export default function LoansPage() {
               Pending Approvals
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-[var(--text-primary)]">
+              <span className="text-2xl font-bold text-[var(--text-primary)]">
                 {summary.pendingApprovals}
               </span>
             </div>
@@ -228,8 +228,8 @@ export default function LoansPage() {
 
         {/* Loans List */}
         <div className="skeuo-card overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-main)]">
+            <h2 className="text-base font-semibold text-[var(--text-primary)]">
               My Loans
             </h2>
           </div>
@@ -338,7 +338,7 @@ export default function LoansPage() {
           <PermissionGate permission={Permissions.LOAN_CREATE}>
             <button
               onClick={() => router.push('/loans/new')}
-              className="group card-interactive p-6 text-left"
+              className="group card-interactive p-4 text-left"
             >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 group-hover:scale-110 transition-transform">
@@ -357,7 +357,7 @@ export default function LoansPage() {
 
           <button
             onClick={() => router.push('/loans?filter=active')}
-            className="group card-interactive p-6 text-left"
+            className="group card-interactive p-4 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">

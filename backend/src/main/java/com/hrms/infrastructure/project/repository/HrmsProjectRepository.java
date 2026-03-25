@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,4 +37,6 @@ public interface HrmsProjectRepository extends JpaRepository<Project, UUID> {
             "LOWER(p.projectCode) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(p.clientName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Project> searchProjects(@Param("tenantId") UUID tenantId, @Param("search") String search, Pageable pageable);
+
+    List<Project> findAllByTenantIdAndIdIn(UUID tenantId, List<UUID> ids);
 }

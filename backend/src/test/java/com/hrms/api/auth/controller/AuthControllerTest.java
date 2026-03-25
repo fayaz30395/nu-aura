@@ -258,7 +258,7 @@ class AuthControllerTest {
             ForgotPasswordRequest request = new ForgotPasswordRequest();
             request.setEmail("john.doe@example.com");
 
-            doNothing().when(authService).requestPasswordReset(anyString());
+            when(authService.requestPasswordReset(anyString())).thenReturn("reset-token");
 
             mockMvc.perform(post("/api/v1/auth/forgot-password")
                             .contentType(MediaType.APPLICATION_JSON)

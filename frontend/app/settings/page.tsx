@@ -29,14 +29,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useDarkMode } from '@/components/layout/DarkModeProvider';
 // authApi removed — Google SSO only, no password change endpoint needed
-import { notificationsApi } from '@/lib/api/notifications';
+import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/lib/hooks/queries/useNotifications';
 
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const { isDark, toggleDarkMode } = useDarkMode();
-  const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -45,12 +44,14 @@ export default function SettingsPage() {
   }, []);
   const [activeNotificationTab, setActiveNotificationTab] = useState<'channels' | 'categories'>('channels');
 
-  // Notification Channel Settings
+  // React Query hooks for notification preferences
+  const { data: prefsData } = useNotificationPreferences(hasHydrated && isAuthenticated);
+  const updatePrefsMutation = useUpdateNotificationPreferences();
+
+  // Local state for notification toggles (initialized from React Query data)
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
-
-  // Notification Category Settings
   const [leaveNotifications, setLeaveNotifications] = useState(true);
   const [attendanceNotifications, setAttendanceNotifications] = useState(true);
   const [payrollNotifications, setPayrollNotifications] = useState(true);
@@ -60,61 +61,37 @@ export default function SettingsPage() {
   const [anniversaryNotifications, setAnniversaryNotifications] = useState(true);
   const [systemAlertNotifications, setSystemAlertNotifications] = useState(true);
 
-  const [_preferencesLoaded, setPreferencesLoaded] = useState(false);
+  // Sync React Query data to local state when preferences load
+  React.useEffect(() => {
+    if (prefsData) {
+      setEmailNotifications(prefsData.emailEnabled ?? true);
+      setPushNotifications(prefsData.pushEnabled ?? true);
+      setSmsNotifications(prefsData.smsEnabled ?? false);
+      setLeaveNotifications(prefsData.leaveNotifications ?? true);
+      setAttendanceNotifications(prefsData.attendanceNotifications ?? true);
+      setPayrollNotifications(prefsData.payrollNotifications ?? true);
+      setPerformanceNotifications(prefsData.performanceNotifications ?? true);
+      setAnnouncementNotifications(prefsData.announcementNotifications ?? true);
+      setBirthdayNotifications(prefsData.birthdayNotifications ?? true);
+      setAnniversaryNotifications(prefsData.anniversaryNotifications ?? true);
+      setSystemAlertNotifications(prefsData.systemAlertNotifications ?? true);
+    }
+  }, [prefsData]);
 
   // Password Change removed — Google SSO handles auth for @nulogic.io domain
 
   React.useEffect(() => {
-    // Wait for hydration before checking authentication
-    if (!hasHydrated) {
-      return;
-    }
-
-    // Tokens are stored in httpOnly cookies — Zustand `isAuthenticated` is the
-    // sole source of truth. Do NOT check localStorage for access/refresh tokens.
+    if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
 
-  // Load notification preferences on mount
-  React.useEffect(() => {
-    if (!isAuthenticated || !hasHydrated) return;
-
-    const loadPreferences = async () => {
-      try {
-        const prefs = await notificationsApi.getPreferences();
-        // Channel settings
-        setEmailNotifications(prefs.emailEnabled ?? prefs.emailNotifications ?? true);
-        setPushNotifications(prefs.pushEnabled ?? prefs.pushNotifications ?? true);
-        setSmsNotifications(prefs.smsEnabled ?? prefs.smsNotifications ?? false);
-        // Category settings
-        setLeaveNotifications(prefs.leaveNotifications ?? true);
-        setAttendanceNotifications(prefs.attendanceNotifications ?? true);
-        setPayrollNotifications(prefs.payrollNotifications ?? true);
-        setPerformanceNotifications(prefs.performanceNotifications ?? true);
-        setAnnouncementNotifications(prefs.announcementNotifications ?? true);
-        setBirthdayNotifications(prefs.birthdayNotifications ?? true);
-        setAnniversaryNotifications(prefs.anniversaryNotifications ?? true);
-        setSystemAlertNotifications(prefs.systemAlertNotifications ?? true);
-        setPreferencesLoaded(true);
-      } catch (err) {
-        logger.error('Failed to load notification preferences:', err);
-        setPreferencesLoaded(true);
-      }
-    };
-
-    loadPreferences();
-  }, [isAuthenticated, hasHydrated]);
-
-  // handlePasswordChange removed — Google SSO only
-
   const handleNotificationSave = async () => {
     try {
-      setIsSavingNotifications(true);
       setError(null);
 
-      await notificationsApi.updatePreferences({
+      await updatePrefsMutation.mutateAsync({
         emailEnabled: emailNotifications,
         emailNotifications,
         pushEnabled: pushNotifications,
@@ -137,8 +114,6 @@ export default function SettingsPage() {
     } catch (err: unknown) {
       logger.error('Failed to save notification preferences:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save preferences');
-    } finally {
-      setIsSavingNotifications(false);
     }
   };
 
@@ -468,10 +443,10 @@ export default function SettingsPage() {
               <div className="flex justify-end pt-4 border-t border-[var(--border-main)]">
                 <button
                   onClick={handleNotificationSave}
-                  disabled={isSavingNotifications}
+                  disabled={updatePrefsMutation.isPending}
                   className="flex items-center gap-2 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 skeuo-button"
                 >
-                  {isSavingNotifications ? (
+                  {updatePrefsMutation.isPending ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       Saving...

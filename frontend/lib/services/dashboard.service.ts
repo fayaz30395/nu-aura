@@ -1,5 +1,5 @@
 import { apiClient } from '../api/client';
-import { ExecutiveDashboardData, EmployeeDashboardData, ManagerDashboardResponse } from '../types/dashboard';
+import { ExecutiveDashboardData, EmployeeDashboardData, ManagerDashboardResponse, ManagerTeamProjectsResponse } from '../types/dashboard';
 
 class DashboardService {
   /**
@@ -56,6 +56,15 @@ class DashboardService {
    */
   async getManagerDashboardById(managerId: string): Promise<ManagerDashboardResponse> {
     const response = await apiClient.get<ManagerDashboardResponse>(`/dashboards/manager/${managerId}`);
+    return response.data;
+  }
+
+  /**
+   * Get Team Projects & Allocations for the current manager
+   * Shows what each direct report is working on with allocation percentages
+   */
+  async getManagerTeamProjects(): Promise<ManagerTeamProjectsResponse> {
+    const response = await apiClient.get<ManagerTeamProjectsResponse>('/dashboards/manager/team-projects');
     return response.data;
   }
 }

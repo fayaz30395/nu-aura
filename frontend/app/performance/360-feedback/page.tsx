@@ -28,8 +28,13 @@ import {
   useActiveFeedback360Cycles,
   useMyPending360Reviews,
   useMyFeedback360Summaries,
+  useCreateFeedback360Cycle,
+  useActivateFeedback360Cycle,
+  useCloseFeedback360Cycle,
+  useDeleteFeedback360Cycle,
+  useSubmitFeedback360Response,
+  useShareFeedback360Summary,
 } from '@/lib/hooks/queries/usePerformance';
-import { feedback360Service } from '@/lib/services/feedback360.service';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { createLogger } from '@/lib/utils/logger';
 import { PermissionGate } from '@/components/auth/PermissionGate';
@@ -95,15 +100,17 @@ export default function Feedback360Page() {
   const [activeTab, setActiveTab] = useState<'cycles' | 'pending' | 'summaries'>('cycles');
 
   // React Query hooks
-  const { data: cyclesData, isLoading: cyclesLoading, refetch: refetchCycles } = useActiveFeedback360Cycles();
-  const { data: pendingData, isLoading: pendingLoading, refetch: refetchPending } = useMyPending360Reviews();
-  const { data: summariesData, isLoading: summariesLoading, refetch: refetchSummaries } = useMyFeedback360Summaries();
+  const { data: cyclesData, isLoading: cyclesLoading } = useActiveFeedback360Cycles();
+  const { data: pendingData, isLoading: pendingLoading } = useMyPending360Reviews();
+  const { data: summariesData, isLoading: summariesLoading } = useMyFeedback360Summaries();
 
-  const fetchData = () => {
-    void refetchCycles();
-    void refetchPending();
-    void refetchSummaries();
-  };
+  // Mutation hooks
+  const createCycleMutation = useCreateFeedback360Cycle();
+  const activateCycleMutation = useActivateFeedback360Cycle();
+  const closeCycleMutation = useCloseFeedback360Cycle();
+  const deleteCycleMutation = useDeleteFeedback360Cycle();
+  const submitResponseMutation = useSubmitFeedback360Response();
+  const shareSummaryMutation = useShareFeedback360Summary();
 
   const cycles = cyclesData || [];
   const pendingReviews = pendingData || [];
@@ -151,10 +158,9 @@ export default function Feedback360Page() {
 
   const handleCreateCycle = async () => {
     try {
-      await feedback360Service.createCycle(cycleForm);
+      await createCycleMutation.mutateAsync(cycleForm);
       setShowCycleModal(false);
       resetCycleForm();
-      fetchData();
     } catch (err) {
       log.error('Error creating cycle:', err);
       setError('Failed to create cycle');
@@ -163,8 +169,7 @@ export default function Feedback360Page() {
 
   const handleActivateCycle = async (id: string) => {
     try {
-      await feedback360Service.activateCycle(id);
-      fetchData();
+      await activateCycleMutation.mutateAsync(id);
     } catch (err) {
       log.error('Error activating cycle:', err);
       setError('Failed to activate cycle');
@@ -173,8 +178,7 @@ export default function Feedback360Page() {
 
   const handleCloseCycle = async (id: string) => {
     try {
-      await feedback360Service.closeCycle(id);
-      fetchData();
+      await closeCycleMutation.mutateAsync(id);
     } catch (err) {
       log.error('Error closing cycle:', err);
       setError('Failed to close cycle');
@@ -183,8 +187,7 @@ export default function Feedback360Page() {
 
   const handleDeleteCycle = async (id: string) => {
     try {
-      await feedback360Service.deleteCycle(id);
-      fetchData();
+      await deleteCycleMutation.mutateAsync(id);
     } catch (err) {
       log.error('Error deleting cycle:', err);
       setError('Failed to delete cycle');
@@ -193,14 +196,13 @@ export default function Feedback360Page() {
 
   const handleSubmitResponse = async (isDraft: boolean = false) => {
     try {
-      await feedback360Service.submitResponse({
+      await submitResponseMutation.mutateAsync({
         ...responseForm,
         isDraft,
       });
       setShowResponseModal(false);
       setSelectedRequest(null);
       resetResponseForm();
-      fetchData();
     } catch (err) {
       log.error('Error submitting response:', err);
       setError('Failed to submit response');
@@ -209,8 +211,7 @@ export default function Feedback360Page() {
 
   const handleShareSummary = async (summaryId: string) => {
     try {
-      await feedback360Service.shareWithEmployee(summaryId);
-      fetchData();
+      await shareSummaryMutation.mutateAsync(summaryId);
     } catch (err) {
       log.error('Error sharing summary:', err);
       setError('Failed to share summary');

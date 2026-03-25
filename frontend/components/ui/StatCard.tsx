@@ -185,7 +185,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           ref={ref}
           onClick={onAction}
           className={cn(
-            'group relative overflow-hidden rounded-2xl border p-6 transition-all duration-300',
+            'group relative overflow-hidden rounded-xl border p-4 transition-all duration-300',
             config.bg,
             config.border,
             isClickable && 'cursor-pointer hover:shadow-lg',
@@ -202,11 +202,11 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         </div>
 
         {/* Header Row */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-3">
           {icon && (
             <div
               className={cn(
-                'flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110',
+                'flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110',
                 config.iconBg,
                 config.iconColor
               )}
@@ -241,7 +241,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         </p>
 
         {/* Value */}
-        <p className="text-3xl font-bold text-[var(--text-primary)] mb-1 tracking-tight">
+        <p className="text-2xl font-bold text-[var(--text-primary)] mb-1 tracking-tight">
           {value}
         </p>
 
@@ -254,7 +254,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 
         {/* Action Link */}
         {actionLabel && (
-          <div className="mt-4 pt-4 border-t border-surface-200/50 dark:border-surface-700/50">
+          <div className="mt-3 pt-3 border-t border-surface-200/50 dark:border-surface-700/50">
             <button className={cn(
               'flex items-center gap-1.5 text-sm font-medium transition-colors',
               config.iconColor,

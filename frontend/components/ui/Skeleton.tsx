@@ -254,7 +254,7 @@ function SkeletonDashboard({
     ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
     return (
-        <div className={cn("space-y-6", className)} {...props}>
+        <div className={cn("space-y-4", className)} {...props}>
             {/* Stats row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -262,7 +262,7 @@ function SkeletonDashboard({
                 ))}
             </div>
             {/* Charts/content row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div
                     className="rounded-xl border p-4"
                     style={{
@@ -270,8 +270,8 @@ function SkeletonDashboard({
                         borderColor: 'var(--border-main)',
                     }}
                 >
-                    <Skeleton height={20} width={128} className="mb-4" />
-                    <Skeleton height={256} width="100%" />
+                    <Skeleton height={16} width={128} className="mb-3" />
+                    <Skeleton height={200} width="100%" />
                 </div>
                 <div
                     className="rounded-xl border p-4"

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Plus,
   Pencil,
@@ -34,6 +37,31 @@ import type { Objective, KeyResult, ObjectiveRequest, KeyResultRequest } from '@
 const OBJECTIVE_LEVELS = ['COMPANY', 'DEPARTMENT', 'TEAM', 'INDIVIDUAL'] as const;
 const OBJECTIVE_STATUSES = ['DRAFT', 'ACTIVE', 'ON_TRACK', 'AT_RISK', 'BEHIND', 'COMPLETED', 'CANCELLED'] as const;
 const MEASUREMENT_TYPES = ['PERCENTAGE', 'NUMBER', 'CURRENCY', 'BINARY', 'MILESTONE'] as const;
+
+const objectiveFormSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().optional().or(z.literal('')),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+  objectiveLevel: z.string().min(1),
+  weight: z.number().min(0).max(10),
+  isStretchGoal: z.boolean(),
+});
+
+type ObjectiveFormData = z.infer<typeof objectiveFormSchema>;
+
+const keyResultFormSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().optional().or(z.literal('')),
+  measurementType: z.string().min(1),
+  startValue: z.number(),
+  targetValue: z.number().min(0.01, 'Target value must be greater than 0'),
+  measurementUnit: z.string().optional().or(z.literal('')),
+  weight: z.number().min(0).max(10),
+  dueDate: z.string().optional().or(z.literal('')),
+});
+
+type KeyResultFormData = z.infer<typeof keyResultFormSchema>;
 
 const getLevelIcon = (level: string) => {
   switch (level) {
@@ -116,24 +144,31 @@ export default function OKRPage() {
   const [deleteObjectiveConfirm, setDeleteObjectiveConfirm] = useState<string | null>(null);
   const [deleteKeyResultConfirm, setDeleteKeyResultConfirm] = useState<string | null>(null);
 
-  const [objectiveForm, setObjectiveForm] = useState<ObjectiveRequest>({
-    title: '',
-    description: '',
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    objectiveLevel: 'INDIVIDUAL',
-    weight: 1,
-    isStretchGoal: false,
+  const objectiveForm = useForm<ObjectiveFormData>({
+    resolver: zodResolver(objectiveFormSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      objectiveLevel: 'INDIVIDUAL',
+      weight: 1,
+      isStretchGoal: false,
+    },
   });
 
-  const [keyResultForm, setKeyResultForm] = useState<KeyResultRequest>({
-    title: '',
-    description: '',
-    measurementType: 'PERCENTAGE',
-    startValue: 0,
-    targetValue: 100,
-    measurementUnit: '%',
-    weight: 1,
+  const keyResultForm = useForm<KeyResultFormData>({
+    resolver: zodResolver(keyResultFormSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      measurementType: 'PERCENTAGE',
+      startValue: 0,
+      targetValue: 100,
+      measurementUnit: '%',
+      weight: 1,
+      dueDate: '',
+    },
   });
 
   const toggleExpanded = (id: string) => {
@@ -148,15 +183,15 @@ export default function OKRPage() {
     });
   };
 
-  const handleCreateObjective = async () => {
-    await createObjectiveMutation.mutateAsync(objectiveForm);
+  const handleCreateObjective = async (data: ObjectiveFormData) => {
+    await createObjectiveMutation.mutateAsync(data as ObjectiveRequest);
     setShowObjectiveModal(false);
     resetObjectiveForm();
   };
 
-  const handleUpdateObjective = async () => {
+  const handleUpdateObjective = async (data: ObjectiveFormData) => {
     if (!editingObjective) return;
-    await updateObjectiveMutation.mutateAsync({ id: editingObjective.id, data: objectiveForm });
+    await updateObjectiveMutation.mutateAsync({ id: editingObjective.id, data: data as ObjectiveRequest });
     setShowObjectiveModal(false);
     setEditingObjective(null);
     resetObjectiveForm();
@@ -166,9 +201,9 @@ export default function OKRPage() {
     await deleteObjectiveMutation.mutateAsync(id);
   };
 
-  const handleAddKeyResult = async () => {
+  const handleAddKeyResult = async (data: KeyResultFormData) => {
     if (!selectedObjectiveId) return;
-    await addKeyResultMutation.mutateAsync({ objectiveId: selectedObjectiveId, data: keyResultForm });
+    await addKeyResultMutation.mutateAsync({ objectiveId: selectedObjectiveId, data: data as KeyResultRequest });
     setShowKeyResultModal(false);
     setSelectedObjectiveId(null);
     resetKeyResultForm();
@@ -183,7 +218,7 @@ export default function OKRPage() {
   };
 
   const resetObjectiveForm = () => {
-    setObjectiveForm({
+    objectiveForm.reset({
       title: '',
       description: '',
       startDate: new Date().toISOString().split('T')[0],
@@ -195,7 +230,7 @@ export default function OKRPage() {
   };
 
   const resetKeyResultForm = () => {
-    setKeyResultForm({
+    keyResultForm.reset({
       title: '',
       description: '',
       measurementType: 'PERCENTAGE',
@@ -203,12 +238,13 @@ export default function OKRPage() {
       targetValue: 100,
       measurementUnit: '%',
       weight: 1,
+      dueDate: '',
     });
   };
 
   const openEditObjective = (objective: Objective) => {
     setEditingObjective(objective);
-    setObjectiveForm({
+    objectiveForm.reset({
       title: objective.title,
       description: objective.description || '',
       startDate: objective.startDate.split('T')[0],
@@ -535,23 +571,20 @@ export default function OKRPage() {
                 </label>
                 <input
                   type="text"
-                  value={objectiveForm.title}
-                  onChange={(e) =>
-                    setObjectiveForm({ ...objectiveForm, title: e.target.value })
-                  }
+                  {...objectiveForm.register('title')}
                   className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="What do you want to achieve?"
                 />
+                {objectiveForm.formState.errors.title && (
+                  <p className="text-red-500 text-xs mt-1">{objectiveForm.formState.errors.title.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Description
                 </label>
                 <textarea
-                  value={objectiveForm.description}
-                  onChange={(e) =>
-                    setObjectiveForm({ ...objectiveForm, description: e.target.value })
-                  }
+                  {...objectiveForm.register('description')}
                   className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="Why is this important?"
@@ -564,10 +597,7 @@ export default function OKRPage() {
                   </label>
                   <input
                     type="date"
-                    value={objectiveForm.startDate}
-                    onChange={(e) =>
-                      setObjectiveForm({ ...objectiveForm, startDate: e.target.value })
-                    }
+                    {...objectiveForm.register('startDate')}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
@@ -577,10 +607,7 @@ export default function OKRPage() {
                   </label>
                   <input
                     type="date"
-                    value={objectiveForm.endDate}
-                    onChange={(e) =>
-                      setObjectiveForm({ ...objectiveForm, endDate: e.target.value })
-                    }
+                    {...objectiveForm.register('endDate')}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
@@ -591,10 +618,7 @@ export default function OKRPage() {
                     Level
                   </label>
                   <select
-                    value={objectiveForm.objectiveLevel}
-                    onChange={(e) =>
-                      setObjectiveForm({ ...objectiveForm, objectiveLevel: e.target.value })
-                    }
+                    {...objectiveForm.register('objectiveLevel')}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   >
                     {OBJECTIVE_LEVELS.map((level) => (
@@ -613,13 +637,7 @@ export default function OKRPage() {
                     min={0}
                     max={10}
                     step={0.1}
-                    value={objectiveForm.weight}
-                    onChange={(e) =>
-                      setObjectiveForm({
-                        ...objectiveForm,
-                        weight: parseFloat(e.target.value),
-                      })
-                    }
+                    {...objectiveForm.register('weight', { valueAsNumber: true })}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
@@ -628,10 +646,7 @@ export default function OKRPage() {
                 <input
                   type="checkbox"
                   id="isStretchGoal"
-                  checked={objectiveForm.isStretchGoal}
-                  onChange={(e) =>
-                    setObjectiveForm({ ...objectiveForm, isStretchGoal: e.target.checked })
-                  }
+                  {...objectiveForm.register('isStretchGoal')}
                   className="h-4 w-4 text-blue-600 border-[var(--border-strong)] rounded"
                 />
                 <label htmlFor="isStretchGoal" className="ml-2 text-sm text-[var(--text-primary)]">
@@ -651,8 +666,8 @@ export default function OKRPage() {
                 Cancel
               </button>
               <button
-                onClick={editingObjective ? handleUpdateObjective : handleCreateObjective}
-                disabled={!objectiveForm.title}
+                onClick={objectiveForm.handleSubmit(editingObjective ? handleUpdateObjective : handleCreateObjective)}
+                disabled={!objectiveForm.formState.isValid && objectiveForm.formState.isSubmitted}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 {editingObjective ? 'Update' : 'Create'}
@@ -676,23 +691,20 @@ export default function OKRPage() {
                 </label>
                 <input
                   type="text"
-                  value={keyResultForm.title}
-                  onChange={(e) =>
-                    setKeyResultForm({ ...keyResultForm, title: e.target.value })
-                  }
+                  {...keyResultForm.register('title')}
                   className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="What measurable outcome will you achieve?"
                 />
+                {keyResultForm.formState.errors.title && (
+                  <p className="text-red-500 text-xs mt-1">{keyResultForm.formState.errors.title.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Description
                 </label>
                 <textarea
-                  value={keyResultForm.description}
-                  onChange={(e) =>
-                    setKeyResultForm({ ...keyResultForm, description: e.target.value })
-                  }
+                  {...keyResultForm.register('description')}
                   className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={2}
                 />
@@ -703,10 +715,7 @@ export default function OKRPage() {
                     Measurement Type
                   </label>
                   <select
-                    value={keyResultForm.measurementType}
-                    onChange={(e) =>
-                      setKeyResultForm({ ...keyResultForm, measurementType: e.target.value })
-                    }
+                    {...keyResultForm.register('measurementType')}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   >
                     {MEASUREMENT_TYPES.map((type) => (
@@ -722,10 +731,7 @@ export default function OKRPage() {
                   </label>
                   <input
                     type="text"
-                    value={keyResultForm.measurementUnit}
-                    onChange={(e) =>
-                      setKeyResultForm({ ...keyResultForm, measurementUnit: e.target.value })
-                    }
+                    {...keyResultForm.register('measurementUnit')}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                     placeholder="%"
                   />
@@ -738,13 +744,7 @@ export default function OKRPage() {
                   </label>
                   <input
                     type="number"
-                    value={keyResultForm.startValue}
-                    onChange={(e) =>
-                      setKeyResultForm({
-                        ...keyResultForm,
-                        startValue: parseFloat(e.target.value),
-                      })
-                    }
+                    {...keyResultForm.register('startValue', { valueAsNumber: true })}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
@@ -754,15 +754,12 @@ export default function OKRPage() {
                   </label>
                   <input
                     type="number"
-                    value={keyResultForm.targetValue}
-                    onChange={(e) =>
-                      setKeyResultForm({
-                        ...keyResultForm,
-                        targetValue: parseFloat(e.target.value),
-                      })
-                    }
+                    {...keyResultForm.register('targetValue', { valueAsNumber: true })}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
+                  {keyResultForm.formState.errors.targetValue && (
+                    <p className="text-red-500 text-xs mt-1">{keyResultForm.formState.errors.targetValue.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
@@ -773,13 +770,7 @@ export default function OKRPage() {
                     min={0}
                     max={10}
                     step={0.1}
-                    value={keyResultForm.weight}
-                    onChange={(e) =>
-                      setKeyResultForm({
-                        ...keyResultForm,
-                        weight: parseFloat(e.target.value),
-                      })
-                    }
+                    {...keyResultForm.register('weight', { valueAsNumber: true })}
                     className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
@@ -790,10 +781,7 @@ export default function OKRPage() {
                 </label>
                 <input
                   type="date"
-                  value={keyResultForm.dueDate || ''}
-                  onChange={(e) =>
-                    setKeyResultForm({ ...keyResultForm, dueDate: e.target.value })
-                  }
+                  {...keyResultForm.register('dueDate')}
                   className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                 />
               </div>
@@ -810,8 +798,8 @@ export default function OKRPage() {
                 Cancel
               </button>
               <button
-                onClick={handleAddKeyResult}
-                disabled={!keyResultForm.title || !keyResultForm.targetValue}
+                onClick={keyResultForm.handleSubmit(handleAddKeyResult)}
+                disabled={!keyResultForm.formState.isValid && keyResultForm.formState.isSubmitted}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 Add Key Result

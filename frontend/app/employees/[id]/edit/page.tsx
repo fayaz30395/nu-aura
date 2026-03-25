@@ -5,12 +5,12 @@ import { useRouter, useParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { employeeService } from '@/lib/services/employee.service';
-import { departmentService } from '@/lib/services/department.service';
 import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
-import { Employee, UpdateEmployeeRequest, Department } from '@/lib/types/employee';
+import { UpdateEmployeeRequest } from '@/lib/types/employee';
 import { toGender, toEmploymentType, toEmployeeLevel, toJobRole, toEmployeeStatus } from '@/lib/utils/type-guards';
 import { CreateEmploymentChangeRequest } from '@/lib/types/employment-change-request';
+import { useEmployee, useManagers, useUpdateEmployee } from '@/lib/hooks/queries/useEmployees';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import { EntityType, CustomFieldValueRequest } from '@/lib/types/custom-fields';
 import { customFieldsApi } from '@/lib/api/custom-fields';
@@ -75,11 +75,16 @@ export default function EditEmployeePage() {
   const params = useParams();
   const employeeId = params.id as string;
 
-  const [employee, setEmployee] = useState<Employee | null>(null);
-  const [managers, setManagers] = useState<Employee[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // React Query hooks for data fetching
+  const { data: employee, isLoading: employeeLoading, error: employeeError } = useEmployee(employeeId);
+  const { data: managersData } = useManagers();
+  const { data: departmentsData } = useActiveDepartments();
+  const updateEmployeeMutation = useUpdateEmployee();
+
+  const managers = managersData || [];
+  const departments = departmentsData || [];
+  const loading = employeeLoading;
+  const [error, setError] = useState<string | null>(employeeError ? 'Failed to load employee' : null);
   const [currentTab, setCurrentTab] = useState('basic');
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, CustomFieldValueRequest>>({});
   const [changeRequestCreated, setChangeRequestCreated] = useState(false);
@@ -94,83 +99,49 @@ export default function EditEmployeePage() {
     resolver: zodResolver(updateEmployeeFormSchema),
   });
 
+  // Pre-populate form when employee data loads from React Query
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    loadEmployee();
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    loadManagers();
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    loadDepartments();
-    // The three load functions are intentionally omitted from deps:
-    // they only depend on `employeeId` (already listed) and stable service refs.
-    // Including them without useCallback would cause an infinite re-render loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employeeId]);
-
-  const loadEmployee = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await employeeService.getEmployee(employeeId);
-      setEmployee(data);
-
-      // Pre-populate form data
+    if (employee) {
       reset({
-        employeeCode: data.employeeCode,
-        firstName: data.firstName,
-        middleName: data.middleName || '',
-        lastName: data.lastName || '',
-        personalEmail: data.personalEmail || '',
-        phoneNumber: data.phoneNumber || '',
-        emergencyContactNumber: data.emergencyContactNumber || '',
-        dateOfBirth: data.dateOfBirth || '',
-        gender: data.gender,
-        address: data.address || '',
-        city: data.city || '',
-        state: data.state || '',
-        postalCode: data.postalCode || '',
-        country: data.country || '',
-        designation: data.designation,
-        level: data.level,
-        jobRole: data.jobRole,
-        departmentId: data.departmentId,
-        employmentType: data.employmentType,
-        confirmationDate: data.confirmationDate || '',
-        managerId: data.managerId || '',
-        dottedLineManager1Id: data.dottedLineManager1Id || '',
-        dottedLineManager2Id: data.dottedLineManager2Id || '',
-        status: data.status,
-        bankAccountNumber: data.bankAccountNumber || '',
-        bankName: data.bankName || '',
-        bankIfscCode: data.bankIfscCode || '',
-        taxId: data.taxId || '',
+        employeeCode: employee.employeeCode,
+        firstName: employee.firstName,
+        middleName: employee.middleName || '',
+        lastName: employee.lastName || '',
+        personalEmail: employee.personalEmail || '',
+        phoneNumber: employee.phoneNumber || '',
+        emergencyContactNumber: employee.emergencyContactNumber || '',
+        dateOfBirth: employee.dateOfBirth || '',
+        gender: employee.gender,
+        address: employee.address || '',
+        city: employee.city || '',
+        state: employee.state || '',
+        postalCode: employee.postalCode || '',
+        country: employee.country || '',
+        designation: employee.designation,
+        level: employee.level,
+        jobRole: employee.jobRole,
+        departmentId: employee.departmentId,
+        employmentType: employee.employmentType,
+        confirmationDate: employee.confirmationDate || '',
+        managerId: employee.managerId || '',
+        dottedLineManager1Id: employee.dottedLineManager1Id || '',
+        dottedLineManager2Id: employee.dottedLineManager2Id || '',
+        status: employee.status,
+        bankAccountNumber: employee.bankAccountNumber || '',
+        bankName: employee.bankName || '',
+        bankIfscCode: employee.bankIfscCode || '',
+        taxId: employee.taxId || '',
         changeRequestReason: '',
       });
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee');
-      log.error('Error loading employee:', err);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [employee, reset]);
 
-  const loadManagers = async () => {
-    try {
-      const response = await employeeService.getAllEmployees(0, 100);
-      setManagers(response.content);
-    } catch (err: unknown) {
-      log.error('Error loading managers:', err);
+  // Sync React Query error to local state
+  useEffect(() => {
+    if (employeeError) {
+      setError('Failed to load employee');
     }
-  };
-
-  const loadDepartments = async () => {
-    try {
-      const response = await departmentService.getActiveDepartments();
-      setDepartments(response);
-    } catch (err: unknown) {
-      log.error('Error loading departments:', err);
-    }
-  };
+  }, [employeeError]);
 
   // Check if employment fields have changed (these require HR approval)
   const hasEmploymentFieldChanges = (formData: UpdateEmployeeFormData): boolean => {
@@ -269,7 +240,7 @@ export default function EditEmployeePage() {
         }),
       };
 
-      await employeeService.updateEmployee(employeeId, submitData);
+      await updateEmployeeMutation.mutateAsync({ id: employeeId, data: submitData });
 
       // Save custom field values if any were modified
       const customFieldValueRequests = Object.values(customFieldValues).filter(

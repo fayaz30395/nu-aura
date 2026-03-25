@@ -289,8 +289,12 @@ function getErrorMessage(error: unknown): string {
 }
 
 /**
- * Create an error handler for React Query that shows toast notifications
- * This is applied globally via MutationCache so mutations don't need individual onError handlers
+ * Create an error handler for React Query that shows toast notifications.
+ *
+ * Applied globally via MutationCache.onError as a safety net.
+ * Many individual mutation hooks already call notifications.show() in their own
+ * onError — to prevent duplicate toasts, the global handler uses a stable
+ * notification `id` derived from the error message so Mantine deduplicates.
  */
 export function createQueryErrorHandler() {
   return (error: Error) => {
@@ -305,7 +309,12 @@ export function createQueryErrorHandler() {
       const message = getErrorMessage(error);
       const userMessage = getUserMessage(category, message);
 
+      // Use a stable id so Mantine deduplicates if the same error is shown
+      // by both the global handler and a hook-level onError.
+      const notificationId = `mutation-error-${message.slice(0, 80)}`;
+
       notifications.show({
+        id: notificationId,
         title: 'Error',
         message: userMessage,
         color: 'red',

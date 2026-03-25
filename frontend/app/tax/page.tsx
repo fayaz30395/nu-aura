@@ -24,30 +24,43 @@ import {
 import { useTaxDeclarations } from '@/lib/hooks/queries/useTax';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
-import type { DeclarationStatus } from '@/lib/types/tax';
+import type { DeclarationStatus, TaxDeclarationResponse } from '@/lib/types/tax';
 
 export default function TaxOverviewPage() {
   const router = useRouter();
-  const { data: declarations = [], isLoading, isError, error, refetch } = useTaxDeclarations(0, 100);
+  const { data: rawDeclarations, isLoading, isError, error, refetch } = useTaxDeclarations(0, 100);
+
+  // Safely extract declarations array — handles paginated objects, null, undefined
+  const safeDeclarations: TaxDeclarationResponse[] = (() => {
+    if (!rawDeclarations) return [];
+    if (Array.isArray(rawDeclarations)) return rawDeclarations;
+    // Handle Spring Boot paginated response that leaked through service layer
+    const raw = rawDeclarations as unknown as Record<string, unknown>;
+    if (raw && typeof raw === 'object' && Array.isArray(raw.content)) return raw.content as TaxDeclarationResponse[];
+    return [];
+  })();
+
+  const approvedCount = safeDeclarations.reduce((count, d) => d.status === ('APPROVED' as DeclarationStatus) ? count + 1 : count, 0);
+  const pendingCount = safeDeclarations.reduce((count, d) => (d.status === ('SUBMITTED' as DeclarationStatus) || d.status === ('DRAFT' as DeclarationStatus)) ? count + 1 : count, 0);
 
   const stats = [
     {
       label: 'Total Declarations',
-      value: declarations.length,
+      value: safeDeclarations.length,
       icon: FileSpreadsheet,
       color: 'text-blue-600 dark:text-blue-400',
       bg: 'bg-blue-50 dark:bg-blue-900/20',
     },
     {
       label: 'Approved',
-      value: declarations.filter((d) => d.status === ('APPROVED' as DeclarationStatus)).length,
+      value: approvedCount,
       icon: FileCheck,
       color: 'text-green-600 dark:text-green-400',
       bg: 'bg-green-50 dark:bg-green-900/20',
     },
     {
       label: 'Pending Review',
-      value: declarations.filter((d) => d.status === ('SUBMITTED' as DeclarationStatus) || d.status === ('DRAFT' as DeclarationStatus)).length,
+      value: pendingCount,
       icon: Clock,
       color: 'text-amber-600 dark:text-amber-400',
       bg: 'bg-amber-50 dark:bg-amber-900/20',
@@ -64,7 +77,7 @@ export default function TaxOverviewPage() {
     }
   };
 
-  const recentDeclarations = declarations.slice(0, 5);
+  const recentDeclarations = safeDeclarations.slice(0, 5);
 
   return (
     <AppLayout

@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useState, useEffect } from 'react';
+import { Notifications } from '@mantine/notifications';
 import { DarkModeProvider, MantineThemeProvider } from '@/components/layout';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { ToastProvider } from '@/components/ui/Toast';
@@ -16,6 +17,8 @@ import { initGlobalErrorHandlers, createQueryErrorHandler } from '@/lib/utils/er
 
 // Import Mantine core styles
 import '@mantine/core/styles.css';
+// Import Mantine notifications styles — required for notifications.show() to render
+import '@mantine/notifications/styles.css';
 
 const GOOGLE_CLIENT_ID = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
@@ -75,6 +78,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <NotificationsToastProvider>
           <DarkModeProvider>
             <MantineThemeProvider>
+              <Notifications position="top-right" autoClose={5000} />
               <WebSocketProvider>
                 <TokenRefreshManager>
                   {children}

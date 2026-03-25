@@ -2,13 +2,19 @@ package com.hrms.application.analytics.service;
 
 import com.hrms.api.analytics.dto.ManagerDashboardResponse;
 import com.hrms.api.analytics.dto.ManagerDashboardResponse.*;
+import com.hrms.api.analytics.dto.TeamProjectsResponse;
+import com.hrms.api.analytics.dto.TeamProjectsResponse.*;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.domain.project.Project;
+import com.hrms.domain.project.ProjectMember;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
+import com.hrms.infrastructure.project.repository.HrmsProjectMemberRepository;
+import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,9 +25,8 @@ import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +42,8 @@ public class ManagerDashboardService {
     private final EmployeeRepository employeeRepository;
     private final AttendanceRecordRepository attendanceRepository;
     private final LeaveRequestRepository leaveRequestRepository;
+    private final HrmsProjectMemberRepository projectMemberRepository;
+    private final HrmsProjectRepository projectRepository;
 
     /**
      * Get manager dashboard for the currently logged-in manager
@@ -428,5 +435,133 @@ public class ManagerDashboardService {
         }
 
         return alerts;
+    }
+
+    // ==================== TEAM PROJECTS ====================
+
+    /**
+     * Get team project allocations for the currently logged-in manager.
+     * Returns each direct report with their active project assignments.
+     */
+    @Transactional(readOnly = true)
+    public TeamProjectsResponse getTeamProjects() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID managerId = SecurityContext.getCurrentEmployeeId();
+
+        if (managerId == null) {
+            throw new IllegalStateException("Current user is not linked to an employee record");
+        }
+
+        return getTeamProjects(managerId);
+    }
+
+    /**
+     * Get team project allocations for a specific manager.
+     */
+    @Transactional(readOnly = true)
+    public TeamProjectsResponse getTeamProjects(UUID managerId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // Get direct reports only (not the full hierarchy)
+        List<UUID> directReportIds = employeeRepository.findEmployeeIdsByManagerIds(tenantId, List.of(managerId));
+
+        if (directReportIds.isEmpty()) {
+            return TeamProjectsResponse.builder()
+                    .teamMembers(new ArrayList<>())
+                    .summary(TeamProjectsSummary.builder()
+                            .totalReports(0)
+                            .allocatedCount(0)
+                            .unallocatedCount(0)
+                            .overAllocatedCount(0)
+                            .avgAllocation(0)
+                            .build())
+                    .build();
+        }
+
+        // Batch-fetch active project memberships for all direct reports
+        List<ProjectMember> allMemberships = projectMemberRepository
+                .findByTenantIdAndEmployeeIdInAndIsActive(tenantId, directReportIds, true);
+
+        // Collect all project IDs and batch-fetch projects
+        Set<UUID> projectIds = allMemberships.stream()
+                .map(ProjectMember::getProjectId)
+                .collect(Collectors.toSet());
+
+        Map<UUID, Project> projectMap = projectIds.isEmpty()
+                ? Collections.emptyMap()
+                : projectRepository.findAllByTenantIdAndIdIn(tenantId, new ArrayList<>(projectIds)).stream()
+                        .collect(Collectors.toMap(Project::getId, Function.identity()));
+
+        // Group memberships by employee
+        Map<UUID, List<ProjectMember>> membershipsByEmployee = allMemberships.stream()
+                .collect(Collectors.groupingBy(ProjectMember::getEmployeeId));
+
+        // Build team member DTOs
+        int totalAllocationSum = 0;
+        int allocatedCount = 0;
+        int overAllocatedCount = 0;
+
+        List<TeamMemberProjectsDto> teamMemberDtos = new ArrayList<>();
+
+        for (UUID empId : directReportIds) {
+            Employee emp = employeeRepository.findByIdAndTenantId(empId, tenantId).orElse(null);
+            if (emp == null) continue;
+
+            List<ProjectMember> empMemberships = membershipsByEmployee.getOrDefault(empId, Collections.emptyList());
+
+            List<EmployeeProjectAllocationDto> projectDtos = empMemberships.stream()
+                    .map(pm -> {
+                        Project project = projectMap.get(pm.getProjectId());
+                        return EmployeeProjectAllocationDto.builder()
+                                .projectId(pm.getProjectId())
+                                .projectName(project != null ? project.getName() : "Unknown")
+                                .projectCode(project != null ? project.getProjectCode() : null)
+                                .role(pm.getRole() != null ? pm.getRole().name() : null)
+                                .allocationPercentage(pm.getAllocationPercentage() != null
+                                        ? pm.getAllocationPercentage().intValue() : 0)
+                                .startDate(pm.getStartDate())
+                                .endDate(pm.getEndDate())
+                                .projectStatus(project != null ? project.getStatus().name() : null)
+                                .projectPriority(project != null ? project.getPriority().name() : null)
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+
+            int totalAlloc = projectDtos.stream()
+                    .mapToInt(EmployeeProjectAllocationDto::getAllocationPercentage)
+                    .sum();
+            boolean overAllocated = totalAlloc > 100;
+
+            teamMemberDtos.add(TeamMemberProjectsDto.builder()
+                    .employeeId(emp.getId())
+                    .employeeName(emp.getFirstName() + " " + (emp.getLastName() != null ? emp.getLastName() : ""))
+                    .employeeCode(emp.getEmployeeCode())
+                    .designation(emp.getDesignation())
+                    .level(emp.getLevel() != null ? emp.getLevel().name() : null)
+                    .avatarUrl(emp.getAvatarUrl())
+                    .projects(projectDtos)
+                    .totalAllocation(totalAlloc)
+                    .isOverAllocated(overAllocated)
+                    .build());
+
+            totalAllocationSum += totalAlloc;
+            if (!empMemberships.isEmpty()) allocatedCount++;
+            if (overAllocated) overAllocatedCount++;
+        }
+
+        int totalReports = teamMemberDtos.size();
+        int unallocatedCount = totalReports - allocatedCount;
+        int avgAllocation = totalReports > 0 ? totalAllocationSum / totalReports : 0;
+
+        return TeamProjectsResponse.builder()
+                .teamMembers(teamMemberDtos)
+                .summary(TeamProjectsSummary.builder()
+                        .totalReports(totalReports)
+                        .allocatedCount(allocatedCount)
+                        .unallocatedCount(unallocatedCount)
+                        .overAllocatedCount(overAllocatedCount)
+                        .avgAllocation(avgAllocation)
+                        .build())
+                .build();
     }
 }

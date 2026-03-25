@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { SkeletonTable } from '@/components/ui/Loading';
 import { Employee } from '@/lib/types/employee';
 
 interface TreeNode extends Employee {
@@ -11,11 +14,13 @@ interface TreeNode extends Employee {
 }
 
 export default function OrgChartPage() {
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [viewMode, setViewMode] = useState<'hierarchy' | 'department'>('hierarchy');
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [orgTree, setOrgTree] = useState<TreeNode[]>([]);
 
-  // React Query - fetch employees and departments
+  // React Query hooks — must be called unconditionally before any returns
   const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(0, 1000);
   const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
 
@@ -37,6 +42,31 @@ export default function OrgChartPage() {
     // infinite re-render loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employees, viewMode, selectedDepartment]);
+
+  // Redirect users without permission
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.ORG_STRUCTURE_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
+  // Show skeleton while permissions loading
+  if (!permReady || isLoading) {
+    return (
+      <AppLayout activeMenuItem="org-chart">
+        <div className="p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+            </div>
+            <SkeletonTable rows={5} columns={4} />
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   const buildOrgTree = () => {
     let filteredEmployees = employees;

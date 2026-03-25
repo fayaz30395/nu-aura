@@ -6,6 +6,7 @@ export type ProjectBillingType = 'TIME_AND_MATERIAL' | 'FIXED_PRICE' | 'RETAINER
 export type ProjectMemberRole =
   | 'PROJECT_MANAGER'
   | 'TEAM_LEAD'
+  | 'TECHNOLOGY_LEAD'
   | 'DEVELOPER'
   | 'SENIOR_DEVELOPER'
   | 'QA_ENGINEER'

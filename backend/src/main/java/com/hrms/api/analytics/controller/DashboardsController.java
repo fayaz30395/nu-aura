@@ -111,6 +111,20 @@ public class DashboardsController {
         return ResponseEntity.ok(dashboard);
     }
 
+    /**
+     * Get team project allocations for the current manager
+     * Shows each direct report with their active project assignments and allocation percentages
+     */
+    @GetMapping("/manager/team-projects")
+    @RequiresPermission(Permission.EMPLOYEE_VIEW_TEAM)
+    @Operation(summary = "Get team project allocations",
+               description = "Returns each direct report with their active project assignments, allocation percentages, and summary stats")
+    public ResponseEntity<TeamProjectsResponse> getTeamProjects() {
+        log.info("Fetching team project allocations for current manager");
+        TeamProjectsResponse response = managerDashboardService.getTeamProjects();
+        return ResponseEntity.ok(response);
+    }
+
     // ==================== EMPLOYEE DASHBOARD ====================
 
     /**

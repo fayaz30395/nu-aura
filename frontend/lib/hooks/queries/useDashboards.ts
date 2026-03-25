@@ -6,6 +6,7 @@ import {
   ExecutiveDashboardData,
   EmployeeDashboardData,
   ManagerDashboardResponse,
+  ManagerTeamProjectsResponse,
 } from '@/lib/types/dashboard';
 
 // Query key factory for dashboard queries
@@ -20,6 +21,7 @@ export const dashboardKeys = {
   manager: () => [...dashboardKeys.all, 'manager'] as const,
   managerById: (managerId: string) =>
     [...dashboardKeys.manager(), managerId] as const,
+  managerTeamProjects: () => ['manager-team-projects'] as const,
 };
 
 /**
@@ -94,5 +96,25 @@ export function useManagerDashboardById(managerId: string, enabled: boolean = tr
     queryKey: dashboardKeys.managerById(managerId),
     queryFn: async () => dashboardService.getManagerDashboardById(managerId),
     enabled: enabled && !!managerId,
+  });
+}
+
+/**
+ * Hook to fetch Team Projects & Allocations for the current manager
+ * Shows what each direct report is working on with project allocation percentages
+ */
+export function useManagerTeamProjects(enabled: boolean = true) {
+  return useQuery<ManagerTeamProjectsResponse>({
+    queryKey: dashboardKeys.managerTeamProjects(),
+    queryFn: async () => dashboardService.getManagerTeamProjects(),
+    enabled,
+    retry: (failureCount, error) => {
+      // Don't retry on 404 (endpoint not deployed yet)
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number } };
+        if (axiosError.response?.status === 404) return false;
+      }
+      return failureCount < 3;
+    },
   });
 }

@@ -525,6 +525,12 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     hrOnly: true,
   },
 
+  // Redirect: /executive → /dashboards/executive
+  {
+    path: '/executive',
+    anyPermission: [Permissions.ANALYTICS_VIEW, Permissions.SYSTEM_ADMIN],
+  },
+
   // Dashboards (plural routes matching actual pages)
   {
     path: '/dashboards/executive',
@@ -551,6 +557,12 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   {
     path: '/payroll/statutory',
     anyPermission: [Permissions.STATUTORY_VIEW, Permissions.STATUTORY_MANAGE],
+  },
+
+  // Redirect: /goals → /performance/goals
+  {
+    path: '/goals',
+    anyPermission: [Permissions.REVIEW_VIEW, Permissions.OKR_VIEW],
   },
 
   // Performance sub-pages
