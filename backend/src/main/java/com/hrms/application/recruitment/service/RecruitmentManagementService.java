@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.application.event.DomainEventPublisher;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RecruitmentManagementService {
+public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
     private final JobOpeningRepository jobOpeningRepository;
     private final CandidateRepository candidateRepository;
@@ -312,7 +313,8 @@ public class RecruitmentManagementService {
                 "Candidate deleted: " + candidate.getCandidateCode() + " - " + candidate.getFullName() + " (" + candidate.getEmail() + ")"
         );
 
-        candidateRepository.delete(candidate);
+        candidate.setDeleted(true);
+        candidateRepository.save(candidate);
     }
 
     // ==================== Offer Response Operations ====================
@@ -552,6 +554,84 @@ public class RecruitmentManagementService {
     @Transactional
     public void deleteInterview(UUID interviewId) {
         interviewManagementService.deleteInterview(interviewId);
+    }
+
+    // ==================== Approval Callback Implementation ====================
+
+    @Override
+    public WorkflowDefinition.EntityType getEntityType() {
+        return WorkflowDefinition.EntityType.RECRUITMENT_OFFER;
+    }
+
+    @Override
+    @Transactional
+    public void onApproved(UUID tenantId, UUID entityId, UUID approvedBy) {
+        log.info("Offer workflow approved for candidate {} in tenant {} by {}", entityId, tenantId, approvedBy);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(entityId, tenantId)
+                .orElse(null);
+
+        if (candidate == null) {
+            log.warn("Candidate {} not found for offer approval callback", entityId);
+            return;
+        }
+
+        // Offer was already set to OFFER_EXTENDED when created; approval confirms it.
+        // No status change needed — candidate remains in OFFER_EXTENDED awaiting acceptance/decline.
+        auditLogService.logAction(
+                "CANDIDATE",
+                entityId,
+                AuditAction.STATUS_CHANGE,
+                Candidate.CandidateStatus.OFFER_EXTENDED.toString(),
+                Candidate.CandidateStatus.OFFER_EXTENDED.toString(),
+                "Offer approval workflow completed - approved by " + approvedBy
+        );
+
+        log.info("Offer approval callback completed for candidate {}", entityId);
+    }
+
+    @Override
+    @Transactional
+    public void onRejected(UUID tenantId, UUID entityId, UUID rejectedBy, String reason) {
+        log.info("Offer workflow rejected for candidate {} in tenant {} by {}", entityId, tenantId, rejectedBy);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(entityId, tenantId)
+                .orElse(null);
+
+        if (candidate == null) {
+            log.warn("Candidate {} not found for offer rejection callback", entityId);
+            return;
+        }
+
+        if (candidate.getStatus() != Candidate.CandidateStatus.OFFER_EXTENDED) {
+            log.warn("Candidate {} is not in OFFER_EXTENDED status (current: {}), skipping rejection callback",
+                    entityId, candidate.getStatus());
+            return;
+        }
+
+        Candidate.CandidateStatus oldStatus = candidate.getStatus();
+
+        // Revert candidate back to SELECTED status (they passed interviews but offer was rejected internally)
+        candidate.setStatus(Candidate.CandidateStatus.SELECTED);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.HR_FINAL_INTERVIEW_COMPLETED);
+        candidate.setOfferExtendedDate(null);
+        candidate.setOfferedCtc(null);
+        candidate.setOfferedDesignation(null);
+        candidate.setProposedJoiningDate(null);
+
+        candidateRepository.save(candidate);
+
+        auditLogService.logAction(
+                "CANDIDATE",
+                entityId,
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                Candidate.CandidateStatus.SELECTED.toString(),
+                "Offer rejected via approval workflow - Reason: " + (reason != null ? reason : "Not specified")
+                        + " - Rejected by: " + rejectedBy
+        );
+
+        log.info("Offer rejection callback completed for candidate {} - reverted to SELECTED", entityId);
     }
 
     // ==================== Private helpers ====================

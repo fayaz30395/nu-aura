@@ -6,6 +6,7 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.domain.exit.*;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.exit.repository.*;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.hrms.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class ExitManagementService {
     private final ExitInterviewRepository exitInterviewRepository;
     private final AssetRecoveryRepository assetRecoveryRepository;
     private final EmployeeRepository employeeRepository;
+    private final EventPublisher eventPublisher;
 
     // ==================== Exit Process Operations ====================
 
@@ -99,6 +101,11 @@ public class ExitManagementService {
         exitProcess.setNotes(request.getNotes());
 
         ExitProcess updatedProcess = exitProcessRepository.save(exitProcess);
+
+        if (request.getStatus() == ExitProcess.ExitStatus.COMPLETED) {
+            publishOffboardedEvent(updatedProcess, tenantId);
+        }
+
         return mapToExitProcessResponse(updatedProcess);
     }
 
@@ -113,6 +120,11 @@ public class ExitManagementService {
         exitProcess.setStatus(status);
 
         ExitProcess updatedProcess = exitProcessRepository.save(exitProcess);
+
+        if (status == ExitProcess.ExitStatus.COMPLETED) {
+            publishOffboardedEvent(updatedProcess, tenantId);
+        }
+
         return mapToExitProcessResponse(updatedProcess);
     }
 
@@ -221,6 +233,69 @@ public class ExitManagementService {
         ExitClearance clearance = exitClearanceRepository.findByIdAndTenantId(clearanceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Exit clearance not found"));
         exitClearanceRepository.delete(clearance);
+    }
+
+    // ==================== Event Publishing ====================
+
+    /**
+     * Publishes an OFFBOARDED employee lifecycle event to Kafka when an exit process
+     * reaches COMPLETED status. Enables downstream consumers to disable access,
+     * revoke assets, update approval chains, and notify stakeholders.
+     *
+     * <p>Best-effort: failures are logged but do not roll back the exit process
+     * transaction, matching the pattern used by {@link com.hrms.application.event.listener.KafkaDomainEventBridge}.</p>
+     */
+    private void publishOffboardedEvent(ExitProcess exitProcess, UUID tenantId) {
+        UUID employeeId = exitProcess.getEmployeeId();
+        try {
+            Employee employee = employeeRepository.findById(employeeId).orElse(null);
+            if (employee == null) {
+                log.warn("Cannot publish OFFBOARDED event: employee {} not found", employeeId);
+                return;
+            }
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("reason", exitProcess.getReasonForLeaving());
+            metadata.put("lastWorkingDay", exitProcess.getLastWorkingDate() != null
+                    ? exitProcess.getLastWorkingDate().toString() : null);
+            metadata.put("exitType", exitProcess.getExitType() != null
+                    ? exitProcess.getExitType().name() : null);
+            metadata.put("exitProcessId", exitProcess.getId().toString());
+            if (exitProcess.getManagerId() != null) {
+                metadata.put("managerId", exitProcess.getManagerId().toString());
+            }
+
+            String email = employee.getUser() != null ? employee.getUser().getEmail() : employee.getPersonalEmail();
+            String name = employee.getFullName();
+
+            eventPublisher.publishEmployeeLifecycleEvent(
+                    employeeId,
+                    "OFFBOARDED",
+                    SecurityContext.getCurrentUserId(),
+                    tenantId,
+                    email,
+                    name,
+                    employee.getDepartmentId(),
+                    employee.getManagerId(),
+                    employee.getDesignation(),
+                    employee.getEmploymentType() != null ? employee.getEmploymentType().name() : null,
+                    metadata,
+                    false
+            ).whenComplete((result, ex) -> {
+                if (ex != null) {
+                    log.error("Failed to publish OFFBOARDED lifecycle event for employee {}: {}",
+                            employeeId, ex.getMessage(), ex);
+                } else {
+                    log.info("Published OFFBOARDED lifecycle event for employee {} (exit process {})",
+                            employeeId, exitProcess.getId());
+                }
+            });
+
+        } catch (Exception e) {
+            log.error("Error publishing OFFBOARDED lifecycle event for employee {}: {}",
+                    employeeId, e.getMessage(), e);
+            // Best-effort: do not propagate — the exit process status is already saved
+        }
     }
 
     // ==================== Mapper Methods ====================

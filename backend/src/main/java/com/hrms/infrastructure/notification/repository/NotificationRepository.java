@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,6 +53,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
      * Use this instead of the inherited deleteById().
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId")
     void deleteByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 
@@ -115,6 +117,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     // ==================== MODIFICATION METHODS ====================
 
     @Modifying
+    @Transactional
     @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.tenantId = :tenantId AND n.id = :notificationId")
     void markAsRead(
         @Param("tenantId") UUID tenantId,
@@ -123,6 +126,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     );
 
     @Modifying
+    @Transactional
     @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false")
     void markAllAsReadForUser(
         @Param("tenantId") UUID tenantId,
@@ -131,6 +135,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     );
 
     @Modifying
+    @Transactional
     @Query("DELETE FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.createdAt < :before")
     void deleteOldNotifications(
         @Param("tenantId") UUID tenantId,

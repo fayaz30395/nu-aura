@@ -40,6 +40,9 @@ class DepartmentServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
+    @Mock
+    private com.hrms.application.audit.service.AuditLogService auditLogService;
+
     @InjectMocks
     private DepartmentService departmentService;
 
@@ -114,7 +117,7 @@ class DepartmentServiceTest {
                     });
             when(employeeRepository.countByDepartmentIdAndTenantId(any(), eq(tenantId)))
                     .thenReturn(0L);
-            when(departmentRepository.countByTenantIdAndParentDepartmentId(tenantId, any()))
+            when(departmentRepository.countByTenantIdAndParentDepartmentId(eq(tenantId), any()))
                     .thenReturn(0L);
 
             // Act
@@ -174,7 +177,7 @@ class DepartmentServiceTest {
                     });
             when(employeeRepository.countByDepartmentIdAndTenantId(any(), eq(tenantId)))
                     .thenReturn(0L);
-            when(departmentRepository.countByTenantIdAndParentDepartmentId(tenantId, any()))
+            when(departmentRepository.countByTenantIdAndParentDepartmentId(eq(tenantId), any()))
                     .thenReturn(0L);
 
             // Act
@@ -199,7 +202,7 @@ class DepartmentServiceTest {
                     .isActive(true)
                     .build();
 
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(departmentRepository.save(any(Department.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -219,7 +222,7 @@ class DepartmentServiceTest {
                     )
                     .containsExactly("Engineering Division", "Updated description");
 
-            verify(departmentRepository, times(1)).findById(departmentId);
+            verify(departmentRepository, times(1)).findByIdAndTenantId(departmentId, tenantId);
             verify(departmentRepository, times(1)).save(any(Department.class));
         }
 
@@ -229,7 +232,7 @@ class DepartmentServiceTest {
             // Arrange
             DepartmentRequest request = DepartmentRequest.builder().name("Updated").build();
 
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -248,7 +251,7 @@ class DepartmentServiceTest {
                     .code("EXISTING_CODE")
                     .build();
 
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(departmentRepository.existsByCodeAndTenantId("EXISTING_CODE", tenantId))
                     .thenReturn(true);
@@ -269,7 +272,7 @@ class DepartmentServiceTest {
         @DisplayName("Should get department by ID")
         void shouldGetDepartmentById() {
             // Arrange
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(employeeRepository.countByDepartmentIdAndTenantId(departmentId, tenantId))
                     .thenReturn(5L);
@@ -293,7 +296,7 @@ class DepartmentServiceTest {
         @DisplayName("Should throw ResourceNotFoundException when not found")
         void shouldThrowExceptionWhenNotFound() {
             // Arrange
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -389,26 +392,28 @@ class DepartmentServiceTest {
         @DisplayName("Should delete department successfully")
         void shouldDeleteDepartmentSuccessfully() {
             // Arrange
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(employeeRepository.countByDepartmentIdAndTenantId(departmentId, tenantId))
                     .thenReturn(0L);
             when(departmentRepository.countByTenantIdAndParentDepartmentId(tenantId, departmentId))
                     .thenReturn(0L);
+            when(departmentRepository.save(any(Department.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             // Act
             departmentService.deleteDepartment(departmentId);
 
             // Assert
-            verify(departmentRepository, times(1)).findById(departmentId);
-            verify(departmentRepository, times(1)).delete(testDepartment);
+            verify(departmentRepository, times(1)).findByIdAndTenantId(departmentId, tenantId);
+            verify(departmentRepository, times(1)).save(any(Department.class));
         }
 
         @Test
         @DisplayName("Should throw BusinessException when department has employees")
         void shouldThrowExceptionWhenHasEmployees() {
             // Arrange
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(employeeRepository.countByDepartmentIdAndTenantId(departmentId, tenantId))
                     .thenReturn(5L);
@@ -425,7 +430,7 @@ class DepartmentServiceTest {
         @DisplayName("Should throw BusinessException when department has sub-departments")
         void shouldThrowExceptionWhenHasSubDepartments() {
             // Arrange
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(employeeRepository.countByDepartmentIdAndTenantId(departmentId, tenantId))
                     .thenReturn(0L);
@@ -449,7 +454,7 @@ class DepartmentServiceTest {
         @DisplayName("Should deactivate department")
         void shouldDeactivateDepartment() {
             // Arrange
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(departmentRepository.save(any(Department.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -477,7 +482,7 @@ class DepartmentServiceTest {
             // Arrange
             testDepartment.setIsActive(false);
 
-            when(departmentRepository.findById(departmentId))
+            when(departmentRepository.findByIdAndTenantId(departmentId, tenantId))
                     .thenReturn(Optional.of(testDepartment));
             when(departmentRepository.save(any(Department.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));

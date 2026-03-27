@@ -4,6 +4,7 @@ import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.leave.LeaveType;
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -36,6 +37,9 @@ class LeaveTypeServiceTest {
 
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
+
+    @Mock
+    private AuditLogService auditLogService;
 
     @InjectMocks
     private LeaveTypeService leaveTypeService;
@@ -193,7 +197,7 @@ class LeaveTypeServiceTest {
                     .minDaysNotice(3)
                     .build();
 
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
             when(leaveTypeRepository.save(any(LeaveType.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -222,7 +226,7 @@ class LeaveTypeServiceTest {
                             3
                     );
 
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
             verify(leaveTypeRepository, times(1)).save(any(LeaveType.class));
         }
 
@@ -232,7 +236,7 @@ class LeaveTypeServiceTest {
             // Arrange
             LeaveType updateData = LeaveType.builder().leaveName("Updated").build();
 
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -240,7 +244,7 @@ class LeaveTypeServiceTest {
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Leave type not found");
 
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
             verify(leaveTypeRepository, never()).save(any());
         }
 
@@ -253,7 +257,7 @@ class LeaveTypeServiceTest {
 
             LeaveType updateData = LeaveType.builder().leaveName("Updated").build();
 
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
 
             // Act & Assert
@@ -286,7 +290,7 @@ class LeaveTypeServiceTest {
                     .genderSpecific(LeaveType.GenderSpecific.FEMALE)
                     .build();
 
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
             when(leaveTypeRepository.save(any(LeaveType.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -330,7 +334,7 @@ class LeaveTypeServiceTest {
                             30,
                             LeaveType.AccrualType.MONTHLY,
                             new BigDecimal("2.5"),
-                            true
+                            LeaveType.GenderSpecific.FEMALE
                     );
         }
     }
@@ -343,7 +347,7 @@ class LeaveTypeServiceTest {
         @DisplayName("Should return leave type by ID")
         void shouldReturnLeaveTypeById() {
             // Arrange
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
 
             // Act
@@ -355,14 +359,14 @@ class LeaveTypeServiceTest {
                     .extracting(LeaveType::getId, LeaveType::getLeaveName)
                     .containsExactly(leaveTypeId, "Annual Leave");
 
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
         }
 
         @Test
         @DisplayName("Should throw ResourceNotFoundException when leave type not found")
         void shouldThrowExceptionWhenLeaveTypeNotFound() {
             // Arrange
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -370,7 +374,7 @@ class LeaveTypeServiceTest {
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Leave type not found");
 
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
         }
 
         @Test
@@ -380,7 +384,7 @@ class LeaveTypeServiceTest {
             UUID wrongTenantId = UUID.randomUUID();
             testLeaveType.setTenantId(wrongTenantId);
 
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
 
             // Act & Assert
@@ -509,7 +513,7 @@ class LeaveTypeServiceTest {
             // Arrange
             testLeaveType.setIsActive(false);
 
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
             when(leaveTypeRepository.save(any(LeaveType.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -518,7 +522,7 @@ class LeaveTypeServiceTest {
             leaveTypeService.activateLeaveType(leaveTypeId);
 
             // Assert
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
             verify(leaveTypeRepository, times(1)).save(any(LeaveType.class));
             assertThat(testLeaveType.getIsActive()).isTrue();
         }
@@ -534,7 +538,7 @@ class LeaveTypeServiceTest {
             // Arrange
             testLeaveType.setIsActive(true);
 
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
             when(leaveTypeRepository.save(any(LeaveType.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -543,7 +547,7 @@ class LeaveTypeServiceTest {
             leaveTypeService.deactivateLeaveType(leaveTypeId);
 
             // Assert
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
             verify(leaveTypeRepository, times(1)).save(any(LeaveType.class));
             assertThat(testLeaveType.getIsActive()).isFalse();
         }
@@ -557,29 +561,31 @@ class LeaveTypeServiceTest {
         @DisplayName("Should delete leave type")
         void shouldDeleteLeaveType() {
             // Arrange
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.of(testLeaveType));
+            when(leaveTypeRepository.save(any(LeaveType.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             // Act
             leaveTypeService.deleteLeaveType(leaveTypeId);
 
             // Assert
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
-            verify(leaveTypeRepository, times(1)).delete(testLeaveType);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
+            verify(leaveTypeRepository, times(1)).save(any(LeaveType.class));
         }
 
         @Test
         @DisplayName("Should throw ResourceNotFoundException when leave type not found")
         void shouldThrowExceptionWhenLeaveTypeNotFound() {
             // Arrange
-            when(leaveTypeRepository.findById(leaveTypeId))
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
             assertThatThrownBy(() -> leaveTypeService.deleteLeaveType(leaveTypeId))
                     .isInstanceOf(ResourceNotFoundException.class);
 
-            verify(leaveTypeRepository, never()).delete(any());
+            verify(leaveTypeRepository, never()).save(any());
         }
     }
 }

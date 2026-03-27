@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -72,8 +73,20 @@ class LeaveRequestServiceTest {
         tenantContextMock.close();
     }
 
+    @AfterEach
+    void tearDown() {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
+    }
+
     @BeforeEach
     void setUp() {
+        // Initialize transaction synchronization for @Transactional behavior in unit tests
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.initSynchronization();
+        }
+
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
         leaveTypeId = UUID.randomUUID();

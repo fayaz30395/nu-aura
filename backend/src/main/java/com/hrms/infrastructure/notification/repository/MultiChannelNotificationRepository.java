@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +39,7 @@ public interface MultiChannelNotificationRepository extends JpaRepository<MultiC
     Long countUnreadInAppNotifications(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId);
 
     @Modifying
+    @Transactional
     @Query("UPDATE MultiChannelNotification n SET n.status = 'READ', n.readAt = :readAt " +
            "WHERE n.recipientId = :userId AND n.tenantId = :tenantId AND n.channel = 'IN_APP' AND n.status != 'READ'")
     int markAllAsRead(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId, @Param("readAt") LocalDateTime readAt);

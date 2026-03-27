@@ -45,11 +45,11 @@ public class PermissionAspect {
     @Around("@annotation(com.hrms.common.security.RequiresPermission)")
     public Object checkPermission(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        // SuperAdmin bypass: skip all permission evaluation for SUPER_ADMIN users.
-        // SecurityContext.isSuperAdmin() delegates to isSystemAdmin() which checks
-        // for the SYSTEM:ADMIN permission — the canonical super-admin indicator.
-        if (SecurityContext.isSuperAdmin()) {
-            log.debug("SuperAdmin bypass — skipping @RequiresPermission check for method: {}",
+        // Admin bypass: skip all permission evaluation for TENANT_ADMIN and SUPER_ADMIN users.
+        // SecurityContext.isTenantAdmin() returns true for both TENANT_ADMIN and SUPER_ADMIN
+        // roles, matching the frontend usePermissions.ts behavior that treats both as full admin.
+        if (SecurityContext.isTenantAdmin()) {
+            log.debug("Admin bypass — skipping @RequiresPermission check for method: {}",
                     ((MethodSignature) joinPoint.getSignature()).getMethod().getName());
             return joinPoint.proceed();
         }

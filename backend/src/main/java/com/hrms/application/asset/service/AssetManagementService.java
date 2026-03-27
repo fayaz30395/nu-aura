@@ -10,6 +10,7 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.asset.repository.AssetRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.hrms.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +34,18 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     private final AssetRepository assetRepository;
     private final EmployeeRepository employeeRepository;
     private final WorkflowService workflowService;
+    private final EventPublisher eventPublisher;
 
     @org.springframework.beans.factory.annotation.Autowired
     public AssetManagementService(
             AssetRepository assetRepository,
             EmployeeRepository employeeRepository,
-            @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+            @org.springframework.context.annotation.Lazy WorkflowService workflowService,
+            EventPublisher eventPublisher) {
         this.assetRepository = assetRepository;
         this.employeeRepository = employeeRepository;
         this.workflowService = workflowService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -124,6 +128,11 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         asset.setStatus(Asset.AssetStatus.ASSIGNED);
 
         Asset updatedAsset = assetRepository.save(asset);
+
+        // Publish audit event for asset assignment (best-effort)
+        publishAssetAuditEvent(null, "ASSIGN", assetId, tenantId,
+                "Asset " + asset.getAssetCode() + " assigned to employee " + employeeId);
+
         return mapToAssetResponse(updatedAsset);
     }
 
@@ -139,6 +148,11 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         asset.setStatus(Asset.AssetStatus.AVAILABLE);
 
         Asset updatedAsset = assetRepository.save(asset);
+
+        // Publish audit event for asset return (best-effort)
+        publishAssetAuditEvent(null, "RETURN", assetId, tenantId,
+                "Asset " + asset.getAssetCode() + " returned");
+
         return mapToAssetResponse(updatedAsset);
     }
 
@@ -193,6 +207,10 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
         assetRepository.delete(asset);
+
+        // Publish audit event for asset deletion (best-effort)
+        publishAssetAuditEvent(null, "DELETE", assetId, tenantId,
+                "Asset " + asset.getAssetCode() + " deleted");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -282,6 +300,27 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         }
 
         return mapToAssetResponse(saved);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Kafka Event Publishing
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Publishes an audit event for asset operations. Best-effort: logs errors
+     * but never fails the business operation.
+     */
+    private void publishAssetAuditEvent(UUID userId, String action, UUID entityId,
+            UUID tenantId, String description) {
+        try {
+            eventPublisher.publishAuditEvent(
+                    userId, action, "Asset", entityId, tenantId,
+                    null, null, null, null, null, null, null, null,
+                    description);
+        } catch (Exception e) {
+            log.warn("Failed to publish asset audit event (action={}, entityId={}): {}",
+                    action, entityId, e.getMessage());
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────

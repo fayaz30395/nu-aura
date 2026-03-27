@@ -36,10 +36,10 @@ export const taxService = {
     // Get all declarations (admin/HR view)
     // Backend may return a paginated object { content: [...] } or a plain array
     getAll: async (params?: Record<string, string | number | boolean | undefined>): Promise<TaxDeclarationResponse[]> => {
-        const response = await apiClient.get(BASE_URL, { params });
+        const response = await apiClient.get<TaxDeclarationResponse[] | { content: TaxDeclarationResponse[] }>(BASE_URL, { params });
         const data = response.data;
         if (Array.isArray(data)) return data;
-        if (data && Array.isArray(data.content)) return data.content;
+        if (data && 'content' in data && Array.isArray(data.content)) return data.content;
         return [];
     },
 

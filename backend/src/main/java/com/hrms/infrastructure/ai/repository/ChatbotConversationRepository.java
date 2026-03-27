@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +28,7 @@ public interface ChatbotConversationRepository extends JpaRepository<ChatbotConv
             UUID tenantId, UUID userId, ChatbotConversation.ConversationStatus status);
 
     @Modifying
+    @Transactional
     @Query("DELETE FROM ChatbotConversation c WHERE c.tenantId = :tenantId AND c.createdAt < :cutoffDate")
     void deleteOlderThan(@Param("tenantId") UUID tenantId, @Param("cutoffDate") LocalDateTime cutoffDate);
 }

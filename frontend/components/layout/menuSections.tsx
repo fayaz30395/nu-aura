@@ -71,6 +71,7 @@ import {
   AlertTriangle,
   Cloud,
   Bell,
+  Share2,
 } from 'lucide-react';
 import type { SidebarSection } from '@/components/ui';
 import { Permissions } from '@/lib/hooks/usePermissions';
@@ -128,6 +129,8 @@ const icon = {
   newspaper: <Newspaper className="h-5 w-5" />,
   fileStack: <FileStack className="h-5 w-5" />,
   shield: <Shield className="h-5 w-5" />,
+  share2: <Share2 className="h-5 w-5" />,
+  timer: <Timer className="h-5 w-5" />,
 } as const;
 
 // Small icons for child items (4x4)
@@ -245,6 +248,8 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
             { id: 'leave-calendar', label: 'Leave Calendar', href: '/leave/calendar', icon: sm.calendar, requiredPermission: Permissions.LEAVE_VIEW_ALL },
           ],
         },
+        { id: 'overtime', label: 'Overtime', icon: icon.timer, href: '/overtime', requiredPermission: Permissions.OVERTIME_VIEW },
+        { id: 'probation', label: 'Probation', icon: icon.userCheck, href: '/probation', requiredPermission: Permissions.PROBATION_VIEW },
         { id: 'assets', label: 'Assets', icon: icon.package, href: '/assets', requiredPermission: Permissions.ASSET_VIEW },
         { id: 'letters', label: 'Letters', icon: icon.mail, href: '/letters', requiredPermission: Permissions.LETTER_TEMPLATE_VIEW },
         { id: 'contracts', label: 'Contracts', icon: icon.fileText, href: '/contracts', requiredPermission: Permissions.CONTRACT_VIEW },
@@ -291,6 +296,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         { id: 'offboarding-hire', label: 'Offboarding', icon: icon.userMinus, href: '/offboarding', requiredPermission: Permissions.EXIT_VIEW },
         { id: 'offer-portal-hire', label: 'Offer Portal', icon: icon.fileCheck, href: '/offer-portal', requiredPermission: Permissions.RECRUITMENT_VIEW },
         { id: 'careers-hire', label: 'Careers Page', icon: icon.briefcase, href: '/careers', requiredPermission: Permissions.RECRUITMENT_VIEW },
+        { id: 'referrals-hire', label: 'Referrals', icon: icon.share2, href: '/referrals', requiredPermission: Permissions.REFERRAL_VIEW },
       ],
     },
     // ─── NU-Grow Hub ────────────────────────────────────────────────

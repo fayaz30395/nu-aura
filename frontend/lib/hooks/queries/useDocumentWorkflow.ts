@@ -10,8 +10,8 @@ import {
   DocumentWithStatus
 } from '@/lib/types/document-workflow';
 
-const DOCUMENTS_API = '/api/v1/documents';
-const WORKFLOW_API = '/api/v1/documents/workflow';
+const DOCUMENTS_API = '/documents';
+const WORKFLOW_API = '/documents/workflow';
 
 // Queries
 export const useListApprovalWorkflows = (page = 0, size = 20) => {

@@ -6,6 +6,7 @@ import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.attendance.repository.AttendanceTimeEntryRepository;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ public class AttendanceRecordService {
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final AttendanceTimeEntryRepository timeEntryRepository;
     private final AttendanceConfigProperties config;
+    private final EventPublisher eventPublisher;
 
     /**
      * Check in an employee at the specified time.
@@ -108,6 +110,11 @@ public class AttendanceRecordService {
                 AttendanceTimeEntry.EntryType.REGULAR, null);
 
         log.info("Check-in completed for employee {} at {} via {}", employeeId, actualCheckInTime, source);
+
+        // Publish audit event for check-in (best-effort)
+        publishAttendanceAuditEvent(employeeId, "CHECK_IN", "AttendanceRecord", savedRecord.getId(),
+                tenantId, "Employee checked in via " + source);
+
         return savedRecord;
     }
 
@@ -177,7 +184,13 @@ public class AttendanceRecordService {
 
         log.info("Check-out completed for employee {} at {} via {} (attendance date: {})",
                 employeeId, actualCheckOutTime, source, record.getAttendanceDate());
-        return attendanceRecordRepository.save(record);
+        AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
+
+        // Publish audit event for check-out (best-effort)
+        publishAttendanceAuditEvent(employeeId, "CHECK_OUT", "AttendanceRecord", savedRecord.getId(),
+                tenantId, "Employee checked out via " + source);
+
+        return savedRecord;
     }
 
     /**
@@ -392,7 +405,13 @@ public class AttendanceRecordService {
                 .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
 
         record.approveRegularization(approverId);
-        return attendanceRecordRepository.save(record);
+        AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
+
+        // Publish audit event for regularization approval (best-effort)
+        publishAttendanceAuditEvent(approverId, "APPROVE", "AttendanceRecord", savedRecord.getId(),
+                tenantId, "Attendance regularization approved");
+
+        return savedRecord;
     }
 
     @Transactional(readOnly = true)
@@ -587,6 +606,25 @@ public class AttendanceRecordService {
         record.rejectRegularization(rejectorId, reason);
         log.info("Regularization rejected for record {} by {}", id, rejectorId);
         return attendanceRecordRepository.save(record);
+    }
+
+    // ===================== Kafka Event Publishing =====================
+
+    /**
+     * Publishes an audit event for attendance operations. Best-effort: logs errors
+     * but never fails the business operation.
+     */
+    private void publishAttendanceAuditEvent(UUID userId, String action, String entityType,
+            UUID entityId, UUID tenantId, String description) {
+        try {
+            eventPublisher.publishAuditEvent(
+                    userId, action, entityType, entityId, tenantId,
+                    null, null, null, null, null, null, null, null,
+                    description);
+        } catch (Exception e) {
+            log.warn("Failed to publish attendance audit event (action={}, entityId={}): {}",
+                    action, entityId, e.getMessage());
+        }
     }
 
     // ===================== Result Classes =====================

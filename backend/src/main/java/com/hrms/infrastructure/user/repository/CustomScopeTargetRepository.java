@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -61,6 +62,7 @@ public interface CustomScopeTargetRepository extends JpaRepository<CustomScopeTa
      * Delete all custom targets for a role permission.
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM CustomScopeTarget c WHERE c.rolePermission.id = :rolePermissionId")
     void deleteByRolePermissionId(@Param("rolePermissionId") UUID rolePermissionId);
 

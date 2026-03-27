@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +31,13 @@ public interface PulseSurveyQuestionRepository extends JpaRepository<PulseSurvey
     List<PulseSurveyQuestion> findAllBySurveyIdAndCategory(UUID surveyId, QuestionCategory category);
 
     @Modifying
+    @Transactional
     @Query("UPDATE PulseSurveyQuestion q SET q.questionOrder = q.questionOrder + 1 " +
             "WHERE q.surveyId = :surveyId AND q.questionOrder >= :fromOrder")
     void shiftQuestionsDown(@Param("surveyId") UUID surveyId, @Param("fromOrder") Integer fromOrder);
 
     @Modifying
+    @Transactional
     @Query("DELETE FROM PulseSurveyQuestion q WHERE q.surveyId = :surveyId")
     void deleteAllBySurveyId(@Param("surveyId") UUID surveyId);
 }

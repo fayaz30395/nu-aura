@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -45,6 +46,7 @@ public interface EmployeePayrollRecordRepository extends JpaRepository<EmployeeP
      * Delete payroll record by ID with mandatory tenant isolation.
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM EmployeePayrollRecord r WHERE r.id = :id AND r.tenantId = :tenantId")
     void deleteByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 

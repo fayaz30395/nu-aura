@@ -3,8 +3,11 @@ package com.hrms.application.employee.service;
 import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.api.employee.dto.UpdateEmployeeRequest;
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.common.exception.DuplicateResourceException;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
@@ -51,6 +54,15 @@ class EmployeeServiceTest {
 
     @Mock
     private DomainEventPublisher eventPublisher;
+
+    @Mock
+    private AuditLogService auditLogService;
+
+    @Mock
+    private DataScopeService dataScopeService;
+
+    @Mock
+    private DepartmentRepository departmentRepository;
 
     @InjectMocks
     private EmployeeService employeeService;
@@ -103,6 +115,7 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
                 when(employeeRepository.existsByEmployeeCodeAndTenantId(anyString(), any(UUID.class))).thenReturn(false);
                 when(userRepository.findByEmailAndTenantId(anyString(), any(UUID.class))).thenReturn(Optional.empty());
                 when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
@@ -127,6 +140,7 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
                 when(employeeRepository.existsByEmployeeCodeAndTenantId(anyString(), any(UUID.class))).thenReturn(true);
 
                 // When/Then
@@ -144,6 +158,7 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
                 when(employeeRepository.existsByEmployeeCodeAndTenantId(anyString(), any(UUID.class))).thenReturn(false);
                 when(userRepository.findByEmailAndTenantId(anyString(), any(UUID.class))).thenReturn(Optional.of(user));
 
@@ -162,6 +177,7 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
                 createRequest.setPassword(null);
                 when(employeeRepository.existsByEmployeeCodeAndTenantId(anyString(), any(UUID.class))).thenReturn(false);
                 when(userRepository.findByEmailAndTenantId(anyString(), any(UUID.class))).thenReturn(Optional.empty());
@@ -187,7 +203,8 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
                 // When
                 EmployeeResponse response = employeeService.getEmployee(employeeId);
@@ -205,7 +222,8 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.empty());
 
                 // When/Then
                 assertThatThrownBy(() -> employeeService.getEmployee(employeeId))
@@ -221,7 +239,8 @@ class EmployeeServiceTest {
                 // Given
                 UUID differentTenantId = UUID.randomUUID();
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(differentTenantId);
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(differentTenantId);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
                 // When/Then
                 assertThatThrownBy(() -> employeeService.getEmployee(employeeId))
@@ -241,7 +260,8 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
                 when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
                 // When
@@ -264,11 +284,12 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
                 UpdateEmployeeRequest updateRequest = new UpdateEmployeeRequest();
                 updateRequest.setFirstName("Jane");
                 updateRequest.setLastName("Smith");
 
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
                 when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
                 when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -289,10 +310,11 @@ class EmployeeServiceTest {
             try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
                 // Given
                 mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
                 UpdateEmployeeRequest updateRequest = new UpdateEmployeeRequest();
                 updateRequest.setFirstName("Jane");
 
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.empty());
 
                 // When/Then
                 assertThatThrownBy(() -> employeeService.updateEmployee(employeeId, updateRequest))

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -34,6 +35,8 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class CandidateHiredEventListener {
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final EmployeeService employeeService;
     private final OnboardingManagementService onboardingService;
@@ -121,15 +124,14 @@ public class CandidateHiredEventListener {
     }
 
     /**
-     * Generates a temporary password for the new employee.
-     * In production, consider using a more secure approach or SSO integration.
+     * Generates a cryptographically secure temporary password for the new employee.
+     * Uses SecureRandom instead of Math.random() for security compliance.
      */
     private String generateTemporaryPassword() {
-        // Generate a 12-character password with mixed case, numbers and special chars
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
         StringBuilder password = new StringBuilder();
-        for (int i = 0; i < 12; i++) {
-            password.append(chars.charAt((int) (Math.random() * chars.length())));
+        for (int i = 0; i < 16; i++) {
+            password.append(chars.charAt(SECURE_RANDOM.nextInt(chars.length())));
         }
         return password.toString();
     }

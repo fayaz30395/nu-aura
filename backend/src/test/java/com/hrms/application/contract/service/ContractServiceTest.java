@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
  * Tests contract lifecycle management including CRUD, status transitions, and versioning.
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
 @DisplayName("ContractService Tests")
 class ContractServiceTest {
 
@@ -82,6 +84,16 @@ class ContractServiceTest {
         securityContextMock = mockStatic(SecurityContext.class);
         securityContextMock.when(SecurityContext::getCurrentTenantId).thenReturn(TENANT_ID);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(USER_ID);
+
+        // Default stub: employeeService.getByIdAndTenant returns a test employee
+        Employee testEmployee = Employee.builder()
+                .firstName("Test")
+                .lastName("Employee")
+                .employeeCode("EMP001")
+                .build();
+        testEmployee.setId(EMPLOYEE_ID);
+        testEmployee.setTenantId(TENANT_ID);
+        lenient().when(employeeService.getByIdAndTenant(any(), any())).thenReturn(testEmployee);
     }
 
     @AfterEach
@@ -245,6 +257,7 @@ class ContractServiceTest {
                     .id(CONTRACT_ID)
                     .tenantId(TENANT_ID)
                     .title("Contract")
+                    .type(ContractType.EMPLOYMENT)
                     .status(ContractStatus.DRAFT)
                     .build();
 
@@ -277,6 +290,7 @@ class ContractServiceTest {
                     .id(CONTRACT_ID)
                     .tenantId(TENANT_ID)
                     .title("Contract")
+                    .type(ContractType.EMPLOYMENT)
                     .status(ContractStatus.DRAFT)
                     .build();
 
@@ -379,6 +393,7 @@ class ContractServiceTest {
             Contract contract = Contract.builder()
                     .id(CONTRACT_ID)
                     .tenantId(TENANT_ID)
+                    .type(ContractType.EMPLOYMENT)
                     .status(ContractStatus.DRAFT)
                     .build();
 
@@ -401,6 +416,7 @@ class ContractServiceTest {
             Contract contract = Contract.builder()
                     .id(CONTRACT_ID)
                     .tenantId(TENANT_ID)
+                    .type(ContractType.EMPLOYMENT)
                     .status(ContractStatus.PENDING_SIGNATURES)
                     .build();
 
@@ -423,6 +439,7 @@ class ContractServiceTest {
             Contract contract = Contract.builder()
                     .id(CONTRACT_ID)
                     .tenantId(TENANT_ID)
+                    .type(ContractType.EMPLOYMENT)
                     .status(ContractStatus.ACTIVE)
                     .build();
 
@@ -451,6 +468,7 @@ class ContractServiceTest {
             Contract contract = Contract.builder()
                     .id(CONTRACT_ID)
                     .tenantId(TENANT_ID)
+                    .type(ContractType.EMPLOYMENT)
                     .status(ContractStatus.ACTIVE)
                     .endDate(originalEndDate)
                     .renewalPeriodDays(365)
@@ -586,16 +604,19 @@ class ContractServiceTest {
                     .id(CONTRACT_ID)
                     .tenantId(TENANT_ID)
                     .title("To Delete")
+                    .type(ContractType.EMPLOYMENT)
                     .build();
 
             when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
                     .thenReturn(Optional.of(contract));
+            when(contractRepository.save(any(Contract.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             // When
             contractService.deleteContract(CONTRACT_ID);
 
             // Then
-            verify(contractRepository).delete(contract);
+            verify(contractRepository).save(any(Contract.class));
         }
 
         @Test

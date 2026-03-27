@@ -14,7 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -262,15 +262,19 @@ public class PayrollComponentService {
      * Evaluates a single SpEL formula using the already-computed component values as variables.
      */
     private BigDecimal evaluateFormula(String formula, Map<String, BigDecimal> componentValues) {
-        StandardEvaluationContext context = new StandardEvaluationContext();
+        // SEC-FIX: Use SimpleEvaluationContext (read-only) instead of StandardEvaluationContext
+        // to prevent arbitrary method invocations via DB-stored payroll formulas (RCE vector).
+        // withInstanceMethods() is required so BigDecimal arithmetic (add, multiply, etc.) works.
+        SimpleEvaluationContext context = SimpleEvaluationContext
+                .forReadOnlyDataBinding()
+                .withRootObject(componentValues)
+                .withInstanceMethods()
+                .build();
 
         // Set each component code as a variable in the SpEL context
         for (Map.Entry<String, BigDecimal> entry : componentValues.entrySet()) {
             context.setVariable(entry.getKey(), entry.getValue());
         }
-
-        // Also set them as root properties by using a map-based root object
-        context.setRootObject(componentValues);
 
         try {
             // SpEL can resolve map keys as properties, so "basic * 0.4" works

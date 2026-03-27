@@ -97,13 +97,6 @@ public class NotificationController {
                 .body(NotificationResponse.fromEntity(notification));
     }
 
-    @PutMapping("/{id}/read")
-    @RequiresPermission(NOTIFICATIONS_VIEW)
-    public ResponseEntity<Void> markAsRead(@PathVariable UUID id) {
-        notificationService.markAsRead(id);
-        return ResponseEntity.ok().build();
-    }
-
     @PutMapping("/read-all")
     @RequiresPermission(NOTIFICATIONS_VIEW)
     public ResponseEntity<Void> markAllAsRead() {

@@ -43,46 +43,46 @@ class FluenceService {
     if (spaceId) {
       params.spaceId = spaceId;
     }
-    const response = await apiClient.get<Page<WikiPage>>('/fluence/wiki/pages', { params });
+    const response = await apiClient.get<Page<WikiPage>>('/knowledge/wiki/pages', { params });
     return response.data;
   }
 
   async getWikiPage(id: string): Promise<WikiPage> {
-    const response = await apiClient.get<WikiPage>(`/fluence/wiki/pages/${id}`);
+    const response = await apiClient.get<WikiPage>(`/knowledge/wiki/pages/${id}`);
     return response.data;
   }
 
   async getWikiPageBySlug(spaceId: string, slug: string): Promise<WikiPage> {
     const response = await apiClient.get<WikiPage>(
-      `/fluence/wiki/spaces/${spaceId}/pages/${slug}`
+      `/knowledge/wiki/spaces/${spaceId}/pages/${slug}`
     );
     return response.data;
   }
 
   async createWikiPage(data: CreateWikiPageRequest): Promise<WikiPage> {
-    const response = await apiClient.post<WikiPage>('/fluence/wiki/pages', data);
+    const response = await apiClient.post<WikiPage>('/knowledge/wiki/pages', data);
     return response.data;
   }
 
   async updateWikiPage(id: string, data: UpdateWikiPageRequest): Promise<WikiPage> {
-    const response = await apiClient.put<WikiPage>(`/fluence/wiki/pages/${id}`, data);
+    const response = await apiClient.put<WikiPage>(`/knowledge/wiki/pages/${id}`, data);
     return response.data;
   }
 
   async deleteWikiPage(id: string): Promise<void> {
-    await apiClient.delete(`/fluence/wiki/pages/${id}`);
+    await apiClient.delete(`/knowledge/wiki/pages/${id}`);
   }
 
   async getWikiPageRevisions(pageId: string): Promise<WikiPageRevision[]> {
     const response = await apiClient.get<WikiPageRevision[]>(
-      `/fluence/wiki/pages/${pageId}/revisions`
+      `/knowledge/wiki/pages/${pageId}/revisions`
     );
     return response.data;
   }
 
   async restoreWikiPageRevision(pageId: string, revisionId: string): Promise<WikiPage> {
     const response = await apiClient.post<WikiPage>(
-      `/fluence/wiki/pages/${pageId}/revisions/${revisionId}/restore`,
+      `/knowledge/wiki/pages/${pageId}/revisions/${revisionId}/restore`,
       {}
     );
     return response.data;
@@ -96,29 +96,29 @@ class FluenceService {
     sortBy: string = 'updatedAt',
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<WikiSpace>> {
-    const response = await apiClient.get<Page<WikiSpace>>('/fluence/wiki/spaces', {
+    const response = await apiClient.get<Page<WikiSpace>>('/knowledge/wiki/spaces', {
       params: { page, size, sortBy, sortDirection },
     });
     return response.data;
   }
 
   async getWikiSpace(id: string): Promise<WikiSpace> {
-    const response = await apiClient.get<WikiSpace>(`/fluence/wiki/spaces/${id}`);
+    const response = await apiClient.get<WikiSpace>(`/knowledge/wiki/spaces/${id}`);
     return response.data;
   }
 
   async createWikiSpace(data: CreateWikiSpaceRequest): Promise<WikiSpace> {
-    const response = await apiClient.post<WikiSpace>('/fluence/wiki/spaces', data);
+    const response = await apiClient.post<WikiSpace>('/knowledge/wiki/spaces', data);
     return response.data;
   }
 
   async updateWikiSpace(id: string, data: UpdateWikiSpaceRequest): Promise<WikiSpace> {
-    const response = await apiClient.put<WikiSpace>(`/fluence/wiki/spaces/${id}`, data);
+    const response = await apiClient.put<WikiSpace>(`/knowledge/wiki/spaces/${id}`, data);
     return response.data;
   }
 
   async deleteWikiSpace(id: string): Promise<void> {
-    await apiClient.delete(`/fluence/wiki/spaces/${id}`);
+    await apiClient.delete(`/knowledge/wiki/spaces/${id}`);
   }
 
   // ─── Blog Posts ─────────────────────────────────────────────────────────────
@@ -134,70 +134,70 @@ class FluenceService {
     if (categoryId) {
       params.categoryId = categoryId;
     }
-    const response = await apiClient.get<Page<BlogPost>>('/fluence/blog/posts', { params });
+    const response = await apiClient.get<Page<BlogPost>>('/knowledge/blogs', { params });
     return response.data;
   }
 
   async getBlogPost(id: string): Promise<BlogPost> {
-    const response = await apiClient.get<BlogPost>(`/fluence/blog/posts/${id}`);
+    const response = await apiClient.get<BlogPost>(`/knowledge/blogs/${id}`);
     return response.data;
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost> {
-    const response = await apiClient.get<BlogPost>(`/fluence/blog/posts/slug/${slug}`);
+    const response = await apiClient.get<BlogPost>(`/knowledge/blogs/slug/${slug}`);
     return response.data;
   }
 
   async createBlogPost(data: CreateBlogPostRequest): Promise<BlogPost> {
-    const response = await apiClient.post<BlogPost>('/fluence/blog/posts', data);
+    const response = await apiClient.post<BlogPost>('/knowledge/blogs', data);
     return response.data;
   }
 
   async updateBlogPost(id: string, data: UpdateBlogPostRequest): Promise<BlogPost> {
-    const response = await apiClient.put<BlogPost>(`/fluence/blog/posts/${id}`, data);
+    const response = await apiClient.put<BlogPost>(`/knowledge/blogs/${id}`, data);
     return response.data;
   }
 
   async deleteBlogPost(id: string): Promise<void> {
-    await apiClient.delete(`/fluence/blog/posts/${id}`);
+    await apiClient.delete(`/knowledge/blogs/${id}`);
   }
 
   async likeBlogPost(id: string): Promise<BlogPost> {
-    const response = await apiClient.post<BlogPost>(`/fluence/blog/posts/${id}/like`, {});
+    const response = await apiClient.post<BlogPost>(`/fluence/engagement/likes/blog/${id}`, {});
     return response.data;
   }
 
   async unlikeBlogPost(id: string): Promise<BlogPost> {
-    const response = await apiClient.post<BlogPost>(`/fluence/blog/posts/${id}/unlike`, {});
+    const response = await apiClient.post<BlogPost>(`/fluence/engagement/likes/blog/${id}`, {});
     return response.data;
   }
 
   // ─── Wiki Page Like ──────────────────────────────────────────────────────────
 
   async likeWikiPage(id: string): Promise<WikiPage> {
-    const response = await apiClient.post<WikiPage>(`/fluence/wiki/pages/${id}/like`, {});
+    const response = await apiClient.post<WikiPage>(`/fluence/engagement/likes/wiki/${id}`, {});
     return response.data;
   }
 
   async unlikeWikiPage(id: string): Promise<WikiPage> {
-    const response = await apiClient.post<WikiPage>(`/fluence/wiki/pages/${id}/unlike`, {});
+    const response = await apiClient.post<WikiPage>(`/fluence/engagement/likes/wiki/${id}`, {});
     return response.data;
   }
 
   // ─── Blog Categories ────────────────────────────────────────────────────────
 
   async listBlogCategories(): Promise<BlogCategory[]> {
-    const response = await apiClient.get<BlogCategory[]>('/fluence/blog/categories');
+    const response = await apiClient.get<BlogCategory[]>('/knowledge/blogs/categories');
     return response.data;
   }
 
   async getBlogCategory(id: string): Promise<BlogCategory> {
-    const response = await apiClient.get<BlogCategory>(`/fluence/blog/categories/${id}`);
+    const response = await apiClient.get<BlogCategory>(`/knowledge/blogs/categories/${id}`);
     return response.data;
   }
 
   async createBlogCategory(data: CreateBlogCategoryRequest): Promise<BlogCategory> {
-    const response = await apiClient.post<BlogCategory>('/fluence/blog/categories', data);
+    const response = await apiClient.post<BlogCategory>('/knowledge/blogs/categories', data);
     return response.data;
   }
 
@@ -206,14 +206,14 @@ class FluenceService {
     data: CreateBlogCategoryRequest
   ): Promise<BlogCategory> {
     const response = await apiClient.put<BlogCategory>(
-      `/fluence/blog/categories/${id}`,
+      `/knowledge/blogs/categories/${id}`,
       data
     );
     return response.data;
   }
 
   async deleteBlogCategory(id: string): Promise<void> {
-    await apiClient.delete(`/fluence/blog/categories/${id}`);
+    await apiClient.delete(`/knowledge/blogs/categories/${id}`);
   }
 
   // ─── Templates ───────────────────────────────────────────────────────────────
@@ -229,19 +229,19 @@ class FluenceService {
     if (categoryId) {
       params.categoryId = categoryId;
     }
-    const response = await apiClient.get<Page<DocumentTemplate>>('/fluence/templates', {
+    const response = await apiClient.get<Page<DocumentTemplate>>('/knowledge/templates', {
       params,
     });
     return response.data;
   }
 
   async getTemplate(id: string): Promise<DocumentTemplate> {
-    const response = await apiClient.get<DocumentTemplate>(`/fluence/templates/${id}`);
+    const response = await apiClient.get<DocumentTemplate>(`/knowledge/templates/${id}`);
     return response.data;
   }
 
   async createTemplate(data: CreateTemplateRequest): Promise<DocumentTemplate> {
-    const response = await apiClient.post<DocumentTemplate>('/fluence/templates', data);
+    const response = await apiClient.post<DocumentTemplate>('/knowledge/templates', data);
     return response.data;
   }
 
@@ -249,17 +249,17 @@ class FluenceService {
     id: string,
     data: UpdateTemplateRequest
   ): Promise<DocumentTemplate> {
-    const response = await apiClient.put<DocumentTemplate>(`/fluence/templates/${id}`, data);
+    const response = await apiClient.put<DocumentTemplate>(`/knowledge/templates/${id}`, data);
     return response.data;
   }
 
   async deleteTemplate(id: string): Promise<void> {
-    await apiClient.delete(`/fluence/templates/${id}`);
+    await apiClient.delete(`/knowledge/templates/${id}`);
   }
 
   async instantiateTemplate(data: InstantiateTemplateRequest): Promise<WikiPage> {
     const response = await apiClient.post<WikiPage>(
-      '/fluence/templates/instantiate',
+      '/knowledge/templates/instantiate',
       data
     );
     return response.data;
@@ -341,7 +341,7 @@ class FluenceService {
     contentId: string,
     contentType: 'WIKI' | 'BLOG'
   ): Promise<void> {
-    await apiClient.post(`/fluence/views/${contentType}/${contentId}`, {});
+    await apiClient.post(`/fluence/engagement/views/${contentType}/${contentId}`, {});
   }
 
   async getViewers(
@@ -349,7 +349,7 @@ class FluenceService {
     contentType: 'WIKI' | 'BLOG'
   ): Promise<ContentViewRecord[]> {
     const response = await apiClient.get<ContentViewRecord[]>(
-      `/fluence/views/${contentType}/${contentId}`
+      `/fluence/engagement/views/${contentType}/${contentId}/viewers`
     );
     return response.data;
   }
@@ -357,7 +357,7 @@ class FluenceService {
   // ─── Favorites ────────────────────────────────────────────────────────────
 
   async listFavorites(): Promise<FluenceFavorite[]> {
-    const response = await apiClient.get<FluenceFavorite[]>('/fluence/favorites');
+    const response = await apiClient.get<FluenceFavorite[]>('/fluence/engagement/favorites');
     return response.data;
   }
 
@@ -365,7 +365,7 @@ class FluenceService {
     contentId: string,
     contentType: FavoriteContentType
   ): Promise<FluenceFavorite> {
-    const response = await apiClient.post<FluenceFavorite>('/fluence/favorites', {
+    const response = await apiClient.post<FluenceFavorite>('/fluence/engagement/favorites', {
       contentId,
       contentType,
     });
@@ -373,14 +373,14 @@ class FluenceService {
   }
 
   async removeFavorite(favoriteId: string): Promise<void> {
-    await apiClient.delete(`/fluence/favorites/${favoriteId}`);
+    await apiClient.delete(`/fluence/engagement/favorites/${favoriteId}`);
   }
 
   async removeFavoriteByContent(
     contentId: string,
     contentType: FavoriteContentType
   ): Promise<void> {
-    await apiClient.delete(`/fluence/favorites/content/${contentType}/${contentId}`);
+    await apiClient.delete(`/fluence/engagement/favorites/content/${contentType}/${contentId}`);
   }
 
   // ─── My Content ───────────────────────────────────────────────────────────
@@ -393,7 +393,7 @@ class FluenceService {
     const params: Record<string, unknown> = { page, size };
     if (status) params.status = status;
     const response = await apiClient.get<Page<WikiPage>>(
-      '/fluence/wiki/pages/my',
+      '/knowledge/wiki/pages/my',
       { params }
     );
     return response.data;
@@ -407,7 +407,7 @@ class FluenceService {
     const params: Record<string, unknown> = { page, size };
     if (status) params.status = status;
     const response = await apiClient.get<Page<BlogPost>>(
-      '/fluence/blog/posts/my',
+      '/knowledge/blogs/my',
       { params }
     );
     return response.data;
@@ -420,7 +420,7 @@ class FluenceService {
     editorIds: string[]
   ): Promise<WikiPage> {
     const response = await apiClient.put<WikiPage>(
-      `/fluence/wiki/pages/${pageId}/editors`,
+      `/knowledge/wiki/pages/${pageId}/editors`,
       { editorIds }
     );
     return response.data;
@@ -431,7 +431,7 @@ class FluenceService {
     editorIds: string[]
   ): Promise<BlogPost> {
     const response = await apiClient.put<BlogPost>(
-      `/fluence/blog/posts/${postId}/editors`,
+      `/knowledge/blogs/${postId}/editors`,
       { editorIds }
     );
     return response.data;

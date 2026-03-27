@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,7 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Delete all values for an entity
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM CustomFieldValue v WHERE v.entityType = :entityType AND v.entityId = :entityId AND v.tenantId = :tenantId")
     void deleteByEntityTypeAndEntityIdAndTenantId(
             @Param("entityType") EntityType entityType,
@@ -60,12 +62,14 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Delete all values for a field definition
      */
     @Modifying
+    @Transactional
     void deleteByFieldDefinitionId(UUID fieldDefinitionId);
 
     /**
      * Delete specific value
      */
     @Modifying
+    @Transactional
     void deleteByFieldDefinitionIdAndEntityId(UUID fieldDefinitionId, UUID entityId);
 
     /**

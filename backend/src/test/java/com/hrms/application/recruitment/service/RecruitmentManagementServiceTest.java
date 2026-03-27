@@ -5,6 +5,7 @@ import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.recruitment.*;
 import com.hrms.domain.user.RoleScope;
@@ -57,6 +58,21 @@ class RecruitmentManagementServiceTest {
 
     @Mock
     private com.hrms.application.workflow.service.WorkflowService workflowService;
+
+    @Mock
+    private com.hrms.application.audit.service.AuditLogService auditLogService;
+
+    @Mock
+    private GoogleMeetService googleMeetService;
+
+    @Mock
+    private JobOpeningService jobOpeningService;
+
+    @Mock
+    private InterviewManagementService interviewManagementService;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private RecruitmentManagementService recruitmentManagementService;
@@ -524,11 +540,13 @@ class RecruitmentManagementServiceTest {
         void shouldDeleteCandidateSuccessfully() {
             when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
                     .thenReturn(Optional.of(candidate));
-            doNothing().when(candidateRepository).delete(any(Candidate.class));
+            when(candidateRepository.save(any(Candidate.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             recruitmentManagementService.deleteCandidate(candidateId);
 
-            verify(candidateRepository).delete(candidate);
+            verify(candidateRepository).save(any(Candidate.class));
+            assertThat(candidate.isDeleted()).isTrue();
         }
     }
 

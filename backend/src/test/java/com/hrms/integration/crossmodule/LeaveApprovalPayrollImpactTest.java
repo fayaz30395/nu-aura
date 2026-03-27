@@ -78,8 +78,18 @@ class LeaveApprovalPayrollImpactTest {
         tenantContextMock.close();
     }
 
+    @AfterEach
+    void tearDown() {
+        if (org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
+            org.springframework.transaction.support.TransactionSynchronizationManager.clearSynchronization();
+        }
+    }
+
     @BeforeEach
     void setUp() {
+        if (!org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
+            org.springframework.transaction.support.TransactionSynchronizationManager.initSynchronization();
+        }
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
         leaveTypeId = UUID.randomUUID();

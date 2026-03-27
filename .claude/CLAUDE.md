@@ -298,9 +298,9 @@ These decisions have been made. Do not re-evaluate unless explicitly asked.
 - **Approval Flows:** Generic `approval_service` engine. Workflows are data-driven, not hardcoded. `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`.
 - **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
 - **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
-- **Flyway Status:** V0–V62 active (63 total). Next migration = **V63**. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for recent migration details.
+- **Flyway Status:** V0–V81 active (with gaps at V1, V27–V29, V67). Next migration = **V82**. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for recent migration details.
 - **Kafka Topics:** `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.employee-lifecycle`, `nu-aura.fluence-content` — 5 topics + 5 DLT topics + DLT handler. Failed events stored in `FailedKafkaEvent` table.
-- **Scheduled Jobs:** 24 `@Scheduled` jobs across attendance, contracts, email, notifications, recruitment, workflows, reports, webhooks, rate limiting, and tenant operations.
+- **Scheduled Jobs:** 25 `@Scheduled` jobs across attendance, contracts, email, notifications, recruitment, workflows, reports, webhooks, rate limiting, leave accrual, and tenant operations.
 - **Security:** Rate limiting (Bucket4j + Redis): 5/min auth, 100/min API, 5/5min exports. OWASP headers at both edge (Next.js middleware) and backend (Spring Security). CSRF double-submit cookie. Password policy: 12+ chars, uppercase/lowercase/digit/special required, history of 5, 90-day max age.
 - **Dev Database:** Neon cloud PostgreSQL (docker-compose.yml has NO local postgres service). Prod uses PostgreSQL 16.
 - **Integrations:** Google OAuth, Twilio (SMS, mock in dev), MinIO (file storage), Elasticsearch (search), SMTP (email), job boards (recruitment), WebSocket/STOMP (real-time notifications).

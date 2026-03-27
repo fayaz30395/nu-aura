@@ -47,6 +47,7 @@ public interface ImplicitUserRoleRepository extends JpaRepository<ImplicitUserRo
      * Must be wrapped in @Transactional by caller.
      */
     @Modifying
+    @Transactional
     @Query("UPDATE ImplicitUserRole iur SET iur.isActive = false " +
            "WHERE iur.userId = :userId AND iur.tenantId = :tenantId")
     int deactivateAllForUser(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId);
@@ -56,6 +57,7 @@ public interface ImplicitUserRoleRepository extends JpaRepository<ImplicitUserRo
      * Called when a rule is disabled or modified.
      */
     @Modifying
+    @Transactional
     @Query("UPDATE ImplicitUserRole iur SET iur.isActive = false " +
            "WHERE iur.derivedFromRuleId = :ruleId AND iur.tenantId = :tenantId")
     int deactivateAllForRule(@Param("ruleId") UUID ruleId, @Param("tenantId") UUID tenantId);
