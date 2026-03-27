@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@org.hibernate.annotations.SQLRestriction("is_deleted = false")
 @Table(name = "candidates", indexes = {
     @Index(name = "idx_candidate_tenant", columnList = "tenant_id"),
     @Index(name = "idx_candidate_tenant_job", columnList = "tenant_id,job_opening_id"),
