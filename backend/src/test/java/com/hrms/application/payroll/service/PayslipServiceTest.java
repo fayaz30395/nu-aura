@@ -1,5 +1,6 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.payroll.Payslip;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
@@ -31,6 +32,12 @@ class PayslipServiceTest {
 
     @Mock
     private PayslipRepository payslipRepository;
+
+    @Mock
+    private AuditLogService auditLogService;
+
+    @Mock
+    private StatutoryDeductionService statutoryDeductionService;
 
     @InjectMocks
     private PayslipService payslipService;
@@ -326,11 +333,11 @@ class PayslipServiceTest {
         void shouldDeletePayslipSuccessfully() {
             UUID payslipId = payslip.getId();
             when(payslipRepository.findById(payslipId)).thenReturn(Optional.of(payslip));
-            doNothing().when(payslipRepository).delete(any(Payslip.class));
+            when(payslipRepository.save(any(Payslip.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             payslipService.deletePayslip(payslipId);
 
-            verify(payslipRepository).delete(payslip);
+            verify(payslipRepository).save(any(Payslip.class));
         }
 
         @Test

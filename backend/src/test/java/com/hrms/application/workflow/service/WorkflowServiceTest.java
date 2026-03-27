@@ -95,6 +95,7 @@ class WorkflowServiceTest {
     void setUp() {
         tenantContextMock = mockStatic(TenantContext.class);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(TENANT_ID);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(TENANT_ID);
 
         securityContextMock = mockStatic(SecurityContext.class);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(USER_ID);

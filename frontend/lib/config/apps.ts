@@ -49,7 +49,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     permissionPrefixes: [
       'employee', 'department', 'leave', 'attendance', 'payroll',
       'compensation', 'benefit', 'expense', 'loan', 'travel',
-      'asset', 'letter', 'statutory', 'tax', 'helpdesk',
+      'asset', 'letter', 'statutory', 'tax', 'helpdesk', 'overtime', 'probation',
       'dashboard', 'self_service', 'document', 'calendar',
       'announcement', 'workflow', 'org_structure', 'report',
       'analytics', 'settings', 'role', 'permission', 'integration',
@@ -66,6 +66,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       '/organization-chart', '/timesheets', '/time-tracking',
       '/projects', '/resources', '/allocations',
       '/calendar', '/nu-calendar', '/nu-drive', '/nu-mail',
+      '/overtime', '/probation',
       '/reports', '/analytics', '/settings', '/admin',
     ],
     available: true,
@@ -81,11 +82,11 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     iconName: 'UserPlus',
     permissionPrefixes: [
       'recruitment', 'candidate', 'onboarding', 'exit',
-      'preboarding',
+      'preboarding', 'referral',
     ],
     routePrefixes: [
       '/recruitment', '/onboarding', '/preboarding',
-      '/offboarding', '/offer-portal', '/careers',
+      '/offboarding', '/offer-portal', '/careers', '/referrals',
     ],
     available: true,
     order: 2,

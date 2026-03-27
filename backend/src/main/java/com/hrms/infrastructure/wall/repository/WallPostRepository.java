@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,7 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
      * Use this instead of the inherited deleteById().
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM WallPost p WHERE p.id = :id AND p.tenantId = :tenantId")
     void deleteByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 

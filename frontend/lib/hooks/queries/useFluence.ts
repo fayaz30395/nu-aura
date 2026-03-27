@@ -5,7 +5,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { fluenceService } from '@/lib/services/fluence.service';
 import {
   WikiPage,
-  DocumentTemplate,
   EditLockResponse,
   CreateWikiPageRequest,
   UpdateWikiPageRequest,
@@ -20,19 +19,7 @@ import {
   CreateCommentRequest,
   UpdateCommentRequest,
   FavoriteContentType,
-  FluenceActivity,
 } from '@/lib/types/fluence';
-import {
-  MOCK_WIKI_PAGES,
-  MOCK_SPACES,
-  MOCK_LIKED_PAGES,
-  MOCK_FAVORITED_PAGES,
-  getMockComments,
-  mockPageResponse,
-  getAllMockTemplates,
-  getMockTemplate,
-  addMockTemplate,
-} from '@/lib/data/mock-fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 
@@ -116,17 +103,7 @@ export function useWikiPages(
 ) {
   return useQuery({
     queryKey: fluenceKeys.wikiPageList(spaceId, page, size),
-    queryFn: async () => {
-      try {
-        return await fluenceService.listWikiPages(spaceId, page, size);
-      } catch {
-        // Fallback to mock data when backend is unavailable
-        const filtered = spaceId
-          ? MOCK_WIKI_PAGES.filter((p) => p.spaceId === spaceId)
-          : MOCK_WIKI_PAGES;
-        return mockPageResponse(filtered, page, size);
-      }
-    },
+    queryFn: () => fluenceService.listWikiPages(spaceId, page, size),
     enabled,
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
@@ -135,22 +112,7 @@ export function useWikiPages(
 export function useWikiPage(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.wikiPageDetail(id),
-    queryFn: async () => {
-      try {
-        return await fluenceService.getWikiPage(id);
-      } catch {
-        // Fallback to mock data when backend is unavailable
-        const mockPage = MOCK_WIKI_PAGES.find((p) => p.id === id);
-        if (mockPage) {
-          return {
-            ...mockPage,
-            isLikedByCurrentUser: MOCK_LIKED_PAGES.has(id),
-            isFavoritedByCurrentUser: MOCK_FAVORITED_PAGES.has(id),
-          };
-        }
-        throw new Error(`Wiki page not found: ${id}`);
-      }
-    },
+    queryFn: () => fluenceService.getWikiPage(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -183,14 +145,7 @@ export function useWikiPageRevisions(pageId: string, enabled: boolean = true) {
 export function useWikiSpaces(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.wikiSpaceList(page, size),
-    queryFn: async () => {
-      try {
-        return await fluenceService.listWikiSpaces(page, size);
-      } catch {
-        // Fallback to mock data when backend is unavailable
-        return mockPageResponse(MOCK_SPACES, page, size);
-      }
-    },
+    queryFn: () => fluenceService.listWikiSpaces(page, size),
     enabled,
     staleTime: 2 * 60 * 1000,
   });
@@ -269,18 +224,7 @@ export function useFluenceTemplates(
 ) {
   return useQuery({
     queryKey: fluenceKeys.templateList(categoryId, page, size),
-    queryFn: async () => {
-      try {
-        return await fluenceService.listTemplates(page, size, categoryId);
-      } catch {
-        // Fallback to mock data when backend is unavailable
-        const templates = getAllMockTemplates();
-        const filtered = categoryId
-          ? templates.filter((t) => t.categoryId === categoryId)
-          : templates;
-        return mockPageResponse(filtered, page, size);
-      }
-    },
+    queryFn: () => fluenceService.listTemplates(page, size, categoryId),
     enabled,
     staleTime: 2 * 60 * 1000,
   });
@@ -289,16 +233,7 @@ export function useFluenceTemplates(
 export function useFluenceTemplate(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.templateDetail(id),
-    queryFn: async () => {
-      try {
-        return await fluenceService.getTemplate(id);
-      } catch {
-        // Fallback to mock data when backend is unavailable
-        const template = getMockTemplate(id);
-        if (template) return template;
-        throw new Error(`Template not found: ${id}`);
-      }
-    },
+    queryFn: () => fluenceService.getTemplate(id),
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000,
   });
@@ -315,15 +250,7 @@ export function useComments(
 ) {
   return useQuery({
     queryKey: fluenceKeys.commentList(contentId, contentType),
-    queryFn: async () => {
-      try {
-        return await fluenceService.listComments(contentId, contentType, page, size);
-      } catch {
-        // Fallback to mock comments when backend is unavailable
-        const comments = getMockComments(contentId);
-        return mockPageResponse(comments, page, size);
-      }
-    },
+    queryFn: () => fluenceService.listComments(contentId, contentType, page, size),
     enabled: enabled && !!contentId,
     staleTime: 1 * 60 * 1000, // 1 minute, comments update frequently
   });
@@ -543,35 +470,7 @@ export function useCreateFluenceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreateTemplateRequest) => {
-      try {
-        return await fluenceService.createTemplate(data);
-      } catch {
-        // Fallback: create a mock template when backend is unavailable
-        const mockId = `tmpl-${Date.now()}`;
-        const slug = data.name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-|-$/g, '');
-        const newTemplate: DocumentTemplate = {
-          id: mockId,
-          name: data.name,
-          slug,
-          description: data.description,
-          content: data.content,
-          categoryId: data.categoryId,
-          authorId: 'user-001',
-          authorName: 'Fayaz M',
-          usageCount: 0,
-          icon: data.icon,
-          tags: data.tags ?? [],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        addMockTemplate(newTemplate);
-        return newTemplate;
-      }
-    },
+    mutationFn: (data: CreateTemplateRequest) => fluenceService.createTemplate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.templates() });
     },
@@ -882,14 +781,7 @@ export function useActivityFeed(
 ) {
   return useQuery({
     queryKey: fluenceKeys.activityFeed(page, size, contentType),
-    queryFn: async () => {
-      try {
-        return await fluenceService.getActivityFeed(page, size, contentType);
-      } catch {
-        // Fallback to empty page when backend is unavailable
-        return mockPageResponse([] as FluenceActivity[], page, size);
-      }
-    },
+    queryFn: () => fluenceService.getActivityFeed(page, size, contentType),
     enabled,
     staleTime: 1 * 60 * 1000,
   });
@@ -902,14 +794,7 @@ export function useMyActivity(
 ) {
   return useQuery({
     queryKey: fluenceKeys.myActivity(page, size),
-    queryFn: async () => {
-      try {
-        return await fluenceService.getMyActivity(page, size);
-      } catch {
-        // Fallback to empty page when backend is unavailable
-        return mockPageResponse([] as FluenceActivity[], page, size);
-      }
-    },
+    queryFn: () => fluenceService.getMyActivity(page, size),
     enabled,
     staleTime: 1 * 60 * 1000,
   });

@@ -139,6 +139,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/integrations/docusign/webhook").permitAll()
                         // Payment provider webhooks (public, signature-verified per provider)
                         .requestMatchers("/api/v1/payments/webhooks/**").permitAll()
+                        // Preboarding portal endpoints (token-based access for new hires)
+                        .requestMatchers("/api/v1/preboarding/portal/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
@@ -182,7 +184,9 @@ public class SecurityConfig {
                     // Ignore CSRF for DocuSign webhook (public, HMAC-verified via CRIT-002)
                     .ignoringRequestMatchers("/api/v1/integrations/docusign/webhook")
                     // Ignore CSRF for payment provider webhooks (signature-verified per provider)
-                    .ignoringRequestMatchers("/api/v1/payments/webhooks/**"));
+                    .ignoringRequestMatchers("/api/v1/payments/webhooks/**")
+                    // Ignore CSRF for preboarding portal (token-based, unauthenticated new hires)
+                    .ignoringRequestMatchers("/api/v1/preboarding/portal/**"));
         } else {
             // Only reachable in non-production profiles (dev, test, local)
             http.csrf(AbstractHttpConfigurer::disable);

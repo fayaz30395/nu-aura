@@ -61,6 +61,12 @@ class AuthServiceTest {
         @Mock
         private ImplicitRoleService implicitRoleService;
 
+        @Mock
+        private com.hrms.common.metrics.MetricsService metricsService;
+
+        @Mock
+        private PasswordPolicyService passwordPolicyService;
+
         @InjectMocks
         private AuthService authService;
 

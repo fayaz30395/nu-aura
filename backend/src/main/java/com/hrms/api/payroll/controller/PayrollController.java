@@ -1,5 +1,6 @@
 package com.hrms.api.payroll.controller;
 
+import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.application.payroll.service.PayrollComponentService;
 import com.hrms.application.payroll.service.PayrollRunService;
 import com.hrms.application.payroll.service.PayslipPdfService;
@@ -9,6 +10,9 @@ import com.lowagie.text.DocumentException;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
+import com.hrms.domain.user.RoleScope;
+import org.springframework.security.access.AccessDeniedException;
 import com.hrms.domain.payroll.PayrollComponent;
 import com.hrms.domain.payroll.PayrollComponent.ComponentType;
 import com.hrms.domain.payroll.PayrollRun;
@@ -39,6 +43,7 @@ public class PayrollController {
     private final PayslipService payslipService;
     private final PayslipPdfService payslipPdfService;
     private final SalaryStructureService salaryStructureService;
+    private final EmployeeService employeeService;
 
     // ===== Payroll Run Endpoints =====
 
@@ -160,6 +165,8 @@ public class PayrollController {
     public ResponseEntity<Page<Payslip>> getPayslipsByEmployee(
             @PathVariable UUID employeeId,
             Pageable pageable) {
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
         Page<Payslip> payslips = payslipService.getPayslipsByEmployeeId(employeeId, pageable);
         return ResponseEntity.ok(payslips);
     }
@@ -170,6 +177,8 @@ public class PayrollController {
             @PathVariable UUID employeeId,
             @RequestParam Integer year,
             @RequestParam Integer month) {
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
         Payslip payslip = payslipService.getPayslipByEmployeeAndPeriod(employeeId, year, month);
         return ResponseEntity.ok(payslip);
     }
@@ -179,6 +188,8 @@ public class PayrollController {
     public ResponseEntity<List<Payslip>> getPayslipsByEmployeeAndYear(
             @PathVariable UUID employeeId,
             @PathVariable Integer year) {
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
         List<Payslip> payslips = payslipService.getPayslipsByEmployeeAndYear(employeeId, year);
         return ResponseEntity.ok(payslips);
     }
@@ -211,6 +222,9 @@ public class PayrollController {
     @GetMapping("/payslips/{id}/pdf")
     @RequiresPermission({Permission.PAYROLL_VIEW_ALL, Permission.PAYROLL_VIEW_SELF})
     public ResponseEntity<byte[]> downloadPayslipPdf(@PathVariable UUID id) throws DocumentException {
+        Payslip payslip = payslipService.getPayslipById(id);
+        String permission = determineViewPermission();
+        validateEmployeeAccess(payslip.getEmployeeId(), permission);
         byte[] pdfBytes = payslipPdfService.generatePayslipPdf(id);
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=payslip_" + id + ".pdf")
@@ -224,6 +238,8 @@ public class PayrollController {
             @PathVariable UUID employeeId,
             @RequestParam Integer year,
             @RequestParam Integer month) throws DocumentException {
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
         byte[] pdfBytes = payslipPdfService.generatePayslipPdf(employeeId, year, month);
         String monthStr = String.format("%02d", month);
         return ResponseEntity.ok()
@@ -268,6 +284,8 @@ public class PayrollController {
     @RequiresPermission({Permission.PAYROLL_VIEW_ALL, Permission.PAYROLL_VIEW_SELF})
     public ResponseEntity<List<SalaryStructure>> getSalaryStructuresByEmployee(
             @PathVariable UUID employeeId) {
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
         List<SalaryStructure> salaryStructures = salaryStructureService.getSalaryStructuresByEmployeeId(employeeId);
         return ResponseEntity.ok(salaryStructures);
     }
@@ -277,6 +295,8 @@ public class PayrollController {
     public ResponseEntity<SalaryStructure> getActiveSalaryStructure(
             @PathVariable UUID employeeId,
             @RequestParam(required = false) LocalDate date) {
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
         LocalDate effectiveDate = date != null ? date : LocalDate.now();
         SalaryStructure salaryStructure = salaryStructureService.getActiveSalaryStructure(employeeId, effectiveDate);
         return ResponseEntity.ok(salaryStructure);
@@ -378,5 +398,139 @@ public class PayrollController {
     public ResponseEntity<Void> recomputeEvaluationOrder() {
         payrollComponentService.recomputeEvaluationOrder();
         return ResponseEntity.noContent().build();
+    }
+
+    // ===== Employee Access Validation (matches LeaveRequestController / AttendanceController pattern) =====
+
+    /**
+     * Determines the highest payroll view permission the current user holds.
+     * Used to resolve the scope (ALL, SELF, etc.) for employee data access checks.
+     */
+    private String determineViewPermission() {
+        if (SecurityContext.getPermissionScope(Permission.PAYROLL_VIEW_ALL) != null) {
+            return Permission.PAYROLL_VIEW_ALL;
+        }
+        return Permission.PAYROLL_VIEW_SELF;
+    }
+
+    /**
+     * Validates that the current user can access payroll data for a specific employee
+     * based on their permission scope. Throws AccessDeniedException if access is not allowed.
+     */
+    private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+
+        // Super admin (includes system admin and SUPER_ADMIN role) bypasses all checks
+        if (SecurityContext.isSuperAdmin()) {
+            return;
+        }
+
+        RoleScope scope = SecurityContext.getPermissionScope(permission);
+        if (scope == null) {
+            throw new AccessDeniedException("No access to payroll records");
+        }
+
+        switch (scope) {
+            case ALL:
+                // ALL scope: can access any employee's payroll data
+                return;
+
+            case LOCATION:
+                // LOCATION scope: target employee must be in same location
+                if (isEmployeeInUserLocations(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case DEPARTMENT:
+                // DEPARTMENT scope: target employee must be in same department
+                if (isEmployeeInUserDepartment(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case TEAM:
+                // TEAM scope: target must be self or a reportee
+                if (targetEmployeeId.equals(currentEmployeeId) || isReportee(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case SELF:
+                // SELF scope: can only access own payroll data
+                if (targetEmployeeId.equals(currentEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case CUSTOM:
+                // CUSTOM scope: check if target is in custom targets
+                if (targetEmployeeId.equals(currentEmployeeId) || isInCustomTargets(targetEmployeeId, permission)) {
+                    return;
+                }
+                break;
+        }
+
+        throw new AccessDeniedException(
+                "You do not have permission to access this employee's payroll records");
+    }
+
+    private boolean isReportee(UUID employeeId) {
+        java.util.Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        return reporteeIds != null && reporteeIds.contains(employeeId);
+    }
+
+    private boolean isEmployeeInUserLocations(UUID employeeId) {
+        java.util.Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
+        if (locationIds == null || locationIds.isEmpty()) {
+            return false;
+        }
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return employeeService.findByIdAndTenant(employeeId, tenantId)
+                .map(emp -> emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId()))
+                .orElse(false);
+    }
+
+    private boolean isEmployeeInUserDepartment(UUID employeeId) {
+        UUID departmentId = SecurityContext.getCurrentDepartmentId();
+        if (departmentId == null) {
+            return false;
+        }
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return employeeService.findByIdAndTenant(employeeId, tenantId)
+                .map(emp -> departmentId.equals(emp.getDepartmentId()))
+                .orElse(false);
+    }
+
+    private boolean isInCustomTargets(UUID employeeId, String permission) {
+        // Check if employee is directly in custom employee targets
+        java.util.Set<UUID> customEmployeeTargets = SecurityContext.getCustomEmployeeIds(permission);
+        if (customEmployeeTargets != null && customEmployeeTargets.contains(employeeId)) {
+            return true;
+        }
+
+        // Check if employee's department is in custom department targets
+        java.util.Set<UUID> customDepartmentTargets = SecurityContext.getCustomDepartmentIds(permission);
+        if (customDepartmentTargets != null && !customDepartmentTargets.isEmpty()) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            java.util.Optional<com.hrms.domain.employee.Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
+            if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
+                    && customDepartmentTargets.contains(empOpt.get().getDepartmentId())) {
+                return true;
+            }
+        }
+
+        // Check if employee's location is in custom location targets
+        java.util.Set<UUID> customLocationTargets = SecurityContext.getCustomLocationIds(permission);
+        if (customLocationTargets != null && !customLocationTargets.isEmpty()) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            java.util.Optional<com.hrms.domain.employee.Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
+            if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
+                    && customLocationTargets.contains(empOpt.get().getOfficeLocationId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

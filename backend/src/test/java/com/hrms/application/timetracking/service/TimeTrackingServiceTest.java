@@ -70,6 +70,7 @@ class TimeTrackingServiceTest {
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(employeeId);
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
 
         testTimeEntry = TimeEntry.builder()
                 .id(entryId)
@@ -307,6 +308,7 @@ class TimeTrackingServiceTest {
                     .startTime(LocalTime.of(10, 0))
                     .endTime(LocalTime.of(18, 0))
                     .hoursWorked(new BigDecimal("8.0"))
+                    .isBillable(true)
                     .description("Updated description")
                     .build();
 
@@ -365,6 +367,7 @@ class TimeTrackingServiceTest {
                     .startTime(LocalTime.of(10, 0))
                     .endTime(LocalTime.of(18, 0))
                     .hoursWorked(new BigDecimal("8.0"))
+                    .isBillable(true)
                     .description("Resubmitted")
                     .build();
 

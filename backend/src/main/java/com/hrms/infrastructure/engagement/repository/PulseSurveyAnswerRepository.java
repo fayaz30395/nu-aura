@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,10 +51,12 @@ public interface PulseSurveyAnswerRepository extends JpaRepository<PulseSurveyAn
     Double calculateNPSScore(@Param("surveyId") UUID surveyId, @Param("questionId") UUID questionId);
 
     @Modifying
+    @Transactional
     @Query("DELETE FROM PulseSurveyAnswer a WHERE a.responseId = :responseId")
     void deleteAllByResponseId(@Param("responseId") UUID responseId);
 
     @Modifying
+    @Transactional
     @Query("DELETE FROM PulseSurveyAnswer a WHERE a.surveyId = :surveyId")
     void deleteAllBySurveyId(@Param("surveyId") UUID surveyId);
 }

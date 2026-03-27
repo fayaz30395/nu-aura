@@ -78,8 +78,8 @@ class PayrollRunServiceTest {
         @Test
         @DisplayName("Should create payroll run successfully")
         void shouldCreatePayrollRunSuccessfully() {
-            when(payrollRunRepository.existsByTenantIdAndPayPeriodYearAndPayPeriodMonth(
-                    tenantId, 2025, 1)).thenReturn(false);
+            when(payrollRunRepository.findByTenantIdAndPeriodForUpdate(
+                    tenantId, 2025, 1)).thenReturn(Optional.empty());
             when(payrollRunRepository.save(any(PayrollRun.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -95,8 +95,8 @@ class PayrollRunServiceTest {
         @Test
         @DisplayName("Should throw exception when payroll run already exists for period")
         void shouldThrowExceptionWhenPayrollRunExists() {
-            when(payrollRunRepository.existsByTenantIdAndPayPeriodYearAndPayPeriodMonth(
-                    tenantId, 2025, 1)).thenReturn(true);
+            when(payrollRunRepository.findByTenantIdAndPeriodForUpdate(
+                    tenantId, 2025, 1)).thenReturn(Optional.of(payrollRun));
 
             assertThatThrownBy(() -> payrollRunService.createPayrollRun(payrollRun))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -169,7 +169,7 @@ class PayrollRunServiceTest {
         @DisplayName("Should process payroll run successfully")
         void shouldProcessPayrollRunSuccessfully() {
             UUID runId = payrollRun.getId();
-            when(payrollRunRepository.findById(runId))
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
                     .thenReturn(Optional.of(payrollRun));
             when(payrollRunRepository.save(any(PayrollRun.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -192,7 +192,7 @@ class PayrollRunServiceTest {
             UUID runId = payrollRun.getId();
             payrollRun.setStatus(PayrollStatus.PROCESSED);
 
-            when(payrollRunRepository.findById(runId))
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
                     .thenReturn(Optional.of(payrollRun));
             when(payrollRunRepository.save(any(PayrollRun.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));

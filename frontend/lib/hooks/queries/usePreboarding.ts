@@ -44,7 +44,7 @@ export function usePreboardingCandidates() {
   return useQuery({
     queryKey: preboardingKeys.candidates(),
     queryFn: async () => {
-      const response = await apiClient.get<PreboardingResponse>('/api/v1/preboarding/candidates');
+      const response = await apiClient.get<PreboardingResponse>('/preboarding/candidates');
       return response.data.content || [];
     },
   });
@@ -61,7 +61,7 @@ export function useCreatePreboardingCandidate() {
 
   return useMutation({
     mutationFn: (data: CreatePreboardingRequest) =>
-      apiClient.post('/api/v1/preboarding/candidates', data),
+      apiClient.post('/preboarding/candidates', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: preboardingKeys.candidates() });
       toast.success('Candidate invited successfully');
@@ -83,7 +83,7 @@ export function useResendPreboardingInvitation() {
 
   return useMutation({
     mutationFn: (candidateId: string) =>
-      apiClient.post(`/api/v1/preboarding/candidates/${candidateId}/resend`),
+      apiClient.post(`/preboarding/candidates/${candidateId}/resend`),
     onSuccess: () => {
       toast.success('Invitation resent successfully');
     },

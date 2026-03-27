@@ -5,6 +5,7 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.benefits.*;
 import com.hrms.infrastructure.benefits.repository.*;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class BenefitEnhancedService {
     private final BenefitDependentRepository dependentRepository;
     private final BenefitClaimRepository claimRepository;
     private final FlexBenefitAllocationRepository flexAllocationRepository;
+    private final EventPublisher eventPublisher;
 
     // ==================== BENEFIT PLANS ====================
 
@@ -251,6 +253,11 @@ public class BenefitEnhancedService {
         }
 
         log.info("Created enrollment: {} for employee: {}", enrollment.getId(), request.getEmployeeId());
+
+        // Publish audit event for enrollment creation (best-effort)
+        publishBenefitAuditEvent(currentUser, "CREATE", "BenefitEnrollment", enrollment.getId(),
+                tenantId, "Enrollment created for employee " + request.getEmployeeId() + " in plan " + request.getBenefitPlanId());
+
         return EnrollmentResponse.from(enrollment);
     }
 
@@ -429,6 +436,11 @@ public class BenefitEnhancedService {
         claim = claimRepository.save(claim);
 
         log.info("Submitted claim: {} for enrollment: {}", claim.getId(), enrollment.getId());
+
+        // Publish audit event for claim submission (best-effort)
+        publishBenefitAuditEvent(currentUser, "CREATE", "BenefitClaim", claim.getId(),
+                tenantId, "Claim submitted for enrollment " + enrollment.getId() + ", amount: " + request.getClaimedAmount());
+
         return ClaimResponse.from(claim);
     }
 
@@ -469,6 +481,11 @@ public class BenefitEnhancedService {
         enrollmentRepository.save(enrollment);
 
         claim = claimRepository.save(claim);
+
+        // Publish audit event for claim approval (best-effort)
+        publishBenefitAuditEvent(currentUser, "APPROVE", "BenefitClaim", claim.getId(),
+                tenantId, "Claim approved, amount: " + approvedAmount + ", comments: " + comments);
+
         return ClaimResponse.from(claim);
     }
 
@@ -482,6 +499,11 @@ public class BenefitEnhancedService {
 
         claim.reject(reason, currentUser);
         claim = claimRepository.save(claim);
+
+        // Publish audit event for claim rejection (best-effort)
+        publishBenefitAuditEvent(currentUser, "REJECT", "BenefitClaim", claim.getId(),
+                tenantId, "Claim rejected, reason: " + reason);
+
         return ClaimResponse.from(claim);
     }
 
@@ -631,6 +653,25 @@ public class BenefitEnhancedService {
 
         allocation.useCredits(amount);
         flexAllocationRepository.save(allocation);
+    }
+
+    // ==================== KAFKA EVENT PUBLISHING ====================
+
+    /**
+     * Publishes an audit event for benefit operations. Best-effort: logs errors
+     * but never fails the business operation.
+     */
+    private void publishBenefitAuditEvent(UUID userId, String action, String entityType,
+            UUID entityId, UUID tenantId, String description) {
+        try {
+            eventPublisher.publishAuditEvent(
+                    userId, action, entityType, entityId, tenantId,
+                    null, null, null, null, null, null, null, null,
+                    description);
+        } catch (Exception e) {
+            log.warn("Failed to publish benefit audit event (action={}, entityId={}): {}",
+                    action, entityId, e.getMessage());
+        }
     }
 
     // ==================== ANALYTICS ====================

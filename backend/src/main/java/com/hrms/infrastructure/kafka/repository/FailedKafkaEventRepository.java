@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +67,7 @@ public interface FailedKafkaEventRepository extends JpaRepository<FailedKafkaEve
      * @return the number of records updated
      */
     @Modifying
+    @Transactional
     @Query("UPDATE FailedKafkaEvent f SET f.status = 'IGNORED' " +
            "WHERE f.topic = :topic AND f.status = 'PENDING_REPLAY'")
     int ignoreAllPendingForTopic(@Param("topic") String topic);

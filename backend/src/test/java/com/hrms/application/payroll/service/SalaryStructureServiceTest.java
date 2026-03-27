@@ -1,5 +1,6 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.payroll.SalaryStructure;
 import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
@@ -30,6 +31,9 @@ class SalaryStructureServiceTest {
 
     @Mock
     private SalaryStructureRepository salaryStructureRepository;
+
+    @Mock
+    private AuditLogService auditLogService;
 
     @InjectMocks
     private SalaryStructureService salaryStructureService;
@@ -273,11 +277,12 @@ class SalaryStructureServiceTest {
         void shouldDeleteSalaryStructureSuccessfully() {
             UUID structureId = salaryStructure.getId();
             when(salaryStructureRepository.findById(structureId)).thenReturn(Optional.of(salaryStructure));
-            doNothing().when(salaryStructureRepository).delete(any(SalaryStructure.class));
+            when(salaryStructureRepository.save(any(SalaryStructure.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             salaryStructureService.deleteSalaryStructure(structureId);
 
-            verify(salaryStructureRepository).delete(salaryStructure);
+            verify(salaryStructureRepository).save(any(SalaryStructure.class));
         }
 
         @Test
