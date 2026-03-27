@@ -1,0 +1,384 @@
+{
+  "agent": "typescript-health",
+  "timestamp": "2026-03-27",
+  "findings": [
+    {
+      "file": "lib/websocket.ts",
+      "line": 122,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.log wrapped in development check (process.env.NODE_ENV === 'development')",
+      "current_code": "console.log('[WebSocket]', str);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/websocket.ts",
+      "line": 131,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.log wrapped in development check (process.env.NODE_ENV === 'development')",
+      "current_code": "console.log('[WebSocket] Connected');",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/websocket.ts",
+      "line": 145,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.log wrapped in development check (process.env.NODE_ENV === 'development')",
+      "current_code": "console.log('[WebSocket] Connection closed');",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 43,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.log in logger utility (development-gated)",
+      "current_code": "console.log(prefix, ...args);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 48,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.info in logger utility (development-gated)",
+      "current_code": "console.info(prefix, ...args);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 53,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.warn in logger utility (development-gated)",
+      "current_code": "console.warn(prefix, ...args);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 59,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.error in logger utility (always logs but sanitized in production)",
+      "current_code": "console.error(prefix, ...args);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 68,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.error in logger utility (production-safe, sanitized)",
+      "current_code": "console.error(prefix, ...sanitizedArgs);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 73,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.debug in logger utility (development-gated)",
+      "current_code": "console.debug(prefix, ...args);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 78,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.group in logger utility (development-gated)",
+      "current_code": "console.group(`${prefix} ${label}`);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 88,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.table in logger utility (development-gated)",
+      "current_code": "console.table(data);",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/utils/logger.ts",
+      "line": 100,
+      "type": "console-log",
+      "severity": "low",
+      "description": "console.log in default logger instance (development-gated)",
+      "current_code": "console.log(...args);",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/attendance/shift-swap/page.tsx",
+      "line": 100,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (submitMutation) defined without onError handler",
+      "current_code": "const submitMutation = useMutation({ mutationFn: (data: ShiftSwapFormData) => apiClient.post('/shift-swaps', ...), onSuccess: () => {...} })",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/attendance/comp-off/page.tsx",
+      "line": 72,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (requestMutation) defined without onError handler",
+      "current_code": "const requestMutation = useMutation({...",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/projects/resource-conflicts/page.tsx",
+      "line": 42,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (scanMutation) defined without onError handler",
+      "current_code": "const scanMutation = useMutation({...",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/offboarding/exit/fnf/page.tsx",
+      "line": 124,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (approveMutation) defined without onError handler",
+      "current_code": "const approveMutation = useMutation({...",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/recruitment/job-boards/page.tsx",
+      "line": 80,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (postMutation) defined without onError handler",
+      "current_code": "const postMutation = useMutation({...",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/exit-interview/[token]/page.tsx",
+      "line": 85,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (submitMutation) defined without onError handler",
+      "current_code": "const submitMutation = useMutation({...",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/performance/pip/page.tsx",
+      "line": 413,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (addCheckInMutation) defined without onError handler",
+      "current_code": "const addCheckInMutation = useMutation({...",
+      "auto_fixable": false
+    },
+    {
+      "file": "app/employees/change-requests/page.tsx",
+      "line": 46,
+      "type": "missing-error-state",
+      "severity": "medium",
+      "description": "useMutation (approveMutation) defined without onError handler",
+      "current_code": "const approveMutation = useMutation({...",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 11,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useListApprovalWorkflows exported but not imported anywhere in the codebase",
+      "current_code": "export const useListApprovalWorkflows = (page = 0, size = 20) => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 13,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useListPendingApprovals exported but not imported anywhere in the codebase",
+      "current_code": "export const useListPendingApprovals = (page = 0, size = 20) => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 15,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useWorkflowDetails exported but not imported anywhere in the codebase",
+      "current_code": "export const useWorkflowDetails = (workflowId: string | null) => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 17,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useDocumentAccessList exported but not imported anywhere in the codebase",
+      "current_code": "export const useDocumentAccessList = (documentId: string) => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 19,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useDocumentExpiryInfo exported but not imported anywhere in the codebase",
+      "current_code": "export const useDocumentExpiryInfo = (documentId: string | null) => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 21,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useExpiringDocuments exported but not imported anywhere in the codebase",
+      "current_code": "export const useExpiringDocuments = (page = 0, size = 20) => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 23,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useInitiateApprovalWorkflow exported but not imported anywhere in the codebase",
+      "current_code": "export const useInitiateApprovalWorkflow = () => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 25,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useApproveDocument exported but not imported anywhere in the codebase",
+      "current_code": "export const useApproveDocument = () => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 27,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useRejectDocument exported but not imported anywhere in the codebase",
+      "current_code": "export const useRejectDocument = () => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 29,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useGrantDocumentAccess exported but not imported anywhere in the codebase",
+      "current_code": "export const useGrantDocumentAccess = () => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 31,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useRevokeDocumentAccess exported but not imported anywhere in the codebase",
+      "current_code": "export const useRevokeDocumentAccess = () => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useDocumentWorkflow.ts",
+      "line": 33,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useSetDocumentExpiry exported but not imported anywhere in the codebase",
+      "current_code": "export const useSetDocumentExpiry = () => {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useEscalation.ts",
+      "line": 6,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useEscalationConfig exported but not imported anywhere in the codebase",
+      "current_code": "export function useEscalationConfig(workflowId: string) {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useEscalation.ts",
+      "line": 20,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useUpsertEscalationConfig exported but not imported anywhere in the codebase",
+      "current_code": "export function useUpsertEscalationConfig(workflowId: string) {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/useEscalation.ts",
+      "line": 38,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useDeleteEscalationConfig exported but not imported anywhere in the codebase",
+      "current_code": "export function useDeleteEscalationConfig(workflowId: string) {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/usePip.ts",
+      "line": 6,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: usePips exported but not imported anywhere in the codebase",
+      "current_code": "export function usePips(employeeId?: string, managerId?: string) {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/usePip.ts",
+      "line": 24,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: usePipDetail exported but not imported anywhere in the codebase",
+      "current_code": "export function usePipDetail(id: string, enabled: boolean = true) {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/usePip.ts",
+      "line": 41,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useCreatePip exported but not imported anywhere in the codebase",
+      "current_code": "export function useCreatePip() {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/usePip.ts",
+      "line": 59,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useRecordPipCheckIn exported but not imported anywhere in the codebase",
+      "current_code": "export function useRecordPipCheckIn() {...}",
+      "auto_fixable": false
+    },
+    {
+      "file": "lib/hooks/queries/usePip.ts",
+      "line": 77,
+      "type": "unused-hook",
+      "severity": "low",
+      "description": "Unused hook: useClosePip exported but not imported anywhere in the codebase",
+      "current_code": "export function useClosePip() {...}",
+      "auto_fixable": false
+    }
+  ],
+  "summary": {
+    "tsc_errors": 0,
+    "any_types": 0,
+    "raw_fetch": 0,
+    "axios_violations": 0,
+    "console_logs": 12,
+    "unused_hooks": 18,
+    "missing_error_states": 8
+  },
+  "notes": {
+    "typescript_compilation": "No TypeScript errors found. All code compiles successfully.",
+    "any_types": "No `as any` or `: any` violations found in production code. All violations are in test files, which is acceptable.",
+    "raw_fetch": "No raw fetch/axios violations found. External API calls (Google APIs) in dashboard.page.tsx are acceptable. All backend API calls use the approved axios client from frontend/lib/api/client.ts.",
+    "axios_violations": "No unauthorized axios.create() calls found. Only approved instances in frontend/lib/api/client.ts and frontend/lib/api/public-client.ts.",
+    "console_logs": "12 console.log statements found, all in logger utility (lib/utils/logger.ts) and WebSocket client (lib/websocket.ts). All are properly development-gated or production-safe. This is acceptable infrastructure code.",
+    "unused_hooks": "18 unused React Query hooks identified across 3 files. These are exported but never imported in the codebase. Consider removing or marking for future use. Files: useDocumentWorkflow.ts (11 hooks), useEscalation.ts (3 hooks), usePip.ts (5 hooks).",
+    "missing_error_states": "8 useMutation calls lack onError handlers. Should add error handling to improve UX and prevent silent failures."
+  }
+}
