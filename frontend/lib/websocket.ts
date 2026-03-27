@@ -76,7 +76,9 @@ class WebSocketService {
         try {
           handler(status);
         } catch (error) {
-          console.error('[WebSocket] Status change handler error:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[WebSocket] Status change handler error:', error);
+          }
         }
       });
     }
@@ -137,7 +139,9 @@ class WebSocketService {
           resolve();
         },
         onStompError: (frame) => {
-          console.error('[WebSocket] STOMP error:', frame.headers['message']);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[WebSocket] STOMP error:', frame.headers['message']);
+          }
           reject(new Error(frame.headers['message']));
         },
         onWebSocketClose: () => {
@@ -147,7 +151,9 @@ class WebSocketService {
           this.handleDisconnect();
         },
         onWebSocketError: (error) => {
-          console.error('[WebSocket] WebSocket error:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[WebSocket] WebSocket error:', error);
+          }
         },
       });
 
@@ -304,11 +310,15 @@ class WebSocketService {
         try {
           handler(notification);
         } catch (error) {
-          console.error('[WebSocket] Handler error:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[WebSocket] Handler error:', error);
+          }
         }
       });
     } catch (error) {
-      console.error('[WebSocket] Failed to parse message:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[WebSocket] Failed to parse message:', error);
+      }
     }
   }
 
@@ -328,11 +338,15 @@ class WebSocketService {
   }
 
   private logWarning(message: string, data?: unknown): void {
-    console.warn(`[WebSocket] ${message}`, data || '');
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[WebSocket] ${message}`, data || '');
+    }
   }
 
   private logError(message: string, error?: unknown): void {
-    console.error(`[WebSocket Error] ${message}`, error || '');
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`[WebSocket Error] ${message}`, error || '');
+    }
   }
 
   /**
@@ -355,7 +369,9 @@ class WebSocketService {
    */
   send(destination: string, body: unknown): void {
     if (!this.client?.connected) {
-      console.warn('[WebSocket] Not connected, cannot send message');
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[WebSocket] Not connected, cannot send message');
+      }
       return;
     }
 

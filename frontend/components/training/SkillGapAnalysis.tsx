@@ -22,7 +22,7 @@ interface SkillGapAnalysisProps {
 }
 
 export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }) => {
-    const { data: report, isLoading, isError, error, refetch } = useSkillGaps(employeeId);
+    const { data: report, isLoading, isError, error: _error, refetch } = useSkillGaps(employeeId);
 
     if (isLoading) {
         return (

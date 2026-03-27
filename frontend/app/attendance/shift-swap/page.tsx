@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeftRight, PlusCircle } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -21,6 +22,14 @@ interface ShiftSwapRequest {
   status: 'PENDING' | 'TARGET_ACCEPTED' | 'TARGET_DECLINED' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED';
   reason?: string;
   requestedAt: string;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
 }
 
 const statusColors: Record<string, string> = {
@@ -105,6 +114,7 @@ export default function ShiftSwapPage() {
       setShowModal(false);
       reset();
     },
+    onError: () => notifications.show({ title: 'Error', message: 'Failed to submit shift swap request', color: 'red' }),
   });
 
   const onSubmitForm = (data: ShiftSwapFormData) => {
@@ -120,6 +130,14 @@ export default function ShiftSwapPage() {
     mutationFn: ({ id, action, payload }: { id: string; action: string; payload: Record<string, string> }) =>
       apiClient.post(`/shift-swaps/${id}/${action}`, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shift-swap'] }),
+    onError: (error: ApiError) => {
+      const errorMessage = error?.response?.data?.message || 'Failed to process the request';
+      notifications.show({
+        title: 'Action Failed',
+        message: errorMessage,
+        color: 'red',
+      });
+    },
   });
 
   const tabs = [

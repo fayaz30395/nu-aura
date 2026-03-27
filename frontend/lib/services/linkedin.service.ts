@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api/client';
-// LinkedIn service - uses /api/v1/knowledge/blogs endpoints
+// LinkedIn service - uses /api/v1/linkedin-posts endpoints for stub implementation
 import type {
   LinkedInPost,
   CreateLinkedInPostRequest,
@@ -14,7 +14,7 @@ export interface PagedResponse<T> {
   number: number;
 }
 
-const BASE_URL = '/knowledge/blogs';
+const BASE_URL = '/linkedin-posts';
 
 class LinkedInService {
   /**

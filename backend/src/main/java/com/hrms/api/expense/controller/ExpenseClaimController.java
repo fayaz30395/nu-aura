@@ -8,6 +8,7 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.expense.ExpenseClaim;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +36,8 @@ public class ExpenseClaimController {
     @PostMapping("/employees/{employeeId}")
     @RequiresPermission(Permission.EXPENSE_CREATE)
     public ResponseEntity<ExpenseClaimResponse> createExpenseClaim(
-            @PathVariable("employeeId") UUID employeeId,
+            @PathVariable("employeeId") @NotNull UUID employeeId,
             @Valid @RequestBody ExpenseClaimRequest request) {
-        if (employeeId == null) {
-            return ResponseEntity.badRequest().build();
-        }
         log.info("Creating expense claim for employee: {}", employeeId);
         ExpenseClaimResponse response = expenseClaimService.createExpenseClaim(employeeId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -48,7 +46,7 @@ public class ExpenseClaimController {
     @PutMapping("/{claimId}")
     @RequiresPermission(Permission.EXPENSE_CREATE)
     public ResponseEntity<ExpenseClaimResponse> updateExpenseClaim(
-            @PathVariable UUID claimId,
+            @PathVariable @NotNull UUID claimId,
             @Valid @RequestBody ExpenseClaimRequest request) {
         log.info("Updating expense claim: {}", claimId);
         return ResponseEntity.ok(expenseClaimService.updateExpenseClaim(claimId, request));
@@ -56,7 +54,7 @@ public class ExpenseClaimController {
 
     @PostMapping("/{claimId}/submit")
     @RequiresPermission(Permission.EXPENSE_CREATE)
-    public ResponseEntity<ExpenseClaimResponse> submitExpenseClaim(@PathVariable UUID claimId) {
+    public ResponseEntity<ExpenseClaimResponse> submitExpenseClaim(@PathVariable @NotNull UUID claimId) {
         log.info("Submitting expense claim: {}", claimId);
         return ResponseEntity.ok(expenseClaimService.submitExpenseClaim(claimId));
     }
@@ -64,7 +62,7 @@ public class ExpenseClaimController {
     @PostMapping("/{claimId}/approve")
     @RequiresPermission(Permission.EXPENSE_APPROVE)
     public ResponseEntity<ExpenseClaimResponse> approveExpenseClaim(
-            @PathVariable UUID claimId) {
+            @PathVariable @NotNull UUID claimId) {
         log.info("Approving expense claim: {}", claimId);
         return ResponseEntity.ok(expenseClaimService.approveExpenseClaim(claimId));
     }
@@ -72,7 +70,7 @@ public class ExpenseClaimController {
     @PostMapping("/{claimId}/reject")
     @RequiresPermission(Permission.EXPENSE_APPROVE)
     public ResponseEntity<ExpenseClaimResponse> rejectExpenseClaim(
-            @PathVariable UUID claimId,
+            @PathVariable @NotNull UUID claimId,
             @NotBlank @Size(max = 1000) @RequestParam String reason) {
         log.info("Rejecting expense claim: {}", claimId);
         return ResponseEntity.ok(expenseClaimService.rejectExpenseClaim(claimId, reason));
@@ -81,7 +79,7 @@ public class ExpenseClaimController {
     @PostMapping("/{claimId}/pay")
     @RequiresPermission(Permission.EXPENSE_MANAGE)
     public ResponseEntity<ExpenseClaimResponse> markAsPaid(
-            @PathVariable UUID claimId,
+            @PathVariable @NotNull UUID claimId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate,
             @NotBlank @Size(max = 255) @RequestParam String paymentReference) {
         LocalDate effectiveDate = paymentDate != null ? paymentDate : LocalDate.now();
@@ -91,7 +89,7 @@ public class ExpenseClaimController {
 
     @PostMapping("/{claimId}/cancel")
     @RequiresPermission(Permission.EXPENSE_CREATE)
-    public ResponseEntity<Void> cancelExpenseClaim(@PathVariable UUID claimId) {
+    public ResponseEntity<Void> cancelExpenseClaim(@PathVariable @NotNull UUID claimId) {
         log.info("Cancelling expense claim: {}", claimId);
         expenseClaimService.cancelExpenseClaim(claimId);
         return ResponseEntity.noContent().build();
@@ -99,7 +97,7 @@ public class ExpenseClaimController {
 
     @DeleteMapping("/{claimId}")
     @RequiresPermission(Permission.EXPENSE_CREATE)
-    public ResponseEntity<Void> deleteExpenseClaim(@PathVariable UUID claimId) {
+    public ResponseEntity<Void> deleteExpenseClaim(@PathVariable @NotNull UUID claimId) {
         log.info("Deleting expense claim: {}", claimId);
         expenseClaimService.deleteExpenseClaim(claimId);
         return ResponseEntity.noContent().build();
@@ -113,7 +111,7 @@ public class ExpenseClaimController {
             Permission.EXPENSE_MANAGE
     })
     public ResponseEntity<Map<String, Object>> getEmployeeStatistics(
-            @PathVariable UUID employeeId,
+            @PathVariable @NotNull UUID employeeId,
             @RequestParam(required = false) Integer year) {
         log.info("Getting expense statistics for employee: {}", employeeId);
         return ResponseEntity.ok(expenseClaimService.getEmployeeStatistics(employeeId, year));
@@ -126,7 +124,7 @@ public class ExpenseClaimController {
             Permission.EXPENSE_VIEW_ALL,
             Permission.EXPENSE_MANAGE
     })
-    public ResponseEntity<ExpenseClaimResponse> getExpenseClaim(@PathVariable UUID claimId) {
+    public ResponseEntity<ExpenseClaimResponse> getExpenseClaim(@PathVariable @NotNull UUID claimId) {
         return ResponseEntity.ok(expenseClaimService.getExpenseClaim(claimId));
     }
 
@@ -149,11 +147,8 @@ public class ExpenseClaimController {
             Permission.EXPENSE_MANAGE
     })
     public ResponseEntity<Page<ExpenseClaimResponse>> getExpenseClaimsByEmployee(
-            @PathVariable("employeeId") UUID employeeId,
+            @PathVariable("employeeId") @NotNull UUID employeeId,
             Pageable pageable) {
-        if (employeeId == null) {
-            return ResponseEntity.badRequest().build();
-        }
         return ResponseEntity.ok(expenseClaimService.getExpenseClaimsByEmployee(employeeId, pageable));
     }
 
@@ -165,7 +160,7 @@ public class ExpenseClaimController {
             Permission.EXPENSE_MANAGE
     })
     public ResponseEntity<Page<ExpenseClaimResponse>> getExpenseClaimsByStatus(
-            @PathVariable ExpenseClaim.ExpenseStatus status,
+            @PathVariable @NotNull ExpenseClaim.ExpenseStatus status,
             Pageable pageable) {
         return ResponseEntity.ok(expenseClaimService.getExpenseClaimsByStatus(status, pageable));
     }

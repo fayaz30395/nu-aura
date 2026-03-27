@@ -48,6 +48,7 @@ export default function EmploymentChangeRequestsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['change-requests'] });
     },
+    onError: () => toast.error('Failed to approve change request'),
   });
 
   const rejectMutation = useMutation({

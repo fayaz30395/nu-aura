@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Globe, Plus, Pause, ExternalLink, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -88,6 +89,7 @@ export default function JobBoardsPage() {
       setSelectedJobId('');
       setSelectedBoards(['NAUKRI']);
     },
+    onError: () => notifications.show({ title: 'Error', message: 'Failed to post job to boards', color: 'red' }),
   });
 
   const pauseMutation = useMutation({

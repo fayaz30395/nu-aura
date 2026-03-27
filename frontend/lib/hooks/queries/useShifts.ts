@@ -114,8 +114,7 @@ export function useCreateNewShift() {
         color: 'green',
       });
     },
-    onError: (error) => {
-      console.error('Failed to create shift:', error);
+    onError: () => {
       notifications.show({
         title: 'Error',
         message: 'Failed to create shift',
@@ -143,8 +142,7 @@ export function useUpdateShiftDetails(shiftId: string) {
         color: 'green',
       });
     },
-    onError: (error) => {
-      console.error('Failed to update shift:', error);
+    onError: () => {
       notifications.show({
         title: 'Error',
         message: 'Failed to update shift',
@@ -170,8 +168,7 @@ export function useRemoveShift() {
         color: 'green',
       });
     },
-    onError: (error) => {
-      console.error('Failed to delete shift:', error);
+    onError: () => {
       notifications.show({
         title: 'Error',
         message: 'Failed to delete shift',
@@ -197,8 +194,7 @@ export function useAssignShift() {
         color: 'green',
       });
     },
-    onError: (error) => {
-      console.error('Failed to assign shift:', error);
+    onError: () => {
       notifications.show({
         title: 'Error',
         message: 'Failed to assign shift',
@@ -224,8 +220,7 @@ export function useCancelShiftAssignment() {
         color: 'green',
       });
     },
-    onError: (error) => {
-      console.error('Failed to cancel shift assignment:', error);
+    onError: () => {
       notifications.show({
         title: 'Error',
         message: 'Failed to cancel shift assignment',
