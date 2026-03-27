@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Clock, CheckCircle, XCircle, PlusCircle, AlertCircle } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -77,6 +78,7 @@ export default function CompOffPage() {
       setShowRequestModal(false);
       reset();
     },
+    onError: () => notifications.show({ title: 'Error', message: 'Failed to submit comp-off request', color: 'red' }),
   });
 
   const onSubmitForm = (data: CompOffFormData) => {

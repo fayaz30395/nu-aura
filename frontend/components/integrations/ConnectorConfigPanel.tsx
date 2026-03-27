@@ -4,7 +4,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, X } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Drawer } from '@mantine/core';
 import { Button } from '@/components/ui/Button';
 import { ConnectorInfo, ConnectorConfigField, ConnectorConfigRequest } from '@/lib/types/connector';
@@ -24,15 +24,13 @@ export function ConnectorConfigPanel({
   onSave,
   isLoading,
 }: ConnectorConfigPanelProps) {
-  if (!connector) return null;
-
   // Build Zod schema dynamically from config fields
-  const buildSchema = () => {
+  const buildSchema = React.useCallback((conn: ConnectorInfo) => {
     const shape: Record<string, z.ZodTypeAny> = {
       displayName: z.string().min(1, 'Display name is required'),
     };
 
-    connector.capabilities.configSchema.forEach((field) => {
+    conn.capabilities.configSchema.forEach((field) => {
       let fieldSchema: z.ZodTypeAny;
 
       switch (field.type) {
@@ -62,26 +60,35 @@ export function ConnectorConfigPanel({
     });
 
     return z.object(shape);
-  };
+  }, []);
 
-  type FormData = z.infer<ReturnType<typeof buildSchema>>;
+  const schema = React.useMemo(
+    () => (connector ? buildSchema(connector) : z.object({ displayName: z.string() })),
+    [connector, buildSchema]
+  );
+
+  type FormData = z.infer<typeof schema>;
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(buildSchema()),
-    defaultValues: {
-      displayName: connector.name,
-      ...Object.fromEntries(
-        connector.capabilities.configSchema.map((field) => {
-          if (field.type === 'boolean') return [field.name, false];
-          return [field.name, ''];
-        })
-      ),
-    },
+    resolver: zodResolver(schema),
+    defaultValues: connector
+      ? {
+          displayName: connector.name,
+          ...Object.fromEntries(
+            connector.capabilities.configSchema.map((field) => {
+              if (field.type === 'boolean') return [field.name, false];
+              return [field.name, ''];
+            })
+          ),
+        }
+      : { displayName: '' },
   });
+
+  if (!connector) return null;
 
   const onSubmit = async (data: FormData) => {
     const { displayName, ...configData } = data;

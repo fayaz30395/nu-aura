@@ -87,7 +87,7 @@ export default function MyLeavesPage() {
   });
 
   const { data: leaveRequestsData, isError: isLeaveRequestsError, error: leaveRequestsError } = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId));
-  const { data: balancesData = [], isError: isBalancesError } = useEmployeeBalances(user?.employeeId || '', Boolean(hasHydrated && user?.employeeId));
+  const { data: balancesData = [], isError: _isBalancesError } = useEmployeeBalances(user?.employeeId || '', Boolean(hasHydrated && user?.employeeId));
   const { data: leaveTypesData = [] } = useActiveLeaveTypes(Boolean(hasHydrated && isAuthenticated));
   const createLeaveRequest = useCreateLeaveRequest();
   const updateLeaveRequest = useUpdateLeaveRequest();

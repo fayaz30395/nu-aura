@@ -76,7 +76,7 @@ describe('EmployeeService', () => {
 
       mockApiClient.post.mockResolvedValueOnce({ data: mockEmployee });
 
-      const result = await employeeService.createEmployee(requestData as any);
+      const result = await employeeService.createEmployee(requestData as Partial<MockEmployee>);
 
       expect(mockApiClient.post).toHaveBeenCalledWith('/employees', requestData);
       expect(result).toEqual(mockEmployee);
@@ -92,7 +92,7 @@ describe('EmployeeService', () => {
 
       mockApiClient.post.mockRejectedValueOnce(error);
 
-      await expect(employeeService.createEmployee(requestData as any)).rejects.toThrow(
+      await expect(employeeService.createEmployee(requestData as Partial<MockEmployee>)).rejects.toThrow(
         'Creation failed'
       );
       expect(mockApiClient.post).toHaveBeenCalledWith('/employees', requestData);
@@ -303,7 +303,7 @@ describe('EmployeeService', () => {
 
       mockApiClient.put.mockResolvedValueOnce({ data: mockEmployee });
 
-      const result = await employeeService.updateEmployee(employeeId, updateData as any);
+      const result = await employeeService.updateEmployee(employeeId, updateData as Partial<MockEmployee>);
 
       expect(mockApiClient.put).toHaveBeenCalledWith(`/employees/${employeeId}`, updateData);
       expect(result).toEqual(mockEmployee);
@@ -316,7 +316,7 @@ describe('EmployeeService', () => {
 
       mockApiClient.put.mockRejectedValueOnce(error);
 
-      await expect(employeeService.updateEmployee(employeeId, updateData as any)).rejects.toThrow(
+      await expect(employeeService.updateEmployee(employeeId, updateData as Partial<MockEmployee>)).rejects.toThrow(
         'Update failed'
       );
     });

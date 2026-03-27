@@ -98,7 +98,7 @@ const _getStatusColor = (status: SurveyStatus) => {
   }
 };
 
-const getTypeColor = (type: SurveyType) => {
+const _getTypeColor = (type: SurveyType) => {
   switch (type) {
     case SurveyType.ENGAGEMENT:
       return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';

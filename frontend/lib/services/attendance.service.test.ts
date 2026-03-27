@@ -93,7 +93,7 @@ describe('AttendanceService', () => {
           name: 'Morning Shift',
           startTime: '09:00',
           endTime: '17:00',
-        } as any);
+        } as Partial<{ name: string; startTime: string; endTime: string }>);
 
         expect(mockApiClient.post).toHaveBeenCalledWith('/shifts', {
           name: 'Morning Shift',
@@ -130,7 +130,7 @@ describe('AttendanceService', () => {
           name: 'Evening Shift',
           startTime: '17:00',
           endTime: '22:00',
-        } as any);
+        } as Partial<{ name: string; startTime: string; endTime: string }>);
 
         expect(mockApiClient.put).toHaveBeenCalledWith('/shifts/shift-123', {
           name: 'Evening Shift',
@@ -345,7 +345,7 @@ describe('AttendanceService', () => {
           name: 'Christmas',
           holidayDate: '2026-12-25',
           type: 'NATIONAL',
-        } as any);
+        } as Partial<{ name: string; startTime: string; endTime: string }>);
 
         expect(mockApiClient.post).toHaveBeenCalledWith('/holidays', {
           name: 'Christmas',
@@ -379,7 +379,7 @@ describe('AttendanceService', () => {
 
         const result = await attendanceService.updateHoliday('hol-123', {
           name: 'Christmas Day',
-        } as any);
+        } as Partial<{ name: string; startTime: string; endTime: string }>);
 
         expect(mockApiClient.put).toHaveBeenCalledWith('/holidays/hol-123', {
           name: 'Christmas Day',
@@ -489,7 +489,7 @@ describe('AttendanceService', () => {
         const result = await attendanceService.checkIn({
           employeeId: 'emp-123',
           source: 'WEB',
-        } as any);
+        } as Partial<{ name: string; startTime: string; endTime: string }>);
 
         expect(mockApiClient.post).toHaveBeenCalledWith('/attendance/check-in', {
           employeeId: 'emp-123',
@@ -528,7 +528,7 @@ describe('AttendanceService', () => {
         const result = await attendanceService.checkOut({
           employeeId: 'emp-123',
           source: 'WEB',
-        } as any);
+        } as Partial<{ name: string; startTime: string; endTime: string }>);
 
         expect(mockApiClient.post).toHaveBeenCalledWith('/attendance/check-out', {
           employeeId: 'emp-123',

@@ -18,7 +18,7 @@ import jakarta.validation.Valid;
 /**
  * REST controller for KEKA HRMS data import
  *
- * All endpoints require system.admin permission
+ * All endpoints require SYSTEM:ADMIN permission
  */
 @Slf4j
 @RestController
@@ -32,7 +32,7 @@ public class KekaImportController {
      * Upload a KEKA CSV file and detect columns
      */
     @PostMapping("/upload")
-    @RequiresPermission("system.admin")
+    @RequiresPermission("SYSTEM:ADMIN")
     public ResponseEntity<KekaFileUploadResponse> uploadKekaFile(@RequestParam("file") MultipartFile file) {
         try {
             log.info("Processing KEKA file upload: {}", file.getOriginalFilename());
@@ -50,7 +50,7 @@ public class KekaImportController {
      * Preview KEKA import with validation
      */
     @PostMapping("/preview")
-    @RequiresPermission("system.admin")
+    @RequiresPermission("SYSTEM:ADMIN")
     public ResponseEntity<KekaImportPreview> previewKekaImport(@Valid @RequestBody KekaImportPreviewRequest request) {
         log.info("Previewing KEKA import for file: {}", request.getFileId());
 
@@ -63,7 +63,7 @@ public class KekaImportController {
      * Execute KEKA import
      */
     @PostMapping("/execute")
-    @RequiresPermission("system.admin")
+    @RequiresPermission("SYSTEM:ADMIN")
     public ResponseEntity<KekaImportResult> executeKekaImport(@Valid @RequestBody KekaImportExecuteRequest request) {
         log.info("Executing KEKA import for file: {}", request.getFileId());
 
@@ -76,7 +76,7 @@ public class KekaImportController {
      * Get KEKA import history for the current tenant
      */
     @GetMapping("/history")
-    @RequiresPermission("system.admin")
+    @RequiresPermission("SYSTEM:ADMIN")
     public ResponseEntity<Page<KekaImportHistoryEntry>> getImportHistory(Pageable pageable) {
         log.info("Fetching KEKA import history");
 
@@ -89,7 +89,7 @@ public class KekaImportController {
      * Get details of a specific import
      */
     @GetMapping("/{importId}")
-    @RequiresPermission("system.admin")
+    @RequiresPermission("SYSTEM:ADMIN")
     public ResponseEntity<KekaImportHistoryEntry> getImportDetails(@PathVariable String importId) {
         log.info("Fetching KEKA import details: {}", importId);
 
@@ -102,7 +102,7 @@ public class KekaImportController {
      * Download error report as CSV
      */
     @GetMapping("/{importId}/errors/csv")
-    @RequiresPermission("system.admin")
+    @RequiresPermission("SYSTEM:ADMIN")
     public ResponseEntity<String> downloadErrorReport(@PathVariable String importId) {
         log.info("Downloading error report for import: {}", importId);
 
@@ -116,7 +116,7 @@ public class KekaImportController {
      * Cancel an in-progress import
      */
     @PostMapping("/{importId}/cancel")
-    @RequiresPermission("system.admin")
+    @RequiresPermission("SYSTEM:ADMIN")
     public ResponseEntity<Void> cancelKekaImport(@PathVariable String importId) {
         log.info("Cancelling KEKA import: {}", importId);
 

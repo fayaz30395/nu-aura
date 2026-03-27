@@ -181,8 +181,8 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="table-aura min-w-full">
+        <div className="overflow-x-auto" suppressHydrationWarning>
+          <table className="table-aura min-w-full" suppressHydrationWarning>
             <thead>
               <tr>
                 <Th>Name</Th>
@@ -243,9 +243,9 @@ export default function AdminDashboardPage() {
                         {user.userStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]" suppressHydrationWarning>
                       {Array.isArray(user.roles) && user.roles.length > 0
-                        ? user.roles.map((role) => role.name).join(', ')
+                        ? user.roles.filter((role) => role && role.name).map((role) => role.name).join(', ')
                         : '—'}
                     </td>
                   </tr>

@@ -1,7 +1,7 @@
 'use client';
 import { AppLayout } from '@/components/layout';
 import { Button } from '@/components/ui/Button';
-
+import { notifications } from '@mantine/notifications';
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
@@ -420,6 +420,7 @@ function PIPDetailModal({
       resetCheckIn();
       onUpdated();
     },
+    onError: () => notifications.show({ title: 'Error', message: 'Failed to add check-in', color: 'red' }),
   });
 
   const closeMutation = useMutation({

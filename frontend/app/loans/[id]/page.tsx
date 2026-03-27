@@ -16,7 +16,6 @@ import {
   Wallet,
   DollarSign,
   TrendingUp,
-  FileText,
   Banknote,
 } from 'lucide-react';
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AlertTriangle, CheckCircle, RefreshCw, Users, Percent } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -45,6 +46,7 @@ export default function ResourceConflictsPage() {
       setScanResults(data);
       queryClient.invalidateQueries({ queryKey: ['resource-conflicts'] });
     },
+    onError: () => notifications.show({ title: 'Error', message: 'Failed to scan resource conflicts', color: 'red' }),
   });
 
   const resolveMutation = useMutation({

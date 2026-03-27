@@ -86,7 +86,7 @@ describe('PayrollService', () => {
         const result = await payrollService.createPayrollRun({
           payrollPeriodStart: '2026-01-01',
           payrollPeriodEnd: '2026-01-31',
-        } as any);
+        } as Partial<{ payrollPeriodStart: string; payrollPeriodEnd: string }>);
 
         expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/runs', {
           payrollPeriodStart: '2026-01-01',
@@ -103,7 +103,7 @@ describe('PayrollService', () => {
           payrollService.createPayrollRun({
             payrollPeriodStart: '2026-01-01',
             payrollPeriodEnd: '2026-01-31',
-          } as any)
+          } as Partial<{ payrollPeriodStart: string; payrollPeriodEnd: string }>)
         ).rejects.toThrow('API Error');
       });
     });
@@ -123,7 +123,7 @@ describe('PayrollService', () => {
         const result = await payrollService.updatePayrollRun('run-123', {
           payrollPeriodStart: '2026-02-01',
           payrollPeriodEnd: '2026-02-28',
-        } as any);
+        } as Partial<{ payrollPeriodStart: string; payrollPeriodEnd: string }>);
 
         expect(mockApiClient.put).toHaveBeenCalledWith('/payroll/runs/run-123', {
           payrollPeriodStart: '2026-02-01',
@@ -135,7 +135,7 @@ describe('PayrollService', () => {
       it('should handle errors when updating payroll run', async () => {
         mockApiClient.put.mockRejectedValue(new Error('Update failed'));
 
-        await expect(payrollService.updatePayrollRun('run-123', {} as any)).rejects.toThrow(
+        await expect(payrollService.updatePayrollRun('run-123', {} as Partial<PayrollRun>)).rejects.toThrow(
           'Update failed'
         );
       });
@@ -373,7 +373,7 @@ describe('PayrollService', () => {
           netAmount: 45000,
         };
 
-        const result = await payrollService.createPayslip(payslipData as any);
+        const result = await payrollService.createPayslip(payslipData as Partial<PayslipRequest>);
 
         expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/payslips', payslipData);
         expect(result.netAmount).toBe(45000);
@@ -389,7 +389,7 @@ describe('PayrollService', () => {
             grossAmount: 50000,
             deductions: 5000,
             netAmount: 45000,
-          } as any)
+          } as Partial<PayslipRequest>)
         ).rejects.toThrow('Creation failed');
       });
     });
@@ -409,7 +409,7 @@ describe('PayrollService', () => {
 
         const result = await payrollService.updatePayslip('slip-123', {
           grossAmount: 52000,
-        } as any);
+        } as Partial<Payslip>);
 
         expect(mockApiClient.put).toHaveBeenCalledWith('/payroll/payslips/slip-123', {
           grossAmount: 52000,
@@ -420,7 +420,7 @@ describe('PayrollService', () => {
       it('should handle payslip update errors', async () => {
         mockApiClient.put.mockRejectedValue(new Error('Update failed'));
 
-        await expect(payrollService.updatePayslip('slip-123', {} as any)).rejects.toThrow(
+        await expect(payrollService.updatePayslip('slip-123', {} as Partial<Payslip>)).rejects.toThrow(
           'Update failed'
         );
       });
@@ -573,7 +573,7 @@ describe('PayrollService', () => {
         const result = await payrollService.createSalaryStructure({
           employeeId: 'emp-123',
           baseSalary: 50000,
-        } as any);
+        } as Partial<SalaryStructure>);
 
         expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/salary-structures', {
           employeeId: 'emp-123',
@@ -586,7 +586,7 @@ describe('PayrollService', () => {
         mockApiClient.post.mockRejectedValue(new Error('Creation failed'));
 
         await expect(
-          payrollService.createSalaryStructure({} as any)
+          payrollService.createSalaryStructure({} as Partial<SalaryStructure>)
         ).rejects.toThrow('Creation failed');
       });
     });

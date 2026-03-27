@@ -32,7 +32,6 @@ import {
   Card,
   CardContent,
   Button,
-  Badge,
   Modal,
   ModalHeader,
   ModalBody,
@@ -155,7 +154,7 @@ const coverageLevelLabels: Record<CoverageLevel, string> = {
   'FAMILY': 'Family',
 };
 
-const claimStatusColors: Record<string, string> = {
+const _claimStatusColors: Record<string, string> = {
   'SUBMITTED': 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
   'UNDER_REVIEW': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
   'APPROVED': 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
