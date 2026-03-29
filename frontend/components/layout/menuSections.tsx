@@ -72,6 +72,8 @@ import {
   Cloud,
   Bell,
   Share2,
+  Ticket,
+  ArrowUpDown,
 } from 'lucide-react';
 import type { SidebarSection } from '@/components/ui';
 import { Permissions } from '@/lib/hooks/usePermissions';
@@ -131,6 +133,7 @@ const icon = {
   shield: <Shield className="h-5 w-5" />,
   share2: <Share2 className="h-5 w-5" />,
   timer: <Timer className="h-5 w-5" />,
+  arrowUpDown: <ArrowUpDown className="h-5 w-5" />,
 } as const;
 
 // Small icons for child items (4x4)
@@ -171,6 +174,7 @@ const sm = {
   alertTriangle: <AlertTriangle className="h-4 w-4" />,
   bookOpen: <BookOpen className="h-4 w-4" />,
   bell: <Bell className="h-4 w-4" />,
+  ticket: <Ticket className="h-4 w-4" />,
 } as const;
 
 /**
@@ -469,10 +473,18 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
             { id: 'leave-requests-admin', label: 'Leave Requests', href: '/admin/leave-requests', icon: sm.fileText, requiredPermission: Permissions.LEAVE_VIEW_ALL },
           ],
         },
+        {
+          id: 'workflows', label: 'Workflows', icon: icon.gitBranch, href: '/workflows', requiredPermission: Permissions.WORKFLOW_VIEW,
+          children: [
+            { id: 'workflows-list', label: 'All Workflows', href: '/workflows', icon: sm.dashboard, requiredPermission: Permissions.WORKFLOW_VIEW },
+          ],
+        },
+        { id: 'import-export', label: 'Import / Export', icon: icon.arrowUpDown, href: '/import-export', requiredPermission: Permissions.MIGRATION_IMPORT },
         { id: 'integrations', label: 'Integrations', icon: icon.cloud, href: '/admin/integrations', requiredPermission: Permissions.INTEGRATION_VIEW },
         {
-          id: 'helpdesk-setup', label: 'Helpdesk', icon: icon.headphones, href: '/helpdesk', requiredPermission: Permissions.HELPDESK_SLA_MANAGE,
+          id: 'helpdesk-setup', label: 'Helpdesk', icon: icon.headphones, href: '/helpdesk', requiredPermission: Permissions.HELPDESK_TICKET_VIEW,
           children: [
+            { id: 'helpdesk-tickets', label: 'Tickets', href: '/helpdesk/tickets', icon: sm.ticket, requiredPermission: Permissions.HELPDESK_TICKET_VIEW },
             { id: 'helpdesk-sla', label: 'SLA', href: '/helpdesk/sla', icon: sm.clock, requiredPermission: Permissions.HELPDESK_SLA_MANAGE },
             { id: 'helpdesk-kb', label: 'Knowledge Base', href: '/helpdesk/knowledge-base', icon: sm.bookOpen, requiredPermission: Permissions.HELPDESK_KB_VIEW },
           ],

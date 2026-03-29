@@ -13,7 +13,6 @@ import com.hrms.domain.performance.Objective.ObjectiveStatus;
 import com.hrms.domain.performance.OkrCheckIn;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/okr")
 @RequiredArgsConstructor
-@Slf4j
 public class OkrController {
 
     private final OkrService okrService;

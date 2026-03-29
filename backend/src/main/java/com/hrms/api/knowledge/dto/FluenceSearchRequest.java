@@ -1,7 +1,6 @@
 package com.hrms.api.knowledge.dto;
 
 import lombok.*;
-import org.springframework.data.domain.Pageable;
 
 @Data
 @Builder

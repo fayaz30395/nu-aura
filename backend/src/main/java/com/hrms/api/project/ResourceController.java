@@ -4,7 +4,6 @@ import com.hrms.api.project.dto.*;
 import com.hrms.application.project.service.ResourceAllocationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/resources")
-@Slf4j
 public class ResourceController {
 
     private final ResourceAllocationService allocationService;

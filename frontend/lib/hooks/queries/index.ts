@@ -123,3 +123,9 @@ export * from './usePredictiveAnalytics';
 
 // LWF (Labour Welfare Fund) hooks
 export * from './useLWF';
+
+// Workflow definition hooks
+export * from './useWorkflows';
+
+// Helpdesk ticket hooks
+export * from './useHelpdesk';

@@ -2,7 +2,6 @@ package com.hrms.application.ai.service;
 
 import com.hrms.api.recruitment.dto.ai.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,6 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class AIRecruitmentService {
 

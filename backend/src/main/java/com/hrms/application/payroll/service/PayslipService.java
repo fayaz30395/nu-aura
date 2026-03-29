@@ -7,7 +7,6 @@ import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.payroll.Payslip;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class PayslipService {
 

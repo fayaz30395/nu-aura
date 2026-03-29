@@ -13,6 +13,8 @@ import {
   BarChart3,
   Settings,
   Bell,
+  Ticket,
+  BookOpen,
 } from 'lucide-react';
 
 export default function HelpdeskPage() {
@@ -128,7 +130,21 @@ export default function HelpdeskPage() {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <button
+            onClick={() => router.push('/helpdesk/tickets')}
+            className="flex items-center justify-between card-interactive p-4 text-left"
+          >
+            <div className="flex items-center gap-3">
+              <Ticket className="w-5 h-5 text-sky-700 dark:text-sky-400" />
+              <div>
+                <p className="font-medium text-[var(--text-primary)]">Tickets</p>
+                <p className="text-xs text-[var(--text-muted)]">View and manage support tickets</p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />
+          </button>
+
           <button
             onClick={() => router.push('/helpdesk/sla')}
             className="flex items-center justify-between card-interactive p-4 text-left"
@@ -152,6 +168,20 @@ export default function HelpdeskPage() {
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Escalations</p>
                 <p className="text-xs text-[var(--text-muted)]">{escalations.length} pending</p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />
+          </button>
+
+          <button
+            onClick={() => router.push('/helpdesk/knowledge-base')}
+            className="flex items-center justify-between card-interactive p-4 text-left"
+          >
+            <div className="flex items-center gap-3">
+              <BookOpen className="w-5 h-5 text-[var(--text-muted)]" />
+              <div>
+                <p className="font-medium text-[var(--text-primary)]">Knowledge Base</p>
+                <p className="text-xs text-[var(--text-muted)]">Find answers to common questions</p>
               </div>
             </div>
             <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />

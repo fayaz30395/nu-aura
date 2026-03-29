@@ -11,7 +11,6 @@ import com.hrms.domain.helpdesk.TicketEscalation.EscalationReason;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/helpdesk/sla")
 @RequiredArgsConstructor
-@Slf4j
 @Validated
 public class HelpdeskSLAController {
 

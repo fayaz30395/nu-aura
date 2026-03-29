@@ -6,7 +6,6 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.notification.Notification;
 import com.hrms.infrastructure.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +25,6 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class NotificationService {
 

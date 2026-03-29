@@ -1,7 +1,6 @@
 package com.hrms.application.notification.service;
 
 import com.hrms.domain.notification.EmailNotification;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -10,7 +9,6 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Slf4j
 public class EmailTemplateService {
 
     private static final String BASE_TEMPLATE = """

@@ -9,7 +9,6 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.domain.wall.model.*;
 import com.hrms.infrastructure.wall.repository.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
  * TenantContext.requireCurrentTenant() to prevent cross-tenant data access.</p>
  */
 @Service
-@Slf4j
 @Transactional
 public class WallService {
 

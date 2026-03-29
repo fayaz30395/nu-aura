@@ -7,7 +7,6 @@ import com.hrms.domain.attendance.Holiday;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.infrastructure.attendance.repository.HolidayRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -21,7 +20,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class HolidayService {
 

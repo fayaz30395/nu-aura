@@ -12,7 +12,6 @@ import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.employee.Department;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;

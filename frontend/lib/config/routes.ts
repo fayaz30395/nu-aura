@@ -107,6 +107,12 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     adminOnly: true,
   },
 
+  // Import / Export Hub
+  {
+    path: '/import-export',
+    anyPermission: [Permissions.MIGRATION_IMPORT, Permissions.MIGRATION_EXPORT, Permissions.SYSTEM_ADMIN],
+  },
+
   // Employee Management
   {
     path: '/employees/new',
@@ -750,6 +756,10 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
 
   // Helpdesk sub-pages
+  {
+    path: '/helpdesk/tickets',
+    anyPermission: [Permissions.HELPDESK_TICKET_VIEW, Permissions.HELPDESK_TICKET_CREATE],
+  },
   {
     path: '/helpdesk/knowledge-base',
     requiresAuth: true,
