@@ -90,33 +90,23 @@ BEGIN
     END IF;
 END $$;
 
--- 5. Seed LWF permissions
-INSERT INTO permissions (id, tenant_id, name, description, module, action, is_active, created_at, updated_at)
-SELECT gen_random_uuid(), t.id, 'lwf.view', 'View LWF configurations and deductions', 'lwf', 'view', true, NOW(), NOW()
-FROM tenants t
-WHERE NOT EXISTS (
-    SELECT 1 FROM permissions p WHERE p.tenant_id = t.id AND p.name = 'lwf.view'
-)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO permissions (id, tenant_id, name, description, module, action, is_active, created_at, updated_at)
-SELECT gen_random_uuid(), t.id, 'lwf.manage', 'Manage LWF configurations', 'lwf', 'manage', true, NOW(), NOW()
-FROM tenants t
-WHERE NOT EXISTS (
-    SELECT 1 FROM permissions p WHERE p.tenant_id = t.id AND p.name = 'lwf.manage'
-)
-ON CONFLICT DO NOTHING;
+-- 5. Seed LWF permissions (uses current schema: code, name, description, resource, action)
+-- Note: idx_permission_code is a partial unique index (WHERE is_deleted = false)
+INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES
+    (gen_random_uuid(), 'LWF:VIEW', 'LWF View', 'View LWF configurations and deductions', 'LWF', 'VIEW', NOW(), NOW(), 0, false),
+    (gen_random_uuid(), 'LWF:MANAGE', 'LWF Manage', 'Manage LWF configurations', 'LWF', 'MANAGE', NOW(), NOW(), 0, false)
+ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 -- Grant LWF permissions to HR Admin and Payroll Manager roles
-INSERT INTO role_permissions (id, role_id, permission_id, created_at, updated_at)
-SELECT gen_random_uuid(), r.id, p.id, NOW(), NOW()
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT gen_random_uuid(), r.tenant_id, r.id, p.id, 'ALL', NOW(), NOW(), 0, false
 FROM roles r
 CROSS JOIN permissions p
 WHERE r.name IN ('HR_ADMIN', 'HR_MANAGER', 'PAYROLL_MANAGER', 'SUPER_ADMIN')
-  AND p.name IN ('lwf.view', 'lwf.manage')
-  AND r.tenant_id = p.tenant_id
+  AND p.code IN ('LWF:VIEW', 'LWF:MANAGE')
   AND NOT EXISTS (
-      SELECT 1 FROM role_permissions rp WHERE rp.role_id = r.id AND rp.permission_id = p.id
+      SELECT 1 FROM role_permissions rp WHERE rp.role_id = r.id AND rp.permission_id = p.id AND rp.is_deleted = false
   )
 ON CONFLICT DO NOTHING;
 

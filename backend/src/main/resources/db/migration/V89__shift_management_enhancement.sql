@@ -96,33 +96,13 @@ ALTER TABLE roster_entries ENABLE ROW LEVEL SECURITY;
 
 -- ========== Seed shift permissions if not already present ==========
 
-INSERT INTO permissions (id, tenant_id, permission_name, module, action, description, is_active, created_at, updated_at)
-SELECT gen_random_uuid(), t.id, 'shift.view', 'shift', 'view', 'View shift definitions and schedules', true, NOW(), NOW()
-FROM tenants t
-WHERE NOT EXISTS (
-    SELECT 1 FROM permissions p WHERE p.tenant_id = t.id AND p.permission_name = 'shift.view'
-);
-
-INSERT INTO permissions (id, tenant_id, permission_name, module, action, description, is_active, created_at, updated_at)
-SELECT gen_random_uuid(), t.id, 'shift.create', 'shift', 'create', 'Create shift definitions', true, NOW(), NOW()
-FROM tenants t
-WHERE NOT EXISTS (
-    SELECT 1 FROM permissions p WHERE p.tenant_id = t.id AND p.permission_name = 'shift.create'
-);
-
-INSERT INTO permissions (id, tenant_id, permission_name, module, action, description, is_active, created_at, updated_at)
-SELECT gen_random_uuid(), t.id, 'shift.assign', 'shift', 'assign', 'Assign shifts to employees', true, NOW(), NOW()
-FROM tenants t
-WHERE NOT EXISTS (
-    SELECT 1 FROM permissions p WHERE p.tenant_id = t.id AND p.permission_name = 'shift.assign'
-);
-
-INSERT INTO permissions (id, tenant_id, permission_name, module, action, description, is_active, created_at, updated_at)
-SELECT gen_random_uuid(), t.id, 'shift.manage', 'shift', 'manage', 'Full shift management (patterns, schedules, rules)', true, NOW(), NOW()
-FROM tenants t
-WHERE NOT EXISTS (
-    SELECT 1 FROM permissions p WHERE p.tenant_id = t.id AND p.permission_name = 'shift.manage'
-);
+INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES
+    (gen_random_uuid(), 'SHIFT:VIEW', 'Shift View', 'View shift definitions and schedules', 'SHIFT', 'VIEW', NOW(), NOW(), 0, false),
+    (gen_random_uuid(), 'SHIFT:CREATE', 'Shift Create', 'Create shift definitions', 'SHIFT', 'CREATE', NOW(), NOW(), 0, false),
+    (gen_random_uuid(), 'SHIFT:ASSIGN', 'Shift Assign', 'Assign shifts to employees', 'SHIFT', 'ASSIGN', NOW(), NOW(), 0, false),
+    (gen_random_uuid(), 'SHIFT:MANAGE', 'Shift Manage', 'Full shift management (patterns, schedules, rules)', 'SHIFT', 'MANAGE', NOW(), NOW(), 0, false)
+ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 -- ========== Seed common shift definitions ==========
 -- Only insert if no shifts exist for the tenant (avoid duplicates on re-run)

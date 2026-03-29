@@ -10,7 +10,7 @@
 -- These can be copied by any tenant using the clone endpoint
 
 -- 1. Offer Letter Template
-INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at)
+INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at, is_deleted)
 SELECT
     gen_random_uuid(),
     t.id,
@@ -48,12 +48,12 @@ SELECT
     true, true, 'For and on behalf of', NULL, 'Head of Human Resources',
     true, true, true, 1,
     'candidate.name,candidate.firstName,candidate.email,offer.designation,offer.ctc,offer.joiningDate,job.location,company.name,currentDate,letter.referenceNumber',
-    NOW(), NOW()
+    NOW(), NOW(), false
 FROM (SELECT DISTINCT tenant_id AS id FROM employees LIMIT 50) t
 WHERE NOT EXISTS (SELECT 1 FROM letter_templates lt WHERE lt.code = 'OFFER_STANDARD' AND lt.tenant_id = t.id);
 
 -- 2. Appointment Letter Template
-INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at)
+INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at, is_deleted)
 SELECT
     gen_random_uuid(),
     t.id,
@@ -90,12 +90,12 @@ Employee ID: {{employee.id}}</p>
     true, true, 'For and on behalf of', NULL, 'Head of Human Resources',
     true, true, true, 1,
     'employee.name,employee.id,employee.designation,employee.department,employee.dateOfJoining,company.name,currentDate,letter.referenceNumber',
-    NOW(), NOW()
+    NOW(), NOW(), false
 FROM (SELECT DISTINCT tenant_id AS id FROM employees LIMIT 50) t
 WHERE NOT EXISTS (SELECT 1 FROM letter_templates lt WHERE lt.code = 'APPOINTMENT_STANDARD' AND lt.tenant_id = t.id);
 
 -- 3. Experience Letter Template
-INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at)
+INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at, is_deleted)
 SELECT
     gen_random_uuid(),
     t.id,
@@ -121,12 +121,12 @@ SELECT
     true, true, 'For and on behalf of', NULL, 'Head of Human Resources',
     true, true, true, 1,
     'employee.name,employee.firstName,employee.id,employee.designation,employee.department,employee.dateOfJoining,employee.lastWorkingDay,company.name,currentDate,letter.referenceNumber',
-    NOW(), NOW()
+    NOW(), NOW(), false
 FROM (SELECT DISTINCT tenant_id AS id FROM employees LIMIT 50) t
 WHERE NOT EXISTS (SELECT 1 FROM letter_templates lt WHERE lt.code = 'EXPERIENCE_STANDARD' AND lt.tenant_id = t.id);
 
 -- 4. Relieving Letter Template
-INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at)
+INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at, is_deleted)
 SELECT
     gen_random_uuid(),
     t.id,
@@ -156,12 +156,12 @@ Employee ID: {{employee.id}}</p>
     true, true, 'For and on behalf of', NULL, 'Head of Human Resources',
     true, true, true, 1,
     'employee.name,employee.id,employee.designation,employee.department,employee.dateOfJoining,employee.lastWorkingDay,company.name,currentDate,letter.referenceNumber',
-    NOW(), NOW()
+    NOW(), NOW(), false
 FROM (SELECT DISTINCT tenant_id AS id FROM employees LIMIT 50) t
 WHERE NOT EXISTS (SELECT 1 FROM letter_templates lt WHERE lt.code = 'RELIEVING_STANDARD' AND lt.tenant_id = t.id);
 
 -- 5. Salary Revision Letter Template
-INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at)
+INSERT INTO letter_templates (id, tenant_id, name, code, description, category, template_content, header_html, footer_html, css_styles, include_company_logo, include_signature, signature_title, signatory_name, signatory_designation, requires_approval, is_active, is_system_template, template_version, available_placeholders, created_at, updated_at, is_deleted)
 SELECT
     gen_random_uuid(),
     t.id,
@@ -196,6 +196,6 @@ Employee ID: {{employee.id}}<br/>
     true, true, 'For and on behalf of', NULL, 'Head of Human Resources',
     true, true, true, 1,
     'employee.name,employee.id,employee.designation,employee.department,employee.salary,company.name,currentDate,letter.referenceNumber,letter.effectiveDate',
-    NOW(), NOW()
+    NOW(), NOW(), false
 FROM (SELECT DISTINCT tenant_id AS id FROM employees LIMIT 50) t
 WHERE NOT EXISTS (SELECT 1 FROM letter_templates lt WHERE lt.code = 'SALARY_REVISION_STANDARD' AND lt.tenant_id = t.id);

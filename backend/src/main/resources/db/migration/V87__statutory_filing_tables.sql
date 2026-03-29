@@ -96,9 +96,9 @@ CROSS JOIN (
 WHERE FALSE; -- Disabled by default; enable per tenant during onboarding
 
 -- Seed permissions for statutory filing management
-INSERT INTO permissions (id, name, module, action, description, created_at, updated_at)
+INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES
-    (gen_random_uuid(), 'statutory.filing_view', 'statutory', 'filing_view', 'View statutory filing reports', now(), now()),
-    (gen_random_uuid(), 'statutory.filing_generate', 'statutory', 'filing_generate', 'Generate statutory filing reports', now(), now()),
-    (gen_random_uuid(), 'statutory.filing_submit', 'statutory', 'filing_submit', 'Submit statutory filings to portals', now(), now())
-ON CONFLICT DO NOTHING;
+    (gen_random_uuid(), 'STATUTORY:FILING_VIEW', 'Statutory Filing View', 'View statutory filing reports', 'STATUTORY', 'FILING_VIEW', now(), now(), 0, false),
+    (gen_random_uuid(), 'STATUTORY:FILING_GENERATE', 'Statutory Filing Generate', 'Generate statutory filing reports', 'STATUTORY', 'FILING_GENERATE', now(), now(), 0, false),
+    (gen_random_uuid(), 'STATUTORY:FILING_SUBMIT', 'Statutory Filing Submit', 'Submit statutory filings to portals', 'STATUTORY', 'FILING_SUBMIT', now(), now(), 0, false)
+ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;

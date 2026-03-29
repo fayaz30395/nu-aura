@@ -59,6 +59,14 @@ public class EncryptionService {
             );
         }
         keyBytes = encryptionKey.getBytes();
+        // Derive a 32-byte key via SHA-256 if the raw key is not a valid AES length
+        if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
+            try {
+                keyBytes = java.security.MessageDigest.getInstance("SHA-256").digest(keyBytes);
+            } catch (java.security.NoSuchAlgorithmException e) {
+                throw new IllegalStateException("SHA-256 not available", e);
+            }
+        }
         if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
             throw new IllegalStateException(
                 String.format(
