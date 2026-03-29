@@ -85,3 +85,4 @@ deployment/kubernetes/secrets.yaml
 
 # Claude
 .claude/
+.fuse_hidden*

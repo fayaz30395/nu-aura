@@ -56,7 +56,7 @@ const REPORT_TYPE_COLORS: Record<ReportType, string> = {
   LEAVE: 'text-warning-600 bg-warning-50 dark:bg-warning-950/20',
   PAYROLL: 'text-accent-800 bg-accent-250 dark:bg-accent-900/20',
   PERFORMANCE: 'text-accent-600 bg-accent-50 dark:bg-accent-950/20',
-  DEPARTMENT_HEADCOUNT: 'text-accent-800 bg-accent-250 dark:bg-pink-950/20',
+  DEPARTMENT_HEADCOUNT: 'text-accent-800 bg-accent-250 dark:bg-accent-950/20',
 };
 
 // Zod schema for scheduled report form

@@ -49,7 +49,7 @@ export default function EmployeeDashboardPage() {
       case 'WEEKLY_OFF':
         return 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600';
       case 'HOLIDAY':
-        return 'bg-accent-300 dark:bg-pink-950/30 text-accent-900 dark:text-accent-600';
+        return 'bg-accent-300 dark:bg-accent-950/30 text-accent-900 dark:text-accent-600';
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
@@ -77,7 +77,7 @@ export default function EmployeeDashboardPage() {
       case 'HOLIDAY':
         return 'bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400';
       case 'BIRTHDAY':
-        return 'bg-accent-250 dark:bg-pink-950/30 text-accent-800 dark:text-accent-600';
+        return 'bg-accent-250 dark:bg-accent-950/30 text-accent-800 dark:text-accent-600';
       case 'ANNIVERSARY':
         return 'bg-accent-250 dark:bg-accent-900/30 text-accent-800 dark:text-accent-600';
       case 'MEETING':

@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-@Import(TestSecurityConfig.class)
+@Import(RequiresPermissionAnnotationTest.TestPermissionController.class)
 class RequiresPermissionAnnotationTest {
 
     private static final UUID TEST_USER_ID = UUID.randomUUID();
@@ -60,10 +60,10 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), permissions);
 
             // When/Then
-            mockMvc.perform(get("/test/employee/read")
+            mockMvc.perform(get("/test/permission/employee/read")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Success: EMPLOYEE_READ"));
+                    .andExpect(content().string("Success: EMPLOYEE:READ"));
         }
 
         @Test
@@ -74,7 +74,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), new HashMap<>());
 
             // When/Then
-            mockMvc.perform(get("/test/employee/read")
+            mockMvc.perform(get("/test/permission/employee/read")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isForbidden());
         }
@@ -90,10 +90,10 @@ class RequiresPermissionAnnotationTest {
                     Set.of(RoleHierarchy.SUPER_ADMIN), permissions);
 
             // When/Then - Should access endpoint that requires PAYROLL_PROCESS
-            mockMvc.perform(get("/test/payroll/process")
+            mockMvc.perform(get("/test/permission/payroll/process")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Success: PAYROLL_PROCESS"));
+                    .andExpect(content().string("Success: PAYROLL:PROCESS"));
         }
     }
 
@@ -112,7 +112,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), permissions);
 
             // When/Then
-            mockMvc.perform(get("/test/employee/anyof")
+            mockMvc.perform(get("/test/permission/employee/anyof")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
         }
@@ -128,7 +128,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), permissions);
 
             // When/Then
-            mockMvc.perform(get("/test/employee/anyof")
+            mockMvc.perform(get("/test/permission/employee/anyof")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
         }
@@ -141,7 +141,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), new HashMap<>());
 
             // When/Then
-            mockMvc.perform(get("/test/employee/anyof")
+            mockMvc.perform(get("/test/permission/employee/anyof")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isForbidden());
         }
@@ -163,7 +163,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), permissions);
 
             // When/Then
-            mockMvc.perform(post("/test/employee/allof")
+            mockMvc.perform(post("/test/permission/employee/allof")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
         }
@@ -179,7 +179,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), permissions);
 
             // When/Then
-            mockMvc.perform(post("/test/employee/allof")
+            mockMvc.perform(post("/test/permission/employee/allof")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isForbidden());
         }
@@ -192,7 +192,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), new HashMap<>());
 
             // When/Then
-            mockMvc.perform(post("/test/employee/allof")
+            mockMvc.perform(post("/test/permission/employee/allof")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isForbidden());
         }
@@ -213,7 +213,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("ADMIN"), permissions);
 
             // When/Then - Should access endpoint requiring EMPLOYEE:DELETE
-            mockMvc.perform(delete("/test/employee/delete")
+            mockMvc.perform(delete("/test/permission/employee/delete")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
         }
@@ -229,7 +229,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), permissions);
 
             // When/Then - Should access endpoint requiring EMPLOYEE:VIEW_ALL
-            mockMvc.perform(get("/test/employee/view-all")
+            mockMvc.perform(get("/test/permission/employee/view-all")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
         }
@@ -251,7 +251,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), permissions);
 
             // When/Then - Should allow access even though permission is prefixed
-            mockMvc.perform(get("/test/employee/read-appcode")
+            mockMvc.perform(get("/test/permission/employee/read-appcode")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
         }
@@ -269,7 +269,7 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), new HashMap<>());
 
             // When
-            mockMvc.perform(get("/test/employee/read")
+            mockMvc.perform(get("/test/permission/employee/read")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isForbidden());
         }
@@ -281,25 +281,16 @@ class RequiresPermissionAnnotationTest {
             SecurityContext.clear();
 
             // When/Then - Should deny access
-            mockMvc.perform(get("/test/employee/read")
+            mockMvc.perform(get("/test/permission/employee/read")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isForbidden());
         }
     }
 
-    // ==================== Test Controller Configuration ====================
-
-    @Configuration
-    public static class TestControllerConfiguration {
-
-        @Bean
-        public TestPermissionController testPermissionController() {
-            return new TestPermissionController();
-        }
-    }
+    // ==================== Test Controller ====================
 
     @RestController
-    @RequestMapping("/test")
+    @RequestMapping("/test/permission")
     public static class TestPermissionController {
 
         @GetMapping("/employee/read")
