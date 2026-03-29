@@ -10,6 +10,7 @@ import com.hrms.infrastructure.workflow.repository.ApprovalEscalationConfigRepos
 import com.hrms.infrastructure.workflow.repository.StepExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,7 @@ public class ApprovalEscalationJob {
      * Runs every 15 minutes (900 seconds).
      */
     @Scheduled(fixedRate = 900000)
+    @SchedulerLock(name = "approvalProcessEscalations", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void processEscalations() {
         log.info("ApprovalEscalationJob: starting escalation processing");
 

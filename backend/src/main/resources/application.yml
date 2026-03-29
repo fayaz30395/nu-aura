@@ -69,8 +69,8 @@ spring:
     baseline-on-migrate: true
     baseline-version: 18
     out-of-order: true
-    validate-on-migrate: false
-    repair-on-migrate: true
+    validate-on-migrate: true
+    repair-on-migrate: false
     clean-disabled: true
     mixed: true
     # Flyway uses direct (non-pooler) Neon endpoint to avoid PgBouncer transaction-mode issues
@@ -173,7 +173,7 @@ management:
     health:
       show-details: when-authorized
       probes:
-        enabled: false
+        enabled: true
       validate-group-membership: false
       group:
         liveness:
@@ -181,19 +181,19 @@ management:
         readiness:
           include: ping
     prometheus:
-      enabled: false
+      enabled: true
   health:
     db:
-      enabled: false
+      enabled: true
     redis:
-      enabled: false
+      enabled: true
     diskSpace:
-      enabled: false
+      enabled: true
       threshold: 1GB
   metrics:
     export:
       prometheus:
-        enabled: false
+        enabled: true
     tags:
       application: ${spring.application.name}
       region: ${METRICS_REGION:default}

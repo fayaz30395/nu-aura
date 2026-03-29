@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -224,6 +226,109 @@ public class FileStorageService {
         if (file.getSize() > maxSize) {
             throw new BusinessException("File size exceeds limit: " + (maxSize / 1024 / 1024) + "MB");
         }
+
+        // Magic byte validation to prevent MIME spoofing attacks
+        validateMagicBytes(file, contentType);
+    }
+
+    /**
+     * Validate that file magic bytes match the declared content type.
+     * Prevents attackers from uploading malicious files disguised as images/documents.
+     */
+    private void validateMagicBytes(MultipartFile file, String contentType) {
+        byte[] headerBytes = new byte[16];
+        try (InputStream is = file.getInputStream()) {
+            int bytesRead = is.read(headerBytes);
+            if (bytesRead < 1) {
+                throw new BusinessException("Unable to read file content for validation");
+            }
+        } catch (IOException e) {
+            log.error("Failed to read file header for magic byte validation", e);
+            throw new BusinessException("Unable to validate file content");
+        }
+
+        String detectedType = detectMimeType(headerBytes);
+        String declaredCategory = getMimeCategory(contentType);
+        String detectedCategory = getMimeCategory(detectedType);
+
+        // Reject if the broad category doesn't match (e.g., declared image/* but detected application/zip)
+        if (!declaredCategory.equals(detectedCategory)) {
+            log.warn("MIME spoofing detected: declared={}, detected={}, filename={}",
+                    contentType, detectedType, file.getOriginalFilename());
+            throw new BusinessException("File content does not match declared type: " + contentType);
+        }
+    }
+
+    /**
+     * Detect MIME type from file magic bytes (file signature).
+     */
+    private String detectMimeType(byte[] headerBytes) {
+        // JPEG: FF D8 FF
+        if (headerBytes.length >= 3
+                && headerBytes[0] == (byte) 0xFF
+                && headerBytes[1] == (byte) 0xD8
+                && headerBytes[2] == (byte) 0xFF) {
+            return "image/jpeg";
+        }
+        // PNG: 89 50 4E 47
+        if (headerBytes.length >= 4
+                && headerBytes[0] == (byte) 0x89
+                && headerBytes[1] == 0x50
+                && headerBytes[2] == 0x4E
+                && headerBytes[3] == 0x47) {
+            return "image/png";
+        }
+        // PDF: 25 50 44 46
+        if (headerBytes.length >= 4
+                && headerBytes[0] == 0x25
+                && headerBytes[1] == 0x50
+                && headerBytes[2] == 0x44
+                && headerBytes[3] == 0x46) {
+            return "application/pdf";
+        }
+        // GIF: 47 49 46 38
+        if (headerBytes.length >= 4
+                && headerBytes[0] == 0x47
+                && headerBytes[1] == 0x49
+                && headerBytes[2] == 0x46
+                && headerBytes[3] == 0x38) {
+            return "image/gif";
+        }
+        // XLSX/DOCX (ZIP container): 50 4B 03 04
+        if (headerBytes.length >= 4
+                && headerBytes[0] == 0x50
+                && headerBytes[1] == 0x4B
+                && headerBytes[2] == 0x03
+                && headerBytes[3] == 0x04) {
+            return "application/zip";
+        }
+        // CSV/TXT: starts with printable ASCII
+        if (headerBytes.length > 0
+                && headerBytes[0] >= 0x20
+                && headerBytes[0] <= 0x7E) {
+            return "text/plain";
+        }
+        return "application/octet-stream";
+    }
+
+    // MIME categories used for magic byte cross-checking
+    private static final Set<String> IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
+    private static final Set<String> DOCUMENT_TYPES = Set.of(
+            "application/pdf", "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/zip");
+    private static final Set<String> TEXT_TYPES = Set.of("text/csv", "text/plain");
+
+    /**
+     * Map a specific MIME type to a broad category for cross-validation.
+     */
+    private String getMimeCategory(String mimeType) {
+        if (IMAGE_TYPES.contains(mimeType)) return "image";
+        if (DOCUMENT_TYPES.contains(mimeType)) return "document";
+        if (TEXT_TYPES.contains(mimeType)) return "text";
+        return "unknown";
     }
 
     private String generateObjectName(UUID tenantId, String category, UUID entityId, String originalFilename) {

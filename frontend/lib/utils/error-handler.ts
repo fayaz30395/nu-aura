@@ -224,13 +224,22 @@ export function handleError(
 
 /**
  * Initialize global error handlers
- * Call this once at app startup
+ * Call this once at app startup.
+ * Returns a cleanup function that removes the listeners.
+ * Calling multiple times is safe — subsequent calls are no-ops until cleanup runs.
  */
-export function initGlobalErrorHandlers(): void {
-  if (typeof window === 'undefined') return;
+let _globalHandlersCleanup: (() => void) | null = null;
 
-  // Handle unhandled promise rejections
-  window.addEventListener('unhandledrejection', (event) => {
+export function initGlobalErrorHandlers(): () => void {
+  if (typeof window === 'undefined') return () => {};
+
+  // Guard: only attach once
+  if (_globalHandlersCleanup) {
+    logger.info('[ErrorHandler] Global error handlers already initialized — skipping');
+    return _globalHandlersCleanup;
+  }
+
+  const handleRejection = (event: PromiseRejectionEvent) => {
     const error = event.reason instanceof Error
       ? event.reason
       : new Error(String(event.reason));
@@ -244,10 +253,9 @@ export function initGlobalErrorHandlers(): void {
     if (isProduction) {
       event.preventDefault();
     }
-  });
+  };
 
-  // Handle uncaught errors
-  window.addEventListener('error', (event) => {
+  const handleWindowError = (event: ErrorEvent) => {
     // Ignore ResizeObserver errors (common false positive)
     if (event.message?.includes('ResizeObserver')) {
       return;
@@ -264,9 +272,21 @@ export function initGlobalErrorHandlers(): void {
     if (isProduction) {
       event.preventDefault();
     }
-  });
+  };
+
+  window.addEventListener('unhandledrejection', handleRejection);
+  window.addEventListener('error', handleWindowError);
 
   logger.info('[ErrorHandler] Global error handlers initialized');
+
+  _globalHandlersCleanup = () => {
+    window.removeEventListener('unhandledrejection', handleRejection);
+    window.removeEventListener('error', handleWindowError);
+    _globalHandlersCleanup = null;
+    logger.info('[ErrorHandler] Global error handlers removed');
+  };
+
+  return _globalHandlersCleanup;
 }
 
 /**

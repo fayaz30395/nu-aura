@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
 import { PermissionGate } from '@/components/auth/PermissionGate';
@@ -101,6 +101,13 @@ export default function ReportBuilderPage() {
   const [error, setError] = useState('');
   const [savedMsg, setSavedMsg] = useState('');
 
+  // Auto-clear saved message with proper cleanup
+  useEffect(() => {
+    if (!savedMsg) return;
+    const t = setTimeout(() => setSavedMsg(''), 3000);
+    return () => clearTimeout(t);
+  }, [savedMsg]);
+
   const columns = MODULE_COLUMNS[module];
 
   function toggleColumn(key: string) {
@@ -183,7 +190,6 @@ export default function ReportBuilderPage() {
         name: templateName,
       });
       setSavedMsg('Template saved.');
-      setTimeout(() => setSavedMsg(''), 3000);
     } catch {
       setError('Failed to save template.');
     } finally {

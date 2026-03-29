@@ -484,6 +484,16 @@ export default function ApplicantPipelinePage() {
   const [offerLoading, setOfferLoading] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
   const [offerSuccess, setOfferSuccess] = useState<string | null>(null);
+  const offerSuccessTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup offer success timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (offerSuccessTimeoutRef.current) {
+        clearTimeout(offerSuccessTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // ── Clear drag error after 4s ─────────────────────────────────────────
   useEffect(() => {
@@ -731,7 +741,7 @@ export default function ApplicantPipelinePage() {
       setOfferSuccess(`Offer letter sent successfully! Reference: ${letter.referenceNumber}`);
       await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
 
-      setTimeout(() => {
+      offerSuccessTimeoutRef.current = setTimeout(() => {
         setShowOfferModal(false);
         setOfferApplicant(null);
         setOfferSuccess(null);

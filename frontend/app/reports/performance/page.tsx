@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -22,6 +22,13 @@ export default function PerformanceReportsPage() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Auto-clear success message with proper cleanup
+  useEffect(() => {
+    if (!successMessage) return;
+    const t = setTimeout(() => setSuccessMessage(''), 3000);
+    return () => clearTimeout(t);
+  }, [successMessage]);
+
   const handleDownload = async () => {
     setLoading(true);
     setError('');
@@ -36,7 +43,6 @@ export default function PerformanceReportsPage() {
 
       await reportService.downloadPerformanceReport(request);
       setSuccessMessage(`Performance report downloaded successfully in ${format} format!`);
-      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
     } finally {

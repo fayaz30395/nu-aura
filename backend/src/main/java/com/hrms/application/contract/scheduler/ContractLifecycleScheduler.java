@@ -12,6 +12,7 @@ import com.hrms.infrastructure.contract.repository.ContractReminderRepository;
 import com.hrms.infrastructure.contract.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -66,6 +67,7 @@ public class ContractLifecycleScheduler {
      * Cron: 02:30 AM UTC every day.
      */
     @Scheduled(cron = "${app.contract.lifecycle.cron:0 30 2 * * *}", zone = "UTC")
+    @SchedulerLock(name = "processContractLifecycle", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void processContractLifecycle() {
         log.info("ContractLifecycleScheduler: starting daily contract lifecycle run");
 

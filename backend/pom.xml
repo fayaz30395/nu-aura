@@ -232,6 +232,18 @@
             <version>1.10.0</version>
         </dependency>
 
+        <!-- ShedLock for distributed job locking (prevents duplicate execution in multi-pod K8s) -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>6.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>6.3.0</version>
+        </dependency>
+
         <!-- Bucket4j for Rate Limiting (Playbook Prompt 14) -->
         <dependency>
             <groupId>com.bucket4j</groupId>

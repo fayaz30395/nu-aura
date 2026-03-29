@@ -6,6 +6,7 @@ import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.application.attendance.service.CompOffService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -52,6 +53,7 @@ public class AutoRegularizationScheduler {
      * Cron: 01:00 AM IST = 19:30 UTC (UTC+5:30).
      */
     @Scheduled(cron = "0 30 19 * * *", zone = "UTC")
+    @SchedulerLock(name = "autoRegularizeAttendance", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void autoRegularizeAttendance() {
         log.info("AutoRegularizationScheduler: starting attendance regularization run");
 
@@ -75,6 +77,7 @@ public class AutoRegularizationScheduler {
      * Cron: 01:30 AM IST = 20:00 UTC.
      */
     @Scheduled(cron = "0 0 20 * * *", zone = "UTC")
+    @SchedulerLock(name = "autoApproveCompOff", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void autoApproveCompOff() {
         log.info("AutoRegularizationScheduler: starting comp-off auto-approval run");
 

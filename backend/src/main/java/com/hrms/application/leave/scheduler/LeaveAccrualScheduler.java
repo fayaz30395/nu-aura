@@ -8,6 +8,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -51,6 +52,7 @@ public class LeaveAccrualScheduler {
      * Cron: 2:00 AM UTC on the 1st of every month.
      */
     @Scheduled(cron = "${app.leave.accrual.cron:0 0 2 1 * *}", zone = "UTC")
+    @SchedulerLock(name = "accrueMonthlyLeave", lockAtLeastFor = "PT15M", lockAtMostFor = "PT60M")
     public void accrueMonthlyLeave() {
         log.info("LeaveAccrualScheduler: starting monthly leave accrual run");
 

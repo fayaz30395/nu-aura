@@ -7,6 +7,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class EmailSchedulerService {
      * iteration so that the employee query is scoped to the correct tenant.</p>
      */
     @Scheduled(cron = "0 0 9 * * *")
+    @SchedulerLock(name = "sendBirthdayEmails", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional(readOnly = true)
     public void sendBirthdayEmails() {
         log.info("Starting birthday email job");
@@ -81,6 +83,7 @@ public class EmailSchedulerService {
      * boundary (e.g. joining on Dec 31 checked on Jan 1 would incorrectly show 1 year).</p>
      */
     @Scheduled(cron = "0 0 9 * * *")
+    @SchedulerLock(name = "sendAnniversaryEmails", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional(readOnly = true)
     public void sendAnniversaryEmails() {
         log.info("Starting work anniversary email job");
@@ -131,6 +134,7 @@ public class EmailSchedulerService {
      * which used a cross-tenant query (no tenant_id filter) — a data isolation risk.</p>
      */
     @Scheduled(cron = "0 0 * * * *")
+    @SchedulerLock(name = "retryFailedEmails", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void retryFailedEmails() {
         log.info("Starting failed email retry job");
 
@@ -158,6 +162,7 @@ public class EmailSchedulerService {
      * null to the tenant-scoped query — resulting in no emails being sent.</p>
      */
     @Scheduled(cron = "0 */15 * * * *")
+    @SchedulerLock(name = "sendScheduledEmails", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendScheduledEmails() {
         log.info("Starting scheduled email job");

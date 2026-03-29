@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -47,11 +47,36 @@ function getGreeting(): { text: string; icon: React.ReactNode } {
   return { text: 'Good Night', icon: <Moon className="w-4 h-4" /> };
 }
 
+/* ─── Clock (isolated to avoid full-page re-render every second) ─── */
+const formatTime = (d: Date) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+const formatDate = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+const LiveClock = React.memo(function LiveClock() {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <>
+      <p className="text-xs text-[var(--text-muted)] mt-0.5">{formatDate(time)}</p>
+    </>
+  );
+});
+
+const LiveTime = React.memo(function LiveTime() {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return <span>{formatTime(time)}</span>;
+});
+
 export default function HomePage() {
   const router = useRouter();
   const { user } = useAuth();
 
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [activeWallTab, setActiveWallTab] = useState<WallTab>('Post');
   const [postContent, setPostContent] = useState('');
 
@@ -59,12 +84,6 @@ export default function HomePage() {
   const { data: dashboardData, isLoading, isError, error } = useHomeDashboard();
   const checkInMutation = useCheckIn();
   const checkOutMutation = useCheckOut();
-
-  // Update time every second
-  React.useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleClockIn = async () => {
     if (!user?.id || !dashboardData.attendanceToday?.employeeId) return;
@@ -84,8 +103,7 @@ export default function HomePage() {
     });
   };
 
-  const formatTime = (d: Date) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-  const formatDate = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  // formatTime and formatDate moved to module scope for LiveClock/LiveTime
   const getInitials = (name?: string | null) => {
     if (!name) return '??';
     return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -158,12 +176,12 @@ export default function HomePage() {
             <h1 className="text-xl font-semibold text-white">
               {user?.fullName?.split(' ')[0] || 'there'}
             </h1>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">{formatDate(currentTime)}</p>
+            <LiveClock />
           </div>
           <div className="flex items-center gap-2.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] rounded-lg px-4 py-2.5 self-start sm:self-auto">
             <div className="w-2 h-2 rounded-full bg-success-400 animate-pulse" aria-label="Online status indicator" />
             <span className="text-lg font-mono font-medium text-white tracking-wider">
-              {formatTime(currentTime)}
+              <LiveTime />
             </span>
           </div>
         </div>
