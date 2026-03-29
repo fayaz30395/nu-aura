@@ -1,10 +1,12 @@
 package com.hrms.application.attendance.service;
 
+import com.hrms.common.config.AttendanceConfigProperties;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.attendance.repository.AttendanceTimeEntryRepository;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,6 +40,12 @@ class AttendanceRecordServiceTest {
     @Mock
     private AttendanceTimeEntryRepository timeEntryRepository;
 
+    @Mock
+    private AttendanceConfigProperties config;
+
+    @Mock
+    private EventPublisher eventPublisher;
+
     @InjectMocks
     private AttendanceRecordService attendanceRecordService;
 
@@ -68,6 +76,10 @@ class AttendanceRecordServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+
+        // Setup config defaults
+        when(config.getMaxLookbackDays()).thenReturn(2);
+        when(config.getMaxOvernightShiftHours()).thenReturn(16);
 
         attendanceRecord = AttendanceRecord.builder()
                 .employeeId(employeeId)
@@ -212,6 +224,8 @@ class AttendanceRecordServiceTest {
         @DisplayName("Should throw exception when tenant context is not set")
         void shouldThrowExceptionWhenTenantContextNotSet() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(null);
+            tenantContextMock.when(TenantContext::requireCurrentTenant)
+                    .thenThrow(new IllegalStateException("Tenant context not set"));
 
             assertThatThrownBy(() -> attendanceRecordService.checkIn(
                     employeeId, checkInTime, "WEB", "Office", "192.168.1.1"))
@@ -411,6 +425,8 @@ class AttendanceRecordServiceTest {
         @DisplayName("Should throw exception when tenant context is not set")
         void shouldThrowExceptionWhenTenantContextNotSet() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(null);
+            tenantContextMock.when(TenantContext::requireCurrentTenant)
+                    .thenThrow(new IllegalStateException("Tenant context not set"));
 
             assertThatThrownBy(() -> attendanceRecordService.checkOut(
                     employeeId, checkOutTime, "WEB", "Office", "192.168.1.1"))

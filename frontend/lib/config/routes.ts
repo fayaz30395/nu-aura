@@ -470,9 +470,10 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
 
   // Dashboard - different views based on role
+  // QA6-002: Fixed path from /dashboard/executive to /dashboards/executive to match actual page location
   {
-    path: '/dashboard/executive',
-    permission: Permissions.DASHBOARD_EXECUTIVE,
+    path: '/dashboards/executive',
+    anyPermission: [Permissions.ANALYTICS_VIEW, Permissions.SYSTEM_ADMIN],
   },
   {
     path: '/dashboard/hr',
@@ -538,10 +539,6 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
 
   // Dashboards (plural routes matching actual pages)
-  {
-    path: '/dashboards/executive',
-    anyPermission: [Permissions.ANALYTICS_VIEW, Permissions.SYSTEM_ADMIN],
-  },
   {
     path: '/dashboards/manager',
     managerOnly: true,
@@ -827,6 +824,152 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   {
     path: '/me/profile',
     requiresAuth: true,
+  },
+
+  // ==================== QA6-001: Missing Route Protections ====================
+
+  // Payroll admin sub-pages (CRITICAL — previously accessible to all authenticated users)
+  {
+    path: '/payroll/salary-structures',
+    anyPermission: [Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_ALL],
+  },
+  {
+    path: '/payroll/components',
+    anyPermission: [Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_ALL],
+  },
+  {
+    path: '/payroll/runs',
+    anyPermission: [Permissions.PAYROLL_VIEW, Permissions.PAYROLL_PROCESS],
+  },
+  {
+    path: '/payroll/structures',
+    anyPermission: [Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_ALL],
+  },
+
+  // FnF + Offboarding detail pages (CRITICAL)
+  {
+    path: '/offboarding/[id]/fnf',
+    anyPermission: [Permissions.EXIT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/offboarding/[id]/exit-interview',
+    anyPermission: [Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE],
+  },
+  {
+    path: '/offboarding/[id]',
+    anyPermission: [Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE],
+  },
+
+  // Payments
+  {
+    path: '/payments/config',
+    anyPermission: [Permissions.PAYMENT_CONFIG, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/payments',
+    anyPermission: [Permissions.PAYMENT_VIEW, Permissions.PAYMENT_PROCESS],
+  },
+
+  // Biometric devices
+  {
+    path: '/biometric-devices',
+    anyPermission: [Permissions.ATTENDANCE_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Compliance
+  {
+    path: '/compliance',
+    anyPermission: [Permissions.COMPLIANCE_VIEW, Permissions.COMPLIANCE_MANAGE],
+  },
+
+  // Letter templates
+  {
+    path: '/letter-templates',
+    anyPermission: [Permissions.LETTER_TEMPLATE_VIEW, Permissions.LETTER_TEMPLATE_MANAGE],
+  },
+
+  // LWF (Labour Welfare Fund)
+  {
+    path: '/lwf',
+    anyPermission: [Permissions.STATUTORY_VIEW, Permissions.STATUTORY_MANAGE],
+  },
+
+  // 1-on-1 meetings
+  {
+    path: '/one-on-one',
+    anyPermission: [Permissions.MEETING_VIEW, Permissions.MEETING_CREATE],
+  },
+
+  // Overtime
+  {
+    path: '/overtime',
+    anyPermission: [Permissions.OVERTIME_VIEW, Permissions.OVERTIME_MANAGE],
+  },
+
+  // Predictive analytics
+  {
+    path: '/predictive-analytics',
+    anyPermission: [Permissions.PREDICTIVE_ANALYTICS_VIEW, Permissions.PREDICTIVE_ANALYTICS_MANAGE],
+  },
+
+  // Probation management
+  {
+    path: '/probation',
+    anyPermission: [Permissions.PROBATION_VIEW, Permissions.PROBATION_MANAGE],
+  },
+
+  // Employee referrals
+  {
+    path: '/referrals',
+    anyPermission: [Permissions.REFERRAL_VIEW, Permissions.REFERRAL_CREATE],
+  },
+
+  // Restricted holidays
+  {
+    path: '/restricted-holidays',
+    anyPermission: [Permissions.LEAVE_VIEW_SELF, Permissions.LEAVE_MANAGE],
+  },
+
+  // Shift management
+  {
+    path: '/shifts/definitions',
+    anyPermission: [Permissions.SHIFT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/shifts/patterns',
+    anyPermission: [Permissions.SHIFT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/shifts',
+    anyPermission: [Permissions.SHIFT_VIEW, Permissions.SHIFT_MANAGE],
+  },
+
+  // Statutory filings
+  {
+    path: '/statutory-filings',
+    anyPermission: [Permissions.STATUTORY_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Workflow management
+  {
+    path: '/workflows',
+    anyPermission: [Permissions.WORKFLOW_VIEW, Permissions.WORKFLOW_MANAGE],
+  },
+
+  // Expense sub-routes
+  {
+    path: '/expenses/settings',
+    anyPermission: [Permissions.EXPENSE_SETTINGS, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/expenses/reports',
+    anyPermission: [Permissions.EXPENSE_REPORT, Permissions.EXPENSE_MANAGE],
+  },
+
+  // Contract sub-routes
+  {
+    path: '/contracts/templates',
+    anyPermission: [Permissions.CONTRACT_TEMPLATE_MANAGE, Permissions.SYSTEM_ADMIN],
   },
 
   // Enterprise Tools

@@ -295,6 +295,17 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
                                @Param("cutoffDateTime") LocalDateTime cutoffDateTime);
 
     /**
+     * Tenant-aware variant of {@link #countJoinedOnOrBefore(LocalDate, LocalDateTime)}.
+     * Use this overload in tenant-scoped contexts to enforce data isolation.
+     */
+    @Query("SELECT COUNT(e) FROM Employee e WHERE e.tenantId = :tenantId AND " +
+           "((e.joiningDate IS NOT NULL AND e.joiningDate <= :cutoffDate) OR " +
+           "(e.joiningDate IS NULL AND e.createdAt IS NOT NULL AND e.createdAt <= :cutoffDateTime))")
+    long countJoinedOnOrBefore(@Param("tenantId") UUID tenantId,
+                               @Param("cutoffDate") LocalDate cutoffDate,
+                               @Param("cutoffDateTime") LocalDateTime cutoffDateTime);
+
+    /**
      * Check if an employee is a department head (manages any department).
      * Used by ImplicitRoleEngine to determine if employee should get IS_DEPARTMENT_HEAD role.
      */

@@ -457,6 +457,23 @@ public class GlobalExceptionHandler {
         return jsonResponse(status, errorResponse);
     }
 
+    @ExceptionHandler(org.springframework.orm.ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLock(
+            org.springframework.orm.ObjectOptimisticLockingFailureException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        log.warn("Concurrent modification on path={}: {}", path, ex.getMessage());
+        recordErrorMetric("data", "optimistic_lock", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Conflict",
+                "This record was modified by another user. Please refresh and try again.", path);
+        errorResponse.setErrorCode("CONCURRENT_MODIFICATION");
+
+        return jsonResponse(status, errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {

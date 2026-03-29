@@ -100,6 +100,24 @@ const AUTHENTICATED_ROUTES = [
   '/integrations',
   '/team-directory',
   '/security',
+  // QA6-001: Routes discovered during RBAC audit — missing from protection list
+  '/biometric-devices',
+  '/compliance',
+  '/executive',
+  '/goals',
+  '/import-export',
+  '/letter-templates',
+  '/lwf',
+  '/one-on-one',
+  '/overtime',
+  '/preboarding',
+  '/predictive-analytics',
+  '/probation',
+  '/referrals',
+  '/restricted-holidays',
+  '/shifts',
+  '/statutory-filings',
+  '/workflows',
 ];
 
 // API routes and static assets to skip

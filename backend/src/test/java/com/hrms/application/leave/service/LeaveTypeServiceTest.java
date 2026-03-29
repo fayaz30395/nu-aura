@@ -251,14 +251,11 @@ class LeaveTypeServiceTest {
         @Test
         @DisplayName("Should throw ResourceNotFoundException when tenant ID doesn't match")
         void shouldThrowExceptionWhenTenantIdMismatch() {
-            // Arrange
-            UUID wrongTenantId = UUID.randomUUID();
-            testLeaveType.setTenantId(wrongTenantId);
-
+            // Arrange - when tenant doesn't match, findByIdAndTenantId returns empty
             LeaveType updateData = LeaveType.builder().leaveName("Updated").build();
 
             when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
-                    .thenReturn(Optional.of(testLeaveType));
+                    .thenReturn(Optional.empty());
 
             // Act & Assert
             assertThatThrownBy(() -> leaveTypeService.updateLeaveType(leaveTypeId, updateData))
@@ -380,12 +377,9 @@ class LeaveTypeServiceTest {
         @Test
         @DisplayName("Should throw ResourceNotFoundException when tenant ID doesn't match")
         void shouldThrowExceptionWhenTenantIdMismatch() {
-            // Arrange
-            UUID wrongTenantId = UUID.randomUUID();
-            testLeaveType.setTenantId(wrongTenantId);
-
+            // Arrange - when tenant doesn't match, findByIdAndTenantId returns empty
             when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId))
-                    .thenReturn(Optional.of(testLeaveType));
+                    .thenReturn(Optional.empty());
 
             // Act & Assert
             assertThatThrownBy(() -> leaveTypeService.getLeaveTypeById(leaveTypeId))

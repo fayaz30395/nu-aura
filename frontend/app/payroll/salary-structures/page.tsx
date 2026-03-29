@@ -1,6 +1,8 @@
 'use client';
 
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Box,
   Stack,
@@ -25,6 +27,7 @@ export default function SalaryStructuresPage() {
 
   return (
     <AppLayout activeMenuItem="payroll">
+      <PermissionGate permission={Permissions.PAYROLL_VIEW} fallback={<Box p="lg"><Text c="red">You do not have permission to view salary structures.</Text></Box>}>
       <Box p="lg">
         <Stack gap="lg">
           {/* Page header */}
@@ -138,6 +141,7 @@ export default function SalaryStructuresPage() {
           )}
         </Stack>
       </Box>
+      </PermissionGate>
     </AppLayout>
   );
 }

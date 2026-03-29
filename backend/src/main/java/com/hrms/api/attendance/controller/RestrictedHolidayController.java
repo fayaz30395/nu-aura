@@ -50,6 +50,7 @@ public class RestrictedHolidayController {
             @ApiResponse(responseCode = "200", description = "Holidays retrieved successfully")
     })
     @GetMapping
+    @RequiresPermission(Permission.LEAVE_VIEW_SELF)
     public ResponseEntity<Page<HolidayResponse>> listHolidays(
             @Parameter(description = "Filter by year") @RequestParam(required = false) Integer year,
             @RequestParam(defaultValue = "0") int page,
@@ -61,6 +62,7 @@ public class RestrictedHolidayController {
     @Operation(summary = "Get available restricted holidays for a year",
             description = "Returns only active restricted holidays for the given year. Used by employees to browse.")
     @GetMapping("/available")
+    @RequiresPermission(Permission.LEAVE_VIEW_SELF)
     public ResponseEntity<List<HolidayResponse>> getAvailableHolidays(
             @Parameter(description = "Year", example = "2026")
             @RequestParam(defaultValue = "#{T(java.time.Year).now().getValue()}") Integer year) {
@@ -69,6 +71,7 @@ public class RestrictedHolidayController {
 
     @Operation(summary = "Get restricted holiday by ID")
     @GetMapping("/{id}")
+    @RequiresPermission(Permission.LEAVE_VIEW_SELF)
     public ResponseEntity<HolidayResponse> getHoliday(@PathVariable UUID id) {
         return ResponseEntity.ok(service.getHolidayById(id));
     }
@@ -112,6 +115,7 @@ public class RestrictedHolidayController {
             @ApiResponse(responseCode = "400", description = "Quota exceeded, duplicate, or holiday not available")
     })
     @PostMapping("/{holidayId}/select")
+    @RequiresPermission(Permission.LEAVE_REQUEST)
     public ResponseEntity<SelectionResponse> selectHoliday(@PathVariable UUID holidayId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.selectHoliday(holidayId));
     }
@@ -119,6 +123,7 @@ public class RestrictedHolidayController {
     @Operation(summary = "Get my restricted holiday selections",
             description = "Returns the current employee's selections for the given year.")
     @GetMapping("/selections/me")
+    @RequiresPermission(Permission.LEAVE_VIEW_SELF)
     public ResponseEntity<List<SelectionResponse>> getMySelections(
             @RequestParam(defaultValue = "#{T(java.time.Year).now().getValue()}") Integer year) {
         return ResponseEntity.ok(service.getMySelections(year));
@@ -127,6 +132,7 @@ public class RestrictedHolidayController {
     @Operation(summary = "Get my restricted holiday summary",
             description = "Returns quota usage summary for the current employee.")
     @GetMapping("/summary/me")
+    @RequiresPermission(Permission.LEAVE_VIEW_SELF)
     public ResponseEntity<EmployeeSummaryResponse> getMySummary(
             @RequestParam(defaultValue = "#{T(java.time.Year).now().getValue()}") Integer year) {
         return ResponseEntity.ok(service.getEmployeeSummary(year));
@@ -135,6 +141,7 @@ public class RestrictedHolidayController {
     @Operation(summary = "Cancel a selection",
             description = "Employee cancels their own pending or approved selection.")
     @PostMapping("/selections/{selectionId}/cancel")
+    @RequiresPermission(Permission.LEAVE_REQUEST)
     public ResponseEntity<SelectionResponse> cancelSelection(@PathVariable UUID selectionId) {
         return ResponseEntity.ok(service.cancelSelection(selectionId));
     }
@@ -187,6 +194,7 @@ public class RestrictedHolidayController {
     @Operation(summary = "Get restricted holiday policy for a year",
             description = "Returns the tenant's policy (quota, approval required). Returns defaults if not configured.")
     @GetMapping("/policy")
+    @RequiresPermission(Permission.LEAVE_VIEW_SELF)
     public ResponseEntity<PolicyResponse> getPolicy(
             @RequestParam(defaultValue = "#{T(java.time.Year).now().getValue()}") Integer year) {
         return ResponseEntity.ok(service.getPolicy(year));

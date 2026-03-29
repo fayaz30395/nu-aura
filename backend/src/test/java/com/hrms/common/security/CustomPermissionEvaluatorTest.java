@@ -49,6 +49,7 @@ class CustomPermissionEvaluatorTest {
         void shouldReturnTrueWhenUserHasPermission() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL
@@ -182,6 +183,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandleEmptyTargetObject() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL
@@ -205,6 +207,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandleNullTargetObject() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL
@@ -233,6 +236,7 @@ class CustomPermissionEvaluatorTest {
         void shouldReturnTrueWithIdAndType() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL
@@ -359,6 +363,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandleVariousTargetIdTypes() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL
@@ -396,6 +401,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandleNullTargetId() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL
@@ -420,6 +426,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandleNullTargetType() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL
@@ -468,6 +475,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandlePermissionHierarchyThroughSecurityContext() {
             // Given - User has MANAGE permission which implies all actions
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, "EMPLOYEE:DELETE")).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     "EMPLOYEE:MANAGE", RoleScope.ALL
@@ -491,6 +499,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandleAppPrefixedPermissions() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, "EMPLOYEE:READ")).thenReturn(true);
 
             SecurityContext.setCurrentApp("HRMS");
             Map<String, RoleScope> permissions = Map.of(
@@ -537,6 +546,7 @@ class CustomPermissionEvaluatorTest {
         void shouldHandleSpecialCharactersInPermission() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, "SPECIAL:PERM:*")).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     "SPECIAL:PERM:*", RoleScope.ALL
@@ -583,6 +593,7 @@ class CustomPermissionEvaluatorTest {
         void shouldReturnTrueWhenBothOverloadsCalled() {
             // Given
             when(authentication.isAuthenticated()).thenReturn(true);
+            when(securityService.hasPermission(authentication, Permission.EMPLOYEE_READ)).thenReturn(true);
 
             Map<String, RoleScope> permissions = Map.of(
                     Permission.EMPLOYEE_READ, RoleScope.ALL

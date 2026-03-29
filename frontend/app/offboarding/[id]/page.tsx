@@ -43,6 +43,8 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   useExitProcess,
   useClearancesByExitProcess,
@@ -229,6 +231,7 @@ export default function SeparationDetailPage() {
 
   return (
     <AppLayout>
+      <PermissionGate anyOf={[Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE]} fallback={<Stack p="md"><Text c="red">You do not have permission to view separation details.</Text></Stack>}>
       <Stack gap="lg" p="md">
         {/* Header */}
         <Group justify="space-between" align="flex-start">
@@ -739,6 +742,7 @@ export default function SeparationDetailPage() {
           </Group>
         </Stack>
       </Modal>
+      </PermissionGate>
     </AppLayout>
   );
 }

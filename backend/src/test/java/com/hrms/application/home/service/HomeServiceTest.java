@@ -302,7 +302,9 @@ class HomeServiceTest {
             employee.setStatus(Employee.EmployeeStatus.ACTIVE);
             Department department = createTestDepartment(departmentId, "Engineering");
 
-            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(employeeRepository.findByTenantIdAndJoiningDateBetweenAndStatus(
+                    eq(tenantId), any(LocalDate.class), any(LocalDate.class), eq(Employee.EmployeeStatus.ACTIVE)))
+                    .thenReturn(List.of(employee));
             when(departmentRepository.findAllById(anySet())).thenReturn(List.of(department));
 
             // When
@@ -364,7 +366,9 @@ class HomeServiceTest {
             employee3.setJoiningDate(LocalDate.now());
             employee3.setStatus(Employee.EmployeeStatus.ACTIVE);
 
-            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee1, employee2, employee3));
+            when(employeeRepository.findByTenantIdAndJoiningDateBetweenAndStatus(
+                    eq(tenantId), any(LocalDate.class), any(LocalDate.class), eq(Employee.EmployeeStatus.ACTIVE)))
+                    .thenReturn(List.of(employee1, employee2, employee3));
 
             // When
             List<NewJoineeResponse> result = homeService.getNewJoinees(30);
@@ -384,7 +388,9 @@ class HomeServiceTest {
             employee.setJoiningDate(LocalDate.now());
             employee.setStatus(Employee.EmployeeStatus.ACTIVE);
 
-            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(employeeRepository.findByTenantIdAndJoiningDateBetweenAndStatus(
+                    eq(tenantId), any(LocalDate.class), any(LocalDate.class), eq(Employee.EmployeeStatus.ACTIVE)))
+                    .thenReturn(List.of(employee));
 
             // When
             List<NewJoineeResponse> result = homeService.getNewJoinees(30);
