@@ -94,16 +94,16 @@ export default function OrgHierarchyPage() {
 
   const getLevelColor = (level?: string) => {
     const colors: Record<string, { bg: string; border: string; text: string }> = {
-      'CXO': { bg: 'bg-accent-250', border: 'border-accent-500', text: 'text-accent-900' },
-      'SVP': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
-      'VP': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
-      'DIRECTOR': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
-      'SENIOR_MANAGER': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
-      'MANAGER': { bg: 'bg-success-50', border: 'border-success-300', text: 'text-success-700' },
-      'LEAD': { bg: 'bg-warning-50', border: 'border-warning-300', text: 'text-warning-700' },
-      'SENIOR': { bg: 'bg-warning-50', border: 'border-warning-300', text: 'text-warning-700' },
-      'MID': { bg: 'bg-danger-50', border: 'border-danger-300', text: 'text-danger-700' },
-      'ENTRY': { bg: 'bg-accent-250', border: 'border-accent-500', text: 'text-accent-900' },
+      'CXO': { bg: 'bg-accent-50 dark:bg-accent-950/40', border: 'border-accent-500', text: 'text-accent-900 dark:text-accent-200' },
+      'SVP': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
+      'VP': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
+      'DIRECTOR': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
+      'SENIOR_MANAGER': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
+      'MANAGER': { bg: 'bg-success-50 dark:bg-success-950/30', border: 'border-success-300 dark:border-success-700', text: 'text-success-700 dark:text-success-300' },
+      'LEAD': { bg: 'bg-warning-50 dark:bg-warning-950/30', border: 'border-warning-300 dark:border-warning-700', text: 'text-warning-700 dark:text-warning-300' },
+      'SENIOR': { bg: 'bg-warning-50 dark:bg-warning-950/30', border: 'border-warning-300 dark:border-warning-700', text: 'text-warning-700 dark:text-warning-300' },
+      'MID': { bg: 'bg-danger-50 dark:bg-danger-950/30', border: 'border-danger-300 dark:border-danger-700', text: 'text-danger-700 dark:text-danger-300' },
+      'ENTRY': { bg: 'bg-accent-50 dark:bg-accent-950/40', border: 'border-accent-500', text: 'text-accent-900 dark:text-accent-200' },
     };
     return level && colors[level] ? colors[level] : { bg: 'bg-[var(--bg-secondary)]/50', border: 'border-[var(--border-main)] dark:border-[var(--border-main)]', text: 'text-[var(--text-secondary)]' };
   };
@@ -127,7 +127,7 @@ export default function OrgHierarchyPage() {
             onClick={() => hasSubordinates && toggleNode(employee.id)}
           >
             {/* Header with Employee Photo */}
-            <div className="bg-white bg-opacity-60 border-b border-current border-opacity-20 p-4">
+            <div className="bg-white/60 dark:bg-white/10 border-b border-current border-opacity-20 p-4">
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <div className={`
@@ -136,7 +136,7 @@ export default function OrgHierarchyPage() {
                   `}>
                     {getInitials(employee.fullName)}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-success-500 border-2 border-white rounded-full h-4 w-4"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-success-500 border-2 border-white dark:border-surface-800 rounded-full h-4 w-4"></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-base truncate">
@@ -167,7 +167,7 @@ export default function OrgHierarchyPage() {
                 </div>
                 {hasSubordinates && (
                   <button
-                    className="ml-2 flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-white hover:bg-opacity-30 transition-colors"
+                    className="ml-2 flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-white/30 dark:hover:bg-white/10 transition-colors"
                   >
                     <svg
                       className={`h-5 w-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -183,20 +183,20 @@ export default function OrgHierarchyPage() {
               {/* Additional Info */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {employee.level && (
-                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-white bg-opacity-50">
+                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-white/50 dark:bg-white/10">
                     {employee.level.replace(/_/g, ' ')}
                   </span>
                 )}
                 {employee.employmentType && (
-                  <span className="px-2 py-1 text-xs rounded-md bg-white bg-opacity-30">
+                  <span className="px-2 py-1 text-xs rounded-md bg-white/30 dark:bg-white/10">
                     {employee.employmentType.replace(/_/g, ' ')}
                   </span>
                 )}
                 {employee.status && (
-                  <span className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? 'bg-success-100 text-success-800' :
-                      employee.status === 'ON_LEAVE' ? 'bg-warning-100 text-warning-800' :
-                        employee.status === 'ON_NOTICE' ? 'bg-warning-100 text-warning-800' :
-                          'bg-danger-100 text-danger-800'
+                  <span className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' :
+                      employee.status === 'ON_LEAVE' ? 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300' :
+                        employee.status === 'ON_NOTICE' ? 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300' :
+                          'bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-300'
                     }`}>
                     {employee.status.replace(/_/g, ' ')}
                   </span>
@@ -336,7 +336,7 @@ export default function OrgHierarchyPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="text-danger-600 font-medium mb-4">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
+                <p className="text-danger-600 dark:text-danger-400 font-medium mb-4">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
               </div>
             </div>
           ) : hierarchy.length === 0 ? (
