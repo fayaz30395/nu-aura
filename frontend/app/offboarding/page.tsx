@@ -994,7 +994,7 @@ export default function OffboardingPage() {
             <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleteMutation.isPending}>
+            <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
               {deleteMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

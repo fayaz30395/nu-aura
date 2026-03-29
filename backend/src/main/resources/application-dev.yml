@@ -8,6 +8,8 @@ spring:
       on-profile: dev
 
   main:
+    # HIGH-4 FIX: allow-bean-definition-overriding scoped to dev only (removed from base application.yml)
+    allow-bean-definition-overriding: true
     lazy-initialization: true
 
   datasource:

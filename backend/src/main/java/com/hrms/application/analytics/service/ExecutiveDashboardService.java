@@ -378,50 +378,76 @@ public class ExecutiveDashboardService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
 
-        // PERFORMANCE FIX (BUG-010): Batch queries instead of N+1
-        // Query last 12 months of payroll in a single call instead of 12 calls
-        LocalDate now = LocalDate.now();
-        LocalDate twelveMonthsAgo = now.minusMonths(11).withDayOfMonth(1);
-        Map<String, BigDecimal> payrollMap = new HashMap<>();
+        // PERFORMANCE FIX (HIGH-2): Batch queries — 3 queries total instead of 48 (4 per month × 12).
+        YearMonth startYM = YearMonth.now().minusMonths(11);
+        YearMonth endYM   = YearMonth.now();
+        LocalDate rangeStart = startYM.atDay(1);
+        LocalDate rangeEnd   = endYM.atEndOfMonth();
 
-        // TODO: Add repository method to batch query: findPayrollByTenantIdAndYearMonthRange()
-        // For now, we still query individually but with caching awareness
-        // Future: @Cacheable("executive-dashboard-payroll-trend-<tenantId>") with 1-hour TTL
+        // 1. Single query: payroll totals for the 12-month window
+        Map<String, BigDecimal> payrollByYearMonth = new HashMap<>();
+        List<Object[]> payrollRows = payslipRepository.sumNetSalaryByTenantIdAndYearMonthRange(
+                tenantId,
+                startYM.getYear(), startYM.getMonthValue(),
+                endYM.getYear(),   endYM.getMonthValue());
+        for (Object[] row : payrollRows) {
+            String key = row[0] + "-" + row[1]; // "year-month"
+            payrollByYearMonth.put(key, (BigDecimal) row[2]);
+        }
 
+        // 2. Single query: hire counts grouped by year/month
+        Map<String, Long> hiresByYearMonth = new HashMap<>();
+        List<Object[]> hireRows = employeeRepository.countHiresByTenantIdAndJoiningDateRange(
+                tenantId, rangeStart, rangeEnd);
+        for (Object[] row : hireRows) {
+            String key = row[0] + "-" + row[1];
+            hiresByYearMonth.put(key, ((Number) row[2]).longValue());
+        }
+
+        // 3. Single query: termination counts grouped by year/month
+        Map<String, Long> terminationsByYearMonth = new HashMap<>();
+        List<Object[]> termRows = employeeRepository.countTerminationsByTenantIdAndExitDateRange(
+                tenantId, Employee.EmployeeStatus.TERMINATED, rangeStart, rangeEnd);
+        for (Object[] row : termRows) {
+            String key = row[0] + "-" + row[1];
+            terminationsByYearMonth.put(key, ((Number) row[2]).longValue());
+        }
+
+        // 4. Single query: current active headcount (point-in-time per month not yet supported;
+        //    a true point-in-time headcount would require an audit/snapshot table — tracked as
+        //    TODO(P2): add monthly_headcount_snapshot table populated by scheduled job).
+        Long currentHeadcount = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
+
+        // Build trend lists from the pre-fetched maps — no further DB calls in this loop
         for (int i = 11; i >= 0; i--) {
             YearMonth month = YearMonth.now().minusMonths(i);
             String period = month.format(formatter);
+            String key = month.getYear() + "-" + month.getMonthValue();
 
-            // Headcount trend (simplified - would need point-in-time queries)
-            Long headcount = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
+            // Headcount trend (approximated with current count — see TODO above)
             headcountTrend.add(TrendPoint.builder()
                     .period(period)
-                    .value(BigDecimal.valueOf(headcount))
-                    .previousValue(BigDecimal.valueOf(headcount - 5))
+                    .value(BigDecimal.valueOf(currentHeadcount))
+                    .previousValue(BigDecimal.valueOf(currentHeadcount - 5))
                     .changePercent(BigDecimal.valueOf(2))
                     .build());
 
             // Payroll trend
-            BigDecimal payroll = payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(
-                    tenantId, month.getYear(), month.getMonthValue());
+            BigDecimal payroll = payrollByYearMonth.getOrDefault(key, BigDecimal.ZERO);
             payrollTrend.add(TrendPoint.builder()
                     .period(period)
-                    .value(payroll != null ? payroll : BigDecimal.ZERO)
+                    .value(payroll)
                     .previousValue(BigDecimal.ZERO)
                     .changePercent(BigDecimal.ZERO)
                     .build());
 
             // Hiring vs Attrition
-            LocalDate monthStart = month.atDay(1);
-            LocalDate monthEnd = month.atEndOfMonth();
-            Long hires = employeeRepository.countByTenantIdAndJoiningDateBetween(tenantId, monthStart, monthEnd);
-            Long terminations = employeeRepository.countByTenantIdAndStatusAndExitDateBetween(
-                    tenantId, Employee.EmployeeStatus.TERMINATED, monthStart, monthEnd);
-
+            long hires        = hiresByYearMonth.getOrDefault(key, 0L);
+            long terminations = terminationsByYearMonth.getOrDefault(key, 0L);
             hiringVsAttrition.add(HiringAttritionPoint.builder()
                     .period(period)
-                    .hires(hires.intValue())
-                    .terminations(terminations.intValue())
+                    .hires((int) hires)
+                    .terminations((int) terminations)
                     .netChange((int) (hires - terminations))
                     .build());
         }

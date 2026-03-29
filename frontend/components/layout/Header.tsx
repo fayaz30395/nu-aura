@@ -145,6 +145,8 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               className="notification-btn relative p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150"
               aria-label="Notifications"
+              aria-expanded={isNotificationsOpen}
+              aria-haspopup="true"
             >
               <Bell className="h-5 w-5" />
               {totalUnreadCount > 0 && (

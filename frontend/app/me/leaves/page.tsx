@@ -31,6 +31,7 @@ import {
   LeaveRequestStatus,
   LeaveBalance,
 } from '@/lib/types/leave';
+import { createLogger } from '@/lib/utils/logger';
 
 const leaveFormSchema = z.object({
   leaveTypeId: z.string().min(1, 'Please select a leave type'),
@@ -41,7 +42,6 @@ const leaveFormSchema = z.object({
 });
 
 type LeaveFormData = z.infer<typeof leaveFormSchema>;
-import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('LeavesPage');
 

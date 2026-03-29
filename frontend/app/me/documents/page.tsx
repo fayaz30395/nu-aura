@@ -86,6 +86,7 @@ const documentRequestSchema = z.object({
     'EMPLOYMENT_CERTIFICATE', 'SALARY_CERTIFICATE', 'EXPERIENCE_LETTER',
     'RELIEVING_LETTER', 'BONAFIDE_CERTIFICATE', 'ADDRESS_PROOF_LETTER',
     'VISA_LETTER', 'BANK_LETTER', 'SALARY_SLIP', 'FORM_16', 'APPOINTMENT_LETTER_COPY',
+    'CUSTOM',
   ]),
   purpose: z.string().min(1, 'Purpose is required'),
   addressedTo: z.string().optional(),

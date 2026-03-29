@@ -32,6 +32,7 @@ import {
 import { AppLayout } from '@/components/layout';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { SkeletonStatCard } from '@/components/ui/Skeleton';
 import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
 import {
@@ -228,6 +229,7 @@ export default function OneOnOnePage() {
   const [statusFilter, setStatusFilter] = useState<MeetingStatus | 'ALL'>('ALL');
   const [showAgendaForm, setShowAgendaForm] = useState(false);
   const [showActionForm, setShowActionForm] = useState(false);
+  const [deleteAgendaItem, setDeleteAgendaItem] = useState<{ meetingId: string; itemId: string } | null>(null);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
@@ -738,7 +740,7 @@ export default function OneOnOnePage() {
                               </div>
                               {isActive && !item.isDiscussed && (
                                 <button
-                                  onClick={() => deleteAgendaMutation.mutate({ meetingId: selectedMeetingId, itemId: item.id })}
+                                  onClick={() => setDeleteAgendaItem({ meetingId: selectedMeetingId!, itemId: item.id })}
                                   className="text-[var(--text-muted)] hover:text-danger-500 transition-colors"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -1160,6 +1162,25 @@ export default function OneOnOnePage() {
             </>
           )}
         </div>
+
+        {/* Delete Agenda Item Confirm Dialog */}
+        <ConfirmDialog
+          isOpen={deleteAgendaItem !== null}
+          onClose={() => setDeleteAgendaItem(null)}
+          onConfirm={() => {
+            if (deleteAgendaItem) {
+              deleteAgendaMutation.mutate(deleteAgendaItem, {
+                onSuccess: () => setDeleteAgendaItem(null),
+                onError: () => setDeleteAgendaItem(null),
+              });
+            }
+          }}
+          title="Delete Agenda Item"
+          message="Are you sure you want to delete this agenda item? This action cannot be undone."
+          confirmText="Delete"
+          type="danger"
+          loading={deleteAgendaMutation.isPending}
+        />
       </AppLayout>
     );
   }

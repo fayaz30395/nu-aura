@@ -193,6 +193,7 @@ export default function CompOffPage() {
                                 size="sm"
                                 variant="outline"
                                 className="text-success-700 border-success-200"
+                                disabled={approveMutation.isPending}
                                 onClick={() => approveMutation.mutate({ id: req.id, action: 'approve' })}
                               >
                                 Approve
@@ -201,6 +202,7 @@ export default function CompOffPage() {
                                 size="sm"
                                 variant="outline"
                                 className="text-danger-700 border-danger-200"
+                                disabled={approveMutation.isPending}
                                 onClick={() => approveMutation.mutate({ id: req.id, action: 'reject' })}
                               >
                                 Reject

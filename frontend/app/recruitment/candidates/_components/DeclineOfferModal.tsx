@@ -50,7 +50,7 @@ export function DeclineOfferModal({
           <Button variant="outline" onClick={onClose} className="flex-1">
             Cancel
           </Button>
-          <Button variant="destructive" onClick={onConfirm} className="flex-1">
+          <Button variant="danger" onClick={onConfirm} className="flex-1">
             Decline Offer
           </Button>
         </div>

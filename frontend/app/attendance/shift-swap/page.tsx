@@ -227,10 +227,12 @@ export default function ShiftSwapPage() {
                         {activeTab === 'incoming' && req.status === 'PENDING' && (
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline" className="text-success-700 border-success-200"
+                              disabled={actionMutation.isPending}
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'accept', payload: { employeeId } })}>
                               Accept
                             </Button>
                             <Button size="sm" variant="outline" className="text-danger-700 border-danger-200"
+                              disabled={actionMutation.isPending}
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'decline', payload: { employeeId } })}>
                               Decline
                             </Button>
@@ -239,10 +241,12 @@ export default function ShiftSwapPage() {
                         {activeTab === 'approval' && req.status === 'PENDING_APPROVAL' && (
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline" className="text-success-700 border-success-200"
+                              disabled={actionMutation.isPending}
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'approve', payload: { managerId: employeeId } })}>
                               Approve
                             </Button>
                             <Button size="sm" variant="outline" className="text-danger-700 border-danger-200"
+                              disabled={actionMutation.isPending}
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'reject', payload: { managerId: employeeId, reason: '' } })}>
                               Reject
                             </Button>
@@ -250,6 +254,7 @@ export default function ShiftSwapPage() {
                         )}
                         {activeTab === 'my' && (req.status === 'PENDING' || req.status === 'TARGET_ACCEPTED') && (
                           <Button size="sm" variant="outline" className="text-[var(--text-secondary)]"
+                            disabled={actionMutation.isPending}
                             onClick={() => actionMutation.mutate({ id: req.id, action: 'cancel', payload: { employeeId } })}>
                             Cancel
                           </Button>

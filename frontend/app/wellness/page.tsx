@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import {
@@ -48,6 +51,15 @@ import {
 import type { HealthLog } from '@/lib/types/wellness';
 import { ProgramCategory, MetricType } from '@/lib/types/wellness';
 
+const healthLogSchema = z.object({
+  metricType: z.string().min(1, 'Select a metric type'),
+  value: z.coerce.number().positive('Value must be positive'),
+  loggedAt: z.string().min(1, 'Date is required'),
+  notes: z.string().optional(),
+});
+
+type HealthLogFormData = z.infer<typeof healthLogSchema>;
+
 const getCategoryIcon = (category: ProgramCategory) => {
   switch (category) {
     case ProgramCategory.PHYSICAL_FITNESS:
@@ -93,11 +105,21 @@ const metricOptions = [
 export default function WellnessPage() {
   const [activeTab, setActiveTab] = useState<'programs' | 'challenges'>('programs');
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
-  const [logFormData, setLogFormData] = useState<Partial<HealthLog>>({
-    metricType: MetricType.STEPS,
-    value: 0,
-    loggedAt: new Date().toISOString().split('T')[0],
-    notes: '',
+
+  const {
+    register: registerLog,
+    handleSubmit: handleLogSubmit,
+    control: logControl,
+    reset: resetLogForm,
+    formState: { errors: logErrors },
+  } = useForm<HealthLogFormData>({
+    resolver: zodResolver(healthLogSchema),
+    defaultValues: {
+      metricType: MetricType.STEPS,
+      value: 0,
+      loggedAt: new Date().toISOString().split('T')[0],
+      notes: '',
+    },
   });
 
   // React Query hooks
@@ -111,14 +133,16 @@ export default function WellnessPage() {
   const loading = programsLoading || challengesLoading || leaderboardLoading;
   const hasError = programsError || challengesError;
 
-  const handleLogHealth = () => {
+  const handleLogHealth = (formData: HealthLogFormData) => {
     logHealthMutation.mutate({
-      ...logFormData,
-      loggedAt: logFormData.loggedAt || new Date().toISOString(),
+      metricType: formData.metricType as MetricType,
+      value: formData.value,
+      loggedAt: formData.loggedAt || new Date().toISOString(),
+      notes: formData.notes,
     } as HealthLog, {
       onSuccess: () => {
         setIsLogModalOpen(false);
-        setLogFormData({
+        resetLogForm({
           metricType: MetricType.STEPS,
           value: 0,
           loggedAt: new Date().toISOString().split('T')[0],
@@ -251,7 +275,12 @@ export default function WellnessPage() {
                   <button
                     key={metric.value}
                     onClick={() => {
-                      setLogFormData({ ...logFormData, metricType: metric.value });
+                      resetLogForm({
+                        metricType: metric.value,
+                        value: 0,
+                        loggedAt: new Date().toISOString().split('T')[0],
+                        notes: '',
+                      });
                       setIsLogModalOpen(true);
                     }}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
@@ -400,8 +429,9 @@ export default function WellnessPage() {
                               size="sm"
                               className="mt-4"
                               onClick={() => handleJoinChallenge(challenge.id)}
+                              disabled={joinChallengeMutation.isPending}
                             >
-                              Join Challenge
+                              {joinChallengeMutation.isPending ? 'Joining...' : 'Join Challenge'}
                             </Button>
                           </PermissionGate>
                         )}
@@ -467,22 +497,32 @@ export default function WellnessPage() {
               Log Health Metric
             </h2>
           </ModalHeader>
+          <form onSubmit={handleLogSubmit(handleLogHealth)}>
           <ModalBody>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Metric Type
                 </label>
-                <Select
-                  value={logFormData.metricType}
-                  onChange={(e) => setLogFormData({ ...logFormData, metricType: e.target.value as MetricType })}
-                >
-                  {metricOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
+                <Controller
+                  name="metricType"
+                  control={logControl}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    >
+                      {metricOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {logErrors.metricType && (
+                  <p className="text-xs text-danger-500 mt-1">{logErrors.metricType.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -490,10 +530,12 @@ export default function WellnessPage() {
                 </label>
                 <Input
                   type="number"
-                  value={logFormData.value}
-                  onChange={(e) => setLogFormData({ ...logFormData, value: parseFloat(e.target.value) || 0 })}
+                  {...registerLog('value')}
                   placeholder="Enter value"
                 />
+                {logErrors.value && (
+                  <p className="text-xs text-danger-500 mt-1">{logErrors.value.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -501,17 +543,18 @@ export default function WellnessPage() {
                 </label>
                 <Input
                   type="date"
-                  value={logFormData.loggedAt?.split('T')[0]}
-                  onChange={(e) => setLogFormData({ ...logFormData, loggedAt: e.target.value })}
+                  {...registerLog('loggedAt')}
                 />
+                {logErrors.loggedAt && (
+                  <p className="text-xs text-danger-500 mt-1">{logErrors.loggedAt.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Notes (Optional)
                 </label>
                 <Textarea
-                  value={logFormData.notes}
-                  onChange={(e) => setLogFormData({ ...logFormData, notes: e.target.value })}
+                  {...registerLog('notes')}
                   placeholder="Add any notes..."
                   rows={2}
                 />
@@ -519,13 +562,14 @@ export default function WellnessPage() {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="outline" onClick={() => setIsLogModalOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => setIsLogModalOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleLogHealth}>
-              Log Metric
+            <Button type="submit" disabled={logHealthMutation.isPending}>
+              {logHealthMutation.isPending ? 'Logging...' : 'Log Metric'}
             </Button>
           </ModalFooter>
+          </form>
         </Modal>
       </div>
     </AppLayout>

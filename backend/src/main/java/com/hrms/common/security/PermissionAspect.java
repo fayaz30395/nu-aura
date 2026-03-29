@@ -42,7 +42,7 @@ public class PermissionAspect {
      * @return The result of the method execution if permissions are satisfied
      * @throws Throwable If permission check fails or method execution throws an exception
      */
-    @Around("@annotation(com.hrms.common.security.RequiresPermission)")
+    @Around("@annotation(com.hrms.common.security.RequiresPermission) || @within(com.hrms.common.security.RequiresPermission)")
     public Object checkPermission(ProceedingJoinPoint joinPoint) throws Throwable {
 
         // Admin bypass: skip all permission evaluation for TENANT_ADMIN and SUPER_ADMIN users.
@@ -58,12 +58,17 @@ public class PermissionAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 
-        // Get the @RequiresPermission annotation
+        // Get the @RequiresPermission annotation — method-level takes precedence over class-level.
+        // The @within pointcut fires for class-level annotations, so fall back to the declaring
+        // class when the method itself is not annotated.
         RequiresPermission requiresPermission = method.getAnnotation(RequiresPermission.class);
+        if (requiresPermission == null && joinPoint.getTarget() != null) {
+            requiresPermission = joinPoint.getTarget().getClass().getAnnotation(RequiresPermission.class);
+        }
 
         if (requiresPermission == null) {
-            // This shouldn't happen, but just in case
-            log.warn("@RequiresPermission annotation not found on method: {}", method.getName());
+            // Should not happen given the pointcut, but guard defensively.
+            log.warn("@RequiresPermission annotation not found on method or class for: {}", method.getName());
             return joinPoint.proceed();
         }
 
@@ -71,6 +76,15 @@ public class PermissionAspect {
         String[] anyOfPermissions = requiresPermission.value();
         String[] allOfPermissions = requiresPermission.allOf();
         boolean revalidate = requiresPermission.revalidate();
+
+        // CRIT-1: Guard against misconfigured annotations that specify no permissions at all.
+        // An empty annotation would silently allow any authenticated user through — treat it as
+        // a configuration error and deny access rather than granting it.
+        if (anyOfPermissions.length == 0 && allOfPermissions.length == 0) {
+            throw new AccessDeniedException(
+                    "Invalid @RequiresPermission configuration on method '" + method.getName()
+                    + "': at least one permission must be specified");
+        }
 
         // If revalidate is true, fetch permissions from DB instead of JWT
         if (revalidate) {

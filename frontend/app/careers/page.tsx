@@ -266,6 +266,12 @@ const ApplicationModal: React.FC<{
   const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setSubmitStatus('error');
+        setSubmitMessage('Resume must be under 5MB');
+        e.target.value = '';
+        return;
+      }
       setResumeFile(file);
     }
   };
@@ -477,7 +483,6 @@ export default function CareersPage() {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedType, setSelectedType] = useState('');
-  const [selectedExperience, setSelectedExperience] = useState('');
 
   // React Query - automatically refetches when filters change
   const filters: CareersFilters = {
@@ -493,7 +498,6 @@ export default function CareersPage() {
   const departments = Array.from(new Set(jobs.map((j) => j.department)));
   const locations = Array.from(new Set(jobs.map((j) => j.location)));
   const types = ['Full-time', 'Part-time', 'Contract', 'Internship'];
-  const experiences = ['Entry-level', 'Mid-level', 'Senior', 'Lead'];
 
   // Pagination
   const paginatedJobs = jobs.slice(
@@ -631,30 +635,9 @@ export default function CareersPage() {
                 </select>
               </div>
 
-              {/* Experience Level Filter */}
-              <div className="mb-5">
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
-                  Experience Level
-                </label>
-                <select
-                  value={selectedExperience}
-                  onChange={(e) => {
-                    setSelectedExperience(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="input-aura"
-                >
-                  <option value="">All Levels</option>
-                  {experiences.map((exp) => (
-                    <option key={exp} value={exp}>
-                      {exp}
-                    </option>
-                  ))}
-                </select>
-              </div>
 
               {/* Clear Filters */}
-              {(searchQuery || selectedDepartment || selectedLocation || selectedType || selectedExperience) && (
+              {(searchQuery || selectedDepartment || selectedLocation || selectedType) && (
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -662,7 +645,6 @@ export default function CareersPage() {
                     setSelectedDepartment('');
                     setSelectedLocation('');
                     setSelectedType('');
-                    setSelectedExperience('');
                     setCurrentPage(1);
                   }}
                   className="w-full text-sm"
@@ -696,7 +678,6 @@ export default function CareersPage() {
                     setSelectedDepartment('');
                     setSelectedLocation('');
                     setSelectedType('');
-                    setSelectedExperience('');
                   }}
                   className="bg-accent-700 hover:bg-accent-700"
                 >

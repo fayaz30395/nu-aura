@@ -46,6 +46,7 @@ import {
   useRemoveFavorite,
 } from '@/lib/hooks/queries/useFluence';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
 const ContentViewer = dynamic(
@@ -74,6 +75,7 @@ export default function BlogPostDetailPage() {
   const { user } = useAuth();
   const [commentText, setCommentText] = useState('');
   const [showViewers, setShowViewers] = useState(false);
+  const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
@@ -626,7 +628,7 @@ export default function BlogPostDetailPage() {
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleDeleteComment(comment.id)}
+                            onClick={() => setDeleteCommentId(comment.id)}
                             className="text-[var(--text-muted)] hover:text-danger-500 transition-colors opacity-0 group-hover:opacity-100"
                             title="Delete comment"
                           >
@@ -652,6 +654,23 @@ export default function BlogPostDetailPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Delete Comment Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={deleteCommentId !== null}
+        onClose={() => setDeleteCommentId(null)}
+        onConfirm={() => {
+          if (deleteCommentId) {
+            handleDeleteComment(deleteCommentId);
+            setDeleteCommentId(null);
+          }
+        }}
+        title="Delete Comment"
+        message="Are you sure you want to delete this comment? This action cannot be undone."
+        confirmText="Delete"
+        type="danger"
+        loading={deleteComment.isPending}
+      />
 
       {/* Viewers Modal */}
       <Modal

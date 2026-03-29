@@ -18,7 +18,7 @@ import {
 } from '@mantine/core';
 import { Search, ToggleLeft, Filter, Plus } from 'lucide-react';
 import { useFeatureFlags, useToggleFeatureFlag, useSetFeatureFlag } from '@/lib/hooks/queries/useFeatureFlags';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { usePermissions } from '@/lib/hooks/usePermissions';
 import { SkeletonCard } from '@/components/ui/Loading';
 import type { FeatureFlag } from '@/lib/types/feature-flag';
 
@@ -36,7 +36,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function FeatureFlagsPage() {
-  const { hasRole } = usePermissions();
+  const { isAdmin } = usePermissions();
   const { data: flags, isLoading } = useFeatureFlags();
   const { mutate: toggleFlag, isPending: isToggling } = useToggleFeatureFlag();
   const { mutate: setFlag, isPending: isSetting } = useSetFeatureFlag();
@@ -52,7 +52,7 @@ export default function FeatureFlagsPage() {
     enabled: false,
   });
 
-  const isAdmin = hasRole(Roles.SUPER_ADMIN) || hasRole(Roles.TENANT_ADMIN);
+  // L-5: use isAdmin from usePermissions instead of direct hasRole calls
 
   const filteredFlags = (flags ?? []).filter((flag: FeatureFlag) => {
     const matchesSearch =

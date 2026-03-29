@@ -61,8 +61,9 @@ public class PaymentWebhookController {
             return ResponseEntity.ok("Webhook processed successfully");
         } catch (Exception e) {
             log.error("Error processing webhook from provider: {}", provider, e);
+            // LOW-2 FIX: Do not expose internal exception details to the caller.
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error processing webhook: " + e.getMessage());
+                .body("Error processing webhook");
         }
     }
 

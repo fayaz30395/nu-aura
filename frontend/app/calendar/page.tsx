@@ -49,7 +49,7 @@ export default function CalendarPage() {
   }
 
   if (!isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
     return null;
   }
 

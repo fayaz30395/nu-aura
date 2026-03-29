@@ -198,23 +198,10 @@ public class JwtTokenProvider {
                         .parseSignedClaims(token)
                         .getPayload();
             } catch (JwtException ex) {
-                // SEC: Transition fallback — accept tokens without issuer/audience during migration.
-                // This allows pre-existing tokens to remain valid until they naturally expire.
-                // TODO: Remove this fallback after one full token expiration cycle in production.
-                Claims fallbackClaims = Jwts.parser()
-                        .verifyWith(getSigningKey())
-                        .build()
-                        .parseSignedClaims(token)
-                        .getPayload();
-                String issuer = fallbackClaims.getIssuer();
-                if (issuer == null) {
-                    log.warn("SEC: Accepting JWT without issuer/audience claims (transition period). " +
-                            "Subject: {}", fallbackClaims.getSubject());
-                    claims = fallbackClaims;
-                } else {
-                    // Has an issuer but it's wrong — reject
-                    throw ex;
-                }
+                // CRIT-2 FIX: Transition fallback removed. Tokens missing or with wrong
+                // issuer/audience claims are always rejected.
+                log.warn("SEC: Rejecting JWT with invalid or missing issuer/audience claims: {}", ex.getMessage());
+                throw ex;
             }
 
             // Check if token is blacklisted

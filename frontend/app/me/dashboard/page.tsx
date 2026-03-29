@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { format, parseISO } from 'date-fns';
 import { User } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -18,124 +18,31 @@ import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { useSelfServiceDashboard } from '@/lib/hooks/queries';
-import { SelfServiceDashboard } from '@/lib/types/selfservice';
+import { useQueryClient } from '@tanstack/react-query';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('Dashboard');
 
 export default function MyDashboardPage() {
   const { user, hasHydrated } = useAuth();
+  const queryClient = useQueryClient();
   const [feedRefreshKey, setFeedRefreshKey] = useState(0);
-  const [dashboard, setDashboard] = useState<SelfServiceDashboard | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
   const [checkInTime, setCheckInTime] = useState<Date | null>(null);
 
-  // Use React Query hook
-  const { data: dashboardData, isLoading: queryLoading } = useSelfServiceDashboard(
+  // React Query — single source of truth for dashboard data
+  const { data: dashboard, isLoading: queryLoading } = useSelfServiceDashboard(
     user?.employeeId || '',
     hasHydrated && !!user?.employeeId
   );
 
-  useEffect(() => {
-    if (!hasHydrated || !user) return;
-    if (user?.employeeId) {
-      // Dashboard data will be handled by React Query hook
-      setIsLoading(queryLoading);
-    } else {
-      // SuperAdmin or user without employee profile — skip loading self-service data
-      setIsLoading(false);
-    }
-  }, [hasHydrated, user, queryLoading]);
+  const isLoading = !hasHydrated || (!!user?.employeeId && queryLoading);
 
-  // Update dashboard from query data
-  useEffect(() => {
-    if (dashboardData) {
-      setDashboard(dashboardData);
-      setIsLoading(false);
-    }
-  }, [dashboardData]);
-
-  const loadDashboard = async () => {
-    if (!user?.employeeId || !dashboardData) return;
-
-    try {
-      setIsLoading(true);
-      setDashboard(dashboardData);
-
-      // Always fetch today's attendance directly to get accurate check-in time
-      // This is more reliable than depending on self-service dashboard data
-      try {
-        const today = format(new Date(), 'yyyy-MM-dd');
-        const attendance = await attendanceService.getAttendanceByDateRange(
-          today,
-          today
-        );
-        if (attendance && attendance.length > 0) {
-          const todayRecord = attendance[0];
-          // Check if there's an open session (checked in but not out)
-          if (todayRecord.checkInTime && !todayRecord.checkOutTime) {
-            setIsCheckedIn(true);
-            const checkIn = parseISO(todayRecord.checkInTime);
-            setCheckInTime(checkIn);
-          } else if (todayRecord.checkOutTime) {
-            // Already checked out for today
-            setIsCheckedIn(false);
-            setCheckInTime(null);
-          } else {
-            // No attendance record yet
-            setIsCheckedIn(false);
-            setCheckInTime(null);
-          }
-        } else {
-          // No attendance record for today
-          setIsCheckedIn(false);
-          setCheckInTime(null);
-        }
-      } catch (err) {
-        log.error('Failed to fetch today\'s attendance:', err);
-        // Fallback to self-service dashboard data
-        const checkedIn = dashboardData.todayAttendanceStatus === 'CHECKED_IN' || dashboardData.todayAttendanceStatus === 'PRESENT';
-        setIsCheckedIn(checkedIn);
-        if (checkedIn && dashboardData.todayCheckInTime && !dashboardData.todayCheckOutTime) {
-          setCheckInTime(parseISO(dashboardData.todayCheckInTime));
-        } else {
-          setCheckInTime(null);
-        }
-      }
-    } catch (error) {
-      log.error('Failed to load dashboard:', error);
-      // Set fallback data for demo
-      setDashboard({
-        employeeName: user?.fullName || 'Employee',
-        employeeId: user?.employeeId || '',
-        designation: 'Software Engineer',
-        department: 'Engineering',
-        reportingManager: 'Manager',
-        dateOfJoining: '2023-01-15',
-        profilePhotoUrl: undefined,
-        leaveBalances: { 'Annual Leave': 15, 'Sick Leave': 10, 'Casual Leave': 5 },
-        pendingLeaveRequests: 0,
-        presentDaysThisMonth: 18,
-        absentDaysThisMonth: 2,
-        lateDaysThisMonth: 1,
-        attendancePercentage: 90,
-        todayAttendanceStatus: 'NOT_CHECKED_IN',
-        pendingProfileUpdates: 0,
-        pendingDocumentRequests: 0,
-        pendingApprovals: 2,
-        pendingTimesheets: 1,
-        recentPayslips: [],
-        upcomingEvents: [],
-        recentAnnouncements: [],
-        teamSize: 8,
-        teamMembersOnLeave: 1,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Refresh attendance state after check-in/check-out by invalidating the React Query cache
+  const refreshDashboard = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ['selfServiceDashboard'] });
+  }, [queryClient]);
 
   const handleCheckIn = async () => {
     if (!user?.employeeId) return;
@@ -153,7 +60,7 @@ export default function MyDashboardPage() {
       } else {
         setCheckInTime(new Date());
       }
-      loadDashboard();
+      refreshDashboard();
     } catch (error) {
       log.error('Check-in failed:', error);
     } finally {
@@ -172,7 +79,7 @@ export default function MyDashboardPage() {
       });
       setIsCheckedIn(false);
       setCheckInTime(null); // Clear the timer
-      loadDashboard();
+      refreshDashboard();
     } catch (error) {
       log.error('Check-out failed:', error);
     } finally {
@@ -296,13 +203,17 @@ export default function MyDashboardPage() {
               <LeaveBalanceWidget
                 leaveBalances={
                   dashboard?.leaveBalances
-                    ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => ({
-                        leaveTypeId: String(idx),
-                        leaveName: name,
-                        available: available as number,
-                        total: (available as number) + 2, // estimate; real API will provide totals
-                        used: 2,
-                      }))
+                    ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => {
+                        const avail = available as number;
+                        const total = avail + 2; // estimate; real API will provide totals
+                        return {
+                          leaveTypeId: String(idx),
+                          leaveName: name,
+                          available: avail,
+                          total,
+                          used: total - avail,
+                        };
+                      })
                     : undefined
                 }
               />

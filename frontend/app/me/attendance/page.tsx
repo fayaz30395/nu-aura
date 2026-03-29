@@ -268,7 +268,7 @@ export default function MyAttendancePage() {
           </p>
           <button
             onClick={() => router.push('/attendance/team')}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors"
           >
             View Team Attendance
           </button>
@@ -681,7 +681,7 @@ export default function MyAttendancePage() {
               <button
                 onClick={handleRequestRegularization}
                 disabled={!regularizationReason.trim()}
-                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Submit Request
               </button>

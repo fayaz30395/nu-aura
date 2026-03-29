@@ -101,7 +101,7 @@ public class PayrollController {
     }
 
     @PostMapping("/runs/{id}/process")
-    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    @RequiresPermission(value = Permission.PAYROLL_PROCESS, revalidate = true)
     public ResponseEntity<PayrollRun> processPayrollRun(@PathVariable UUID id) {
         UUID processedBy = SecurityContext.getCurrentUserId();
         PayrollRun payrollRun = payrollRunService.processPayrollRun(id, processedBy);
@@ -109,7 +109,7 @@ public class PayrollController {
     }
 
     @PostMapping("/runs/{id}/approve")
-    @RequiresPermission(Permission.PAYROLL_APPROVE)
+    @RequiresPermission(value = Permission.PAYROLL_APPROVE, revalidate = true)
     public ResponseEntity<PayrollRun> approvePayrollRun(@PathVariable UUID id) {
         UUID approvedBy = SecurityContext.getCurrentUserId();
         PayrollRun payrollRun = payrollRunService.approvePayrollRun(id, approvedBy);
@@ -117,7 +117,7 @@ public class PayrollController {
     }
 
     @PostMapping("/runs/{id}/lock")
-    @RequiresPermission(Permission.PAYROLL_APPROVE)
+    @RequiresPermission(value = Permission.PAYROLL_APPROVE, revalidate = true)
     public ResponseEntity<PayrollRun> lockPayrollRun(@PathVariable UUID id) {
         PayrollRun payrollRun = payrollRunService.lockPayrollRun(id);
         return ResponseEntity.ok(payrollRun);

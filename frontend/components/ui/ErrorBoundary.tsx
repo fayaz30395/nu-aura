@@ -110,7 +110,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex gap-2">
               <button
                 onClick={() => this.setState({ hasError: false, error: undefined, errorId: undefined })}
-                className="flex-1 px-4 py-2 bg-accent-600 dark:bg-accent-500 text-white rounded-lg hover:bg-accent-700 dark:hover:bg-accent-600 font-medium transition-colors"
+                className="flex-1 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent-600 focus:ring-offset-2"
               >
                 Try Again
               </button>

@@ -72,7 +72,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> =
   PENDING: { bg: 'bg-warning-50', text: 'text-warning-700', dot: 'bg-warning-500' },
   PROCESSED: { bg: 'bg-success-50', text: 'text-success-700', dot: 'bg-success-500' },
   FAILED: { bg: 'bg-danger-50', text: 'text-danger-700', dot: 'bg-danger-500' },
-  DUPLICATE: { bg: 'bg-gray-50', text: 'text-gray-500', dot: 'bg-gray-400' },
+  DUPLICATE: { bg: 'bg-[var(--bg-card)]', text: 'text-[var(--text-muted)]', dot: 'bg-[var(--text-muted)]' },
 };
 
 // ─── Main Page ──────────────────────────────────────────────────────────────
@@ -91,18 +91,18 @@ export default function BiometricDevicesPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                 <Fingerprint className="h-7 w-7 text-accent-700" />
                 Biometric Devices
               </h1>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-[var(--text-muted)]">
                 Manage biometric devices, monitor punch logs, and configure API keys
               </p>
             </div>
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex gap-1 rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
+          <div className="flex gap-1 rounded-lg bg-[var(--bg-card-hover)] p-1">
             {[
               { key: 'devices' as const, label: 'Devices', icon: Server },
               { key: 'punches' as const, label: 'Pending Punches', icon: Clock },
@@ -113,8 +113,8 @@ export default function BiometricDevicesPage() {
                 onClick={() => { setActiveTab(key); setPage(0); }}
                 className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                   activeTab === key
-                    ? 'bg-white text-accent-700 shadow-sm dark:bg-gray-700 dark:text-accent-400'
-                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                    ? 'bg-[var(--bg-surface)] text-accent-700 shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -200,7 +200,7 @@ function DeviceListPanel({
     <div className="space-y-4">
       {/* Actions Row */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-[var(--text-muted)]">
           {data ? `${data.totalElements} device(s) registered` : 'Loading...'}
         </p>
         <Button
@@ -219,9 +219,9 @@ function DeviceListPanel({
             <Card key={i}>
               <CardContent className="p-6">
                 <div className="animate-pulse space-y-4">
-                  <div className="h-5 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
-                  <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
-                  <div className="h-4 w-full rounded bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-5 w-3/4 rounded bg-[var(--border-main)]" />
+                  <div className="h-4 w-1/2 rounded bg-[var(--border-main)]" />
+                  <div className="h-4 w-full rounded bg-[var(--border-main)]" />
                 </div>
               </CardContent>
             </Card>
@@ -252,7 +252,7 @@ function DeviceListPanel({
               >
                 Previous
               </Button>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-[var(--text-muted)]">
                 Page {page + 1} of {data.totalPages}
               </span>
               <Button
@@ -299,7 +299,7 @@ function DeviceCard({
 }) {
   const typeConfig = DEVICE_TYPES[device.deviceType] || {
     label: device.deviceType,
-    color: 'bg-gray-100 text-gray-700',
+    color: 'bg-[var(--bg-card-hover)] text-[var(--text-secondary)]',
   };
 
   const lastSyncFormatted = device.lastSyncAt
@@ -312,16 +312,16 @@ function DeviceCard({
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate">
                 {device.deviceName}
               </h3>
               {device.isOnline ? (
                 <Wifi className="h-4 w-4 text-success-500 flex-shrink-0" />
               ) : (
-                <WifiOff className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <WifiOff className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
               )}
             </div>
-            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400 truncate">
+            <p className="mt-0.5 text-xs text-[var(--text-muted)] truncate">
               SN: {device.serialNumber}
             </p>
           </div>
@@ -332,28 +332,28 @@ function DeviceCard({
 
         {/* Stats */}
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-2 text-center">
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
+          <div className="rounded-lg bg-[var(--bg-page)] p-2 text-center">
+            <p className="text-lg font-bold text-[var(--text-primary)]">
               {device.totalPunchesToday}
             </p>
-            <p className="text-[10px] text-gray-500">Today</p>
+            <p className="text-[10px] text-[var(--text-muted)]">Today</p>
           </div>
           <div className="rounded-lg bg-danger-50 dark:bg-danger-900/20 p-2 text-center">
             <p className="text-lg font-bold text-danger-600 dark:text-danger-400">
               {device.failedPunchesToday}
             </p>
-            <p className="text-[10px] text-gray-500">Failed</p>
+            <p className="text-[10px] text-[var(--text-muted)]">Failed</p>
           </div>
           <div className="rounded-lg bg-warning-50 dark:bg-warning-900/20 p-2 text-center">
             <p className="text-lg font-bold text-warning-600 dark:text-warning-400">
               {device.pendingPunches}
             </p>
-            <p className="text-[10px] text-gray-500">Pending</p>
+            <p className="text-[10px] text-[var(--text-muted)]">Pending</p>
           </div>
         </div>
 
         {/* Meta */}
-        <div className="mt-3 space-y-1 text-xs text-gray-500 dark:text-gray-400">
+        <div className="mt-3 space-y-1 text-xs text-[var(--text-muted)]">
           {device.manufacturer && (
             <p>
               {device.manufacturer} {device.model || ''}
@@ -364,7 +364,7 @@ function DeviceCard({
         </div>
 
         {/* Actions */}
-        <div className="mt-4 flex items-center gap-2 border-t border-gray-100 dark:border-gray-700 pt-3">
+        <div className="mt-4 flex items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
           <button
             onClick={onViewLogs}
             className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-800 dark:text-accent-400 font-medium"
@@ -423,21 +423,21 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800"
+        className="w-full max-w-lg rounded-xl bg-[var(--bg-surface)] p-6 shadow-xl"
       >
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
           Register Biometric Device
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Device Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Device Name *
             </label>
             <input
               {...register('deviceName')}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
               placeholder="e.g., Main Entrance Scanner"
             />
             {errors.deviceName && (
@@ -447,12 +447,12 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
 
           {/* Device Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Device Type *
             </label>
             <select
               {...register('deviceType')}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
             >
               {Object.entries(DEVICE_TYPES).map(([key, { label }]) => (
                 <option key={key} value={key}>
@@ -467,12 +467,12 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
 
           {/* Serial Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Serial Number *
             </label>
             <input
               {...register('serialNumber')}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
               placeholder="e.g., ZK-2024-001"
             />
             {errors.serialNumber && (
@@ -483,22 +483,22 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
           {/* Two Column: Manufacturer + Model */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Manufacturer
               </label>
               <input
                 {...register('manufacturer')}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., ZKTeco"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Model
               </label>
               <input
                 {...register('model')}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., SpeedFace V5L"
               />
             </div>
@@ -507,22 +507,22 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
           {/* Two Column: IP Address + Location */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 IP Address
               </label>
               <input
                 {...register('ipAddress')}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., 192.168.1.100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Location
               </label>
               <input
                 {...register('locationName')}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., Building A, Floor 1"
               />
             </div>
@@ -530,13 +530,13 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Notes
             </label>
             <textarea
               {...register('notes')}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
               placeholder="Additional notes..."
             />
           </div>
@@ -579,10 +579,10 @@ function DeviceLogsDrawer({
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="w-full max-w-xl bg-white shadow-xl dark:bg-gray-800 overflow-y-auto"
+        className="w-full max-w-xl bg-[var(--bg-surface)] shadow-xl overflow-y-auto"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-6 py-4">
+          <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <Activity className="h-5 w-5 text-accent-700" />
             Punch Logs
           </h3>
@@ -595,11 +595,11 @@ function DeviceLogsDrawer({
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="animate-pulse h-16 rounded-lg bg-gray-100 dark:bg-gray-700" />
+                <div key={i} className="animate-pulse h-16 rounded-lg bg-[var(--bg-card-hover)]" />
               ))}
             </div>
           ) : data?.content.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">No punch logs found</p>
+            <p className="text-center text-[var(--text-muted)] py-8">No punch logs found</p>
           ) : (
             <>
               {data?.content.map((log) => (
@@ -616,7 +616,7 @@ function DeviceLogsDrawer({
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-[var(--text-muted)]">
                     Page {logPage + 1} of {data.totalPages}
                   </span>
                   <Button
@@ -655,7 +655,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
         <div className="flex items-center gap-2">
           <StatusIcon className={`h-4 w-4 ${status.text}`} />
           <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-white">
+            <p className="text-sm font-medium text-[var(--text-primary)]">
               {log.employeeIdentifier}
               <span className={`ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold ${
                 log.punchType === 'IN' ? 'bg-success-100 text-success-700' : 'bg-warning-100 text-warning-700'
@@ -663,7 +663,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
                 {log.punchType}
               </span>
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-[var(--text-muted)]">
               {new Date(log.punchTime).toLocaleString()}
             </p>
           </div>
@@ -696,7 +696,7 @@ function PendingPunchesPanel({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[var(--text-muted)]">
           {data ? `${data.totalElements} unprocessed punch(es)` : 'Loading...'}
         </p>
         <Button
@@ -713,14 +713,14 @@ function PendingPunchesPanel({
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse h-16 rounded-lg bg-gray-100 dark:bg-gray-700" />
+            <div key={i} className="animate-pulse h-16 rounded-lg bg-[var(--bg-card-hover)]" />
           ))}
         </div>
       ) : data?.content.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <CheckCircle className="h-12 w-12 text-success-500 mb-3" />
-            <p className="text-gray-500 dark:text-gray-400">All punches have been processed</p>
+            <p className="text-[var(--text-muted)]">All punches have been processed</p>
           </CardContent>
         </Card>
       ) : (
@@ -741,7 +741,7 @@ function PendingPunchesPanel({
               >
                 Previous
               </Button>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-[var(--text-muted)]">
                 Page {page + 1} of {data.totalPages}
               </span>
               <Button
@@ -776,7 +776,7 @@ function ApiKeysPanel({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[var(--text-muted)]">
           {keys ? `${keys.length} API key(s)` : 'Loading...'}
         </p>
         <Button
@@ -800,7 +800,7 @@ function ApiKeysPanel({
               <p className="mt-1 text-xs text-success-700 dark:text-success-400">
                 This key will not be shown again.
               </p>
-              <code className="mt-2 block break-all rounded bg-white px-4 py-2 text-xs font-mono text-gray-900 dark:bg-gray-800 dark:text-white">
+              <code className="mt-2 block break-all rounded bg-[var(--bg-page)] px-4 py-2 text-xs font-mono text-[var(--text-primary)]">
                 {newKey}
               </code>
               <Button
@@ -823,14 +823,14 @@ function ApiKeysPanel({
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2].map((i) => (
-            <div key={i} className="animate-pulse h-16 rounded-lg bg-gray-100 dark:bg-gray-700" />
+            <div key={i} className="animate-pulse h-16 rounded-lg bg-[var(--bg-card-hover)]" />
           ))}
         </div>
       ) : keys?.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Key className="h-12 w-12 text-gray-300 mb-3" />
-            <p className="text-gray-500 dark:text-gray-400">
+            <Key className="h-12 w-12 text-[var(--text-muted)] mb-3" />
+            <p className="text-[var(--text-muted)]">
               No API keys. Generate one to connect biometric devices.
             </p>
           </CardContent>
@@ -840,13 +840,13 @@ function ApiKeysPanel({
           {keys?.map((key) => (
             <div
               key={key.id}
-              className="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+              className="flex items-center justify-between rounded-lg border border-[var(--border-main)] p-4"
             >
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <p className="text-sm font-medium text-[var(--text-primary)]">
                   {key.keyName}
                 </p>
-                <div className="mt-1 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                <div className="mt-1 flex items-center gap-4 text-xs text-[var(--text-muted)]">
                   <span>...{key.keySuffix}</span>
                   <span>Created: {new Date(key.createdAt).toLocaleDateString()}</span>
                   {key.lastUsedAt && (
@@ -919,20 +919,20 @@ function GenerateApiKeyModal({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800"
+        className="w-full max-w-md rounded-xl bg-[var(--bg-surface)] p-6 shadow-xl"
       >
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
           Generate API Key
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Key Name *
             </label>
             <input
               {...register('keyName')}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
               placeholder="e.g., Main Entrance Device Key"
             />
             {errors.keyName && (

@@ -764,7 +764,7 @@ export default function JobOpeningsPage() {
                   Cancel
                 </Button>
                 <Button
-                  variant="destructive"
+                  variant="danger"
                   onClick={handleDelete}
                   className="flex-1"
                   disabled={deleteMutation.isPending}

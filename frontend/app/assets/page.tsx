@@ -1051,7 +1051,7 @@ export default function AssetManagementPage() {
             <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+            <Button variant="danger" onClick={handleDelete} disabled={deleting}>
               {deleting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

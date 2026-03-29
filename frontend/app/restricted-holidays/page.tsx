@@ -26,6 +26,7 @@ import {
   Edit3,
   Ban,
 } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
   useAvailableRestrictedHolidays,
   useRestrictedHolidays,
@@ -114,6 +115,7 @@ export default function RestrictedHolidaysPage() {
   const [showHolidayForm, setShowHolidayForm] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<RestrictedHoliday | null>(null);
   const [showPolicyForm, setShowPolicyForm] = useState(false);
+  const [deleteHolidayId, setDeleteHolidayId] = useState<string | null>(null);
 
   const year = new Date().getFullYear();
 
@@ -154,7 +156,7 @@ export default function RestrictedHolidaysPage() {
 
   if (!hasHydrated) return null;
   if (!isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
     return null;
   }
 
@@ -274,7 +276,7 @@ export default function RestrictedHolidaysPage() {
             isLoading={isAllLoading}
             onAdd={() => { setEditingHoliday(null); setShowHolidayForm(true); }}
             onEdit={(h) => { setEditingHoliday(h); setShowHolidayForm(true); }}
-            onDelete={(id) => deleteHoliday.mutate(id)}
+            onDelete={(id) => setDeleteHolidayId(id)}
           />
         )}
 
@@ -287,6 +289,25 @@ export default function RestrictedHolidaysPage() {
             isSaving={savePolicy.isPending}
           />
         )}
+
+        {/* ─── Delete Holiday Confirm Dialog ──────────────────── */}
+        <ConfirmDialog
+          isOpen={deleteHolidayId !== null}
+          onClose={() => setDeleteHolidayId(null)}
+          onConfirm={() => {
+            if (deleteHolidayId) {
+              deleteHoliday.mutate(deleteHolidayId, {
+                onSuccess: () => setDeleteHolidayId(null),
+                onError: () => setDeleteHolidayId(null),
+              });
+            }
+          }}
+          title="Delete Holiday"
+          message="Are you sure you want to delete this restricted holiday? This action cannot be undone."
+          confirmText="Delete"
+          type="danger"
+          loading={deleteHoliday.isPending}
+        />
 
         {/* ─── Holiday Form Modal ─────────────────────────────── */}
         {showHolidayForm && (

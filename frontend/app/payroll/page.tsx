@@ -13,6 +13,8 @@ import {
   ChevronRight,
   Settings,
   TrendingUp,
+  Package,
+  Scale,
 } from 'lucide-react';
 
 const SUB_PAGES = [
@@ -51,6 +53,24 @@ const SUB_PAGES = [
     gradient: 'from-warning-500 to-warning-600',
     hoverBorder: 'hover:border-warning-300 dark:hover:border-warning-700',
     hoverText: 'group-hover:text-warning-500',
+  },
+  {
+    href: '/payroll/components',
+    label: 'Components',
+    description: 'Manage payroll components like allowances, deductions, and reimbursements',
+    icon: Package,
+    gradient: 'from-accent-400 to-accent-600',
+    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
+    hoverText: 'group-hover:text-accent-500',
+  },
+  {
+    href: '/payroll/statutory',
+    label: 'Statutory',
+    description: 'Configure statutory compliance — PF, ESI, PT, TDS, and LWF',
+    icon: Scale,
+    gradient: 'from-success-500 to-success-600',
+    hoverBorder: 'hover:border-success-300 dark:hover:border-success-700',
+    hoverText: 'group-hover:text-success-500',
   },
 ] as const;
 

@@ -201,12 +201,11 @@ class PermissionAspectTest {
         }
 
         @Test
-        @DisplayName("Should allow access when no permissions required (empty array)")
-        void shouldAllowAccessWithEmptyPermissions() throws Throwable {
-            // Given
+        @DisplayName("Should deny access when no permissions specified (empty array — CRIT-1)")
+        void shouldDenyAccessWithEmptyPermissions() throws Throwable {
+            // Given - annotation with no permissions specified (misconfiguration)
             SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
                     Set.of("USER"), new HashMap<>());
-            when(joinPoint.proceed()).thenReturn("success");
 
             RequiresPermission annotation = mock(RequiresPermission.class);
             when(annotation.value()).thenReturn(new String[]{});
@@ -217,12 +216,11 @@ class PermissionAspectTest {
             when(method.getAnnotation(RequiresPermission.class)).thenReturn(annotation);
             when(methodSignature.getMethod()).thenReturn(method);
 
-            // When
-            Object result = permissionAspect.checkPermission(joinPoint);
-
-            // Then
-            assertThat(result).isEqualTo("success");
-            verify(joinPoint).proceed();
+            // When/Then — CRIT-1: empty annotation must be rejected, not silently allowed
+            assertThatThrownBy(() -> permissionAspect.checkPermission(joinPoint))
+                    .isInstanceOf(AccessDeniedException.class)
+                    .hasMessageContaining("Invalid @RequiresPermission configuration");
+            verify(joinPoint, never()).proceed();
         }
     }
 

@@ -91,6 +91,25 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
         @Param("month") Integer month
     );
 
+    /**
+     * Batch query: returns payroll totals for all months in [startYear/startMonth .. endYear/endMonth].
+     * Each element is Object[]{year (Integer), month (Integer), total (BigDecimal)}.
+     * Replaces 12 individual sumNetSalaryByTenantIdAndYearAndMonth calls in trend-chart generation.
+     */
+    @Query("SELECT p.payPeriodYear, p.payPeriodMonth, COALESCE(SUM(p.netSalary), 0) " +
+           "FROM Payslip p " +
+           "WHERE p.tenantId = :tenantId " +
+           "  AND (p.payPeriodYear > :startYear OR (p.payPeriodYear = :startYear AND p.payPeriodMonth >= :startMonth)) " +
+           "  AND (p.payPeriodYear < :endYear   OR (p.payPeriodYear = :endYear   AND p.payPeriodMonth <= :endMonth)) " +
+           "GROUP BY p.payPeriodYear, p.payPeriodMonth")
+    List<Object[]> sumNetSalaryByTenantIdAndYearMonthRange(
+        @Param("tenantId")    UUID tenantId,
+        @Param("startYear")   Integer startYear,
+        @Param("startMonth")  Integer startMonth,
+        @Param("endYear")     Integer endYear,
+        @Param("endMonth")    Integer endMonth
+    );
+
     // Get net salary for employee for a specific month
     @Query("SELECT p.netSalary FROM Payslip p WHERE p.tenantId = :tenantId AND p.employeeId = :employeeId AND p.payPeriodYear = :year AND p.payPeriodMonth = :month")
     BigDecimal findNetSalaryByEmployeeIdAndYearAndMonth(

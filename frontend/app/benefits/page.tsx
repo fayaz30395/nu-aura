@@ -817,7 +817,7 @@ export default function BenefitsPage() {
         </Card>
 
         {/* Enrollment Modal */}
-        <Modal isOpen={isEnrollModalOpen} onClose={() => setIsEnrollModalOpen(false)} size="lg">
+        <Modal isOpen={isEnrollModalOpen} onClose={() => { setIsEnrollModalOpen(false); resetEnrollmentForm(); }} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-4">
               {selectedBenefit && (
@@ -904,7 +904,7 @@ export default function BenefitsPage() {
                     )}
                   </div>
                   <div className="mt-6 flex justify-end gap-2 border-t border-[var(--border-main)] pt-4">
-                    <Button type="button" variant="outline" onClick={() => setIsEnrollModalOpen(false)}>
+                    <Button type="button" variant="outline" onClick={() => { setIsEnrollModalOpen(false); resetEnrollmentForm(); }}>
                       Cancel
                     </Button>
                     <Button type="submit" disabled={isEnrollingForm}>
@@ -925,7 +925,7 @@ export default function BenefitsPage() {
         </Modal>
 
         {/* Claim Modal */}
-        <Modal isOpen={isClaimModalOpen} onClose={() => setIsClaimModalOpen(false)} size="lg">
+        <Modal isOpen={isClaimModalOpen} onClose={() => { setIsClaimModalOpen(false); resetClaimForm(); }} size="lg">
           <ModalHeader>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Submit Benefit Claim
@@ -1034,7 +1034,7 @@ export default function BenefitsPage() {
               </div>
 
               <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-main)]">
-                <Button type="button" variant="outline" onClick={() => setIsClaimModalOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => { setIsClaimModalOpen(false); resetClaimForm(); }}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isSubmittingClaim}>

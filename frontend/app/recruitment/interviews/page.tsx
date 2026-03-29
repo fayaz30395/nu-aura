@@ -1079,7 +1079,7 @@ const formatDateTime = (dateString?: string): string => {
                 <Button variant="outline" onClick={() => { setShowDeleteModal(false); setInterviewToDelete(null); }} className="flex-1">
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDelete} disabled={deleteInterviewMutation.isPending} className="flex-1">
+                <Button variant="danger" onClick={handleDelete} disabled={deleteInterviewMutation.isPending} className="flex-1">
                   Delete
                 </Button>
               </div>

@@ -134,7 +134,7 @@ public class SystemAdminController {
      */
     @PostMapping("/tenants/{tenantId}/impersonate")
     @Operation(summary = "Generate impersonation token", description = "Generate a JWT token that allows SuperAdmin to access a specific tenant's data for troubleshooting or support purposes")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
     public ResponseEntity<ImpersonationTokenDTO> generateImpersonationToken(
             @Parameter(description = "Target tenant ID for impersonation")
             @PathVariable UUID tenantId) {

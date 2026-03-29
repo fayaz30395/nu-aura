@@ -134,7 +134,7 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
                 <Cell
                   key={`cell-${index}`}
                   fill={
-                    entry.isHoliday ? 'var(--chart-purple, #a855f7)'
+                    entry.isHoliday ? 'var(--chart-accent, var(--accent-primary))'
                     : entry.hours >= STANDARD_WORK_HOURS ? 'var(--chart-success)'
                     : entry.isToday ? 'var(--chart-primary)'
                     : entry.hours > 0 ? 'var(--chart-warning)'

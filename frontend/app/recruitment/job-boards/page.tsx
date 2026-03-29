@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Globe, Plus, Pause, ExternalLink, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
@@ -8,6 +11,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
+
+const postJobBoardSchema = z.object({
+  jobId: z.string().min(1, 'Select a job opening'),
+  boards: z.array(z.string()).min(1, 'Select at least one board'),
+});
+
+type PostJobBoardFormData = z.infer<typeof postJobBoardSchema>;
 
 interface JobBoardPosting {
   id: string;
@@ -53,9 +65,21 @@ const ALL_BOARDS: JobBoardPosting['boardName'][] = ['NAUKRI', 'INDEED', 'LINKEDI
 export default function JobBoardsPage() {
   const queryClient = useQueryClient();
   const [showPostModal, setShowPostModal] = useState(false);
-  const [selectedJobId, setSelectedJobId] = useState('');
-  const [selectedBoards, setSelectedBoards] = useState<JobBoardPosting['boardName'][]>(['NAUKRI']);
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset: resetPostForm,
+    formState: { errors: postErrors },
+    watch: watchPost,
+  } = useForm<PostJobBoardFormData>({
+    resolver: zodResolver(postJobBoardSchema),
+    defaultValues: { jobId: '', boards: ['NAUKRI'] },
+  });
+
+  const selectedBoards = watchPost('boards') ?? [];
 
   const { data: postingsData, isLoading } = useQuery<{ content: JobBoardPosting[] }>({
     queryKey: ['job-board-postings', filterStatus],
@@ -79,15 +103,14 @@ export default function JobBoardsPage() {
   });
 
   const postMutation = useMutation({
-    mutationFn: () => apiClient.post('/recruitment/job-boards/post', {
-      jobOpeningId: selectedJobId,
-      boards: selectedBoards,
+    mutationFn: (data: PostJobBoardFormData) => apiClient.post('/recruitment/job-boards/post', {
+      jobOpeningId: data.jobId,
+      boards: data.boards,
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['job-board-postings'] });
       setShowPostModal(false);
-      setSelectedJobId('');
-      setSelectedBoards(['NAUKRI']);
+      resetPostForm({ jobId: '', boards: ['NAUKRI'] });
     },
     onError: () => notifications.show({ title: 'Error', message: 'Failed to post job to boards', color: 'red' }),
   });
@@ -95,14 +118,13 @@ export default function JobBoardsPage() {
   const pauseMutation = useMutation({
     mutationFn: (id: string) => apiClient.post(`/recruitment/job-boards/${id}/pause`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['job-board-postings'] }),
+    onError: () => notifications.show({ title: 'Error', message: 'Failed to pause job board posting', color: 'red' }),
   });
 
   const postings = postingsData?.content ?? [];
 
-  const toggleBoard = (board: JobBoardPosting['boardName']) => {
-    setSelectedBoards(prev =>
-      prev.includes(board) ? prev.filter(b => b !== board) : [...prev, board]
-    );
+  const onSubmitPost = (data: PostJobBoardFormData) => {
+    postMutation.mutate(data);
   };
 
   return (
@@ -113,10 +135,12 @@ export default function JobBoardsPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Board Management</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Post jobs to Naukri, Indeed, LinkedIn and track applications</p>
           </div>
-          <Button onClick={() => setShowPostModal(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Post to Job Boards
-          </Button>
+          <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
+            <Button onClick={() => setShowPostModal(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Post to Job Boards
+            </Button>
+          </PermissionGate>
         </div>
 
         {/* Stats row */}
@@ -207,10 +231,12 @@ export default function JobBoardsPage() {
                           <p className="text-xs text-[var(--text-muted)]">Views</p>
                         </div>
                         {posting.status === 'ACTIVE' && (
-                          <Button size="sm" variant="outline" onClick={() => pauseMutation.mutate(posting.id)}>
-                            <Pause className="w-3.5 h-3.5 mr-1" />
-                            Pause
-                          </Button>
+                          <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
+                            <Button size="sm" variant="outline" onClick={() => pauseMutation.mutate(posting.id)}>
+                              <Pause className="w-3.5 h-3.5 mr-1" />
+                              Pause
+                            </Button>
+                          </PermissionGate>
                         )}
                       </div>
                     </div>
@@ -237,11 +263,11 @@ export default function JobBoardsPage() {
               <CardTitle>Post Job to Boards</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmitPost)} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Select Job Opening *</label>
                 <select
-                  value={selectedJobId}
-                  onChange={e => setSelectedJobId(e.target.value)}
+                  {...register('jobId')}
                   className="input-aura"
                 >
                   <option value="">— Select a job —</option>
@@ -251,30 +277,45 @@ export default function JobBoardsPage() {
                     </option>
                   ))}
                 </select>
+                {postErrors.jobId && (
+                  <p className="text-xs text-danger-500 mt-1">{postErrors.jobId.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Select Boards *</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {ALL_BOARDS.map((board: JobBoardPosting['boardName']) => {
-                    const bc = boardConfig[board];
-                    const isSelected = selectedBoards.includes(board);
-                    return (
-                      <button
-                        key={board}
-                        onClick={() => toggleBoard(board)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-all ${
-                          isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
-                        }`}
-                      >
-                        <Globe className="w-4 h-4" />
-                        {board}
-                        {board === 'NAUKRI' && <span className="text-xs opacity-75">🔥</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-                {selectedBoards.length === 0 && (
-                  <p className="text-xs text-danger-500 mt-1">Select at least one board</p>
+                <Controller
+                  name="boards"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="grid grid-cols-2 gap-2">
+                      {ALL_BOARDS.map((board: JobBoardPosting['boardName']) => {
+                        const bc = boardConfig[board];
+                        const isSelected = (field.value ?? []).includes(board);
+                        return (
+                          <button
+                            key={board}
+                            type="button"
+                            onClick={() => {
+                              const current = field.value ?? [];
+                              field.onChange(
+                                isSelected ? current.filter((b) => b !== board) : [...current, board]
+                              );
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-all ${
+                              isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
+                            }`}
+                          >
+                            <Globe className="w-4 h-4" />
+                            {board}
+                            {board === 'NAUKRI' && <span className="text-xs opacity-75">🔥</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                />
+                {postErrors.boards && (
+                  <p className="text-xs text-danger-500 mt-1">{postErrors.boards.message}</p>
                 )}
               </div>
               <p className="text-xs text-[var(--text-muted)] bg-[var(--bg-surface)] p-4 rounded-md">
@@ -282,14 +323,15 @@ export default function JobBoardsPage() {
                 Jobs will be posted immediately and expire after 30 days.
               </p>
               <div className="flex gap-4 justify-end pt-2">
-                <Button variant="outline" onClick={() => setShowPostModal(false)}>Cancel</Button>
+                <Button type="button" variant="outline" onClick={() => setShowPostModal(false)}>Cancel</Button>
                 <Button
-                  onClick={() => postMutation.mutate()}
-                  disabled={!selectedJobId || selectedBoards.length === 0 || postMutation.isPending}
+                  type="submit"
+                  disabled={postMutation.isPending}
                 >
-                  {postMutation.isPending ? 'Posting...' : `Post to ${selectedBoards.length} Board${selectedBoards.length > 1 ? 's' : ''}`}
+                  {postMutation.isPending ? 'Posting...' : `Post to ${selectedBoards.length} Board${selectedBoards.length !== 1 ? 's' : ''}`}
                 </Button>
               </div>
+              </form>
             </CardContent>
           </Card>
         </div>

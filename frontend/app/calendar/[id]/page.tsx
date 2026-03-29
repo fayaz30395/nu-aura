@@ -50,7 +50,7 @@ export default function EventDetailPage() {
   }
 
   if (!isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
     return null;
   }
 

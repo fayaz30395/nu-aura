@@ -276,7 +276,7 @@ export default function SettingsPage() {
                 <div className="flex-1">
                   <p className="font-medium text-[var(--text-primary)]">Google SSO (Single Sign-On)</p>
                   <p className="text-sm text-[var(--text-muted)]">
-                    Your account is authenticated via Google Workspace for <span className="font-medium text-[var(--text-secondary)]">@nulogic.io</span>.
+                    Your account is authenticated via Google Workspace for your organisation&apos;s domain.
                     Password management is handled through your Google account.
                   </p>
                 </div>
@@ -476,7 +476,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleNotificationSave}
                   disabled={updatePrefsMutation.isPending}
-                  className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50 skeuo-button"
+                  className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 skeuo-button"
                 >
                   {updatePrefsMutation.isPending ? (
                     <>

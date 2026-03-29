@@ -348,7 +348,7 @@ export default function PerformancePage() {
               Continuous feedback helps improve performance year-round
             </p>
           </div>
-          <div className="p-4 tint-purple rounded-lg border border-[var(--status-purple-border)]">
+          <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <BarChart3 className="h-6 w-6 text-accent-800 dark:text-accent-600 mb-2" />
             <h3 className="font-medium text-[var(--text-primary)]">Track Progress</h3>
             <p className="text-sm text-[var(--text-secondary)] mt-1">

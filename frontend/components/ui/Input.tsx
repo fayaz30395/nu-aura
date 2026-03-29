@@ -138,8 +138,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               <button
                 type="button"
                 onClick={handleRightIconClick}
-                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 p-1 rounded transition-colors"
-                tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 p-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sky-700"
                 disabled={disabled}
               >
                 {showPassword ? (

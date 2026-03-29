@@ -27,8 +27,6 @@ const buttonVariants = cva(
         // Danger / Destructive - Destructive actions
         danger:
           'bg-danger-500 text-white hover:bg-danger-600 focus-visible:ring-danger-500/50 shadow-sm',
-        destructive:
-          'bg-danger-500 text-white hover:bg-danger-600 focus-visible:ring-danger-500/50 shadow-sm',
         // Success - Positive actions
         success:
           'bg-success-500 text-white hover:bg-success-600 focus-visible:ring-success-500/50 shadow-sm',
@@ -57,7 +55,7 @@ const buttonVariants = cva(
         sm: 'h-9 px-4 text-sm rounded-lg',
         md: 'h-11 px-4 text-sm rounded-xl',
         lg: 'h-12 px-6 text-base rounded-xl',
-        xl: 'h-12 px-6 text-base rounded-xl',
+        xl: 'h-14 px-8 text-lg rounded-xl',
         icon: 'h-11 w-11 rounded-xl',
         'icon-sm': 'h-9 w-9 rounded-lg',
         'icon-xs': 'h-7 w-7 rounded-md',
@@ -106,6 +104,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isLoading || disabled}
         {...props}
+        aria-busy={isLoading ? 'true' : undefined}
+        aria-label={isLoading ? (loadingText || props['aria-label'] || 'Loading') : props['aria-label']}
       >
         {isLoading ? (
           <>

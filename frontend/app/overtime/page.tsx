@@ -155,7 +155,7 @@ export default function OvertimePage() {
 
   if (!hasHydrated) return null;
   if (!isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
     return null;
   }
 

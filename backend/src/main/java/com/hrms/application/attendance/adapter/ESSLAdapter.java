@@ -2,6 +2,7 @@ package com.hrms.application.attendance.adapter;
 
 import com.hrms.api.attendance.dto.BiometricPunchRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -11,8 +12,13 @@ import java.util.List;
  * Adapter for eSSL biometric devices.
  * TODO: Implement eSSL PUSH API / SOAP protocol integration.
  * eSSL devices typically support both push-based (ADMS) and pull-based protocols.
+ *
+ * <p>This bean is only registered when {@code app.biometric.essl.enabled=true} is set
+ * in application properties. This prevents the unimplemented stub from being loaded
+ * (and polluting BiometricAdapter discovery) in environments where eSSL is not in use.
  */
 @Component
+@ConditionalOnProperty(name = "app.biometric.essl.enabled", havingValue = "true", matchIfMissing = false)
 @Slf4j
 public class ESSLAdapter implements BiometricAdapter {
 

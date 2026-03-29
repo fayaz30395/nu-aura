@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import {
@@ -24,6 +27,12 @@ import {
   Mail,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+
+const acceptOfferSchema = z.object({
+  confirmedJoiningDate: z.string().min(1, 'Please confirm your joining date'),
+});
+
+type AcceptOfferFormData = z.infer<typeof acceptOfferSchema>;
 
 function OfferPortalLoading() {
   return (
@@ -56,35 +65,48 @@ function OfferPortalPage() {
   const [error, setError] = useState<string | null>(null);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
-  const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
   const [declineReason, setDeclineReason] = useState('');
 
+  const {
+    register: registerAccept,
+    handleSubmit: handleAcceptSubmit,
+    setValue: setAcceptValue,
+    formState: { errors: acceptErrors },
+  } = useForm<AcceptOfferFormData>({
+    resolver: zodResolver(acceptOfferSchema),
+    defaultValues: { confirmedJoiningDate: '' },
+  });
+
   // Update local offer state when query data arrives
-  if (initialOffer && initialOffer !== offer) {
-    if (!initialOffer.tokenValid) {
-      setError(initialOffer.errorMessage || 'Invalid or expired offer link');
-      setOffer(null);
-    } else {
-      setOffer(initialOffer);
-      if (!confirmedJoiningDate && initialOffer.proposedJoiningDate) {
-        setConfirmedJoiningDate(initialOffer.proposedJoiningDate);
+  useEffect(() => {
+    if (initialOffer) {
+      if (!initialOffer.tokenValid) {
+        setError(initialOffer.errorMessage || 'Invalid or expired offer link');
+        setOffer(null);
+      } else {
+        setOffer(initialOffer);
+        if (initialOffer.proposedJoiningDate) {
+          setAcceptValue('confirmedJoiningDate', initialOffer.proposedJoiningDate);
+        }
       }
     }
-  }
+  }, [initialOffer, setAcceptValue]);
 
   // Handle query errors
-  if (queryError && !offer) {
-    setError('Failed to load offer details. The link may be invalid or expired.');
-  }
+  useEffect(() => {
+    if (queryError) {
+      setError(queryError instanceof Error ? queryError.message : 'Failed to load offer details. The link may be invalid or expired.');
+    }
+  }, [queryError]);
 
-  const handleAcceptOffer = async () => {
+  const handleAcceptOffer = async (formData: AcceptOfferFormData) => {
     if (!offer || !offer.email || !token) return;
     try {
       const _response = await acceptMutation.mutateAsync({
         token,
         data: {
           email: offer.email,
-          confirmedJoiningDate: confirmedJoiningDate || undefined,
+          confirmedJoiningDate: formData.confirmedJoiningDate || undefined,
         },
       });
       setOffer({
@@ -391,23 +413,28 @@ function OfferPortalPage() {
                 </p>
               </div>
 
+              <form onSubmit={handleAcceptSubmit(handleAcceptOffer)}>
               <div className="mb-6">
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Confirmed Joining Date
                 </label>
                 <input
                   type="date"
-                  value={confirmedJoiningDate}
-                  onChange={(e) => setConfirmedJoiningDate(e.target.value)}
+                  {...registerAccept('confirmedJoiningDate')}
                   className="w-full px-4 py-4 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
-                <p className="text-xs text-[var(--text-muted)] mt-1">
-                  Please confirm your expected joining date
-                </p>
+                {acceptErrors.confirmedJoiningDate ? (
+                  <p className="text-xs text-danger-500 mt-1">{acceptErrors.confirmedJoiningDate.message}</p>
+                ) : (
+                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                    Please confirm your expected joining date
+                  </p>
+                )}
               </div>
 
               <div className="flex gap-4">
                 <Button
+                  type="button"
                   variant="outline"
                   onClick={() => setShowAcceptModal(false)}
                   className="flex-1"
@@ -416,7 +443,7 @@ function OfferPortalPage() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleAcceptOffer}
+                  type="submit"
                   disabled={acceptMutation.isPending}
                   className="flex-1 bg-success-600 hover:bg-success-700"
                 >
@@ -430,6 +457,7 @@ function OfferPortalPage() {
                   )}
                 </Button>
               </div>
+              </form>
             </CardContent>
           </Card>
         </div>
@@ -475,7 +503,7 @@ function OfferPortalPage() {
                   Cancel
                 </Button>
                 <Button
-                  variant="destructive"
+                  variant="danger"
                   onClick={handleDeclineOffer}
                   disabled={declineMutation.isPending}
                   className="flex-1"

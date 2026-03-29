@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { useReceivedFeedback, useGivenFeedback, useCreateFeedback, useUpdateFeedback, useDeleteFeedback } from '@/lib/hooks/queries/usePerformance';
 import { Feedback, FeedbackRequest, FeedbackType } from '@/lib/types/performance';
-import { useToast } from '@/components/notifications/ToastProvider';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 
@@ -27,19 +27,8 @@ const feedbackFormSchema = z.object({
 type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
 
 export default function FeedbackPage() {
-  const _toast = useToast();
-
-  // Get current user ID from localStorage
-  const [currentUserId, setCurrentUserId] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !currentUserId) {
-      const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-      if (user.employeeId) {
-        setCurrentUserId(user.employeeId);
-      }
-    }
-  }, [currentUserId]);
+  const { user } = useAuth();
+  const currentUserId = user?.employeeId || '';
 
   // React Query hooks
   const receivedQuery = useReceivedFeedback(currentUserId);

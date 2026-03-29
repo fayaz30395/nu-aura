@@ -255,11 +255,15 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         {/* Action Link */}
         {actionLabel && (
           <div className="mt-3 pt-3 border-t border-surface-200/50 dark:border-surface-700/50">
-            <button className={cn(
-              'flex items-center gap-1.5 text-sm font-medium transition-colors',
-              config.iconColor,
-              'hover:opacity-80'
-            )}>
+            <button
+              onClick={onAction}
+              aria-label={actionLabel}
+              className={cn(
+                'flex items-center gap-1.5 text-sm font-medium transition-colors',
+                config.iconColor,
+                'hover:opacity-80'
+              )}
+            >
               <span>{actionLabel}</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>

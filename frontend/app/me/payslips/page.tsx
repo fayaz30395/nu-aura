@@ -31,12 +31,10 @@ export default function MyPayslipsPage() {
   const [isAdminView, setIsAdminView] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if user is admin/HR
+  // Check if user is admin/HR — role codes have no ROLE_ prefix in NU-AURA
   const isAdmin = !user?.employeeId || user?.roles?.some(role => {
-    if (typeof role === 'string') {
-      return ['ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_HR'].includes(role);
-    }
-    return ['ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_HR'].includes(role?.code || '');
+    const code = typeof role === 'string' ? role : (role?.code || '');
+    return ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_MANAGER', 'HR_EXECUTIVE', 'PAYROLL_ADMIN'].includes(code);
   });
 
   // React Query hooks
@@ -160,7 +158,7 @@ export default function MyPayslipsPage() {
           </p>
           <button
             onClick={() => router.push('/payroll')}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors"
           >
             Go to Payroll Management
           </button>

@@ -102,7 +102,7 @@ public class AuditLogController {
     // ==================== Security Endpoints ====================
 
     @GetMapping("/security-events")
-    @RequiresPermission(Permission.AUDIT_VIEW)
+    @RequiresPermission(value = Permission.AUDIT_VIEW, revalidate = true)
     public ResponseEntity<Page<AuditLogResponse>> getSecurityEvents(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,

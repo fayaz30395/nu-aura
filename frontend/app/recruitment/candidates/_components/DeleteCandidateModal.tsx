@@ -38,7 +38,7 @@ export function DeleteCandidateModal({
           <Button variant="outline" onClick={onClose} className="flex-1">
             Cancel
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isDeleting} className="flex-1">
+          <Button variant="danger" onClick={onConfirm} disabled={isDeleting} className="flex-1">
             Delete
           </Button>
         </div>
