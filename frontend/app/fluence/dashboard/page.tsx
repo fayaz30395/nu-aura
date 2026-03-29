@@ -361,7 +361,7 @@ function StatCard({ icon: IconComponent, label, value, color }: StatCardProps) {
               {value}
             </p>
           </div>
-          <div className={`p-3 rounded-lg ${colorMap[color]}`}>
+          <div className={`p-4 rounded-lg ${colorMap[color]}`}>
             <IconComponent className={`w-6 h-6 ${textColorMap[color]}`} />
           </div>
         </CardContent>

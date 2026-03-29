@@ -384,7 +384,7 @@ export default function WorkflowDetailPage() {
       >
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -553,7 +553,7 @@ export default function WorkflowDetailPage() {
                     <input
                       {...form.register('name')}
                       placeholder="e.g., Leave Approval - Standard"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                     {form.formState.errors.name && (
                       <p className="mt-1 text-xs text-danger-500">{form.formState.errors.name.message}</p>
@@ -567,7 +567,7 @@ export default function WorkflowDetailPage() {
                     </label>
                     <select
                       {...form.register('entityType')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     >
                       {ENTITY_TYPE_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
@@ -585,7 +585,7 @@ export default function WorkflowDetailPage() {
                     </label>
                     <select
                       {...form.register('workflowType')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     >
                       {WORKFLOW_TYPE_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
@@ -602,7 +602,7 @@ export default function WorkflowDetailPage() {
                       {...form.register('description')}
                       placeholder="Describe what this workflow is used for..."
                       rows={2}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                 </div>
@@ -624,7 +624,7 @@ export default function WorkflowDetailPage() {
                       type="number"
                       {...form.register('minAmount')}
                       placeholder="0"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                   <div>
@@ -635,7 +635,7 @@ export default function WorkflowDetailPage() {
                       type="number"
                       {...form.register('maxAmount')}
                       placeholder="No limit"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                 </div>
@@ -705,7 +705,7 @@ export default function WorkflowDetailPage() {
                     className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)]/20 p-4"
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         <div className="flex flex-col gap-0.5">
                           <button
                             type="button"
@@ -749,7 +749,7 @@ export default function WorkflowDetailPage() {
                         <input
                           {...form.register(`steps.${idx}.stepName`)}
                           placeholder="e.g., Manager Approval"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         />
                         {form.formState.errors.steps?.[idx]?.stepName && (
                           <p className="mt-1 text-xs text-danger-500">
@@ -765,7 +765,7 @@ export default function WorkflowDetailPage() {
                         </label>
                         <select
                           {...form.register(`steps.${idx}.approverType`)}
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         >
                           {APPROVER_TYPE_OPTIONS.map((o) => (
                             <option key={o.value} value={o.value}>{o.label}</option>
@@ -783,7 +783,7 @@ export default function WorkflowDetailPage() {
                           <input
                             {...form.register(`steps.${idx}.roleName`)}
                             placeholder="e.g., Finance Manager"
-                            className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                            className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                           />
                         </div>
                       )}
@@ -797,7 +797,7 @@ export default function WorkflowDetailPage() {
                           type="number"
                           {...form.register(`steps.${idx}.slaHours`)}
                           placeholder="48"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         />
                       </div>
 
@@ -809,7 +809,7 @@ export default function WorkflowDetailPage() {
                         <input
                           {...form.register(`steps.${idx}.description`)}
                           placeholder="Optional step description"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         />
                       </div>
                     </div>
@@ -860,7 +860,7 @@ export default function WorkflowDetailPage() {
                           type="number"
                           {...form.register(`steps.${idx}.escalateAfterHours`)}
                           placeholder="72"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                         />
                       </div>
                     )}
@@ -883,7 +883,7 @@ export default function WorkflowDetailPage() {
                     <input
                       type="number"
                       {...form.register('defaultSlaHours')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                   <div>
@@ -893,7 +893,7 @@ export default function WorkflowDetailPage() {
                     <input
                       type="number"
                       {...form.register('escalationAfterHours')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                     />
                   </div>
                 </div>
@@ -940,7 +940,7 @@ export default function WorkflowDetailPage() {
             </Card>
 
             {/* Submit */}
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex items-center justify-end gap-4">
               <Button
                 type="button"
                 variant="ghost"
@@ -990,7 +990,7 @@ function InfoCard({
 
 function SettingItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2">
+    <div className="flex items-center justify-between rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2">
       <span className="text-xs text-[var(--text-muted)]">{label}</span>
       <span className="text-sm font-medium text-[var(--text-primary)]">{value}</span>
     </div>

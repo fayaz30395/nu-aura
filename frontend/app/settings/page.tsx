@@ -131,7 +131,7 @@ export default function SettingsPage() {
     description: string;
     icon?: React.ElementType;
   }) => (
-    <div className="flex items-center justify-between py-3 border-b border-[var(--border-main)] last:border-b-0">
+    <div className="flex items-center justify-between py-4 border-b border-[var(--border-main)] last:border-b-0">
       <div className="flex items-center gap-4">
         {Icon && (
           <div className="p-2 bg-[var(--bg-surface)] rounded-lg">
@@ -167,7 +167,7 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Settings</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Settings</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage your account settings and preferences
           </p>

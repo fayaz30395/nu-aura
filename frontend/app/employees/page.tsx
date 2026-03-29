@@ -349,13 +349,13 @@ export default function EmployeesPage() {
                     <th>
                       Department
                     </th>
-                    <th>
+                    <th className="text-center">
                       Level
                     </th>
                     <th>
                       Manager
                     </th>
-                    <th>
+                    <th className="text-center">
                       Status
                     </th>
                     <th className="text-right">
@@ -365,7 +365,7 @@ export default function EmployeesPage() {
                 </thead>
                 <tbody>
                   {employees.map((employee) => (
-                  <tr key={employee.id}>
+                  <tr key={employee.id} className="h-11">
                     <td className="whitespace-nowrap">
                       <div className="flex items-center gap-4">
                         <div className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
@@ -388,7 +388,7 @@ export default function EmployeesPage() {
                     <td className="whitespace-nowrap">
                       <span className="text-sm text-[var(--text-primary)]">{employee.departmentName || '-'}</span>
                     </td>
-                    <td className="whitespace-nowrap">
+                    <td className="whitespace-nowrap text-center">
                       {employee.level ? (
                         <span className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
                           {employee.level.replace('_', ' ')}
@@ -400,7 +400,7 @@ export default function EmployeesPage() {
                     <td className="whitespace-nowrap">
                       <span className="text-sm text-[var(--text-primary)]">{employee.managerName || '-'}</span>
                     </td>
-                    <td className="whitespace-nowrap">
+                    <td className="whitespace-nowrap text-center">
                       <span className={`px-2 py-0.5 inline-flex text-xs font-medium rounded-md ${getStatusBadgeColor(employee.status)}`}>
                         {employee.status.replace('_', ' ')}
                       </span>
@@ -1111,7 +1111,7 @@ export default function EmployeesPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)]">Delete Employee</h3>
+                <h3 className="text-xl font-semibold text-[var(--text-primary)]">Delete Employee</h3>
               </div>
               <p className="text-sm text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete <strong className="text-[var(--text-primary)]">{employeeToDelete.fullName}</strong>? This action cannot be undone.

@@ -5,7 +5,7 @@
  * Import these constants instead of hardcoding Tailwind classes.
  *
  * STRICT 8px GRID: 4, 8, 16, 24, 32, 48, 64px
- * BANNED: gap-3, p-3, p-5, gap-5, space-y-3, space-y-5, text-[10px], text-[11px]
+ * BANNED: gap-4, p-4, p-6, gap-6, space-y-4, space-y-6, text-[10px], text-[11px]
  */
 
 // ── Page Layout ────────────────────────────────────────
@@ -63,9 +63,9 @@ export const table = {
   /** Table wrapper */
   wrapper: 'table-aura',
   /** Header cell */
-  th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]',
+  th: 'px-4 py-4 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]',
   /** Body cell */
-  td: 'px-4 py-3 text-sm text-[var(--text-primary)]',
+  td: 'px-4 py-4 text-sm text-[var(--text-primary)]',
   /** Row hover */
   row: 'hover:bg-[var(--bg-card-hover)] transition-colors duration-100',
   /** Sticky header */

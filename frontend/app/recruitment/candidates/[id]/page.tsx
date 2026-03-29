@@ -154,7 +154,7 @@ export default function CandidateDetailPage() {
                 Contact Information
               </h2>
               <div className="space-y-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <Mail className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="text-xs text-[var(--text-muted)]">Email</p>
@@ -162,7 +162,7 @@ export default function CandidateDetailPage() {
                   </div>
                 </div>
                 {candidate.phone && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Phone className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
                       <p className="text-xs text-[var(--text-muted)]">Phone</p>
@@ -171,7 +171,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.currentLocation && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <MapPin className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
                       <p className="text-xs text-[var(--text-muted)]">Location</p>
@@ -191,7 +191,7 @@ export default function CandidateDetailPage() {
               </h2>
               <div className="space-y-4">
                 {candidate.currentCompany && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Building className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
                       <p className="text-xs text-[var(--text-muted)]">Current Company</p>
@@ -200,7 +200,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.currentDesignation && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
                       <p className="text-xs text-[var(--text-muted)]">Designation</p>
@@ -209,7 +209,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.jobTitle && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
                       <p className="text-xs text-[var(--text-muted)]">Applied For</p>
@@ -218,7 +218,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.assignedRecruiterName && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <User className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
                       <p className="text-xs text-[var(--text-muted)]">Assigned Recruiter</p>
@@ -237,25 +237,25 @@ export default function CandidateDetailPage() {
                 Key Metrics
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                   <p className="text-xs text-[var(--text-muted)]">Experience</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.totalExperience ? `${candidate.totalExperience}y` : '-'}
                   </p>
                 </div>
-                <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                   <p className="text-xs text-[var(--text-muted)]">Notice Period</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.noticePeriodDays ? `${candidate.noticePeriodDays}d` : '-'}
                   </p>
                 </div>
-                <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                   <p className="text-xs text-[var(--text-muted)]">Current CTC</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.currentCtc?.toLocaleString() || '-'}
                   </p>
                 </div>
-                <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
                   <p className="text-xs text-[var(--text-muted)]">Expected CTC</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.expectedCtc?.toLocaleString() || '-'}
@@ -275,7 +275,7 @@ export default function CandidateDetailPage() {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {candidate.offeredCtc && (
-                  <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Offered CTC</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {candidate.offeredCtc.toLocaleString()}
@@ -283,7 +283,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.offeredDesignation && (
-                  <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Offered Designation</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {candidate.offeredDesignation}
@@ -291,7 +291,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.proposedJoiningDate && (
-                  <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Proposed Joining</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {formatDate(candidate.proposedJoiningDate)}
@@ -299,7 +299,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.offerExtendedDate && (
-                  <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Offer Extended</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {formatDate(candidate.offerExtendedDate)}
@@ -307,7 +307,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.offerAcceptedDate && (
-                  <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Offer Accepted</p>
                     <p className="text-sm font-semibold text-success-700 dark:text-success-400">
                       {formatDate(candidate.offerAcceptedDate)}
@@ -315,7 +315,7 @@ export default function CandidateDetailPage() {
                   </div>
                 )}
                 {candidate.offerDeclinedDate && (
-                  <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Offer Declined</p>
                     <p className="text-sm font-semibold text-danger-700 dark:text-danger-400">
                       {formatDate(candidate.offerDeclinedDate)}
@@ -324,7 +324,7 @@ export default function CandidateDetailPage() {
                 )}
               </div>
               {candidate.offerDeclineReason && (
-                <div className="mt-4 p-3 bg-danger-50 dark:bg-danger-900/10 rounded-xl border border-danger-200 dark:border-danger-800">
+                <div className="mt-4 p-4 bg-danger-50 dark:bg-danger-900/10 rounded-xl border border-danger-200 dark:border-danger-800">
                   <p className="text-xs text-[var(--text-muted)]">Decline Reason</p>
                   <p className="text-sm text-[var(--text-primary)]">{candidate.offerDeclineReason}</p>
                 </div>
@@ -341,7 +341,7 @@ export default function CandidateDetailPage() {
               <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
                 Timeline
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[var(--text-muted)]">Applied</span>
                   <span className="text-sm font-medium text-[var(--text-primary)]">

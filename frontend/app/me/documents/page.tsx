@@ -399,7 +399,7 @@ export default function MyDocumentsPage() {
                 </label>
                 <select
                   {...register('documentType')}
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                 >
                   {documentTypeOptions.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -421,7 +421,7 @@ export default function MyDocumentsPage() {
                   {...register('purpose')}
                   placeholder="Why do you need this document?"
                   rows={3}
-                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.purpose ? 'border-danger-500' : ''}`}
+                  className={`input-aura w-full px-4 py-2 rounded-lg ${errors.purpose ? 'border-danger-500' : ''}`}
                 />
                 {errors.purpose && (
                   <p className="mt-1 text-xs text-danger-500">{errors.purpose.message}</p>
@@ -437,7 +437,7 @@ export default function MyDocumentsPage() {
                   type="text"
                   {...register('addressedTo')}
                   placeholder="e.g., Immigration Department, Bank Name"
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                 />
               </div>
 
@@ -450,7 +450,7 @@ export default function MyDocumentsPage() {
                   type="date"
                   {...register('requiredByDate')}
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.requiredByDate ? 'border-danger-500' : ''}`}
+                  className={`input-aura w-full px-4 py-2 rounded-lg ${errors.requiredByDate ? 'border-danger-500' : ''}`}
                 />
                 {errors.requiredByDate && (
                   <p className="mt-1 text-xs text-danger-500">{errors.requiredByDate.message}</p>
@@ -489,7 +489,7 @@ export default function MyDocumentsPage() {
                     {...register('deliveryAddress')}
                     placeholder="Enter delivery address"
                     rows={2}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                 </div>
               )}
@@ -501,7 +501,7 @@ export default function MyDocumentsPage() {
                 </label>
                 <select
                   {...register('priority', { valueAsNumber: true })}
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                 >
                   <option value={1}>High - Urgent</option>
                   <option value={2}>Normal</option>

@@ -57,7 +57,7 @@ export function EmployeeWorkloadCard({
   return (
     <div
       className={cn(
-        'group flex items-center gap-4 rounded-lg px-3 py-2.5 transition-colors',
+        'group flex items-center gap-4 rounded-lg px-4 py-2.5 transition-colors',
         'hover:bg-surface-50 dark:hover:bg-surface-800/50',
         onViewDetails && 'cursor-pointer',
         className

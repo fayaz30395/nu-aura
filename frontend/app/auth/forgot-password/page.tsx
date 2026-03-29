@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl mb-4 shadow-lg shadow-accent-500/25">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-700 to-accent-500 bg-clip-text text-transparent skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               NU-AURA
             </h1>
           </div>
@@ -186,7 +186,7 @@ export default function ForgotPasswordPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl mb-4 shadow-lg shadow-accent-500/25">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-700 to-accent-500 bg-clip-text text-transparent skeuo-emboss">
+          <h1 className="text-2xl font-bold skeuo-emboss">
             NU-AURA
           </h1>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">

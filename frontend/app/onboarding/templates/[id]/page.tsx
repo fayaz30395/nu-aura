@@ -176,9 +176,9 @@ export default function TemplateEditorPage() {
                             <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
                         </Button>
                         <div>
-                            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss flex items-center gap-4">
+                            <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss flex items-center gap-4">
                                 Blueprint <span className="text-accent-700">Editor</span>
-                                <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
+                                <Badge variant="outline" className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
                                     V1.0
                                 </Badge>
                             </h1>
@@ -395,7 +395,7 @@ export default function TemplateEditorPage() {
                                         Category
                                     </label>
                                     <select
-                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
                                         value={taskForm.category}
                                         onChange={(e) => setTaskForm({ ...taskForm, category: e.target.value as OnboardingTaskCategory })}
                                     >
@@ -414,7 +414,7 @@ export default function TemplateEditorPage() {
                                         Priority
                                     </label>
                                     <select
-                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
                                         value={taskForm.priority}
                                         onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as OnboardingTaskPriority })}
                                     >
@@ -437,7 +437,7 @@ export default function TemplateEditorPage() {
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-4 bg-[var(--bg-secondary)] dark:bg-black/20 p-5 rounded-2xl border border-dashed border-[var(--border-main)]">
+                                <div className="flex items-center gap-4 bg-[var(--bg-secondary)] dark:bg-black/20 p-6 rounded-2xl border border-dashed border-[var(--border-main)]">
                                     <input
                                         type="checkbox"
                                         id="mandatory"

@@ -174,7 +174,7 @@ export default function WorkflowListPage() {
                   key={s}
                   type="button"
                   onClick={() => { setStatusFilter(s); setPage(0); }}
-                  className={`rounded-full px-3 py-1 font-medium transition-colors ${
+                  className={`rounded-full px-4 py-1 font-medium transition-colors ${
                     statusFilter === s
                       ? 'bg-accent-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:text-[var(--text-muted)]'
@@ -192,7 +192,7 @@ export default function WorkflowListPage() {
                 setEntityTypeFilter(e.target.value as WorkflowEntityType | 'ALL');
                 setPage(0);
               }}
-              className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-primary)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm text-[var(--text-primary)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
             >
               <option value="ALL">All types</option>
               {Object.entries(ENTITY_TYPE_CONFIG).map(([key, cfg]) => (
@@ -240,13 +240,13 @@ export default function WorkflowListPage() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
-                    <th className="px-4 py-3 font-medium text-[var(--text-secondary)]">Name</th>
-                    <th className="hidden px-4 py-3 font-medium text-[var(--text-secondary)] sm:table-cell">Type</th>
-                    <th className="hidden px-4 py-3 font-medium text-[var(--text-secondary)] md:table-cell">Workflow Type</th>
-                    <th className="px-4 py-3 font-medium text-[var(--text-secondary)]">Status</th>
-                    <th className="hidden px-4 py-3 font-medium text-[var(--text-secondary)] lg:table-cell">Steps</th>
-                    <th className="hidden px-4 py-3 font-medium text-[var(--text-secondary)] lg:table-cell">Created</th>
-                    <th className="px-4 py-3 text-right font-medium text-[var(--text-secondary)]">Actions</th>
+                    <th className="px-4 py-2 font-medium text-[var(--text-secondary)]">Name</th>
+                    <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] sm:table-cell">Type</th>
+                    <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] md:table-cell">Workflow Type</th>
+                    <th className="px-4 py-2 text-center font-medium text-[var(--text-secondary)]">Status</th>
+                    <th className="hidden px-4 py-2 text-right font-medium text-[var(--text-secondary)] lg:table-cell">Steps</th>
+                    <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] lg:table-cell">Created</th>
+                    <th className="px-4 py-2 text-right font-medium text-[var(--text-secondary)]">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-main)]">
@@ -255,10 +255,10 @@ export default function WorkflowListPage() {
                     return (
                       <tr
                         key={wf.id}
-                        className="cursor-pointer transition-colors hover:bg-[var(--bg-secondary)]/30"
+                        className="h-11 cursor-pointer transition-colors hover:bg-[var(--bg-secondary)]/30"
                         onClick={() => router.push(`/workflows/${wf.id}`)}
                       >
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4">
                           <div>
                             <p className="font-medium text-[var(--text-primary)]">{wf.name}</p>
                             {wf.description && (
@@ -268,19 +268,19 @@ export default function WorkflowListPage() {
                             )}
                           </div>
                         </td>
-                        <td className="hidden px-4 py-3 sm:table-cell">
+                        <td className="hidden px-4 py-4 sm:table-cell">
                           <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${typeConfig.bg} ${typeConfig.text}`}>
                             {typeConfig.label}
                           </span>
                         </td>
-                        <td className="hidden px-4 py-3 md:table-cell">
+                        <td className="hidden px-4 py-4 md:table-cell">
                           <span className="text-xs text-[var(--text-secondary)] capitalize">
                             {wf.workflowType.toLowerCase()}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4 text-center">
                           <span
-                            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold justify-center ${
                               wf.isActive
                                 ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-300'
                                 : 'bg-gray-100 text-gray-600 dark:bg-gray-800/30 dark:text-gray-400'
@@ -296,17 +296,17 @@ export default function WorkflowListPage() {
                             </span>
                           )}
                         </td>
-                        <td className="hidden px-4 py-3 lg:table-cell">
+                        <td className="hidden px-4 py-4 text-right lg:table-cell">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {wf.totalSteps} {wf.totalSteps === 1 ? 'step' : 'steps'}
                           </span>
                         </td>
-                        <td className="hidden px-4 py-3 lg:table-cell">
+                        <td className="hidden px-4 py-4 lg:table-cell">
                           <span className="text-xs text-[var(--text-muted)]">
                             {wf.createdAt ? format(new Date(wf.createdAt), 'MMM d, yyyy') : '--'}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-4 text-right">
                           <div className="relative inline-block">
                             <button
                               type="button"
@@ -325,7 +325,7 @@ export default function WorkflowListPage() {
                               >
                                 <button
                                   type="button"
-                                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
                                   onClick={() => {
                                     router.push(`/workflows/${wf.id}`);
                                     setMenuOpenId(null);
@@ -337,7 +337,7 @@ export default function WorkflowListPage() {
                                   <>
                                     <button
                                       type="button"
-                                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
                                       onClick={() => {
                                         router.push(`/workflows/${wf.id}?edit=true`);
                                         setMenuOpenId(null);
@@ -347,7 +347,7 @@ export default function WorkflowListPage() {
                                     </button>
                                     <button
                                       type="button"
-                                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20"
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20"
                                       onClick={() => {
                                         setDeleteTarget(wf);
                                         setMenuOpenId(null);

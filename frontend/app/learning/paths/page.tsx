@@ -117,7 +117,7 @@ export default function LearningPathsPage() {
           <Link href="/learning" className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
           <p className="text-[var(--text-secondary)]">Structured learning journeys to develop specific skills and competencies</p>
         </div>
 
@@ -186,7 +186,7 @@ export default function LearningPathsPage() {
                 <div className="p-6">
                   {/* Title and Status */}
                   <div className="flex items-start justify-between gap-2 mb-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] flex-1">{path.title}</h3>
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)] flex-1">{path.title}</h3>
                     {path.status && (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(path.status)}`}>
                         {path.status.replace('_', ' ')}
@@ -221,7 +221,7 @@ export default function LearningPathsPage() {
 
                   {/* Difficulty Badge */}
                   <div className="mb-4">
-                    <span className={`badge-status inline-block px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
+                    <span className={`badge-status inline-block px-4 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
                       {path.difficulty}
                     </span>
                   </div>
@@ -283,7 +283,7 @@ export default function LearningPathsPage() {
         ) : (
           <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-12 text-center">
             <Zap className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || selectedDifficulty !== 'ALL' ? 'No matching learning paths' : 'No learning paths available'}
             </h3>
             <p className="text-[var(--text-secondary)] mb-6">

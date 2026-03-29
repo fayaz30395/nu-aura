@@ -161,20 +161,20 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Analytics Dashboard
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Comprehensive HR metrics and insights
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-1">
               {(['7d', '30d', '90d', 'custom'] as const).map((range) => (
                 <button
                   key={range}
                   onClick={() => setTimeRange(range)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     timeRange === range
                       ? 'bg-accent-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
@@ -191,7 +191,7 @@ export default function AnalyticsPage() {
                   value={customStart}
                   max={customEnd || undefined}
                   onChange={(e) => setCustomStart(e.target.value)}
-                  className="input-aura px-3 py-1.5 text-sm"
+                  className="input-aura px-4 py-1.5 text-sm"
                   aria-label="Start date"
                 />
                 <span className="text-sm text-[var(--text-muted)]">to</span>
@@ -200,7 +200,7 @@ export default function AnalyticsPage() {
                   value={customEnd}
                   min={customStart || undefined}
                   onChange={(e) => setCustomEnd(e.target.value)}
-                  className="input-aura px-3 py-1.5 text-sm"
+                  className="input-aura px-4 py-1.5 text-sm"
                   aria-label="End date"
                 />
               </div>
@@ -219,7 +219,7 @@ export default function AnalyticsPage() {
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Total Employees</p>
@@ -250,7 +250,7 @@ export default function AnalyticsPage() {
           </Card>
 
           <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Attendance Rate</p>
@@ -270,7 +270,7 @@ export default function AnalyticsPage() {
           </Card>
 
           <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Leave Utilization</p>
@@ -291,7 +291,7 @@ export default function AnalyticsPage() {
 
           {analytics.payroll && (
             <Card className="hover:shadow-md transition-shadow">
-              <CardContent className="p-5">
+              <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>

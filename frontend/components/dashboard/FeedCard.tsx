@@ -142,7 +142,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
             {onEdit && (
               <button
                 onClick={() => { onEdit(); setShowMenu(false); }}
-                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
+                className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
               >
                 <Pencil className="h-3 w-3" />
                 Edit post
@@ -151,7 +151,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
             <button
               onClick={onDelete}
               disabled={isDeleting}
-              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors disabled:opacity-50"
+              className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors disabled:opacity-50"
             >
               <Trash2 className="h-3 w-3" />
               {isDeleting ? 'Deleting...' : 'Delete post'}
@@ -443,14 +443,14 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 <button
                   onClick={handleCancelEdit}
                   disabled={isSavingEdit}
-                  className="px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
+                  className="px-4 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveEdit}
                   disabled={!editContent.trim() || isSavingEdit}
-                  className="px-3 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSavingEdit ? 'Saving...' : 'Save'}
                 </button>
@@ -675,7 +675,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
 
         {/* Comment section */}
         {showComments && item.wallPostId && (
-          <div className="px-4 py-3 space-y-2">
+          <div className="px-4 py-4 space-y-2">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -685,13 +685,13 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); }
                 }}
                 placeholder="Write a comment..."
-                className="flex-1 px-3 py-2 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className="flex-1 px-4 py-2 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
                 disabled={isSubmittingComment}
               />
               <button
                 onClick={handleSubmitComment}
                 disabled={!commentText.trim() || isSubmittingComment}
-                className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Send className="h-3 w-3" />
               </button>
@@ -896,7 +896,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 <button
                   onClick={handleSubmitComment}
                   disabled={!commentText.trim() || isSubmittingComment}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="inline-flex items-center gap-1 px-4 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send className="h-3 w-3" />
                   {isSubmittingComment ? 'Posting...' : 'Post'}

@@ -205,7 +205,7 @@ export default function GanttChartPage() {
             <Calendar className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               Gantt Chart
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -419,7 +419,7 @@ export default function GanttChartPage() {
                 <div className="w-16 h-16 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-4">
                   <BarChart3 className="h-8 w-8 text-accent-500" />
                 </div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Gantt View Coming Soon</h2>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Gantt View Coming Soon</h2>
                 <p className="text-sm text-[var(--text-muted)] max-w-md">
                   The Gantt chart view is under development. Project timelines will be visualized here once task management is enabled.
                 </p>

@@ -327,7 +327,7 @@ export default function FeedbackResponseForm({
                 value={formData.strengths}
                 onChange={(e) => updateText('strengths', e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Excellent at breaking down complex problems into actionable tasks..."
               />
               <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
@@ -346,7 +346,7 @@ export default function FeedbackResponseForm({
                 value={formData.areasForImprovement}
                 onChange={(e) => updateText('areasForImprovement', e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Could benefit from more proactive communication with stakeholders..."
               />
               <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
@@ -365,7 +365,7 @@ export default function FeedbackResponseForm({
                 value={formData.developmentSuggestions}
                 onChange={(e) => updateText('developmentSuggestions', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Leadership training, mentorship in project management..."
               />
             </div>
@@ -381,7 +381,7 @@ export default function FeedbackResponseForm({
                 value={formData.additionalComments}
                 onChange={(e) => updateText('additionalComments', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Optional additional feedback..."
               />
             </div>

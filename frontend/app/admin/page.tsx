@@ -153,9 +153,9 @@ export default function AdminDashboardPage() {
 
       {/* All employees table */}
       <div className="skeuo-card rounded-xl border border-[var(--border-main)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 py-3 border-b border-[var(--border-main)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 py-4 border-b border-[var(--border-main)]">
           <div>
-            <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
+            <h2 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">
               All Employees
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-muted)]">
@@ -169,12 +169,12 @@ export default function AdminDashboardPage() {
               value={pendingSearch}
               onChange={(e) => setPendingSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearchApply()}
-              className="input-aura flex-1 sm:flex-none min-w-0 px-3 py-2 text-sm rounded-xl"
+              className="input-aura flex-1 sm:flex-none min-w-0 px-4 py-2 text-sm rounded-xl"
             />
             <button
               type="button"
               onClick={handleSearchApply}
-              className="btn-secondary px-3 py-2 text-sm font-medium rounded-xl"
+              className="btn-secondary px-4 py-2 text-sm font-medium rounded-xl"
             >
               Search
             </button>
@@ -256,7 +256,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Simple pagination */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border-main)] text-xs sm:text-sm">
+        <div className="flex items-center justify-between px-4 py-4 border-t border-[var(--border-main)] text-xs sm:text-sm">
           <div className="text-[var(--text-muted)]">
             Page {totalPages === 0 ? 0 : page + 1} of {totalPages}
           </div>
@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
               type="button"
               disabled={!canPrevious}
               onClick={() => canPrevious && setPage((p) => p - 1)}
-              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="px-4 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Previous
             </button>
@@ -273,7 +273,7 @@ export default function AdminDashboardPage() {
               type="button"
               disabled={!canNext}
               onClick={() => canNext && setPage((p) => p + 1)}
-              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="px-4 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-muted)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Next
             </button>
@@ -287,7 +287,7 @@ export default function AdminDashboardPage() {
         className="skeuo-card rounded-xl border border-[var(--border-main)] p-4 sm:p-6 space-y-4"
       >
         <div>
-          <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
+          <h2 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">
             Role Management
           </h2>
           <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
@@ -303,7 +303,7 @@ export default function AdminDashboardPage() {
               type="email"
               placeholder="user@example.com"
               {...registerRole('email')}
-              className="input-aura w-full px-3 py-2 text-sm rounded-xl"
+              className="input-aura w-full px-4 py-2 text-sm rounded-xl"
             />
             {roleErrors.email && (
               <p className="text-xs text-danger-500 mt-1">{roleErrors.email.message}</p>
@@ -315,7 +315,7 @@ export default function AdminDashboardPage() {
             </label>
             <select
               {...registerRole('role')}
-              className="input-aura w-full px-3 py-2 text-sm rounded-xl"
+              className="input-aura w-full px-4 py-2 text-sm rounded-xl"
             >
               {ROLE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -359,7 +359,7 @@ export default function AdminDashboardPage() {
 function StatCard(props: { title: string; value: number | string; description?: string }) {
   const { title, value, description } = props;
   return (
-    <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-5 sm:py-5">
+    <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-6 sm:py-5">
       <div className="skeuo-deboss text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
         {title}
       </div>
@@ -417,7 +417,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
-          <h2 className="skeuo-emboss text-base sm:text-lg font-semibold text-[var(--text-primary)]">
+          <h2 className="skeuo-emboss text-base sm:text-xl font-semibold text-[var(--text-primary)]">
             System Health
           </h2>
           <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
@@ -425,7 +425,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {/* Refresh Button */}
           <button
             onClick={() => onRefresh()}
@@ -538,7 +538,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
 
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="skeuo-table-header px-6 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+    <th className="skeuo-table-header px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
       {children}
     </th>
   );

@@ -32,7 +32,7 @@ export default function WallPage() {
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-4 mb-6">
           <IconActivity size={28} className="text-[var(--text-primary)]" />
           <div>
             <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">

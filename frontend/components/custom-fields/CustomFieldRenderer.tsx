@@ -30,7 +30,7 @@ export default function CustomFieldRenderer({
 }: CustomFieldRendererProps) {
   const currentValue = value?.value || definition.defaultValue || '';
 
-  const baseInputClass = `w-full px-3 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:bg-[var(--bg-surface)]  disabled:cursor-not-allowed ${className}`;
+  const baseInputClass = `w-full px-4 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:bg-[var(--bg-surface)]  disabled:cursor-not-allowed ${className}`;
 
   const renderField = () => {
     switch (definition.fieldType) {
@@ -94,7 +94,7 @@ export default function CustomFieldRenderer({
               value={value?.currencyCode || 'INR'}
               onChange={(e) => onChange(currentValue, { currencyCode: e.target.value })}
               disabled={disabled}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="px-4 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
               <option value="INR">INR</option>
               <option value="USD">USD</option>

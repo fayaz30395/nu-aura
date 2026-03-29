@@ -239,7 +239,7 @@ export default function BlogsPage() {
                     <Pen className="w-8 h-8 text-warning-600 dark:text-warning-400" />
                   </div>
                 </motion.div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No posts yet
                 </h3>
                 <p className="text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">
@@ -305,12 +305,12 @@ export default function BlogsPage() {
                               </span>
                             </motion.div>
                             {featuredPost.categoryName && (
-                              <span className="badge-status px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                              <span className="badge-status px-4 py-1 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                                 {featuredPost.categoryName}
                               </span>
                             )}
                           </div>
-                          <h2 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-3 line-clamp-3">
+                          <h2 className="text-2xl md:text-2xl font-bold text-[var(--text-primary)] mb-3 line-clamp-3">
                             {featuredPost.title}
                           </h2>
                           <p className="text-[var(--text-secondary)] text-base leading-relaxed line-clamp-3 mb-6">

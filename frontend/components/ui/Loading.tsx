@@ -75,7 +75,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; column
   return (
     <div className="card-aura overflow-hidden" aria-hidden="true">
       {/* Header */}
-      <div className="flex gap-4 px-6 py-3 border-b border-[var(--border-main)]">
+      <div className="flex gap-4 px-6 py-4 border-b border-[var(--border-main)]">
         {Array.from({ length: columns }).map((_, i) => (
           <div key={i} className="skeleton-aura h-4 rounded flex-1" />
         ))}
@@ -84,7 +84,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; column
       {Array.from({ length: rows }).map((_, rowIdx) => (
         <div
           key={rowIdx}
-          className="flex gap-4 px-6 py-3 border-b border-[var(--border-subtle)]"
+          className="flex gap-4 px-6 py-4 border-b border-[var(--border-subtle)]"
         >
           {Array.from({ length: columns }).map((_, colIdx) => (
             <div

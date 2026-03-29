@@ -261,7 +261,7 @@ export default function PreboardingPortalPage() {
           <CardContent className="p-6">
             {activeStep === 0 && (
               <form onSubmit={handleSubmitPersonalInfo(savePersonalInfo)} className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
+                <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Date of Birth *</label>
@@ -277,7 +277,7 @@ export default function PreboardingPortalPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Address *</label>
                   <textarea
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-[var(--bg-secondary)] dark:border-[var(--border-main)]"
+                    className="w-full px-4 py-2 border rounded-lg dark:bg-[var(--bg-secondary)] dark:border-[var(--border-main)]"
                     rows={2}
                     {...registerPersonalInfo('address')}
                   />
@@ -324,7 +324,7 @@ export default function PreboardingPortalPage() {
 
             {activeStep === 1 && (
               <form onSubmit={handleSubmitBankDetails(saveBankDetails)} className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Bank & Tax Details</h2>
+                <h2 className="text-xl font-semibold mb-4">Bank & Tax Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Bank Name *</label>
@@ -361,7 +361,7 @@ export default function PreboardingPortalPage() {
 
             {activeStep === 2 && (
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Document Upload</h2>
+                <h2 className="text-xl font-semibold mb-4">Document Upload</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card className={`p-4 border-2 ${data.photoUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
@@ -413,7 +413,7 @@ export default function PreboardingPortalPage() {
 
             {activeStep === 3 && (
               <div className="space-y-6">
-                <h2 className="text-lg font-semibold mb-4">Offer Letter</h2>
+                <h2 className="text-xl font-semibold mb-4">Offer Letter</h2>
                 {data.offerLetterSigned ? (
                   <div className="text-center py-8">
                     <CheckCircle2 className="h-16 w-16 text-success-500 mx-auto mb-4" />

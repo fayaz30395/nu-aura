@@ -104,13 +104,13 @@ export function ConnectorConfigPanel({
 
   const renderField = (field: ConnectorConfigField) => {
     const baseClasses =
-      'w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)]';
+      'w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)]';
     const errorClasses = errors[field.name as keyof FormData] ? 'border-danger-500' : '';
 
     switch (field.type) {
       case 'boolean':
         return (
-          <div key={field.name} className="flex items-center gap-3 py-2">
+          <div key={field.name} className="flex items-center gap-4 py-2">
             <input
               type="checkbox"
               id={field.name}
@@ -279,7 +279,7 @@ export function ConnectorConfigPanel({
           <input
             type="text"
             {...register('displayName')}
-            className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)]"
+            className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)]"
             placeholder="My Connector"
           />
           {errors.displayName?.message && (

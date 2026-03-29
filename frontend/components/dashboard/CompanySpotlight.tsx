@@ -84,9 +84,9 @@ export function CompanySpotlight() {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      <div className={`${gradientClass} flex items-center px-5 py-5 text-white`}>
+      <div className={`${gradientClass} flex items-center px-6 py-5 text-white`}>
         <div className="flex-1 pr-4">
-          <h3 className="text-lg font-semibold mb-1 line-clamp-1">{current.title}</h3>
+          <h3 className="text-xl font-semibold mb-1 line-clamp-1">{current.title}</h3>
           {current.description && (
             <p className="text-white/60 text-sm line-clamp-2">{current.description}</p>
           )}
@@ -95,7 +95,7 @@ export function CompanySpotlight() {
               href={current.ctaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mt-2 px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white rounded-lg text-xs font-medium transition-colors"
+              className="inline-block mt-2 px-4 py-1.5 bg-white/15 hover:bg-white/25 text-white rounded-lg text-xs font-medium transition-colors"
             >
               {current.ctaLabel}
             </a>

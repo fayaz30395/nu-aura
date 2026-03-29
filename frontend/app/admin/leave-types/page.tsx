@@ -257,7 +257,7 @@ export default function LeaveTypesManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Leave Types Management</h1>
+            <h1 className="text-2xl font-bold skeuo-emboss">Leave Types Management</h1>
             <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
               Configure and manage leave types for your organization
             </p>
@@ -276,11 +276,11 @@ export default function LeaveTypesManagementPage() {
 
         {/* Error Message */}
         {(uiError || queryError) && (
-          <div className="mb-4 bg-danger-50 border border-danger-200 text-danger-700 px-4 py-3 rounded relative">
+          <div className="mb-4 bg-danger-50 border border-danger-200 text-danger-700 px-4 py-4 rounded relative">
             <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
-              className="absolute top-0 bottom-0 right-0 px-4 py-3"
+              className="absolute top-0 bottom-0 right-0 px-4 py-4"
             >
               <span className="text-danger-500 text-xl">&times;</span>
             </button>
@@ -292,22 +292,22 @@ export default function LeaveTypesManagementPage() {
           <table className="table-aura">
             <thead className="skeuo-table-header">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Code & Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Annual Quota
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Properties
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>

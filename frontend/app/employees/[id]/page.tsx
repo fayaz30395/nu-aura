@@ -137,7 +137,7 @@ function SectionCard({
 }) {
   return (
     <Card className={className}>
-      <CardContent className="p-5">
+      <CardContent className="p-6">
         <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-4 uppercase tracking-wider">
           {title}
         </h4>
@@ -177,7 +177,7 @@ function AvatarInitials({
 
 // ─── Active tab underline style ──────────────────────────────────────
 function tabClass(active: boolean) {
-  return `py-3 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-t-sm ${
+  return `py-4 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-t-sm ${
     active
       ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)]'
@@ -339,7 +339,7 @@ export default function EmployeeDetailPage() {
                 <ChevronLeft className="h-4 w-4" />
                 <span className="text-sm">Employees</span>
               </button>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
                   <button
                     onClick={() => router.push(`/employees/${employeeId}/edit`)}
@@ -362,7 +362,7 @@ export default function EmployeeDetailPage() {
             </div>
 
             {/* Avatar + Name + Badge */}
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-6">
               {employee.profilePhotoUrl ? (
                 <img
                   src={employee.profilePhotoUrl}
@@ -373,7 +373,7 @@ export default function EmployeeDetailPage() {
                 <AvatarInitials name={employee.fullName} size="xl" />
               )}
               <div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <h1 className="text-2xl font-bold text-white">{employee.fullName}</h1>
                   <span
                     className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeColor(employee.status)}`}
@@ -391,7 +391,7 @@ export default function EmployeeDetailPage() {
         {/* ── QUICK INFO BAR ───────────────────────────────────────── */}
         <div className="bg-[var(--bg-card)]/50 border-b border-[var(--border-main)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-center gap-6 py-3">
+            <div className="flex flex-wrap items-center gap-6 py-4">
               <div className="flex items-center gap-2 text-sm">
                 <Mail className="h-4 w-4 text-[var(--text-muted)]" />
                 <a
@@ -492,7 +492,7 @@ export default function EmployeeDetailPage() {
               {dottedReports.length > 0 && (
                 <button
                   onClick={() => handleMainTab('about')}
-                  className={`py-3 px-4 text-sm font-medium border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] whitespace-nowrap`}
+                  className={`py-4 px-4 text-sm font-medium border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] whitespace-nowrap`}
                   title="View dotted reports in Job tab org section"
                 >
                   Dotted Reports ({dottedReports.length})
@@ -563,12 +563,12 @@ export default function EmployeeDetailPage() {
                     {/* Reporting Team */}
                     <SectionCard title="Reporting Team">
                       {subordinates.length > 0 ? (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           {subordinates.slice(0, 8).map((sub) => (
                             <button
                               key={sub.id}
                               onClick={() => router.push(`/employees/${sub.id}`)}
-                              className="flex items-center gap-3 w-full text-left hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
+                              className="flex items-center gap-4 w-full text-left hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                             >
                               <AvatarInitials name={sub.fullName} size="sm" />
                               <div className="min-w-0">
@@ -594,7 +594,7 @@ export default function EmployeeDetailPage() {
 
                     {/* System Information */}
                     <SectionCard title="System Information">
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         <InfoField label="Created At" value={formatDate(employee.createdAt)} />
                         <InfoField label="Last Updated" value={formatDate(employee.updatedAt)} />
                         <InfoField label="Employee ID" value={employee.id} />
@@ -616,7 +616,7 @@ export default function EmployeeDetailPage() {
               {aboutSubTab === 'wall' && (
                 <div className="text-center py-16">
                   <MessageSquare className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Wall Activity
                   </h3>
                   <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">
@@ -677,7 +677,7 @@ export default function EmployeeDetailPage() {
                   <InfoField label="IFSC / Routing" value={employee.bankIfscCode} />
                   <InfoField label="Tax ID / SSN" value={employee.taxId} />
                 </div>
-                <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-3">
+                <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-4">
                   <p className="text-xs text-accent-700 dark:text-accent-400">
                     Banking and tax information is encrypted and stored securely.
                   </p>
@@ -725,7 +725,7 @@ export default function EmployeeDetailPage() {
                     {employee.managerId ? (
                       <button
                         onClick={() => router.push(`/employees/${employee.managerId}`)}
-                        className="flex items-center gap-3 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
+                        className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                       >
                         <AvatarInitials name={employee.managerName || 'M'} size="sm" />
                         <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
@@ -748,7 +748,7 @@ export default function EmployeeDetailPage() {
                           onClick={() =>
                             router.push(`/employees/${employee.dottedLineManager1Id}`)
                           }
-                          className="flex items-center gap-3 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
+                          className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                         >
                           <AvatarInitials
                             name={employee.dottedLineManager1Name}
@@ -775,7 +775,7 @@ export default function EmployeeDetailPage() {
                           onClick={() =>
                             router.push(`/employees/${employee.dottedLineManager2Id}`)
                           }
-                          className="flex items-center gap-3 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
+                          className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                         >
                           <AvatarInitials
                             name={employee.dottedLineManager2Name}
@@ -906,7 +906,7 @@ export default function EmployeeDetailPage() {
                       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     >
                       <Card className="cursor-pointer hover:border-accent-500/30 transition-colors">
-                        <CardContent className="p-5 text-center">
+                        <CardContent className="p-6 text-center">
                           <div className="h-12 w-12 mx-auto mb-3 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                             <Icon className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                           </div>
@@ -1023,7 +1023,7 @@ export default function EmployeeDetailPage() {
                   ) : (
                     <div className="text-center py-16">
                       <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                         No Assets Assigned
                       </h3>
                       <p className="text-sm text-[var(--text-muted)]">
@@ -1038,7 +1038,7 @@ export default function EmployeeDetailPage() {
               {assetSubTab === 'requests' && (
                 <div className="text-center py-16">
                   <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Requests
                   </h3>
                   <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">
@@ -1051,7 +1051,7 @@ export default function EmployeeDetailPage() {
               {assetSubTab === 'damages' && (
                 <div className="text-center py-16">
                   <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Damage Charges
                   </h3>
                   <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">

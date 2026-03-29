@@ -49,7 +49,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
 
   return (
     <tr
-      className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+      className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
       onClick={() => router.push(`/recruitment/candidates/${candidate.id}`)}
     >
       {/* Candidate Info */}
@@ -79,7 +79,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       </td>
 
       {/* Stage */}
-      <td className="px-6 py-4">
+      <td className="px-6 py-4 text-center">
         {candidate.currentStage && (
           <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
             {candidate.currentStage.replace(/_/g, ' ')}
@@ -88,7 +88,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       </td>
 
       {/* Status */}
-      <td className="px-6 py-4">
+      <td className="px-6 py-4 text-center">
         <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
           {candidate.status.replace(/_/g, ' ')}
         </span>

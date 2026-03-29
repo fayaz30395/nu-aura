@@ -72,7 +72,7 @@ export function ScopeSelector({
             type="button"
             onClick={() => onChange(scope)}
             disabled={disabled}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border transition-colors ${
+            className={`inline-flex items-center gap-1.5 px-4 py-1.5 text-sm rounded-md border transition-colors ${
               value === scope
                 ? 'bg-accent-600 text-white border-accent-600 dark:bg-accent-500 dark:border-accent-500'
                 : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-main)] hover:bg-[var(--bg-card-hover)]'

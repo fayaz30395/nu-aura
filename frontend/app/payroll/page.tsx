@@ -104,11 +104,11 @@ export default function PayrollPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
+            <div className="flex items-center gap-4 mb-2">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Payroll Management</h1>
+              <h1 className="text-2xl font-bold skeuo-emboss">Payroll Management</h1>
             </div>
             <p className="text-[var(--text-secondary)] mt-2 ml-1 skeuo-deboss">
               Manage payroll runs, payslips, and salary structures for your organisation

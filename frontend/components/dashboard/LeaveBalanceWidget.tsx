@@ -76,7 +76,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
   const current = balances[selectedIndex];
 
   return (
-    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-[var(--text-muted)]" />

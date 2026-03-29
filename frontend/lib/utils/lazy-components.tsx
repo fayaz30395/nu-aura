@@ -86,7 +86,7 @@ export const LazyPieChart = dynamic(
  */
 export const EditorLoadingFallback = () => (
   <div className="w-full rounded-lg border border-[var(--border-strong)] bg-white dark:border-surface-700 dark:bg-surface-800 flex items-center justify-center" style={{ minHeight: '300px' }}>
-    <div className="space-y-3 w-full p-6">
+    <div className="space-y-4 w-full p-6">
       <Skeleton className="h-10 w-full rounded" />
       <Skeleton className="h-4 w-3/4 rounded" />
       <Skeleton className="h-4 w-1/2 rounded" />
@@ -101,7 +101,7 @@ export const EditorLoadingFallback = () => (
 export const KanbanLoadingFallback = () => (
   <div className="flex gap-4 overflow-hidden p-4">
     {Array.from({ length: 4 }).map((_, i) => (
-      <div key={i} className="flex-shrink-0 w-[240px] space-y-3">
+      <div key={i} className="flex-shrink-0 w-[240px] space-y-4">
         <Skeleton className="h-8 w-full rounded" />
         <Skeleton className="h-24 w-full rounded" />
         <Skeleton className="h-24 w-full rounded" />

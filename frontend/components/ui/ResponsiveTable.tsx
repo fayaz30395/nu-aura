@@ -144,7 +144,7 @@ function ResponsiveTable<T>({
           <thead>
             <tr className="border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
               {selectable && (
-                <th className="w-12 px-4 py-3 text-left">
+                <th className="w-12 px-4 py-2 text-left">
                   <input
                     type="checkbox"
                     checked={selectedKeys.size === data.length && data.length > 0}
@@ -157,7 +157,7 @@ function ResponsiveTable<T>({
                 <th
                   key={column.key}
                   className={cn(
-                    'px-4 py-3 text-left text-sm font-semibold text-surface-700 dark:text-surface-300',
+                    'px-4 py-4 text-left text-sm font-semibold text-surface-700 dark:text-surface-300',
                     column.sortable && 'cursor-pointer select-none hover:bg-surface-100 dark:hover:bg-surface-700/50',
                     column.width
                   )}
@@ -170,7 +170,7 @@ function ResponsiveTable<T>({
                 </th>
               ))}
               {renderRowActions && (
-                <th className="w-16 px-4 py-3 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                <th className="w-16 px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
                   Actions
                 </th>
               )}
@@ -383,7 +383,7 @@ export function TablePagination({
             <span className="text-sm">Prev</span>
           </button>
 
-          <span className="px-3 py-1 text-sm text-surface-700 dark:text-surface-300">
+          <span className="px-4 py-1 text-sm text-surface-700 dark:text-surface-300">
             {currentPage + 1} / {totalPages || 1}
           </span>
 

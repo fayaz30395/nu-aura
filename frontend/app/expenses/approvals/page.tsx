@@ -99,7 +99,7 @@ export default function ExpenseApprovalsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="text-left text-sm text-surface-500 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800">
-                    <th className="px-4 py-3">
+                    <th className="px-4 py-2">
                       <input
                         type="checkbox"
                         checked={selected.size === claims.length && claims.length > 0}
@@ -107,18 +107,18 @@ export default function ExpenseApprovalsPage() {
                         className="rounded border-surface-300"
                       />
                     </th>
-                    <th className="px-4 py-3 font-medium">Claim #</th>
-                    <th className="px-4 py-3 font-medium">Employee</th>
-                    <th className="px-4 py-3 font-medium">Category</th>
-                    <th className="px-4 py-3 font-medium">Date</th>
-                    <th className="px-4 py-3 font-medium text-right">Amount</th>
-                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    <th className="px-4 py-2 font-medium">Claim #</th>
+                    <th className="px-4 py-2 font-medium">Employee</th>
+                    <th className="px-4 py-2 font-medium">Category</th>
+                    <th className="px-4 py-2 font-medium">Date</th>
+                    <th className="px-4 py-2 font-medium text-right">Amount</th>
+                    <th className="px-4 py-2 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {claims.map((claim) => (
                     <tr key={claim.id} className="border-b border-surface-100 dark:border-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50">
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4">
                         <input
                           type="checkbox"
                           checked={selected.has(claim.id)}
@@ -126,7 +126,7 @@ export default function ExpenseApprovalsPage() {
                           className="rounded border-surface-300"
                         />
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4">
                         <button
                           onClick={() => router.push(`/expenses/${claim.id}`)}
                           className="text-accent-700 hover:underline font-medium"
@@ -134,19 +134,19 @@ export default function ExpenseApprovalsPage() {
                           {claim.claimNumber}
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-surface-700 dark:text-surface-300">{claim.employeeName}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4 text-surface-700 dark:text-surface-300">{claim.employeeName}</td>
+                      <td className="px-4 py-4">
                         <span className="px-2 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs font-medium">
                           {claim.categoryDisplayName || claim.category}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-surface-500">
+                      <td className="px-4 py-4 text-sm text-surface-500">
                         {format(new Date(claim.claimDate), 'dd MMM yyyy')}
                       </td>
-                      <td className="px-4 py-3 text-right font-semibold text-surface-900 dark:text-surface-50">
+                      <td className="px-4 py-4 text-right font-semibold text-surface-900 dark:text-surface-50">
                         {formatCurrency(claim.amount, claim.currency)}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => router.push(`/expenses/${claim.id}`)}
@@ -184,7 +184,7 @@ export default function ExpenseApprovalsPage() {
             <ModalHeader>Reject Expense: {selectedClaim?.claimNumber}</ModalHeader>
             <ModalBody>
               <div className="space-y-4">
-                <div className="bg-surface-50 dark:bg-surface-800 rounded-lg p-3">
+                <div className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4">
                   <p className="text-sm text-surface-500">Amount: <span className="font-semibold text-surface-900 dark:text-surface-50">{selectedClaim && formatCurrency(selectedClaim.amount, selectedClaim.currency)}</span></p>
                   <p className="text-sm text-surface-500 mt-1">Employee: <span className="font-medium">{selectedClaim?.employeeName}</span></p>
                 </div>
@@ -195,7 +195,7 @@ export default function ExpenseApprovalsPage() {
                     onChange={(e) => setRejectReason(e.target.value)}
                     rows={3}
                     placeholder="Explain why this claim is being rejected..."
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                 </div>
               </div>

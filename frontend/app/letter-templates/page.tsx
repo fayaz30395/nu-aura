@@ -141,7 +141,7 @@ function PlaceholderToolbar({ placeholders, onInsert }: PlaceholderToolbarProps)
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
 
   return (
-    <div className="border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] p-3">
+    <div className="border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] p-4">
       <div className="flex items-center gap-2 mb-2">
         <Variable className="h-4 w-4 text-accent-600" />
         <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -525,7 +525,7 @@ export default function LetterTemplatesPage() {
                 key={template.id}
                 className="hover:shadow-md transition-shadow"
               >
-                <CardContent className="p-5">
+                <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900/30">
@@ -627,7 +627,7 @@ export default function LetterTemplatesPage() {
           <Card>
             <CardContent className="p-12 text-center">
               <FileText className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 {searchQuery || categoryFilter ? 'No templates match your filters' : 'No templates yet'}
               </h3>
               <p className="text-[var(--text-secondary)] mb-4">
@@ -699,7 +699,7 @@ export default function LetterTemplatesPage() {
                   </label>
                   <input
                     {...form.register('name')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="e.g., Standard Offer Letter"
                   />
                   {form.formState.errors.name && (
@@ -713,7 +713,7 @@ export default function LetterTemplatesPage() {
                   <input
                     {...form.register('code')}
                     disabled={!!editingTemplate}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 font-mono"
+                    className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 font-mono"
                     placeholder="e.g., OFFER_STANDARD"
                   />
                   {form.formState.errors.code && (
@@ -730,7 +730,7 @@ export default function LetterTemplatesPage() {
                   </label>
                   <select
                     {...form.register('category')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     {Object.values(LetterCategory).map((cat) => (
                       <option key={cat} value={cat}>
@@ -748,7 +748,7 @@ export default function LetterTemplatesPage() {
                   </label>
                   <input
                     {...form.register('description')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Brief description of this template"
                   />
                 </div>
@@ -781,7 +781,7 @@ export default function LetterTemplatesPage() {
                       <textarea
                         {...field}
                         rows={18}
-                        className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 font-mono text-sm resize-y"
+                        className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 font-mono text-sm resize-y"
                         placeholder={'<p>Dear {{employee.name}},</p>\n<p>This is to certify that...</p>'}
                       />
                     )}
@@ -796,7 +796,7 @@ export default function LetterTemplatesPage() {
               <div className="border border-[var(--border-main)] rounded-lg p-4">
                 <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Signature Settings</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
                       {...form.register('includeSignature')}
@@ -804,7 +804,7 @@ export default function LetterTemplatesPage() {
                     />
                     <label className="text-sm text-[var(--text-primary)]">Include Signature Block</label>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
                       {...form.register('includeCompanyLogo')}
@@ -818,7 +818,7 @@ export default function LetterTemplatesPage() {
                     </label>
                     <input
                       {...form.register('signatoryName')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., Rajesh Kumar"
                     />
                   </div>
@@ -828,7 +828,7 @@ export default function LetterTemplatesPage() {
                     </label>
                     <input
                       {...form.register('signatoryDesignation')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., Head of HR"
                     />
                   </div>
@@ -838,11 +838,11 @@ export default function LetterTemplatesPage() {
                     </label>
                     <input
                       {...form.register('signatureTitle')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., For and on behalf of"
                     />
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
                       {...form.register('requiresApproval')}
@@ -866,7 +866,7 @@ export default function LetterTemplatesPage() {
                     <textarea
                       {...form.register('headerHtml')}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder="Custom header HTML..."
                     />
                   </div>
@@ -877,7 +877,7 @@ export default function LetterTemplatesPage() {
                     <textarea
                       {...form.register('footerHtml')}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder="Custom footer HTML..."
                     />
                   </div>
@@ -888,7 +888,7 @@ export default function LetterTemplatesPage() {
                     <textarea
                       {...form.register('cssStyles')}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder=".letter-body { font-family: 'Times New Roman'; }"
                     />
                   </div>

@@ -23,7 +23,7 @@ export default function Loading() {
       {/* Grid skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, index) => (
-          <div key={index} className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5 space-y-3">
+          <div key={index} className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Skeleton height={40} width={40} radius="md" />
               <div className="flex-1 space-y-1">

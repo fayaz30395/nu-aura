@@ -110,7 +110,7 @@ export default function PayslipsPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                <h1 className="text-2xl font-bold skeuo-emboss">
                   Payslips
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -171,7 +171,7 @@ export default function PayslipsPage() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="input-aura w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="">All Months</option>
                   {getMonthOptions().map(option => (
@@ -190,7 +190,7 @@ export default function PayslipsPage() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="input-aura w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="">All Years</option>
                   {[2024, 2023, 2022, 2021, 2020].map(year => (
@@ -209,7 +209,7 @@ export default function PayslipsPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as PayslipStatus)}
-                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="input-aura w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="ALL">All Status</option>
                   <option value="DRAFT">Draft</option>

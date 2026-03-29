@@ -253,7 +253,7 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                 <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Travel Details</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Travel Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -312,7 +312,7 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
                 <MapPin className="h-5 w-5 text-success-600 dark:text-success-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Journey Details</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Journey Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -405,7 +405,7 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                 <Plane className="h-5 w-5 text-accent-600 dark:text-accent-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Transport Details</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Transport Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -457,7 +457,7 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-accent-300 dark:bg-accent-900/30 rounded-lg">
                 <Hotel className="h-5 w-5 text-accent-800 dark:text-accent-600" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Accommodation</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Accommodation</h2>
             </div>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -521,7 +521,7 @@ export default function NewTravelRequestPage() {
               <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
                 <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Budget Details</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Budget Details</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

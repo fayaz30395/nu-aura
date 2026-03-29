@@ -372,7 +372,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
           <button
             onClick={() => setNotificationTab('google')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
+              "flex-1 px-4 py-4 text-sm font-medium transition-all duration-200",
               notificationTab === 'google'
                 ? "text-accent-500 dark:text-accent-400 border-b-2 border-accent-500"
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
@@ -388,7 +388,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
           <button
             onClick={() => setNotificationTab('system')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
+              "flex-1 px-4 py-4 text-sm font-medium transition-all duration-200",
               notificationTab === 'system'
                 ? "text-accent-500 dark:text-accent-400 border-b-2 border-accent-500"
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
@@ -577,7 +577,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-6 w-6 text-white" />
-                  <h3 className="text-lg font-semibold text-white">{selectedEvent.calendarEvent.summary}</h3>
+                  <h3 className="text-xl font-semibold text-white">{selectedEvent.calendarEvent.summary}</h3>
                 </div>
                 <button onClick={() => setSelectedEvent(null)} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
                   <X className="h-5 w-5 text-white" />
@@ -673,7 +673,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 <div className="flex items-center gap-2">
                   <Mail className="h-6 w-6 text-white" />
                   <div>
-                    <h3 className="text-lg font-semibold text-white line-clamp-1">{selectedEmail.emailData.subject}</h3>
+                    <h3 className="text-xl font-semibold text-white line-clamp-1">{selectedEmail.emailData.subject}</h3>
                     <p className="text-sm text-white/80 mt-0.5">From: {selectedEmail.emailData.from}</p>
                   </div>
                 </div>
@@ -714,7 +714,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
                   <HardDrive className="h-6 w-6 text-white" />
-                  <h3 className="text-lg font-semibold text-white line-clamp-1">{selectedFile.driveFile.name}</h3>
+                  <h3 className="text-xl font-semibold text-white line-clamp-1">{selectedFile.driveFile.name}</h3>
                 </div>
                 <button onClick={() => setSelectedFile(null)} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
                   <X className="h-5 w-5 text-white" />

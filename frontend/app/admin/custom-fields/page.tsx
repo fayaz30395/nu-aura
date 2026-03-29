@@ -248,7 +248,7 @@ export default function CustomFieldsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Custom Fields</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Custom Fields</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Define custom fields to extend entity data with your own attributes
           </p>
@@ -301,22 +301,22 @@ export default function CustomFieldsPage() {
           <table className="table-aura">
             <thead className="skeuo-table-header">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Field
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Entity Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Field Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Group
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>

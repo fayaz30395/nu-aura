@@ -152,7 +152,7 @@ export default function ContactPage() {
                   >
                     <method.icon className="h-7 w-7 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {method.title}
                   </h3>
                   <p className="text-sm text-[var(--text-muted)] mb-3">{method.description}</p>
@@ -172,7 +172,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Form */}
             <div>
-              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4 skeuo-emboss">
+              <h2 className="text-2xl font-bold skeuo-emboss">
                 Send us a message
               </h2>
               <p className="text-[var(--text-secondary)] mb-8">
@@ -319,7 +319,7 @@ export default function ContactPage() {
 
             {/* FAQ */}
             <div>
-              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
                 Quick Answers
               </h2>
               <p className="text-[var(--text-secondary)] mb-8">
@@ -367,7 +367,7 @@ export default function ContactPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
               Our Offices
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
@@ -381,7 +381,7 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center mb-4">
                   <MapPin className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}
                 </h3>
                 <p className="text-sm text-[var(--text-secondary)] mb-3">{office.address}</p>

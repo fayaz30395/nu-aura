@@ -146,7 +146,7 @@ export default function LeavePage() {
             <div className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
               <AlertCircle className="h-8 w-8 text-danger-500" />
             </div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Unable to load leave data
             </h2>
             <p className="text-sm text-[var(--text-muted)]">
@@ -195,7 +195,7 @@ export default function LeavePage() {
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
             >
               <Plus className="h-5 w-5" />
               Apply for Leave
@@ -205,7 +205,7 @@ export default function LeavePage() {
 
         {/* Leave Balance Cards */}
         <div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 skeuo-emboss">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 skeuo-emboss">
             Leave Balance ({new Date().getFullYear()})
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -235,7 +235,7 @@ export default function LeavePage() {
                   </h3>
 
                   <div className="flex items-baseline gap-1 mb-3">
-                    <span className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                    <span className="text-2xl font-bold skeuo-emboss">
                       {balance.available.toFixed(1)}
                     </span>
                     <span className="text-sm text-[var(--text-muted)]">
@@ -269,8 +269,8 @@ export default function LeavePage() {
 
         {/* Recent Leave Requests */}
         <div className="skeuo-card rounded-xl border border-[var(--border-main)] overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
+          <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
               Recent Leave Requests
             </h2>
             <button
@@ -293,22 +293,22 @@ export default function LeavePage() {
               <table className="table-aura w-full">
                 <thead className="skeuo-table-header">
                   <tr>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Request #
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Leave Type
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Duration
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Days
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Applied On
                     </th>
                   </tr>
@@ -322,19 +322,19 @@ export default function LeavePage() {
                     return (
                       <tr
                         key={request.id}
-                        className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
+                        className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                       >
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {request.requestNumber}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {leaveType?.leaveName || 'N/A'}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {new Date(request.startDate).toLocaleDateString('en-IN', {
                               day: '2-digit',
@@ -348,7 +348,7 @@ export default function LeavePage() {
                             })}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4 text-right">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {request.totalDays}
                             {request.isHalfDay && (
@@ -356,15 +356,15 @@ export default function LeavePage() {
                             )}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4 text-center">
                           <span
-                            className={`badge-status ${request.status === 'APPROVED' ? 'status-success' : request.status === 'PENDING' ? 'status-warning' : request.status === 'REJECTED' ? 'status-danger' : request.status === 'CANCELLED' ? 'status-neutral' : 'status-info'} inline-flex items-center gap-1.5`}
+                            className={`badge-status ${request.status === 'APPROVED' ? 'status-success' : request.status === 'PENDING' ? 'status-warning' : request.status === 'REJECTED' ? 'status-danger' : request.status === 'CANCELLED' ? 'status-neutral' : 'status-info'} inline-flex items-center gap-1.5 justify-center`}
                           >
                             <StatusIcon className="h-3.5 w-3.5" />
                             {request.status}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {new Date(request.appliedOn).toLocaleDateString('en-IN', {
                               day: '2-digit',
@@ -394,7 +394,7 @@ export default function LeavePage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Apply for Leave
             </h3>
             <p className="text-sm text-[var(--text-secondary)]">
@@ -412,7 +412,7 @@ export default function LeavePage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               My Leaves
             </h3>
             <p className="text-sm text-[var(--text-secondary)]">
@@ -430,7 +430,7 @@ export default function LeavePage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Leave Calendar
             </h3>
             <p className="text-sm text-[var(--text-secondary)]">

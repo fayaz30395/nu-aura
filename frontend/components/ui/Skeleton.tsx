@@ -102,7 +102,7 @@ function SkeletonTableRow({
     return (
         <tr className={cn(className)} {...props}>
             {Array.from({ length: columns }).map((_, i) => (
-                <td key={i} className="px-4 py-3">
+                <td key={i} className="px-4 py-4">
                     <Skeleton height={16} width={i === 0 ? 96 : "100%"} />
                 </td>
             ))}
@@ -130,7 +130,7 @@ function SkeletonTable({
                 <thead style={{ backgroundColor: 'var(--bg-surface)' }}>
                     <tr style={{ borderBottom: '1px solid var(--border-main)' }}>
                         {Array.from({ length: columns }).map((_, i) => (
-                            <th key={i} className="px-4 py-3 text-left">
+                            <th key={i} className="px-4 py-2 text-left">
                                 <Skeleton height={16} width={80} />
                             </th>
                         ))}
@@ -178,7 +178,7 @@ function SkeletonListItem({
 }: React.HTMLAttributes<HTMLDivElement> & { hasAvatar?: boolean }) {
     return (
         <div
-            className={cn("flex items-center space-x-4 py-3", className)}
+            className={cn("flex items-center space-x-4 py-4", className)}
             {...props}
         >
             {hasAvatar && <SkeletonAvatar />}
@@ -205,7 +205,7 @@ function SkeletonForm({
                     <Skeleton height={40} width="100%" className="rounded-md" />
                 </div>
             ))}
-            <div className="flex justify-end space-x-3 pt-4">
+            <div className="flex justify-end space-x-4 pt-4">
                 <Skeleton height={40} width={96} className="rounded-md" />
                 <Skeleton height={40} width={96} className="rounded-md" />
             </div>

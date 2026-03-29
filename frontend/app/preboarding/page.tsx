@@ -175,7 +175,7 @@ export default function PreboardingPage() {
         {isError && (
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
             <CardContent className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
                 <p className="text-sm text-danger-600 dark:text-danger-400">
                   {error instanceof Error ? error.message : 'Failed to load pre-boarding data'}

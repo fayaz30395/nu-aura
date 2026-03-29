@@ -46,22 +46,22 @@ export function RequestsTable({ requests, loading, statusFilter, onNewRequest }:
             <table className="w-full">
               <thead className="bg-[var(--bg-secondary)]/50">
                 <tr>
-                  <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                     Original Time
                   </th>
-                  <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                     Reason
                   </th>
-                  <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                     Requested
                   </th>
-                  <th className="px-4 md:px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="px-4 md:px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                     Action
                   </th>
                 </tr>

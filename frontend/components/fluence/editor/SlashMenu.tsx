@@ -287,13 +287,13 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
           exit={{ opacity: 0, y: -4, scale: 0.98 }}
           transition={{ duration: 0.15, ease: 'easeOut' }}
         >
-          <div className="px-3 py-2 text-xs font-medium text-[var(--text-muted)] border-b border-[var(--border-subtle)]">
+          <div className="px-4 py-2 text-xs font-medium text-[var(--text-muted)] border-b border-[var(--border-subtle)]">
             {query ? `Results for "${query}"` : 'Type to filter...'}
           </div>
           <div className="max-h-[320px] overflow-y-auto py-1">
             {Object.entries(grouped).map(([category, items]) => (
               <div key={category}>
-                <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] opacity-60">
+                <div className="px-4 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] opacity-60">
                   {category}
                 </div>
                 {items.map((item) => {

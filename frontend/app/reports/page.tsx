@@ -253,7 +253,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
                   />
                 </div>
                 <div>
@@ -262,7 +262,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
                   />
                 </div>
               </div>
@@ -345,7 +345,7 @@ export default function ReportsPage() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Reports</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Reports</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Generate and download various HR reports in Excel or PDF format
           </p>

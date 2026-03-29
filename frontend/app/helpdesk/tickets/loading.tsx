@@ -15,7 +15,7 @@ export default function TicketsLoading() {
       </div>
 
       {/* Search bar skeleton */}
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <Skeleton height={40} className="flex-1" />
         <Skeleton height={40} width={90} />
       </div>

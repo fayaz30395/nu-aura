@@ -76,7 +76,7 @@ export default function LearningPage() {
   return (
     <AppLayout activeMenuItem="learning">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)] skeuo-emboss">Learning Management</h1>
+        <h1 className="text-2xl font-bold skeuo-emboss">Learning Management</h1>
 
         {/* Dashboard Cards */}
         {dashboardLoading ? (
@@ -116,19 +116,19 @@ export default function LearningPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('catalog')}
           >
             Course Catalog
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('my-courses')}
           >
             My Courses
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('certificates')}
           >
             Certificates
@@ -226,7 +226,7 @@ export default function LearningPage() {
                     <div key={enrollment.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-lg font-semibold text-[var(--text-primary)]">Course #{enrollment.courseId.slice(0, 8)}</h3>
+                          <h3 className="text-xl font-semibold text-[var(--text-primary)]">Course #{enrollment.courseId.slice(0, 8)}</h3>
                           <div className="flex gap-2 mt-2">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(enrollment.status)}`} aria-label={`Status: ${enrollment.status}`}>
                               {enrollment.status}

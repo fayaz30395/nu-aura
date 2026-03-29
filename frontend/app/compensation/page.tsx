@@ -551,19 +551,19 @@ export default function CompensationPage() {
                       <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Type
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Current Salary
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
                         New Salary
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Increment
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      <th className="text-center p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Status
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Actions
                       </th>
                     </tr>
@@ -572,7 +572,7 @@ export default function CompensationPage() {
                     {filteredRevisions.map((revision) => (
                       <tr
                         key={revision.id}
-                        className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                        className="h-11 border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                       >
                         <td className="p-4">
                           <div>
@@ -589,30 +589,30 @@ export default function CompensationPage() {
                             {revisionTypeLabels[revision.revisionType]}
                           </span>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4 text-right">
                           <span className="text-[var(--text-primary)]">
                             ${revision.previousSalary.toLocaleString()}
                           </span>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4 text-right">
                           <span className="font-medium text-[var(--text-primary)]">
                             ${revision.newSalary.toLocaleString()}
                           </span>
                         </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-1">
+                        <td className="p-4 text-right">
+                          <div className="flex items-center justify-end gap-1">
                             <ArrowUpRight className="h-4 w-4 text-success-500" />
                             <span className="text-success-600 dark:text-success-400 font-medium">
                               {revision.incrementPercentage?.toFixed(1)}%
                             </span>
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4 text-center">
                           <Badge variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
                             {revisionStatusLabels[revision.status]}
                           </Badge>
                         </td>
-                        <td className="p-4">
+                        <td className="p-4 text-right">
                           <Button
                             size="sm"
                             variant="ghost"
@@ -866,7 +866,7 @@ export default function CompensationPage() {
                     <Users className="h-6 w-6 text-[var(--text-secondary)]" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                       {selectedRevision.employeeName}
                     </h3>
                     <p className="text-sm text-[var(--text-muted)]">

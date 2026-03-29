@@ -81,7 +81,7 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
         return (
           <div
             key={attachment.id}
-            className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border-main)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] transition-colors"
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] transition-colors"
           >
             <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
               <IconComponent className="h-5 w-5 text-accent-600 dark:text-accent-400" />

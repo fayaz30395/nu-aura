@@ -108,9 +108,9 @@ export default function CertificateGalleryPage() {
 
   const getStatusBadge = (isActive: boolean) => {
     if (isActive) {
-      return <span className="badge-status px-3 py-1 bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300 rounded-full text-xs font-semibold">Active</span>;
+      return <span className="badge-status px-4 py-1 bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300 rounded-full text-xs font-semibold">Active</span>;
     }
-    return <span className="badge-status px-3 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 rounded-full text-xs font-semibold">Expired</span>;
+    return <span className="badge-status px-4 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 rounded-full text-xs font-semibold">Expired</span>;
   };
 
   const formatDate = (date: string) => {
@@ -129,7 +129,7 @@ export default function CertificateGalleryPage() {
           <Link href="/learning" className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">My Certificates</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">My Certificates</h1>
           <p className="text-[var(--text-secondary)]">Collection of all earned certificates and credentials</p>
         </div>
 
@@ -265,7 +265,7 @@ export default function CertificateGalleryPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => handleDownload(cert.id, cert.certificateNumber)}
-                      className="btn-primary flex items-center justify-center gap-1 px-3 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 text-xs font-medium transition-colors"
+                      className="btn-primary flex items-center justify-center gap-1 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 text-xs font-medium transition-colors"
                       title="Download PDF"
                     >
                       <Download className="h-4 w-4" />
@@ -273,7 +273,7 @@ export default function CertificateGalleryPage() {
                     </button>
                     <button
                       onClick={() => handlePrint(cert.id)}
-                      className="flex items-center justify-center gap-1 px-3 py-2 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)] text-xs font-medium transition-colors"
+                      className="flex items-center justify-center gap-1 px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)] text-xs font-medium transition-colors"
                       title="Print certificate"
                     >
                       <Printer className="h-4 w-4" />
@@ -281,7 +281,7 @@ export default function CertificateGalleryPage() {
                     </button>
                     <button
                       onClick={() => handleShareLinkedIn(cert)}
-                      className="flex items-center justify-center gap-1 px-3 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 text-xs font-medium transition-colors"
+                      className="flex items-center justify-center gap-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 text-xs font-medium transition-colors"
                       title="Share on LinkedIn"
                     >
                       <Share2 className="h-4 w-4" />
@@ -291,7 +291,7 @@ export default function CertificateGalleryPage() {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-3 bg-gradient-to-r from-accent-500/10 to-accent-700/10 dark:from-accent-900/20 dark:to-accent-900/20 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
+                <div className="px-6 py-4 bg-gradient-to-r from-accent-500/10 to-accent-700/10 dark:from-accent-900/20 dark:to-accent-900/20 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
                   <a
                     href={`/learning/certificates/${cert.id}/verify`}
                     className="text-xs font-medium text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex items-center gap-1 w-fit"
@@ -306,7 +306,7 @@ export default function CertificateGalleryPage() {
         ) : (
           <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-12 text-center">
             <Award className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || dateFilter !== 'ALL' ? 'No matching certificates' : 'No certificates earned yet'}
             </h3>
             <p className="text-[var(--text-secondary)] mb-6">

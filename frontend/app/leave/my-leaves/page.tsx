@@ -96,7 +96,7 @@ export default function MyLeavesPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Leaves</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">My Leaves</h1>
           <button
             onClick={() => router.push('/leave/apply')}
             className="btn-primary !h-auto"
@@ -155,7 +155,7 @@ export default function MyLeavesPage() {
                   <CalendarOff className="w-8 h-8 text-[var(--text-muted)]" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">No leave requests found</h3>
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No leave requests found</h3>
               <p className="text-sm text-[var(--text-secondary)] mb-6">Get started by applying for your first leave</p>
               <button
                 onClick={() => router.push('/leave/apply')}
@@ -170,14 +170,14 @@ export default function MyLeavesPage() {
                 <table className="table-aura">
                   <thead className="skeuo-table-header">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied On</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Status</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied On</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">

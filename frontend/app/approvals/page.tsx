@@ -128,14 +128,14 @@ function ApprovalCard({ approval, onApprove, onReject, isLoading }: {
                 <Button
                   onClick={() => onApprove(approval.id)}
                   isLoading={isLoading}
-                  className="btn-primary h-9 px-3 text-xs bg-success-600 hover:bg-success-700 text-white border-0"
+                  className="btn-primary h-9 px-4 text-xs bg-success-600 hover:bg-success-700 text-white border-0"
                 >
                   Approve
                 </Button>
                 <Button
                   onClick={() => onReject(approval.id)}
                   isLoading={isLoading}
-                  className="btn-secondary h-9 px-3 text-xs bg-danger-600 hover:bg-danger-700 text-white border-0"
+                  className="btn-secondary h-9 px-4 text-xs bg-danger-600 hover:bg-danger-700 text-white border-0"
                 >
                   Reject
                 </Button>
@@ -203,7 +203,7 @@ export default function ApprovalsPage() {
             <Skeleton className="h-8 w-48 rounded-lg" />
             <Skeleton className="h-4 w-96 rounded" />
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[1, 2, 3].map(i => <Skeleton key={i} className="h-24 rounded-lg" />)}
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function ApprovalsPage() {
     return (
       <AppLayout activeMenuItem="approvals">
         <div className="p-4 md:p-6 lg:p-8 max-w-[1200px] mx-auto">
-          <div className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-900/50 flex items-start gap-3">
+          <div className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-900/50 flex items-start gap-4">
             <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
             <div>
               <h3 className="font-semibold text-danger-900 dark:text-danger-200">Error Loading Approvals</h3>
@@ -240,7 +240,7 @@ export default function ApprovalsPage() {
       >
         {/* Header */}
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Approvals</h1>
+          <h1 className="text-2xl md:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Approvals</h1>
           <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Review and manage pending approvals</p>
         </div>
 
@@ -253,7 +253,7 @@ export default function ApprovalsPage() {
                 setActiveTab(tab.key);
                 setPage(0);
               }}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
+              className={`flex items-center gap-2 px-4 py-4 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === tab.key
                   ? 'text-accent-700 dark:text-accent-400 border-accent-700 dark:border-accent-400'
                   : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)]'
@@ -283,7 +283,7 @@ export default function ApprovalsPage() {
         {/* Approvals List */}
         {approvals.length > 0 ? (
           <>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {approvals.map(approval => (
                 <ApprovalCard
                   key={approval.id}
@@ -305,14 +305,14 @@ export default function ApprovalsPage() {
                   <Button
                     onClick={() => setPage(Math.max(0, page - 1))}
                     disabled={page === 0}
-                    className="h-8 px-3 text-xs"
+                    className="h-8 px-4 text-xs"
                   >
                     Previous
                   </Button>
                   <Button
                     onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                     disabled={page >= totalPages - 1}
-                    className="h-8 px-3 text-xs"
+                    className="h-8 px-4 text-xs"
                   >
                     Next
                   </Button>

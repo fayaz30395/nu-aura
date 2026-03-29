@@ -111,13 +111,13 @@ export const theme = createTheme({
   },
   defaultRadius: 'md',
 
-  // Spacing - generous (24px default instead of 16px)
+  // Spacing - strict 8px grid (4, 8, 16, 24, 32)
   spacing: {
-    xs: '0.5rem',   // 8px
-    sm: '0.75rem',  // 12px
+    xs: '0.25rem',  // 4px
+    sm: '0.5rem',   // 8px
     md: '1rem',     // 16px
-    lg: '1.5rem',   // 24px (generous spacing)
-    xl: '2rem',     // 32px (page padding)
+    lg: '1.5rem',   // 24px
+    xl: '2rem',     // 32px
   },
 
   // Shadows - soft material depth

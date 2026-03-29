@@ -199,7 +199,7 @@ export const NotificationBell: React.FC = () => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-2xl border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between p-4 border-b">
-            <h3 className="text-lg font-semibold">Notifications</h3>
+            <h3 className="text-xl font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button onClick={handleMarkAllAsRead} className="text-sm text-accent-600 hover:text-accent-800">

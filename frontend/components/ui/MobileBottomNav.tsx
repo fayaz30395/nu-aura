@@ -77,7 +77,7 @@ export function MobileBottomNav({
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center justify-center min-w-[64px] h-full px-3 py-2',
+                'flex flex-col items-center justify-center min-w-[64px] h-full px-4 py-2',
                 'transition-colors duration-200',
                 'touch-manipulation', // Optimize for touch
                 active
@@ -117,7 +117,7 @@ export function MobileBottomNav({
           <button
             onClick={onMoreClick}
             className={cn(
-              'flex flex-col items-center justify-center min-w-[64px] h-full px-3 py-2',
+              'flex flex-col items-center justify-center min-w-[64px] h-full px-4 py-2',
               'text-surface-500 dark:text-surface-400',
               'active:text-surface-700 dark:active:text-surface-300',
               'transition-colors duration-200 touch-manipulation'

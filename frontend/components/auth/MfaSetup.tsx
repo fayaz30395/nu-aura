@@ -149,7 +149,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                 Or enter this code manually:
               </p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 px-4 py-3 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg font-mono text-sm text-[var(--text-primary)] break-all">
+                <code className="flex-1 px-4 py-4 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg font-mono text-sm text-[var(--text-primary)] break-all">
                   {secret}
                 </code>
                 <button
@@ -200,7 +200,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   setVerificationCode(value);
                 }}
                 disabled={isVerifying}
-                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50"
+                className="w-full px-4 py-4 text-center text-2xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50"
                 autoComplete="off"
               />
             </div>

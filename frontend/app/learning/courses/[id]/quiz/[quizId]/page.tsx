@@ -254,7 +254,7 @@ export default function QuizPage() {
           <div className="skeuo-card overflow-hidden">
             {/* Header */}
             <div className="bg-gradient-to-r from-accent-600 to-accent-700 text-white p-8">
-              <h1 className="text-3xl font-bold skeuo-emboss mb-2">{quiz.title}</h1>
+              <h1 className="text-2xl font-bold skeuo-emboss mb-2">{quiz.title}</h1>
               {quiz.description && (
                 <p className="text-accent-100">{quiz.description}</p>
               )}
@@ -311,7 +311,7 @@ export default function QuizPage() {
               <button
                 onClick={handleStartQuiz}
                 disabled={startQuizMutation.isPending}
-                className="w-full px-6 py-3 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {startQuizMutation.isPending ? (
                   <>
@@ -357,7 +357,7 @@ export default function QuizPage() {
                 </div>
               </div>
               {quiz.timeLimit && (
-                <div className={`flex items-center gap-2 px-3 py-1 rounded-lg ${
+                <div className={`flex items-center gap-2 px-4 py-1 rounded-lg ${
                   showTimeWarning ? 'bg-danger-50 border border-danger-200' : 'bg-[var(--bg-surface)]'
                 }`}>
                   <Clock className={`h-4 w-4 ${showTimeWarning ? 'text-danger-600' : 'text-[var(--text-secondary)]'}`} />
@@ -563,7 +563,7 @@ export default function QuizPage() {
                   </div>
                 )}
               </div>
-              <h1 className="text-4xl font-bold mb-2">{Math.round(score)}%</h1>
+              <h1 className="text-2xl  font-bold mb-2">{Math.round(score)}%</h1>
               <p className="text-xl font-semibold mb-1">{passed ? 'Quiz Passed!' : 'Quiz Failed'}</p>
               <p className="text-white/90">Passing score: {quiz.passingScore}%</p>
             </div>
@@ -624,21 +624,21 @@ export default function QuizPage() {
                 {canRetry && (
                   <button
                     onClick={handleRetry}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700"
+                    className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700"
                   >
                     <RefreshCw className="h-4 w-4" /> Retry Quiz
                   </button>
                 )}
                 {passed && (
                   <button
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700"
+                    className="flex items-center justify-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700"
                   >
                     <Award className="h-4 w-4" /> View Certificate
                   </button>
                 )}
                 <Link
                   href={`/learning/courses/${courseId}`}
-                  className="flex items-center justify-center gap-2 px-6 py-3 border border-[var(--border-strong)] text-[var(--text-primary)] rounded-lg font-medium hover:bg-[var(--bg-surface)]"
+                  className="flex items-center justify-center gap-2 px-6 py-4 border border-[var(--border-strong)] text-[var(--text-primary)] rounded-lg font-medium hover:bg-[var(--bg-surface)]"
                 >
                   <Home className="h-4 w-4" /> Back to Course
                 </Link>

@@ -245,7 +245,7 @@ export default function MyProfilePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Profile</h1>
+            <h1 className="text-2xl font-bold skeuo-emboss">My Profile</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Manage your personal information
             </p>
@@ -330,7 +330,7 @@ export default function MyProfilePage() {
                 <div className="absolute bottom-2 right-2 w-6 h-6 bg-success-500 border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] rounded-full" />
               </div>
               <div className="flex-1 pb-6">
-                <h2 className="text-3xl font-bold text-[var(--text-primary)]">
+                <h2 className="text-2xl  font-bold text-[var(--text-primary)]">
                   {displayName}
                 </h2>
                 <p className="text-lg text-[var(--text-secondary)] mt-1">
@@ -415,7 +415,7 @@ export default function MyProfilePage() {
                   <input
                     type="email"
                     {...profileForm.register('personalEmail')}
-                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                    className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-[var(--text-primary)] mt-1">
@@ -431,7 +431,7 @@ export default function MyProfilePage() {
                   <input
                     type="tel"
                     {...profileForm.register('phoneNumber')}
-                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                    className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-[var(--text-primary)] mt-1">
@@ -447,7 +447,7 @@ export default function MyProfilePage() {
                   <input
                     type="tel"
                     {...profileForm.register('emergencyContactNumber')}
-                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                    className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-[var(--text-primary)] mt-1">
@@ -476,7 +476,7 @@ export default function MyProfilePage() {
                   <textarea
                     {...profileForm.register('address')}
                     rows={2}
-                    className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                    className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                   />
                 ) : (
                   <p className="text-[var(--text-primary)] mt-1">
@@ -493,7 +493,7 @@ export default function MyProfilePage() {
                     <input
                       type="text"
                       {...profileForm.register('city')}
-                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                      className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-[var(--text-primary)] mt-1">
@@ -509,7 +509,7 @@ export default function MyProfilePage() {
                     <input
                       type="text"
                       {...profileForm.register('state')}
-                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                      className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-[var(--text-primary)] mt-1">
@@ -527,7 +527,7 @@ export default function MyProfilePage() {
                     <input
                       type="text"
                       {...profileForm.register('postalCode')}
-                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                      className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-[var(--text-primary)] mt-1">
@@ -543,7 +543,7 @@ export default function MyProfilePage() {
                     <input
                       type="text"
                       {...profileForm.register('country')}
-                      className="input-aura w-full mt-1 px-3 py-2 rounded-lg"
+                      className="input-aura w-full mt-1 px-4 py-2 rounded-lg"
                     />
                   ) : (
                     <p className="text-[var(--text-primary)] mt-1">
@@ -634,7 +634,7 @@ export default function MyProfilePage() {
                     });
                     setShowBankChangeModal(true);
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-warning-700 dark:text-warning-400 bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800 rounded-lg hover:bg-warning-100 dark:hover:bg-warning-950/50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-warning-700 dark:text-warning-400 bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800 rounded-lg hover:bg-warning-100 dark:hover:bg-warning-950/50 transition-colors"
                 >
                   <SendHorizonal className="h-3.5 w-3.5" />
                   Request Change
@@ -699,12 +699,12 @@ export default function MyProfilePage() {
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-xl">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
                       <SendHorizonal className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                         Request Bank Details Change
                       </h2>
                       <p className="text-sm text-[var(--text-secondary)]">
@@ -726,7 +726,7 @@ export default function MyProfilePage() {
                   <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Check className="h-8 w-8 text-success-600 dark:text-success-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                     Request Submitted
                   </h3>
                   <p className="text-[var(--text-secondary)] mt-2">
@@ -736,7 +736,7 @@ export default function MyProfilePage() {
                 </div>
               ) : (
                 <div className="p-6 space-y-4">
-                  <div className="flex items-start gap-2 p-3 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                  <div className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
                     <Clock className="h-4 w-4 text-warning-600 dark:text-warning-400 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-warning-800 dark:text-warning-300">
                       Bank detail changes are sensitive and go through an approval workflow. Your current details will remain active until the change is approved.
@@ -751,7 +751,7 @@ export default function MyProfilePage() {
                       type="text"
                       {...bankChangeForm.register('bankName')}
                       placeholder="e.g., State Bank of India"
-                      className="input-aura w-full px-3 py-2 rounded-lg"
+                      className="input-aura w-full px-4 py-2 rounded-lg"
                     />
                     {bankChangeForm.formState.errors.bankName && (
                       <p className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.bankName.message}</p>
@@ -765,7 +765,7 @@ export default function MyProfilePage() {
                       type="text"
                       {...bankChangeForm.register('bankAccountNumber')}
                       placeholder="Enter full account number"
-                      className="input-aura w-full px-3 py-2 rounded-lg font-mono"
+                      className="input-aura w-full px-4 py-2 rounded-lg font-mono"
                     />
                     {bankChangeForm.formState.errors.bankAccountNumber && (
                       <p className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.bankAccountNumber.message}</p>
@@ -779,7 +779,7 @@ export default function MyProfilePage() {
                       type="text"
                       {...bankChangeForm.register('bankIfscCode')}
                       placeholder="e.g., SBIN0001234"
-                      className="input-aura w-full px-3 py-2 rounded-lg font-mono uppercase"
+                      className="input-aura w-full px-4 py-2 rounded-lg font-mono uppercase"
                     />
                     {bankChangeForm.formState.errors.bankIfscCode && (
                       <p className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.bankIfscCode.message}</p>
@@ -793,7 +793,7 @@ export default function MyProfilePage() {
                       {...bankChangeForm.register('reason')}
                       rows={3}
                       placeholder="e.g., Changed salary account to new bank"
-                      className="input-aura w-full px-3 py-2 rounded-lg"
+                      className="input-aura w-full px-4 py-2 rounded-lg"
                     />
                     {bankChangeForm.formState.errors.reason && (
                       <p className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.reason.message}</p>
@@ -803,7 +803,7 @@ export default function MyProfilePage() {
               )}
 
               {!bankChangeSuccess && (
-                <div className="p-6 border-t border-[var(--border-main)] flex justify-end gap-3">
+                <div className="p-6 border-t border-[var(--border-main)] flex justify-end gap-4">
                   <button
                     onClick={() => setShowBankChangeModal(false)}
                     className="btn-secondary px-4 py-2 rounded-lg"

@@ -214,7 +214,7 @@ export default function HolidayCalendarManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Holiday Calendar Management</h1>
+            <h1 className="text-2xl font-bold skeuo-emboss">Holiday Calendar Management</h1>
             <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
               Manage organizational holidays and events
             </p>
@@ -248,11 +248,11 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Error Message */}
         {(uiError || queryError) && (
-          <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-3 rounded relative">
+          <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-4 rounded relative">
             <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
-              className="absolute top-0 bottom-0 right-0 px-4 py-3"
+              className="absolute top-0 bottom-0 right-0 px-4 py-4"
             >
               <span className="text-danger-500 dark:text-danger-400 text-xl">&times;</span>
             </button>
@@ -305,7 +305,7 @@ export default function HolidayCalendarManagementPage() {
             <div className="divide-y divide-surface-200 dark:divide-surface-700">
               {months.map((month) => (
                 <div key={month} className="p-6">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{month}</h3>
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">{month}</h3>
                   <div className="space-y-4">
                     {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div
@@ -353,13 +353,13 @@ export default function HolidayCalendarManagementPage() {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleEdit(holiday)}
-                            className="text-accent-700 hover:text-accent-900 px-3 py-1"
+                            className="text-accent-700 hover:text-accent-900 px-4 py-1"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(holiday)}
-                            className="text-danger-600 hover:text-danger-900 px-3 py-1"
+                            className="text-danger-600 hover:text-danger-900 px-4 py-1"
                           >
                             Delete
                           </button>

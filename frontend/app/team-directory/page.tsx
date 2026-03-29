@@ -70,7 +70,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
               </div>
 
               {/* Details */}
-              <div className="flex-1 min-w-0 hidden md:grid grid-cols-2 gap-3 text-xs">
+              <div className="flex-1 min-w-0 hidden md:grid grid-cols-2 gap-4 text-xs">
                 <div className="flex items-center gap-1.5 text-[var(--text-secondary)] truncate">
                   <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
                   <span className="truncate">{employee.departmentName || '—'}</span>
@@ -222,7 +222,7 @@ export default function TeamDirectoryPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Team Directory</h1>
+            <h1 className="text-2xl md:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Team Directory</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Browse and connect with team members</p>
           </div>
           <div className="flex items-center gap-2 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] p-1">
@@ -230,7 +230,7 @@ export default function TeamDirectoryPage() {
               <button
                 key={mode.key}
                 onClick={() => setViewMode(mode.key)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-1.5 rounded text-xs font-medium transition-colors ${
                   viewMode === mode.key
                     ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -273,7 +273,7 @@ export default function TeamDirectoryPage() {
                   setSelectedDepartment(e.target.value);
                   setPage(0);
                 }}
-                className="w-full px-3 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/50"
+                className="w-full px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/50"
               >
                 <option value="all">
                   All Departments ({deptCounts.all || 0})
@@ -290,7 +290,7 @@ export default function TeamDirectoryPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-3'}`}>
+          <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-4'}`}>
             {[1, 2, 3, 4, 5, 6].map(i => (
               <Skeleton key={i} className={`rounded-lg ${viewMode === 'grid' ? 'h-64' : 'h-24'}`} />
             ))}
@@ -312,7 +312,7 @@ export default function TeamDirectoryPage() {
         {/* Employees Grid/List */}
         {!isLoading && filtered.length > 0 && (
           <>
-            <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-3'}`}>
+            <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-4'}`}>
               {filtered.map(employee => (
                 <EmployeeCard
                   key={employee.id}
@@ -333,14 +333,14 @@ export default function TeamDirectoryPage() {
                   <Button
                     onClick={() => setPage(Math.max(0, page - 1))}
                     disabled={page === 0}
-                    className="h-8 px-3 text-xs"
+                    className="h-8 px-4 text-xs"
                   >
                     Previous
                   </Button>
                   <Button
                     onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                     disabled={page >= totalPages - 1}
-                    className="h-8 px-3 text-xs"
+                    className="h-8 px-4 text-xs"
                   >
                     Next
                   </Button>

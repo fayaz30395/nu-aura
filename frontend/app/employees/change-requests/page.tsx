@@ -172,7 +172,7 @@ export default function EmploymentChangeRequestsPage() {
         </div>
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+          <h1 className="text-2xl font-bold skeuo-emboss">
             Employment Change Requests
           </h1>
           <div className="flex gap-2">
@@ -407,7 +407,7 @@ export default function EmploymentChangeRequestsPage() {
       {showRejectModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none">
           <div className="skeuo-card max-w-md w-full mx-4 p-6">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Reject Change Request
             </h3>
             <p className="text-sm text-[var(--text-secondary)] mb-4">

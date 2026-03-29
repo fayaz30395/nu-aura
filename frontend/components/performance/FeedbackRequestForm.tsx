@@ -190,7 +190,7 @@ export default function FeedbackRequestForm({
                     key={employee.id}
                     type="button"
                     onClick={() => addPeer(employee)}
-                    className="w-full px-4 py-3 text-left hover:bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] last:border-b-0"
+                    className="w-full px-4 py-4 text-left hover:bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] last:border-b-0"
                     disabled={selectedPeers.some((p) => p.employeeId === employee.id)}
                   >
                     <div className="flex items-center justify-between">

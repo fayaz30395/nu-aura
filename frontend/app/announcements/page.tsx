@@ -251,7 +251,7 @@ export default function AnnouncementsPage() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
+              <h1 className="text-2xl font-bold skeuo-emboss">
                 <Megaphone className="w-8 h-8 text-accent-700" />
                 Announcements
               </h1>
@@ -279,7 +279,7 @@ export default function AnnouncementsPage() {
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <Pin className="w-5 h-5 text-warning-500" />
               Pinned
             </h2>
@@ -293,7 +293,7 @@ export default function AnnouncementsPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => handleAnnouncementClick(announcement)}
-                    className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-5 cursor-pointer hover:shadow-lg transition-all group"
+                    className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all group"
                   >
                     <div className="flex items-start gap-4">
                       <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
@@ -387,7 +387,7 @@ export default function AnnouncementsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
             <Bell className="w-5 h-5 text-accent-700" />
             All Announcements
           </h2>
@@ -413,7 +413,7 @@ export default function AnnouncementsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleAnnouncementClick(announcement)}
-                    className={`bg-[var(--bg-card)] rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
+                    className={`bg-[var(--bg-card)] rounded-xl shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
                       announcement.isRead
                         ? 'border-l-[var(--border-main)]'
                         : 'border-l-accent-600'

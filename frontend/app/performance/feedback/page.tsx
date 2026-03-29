@@ -167,7 +167,7 @@ export default function FeedbackPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold skeuo-emboss">Feedback</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Feedback</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {
@@ -205,7 +205,7 @@ export default function FeedbackPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FeedbackType | 'ALL')}
-                className="w-full md:w-1/2 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full md:w-1/2 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="PRAISE">Praise</option>
@@ -287,7 +287,7 @@ export default function FeedbackPage() {
                     <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                       <button
                         onClick={() => openEditModal(feedback)}
-                        className="flex-1 px-3 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
+                        className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
                       >
                         Edit
                       </button>
@@ -295,7 +295,7 @@ export default function FeedbackPage() {
                     <PermissionGate permission={Permissions.REVIEW_DELETE}>
                       <button
                         onClick={() => openDeleteConfirm(feedback)}
-                        className="flex-1 px-3 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
+                        className="flex-1 px-4 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
                       >
                         Delete
                       </button>
@@ -324,7 +324,7 @@ export default function FeedbackPage() {
                         type="text"
                         placeholder="Enter employee ID"
                         {...register('recipientId')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.recipientId && (
                         <p className="text-danger-500 text-sm mt-1">{errors.recipientId.message}</p>
@@ -337,7 +337,7 @@ export default function FeedbackPage() {
                       </label>
                       <select
                         {...register('feedbackType')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       >
                         <option value="PRAISE">Praise</option>
                         <option value="CONSTRUCTIVE">Constructive</option>
@@ -357,7 +357,7 @@ export default function FeedbackPage() {
                         type="text"
                         placeholder="e.g., Communication, Leadership, Technical Skills"
                         {...register('category')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.category && (
                         <p className="text-danger-500 text-sm mt-1">{errors.category.message}</p>
@@ -372,7 +372,7 @@ export default function FeedbackPage() {
                         rows={6}
                         placeholder="Provide detailed feedback..."
                         {...register('feedbackText')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.feedbackText && (
                         <p className="text-danger-500 text-sm mt-1">{errors.feedbackText.message}</p>

@@ -159,7 +159,7 @@ export const ShareModal = React.memo(function ShareModal({
             <select
               value={shareRole}
               onChange={(e) => onRoleChange(e.target.value as 'reader' | 'writer' | 'commenter')}
-              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
             >
               <option value="reader">Viewer</option>
               <option value="commenter">Commenter</option>
@@ -301,7 +301,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
   return (
     <div className="fixed inset-0 bg-black/80 flex flex-col z-50">
       {/* Preview Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
+      <div className="flex items-center justify-between px-4 py-4 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-4">
           {getFileIcon(file.mimeType)}
           <div>

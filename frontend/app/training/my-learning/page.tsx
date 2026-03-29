@@ -231,7 +231,7 @@ export default function MyLearningPage() {
 
               return (
                 <Card key={enrollment.id} className="border border-[var(--border-main)] hover:shadow-md transition-shadow">
-                  <CardContent className="p-5">
+                  <CardContent className="p-6">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: info */}
                       <div className="flex-1 min-w-0">

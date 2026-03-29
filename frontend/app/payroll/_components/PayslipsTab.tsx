@@ -49,7 +49,7 @@ export function PayslipsTab({
               type="month"
               value={payslipSearchMonth}
               onChange={(e) => onMonthChange(e.target.value)}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
             />
           </div>
           <div>
@@ -59,7 +59,7 @@ export function PayslipsTab({
               placeholder="Search by employee..."
               value={payslipSearchEmployee}
               onChange={(e) => onEmployeeSearch(e.target.value)}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
             />
           </div>
         </div>
@@ -89,7 +89,7 @@ export function PayslipsTab({
             <div key={payslip.id} className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">{payslip.employeeName}</h3>
+                  <h3 className="text-xl font-semibold">{payslip.employeeName}</h3>
                   <p className="text-sm text-[var(--text-secondary)]">{payslip.payrollRunName}</p>
                 </div>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(payslip.status)}`}>
@@ -130,7 +130,7 @@ export function PayslipsTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onEditPayslip(payslip)}
-                    className="flex-1 px-3 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
+                    className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
                   >
                     Edit
                   </button>
@@ -138,7 +138,7 @@ export function PayslipsTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onDeletePayslip(payslip)}
-                    className="flex-1 px-3 py-2 bg-danger-50 dark:bg-danger-900/40 text-danger-600 dark:text-danger-400 rounded hover:bg-danger-100 dark:hover:bg-danger-900/60 text-sm font-medium"
+                    className="flex-1 px-4 py-2 bg-danger-50 dark:bg-danger-900/40 text-danger-600 dark:text-danger-400 rounded hover:bg-danger-100 dark:hover:bg-danger-900/60 text-sm font-medium"
                   >
                     Delete
                   </button>

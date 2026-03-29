@@ -289,7 +289,7 @@ export function CreateAllocationModal({
         </div>
       </ModalHeader>
 
-      <ModalBody className="space-y-5">
+      <ModalBody className="space-y-6">
         {loadingData ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-accent-700" />

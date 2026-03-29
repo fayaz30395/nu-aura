@@ -426,7 +426,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                               type="button"
                               onClick={() => field.onChange(isSelected ? '' : ct.id)}
                               className={cn(
-                                'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border',
+                                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border',
                                 isSelected
                                   ? 'border-accent-400 bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-600'
                                   : 'border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-secondary)]'

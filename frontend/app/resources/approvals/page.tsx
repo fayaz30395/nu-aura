@@ -139,7 +139,7 @@ export default function ApprovalsPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as TabKey)}
-                className={`flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                   activeTab === tab.key
                     ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)]'

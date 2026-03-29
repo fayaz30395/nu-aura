@@ -277,7 +277,7 @@ export default function PricingPage() {
                           )}
                         </>
                       ) : (
-                        <div className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <div className="text-2xl font-bold skeuo-emboss">
                           Custom
                         </div>
                       )}
@@ -320,7 +320,7 @@ export default function PricingPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
               Enhance with add-ons
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
@@ -338,7 +338,7 @@ export default function PricingPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card hover padding="lg">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {addon.name}
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)] mb-4">
@@ -369,7 +369,7 @@ export default function PricingPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
               Frequently asked questions
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
@@ -412,7 +412,7 @@ export default function PricingPage() {
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+          <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Still have questions?
           </h2>
           <p className="text-lg text-[var(--text-secondary)] mb-8">

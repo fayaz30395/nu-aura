@@ -506,7 +506,7 @@ export default function BenefitsPage() {
           <div className="flex border-b border-[var(--border-main)]">
             <button
               onClick={() => setActiveTab('plans')}
-              className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
+              className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
@@ -516,7 +516,7 @@ export default function BenefitsPage() {
             </button>
             <button
               onClick={() => setActiveTab('enrollments')}
-              className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
+              className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
@@ -526,7 +526,7 @@ export default function BenefitsPage() {
             </button>
             <button
               onClick={() => setActiveTab('claims')}
-              className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
+              className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
@@ -543,7 +543,7 @@ export default function BenefitsPage() {
             {/* Enrolled Benefits */}
             {benefits.filter((b) => b.isEnrolled).length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
                   My Enrolled Benefits
                 </h2>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -588,7 +588,7 @@ export default function BenefitsPage() {
             {/* Available Benefits */}
             {benefits.filter((b) => !b.isEnrolled).length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
                   Available Benefits
                 </h2>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -642,7 +642,7 @@ export default function BenefitsPage() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <Gift className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     No Benefit Plans Available
                   </h3>
                   <p className="text-[var(--text-secondary)]">
@@ -660,7 +660,7 @@ export default function BenefitsPage() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     No Enrollments Yet
                   </h3>
                   <p className="text-[var(--text-secondary)]">
@@ -735,7 +735,7 @@ export default function BenefitsPage() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <Receipt className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     No Claims Yet
                   </h3>
                   <p className="text-[var(--text-secondary)]">

@@ -362,7 +362,7 @@ export default function Feedback360Page() {
               {cycles.map((cycle) => (
                 <div
                   key={cycle.id}
-                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-5"
+                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-6"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{cycle.name}</h3>
@@ -472,19 +472,19 @@ export default function Feedback360Page() {
                 <table className="min-w-full divide-y divide-[var(--border-main)]">
                   <thead className="bg-[var(--bg-surface)]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Subject
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Review Type
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Created
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -515,7 +515,7 @@ export default function Feedback360Page() {
                           <PermissionGate permission={Permissions.FEEDBACK_360_SUBMIT}>
                             <button
                               onClick={() => openResponseModal(request)}
-                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded text-white bg-accent-600 hover:bg-accent-700"
+                              className="inline-flex items-center px-4 py-1.5 border border-transparent text-sm font-medium rounded text-white bg-accent-600 hover:bg-accent-700"
                             >
                               <Pencil className="h-4 w-4 mr-1" />
                               Provide Feedback
@@ -548,7 +548,7 @@ export default function Feedback360Page() {
               {summaries.map((summary) => (
                 <div
                   key={summary.id}
-                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-5"
+                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-6"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
@@ -685,7 +685,7 @@ export default function Feedback360Page() {
 
                   <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-subtle)] mt-4">
                     <button
-                      className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)]"
+                      className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)]"
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       View Details
@@ -694,7 +694,7 @@ export default function Feedback360Page() {
                       <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
                         <button
                           onClick={() => setShareConfirm(summary.id)}
-                          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-accent-600 rounded hover:bg-accent-700"
+                          className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-white bg-accent-600 rounded hover:bg-accent-700"
                         >
                           <Share2 className="h-4 w-4 mr-1" />
                           Share
@@ -714,7 +714,7 @@ export default function Feedback360Page() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Create 360 Feedback Cycle
               </h2>
             </div>
@@ -727,7 +727,7 @@ export default function Feedback360Page() {
                   type="text"
                   value={cycleForm.name}
                   onChange={(e) => setCycleForm({ ...cycleForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="Q4 2024 Performance Review"
                 />
               </div>
@@ -738,7 +738,7 @@ export default function Feedback360Page() {
                 <textarea
                   value={cycleForm.description}
                   onChange={(e) => setCycleForm({ ...cycleForm, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={2}
                 />
               </div>
@@ -751,7 +751,7 @@ export default function Feedback360Page() {
                     type="date"
                     value={cycleForm.startDate}
                     onChange={(e) => setCycleForm({ ...cycleForm, startDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
@@ -762,7 +762,7 @@ export default function Feedback360Page() {
                     type="date"
                     value={cycleForm.endDate}
                     onChange={(e) => setCycleForm({ ...cycleForm, endDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -777,7 +777,7 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, nominationDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
@@ -790,7 +790,7 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, selfReviewDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -805,7 +805,7 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, peerReviewDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
@@ -818,7 +818,7 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, managerReviewDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -835,7 +835,7 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, minPeersRequired: parseInt(e.target.value) })
                     }
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
@@ -850,7 +850,7 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, maxPeersAllowed: parseInt(e.target.value) })
                     }
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -946,7 +946,7 @@ export default function Feedback360Page() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Provide Feedback</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide Feedback</h2>
               <p className="text-sm text-[var(--text-muted)] mt-1">
                 {selectedRequest.reviewerType} review for Employee #
                 {selectedRequest.subjectEmployeeId.slice(0, 8)}
@@ -1020,7 +1020,7 @@ export default function Feedback360Page() {
                   onChange={(e) =>
                     setResponseForm({ ...responseForm, strengths: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="What does this person do well?"
                 />
@@ -1034,7 +1034,7 @@ export default function Feedback360Page() {
                   onChange={(e) =>
                     setResponseForm({ ...responseForm, areasForImprovement: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="What areas could they improve?"
                 />
@@ -1048,7 +1048,7 @@ export default function Feedback360Page() {
                   onChange={(e) =>
                     setResponseForm({ ...responseForm, additionalComments: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="Any other feedback or observations?"
                 />

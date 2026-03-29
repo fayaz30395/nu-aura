@@ -324,7 +324,7 @@ export default function KekaImportPage() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Admin
             </button>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               KEKA Data Import
             </h1>
             <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -365,7 +365,7 @@ export default function KekaImportPage() {
             <div className="skeuo-card p-6 space-y-6">
               {/* Download Templates */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3 flex items-center">
                   <Download className="w-5 h-5 mr-2" />
                   Download Template
                 </h3>
@@ -405,7 +405,7 @@ export default function KekaImportPage() {
 
               {/* File Upload */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3 flex items-center">
                   <Upload className="w-5 h-5 mr-2" />
                   Upload File
                 </h3>
@@ -494,7 +494,7 @@ export default function KekaImportPage() {
           {step === 'mapping' && (
             <div className="skeuo-card p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center">
                   <MapPin className="w-5 h-5 mr-2" />
                   Column Mapping
                 </h3>
@@ -655,7 +655,7 @@ export default function KekaImportPage() {
 
               {/* Preview Table */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3 flex items-center">
                   <Eye className="w-5 h-5 mr-2" />
                   Data Preview (First 10 rows)
                 </h3>
@@ -711,7 +711,7 @@ export default function KekaImportPage() {
           {step === 'import' && preview && (
             <div className="skeuo-card p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center">
                   <Settings className="w-5 h-5 mr-2" />
                   Import Options
                 </h3>
@@ -820,7 +820,7 @@ export default function KekaImportPage() {
               {/* Status Badge */}
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] flex items-center">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center">
                     {result.status === 'SUCCESS' ? (
                       <>
                         <CheckCircle className="w-6 h-6 text-success-500 mr-2" />

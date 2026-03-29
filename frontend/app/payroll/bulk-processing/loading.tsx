@@ -55,7 +55,7 @@ export default function BulkProcessingLoading() {
           <div className="h-4 w-20 bg-[var(--bg-surface)] rounded ml-auto" />
         </div>
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="flex items-center gap-4 px-4 py-3 border-b border-[var(--border-main)]">
+          <div key={i} className="flex items-center gap-4 px-4 py-4 border-b border-[var(--border-main)]">
             <div className="w-4 h-4 bg-[var(--bg-surface)] rounded" />
             <div className="w-8 h-8 bg-[var(--bg-surface)] rounded-full flex-shrink-0" />
             <div className="space-y-1 flex-1">

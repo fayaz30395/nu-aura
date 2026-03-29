@@ -516,7 +516,7 @@ export default function DashboardPage() {
           <CardContent className="p-6 sm:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-4">
                   <h1 className="text-page-title skeuo-emboss">
                     Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
                   </h1>
@@ -529,15 +529,15 @@ export default function DashboardPage() {
                   )}
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3 min-w-[140px]">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
                   <p className="text-stat-medium" suppressHydrationWarning>
                     {currentTime?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) ?? '--:--'}
                   </p>
                   <p className="text-caption">Current time</p>
                 </div>
                 {analytics.viewType !== 'EMPLOYEE' && (
-                  <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3 min-w-[140px]">
+                  <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
                     <p className="text-caption">Team size</p>
                     <p className="text-stat-medium">{analytics.teamSize}</p>
                   </div>
@@ -557,7 +557,7 @@ export default function DashboardPage() {
                   <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-[var(--accent-primary)]" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Today&apos;s Attendance</h3>
+                  <h3 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">Today&apos;s Attendance</h3>
                   {timeEntries.length > 0 ? (
                     <div className="flex flex-wrap items-center gap-4 mt-1">
                       {/* Show first check-in time */}
@@ -704,7 +704,7 @@ export default function DashboardPage() {
                     <button
                       key={idx}
                       onClick={() => router.push(action.href)}
-                      className="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px]"
+                      className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px]"
                     >
                       <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
                         <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -736,7 +736,7 @@ export default function DashboardPage() {
                     { label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info' },
                     { label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger' },
                   ].map((item) => (
-                    <div key={item.label} className="text-center p-4 sm:p-5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+                    <div key={item.label} className="text-center p-4 sm:p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
                       <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl ${item.tone}`}>
                         <item.icon className="h-5 w-5" />
                       </div>
@@ -1012,7 +1012,7 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-lg w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Event Details
               </h3>
               <button
@@ -1158,7 +1158,7 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate pr-4">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate pr-4">
                 {selectedEmail.title}
               </h3>
               <button
@@ -1223,7 +1223,7 @@ export default function DashboardPage() {
                   <HardDrive className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate">
                     {selectedFile.driveFile.name}
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)]">{selectedFile.subtitle}</p>

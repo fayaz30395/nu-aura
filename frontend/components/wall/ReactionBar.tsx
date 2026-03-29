@@ -93,7 +93,7 @@ export function ReactionBar({
               onReact('LIKE');
             }
           }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg transition-colors ${
             hasReacted
               ? 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-200'
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
@@ -141,7 +141,7 @@ export function ReactionBar({
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onToggleComments}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
+        className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
       >
         <MessageCircle size={16} />
         {commentCount > 0 && (

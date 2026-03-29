@@ -93,7 +93,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Error Alert */}
           {error && (
             <div className="flex items-start gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl animate-in slide-in-from-top-2 duration-300">
@@ -127,7 +127,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
               }}
               onPaste={handlePaste}
               disabled={isVerifying}
-              className={`w-full px-4 py-3 text-center font-mono text-2xl tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all disabled:opacity-50 ${
+              className={`w-full px-4 py-4 text-center font-mono text-2xl tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all disabled:opacity-50 ${
                 error
                   ? 'border-danger-500 dark:border-danger-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100'
                   : 'border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500'
@@ -140,7 +140,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
           <Button
             type="submit"
             variant="primary"
-            className="w-full py-3"
+            className="w-full py-4"
             isLoading={isVerifying}
             disabled={isVerifying || code.length < (useBackupCode ? 12 : 6)}
           >

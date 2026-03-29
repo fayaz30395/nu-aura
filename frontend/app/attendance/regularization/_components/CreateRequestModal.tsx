@@ -282,7 +282,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           <textarea
                             {...register('reason')}
                             rows={4}
-                            className="input-aura w-full px-4 py-3"
+                            className="input-aura w-full px-4 py-4"
                             placeholder="Please explain why you need attendance regularization..."
                           />
                           <div className="flex items-center justify-between mt-2">
@@ -322,7 +322,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                                 onClick={() => onQuickReason(template)}
                                 whileHover={{ scale: 1.05, y: -1 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="px-3 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-accent-400 hover:text-accent-700 dark:hover:text-accent-400 transition-all"
+                                className="px-4 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-accent-400 hover:text-accent-700 dark:hover:text-accent-400 transition-all"
                               >
                                 {template}
                               </motion.button>

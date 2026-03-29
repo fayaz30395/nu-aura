@@ -237,7 +237,7 @@ export default function ReviewCyclesPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold skeuo-emboss">Review Cycles</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Review Cycles</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {
@@ -260,7 +260,7 @@ export default function ReviewCyclesPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as CycleType | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="ANNUAL">Annual</option>
@@ -278,7 +278,7 @@ export default function ReviewCyclesPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as CycleStatus | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="PLANNING">Planning</option>
@@ -316,7 +316,7 @@ export default function ReviewCyclesPage() {
               <div key={cycle.id} className="card-interactive p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold mb-2">{cycle.name}</h3>
+                    <h3 className="text-xl font-semibold mb-2">{cycle.name}</h3>
                     <div className="flex gap-2 mb-3 flex-wrap">
                       <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(cycle.cycleType)}>
                         {cycle.cycleType}
@@ -366,7 +366,7 @@ export default function ReviewCyclesPage() {
                     <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                       <button
                         onClick={() => openActivateModal(cycle)}
-                        className="flex-1 px-3 py-2 tint-success text-success-600 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
+                        className="flex-1 px-4 py-2 tint-success text-success-600 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
                       >
                         <Play className="h-4 w-4" />
                         Activate
@@ -376,7 +376,7 @@ export default function ReviewCyclesPage() {
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(cycle)}
-                      className="flex-1 px-3 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
                     >
                       Edit
                     </button>
@@ -384,7 +384,7 @@ export default function ReviewCyclesPage() {
                   <PermissionGate permission={Permissions.REVIEW_DELETE}>
                     <button
                       onClick={() => openDeleteConfirm(cycle)}
-                      className="flex-1 px-3 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-4 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
                     >
                       Delete
                     </button>
@@ -412,7 +412,7 @@ export default function ReviewCyclesPage() {
                         type="text"
                         placeholder="e.g., Annual Review 2024"
                         {...register('name')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.name && (
                         <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>
@@ -426,7 +426,7 @@ export default function ReviewCyclesPage() {
                       <textarea
                         rows={3}
                         {...register('description')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.description && (
                         <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>
@@ -440,7 +440,7 @@ export default function ReviewCyclesPage() {
                         </label>
                         <select
                           {...register('cycleType')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         >
                           <option value="ANNUAL">Annual</option>
                           <option value="SEMI_ANNUAL">Semi-Annual</option>
@@ -460,7 +460,7 @@ export default function ReviewCyclesPage() {
                         </label>
                         <select
                           {...register('status')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         >
                           <option value="PLANNING">Planning</option>
                           <option value="ACTIVE">Active</option>
@@ -482,7 +482,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('startDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.startDate && (
                           <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -496,7 +496,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('endDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.endDate && (
                           <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -512,7 +512,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('reviewDeadline')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.reviewDeadline && (
                           <p className="text-danger-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
@@ -526,7 +526,7 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('selfReviewDeadline')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.selfReviewDeadline && (
                           <p className="text-danger-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>

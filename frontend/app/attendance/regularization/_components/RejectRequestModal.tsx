@@ -77,7 +77,7 @@ export function RejectRequestModal({
                       <textarea
                         {...register('reason')}
                         rows={4}
-                        className="input-aura w-full px-4 py-3"
+                        className="input-aura w-full px-4 py-4"
                         placeholder="Please explain why you are rejecting this regularization request..."
                       />
                       <div className="flex items-center justify-between mt-2">

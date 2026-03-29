@@ -209,7 +209,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+              className={`px-4 py-1.5 text-sm rounded-lg transition-colors ${
                 timeRange === range
                   ? 'bg-accent-500 text-white'
                   : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600'
@@ -394,7 +394,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                     key={spender.employeeId}
                     className="border-b border-surface-100 dark:border-surface-800 last:border-0"
                   >
-                    <td className="py-3">
+                    <td className="py-4">
                       <span
                         className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                           index === 0
@@ -409,16 +409,16 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                         {index + 1}
                       </span>
                     </td>
-                    <td className="py-3">
+                    <td className="py-4">
                       <p className="font-medium text-surface-900 dark:text-surface-50">
                         {spender.employeeName}
                       </p>
                       <p className="text-sm text-surface-500">{spender.employeeCode}</p>
                     </td>
-                    <td className="py-3 text-right text-surface-600 dark:text-surface-400">
+                    <td className="py-4 text-right text-surface-600 dark:text-surface-400">
                       {spender.claimCount}
                     </td>
-                    <td className="py-3 text-right font-semibold text-surface-900 dark:text-surface-50">
+                    <td className="py-4 text-right font-semibold text-surface-900 dark:text-surface-50">
                       ${spender.totalAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </td>
                   </tr>

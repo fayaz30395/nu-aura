@@ -70,7 +70,7 @@ export default function NewTemplatePage() {
                         <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+                        <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                             New <span className="text-accent-700">Template</span>
                         </h1>
                         <p className="text-[var(--text-muted)] font-bold">Define the core metadata for your onboarding blueprint.</p>

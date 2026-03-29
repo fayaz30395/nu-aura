@@ -112,17 +112,17 @@ export default function ManagerDashboardPage() {
 
   // Loading skeleton
   const DashboardSkeleton = () => (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
           <Skeleton key={i} className="h-[80px] rounded-2xl" />
         ))}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Skeleton className="h-[220px] rounded-2xl" />
         <Skeleton className="h-[220px] rounded-2xl" />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Skeleton className="h-[220px] rounded-2xl lg:col-span-2" />
         <Skeleton className="h-[220px] rounded-2xl" />
       </div>
@@ -146,7 +146,7 @@ export default function ManagerDashboardPage() {
           <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl p-6 flex items-center gap-4">
             <AlertCircle className="h-8 w-8 text-danger-600 dark:text-danger-400" />
             <div>
-              <h3 className="text-lg font-semibold text-danger-900 dark:text-danger-200">
+              <h3 className="text-xl font-semibold text-danger-900 dark:text-danger-200">
                 Error Loading Dashboard
               </h3>
               <p className="text-danger-700 dark:text-danger-400">{error instanceof Error ? error.message : String(error)}</p>
@@ -197,7 +197,7 @@ export default function ManagerDashboardPage() {
         variants={containerVariants}
       >
         {/* Header Section */}
-        <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="h-1.5 w-1.5 rounded-full bg-accent-500 animate-pulse" />
@@ -210,8 +210,8 @@ export default function ManagerDashboardPage() {
               Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 border shadow-sm transition-all duration-200 text-xs ${teamOverview.teamHealthStatus === 'EXCELLENT'
+          <div className="flex items-center gap-4">
+            <div className={`px-4 py-1.5 rounded-xl flex items-center gap-1.5 border shadow-sm transition-all duration-200 text-xs ${teamOverview.teamHealthStatus === 'EXCELLENT'
               ? 'bg-success-500/10 border-success-500/20 text-success-700 dark:text-success-400'
               : 'bg-warning-500/10 border-warning-500/20 text-warning-700 dark:text-warning-400'
               }`}>
@@ -222,13 +222,13 @@ export default function ManagerDashboardPage() {
         </motion.div>
 
         {/* Global Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <motion.div variants={itemVariants}>
             <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Users className="h-10 w-10 text-accent-500" />
               </div>
-              <CardContent className="p-3">
+              <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Team Force</p>
                   <div className="flex items-center gap-2">
@@ -249,7 +249,7 @@ export default function ManagerDashboardPage() {
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <UserCheck className="h-10 w-10 text-success-500" />
               </div>
-              <CardContent className="p-3">
+              <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Availability Today</p>
                   <div className="flex items-center gap-2">
@@ -270,7 +270,7 @@ export default function ManagerDashboardPage() {
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Calendar className="h-10 w-10 text-warning-500" />
               </div>
-              <CardContent className="p-3">
+              <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Out of Office</p>
                   <div className="flex items-center gap-2">
@@ -291,7 +291,7 @@ export default function ManagerDashboardPage() {
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Zap className="h-10 w-10 text-accent-500" />
               </div>
-              <CardContent className="p-3">
+              <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Active Tasks</p>
                   <div className="flex items-center gap-2">
@@ -309,21 +309,21 @@ export default function ManagerDashboardPage() {
         </div>
 
         {/* Central Intelligence Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Team Attendance Analytics */}
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden max-h-[220px]">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Activity className="h-4 w-4 text-accent-500" />
                     <span className="text-sm">Attendance Flow</span>
                   </div>
                   <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter self-center">Real-time</Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-3">
-                <div className="space-y-3">
+              <CardContent className="p-4">
+                <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-2.5 bg-accent-500/5 rounded-xl border border-accent-500/10">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Weekly Rate</p>
@@ -358,14 +358,14 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden max-h-[280px]">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
-                <CardTitle className="flex items-center gap-3">
+                <CardTitle className="flex items-center gap-4">
                   <Star className="h-4 w-4 text-warning-500" />
                   <span className="text-sm">Performance DNA</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
-                  <div className="space-y-3">
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                  <div className="space-y-4">
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Avg Rating</p>
                       <div className="flex items-baseline gap-2">
@@ -420,7 +420,7 @@ export default function ManagerDashboardPage() {
                   {teamLeave.pendingLeaveRequests.slice(0, 5).map((leave) => (
                     <div
                       key={leave.requestId}
-                      className="px-3 py-2 hover:bg-[var(--bg-card-hover)] transition-all duration-200 group cursor-pointer"
+                      className="px-4 py-2 hover:bg-[var(--bg-card-hover)] transition-all duration-200 group cursor-pointer"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
@@ -447,7 +447,7 @@ export default function ManagerDashboardPage() {
                   ))}
 
                   {teamLeave.pendingLeaveRequests.length === 0 && (
-                    <div className="p-5 text-center">
+                    <div className="p-6 text-center">
                       <div className="h-10 w-10 rounded-full bg-success-500/10 flex items-center justify-center mx-auto mb-2">
                         <CheckCircle className="h-5 w-5 text-success-500" />
                       </div>
@@ -469,7 +469,7 @@ export default function ManagerDashboardPage() {
                   <span className="text-sm">Immediate Acts</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-3">
+              <CardContent className="p-4">
                 <div className="space-y-1.5">
                   {[
                     { label: 'Leaves', count: actionItems.leaveApprovals, icon: Calendar, color: 'text-warning-500', bg: 'bg-warning-500/10' },
@@ -525,7 +525,7 @@ export default function ManagerDashboardPage() {
                 )}
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-3">
+            <CardContent className="p-4">
               {/* Loading state */}
               {teamProjectsLoading && (
                 <div className="space-y-2">
@@ -563,15 +563,15 @@ export default function ManagerDashboardPage() {
 
               {/* Team member project cards */}
               {!teamProjectsLoading && !teamProjectsError && teamProjectsData && teamProjectsData.teamMembers.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {teamProjectsData.teamMembers.map((member: TeamMemberWithProjects) => (
                     <div
                       key={member.employeeId}
-                      className="p-3 rounded-xl border border-[var(--border-main)]/30 bg-[var(--bg-secondary)]/30 dark:bg-[var(--bg-secondary)]/20 hover:border-[var(--border-main)] transition-all duration-200"
+                      className="p-4 rounded-xl border border-[var(--border-main)]/30 bg-[var(--bg-secondary)]/30 dark:bg-[var(--bg-secondary)]/20 hover:border-[var(--border-main)] transition-all duration-200"
                     >
                       {/* Member header */}
                       <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-md">
                             {member.employeeName?.charAt(0)}
                           </div>
@@ -588,7 +588,7 @@ export default function ManagerDashboardPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           {member.isOverAllocated && (
                             <div className="flex items-center gap-1 text-xs font-black text-danger-600 dark:text-danger-400 bg-danger-500/10 px-2.5 py-1 rounded-full">
                               <AlertTriangle className="h-3.5 w-3.5" />
@@ -617,7 +617,7 @@ export default function ManagerDashboardPage() {
                               key={project.projectId}
                               className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] transition-all duration-200 group"
                             >
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-4">
                                 <span className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${priorityDotColor[project.projectPriority] || 'bg-slate-400'}`} />
                                 <button
                                   onClick={() => router.push(`/projects/${project.projectId}`)}
@@ -663,7 +663,7 @@ export default function ManagerDashboardPage() {
               exit={{ height: 0, opacity: 0 }}
             >
               <Card className="border-0 shadow-2xl bg-danger-50 dark:bg-danger-950 overflow-hidden">
-                <CardContent className="p-3">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <div className="h-7 w-7 rounded-lg bg-danger-500 text-white flex items-center justify-center shadow-md">
@@ -672,9 +672,9 @@ export default function ManagerDashboardPage() {
                       <h2 className="text-sm font-black text-[var(--text-primary)] tracking-tight">System Alerts</h2>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {teamAlerts.slice(0, 3).map((alert) => (
-                      <div key={alert.id} className="p-3 rounded-xl bg-white/40 dark:bg-black/20 border border-danger-500/10">
+                      <div key={alert.id} className="p-4 rounded-xl bg-white/40 dark:bg-black/20 border border-danger-500/10">
                         <div className="flex items-center gap-2 mb-1">
                           <Badge className="bg-danger-500 text-white font-black px-1.5 py-0 text-[10px]">CRITICAL</Badge>
                           <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">{alert.type}</span>
@@ -704,7 +704,7 @@ export default function ManagerDashboardPage() {
                 Team Goals
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-3 pb-3 pt-0">
+            <CardContent className="px-4 pb-3 pt-0">
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2">
                   <div className="p-2 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
@@ -761,7 +761,7 @@ export default function ManagerDashboardPage() {
                 Engagement & Feedback
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-3 pb-3 pt-0">
+            <CardContent className="px-4 pb-3 pt-0">
               <div className="space-y-1.5">
                 <div className="p-2.5 bg-[var(--bg-secondary)] rounded-lg">
                   <div className="flex items-center justify-between">

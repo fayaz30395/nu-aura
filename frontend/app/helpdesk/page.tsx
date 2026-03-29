@@ -82,7 +82,7 @@ export default function HelpdeskPage() {
               key={card.label}
               className="skeuo-card p-4"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className={`p-2 rounded-lg ${card.bg}`}>
                   <card.icon className={`w-5 h-5 ${card.color}`} />
                 </div>
@@ -110,7 +110,7 @@ export default function HelpdeskPage() {
               {escalations.slice(0, 5).map((esc) => (
                 <div
                   key={esc.id}
-                  className="flex items-center justify-between bg-white/60 dark:bg-white/5 rounded-lg px-3 py-2"
+                  className="flex items-center justify-between bg-white/60 dark:bg-white/5 rounded-lg px-4 py-2"
                 >
                   <div>
                     <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -135,7 +135,7 @@ export default function HelpdeskPage() {
             onClick={() => router.push('/helpdesk/tickets')}
             className="flex items-center justify-between card-interactive p-4 text-left"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Ticket className="w-5 h-5 text-accent-700 dark:text-accent-400" />
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Tickets</p>
@@ -149,7 +149,7 @@ export default function HelpdeskPage() {
             onClick={() => router.push('/helpdesk/sla')}
             className="flex items-center justify-between card-interactive p-4 text-left"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Settings className="w-5 h-5 text-[var(--text-muted)]" />
               <div>
                 <p className="font-medium text-[var(--text-primary)]">SLA Policies</p>
@@ -163,7 +163,7 @@ export default function HelpdeskPage() {
             onClick={() => router.push('/helpdesk/sla')}
             className="flex items-center justify-between card-interactive p-4 text-left"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Bell className="w-5 h-5 text-[var(--text-muted)]" />
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Escalations</p>
@@ -177,7 +177,7 @@ export default function HelpdeskPage() {
             onClick={() => router.push('/helpdesk/knowledge-base')}
             className="flex items-center justify-between card-interactive p-4 text-left"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <BookOpen className="w-5 h-5 text-[var(--text-muted)]" />
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Knowledge Base</p>
@@ -191,7 +191,7 @@ export default function HelpdeskPage() {
             onClick={() => router.push('/helpdesk/sla')}
             className="flex items-center justify-between card-interactive p-4 text-left"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <BarChart3 className="w-5 h-5 text-[var(--text-muted)]" />
               <div>
                 <p className="font-medium text-[var(--text-primary)]">SLA Dashboard</p>

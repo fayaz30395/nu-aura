@@ -71,7 +71,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({ toast, on
   return (
     <div
       className={`
-        flex items-start gap-3 p-4 rounded-lg border-l-4 shadow-lg
+        flex items-start gap-4 p-4 rounded-lg border-l-4 shadow-lg
         animate-in slide-in-from-right fade-in duration-300
         ${toastColors[toast.type]}
       `}

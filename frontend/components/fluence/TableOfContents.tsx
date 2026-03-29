@@ -98,7 +98,7 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
             <motion.button
               key={heading.id}
               onClick={() => handleHeadingClick(heading.id)}
-              className={`block w-full text-left px-3 py-1.5 rounded-md text-xs transition-all line-clamp-2 ${
+              className={`block w-full text-left px-4 py-1.5 rounded-md text-xs transition-all line-clamp-2 ${
                 activeHeadingId === heading.id
                   ? 'bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] font-medium'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'

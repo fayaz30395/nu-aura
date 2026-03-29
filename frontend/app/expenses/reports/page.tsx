@@ -70,21 +70,21 @@ export default function ExpenseReportsPage() {
               </h1>
               <p className="text-surface-500 mt-1">Organization-wide expense analytics</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-surface-500" />
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="px-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className="px-4 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 <span className="text-surface-400">to</span>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="px-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className="px-4 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
             </div>
@@ -100,17 +100,17 @@ export default function ExpenseReportsPage() {
             <>
               {/* Summary Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5">
+                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
                   <p className="text-sm text-surface-500 mb-1">Total Claims</p>
                   <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">{report.totalClaims}</p>
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5">
+                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
                   <p className="text-sm text-surface-500 mb-1">Total Amount</p>
                   <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">
                     {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(report.totalAmount)}
                   </p>
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5">
+                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
                   <p className="text-sm text-surface-500 mb-1">Avg per Claim</p>
                   <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">
                     {report.totalClaims > 0
@@ -118,7 +118,7 @@ export default function ExpenseReportsPage() {
                       : '-'}
                   </p>
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5">
+                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
                   <p className="text-sm text-surface-500 mb-1">Categories</p>
                   <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">{categoryChartData.length}</p>
                 </div>

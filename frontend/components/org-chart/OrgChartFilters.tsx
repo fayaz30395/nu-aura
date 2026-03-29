@@ -46,7 +46,7 @@ export function OrgChartFilters({
   onMaxDepthChange,
 }: OrgChartFiltersProps) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-4">
       {/* Search */}
       <div className="relative flex-1 min-w-[200px] max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-tertiary)]" />
@@ -75,7 +75,7 @@ export function OrgChartFilters({
             key={opt.value}
             onClick={() => onViewModeChange(opt.value)}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all',
+              'flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-all',
               viewMode === opt.value
                 ? 'bg-accent-700 text-white shadow-sm'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]',
@@ -92,7 +92,7 @@ export function OrgChartFilters({
       <select
         value={selectedDepartment}
         onChange={e => onDepartmentChange(e.target.value)}
-        className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
+        className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
       >
         <option value="">All Departments</option>
         {departments.map(dept => (
@@ -107,7 +107,7 @@ export function OrgChartFilters({
         <select
           value={maxDepth}
           onChange={e => onMaxDepthChange(Number(e.target.value))}
-          className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
+          className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
         >
           {DEPTH_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>

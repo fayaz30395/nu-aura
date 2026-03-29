@@ -145,7 +145,7 @@ function FluenceDriveContent() {
             <HardDrive className="h-8 w-8 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               NU-Fluence Drive
             </h1>
             <p className="text-[var(--text-muted)]">
@@ -180,7 +180,7 @@ function FluenceDriveContent() {
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-3 font-medium border-b-2 transition-colors whitespace-nowrap',
+                  'flex items-center gap-2 px-4 py-4 font-medium border-b-2 transition-colors whitespace-nowrap',
                   activeCategory === cat.id
                     ? 'text-accent-600 dark:text-accent-400 border-accent-600 dark:border-accent-400'
                     : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
@@ -218,7 +218,7 @@ function FluenceDriveContent() {
         {attachments.length === 0 && !isLoading && (
           <Card className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 flex items-center gap-2">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center gap-2">
                 <Upload className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 Getting Started
               </h3>

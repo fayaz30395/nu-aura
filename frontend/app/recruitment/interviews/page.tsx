@@ -87,21 +87,21 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           placeholder={selectedOption ? selectedOption.label : placeholder}
-          className="w-full px-3 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+          className="w-full px-4 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
         />
         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
       </div>
       {isOpen && (
         <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl shadow-lg">
           {filtered.length === 0 ? (
-            <div className="px-3 py-2 text-sm text-[var(--text-muted)]">No results found</div>
+            <div className="px-4 py-2 text-sm text-[var(--text-muted)]">No results found</div>
           ) : (
             filtered.map(option => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-accent-50 transition-colors ${
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-accent-50 transition-colors ${
                   option.value === value ? 'bg-accent-50 text-accent-700' : 'text-[var(--text-primary)]'
                 }`}
               >
@@ -550,7 +550,7 @@ const formatDateTime = (dateString?: string): string => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
                   <Calendar className="h-6 w-6 text-accent-700" />
@@ -563,7 +563,7 @@ const formatDateTime = (dateString?: string): string => {
             </CardContent>
           </Card>
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
                   <Clock className="h-6 w-6 text-accent-600" />
@@ -576,7 +576,7 @@ const formatDateTime = (dateString?: string): string => {
             </CardContent>
           </Card>
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-success-600" />
@@ -589,7 +589,7 @@ const formatDateTime = (dateString?: string): string => {
             </CardContent>
           </Card>
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-warning-50 flex items-center justify-center">
                   <AlertCircle className="h-6 w-6 text-warning-600" />
@@ -649,14 +649,14 @@ const formatDateTime = (dateString?: string): string => {
                 <table className="w-full table-aura">
                   <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Round</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Scheduled</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Interviewer</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Result</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Round</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Scheduled</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Interviewer</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Result</th>
+                      <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--border-main)]">
@@ -910,7 +910,7 @@ const formatDateTime = (dateString?: string): string => {
 
                   {/* Time Slot Preview when Google Meet is enabled */}
                   {createMeetToggle && watchCreate('scheduledAt') && (
-                    <div className="px-3 py-2 rounded-lg bg-accent-50 border border-accent-200 text-xs text-accent-700 flex items-center gap-2">
+                    <div className="px-4 py-2 rounded-lg bg-accent-50 border border-accent-200 text-xs text-accent-700 flex items-center gap-2">
                       <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>
                         Calendar event: {new Date(watchCreate('scheduledAt')).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
@@ -933,7 +933,7 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('meetingLink')}
                         placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}
                         disabled={createMeetToggle}
-                        className={`w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 ${
+                        className={`w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 ${
                           createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
                         }`}
                       />
@@ -1106,7 +1106,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Technical Questions */}
                   {generatedQuestions.technicalQuestions && generatedQuestions.technicalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Technical Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Technical Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.technicalQuestions.map((q: TechnicalQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1130,7 +1130,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Behavioral Questions */}
                   {generatedQuestions.behavioralQuestions && generatedQuestions.behavioralQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Behavioral Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Behavioral Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.behavioralQuestions.map((q: BehavioralQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1145,7 +1145,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Situational Questions */}
                   {generatedQuestions.situationalQuestions && generatedQuestions.situationalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Situational Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Situational Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.situationalQuestions.map((q: SituationalQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1160,7 +1160,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Cultural Fit Questions */}
                   {generatedQuestions.culturalFitQuestions && generatedQuestions.culturalFitQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Cultural Fit Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Cultural Fit Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.culturalFitQuestions.map((q: CulturalFitQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1175,7 +1175,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Role-Specific Questions */}
                   {generatedQuestions.roleSpecificQuestions && generatedQuestions.roleSpecificQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Role-Specific Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Role-Specific Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.roleSpecificQuestions.map((q: RoleSpecificQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">

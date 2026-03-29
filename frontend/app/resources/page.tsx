@@ -253,7 +253,7 @@ export default function ResourcesPage() {
             return (
               <Link key={card.href} href={card.href}>
                 <Card hover className="h-full">
-                  <CardContent className="flex h-full flex-col p-5">
+                  <CardContent className="flex h-full flex-col p-6">
                     <div className="flex items-start justify-between">
                       <div className={`rounded-lg p-2.5 ${card.color}`}>
                         <Icon className="h-6 w-6" />

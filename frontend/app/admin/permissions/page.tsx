@@ -404,10 +404,10 @@ export default function PermissionsPage() {
                     <table className="w-full text-left text-sm">
                       <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                         <tr>
-                          <th className="px-6 py-3 font-medium">User</th>
-                          <th className="px-6 py-3 font-medium">Email</th>
-                          <th className="px-6 py-3 font-medium">Assigned Roles</th>
-                          <th className="px-6 py-3 font-medium text-right">Actions</th>
+                          <th className="px-6 py-2 font-medium">User</th>
+                          <th className="px-6 py-2 font-medium">Email</th>
+                          <th className="px-6 py-2 font-medium">Assigned Roles</th>
+                          <th className="px-6 py-2 font-medium text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
@@ -442,7 +442,7 @@ export default function PermissionsPage() {
                             <td className="px-6 py-4 text-right">
                               <button
                                 onClick={() => openEditUserModal(user)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors"
+                                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors"
                               >
                                 <Pencil className="w-4 h-4" />
                                 Edit Roles
@@ -606,7 +606,7 @@ function EditRoleModal({
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Edit Role: {role.code}
             </h2>
             <p className="text-sm text-[var(--text-muted)]">
@@ -752,7 +752,7 @@ function CreateRoleModal({
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">Create New Role</h2>
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Create New Role</h2>
             <p className="text-sm text-[var(--text-muted)]">Create a custom role with specific permissions</p>
           </div>
           <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
@@ -909,7 +909,7 @@ function EditUserModal({
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Edit User Roles
             </h2>
             <p className="text-sm text-[var(--text-muted)]">

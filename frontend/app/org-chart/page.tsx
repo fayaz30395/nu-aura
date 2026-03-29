@@ -31,7 +31,7 @@ interface StatItemProps {
 
 function StatItem({ icon, label, value }: StatItemProps) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-4 px-4 py-4">
       <div className="h-9 w-9 rounded-lg bg-accent-100 dark:bg-accent-900/40 flex items-center justify-center flex-shrink-0">
         {icon}
       </div>
@@ -64,7 +64,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
     <div className="skeuo-card overflow-hidden">
       <button
         onClick={() => setExpanded(p => !p)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors"
+        className="w-full flex items-center justify-between px-4 py-4 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors"
       >
         <div className="flex items-center gap-2">
           <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />
@@ -76,7 +76,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
       </button>
 
       {expanded && (
-        <div className="p-3 space-y-1 max-h-80 overflow-y-auto">
+        <div className="p-4 space-y-1 max-h-80 overflow-y-auto">
           {employees
             .sort((a, b) => {
               const levelOrder: Record<string, number> = {
@@ -92,7 +92,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
               <div
                 key={emp.id}
                 className={cn(
-                  'flex items-center gap-3 p-2 rounded-lg transition-colors',
+                  'flex items-center gap-4 p-2 rounded-lg transition-colors',
                   emp.id === highlightedId
                     ? 'bg-accent-100 dark:bg-accent-900/40 ring-1 ring-accent-400'
                     : 'hover:bg-slate-50 dark:hover:bg-slate-800/50',
@@ -353,7 +353,7 @@ export default function OrgChartPage() {
         )}
 
         {/* ── Legend ──────────────────────────────────────────────── */}
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[var(--text-secondary)]">
+        <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-[var(--text-secondary)]">
           <span className="font-medium mr-1">Legend:</span>
           <span className="flex items-center gap-1">
             <span className="inline-block w-3 h-3 rounded bg-accent-100 border border-accent-400" />

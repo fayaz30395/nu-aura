@@ -129,7 +129,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Leave Calendar</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Leave Calendar</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('my')}
@@ -163,7 +163,7 @@ export default function LeaveCalendarPage() {
               </h2>
               <button
                 onClick={goToToday}
-                className="px-3 py-1 text-sm bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg text-[var(--text-primary)]"
+                className="px-4 py-1 text-sm bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg text-[var(--text-primary)]"
               >
                 Today
               </button>
@@ -321,7 +321,7 @@ export default function LeaveCalendarPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">Apply for Leave</h3>
+            <h3 className="text-xl font-semibold mb-2 text-[var(--text-primary)]">Apply for Leave</h3>
             <p className="text-[var(--text-secondary)] text-sm">Submit a new leave request</p>
           </button>
 
@@ -334,7 +334,7 @@ export default function LeaveCalendarPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">My Leave History</h3>
+            <h3 className="text-xl font-semibold mb-2 text-[var(--text-primary)]">My Leave History</h3>
             <p className="text-[var(--text-secondary)] text-sm">View all your leave requests</p>
           </button>
         </div>

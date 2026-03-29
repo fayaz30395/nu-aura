@@ -231,7 +231,7 @@ export default function ShiftsManagementPage() {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+              <h1 className="text-2xl font-bold skeuo-emboss">
                 <Clock className="h-8 w-8 text-accent-700" />
                 Shift Management
               </h1>
@@ -254,11 +254,11 @@ export default function ShiftsManagementPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-3 rounded-lg relative animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="mb-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-lg relative animate-in fade-in slide-in-from-top-2 duration-300">
               <span className="block sm:inline">{error}</span>
               <button
                 onClick={() => setError(null)}
-                className="absolute top-0 bottom-0 right-0 px-4 py-3"
+                className="absolute top-0 bottom-0 right-0 px-4 py-4"
               >
                 <span className="text-danger-500 text-xl">&times;</span>
               </button>
@@ -291,7 +291,7 @@ export default function ShiftsManagementPage() {
                         <p className="text-sm text-[var(--text-muted)]">{shift.shiftCode}</p>
                       </div>
                       <span
-                        className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                        className={`px-4 py-1 text-xs font-semibold rounded-full ${
                           shift.isActive
                             ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-400'
                             : 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-400'
@@ -473,7 +473,7 @@ export default function ShiftsManagementPage() {
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
                           placeholder="Brief description of this shift..."
                         />
                       </div>

@@ -82,7 +82,7 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
               )}
             </div>
           ) : (
-            <div className="absolute inset-0 flex items-center px-3">
+            <div className="absolute inset-0 flex items-center px-4">
               <span className="text-xs text-[var(--text-muted)]">Unassigned</span>
             </div>
           )}
@@ -171,7 +171,7 @@ export default function CapacityTimelinePage() {
           <div className="w-14 h-14 rounded-full bg-warning-50 flex items-center justify-center mb-4">
             <Info size={24} className="text-warning-600" />
           </div>
-          <h2 className="text-lg font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not Available</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not Available</h2>
           <p className="text-[var(--text-muted)] text-sm max-w-md">
             {error instanceof Error ? error.message : 'The backend Resource Management module is not yet deployed in this environment.'}
           </p>
@@ -213,7 +213,7 @@ export default function CapacityTimelinePage() {
             <div className="flex rounded-lg border border-[var(--border-main)] overflow-hidden">
               <button
                 onClick={() => setViewMode('week')}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
                   viewMode === 'week'
                     ? 'bg-accent-500 text-white'
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
@@ -223,7 +223,7 @@ export default function CapacityTimelinePage() {
               </button>
               <button
                 onClick={() => setViewMode('month')}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
                   viewMode === 'month'
                     ? 'bg-accent-500 text-white'
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
@@ -235,7 +235,7 @@ export default function CapacityTimelinePage() {
             <button
               onClick={() => refetch()}
               disabled={isLoading}
-              className="flex items-center gap-2 px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
             >
               <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
               Refresh
@@ -244,7 +244,7 @@ export default function CapacityTimelinePage() {
         </div>
 
         {error && (
-          <div className="bg-danger-50 border border-danger-200 text-danger-700 dark:bg-danger-900/20 dark:border-danger-800 dark:text-danger-300 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 dark:bg-danger-900/20 dark:border-danger-800 dark:text-danger-300 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
             <AlertTriangle size={15} />
             {error instanceof Error ? error.message : String(error)}
           </div>
@@ -253,15 +253,15 @@ export default function CapacityTimelinePage() {
         {/* Stats */}
         {!isLoading && sorted.length > 0 && (
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-3">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-4">
               <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{sorted.length}</p>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">Employees shown</p>
             </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-3">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-4">
               <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgAlloc}%</p>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">Avg allocation</p>
             </div>
-            <div className={`border rounded-xl px-4 py-3 ${overAllocated > 0 ? 'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800' : 'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800'}`}>
+            <div className={`border rounded-xl px-4 py-4 ${overAllocated > 0 ? 'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800' : 'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800'}`}>
               <p className={`text-2xl font-bold ${overAllocated > 0 ? 'text-danger-700 dark:text-danger-300' : 'text-success-700 dark:text-success-300'}`}>
                 {overAllocated}
               </p>
@@ -279,12 +279,12 @@ export default function CapacityTimelinePage() {
             placeholder="Search employee..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 w-52"
+            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 w-52"
           />
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => <option key={d} value={d}>{d}</option>)}
@@ -303,7 +303,7 @@ export default function CapacityTimelinePage() {
             <p className="text-[var(--text-secondary)] font-medium">No employees found</p>
           </div>
         ) : (
-          <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-5">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-6">
             {/* Legend */}
             <div className="flex items-center gap-4 mb-4 pb-3 border-b border-[var(--border-main)] text-xs text-[var(--text-muted)]">
               <span className="font-medium text-[var(--text-secondary)]">Legend:</span>

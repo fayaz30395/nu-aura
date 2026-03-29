@@ -218,7 +218,7 @@ function FrameworkAdminTab() {
 
       {/* Filters */}
       <Paper className="p-4 border border-[var(--border-main)] skeuo-card">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2 text-[var(--text-muted)]">
             <Filter className="h-4 w-4" />
             <Text size="sm" fw={500}>Filters:</Text>
@@ -438,7 +438,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                         key={skill.id}
                         className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
                       >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <Text size="sm" fw={500} truncate="end">
@@ -547,7 +547,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                       />
                       <Text size="sm" fw={500}>{gap.skillName}</Text>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       <Badge
                         size="xs"
                         color={GAP_LEVEL_COLORS[gap.gapLevel]}
@@ -826,13 +826,13 @@ function TeamViewTab({ managerId }: { managerId: string }) {
           <Title order={4} mb="md" className="text-[var(--text-primary)]">
             Training Recommendations
           </Title>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {gapReport.gaps
               .filter((gap) => gap.recommendedCourses.length > 0)
               .map((gap) => (
                 <div
                   key={gap.skillName}
-                  className="p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
+                  className="p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <BookOpen className="h-4 w-4 text-accent-600" />
@@ -882,7 +882,7 @@ export default function CompetencyMatrixPage() {
       <div className="p-6 max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-3 mb-1">
+          <div className="flex items-center gap-4 mb-1">
             <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/40">
               <BarChart3 className="h-5 w-5 text-accent-700 dark:text-accent-400" />
             </div>

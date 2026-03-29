@@ -82,7 +82,7 @@ export function TeamPresenceWidget({
     ?? (apiRemote ? apiRemote.map(mapRemoteToPresence) : []);
 
   return (
-    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-6">
       {/* On Leave Today */}
       <div className="mb-4">
         <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-2.5">
@@ -91,7 +91,7 @@ export function TeamPresenceWidget({
         {onLeaveLoading && !propOnLeave ? (
           <SkeletonChips />
         ) : onLeaveEmployees.length === 0 ? (
-          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
+          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-4 py-2.5">
             <CheckCircle2 className="h-4 w-4 text-success-500" />
             <p className="text-xs text-[var(--text-muted)]">Everyone is working today</p>
           </div>
@@ -121,7 +121,7 @@ export function TeamPresenceWidget({
         {remoteLoading && !propRemote ? (
           <SkeletonChips />
         ) : remoteWorkers.length === 0 ? (
-          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
+          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-4 py-2.5">
             <CheckCircle2 className="h-4 w-4 text-accent-500" />
             <p className="text-xs text-[var(--text-muted)]">No one is working remotely today</p>
           </div>

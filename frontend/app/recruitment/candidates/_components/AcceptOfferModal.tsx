@@ -42,7 +42,7 @@ export function AcceptOfferModal({
             type="date"
             value={confirmedJoiningDate}
             onChange={(e) => onJoiningDateChange(e.target.value)}
-            className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+            className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
           />
         </div>
         <div className="flex gap-4">

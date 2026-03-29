@@ -23,7 +23,7 @@ export function PageErrorFallback({
           />
         </svg>
       </div>
-      <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{title}</h2>
+      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{title}</h2>
       <p className="text-sm text-[var(--text-muted)] mb-6 max-w-md">
         {error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
       </p>

@@ -471,21 +471,23 @@
   }
 
   .table-aura thead th {
-    @apply px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider;
+    @apply px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border-subtle);
     box-shadow: var(--shadow-skeuo-table-header);
     white-space: nowrap;
+    height: 44px;
     user-select: none;
   }
 
   .table-aura tbody td {
-    @apply px-6 py-4;
+    @apply px-4 py-2 text-sm;
     color: var(--text-primary);
     border-bottom: 1px solid var(--border-subtle);
   }
 
   .table-aura tbody tr {
+    height: 44px;
     transition: background-color 100ms ease-out;
   }
 

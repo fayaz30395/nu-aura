@@ -297,7 +297,7 @@ export function SpaceFormDrawer({
                     type="button"
                     whileTap={{ scale: 0.98 }}
                     onClick={() => field.onChange(opt.value)}
-                    className={`w-full text-left px-4 py-3 rounded-lg border transition-all duration-150 ${
+                    className={`w-full text-left px-4 py-4 rounded-lg border transition-all duration-150 ${
                       field.value === opt.value
                         ? 'border-[var(--accent-700)] bg-[var(--accent-700)]/5 ring-1 ring-[var(--accent-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'

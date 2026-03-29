@@ -265,10 +265,10 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
       {open && query.trim().length >= 2 && (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
-            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching owners...</div>
+            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching owners...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">No owners found</div>
+            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">No owners found</div>
           )}
           {!loading && results.length > 0 && (
             <ul className="max-h-64 overflow-y-auto">
@@ -277,7 +277,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
                   <button
                     type="button"
                     aria-label={`Select ${buildEmployeeName(owner)}`}
-                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(owner)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
@@ -413,10 +413,10 @@ function MultiOwnerTypeahead({
       {open && query.trim().length >= 2 && (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
-            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching owners...</div>
+            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching owners...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">
+            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">
               {values.length >= maxOwners ? 'Maximum owners reached' : 'No owners found'}
             </div>
           )}
@@ -427,7 +427,7 @@ function MultiOwnerTypeahead({
                   <button
                     type="button"
                     aria-label={`Select ${buildEmployeeName(owner)}`}
-                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(owner)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
@@ -1028,7 +1028,7 @@ export default function ProjectsPage() {
         <form onSubmit={handleSubmit(handleCreateProject)}>
           <ModalBody className="space-y-4">
             {formErrorDetails.length > 0 && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 <ul className="space-y-1">
                   {formErrorDetails.map((detail, index) => (
                     <li key={`${index}-${detail}`}>{detail}</li>
@@ -1170,7 +1170,7 @@ export default function ProjectsPage() {
         <form onSubmit={editHandleSubmit(handleEditProject)}>
           <ModalBody className="space-y-4">
             {editFormErrorDetails.length > 0 && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 <ul className="space-y-1">
                   {editFormErrorDetails.map((detail, index) => (
                     <li key={`${index}-${detail}`}>{detail}</li>

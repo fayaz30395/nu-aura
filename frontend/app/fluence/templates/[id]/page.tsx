@@ -132,7 +132,7 @@ export default function TemplateDetailPage() {
               <ArrowLeft className="w-4 h-4" />
               Back to Templates
             </button>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss flex items-center gap-4 mb-2">
+            <h1 className="text-2xl font-bold skeuo-emboss flex items-center gap-4 mb-2">
               {template.icon && <span className="text-2xl">{template.icon}</span>}
               {template.name}
             </h1>
@@ -227,7 +227,7 @@ export default function TemplateDetailPage() {
                     {template.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] px-3 py-1 rounded-full text-sm"
+                        className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] px-4 py-1 rounded-full text-sm"
                       >
                         <Tag className="w-3 h-3" />
                         {tag}

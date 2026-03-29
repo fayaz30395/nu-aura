@@ -277,7 +277,7 @@ export default function WorkloadDashboardPage() {
             </button>
             <button
               onClick={handleExport}
-              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]"
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]"
             >
               <Download className="h-4 w-4" />
               Export
@@ -291,7 +291,7 @@ export default function WorkloadDashboardPage() {
           <select
             value={selectedDateRange}
             onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-            className="input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+            className="input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
           >
             {dateRangeOptions.map((opt) => (
               <option key={opt.key} value={opt.key}>{opt.label}</option>
@@ -307,7 +307,7 @@ export default function WorkloadDashboardPage() {
                 key={opt.key}
                 onClick={() => toggleStatusFilter(opt.key)}
                 className={cn(
-                  'rounded-full px-3 py-1 text-xs font-medium transition-all',
+                  'rounded-full px-4 py-1 text-xs font-medium transition-all',
                   selectedStatus.includes(opt.key)
                     ? opt.color
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]'
@@ -327,7 +327,7 @@ export default function WorkloadDashboardPage() {
                 key={opt.key}
                 onClick={() => toggleRangeFilter(opt.key)}
                 className={cn(
-                  'rounded-full px-3 py-1 text-xs font-medium transition-all',
+                  'rounded-full px-4 py-1 text-xs font-medium transition-all',
                   selectedRanges.includes(opt.key)
                     ? 'bg-[var(--bg-secondary)] text-white dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]'
@@ -367,7 +367,7 @@ export default function WorkloadDashboardPage() {
 
         {/* Error state */}
         {error && (
-          <div className="flex items-center gap-4 rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+          <div className="flex items-center gap-4 rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <span className="flex-1">{error instanceof Error ? error.message : 'Error loading data'}</span>
             <button onClick={() => refetchData()} className="font-medium hover:underline">

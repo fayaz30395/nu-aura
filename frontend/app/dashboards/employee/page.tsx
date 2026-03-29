@@ -204,7 +204,7 @@ export default function EmployeeDashboardPage() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">
@@ -225,7 +225,7 @@ export default function EmployeeDashboardPage() {
           </Card>
 
           <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">
@@ -244,7 +244,7 @@ export default function EmployeeDashboardPage() {
           </Card>
 
           <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">
@@ -263,7 +263,7 @@ export default function EmployeeDashboardPage() {
           </Card>
 
           <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">

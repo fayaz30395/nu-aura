@@ -209,7 +209,7 @@ export default function ShiftPatternsPage() {
         <div className="p-6 space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => router.push('/shifts')}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
@@ -285,7 +285,7 @@ export default function ShiftPatternsPage() {
                     <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
                       <button
                         onClick={() => openEdit(pattern)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         Edit
@@ -294,7 +294,7 @@ export default function ShiftPatternsPage() {
                         onClick={() => {
                           if (confirm('Delete this pattern?')) deleteMutation.mutate(pattern.id);
                         }}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         Delete
@@ -325,7 +325,7 @@ export default function ShiftPatternsPage() {
                   className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 >
                   <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                       {editingPattern ? 'Edit Pattern' : 'New Pattern'}
                     </h2>
                     <button
@@ -343,7 +343,7 @@ export default function ShiftPatternsPage() {
                       </label>
                       <input
                         {...form.register('name')}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         placeholder="e.g., 4-on-2-off Rotation"
                       />
                     </div>
@@ -355,7 +355,7 @@ export default function ShiftPatternsPage() {
                       <textarea
                         {...form.register('description')}
                         rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                       />
                     </div>
 
@@ -366,7 +366,7 @@ export default function ShiftPatternsPage() {
                         </label>
                         <select
                           {...form.register('rotationType')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         >
                           {ROTATION_TYPES.map((t) => (
                             <option key={t.value} value={t.value}>
@@ -386,7 +386,7 @@ export default function ShiftPatternsPage() {
                           })}
                           min={1}
                           max={60}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -433,7 +433,7 @@ export default function ShiftPatternsPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <button
                         type="button"
                         onClick={() => setShowForm(false)}

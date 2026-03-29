@@ -61,7 +61,7 @@ export default function ContractsPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Contracts</h1>
+            <h1 className="text-2xl font-bold skeuo-emboss">Contracts</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage employment, vendor, and other contracts</p>
           </div>
           <PermissionGate permission={Permissions.CONTRACT_CREATE}>
@@ -113,7 +113,7 @@ export default function ContractsPage() {
         {/* Error State */}
         {isError && (
           <div className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
               <p className="text-sm text-danger-600 dark:text-danger-400">
                 {error instanceof Error ? error.message : 'Failed to load contracts'}

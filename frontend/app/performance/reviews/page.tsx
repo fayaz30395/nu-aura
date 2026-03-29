@@ -234,7 +234,7 @@ export default function PerformanceReviewsPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Performance Reviews</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Performance Reviews</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {
@@ -257,7 +257,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as ReviewType | 'ALL')}
-                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full input-aura px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="SELF">Self Review</option>
@@ -274,7 +274,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as ReviewStatus | 'ALL')}
-                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full input-aura px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -351,7 +351,7 @@ export default function PerformanceReviewsPage() {
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(review)}
-                      className="flex-1 px-3 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
                     >
                       View/Edit
                     </button>
@@ -359,7 +359,7 @@ export default function PerformanceReviewsPage() {
                   <PermissionGate permission={Permissions.REVIEW_DELETE}>
                     <button
                       onClick={() => openDeleteConfirm(review)}
-                      className="flex-1 px-3 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-4 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
                     >
                       Delete
                     </button>
@@ -386,7 +386,7 @@ export default function PerformanceReviewsPage() {
                         </label>
                         <select
                           {...register('reviewType')}
-                          className="w-full input-aura px-3 py-2 rounded-lg"
+                          className="w-full input-aura px-4 py-2 rounded-lg"
                         >
                           <option value="SELF">Self Review</option>
                           <option value="MANAGER">Manager Review</option>
@@ -405,7 +405,7 @@ export default function PerformanceReviewsPage() {
                         </label>
                         <select
                           {...register('status')}
-                          className="w-full input-aura px-3 py-2 rounded-lg"
+                          className="w-full input-aura px-4 py-2 rounded-lg"
                         >
                           <option value="DRAFT">Draft</option>
                           <option value="SUBMITTED">Submitted</option>
@@ -428,7 +428,7 @@ export default function PerformanceReviewsPage() {
                         <input
                           type="date"
                           {...register('reviewPeriodStart')}
-                          className="w-full input-aura px-3 py-2 rounded-lg"
+                          className="w-full input-aura px-4 py-2 rounded-lg"
                         />
                         {errors.reviewPeriodStart && (
                           <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodStart.message}</p>
@@ -442,7 +442,7 @@ export default function PerformanceReviewsPage() {
                         <input
                           type="date"
                           {...register('reviewPeriodEnd')}
-                          className="w-full input-aura px-3 py-2 rounded-lg"
+                          className="w-full input-aura px-4 py-2 rounded-lg"
                         />
                         {errors.reviewPeriodEnd && (
                           <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodEnd.message}</p>
@@ -460,7 +460,7 @@ export default function PerformanceReviewsPage() {
                         max="5"
                         step="0.1"
                         {...register('overallRating')}
-                        className="w-full input-aura px-3 py-2 rounded-lg"
+                        className="w-full input-aura px-4 py-2 rounded-lg"
                       />
                       {errors.overallRating && (
                         <p className="text-danger-500 text-sm mt-1">{errors.overallRating.message}</p>
@@ -474,7 +474,7 @@ export default function PerformanceReviewsPage() {
                       <textarea
                         rows={3}
                         {...register('strengths')}
-                        className="w-full input-aura px-3 py-2 rounded-lg"
+                        className="w-full input-aura px-4 py-2 rounded-lg"
                       />
                       {errors.strengths && (
                         <p className="text-danger-500 text-sm mt-1">{errors.strengths.message}</p>
@@ -488,7 +488,7 @@ export default function PerformanceReviewsPage() {
                       <textarea
                         rows={3}
                         {...register('areasForImprovement')}
-                        className="w-full input-aura px-3 py-2 rounded-lg"
+                        className="w-full input-aura px-4 py-2 rounded-lg"
                       />
                       {errors.areasForImprovement && (
                         <p className="text-danger-500 text-sm mt-1">{errors.areasForImprovement.message}</p>
@@ -502,7 +502,7 @@ export default function PerformanceReviewsPage() {
                       <textarea
                         rows={3}
                         {...register('goals')}
-                        className="w-full input-aura px-3 py-2 rounded-lg"
+                        className="w-full input-aura px-4 py-2 rounded-lg"
                       />
                       {errors.goals && (
                         <p className="text-danger-500 text-sm mt-1">{errors.goals.message}</p>
@@ -516,7 +516,7 @@ export default function PerformanceReviewsPage() {
                       <textarea
                         rows={3}
                         {...register('reviewerComments')}
-                        className="w-full input-aura px-3 py-2 rounded-lg"
+                        className="w-full input-aura px-4 py-2 rounded-lg"
                       />
                       {errors.reviewerComments && (
                         <p className="text-danger-500 text-sm mt-1">{errors.reviewerComments.message}</p>
@@ -530,7 +530,7 @@ export default function PerformanceReviewsPage() {
                       <textarea
                         rows={3}
                         {...register('employeeComments')}
-                        className="w-full input-aura px-3 py-2 rounded-lg"
+                        className="w-full input-aura px-4 py-2 rounded-lg"
                       />
                       {errors.employeeComments && (
                         <p className="text-danger-500 text-sm mt-1">{errors.employeeComments.message}</p>

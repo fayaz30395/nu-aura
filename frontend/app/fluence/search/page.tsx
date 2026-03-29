@@ -109,7 +109,7 @@ export default function SearchPage() {
             placeholder="Search wiki pages, blog posts, templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={`${dsInput.base} w-full pl-12 pr-4 py-3 text-base`}
+            className={`${dsInput.base} w-full pl-12 pr-4 py-4 text-base`}
           />
         </div>
 

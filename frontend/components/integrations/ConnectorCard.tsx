@@ -67,7 +67,7 @@ export function ConnectorCard({ connector, status, onConfigure, isLoading }: Con
 
         {/* Status */}
         {status && (
-          <div className={`badge-status px-3 py-1.5 rounded-lg ${colors.bg} ${colors.text} text-sm font-medium`}>
+          <div className={`badge-status px-4 py-1.5 rounded-lg ${colors.bg} ${colors.text} text-sm font-medium`}>
             {status === 'ACTIVE' ? 'Connected' : status === 'ERROR' ? 'Error' : 'Not Configured'}
           </div>
         )}

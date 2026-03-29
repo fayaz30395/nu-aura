@@ -213,7 +213,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
         <div className="absolute right-0 top-6 z-30 w-44 bg-white border border-[var(--border-main)] rounded-lg shadow-lg py-1 text-sm">
           <button
             type="button"
-            className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+            className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
             onClick={() => { setOpen(false); onViewDetails(); }}
           >
             View Details
@@ -221,7 +221,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {!isTerminal && nextStage && (
             <button
               type="button"
-              className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+              className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
               onClick={() => { setOpen(false); onMoveToNextStage(); }}
             >
               Move to {STAGE_LABELS[nextStage]}
@@ -230,7 +230,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {(applicant.status === ApplicationStatus.HR_ROUND || applicant.status === ApplicationStatus.OFFER_PENDING) && (
             <button
               type="button"
-              className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+              className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
               onClick={() => { setOpen(false); onCreateOffer?.(); }}
             >
               Create Offer Letter
@@ -239,7 +239,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {applicant.status !== ApplicationStatus.REJECTED && (
             <button
               type="button"
-              className="w-full text-left px-3 py-2 hover:bg-danger-50 text-danger-600 transition-colors"
+              className="w-full text-left px-4 py-2 hover:bg-danger-50 text-danger-600 transition-colors"
               onClick={() => { setOpen(false); onReject(); }}
             >
               Reject
@@ -771,7 +771,7 @@ export default function ApplicantPipelinePage() {
         { label: 'Pipeline' },
       ]}
     >
-      <div className="p-6 space-y-5 min-h-screen bg-[var(--bg-secondary)]">
+      <div className="p-6 space-y-6 min-h-screen bg-[var(--bg-secondary)]">
         {/* ── Header ────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -785,7 +785,7 @@ export default function ApplicantPipelinePage() {
             {/* Job Selector */}
             <div className="w-72">
               {jobsLoading ? (
-                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)] h-10 px-3 border border-[var(--border-main)] rounded-lg bg-white">
+                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)] h-10 px-4 border border-[var(--border-main)] rounded-lg bg-white">
                   <Loader2 size={14} className="animate-spin" />
                   Loading job openings...
                 </div>
@@ -821,14 +821,14 @@ export default function ApplicantPipelinePage() {
 
         {/* ── Errors ────────────────────────────────────────────────────── */}
         {jobsError && (
-          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
             {jobsError}
           </div>
         )}
 
         {/* ── Drag Error Toast ───────────────────────────────────────────── */}
         {dragError && (
-          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
             <AlertCircle size={16} className="flex-shrink-0" />
             <span className="flex-1">{dragError}</span>
             <button onClick={() => setDragError(null)} className="p-1 hover:bg-danger-100 rounded">
@@ -856,7 +856,7 @@ export default function ApplicantPipelinePage() {
             </span>
           </div>
         ) : pipelineError ? (
-          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
             {pipelineError}
           </div>
         ) : (
@@ -910,7 +910,7 @@ export default function ApplicantPipelinePage() {
 
               <button
                 onClick={() => setShowFilters(v => !v)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-sm border rounded-lg transition-colors ${
                   hasActiveFilters
                     ? 'border-accent-300 bg-accent-50 text-accent-700'
                     : 'border-[var(--border-main)] bg-white text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
@@ -944,7 +944,7 @@ export default function ApplicantPipelinePage() {
                   <select
                     value={sourceFilter}
                     onChange={e => setSourceFilter(e.target.value as ApplicationSource | '')}
-                    className="w-full px-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20"
+                    className="w-full px-4 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20"
                   >
                     <option value="">All sources</option>
                     {Object.values(ApplicationSource).map(src => (
@@ -955,7 +955,7 @@ export default function ApplicantPipelinePage() {
 
                 <div className="min-w-[140px]">
                   <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Min. Rating</label>
-                  <div className="flex items-center gap-2 px-3 py-2 border border-[var(--border-main)] rounded-lg bg-white">
+                  <div className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg bg-white">
                     <StarRating value={minRating} onChange={v => setMinRating(v === minRating ? 0 : v)} size={15} />
                     {minRating > 0 && (
                       <button onClick={() => setMinRating(0)} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
@@ -994,7 +994,7 @@ export default function ApplicantPipelinePage() {
                             style={{ maxHeight: 'calc(100vh - 380px)' }}
                           >
                             {/* Column Header */}
-                            <div className={`px-3 py-2.5 ${colors.header} flex items-center justify-between`}>
+                            <div className={`px-4 py-2.5 ${colors.header} flex items-center justify-between`}>
                               <span className="text-sm font-semibold text-[var(--text-secondary)]">
                                 {STAGE_LABELS[stage]}
                               </span>
@@ -1153,7 +1153,7 @@ export default function ApplicantPipelinePage() {
         <ModalBody>
           <div className="space-y-4">
             {addError && (
-              <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+              <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
                 {addError}
               </div>
             )}
@@ -1242,7 +1242,7 @@ export default function ApplicantPipelinePage() {
           {activeApplicant && (
             <div className="space-y-4">
               {detailError && (
-                <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+                <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
                   {detailError}
                 </div>
               )}
@@ -1388,12 +1388,12 @@ export default function ApplicantPipelinePage() {
         <ModalBody>
           <div className="space-y-4">
             {offerError && (
-              <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+              <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
                 {offerError}
               </div>
             )}
             {offerSuccess && (
-              <div className="bg-success-50 border border-success-200 text-success-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+              <div className="bg-success-50 border border-success-200 text-success-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
                 <svg className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
                 {offerSuccess}
               </div>
@@ -1405,7 +1405,7 @@ export default function ApplicantPipelinePage() {
                 Offer Letter Template *
               </label>
               {offerTemplatesLoading ? (
-                <div className="flex items-center gap-2 h-10 px-3 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)] text-sm text-[var(--text-muted)]">
+                <div className="flex items-center gap-2 h-10 px-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)] text-sm text-[var(--text-muted)]">
                   <Loader2 size={14} className="animate-spin" /> Loading templates...
                 </div>
               ) : (
@@ -1452,7 +1452,7 @@ export default function ApplicantPipelinePage() {
                 onChange={e => setOfferForm(prev => ({ ...prev, proposedJoiningDate: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
                 disabled={offerLoading}
-                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
               />
             </div>
 

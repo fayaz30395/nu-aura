@@ -132,7 +132,7 @@ export function EmployeeAllocationDetailModal({
             <User className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+            <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
               {employee.employeeName}
             </h2>
             <div className="flex items-center gap-2 text-sm text-surface-500">
@@ -246,7 +246,7 @@ export function EmployeeAllocationDetailModal({
           <nav className="-mb-px flex gap-6">
             <button
               onClick={() => setActiveTab('current')}
-              className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+              className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                 activeTab === 'current'
                   ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                   : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
@@ -259,7 +259,7 @@ export function EmployeeAllocationDetailModal({
             </button>
             <button
               onClick={() => setActiveTab('history')}
-              className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+              className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                 activeTab === 'history'
                   ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                   : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'

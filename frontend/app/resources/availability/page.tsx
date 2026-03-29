@@ -157,7 +157,7 @@ export default function AvailabilityCalendarPage() {
                 <select
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}
-                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
+                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
                 >
                   <option value="">All Departments</option>
                   {/* Department options would be loaded from API */}
@@ -231,7 +231,7 @@ export default function AvailabilityCalendarPage() {
             <Button variant="ghost" size="sm" onClick={navigateNext}>
               <ChevronRight className="h-4 w-4" />
             </Button>
-            <h2 className="ml-2 text-lg font-semibold text-[var(--text-primary)]">
+            <h2 className="ml-2 text-xl font-semibold text-[var(--text-primary)]">
               {viewMode === 'month'
                 ? format(currentDate, 'MMMM yyyy')
                 : `Week of ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`}

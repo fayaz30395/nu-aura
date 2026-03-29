@@ -78,7 +78,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       <div className={cn('max-w-[85%] space-y-2')}>
         <div
           className={cn(
-            'rounded-2xl px-3 py-2 text-sm leading-relaxed',
+            'rounded-2xl px-4 py-2 text-sm leading-relaxed',
             isUser
               ? 'bg-accent-700 text-white rounded-br-md'
               : 'bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-primary)] rounded-bl-md'

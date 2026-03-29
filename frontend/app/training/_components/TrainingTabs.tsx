@@ -21,28 +21,28 @@ export function TrainingTabs({ activeTab, onTabChange }: TrainingTabsProps) {
       <div className="flex border-b border-[var(--border-main)]">
         <button
           onClick={() => onTabChange('my-trainings')}
-          className={`px-6 py-3 font-medium transition-colors ${activeTab === 'my-trainings' ? activeClass : inactiveClass}`}
+          className={`px-6 py-4 font-medium transition-colors ${activeTab === 'my-trainings' ? activeClass : inactiveClass}`}
         >
           <BookOpen className="h-4 w-4 inline-block mr-2" />
           My Trainings
         </button>
         <button
           onClick={() => onTabChange('catalog')}
-          className={`px-6 py-3 font-medium transition-colors ${activeTab === 'catalog' ? activeClass : inactiveClass}`}
+          className={`px-6 py-4 font-medium transition-colors ${activeTab === 'catalog' ? activeClass : inactiveClass}`}
         >
           <GraduationCap className="h-4 w-4 inline-block mr-2" />
           Course Catalog
         </button>
         <button
           onClick={() => onTabChange('manage')}
-          className={`px-6 py-3 font-medium transition-colors ${activeTab === 'manage' ? activeClass : inactiveClass}`}
+          className={`px-6 py-4 font-medium transition-colors ${activeTab === 'manage' ? activeClass : inactiveClass}`}
         >
           <Edit className="h-4 w-4 inline-block mr-2" />
           Manage Programs
         </button>
         <button
           onClick={() => onTabChange('growth-roadmap')}
-          className={`px-6 py-3 font-medium transition-colors ${activeTab === 'growth-roadmap' ? activeClass : inactiveClass}`}
+          className={`px-6 py-4 font-medium transition-colors ${activeTab === 'growth-roadmap' ? activeClass : inactiveClass}`}
         >
           <Target className="h-4 w-4 inline-block mr-2" />
           Growth Roadmap

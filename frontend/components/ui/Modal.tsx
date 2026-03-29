@@ -168,7 +168,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
     >
       <div className="flex-1 min-w-0">
         {typeof children === 'string' ? (
-          <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 truncate">
+          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 truncate">
             {children}
           </h2>
         ) : (

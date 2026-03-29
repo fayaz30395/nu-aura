@@ -403,7 +403,7 @@ export default function ExpenseClaims() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2 skeuo-button"
+            className="px-4 sm:px-6 py-2.5 sm:py-4 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2 skeuo-button"
           >
             <Plus className="w-5 h-5" />
             New Claim
@@ -730,7 +730,7 @@ export default function ExpenseClaims() {
           <div className="flex border-b border-[var(--border-main)]">
             <button
               onClick={() => { setActiveTab('my-claims'); setSelectedClaims(new Set()); }}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'my-claims'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -740,7 +740,7 @@ export default function ExpenseClaims() {
             </button>
             <button
               onClick={() => { setActiveTab('pending'); setSelectedClaims(new Set()); }}
-              className={`px-6 py-3 font-medium transition-colors relative ${
+              className={`px-6 py-4 font-medium transition-colors relative ${
                 activeTab === 'pending'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -755,7 +755,7 @@ export default function ExpenseClaims() {
             </button>
             <button
               onClick={() => { setActiveTab('all'); setSelectedClaims(new Set()); }}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'all'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -765,7 +765,7 @@ export default function ExpenseClaims() {
             </button>
             <button
               onClick={() => { setActiveTab('analytics'); setSelectedClaims(new Set()); }}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'analytics'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -851,7 +851,7 @@ export default function ExpenseClaims() {
                       <div>
                         <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(claim.status)}`}>
+                          <span className={`px-4 py-1 rounded-full text-xs font-medium ${getStatusBadge(claim.status)}`}>
                             {claim.status}
                           </span>
                         </div>

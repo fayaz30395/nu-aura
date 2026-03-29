@@ -168,7 +168,7 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
             >
               <Plus className="h-5 w-5" />
               New Event
@@ -193,7 +193,7 @@ export default function CalendarPage() {
             </button>
             <button
               onClick={goToToday}
-              className="px-3 py-1.5 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
+              className="px-4 py-1.5 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
             >
               Today
             </button>
@@ -212,7 +212,7 @@ export default function CalendarPage() {
             <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
               <button
                 onClick={() => setView('week')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'week'
                     ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
                     : 'text-[var(--text-secondary)]'
@@ -222,7 +222,7 @@ export default function CalendarPage() {
               </button>
               <button
                 onClick={() => setView('month')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'month'
                     ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
                     : 'text-[var(--text-secondary)]'
@@ -239,7 +239,7 @@ export default function CalendarPage() {
           <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl p-6 text-white">
             <div className="flex items-center gap-4 mb-4">
               <CalendarDays className="h-6 w-6" />
-              <h2 className="text-lg font-semibold">Today&apos;s Events</h2>
+              <h2 className="text-xl font-semibold">Today&apos;s Events</h2>
               <span className="ml-auto px-2.5 py-0.5 bg-white/20 rounded-full text-sm">
                 {todayEvents.length} events
               </span>
@@ -274,8 +274,8 @@ export default function CalendarPage() {
 
         {/* Events List */}
         <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+          <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {view === 'week' ? 'This Week' : 'This Month'}
             </h2>
             <span className="text-sm text-[var(--text-muted)]">
@@ -300,7 +300,7 @@ export default function CalendarPage() {
             <div className="divide-y divide-surface-100 dark:divide-surface-800">
               {Object.entries(groupedEvents).map(([date, dateEvents]) => (
                 <div key={date}>
-                  <div className="px-5 py-3 bg-[var(--bg-secondary)]/50">
+                  <div className="px-6 py-4 bg-[var(--bg-secondary)]/50">
                     <p className="text-sm font-medium text-[var(--text-secondary)]">
                       {new Date(date).toLocaleDateString('en-IN', {
                         weekday: 'long',
@@ -317,7 +317,7 @@ export default function CalendarPage() {
                       <div
                         key={event.id}
                         onClick={() => router.push(`/calendar/${event.id}`)}
-                        className="flex items-center gap-4 px-5 py-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+                        className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
                       >
                         <div
                           className={`w-1 h-12 rounded-full ${calendarService.getEventColor(
@@ -393,7 +393,7 @@ export default function CalendarPage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Schedule Event
             </h3>
             <p className="text-sm text-[var(--text-muted)]">
@@ -412,7 +412,7 @@ export default function CalendarPage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               My Meetings
             </h3>
             <p className="text-sm text-[var(--text-muted)]">

@@ -129,7 +129,7 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
-        <div className="p-5">
+        <div className="p-6">
           <Skeleton className="h-20 w-full rounded-xl mb-4" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
@@ -164,10 +164,10 @@ export default function HomePage() {
 
   return (
     <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
-      <div className="p-4 md:p-5 space-y-4">
+      <div className="p-4 md:p-6 space-y-4">
 
         {/* ═══ WELCOME STRIP ═══ */}
-        <div className="bg-[var(--bg-sidebar)] rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-theme-md dark:shadow-dark-md">
+        <div className="bg-[var(--bg-sidebar)] rounded-xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-theme-md dark:shadow-dark-md">
           <div>
             <div className="flex items-center gap-2 text-accent-300 dark:text-accent-300 text-xs font-medium mb-0.5 uppercase tracking-wide">
               {greeting.icon}
@@ -514,7 +514,7 @@ export default function HomePage() {
               )}
 
               {todayBirthdays.length === 0 && todayAnniversaries.length === 0 && upcomingBirthdays.length === 0 && (
-                <div className="text-center py-3">
+                <div className="text-center py-4">
                   <Cake className="w-6 h-6 text-[var(--text-muted)] mx-auto mb-1" />
                   <p className="text-xs text-[var(--text-muted)]">No celebrations this month</p>
                 </div>
@@ -530,7 +530,7 @@ export default function HomePage() {
                 </span>
               </div>
               {newJoinees.length === 0 ? (
-                <div className="text-center py-3">
+                <div className="text-center py-4">
                   <UserPlus className="w-6 h-6 text-[var(--text-muted)] mx-auto mb-1" />
                   <p className="text-xs text-[var(--text-muted)]">No new joinees this month</p>
                 </div>

@@ -164,7 +164,7 @@ export default function NewLoanPage() {
             </label>
             <select
               {...register('loanType')}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
               {LOAN_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -188,7 +188,7 @@ export default function NewLoanPage() {
                 type="number"
                 {...register('requestedAmount', { valueAsNumber: true })}
                 placeholder="Enter loan amount"
-                className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
+                className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                   errors.requestedAmount ? 'border-danger-500' : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
@@ -208,7 +208,7 @@ export default function NewLoanPage() {
               step="0.1"
               {...register('interestRate', { valueAsNumber: true })}
               placeholder="8.5"
-              className={`w-full px-4 py-3 bg-[var(--bg-secondary)] border ${
+              className={`w-full px-4 py-4 bg-[var(--bg-secondary)] border ${
                 errors.interestRate ? 'border-danger-500' : 'border-[var(--border-main)]'
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
@@ -228,7 +228,7 @@ export default function NewLoanPage() {
                 type="number"
                 {...register('termMonths', { valueAsNumber: true })}
                 placeholder="12"
-                className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
+                className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                   errors.termMonths ? 'border-danger-500' : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
@@ -245,7 +245,7 @@ export default function NewLoanPage() {
             </label>
             <select
               {...register('repaymentFrequency')}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
               {REPAYMENT_FREQUENCIES.map((freq) => (
                 <option key={freq.value} value={freq.value}>
@@ -269,7 +269,7 @@ export default function NewLoanPage() {
                 {...register('purpose')}
                 placeholder="Describe the purpose of this loan..."
                 rows={4}
-                className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
+                className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                   errors.purpose ? 'border-danger-500' : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none`}
               />
@@ -288,7 +288,7 @@ export default function NewLoanPage() {
               {...register('notes')}
               placeholder="Any additional information..."
               rows={3}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
+              className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
             />
             {errors.notes && (
               <p className="mt-1 text-sm text-danger-500">{errors.notes.message}</p>
@@ -300,7 +300,7 @@ export default function NewLoanPage() {
             <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl p-6 text-white">
               <div className="flex items-center gap-4 mb-4">
                 <Wallet className="h-6 w-6" />
-                <h3 className="text-lg font-semibold">Estimated Monthly Payment</h3>
+                <h3 className="text-xl font-semibold">Estimated Monthly Payment</h3>
               </div>
               <div className="text-4xl font-bold mb-2">
                 {loanService.formatCurrency(monthlyPayment)}
@@ -316,7 +316,7 @@ export default function NewLoanPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="px-6 py-4 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Cancel
             </button>
@@ -324,7 +324,7 @@ export default function NewLoanPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
               >
                 {isLoading ? (
                   <>

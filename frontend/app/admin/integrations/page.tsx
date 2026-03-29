@@ -217,14 +217,14 @@ export default function AdminIntegrationsPage() {
     return (
       <div className="flex items-center gap-2">
         {isActive ? (
-          <div className="badge-status flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-100 dark:bg-success-900/30">
+          <div className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-success-100 dark:bg-success-900/30">
             <CheckCircle2 className="h-4 w-4 text-success-600 dark:text-success-400" />
             <span className="text-sm font-medium text-success-700 dark:text-success-300">
               Active
             </span>
           </div>
         ) : (
-          <div className="badge-status flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-100 dark:bg-rose-900/30">
+          <div className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100 dark:bg-rose-900/30">
             <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />
             <span className="text-sm font-medium text-rose-700 dark:text-rose-300">
               Inactive
@@ -252,7 +252,7 @@ export default function AdminIntegrationsPage() {
             <Settings className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl  font-bold text-[var(--text-primary)]">
               Integrations
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -445,7 +445,7 @@ export default function AdminIntegrationsPage() {
               <div>
                 <Label>Template (Optional)</Label>
                 <select
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
                   disabled={sendSmsMutation.isPending}
@@ -462,7 +462,7 @@ export default function AdminIntegrationsPage() {
                 <div>
                   <Label>Message</Label>
                   <textarea
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                     placeholder="Enter your message here..."
                     value={sendMessage}
                     onChange={(e) => setSendMessage(e.target.value)}
@@ -617,7 +617,7 @@ export default function AdminIntegrationsPage() {
                 {paymentStatus.supportedMethods.map((method) => (
                   <span
                     key={method}
-                    className="badge-status px-3 py-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-sm text-[var(--text-secondary)]"
+                    className="badge-status px-4 py-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-sm text-[var(--text-secondary)]"
                   >
                     {method}
                   </span>

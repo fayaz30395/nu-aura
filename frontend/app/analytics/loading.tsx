@@ -17,7 +17,7 @@ export default function AnalyticsLoading() {
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
+          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
             <div className="h-4 w-28 bg-[var(--bg-surface)] rounded" />
             <div className="h-8 w-20 bg-[var(--bg-surface)] rounded" />
             <div className="h-3 w-16 bg-[var(--bg-surface)] rounded" />
@@ -28,7 +28,7 @@ export default function AnalyticsLoading() {
       {/* Chart row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
+          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
             <div className="h-5 w-40 bg-[var(--bg-surface)] rounded" />
             <div className="h-56 bg-[var(--bg-surface)] rounded-lg" />
           </div>
@@ -41,7 +41,7 @@ export default function AnalyticsLoading() {
           <div className="h-5 w-32 bg-[var(--bg-surface)] rounded" />
         </div>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center gap-4 px-4 py-3 border-b border-[var(--border-subtle)]">
+          <div key={i} className="flex items-center gap-4 px-4 py-4 border-b border-[var(--border-subtle)]">
             <div className="h-4 w-32 bg-[var(--bg-surface)] rounded" />
             <div className="h-4 w-24 bg-[var(--bg-surface)] rounded" />
             <div className="h-4 w-16 bg-[var(--bg-surface)] rounded ml-auto" />

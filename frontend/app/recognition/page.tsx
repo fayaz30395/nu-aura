@@ -491,10 +491,10 @@ export default function RecognitionPage() {
                                       [recognition.id]: e.target.value,
                                     }))
                                   }
-                                  className="flex-1 px-3 py-1.5 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                                  className="flex-1 px-4 py-1.5 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                                 />
                                 <button
-                                  className="px-3 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50"
+                                  className="px-4 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50"
                                   disabled={!commentText[recognition.id]?.trim()}
                                 >
                                   <Send className="h-3.5 w-3.5" />
@@ -520,7 +520,7 @@ export default function RecognitionPage() {
           <div className="space-y-4">
             <Card className="skeuo-card">
               <CardContent className="p-4">
-                <h3 className="flex items-center gap-2 text-lg font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
+                <h3 className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
                   <Crown className="h-5 w-5 text-warning-500" />
                   Top Contributors
                 </h3>
@@ -575,7 +575,7 @@ export default function RecognitionPage() {
 
             <Card className="skeuo-card">
               <CardContent className="p-4">
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
                   Quick Recognize
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
