@@ -25,30 +25,30 @@ const toMantineTuple = (scale: Record<string, string>, name: string): MantineCol
 
 // Primary/Accent - Pure blue
 const accent: MantineColorsTuple = [
-  '#EBF0FF',
-  '#D6E0FF',
-  '#ADC2FF',
-  '#85A3FF',
-  '#5C85FF',
-  '#4D8AFF',
-  '#0057FF',
-  '#003ECB',
-  '#002F9A',
-  '#001F66',
+  '#f0f4ff',   // 0 — accent-50
+  '#dce4ff',   // 1 — accent-100
+  '#b8c9ff',   // 2 — accent-200
+  '#94adff',   // 3 — accent-300
+  '#7092ff',   // 4 — accent-400
+  '#4d77ff',   // 5 — accent-500
+  '#3a5fd9',   // 6 — accent-600
+  '#2a48b3',   // 7 — accent-700
+  '#1c328d',   // 8 — accent-800
+  '#101e66',   // 9 — accent-900
 ];
 
 // Neutrals - Neutral gray
 const secondary: MantineColorsTuple = [
-  '#F9F9F9',
-  '#F0F0F0',
-  '#E8E8E8',
-  '#DCDCDC',
-  '#C0C0C0',
-  '#909090',
-  '#707070',
-  '#505050',
-  '#303030',
-  '#191919',
+  '#f8f9fb',   // 0 — neutral-50
+  '#f0f1f5',   // 1 — neutral-100
+  '#e2e4ea',   // 2 — neutral-200
+  '#d1d4dc',   // 3 — neutral-300
+  '#a1a6b4',   // 4 — neutral-400
+  '#71778a',   // 5 — neutral-500
+  '#545a6e',   // 6 — neutral-600
+  '#3d4255',   // 7 — neutral-700
+  '#282c3a',   // 8 — neutral-800
+  '#1a1d28',   // 9 — neutral-900
 ];
 
 // Semantic colors (professional, muted)
@@ -82,7 +82,7 @@ export const theme = createTheme({
   },
 
   primaryColor: 'accent',
-  primaryShade: { light: 6, dark: 5 },
+  primaryShade: { light: 6, dark: 4 },
 
   // Typography - IBM Plex (humanist + editorial)
   fontFamily: 'var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',

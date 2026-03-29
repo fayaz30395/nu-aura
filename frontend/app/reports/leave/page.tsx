@@ -82,9 +82,9 @@ export default function LeaveReportsPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg"
+            className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg"
           >
-            <span className="text-green-700 dark:text-green-400">{successMessage}</span>
+            <span className="text-success-700 dark:text-success-400">{successMessage}</span>
           </motion.div>
         )}
 
@@ -97,7 +97,7 @@ export default function LeaveReportsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-orange-600" />
+                <FileText className="h-5 w-5 text-warning-600" />
                 Leave Report Configuration
               </CardTitle>
               <CardDescription>
@@ -108,7 +108,7 @@ export default function LeaveReportsPage() {
               {/* Date Range */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                  Date Range <span className="text-red-500">*</span>
+                  Date Range <span className="text-danger-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -168,11 +168,11 @@ export default function LeaveReportsPage() {
                       onClick={() => setFormat(fmt)}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
-                          ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20'
+                          ? 'border-warning-500 bg-warning-50 dark:bg-warning-950/20'
                           : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
-                      <p className={`font-medium text-sm ${format === fmt ? 'text-orange-700' : 'text-[var(--text-secondary)]'}`}>
+                      <p className={`font-medium text-sm ${format === fmt ? 'text-warning-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
                       <p className="text-xs text-[var(--text-muted)]">
@@ -185,9 +185,9 @@ export default function LeaveReportsPage() {
 
               {/* Error */}
               {error && (
-                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
-                  <X className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
+                <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start gap-2">
+                  <X className="h-5 w-5 text-danger-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-danger-600 dark:text-danger-400">{error}</span>
                 </div>
               )}
 
@@ -217,13 +217,13 @@ export default function LeaveReportsPage() {
 
         {/* Info Card */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-          <Card className="bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900">
+          <Card className="bg-warning-50 dark:bg-warning-950/20 border-warning-200 dark:border-warning-900">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <Calendar className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5" />
+                <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-orange-900 dark:text-orange-100">Report Details</h3>
-                  <ul className="text-sm text-orange-700 dark:text-orange-300 mt-2 space-y-1">
+                  <h3 className="font-semibold text-warning-900 dark:text-warning-100">Report Details</h3>
+                  <ul className="text-sm text-warning-700 dark:text-warning-300 mt-2 space-y-1">
                     <li>• Includes employee code, name, department, and leave details</li>
                     <li>• Shows leave type, start/end dates, and number of days</li>
                     <li>• Displays leave status and approval information</li>

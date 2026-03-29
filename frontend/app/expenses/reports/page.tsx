@@ -77,14 +77,14 @@ export default function ExpenseReportsPage() {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="px-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="px-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 <span className="text-surface-400">to</span>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="px-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="px-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
             </div>
@@ -92,7 +92,7 @@ export default function ExpenseReportsPage() {
 
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-sky-700" />
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-700" />
             </div>
           ) : !report ? (
             <div className="text-center py-20 text-surface-500">No report data available.</div>

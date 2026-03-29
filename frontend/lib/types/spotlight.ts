@@ -11,7 +11,7 @@ export interface Spotlight {
   imageUrl?: string;
   ctaUrl?: string;
   ctaLabel?: string;
-  bgGradient?: string; // tailwind gradient classes, e.g. "from-blue-600 to-indigo-700"
+  bgGradient?: string; // tailwind gradient classes, e.g. "from-accent-600 to-accent-700"
   displayOrder: number;
   isActive: boolean;
   startDate?: string; // ISO date — show only after this date

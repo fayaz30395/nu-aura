@@ -18,14 +18,14 @@ type TabType = 'post' | 'poll' | 'praise';
 
 // ─── Praise badge categories ────────────────────────────────────────
 const PRAISE_CATEGORIES = [
-  { id: 'team_player', label: 'Team Player', emoji: '🤝', color: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800' },
-  { id: 'innovator', label: 'Innovator', emoji: '💡', color: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800' },
-  { id: 'mentor', label: 'Mentor', emoji: '🎓', color: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800' },
-  { id: 'go_getter', label: 'Go-Getter', emoji: '🚀', color: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800' },
-  { id: 'problem_solver', label: 'Problem Solver', emoji: '🧩', color: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800' },
-  { id: 'customer_champion', label: 'Customer Champion', emoji: '⭐', color: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800' },
+  { id: 'team_player', label: 'Team Player', emoji: '🤝', color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800' },
+  { id: 'innovator', label: 'Innovator', emoji: '💡', color: 'bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800' },
+  { id: 'mentor', label: 'Mentor', emoji: '🎓', color: 'bg-accent-250 text-accent-900 border-accent-400 dark:bg-accent-900 dark:text-accent-500 dark:border-accent-900' },
+  { id: 'go_getter', label: 'Go-Getter', emoji: '🚀', color: 'bg-success-50 text-success-700 border-success-200 dark:bg-success-950 dark:text-success-300 dark:border-success-800' },
+  { id: 'problem_solver', label: 'Problem Solver', emoji: '🧩', color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800' },
+  { id: 'customer_champion', label: 'Customer Champion', emoji: '⭐', color: 'bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800' },
   { id: 'culture_hero', label: 'Culture Hero', emoji: '🏆', color: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800' },
-  { id: 'rising_star', label: 'Rising Star', emoji: '🌟', color: 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800' },
+  { id: 'rising_star', label: 'Rising Star', emoji: '🌟', color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800' },
 ] as const;
 
 export { PRAISE_CATEGORIES };
@@ -211,7 +211,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             className={cn(
               'flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors border-b-2',
               activeTab === tab.key
-                ? 'border-sky-700 text-[var(--text-primary)]'
+                ? 'border-accent-700 text-[var(--text-primary)]'
                 : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             )}
           >
@@ -252,7 +252,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handlePost}
               disabled={!postContent.trim() || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-700 active:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
               {isSubmitting ? 'Posting...' : 'Post'}
@@ -304,7 +304,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               <button
                 type="button"
                 onClick={addPollOption}
-                className="flex items-center gap-1.5 text-xs font-medium text-sky-700 hover:text-sky-700 transition-colors pl-7"
+                className="flex items-center gap-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 transition-colors pl-7"
               >
                 <Plus size={12} />
                 Add option
@@ -317,7 +317,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleCreatePoll}
               disabled={!canSubmitPoll || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-700 active:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} />}
               {isSubmitting ? 'Creating...' : 'Create Poll'}
@@ -333,8 +333,8 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           <div className="relative">
             <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Who do you want to recognize?</p>
             {selectedRecipient ? (
-              <div className="flex items-center gap-2 p-2 rounded-lg border border-sky-200 bg-sky-50 dark:bg-sky-950 dark:border-sky-800">
-                <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center text-sm font-semibold text-sky-700 dark:text-sky-300 overflow-hidden shrink-0">
+              <div className="flex items-center gap-2 p-2 rounded-lg border border-accent-200 bg-accent-50 dark:bg-accent-950 dark:border-accent-800">
+                <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-sm font-semibold text-accent-700 dark:text-accent-300 overflow-hidden shrink-0">
                   {selectedRecipient.avatarUrl ? (
                     <NextImage src={selectedRecipient.avatarUrl} alt="" width={32} height={32} className="w-full h-full object-cover" unoptimized />
                   ) : (
@@ -421,7 +421,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                   className={cn(
                     'inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-all',
                     praiseCategory === cat.id
-                      ? `${cat.color} ring-2 ring-sky-400 ring-offset-1 dark:ring-offset-[var(--bg-card)]`
+                      ? `${cat.color} ring-2 ring-accent-400 ring-offset-1 dark:ring-offset-[var(--bg-card)]`
                       : 'border-[var(--border-main)] text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:bg-[var(--bg-secondary)]'
                   )}
                 >
@@ -447,7 +447,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleSendPraise}
               disabled={!canSubmitPraise || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-700 active:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Trophy size={14} />}
               {isSubmitting ? 'Sending...' : 'Send Praise'}

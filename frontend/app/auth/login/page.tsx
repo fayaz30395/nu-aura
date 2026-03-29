@@ -33,14 +33,14 @@ interface DemoAccount {
 }
 
 const DEMO_ACCOUNTS: DemoAccount[] = [
-  { name: 'Fayaz M', email: 'fayaz.m@nulogic.io', role: 'SUPER_ADMIN', department: 'Executive', level: 'CEO', color: 'from-red-500 to-rose-600' },
-  { name: 'Sumit Kumar', email: 'sumit@nulogic.io', role: 'MANAGER', department: 'Engineering', level: 'Manager', color: 'from-blue-500 to-indigo-600' },
-  { name: 'Mani S', email: 'mani@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Team Lead', color: 'from-cyan-500 to-blue-600' },
-  { name: 'Gokul R', email: 'gokul@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Lead', color: 'from-teal-500 to-cyan-600' },
-  { name: 'Saran V', email: 'saran@nulogic.io', role: 'EMPLOYEE', department: 'Engineering', level: 'Employee', color: 'from-slate-500 to-gray-600' },
-  { name: 'Jagadeesh N', email: 'jagadeesh@nulogic.io', role: 'HR_MANAGER', department: 'HR', level: 'HR Manager', color: 'from-purple-500 to-violet-600' },
-  { name: 'Suresh M', email: 'suresh@nulogic.io', role: 'RECRUITMENT_ADMIN', department: 'Recruitment', level: 'Lead', color: 'from-amber-500 to-orange-600' },
-  { name: 'Dhanush A', email: 'dhanush@nulogic.io', role: 'TEAM_LEAD', department: 'HR', level: 'HR Lead', color: 'from-pink-500 to-rose-600' },
+  { name: 'Fayaz M', email: 'fayaz.m@nulogic.io', role: 'SUPER_ADMIN', department: 'Executive', level: 'CEO', color: 'from-danger-500 to-rose-600' },
+  { name: 'Sumit Kumar', email: 'sumit@nulogic.io', role: 'MANAGER', department: 'Engineering', level: 'Manager', color: 'from-accent-500 to-accent-600' },
+  { name: 'Mani S', email: 'mani@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Team Lead', color: 'from-accent-500 to-accent-600' },
+  { name: 'Gokul R', email: 'gokul@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Lead', color: 'from-accent-500 to-accent-600' },
+  { name: 'Saran V', email: 'saran@nulogic.io', role: 'EMPLOYEE', department: 'Engineering', level: 'Employee', color: 'from-accent-600 to-accent-700' },
+  { name: 'Jagadeesh N', email: 'jagadeesh@nulogic.io', role: 'HR_MANAGER', department: 'HR', level: 'HR Manager', color: 'from-accent-700 to-accent-800' },
+  { name: 'Suresh M', email: 'suresh@nulogic.io', role: 'RECRUITMENT_ADMIN', department: 'Recruitment', level: 'Lead', color: 'from-accent-500 to-accent-600' },
+  { name: 'Dhanush A', email: 'dhanush@nulogic.io', role: 'TEAM_LEAD', department: 'HR', level: 'HR Lead', color: 'from-accent-600 to-accent-700' },
 ];
 
 // SEC-007: Demo password only used when NEXT_PUBLIC_DEMO_MODE=true (never in production)
@@ -82,16 +82,16 @@ function AnimatedBackground() {
       <div className="absolute inset-0 bg-[var(--bg-main)]" />
       {/* Light-mode: elegant blue gradient mesh */}
       <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(0, 87, 255, 0.10)' }} />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(77, 138, 255, 0.08)' }} />
-        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'rgba(0, 62, 203, 0.06)' }} />
+        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(58, 95, 217, 0.10)' }} />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(112, 146, 255, 0.08)' }} />
+        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'rgba(42, 72, 179, 0.06)' }} />
       </div>
       {/* Dark-mode: deep navy mesh with subtle grid lines */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
         <div className="absolute inset-0" style={{ background: '#0B0F1A' }} />
-        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(0, 87, 255, 0.12)' }} />
-        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(77, 138, 255, 0.08)' }} />
-        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'rgba(0, 62, 203, 0.06)' }} />
+        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(58, 95, 217, 0.12)' }} />
+        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(112, 146, 255, 0.08)' }} />
+        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'rgba(42, 72, 179, 0.06)' }} />
         {/* Subtle grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.04]"
@@ -123,7 +123,7 @@ function FeaturePills() {
             animation: `fadeSlideUp 0.6s ease-out ${delay} both`,
           }}
         >
-          <Icon className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
+          <Icon className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
           {label}
         </div>
       ))}
@@ -136,7 +136,7 @@ function LoginPageLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-2 border-sky-300/30 border-t-sky-500 rounded-full animate-spin" />
+        <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin" />
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
       </div>
     </div>
@@ -173,12 +173,12 @@ function DemoLoginPanel({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-300 text-sm font-medium transition-colors hover:bg-amber-100 dark:hover:bg-amber-900/30"
+        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30"
       >
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4" />
           <span>Demo Accounts</span>
-          <span className="text-xs px-1.5 py-0.5 rounded bg-amber-200/60 dark:bg-amber-800/40 text-amber-800 dark:text-amber-200">
+          <span className="text-xs px-1.5 py-0.5 rounded bg-warning-200/60 dark:bg-warning-800/40 text-warning-800 dark:text-warning-200">
             {DEMO_ACCOUNTS.length} roles
           </span>
         </div>
@@ -208,7 +208,7 @@ function DemoLoginPanel({
                   <span className="text-sm font-medium text-[var(--text-primary)] truncate">
                     {account.name}
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 font-medium flex-shrink-0">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium flex-shrink-0">
                     {account.role.replace(/_/g, ' ')}
                   </span>
                 </div>
@@ -218,7 +218,7 @@ function DemoLoginPanel({
               </div>
               <LogIn className="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
               {isLoading && loadingEmail === account.email && (
-                <div className="w-4 h-4 border-2 border-sky-300 border-t-sky-700 rounded-full animate-spin flex-shrink-0" />
+                <div className="w-4 h-4 border-2 border-accent-300 border-t-accent-700 rounded-full animate-spin flex-shrink-0" />
               )}
             </button>
           ))}
@@ -452,9 +452,9 @@ function LoginPage() {
             style={{ animation: 'fadeSlideUp 0.8s ease-out 0.1s both' }}
           >
             {/* Platform badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/40 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800/40 mb-8">
               <div className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse" />
-              <span className="text-sky-700 dark:text-sky-300 text-xs font-medium tracking-wider uppercase">
+              <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase">
                 NU-AURA Platform v1.0
               </span>
             </div>
@@ -463,7 +463,7 @@ function LoginPage() {
             <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
               Your People.
               <br />
-              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #0057FF 0%, #4D8AFF 50%, #003ECB 100%)' }}>
+              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #3a5fd9 0%, #7092ff 50%, #2a48b3 100%)' }}>
                 Amplified.
               </span>
             </h1>
@@ -473,13 +473,13 @@ function LoginPage() {
               Management. Built for teams that move fast.
             </p>
 
-            {/* App icons row — refined with consistent blue-based palette */}
+            {/* App icons row — refined with consistent accent-based palette */}
             <div className="flex gap-5 mb-8">
               {[
-                { name: 'HRMS', bg: 'linear-gradient(135deg, #0057FF, #003ECB)', icon: '👥' },
-                { name: 'Hire', bg: 'linear-gradient(135deg, #4D8AFF, #0057FF)', icon: '🎯' },
+                { name: 'HRMS', bg: 'linear-gradient(135deg, #3a5fd9, #2a48b3)', icon: '👥' },
+                { name: 'Hire', bg: 'linear-gradient(135deg, #7092ff, #3a5fd9)', icon: '🎯' },
                 { name: 'Grow', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', icon: '📈' },
-                { name: 'Fluence', bg: 'linear-gradient(135deg, #06B6D4, #0891B2)', icon: '💡' },
+                { name: 'Fluence', bg: 'linear-gradient(135deg, #3a5fd9, #2a48b3)', icon: '💡' },
               ].map((app, i) => (
                 <div
                   key={app.name}
@@ -517,7 +517,7 @@ function LoginPage() {
             <div className="flex justify-center mb-10 lg:mb-8">
               <div className="relative">
                 <div
-                  className="absolute -inset-4 rounded-full bg-sky-500/10 blur-xl"
+                  className="absolute -inset-4 rounded-full bg-accent-500/10 blur-xl"
                   style={{ animation: 'pulse-ring 4s ease-in-out infinite' }}
                 />
                 <Image
@@ -534,7 +534,7 @@ function LoginPage() {
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
               <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
-                Welcome to <span className="text-sky-700 dark:text-sky-400 font-extrabold">NU-AURA</span>
+                Welcome to <span className="text-accent-700 dark:text-accent-400 font-extrabold">NU-AURA</span>
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
                 Your unified people platform
@@ -578,7 +578,7 @@ function LoginPage() {
                 disabled={isGoogleLoading}
               >
                 {isGoogleLoading ? (
-                  <div className="w-5 h-5 border-2 border-[var(--border-main)] border-t-sky-700 rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin" />
                 ) : (
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -605,7 +605,7 @@ function LoginPage() {
 
               {/* Domain notice */}
               <p className="text-center text-[var(--text-secondary)] text-xs mt-4 leading-relaxed">
-                Restricted to <span className="text-sky-700 dark:text-sky-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
+                Restricted to <span className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
                 <br />
                 <span className="text-[var(--text-muted)]">Includes NU-Drive and NU-Mail access.</span>
               </p>
@@ -630,19 +630,19 @@ function LoginPage() {
               {/* Trust badges */}
               <div className="flex items-center justify-center gap-6 text-[var(--text-secondary)] text-xs font-medium">
                 <div className="flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
+                  <Shield className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
                   <span>SOC 2</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                   <span>Encrypted</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
+                  <Globe className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
                   <span>GDPR</span>
                 </div>
               </div>
@@ -652,11 +652,11 @@ function LoginPage() {
             <div className="text-center mt-8 space-y-2">
               <p className="text-xs text-[var(--text-secondary)]">
                 By signing in, you agree to our{' '}
-                <Link href="/terms" className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors font-medium">
+                <Link href="/terms" className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
                   Terms
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors font-medium">
+                <Link href="/privacy" className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
                   Privacy Policy
                 </Link>
               </p>

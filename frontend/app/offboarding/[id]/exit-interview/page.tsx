@@ -371,7 +371,7 @@ export default function ExitInterviewPage() {
                       <Group justify="space-between">
                         <Text fw={600}>Average Rating</Text>
                         <Group gap="xs">
-                          <IconStarFilled size={16} className="text-yellow-500" />
+                          <IconStarFilled size={16} className="text-warning-500" />
                           <Text fw={700} size="lg">{interview.averageRating.toFixed(1)}/5</Text>
                         </Group>
                       </Group>

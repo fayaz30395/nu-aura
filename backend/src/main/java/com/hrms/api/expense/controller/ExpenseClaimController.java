@@ -198,16 +198,7 @@ public class ExpenseClaimController {
         return ResponseEntity.ok(expenseClaimService.getExpenseSummary(startDate, endDate));
     }
 
-    @GetMapping("/categories")
-    @RequiresPermission({
-            Permission.EXPENSE_VIEW,
-            Permission.EXPENSE_VIEW_TEAM,
-            Permission.EXPENSE_VIEW_ALL,
-            Permission.EXPENSE_MANAGE
-    })
-    public ResponseEntity<ExpenseClaim.ExpenseCategory[]> getCategories() {
-        return ResponseEntity.ok(ExpenseClaim.ExpenseCategory.values());
-    }
+    // Note: GET /categories is handled by ExpenseCategoryController
 
     @GetMapping("/statuses")
     @RequiresPermission({

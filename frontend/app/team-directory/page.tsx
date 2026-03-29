@@ -47,14 +47,14 @@ function EmployeeCard({ employee, viewMode, onClick }: {
         transition={{ duration: 0.2 }}
       >
         <Card
-          className="border border-[var(--border-main)] hover:border-sky-400 hover:shadow-md transition-all cursor-pointer"
+          className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-md transition-all cursor-pointer"
           onClick={() => onClick(employee.id)}
         >
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
               {/* Avatar */}
               <div className="flex-shrink-0">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-sky-400 to-sky-700 flex items-center justify-center text-white font-semibold">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-semibold">
                   {employee.firstName?.[0]}{employee.lastName?.[0]}
                 </div>
               </div>
@@ -77,7 +77,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
                 </div>
                 <div className="flex items-center gap-1.5 text-[var(--text-secondary)] truncate">
                   <Mail className="h-3.5 w-3.5 flex-shrink-0" />
-                  <a href={`mailto:${employee.workEmail}`} className="text-sky-700 dark:text-sky-400 hover:underline truncate" onClick={e => e.stopPropagation()}>
+                  <a href={`mailto:${employee.workEmail}`} className="text-accent-700 dark:text-accent-400 hover:underline truncate" onClick={e => e.stopPropagation()}>
                     {employee.workEmail}
                   </a>
                 </div>
@@ -97,13 +97,13 @@ function EmployeeCard({ employee, viewMode, onClick }: {
       transition={{ duration: 0.2 }}
     >
       <Card
-        className="border border-[var(--border-main)] hover:border-sky-400 hover:shadow-lg transition-all cursor-pointer h-full flex flex-col"
+        className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-lg transition-all cursor-pointer h-full flex flex-col"
         onClick={() => onClick(employee.id)}
       >
         <CardContent className="p-4 flex flex-col h-full">
           {/* Avatar */}
           <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-xl bg-gradient-to-br from-sky-400 to-sky-700 flex items-center justify-center text-white text-2xl font-semibold">
+            <div className="h-20 w-20 rounded-xl bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white text-2xl font-semibold">
               {employee.firstName?.[0]}{employee.lastName?.[0]}
             </div>
           </div>
@@ -133,7 +133,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
                 <Mail className="h-3.5 w-3.5 flex-shrink-0" />
                 <a
                   href={`mailto:${employee.workEmail}`}
-                  className="text-sky-700 dark:text-sky-400 hover:underline truncate"
+                  className="text-accent-700 dark:text-accent-400 hover:underline truncate"
                   onClick={e => e.stopPropagation()}
                 >
                   {employee.workEmail}
@@ -145,7 +145,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
                 <Phone className="h-3.5 w-3.5 flex-shrink-0" />
                 <a
                   href={`tel:${employee.phoneNumber}`}
-                  className="text-sky-700 dark:text-sky-400 hover:underline"
+                  className="text-accent-700 dark:text-accent-400 hover:underline"
                   onClick={e => e.stopPropagation()}
                 >
                   {employee.phoneNumber}
@@ -232,7 +232,7 @@ export default function TeamDirectoryPage() {
                 onClick={() => setViewMode(mode.key)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                   viewMode === mode.key
-                    ? 'bg-sky-700 text-white'
+                    ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -254,7 +254,7 @@ export default function TeamDirectoryPage() {
               setSearch(e.target.value);
               setPage(0);
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500/50"
           />
         </div>
 
@@ -273,7 +273,7 @@ export default function TeamDirectoryPage() {
                   setSelectedDepartment(e.target.value);
                   setPage(0);
                 }}
-                className="w-full px-3 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+                className="w-full px-3 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/50"
               >
                 <option value="all">
                   All Departments ({deptCounts.all || 0})

@@ -237,9 +237,9 @@ export default function EmployeesPage() {
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'ON_LEAVE': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'TERMINATED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      case 'ACTIVE': return 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300';
+      case 'ON_LEAVE': return 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300';
+      case 'TERMINATED': return 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
@@ -368,8 +368,8 @@ export default function EmployeesPage() {
                   <tr key={employee.id}>
                     <td className="whitespace-nowrap">
                       <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0 h-10 w-10 bg-sky-100 dark:bg-sky-900/30 rounded-lg flex items-center justify-center">
-                          <span className="text-sm font-medium text-sky-700 dark:text-sky-300">
+                        <div className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+                          <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
                             {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
                           </span>
                         </div>
@@ -390,7 +390,7 @@ export default function EmployeesPage() {
                     </td>
                     <td className="whitespace-nowrap">
                       {employee.level ? (
-                        <span className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300">
+                        <span className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
                           {employee.level.replace('_', ' ')}
                         </span>
                       ) : (
@@ -510,7 +510,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('basic')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'basic'
-                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                          ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -520,7 +520,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('personal')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'personal'
-                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                          ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -530,7 +530,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('employment')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'employment'
-                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                          ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -540,7 +540,7 @@ export default function EmployeesPage() {
                       onClick={() => setCurrentTab('bank')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
                         currentTab === 'bank'
-                          ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                          ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -1064,8 +1064,8 @@ export default function EmployeesPage() {
                         </div>
                       </div>
 
-                      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-                        <p className="text-sm text-blue-700 dark:text-blue-400">
+                      <div className="bg-accent-50 dark:bg-accent-950/30 border border-accent-200 dark:border-accent-800 rounded-xl p-4">
+                        <p className="text-sm text-accent-700 dark:text-accent-400">
                           <strong>Note:</strong> Banking and tax information is encrypted and stored securely. This information will be used for payroll processing.
                         </p>
                       </div>

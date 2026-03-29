@@ -79,7 +79,7 @@ export default function CreateContractPage() {
                 placeholder="Enter contract title"
                 {...register('title')}
               />
-              {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
+              {errors.title && <p className="text-danger-500 text-sm mt-1">{errors.title.message}</p>}
             </div>
 
             <div>
@@ -103,7 +103,7 @@ export default function CreateContractPage() {
                   />
                 )}
               />
-              {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
+              {errors.type && <p className="text-danger-500 text-sm mt-1">{errors.type.message}</p>}
             </div>
 
             <div>
@@ -112,7 +112,7 @@ export default function CreateContractPage() {
                 type="date"
                 {...register('startDate')}
               />
-              {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
+              {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
 
             <div>
@@ -121,7 +121,7 @@ export default function CreateContractPage() {
                 type="date"
                 {...register('endDate')}
               />
-              {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
+              {errors.endDate && <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>
 
             <div>
@@ -131,7 +131,7 @@ export default function CreateContractPage() {
                 rows={4}
                 {...register('description')}
               />
-              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+              {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
             </div>
 
             <div className="flex gap-4">

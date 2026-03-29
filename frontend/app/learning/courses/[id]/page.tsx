@@ -28,9 +28,9 @@ import { useToast } from '@/components/notifications/ToastProvider';
 import { useCourseDetail, useMyEnrollments, useEnrollCourse } from '@/lib/hooks/queries/useLearning';
 
 const DIFFICULTY_COLOR = {
-  BEGINNER: 'bg-green-100 text-green-700',
-  INTERMEDIATE: 'bg-yellow-100 text-yellow-700',
-  ADVANCED: 'bg-red-100 text-red-700',
+  BEGINNER: 'bg-success-100 text-success-700',
+  INTERMEDIATE: 'bg-warning-100 text-warning-700',
+  ADVANCED: 'bg-danger-100 text-danger-700',
 };
 
 interface Quiz {
@@ -127,7 +127,7 @@ export default function CourseDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+        <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -139,8 +139,8 @@ export default function CourseDetailPage() {
   if (error || !course) {
     return (
       <div className="p-6 text-center">
-        <p className="text-red-600 mb-4">{error || 'Course not found'}</p>
-        <Link href="/learning" className="text-blue-600 hover:underline">← Back to Learning</Link>
+        <p className="text-danger-600 mb-4">{error || 'Course not found'}</p>
+        <Link href="/learning" className="text-accent-600 hover:underline">← Back to Learning</Link>
       </div>
     );
   }
@@ -153,21 +153,21 @@ export default function CourseDetailPage() {
     <AppLayout>
       <div className="min-h-screen bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white">
+      <div className="bg-gradient-to-r from-accent-700 to-accent-900 text-white">
         <div className="max-w-5xl mx-auto px-6 py-8">
-          <Link href="/learning" className="flex items-center gap-1 text-blue-200 hover:text-white text-sm mb-4 w-fit">
+          <Link href="/learning" className="flex items-center gap-1 text-accent-200 hover:text-white text-sm mb-4 w-fit">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
           {course.isMandatory && (
-            <span className="inline-block mb-3 px-2 py-0.5 bg-orange-400 text-white text-xs font-semibold rounded-full">
+            <span className="inline-block mb-3 px-2 py-0.5 bg-warning-400 text-white text-xs font-semibold rounded-full">
               Mandatory
             </span>
           )}
           <h1 className="text-3xl font-bold skeuo-emboss mb-2">{course.title}</h1>
           {course.shortDescription && (
-            <p className="text-blue-100 text-base mb-4">{course.shortDescription}</p>
+            <p className="text-accent-100 text-base mb-4">{course.shortDescription}</p>
           )}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-blue-200">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-accent-200">
             {course.difficultyLevel && (
               <span className={`px-2 py-0.5 rounded text-xs font-medium ${DIFFICULTY_COLOR[course.difficultyLevel as keyof typeof DIFFICULTY_COLOR] ?? 'bg-[var(--bg-surface)] text-[var(--text-primary)]'}`}>
                 {course.difficultyLevel}
@@ -188,7 +188,7 @@ export default function CourseDetailPage() {
             )}
             {course.avgRating && (
               <span className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 fill-yellow-300 text-yellow-300" />
+                <Star className="h-3.5 w-3.5 fill-warning-300 text-warning-300" />
                 {course.avgRating.toFixed(1)} ({course.totalRatings})
               </span>
             )}
@@ -216,7 +216,7 @@ export default function CourseDetailPage() {
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-3">
                   <div className="flex-1 h-3 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-500" style={{ width: `${completionPercentage}%` }} />
+                    <div className="h-full bg-gradient-to-r from-accent-600 to-accent-400 rounded-full transition-all duration-500" style={{ width: `${completionPercentage}%` }} />
                   </div>
                   <span className="text-sm font-bold text-[var(--text-primary)]">{completionPercentage}%</span>
                 </div>
@@ -272,12 +272,12 @@ export default function CourseDetailPage() {
                             <span className="text-xs font-bold text-[var(--text-muted)] w-6">{idx + 1}</span>
                             <h4 className="font-semibold text-[var(--text-primary)]">{quiz.title}</h4>
                             {isPassed && (
-                              <span className="flex items-center gap-1 px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-xs font-medium rounded">
+                              <span className="flex items-center gap-1 px-2 py-0.5 bg-success-100 dark:bg-success-900/50 text-success-700 dark:text-success-300 text-xs font-medium rounded">
                                 <CheckCircle2 className="h-3 w-3" /> Passed
                               </span>
                             )}
                             {isFailed && (
-                              <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 text-xs font-medium rounded">
+                              <span className="flex items-center gap-1 px-2 py-0.5 bg-danger-100 dark:bg-danger-900/50 text-danger-700 dark:text-danger-300 text-xs font-medium rounded">
                                 <AlertCircle className="h-3 w-3" /> Failed
                               </span>
                             )}
@@ -288,7 +288,7 @@ export default function CourseDetailPage() {
                           <div className="flex flex-wrap gap-4 mt-2 text-xs text-[var(--text-secondary)]">
                             <span>{quiz.totalQuestions} questions</span>
                             {quiz.timeLimit && <span>{quiz.timeLimit} min time limit</span>}
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">{quiz.passingScore}% to pass</span>
+                            <span className="text-accent-600 dark:text-accent-400 font-medium">{quiz.passingScore}% to pass</span>
                           </div>
                         </div>
 
@@ -297,7 +297,7 @@ export default function CourseDetailPage() {
                           disabled={!isAvailable && !isPassed && !isFailed}
                           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
                             isAvailable || isPassed || isFailed
-                              ? 'bg-blue-600 text-white hover:bg-blue-700'
+                              ? 'bg-accent-600 text-white hover:bg-accent-700'
                               : 'bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed'
                           }`}
                         >
@@ -386,13 +386,13 @@ export default function CourseDetailPage() {
                     <span className="font-semibold text-[var(--text-primary)]">{progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-600 rounded-full" style={{ width: `${progress}%` }} />
+                    <div className="h-full bg-accent-600 rounded-full" style={{ width: `${progress}%` }} />
                   </div>
                 </div>
 
                 {enrollment?.status === 'COMPLETED' && !enrollment?.certificateId && (
-                  <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                    <p className="text-xs text-yellow-800 dark:text-yellow-200">
+                  <div className="mb-4 p-4 bg-warning-50 dark:bg-warning-900/20 rounded-lg border border-warning-200 dark:border-warning-800">
+                    <p className="text-xs text-warning-800 dark:text-warning-200">
                       Processing your certificate... This should appear within a few minutes.
                     </p>
                   </div>
@@ -400,7 +400,7 @@ export default function CourseDetailPage() {
 
                 <Link
                   href={`/learning/courses/${id}/play`}
-                  className="btn-primary flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors mb-2"
+                  className="btn-primary flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-accent-600 text-white rounded-md font-medium hover:bg-accent-700 transition-colors mb-2"
                 >
                   <Play className="h-4 w-4" />
                   {progress > 0 ? 'Continue Learning' : 'Start Course'}
@@ -410,11 +410,11 @@ export default function CourseDetailPage() {
                   <button
                     onClick={handleDownloadCertificate}
                     disabled={downloadingCert}
-                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-green-600 text-green-600 dark:text-green-400 rounded-md text-sm font-medium hover:bg-green-50 dark:hover:bg-green-900/20 mb-2 disabled:opacity-60"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-success-600 text-success-600 dark:text-success-400 rounded-md text-sm font-medium hover:bg-success-50 dark:hover:bg-success-900/20 mb-2 disabled:opacity-60"
                   >
                     {downloadingCert ? (
                       <>
-                        <div className="animate-spin h-4 w-4 border-2 border-green-600 border-t-transparent rounded-full" />
+                        <div className="animate-spin h-4 w-4 border-2 border-success-600 border-t-transparent rounded-full" />
                         Downloading...
                       </>
                     ) : (
@@ -430,7 +430,7 @@ export default function CourseDetailPage() {
                     href="/learning/certificates"
                     className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md text-sm font-medium hover:bg-[var(--bg-surface)]"
                   >
-                    <Award className="h-4 w-4 text-green-600 dark:text-green-400" /> View All Certificates
+                    <Award className="h-4 w-4 text-success-600 dark:text-success-400" /> View All Certificates
                   </Link>
                 )}
               </>
@@ -439,7 +439,7 @@ export default function CourseDetailPage() {
                 <button
                   onClick={handleEnroll}
                   disabled={enrollMutation.isPending}
-                  className="btn-primary w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="btn-primary w-full px-4 py-2.5 bg-accent-600 text-white rounded-md font-medium hover:bg-accent-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {enrollMutation.isPending ? (
                     <><div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> Enrolling...</>
@@ -450,7 +450,7 @@ export default function CourseDetailPage() {
               </PermissionGate>
             )}
 
-            {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+            {error && <p className="mt-2 text-xs text-danger-600 dark:text-danger-400">{error}</p>}
 
             <div className="mt-4 space-y-2 text-sm text-[var(--text-secondary)]">
               {course.instructorName && (
@@ -477,7 +477,7 @@ export default function CourseDetailPage() {
               )}
               <div className="flex justify-between">
                 <span className="text-[var(--text-muted)]">Certificate</span>
-                <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
+                <span className="flex items-center gap-1 text-success-600 dark:text-success-400 font-medium">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Awarded
                 </span>
               </div>

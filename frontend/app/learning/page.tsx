@@ -50,27 +50,27 @@ export default function LearningPage() {
 
   const getDifficultyColor = (level: string | undefined): string => {
     switch (level) {
-      case 'BEGINNER': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
-      case 'INTERMEDIATE': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
-      case 'ADVANCED': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
+      case 'BEGINNER': return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+      case 'INTERMEDIATE': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+      case 'ADVANCED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getStatusColor = (status: string | undefined): string => {
     switch (status) {
-      case 'ENROLLED': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400';
-      case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
-      case 'COMPLETED': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+      case 'ENROLLED': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400';
+      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+      case 'COMPLETED': return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
       case 'DROPPED': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 70) return 'bg-green-500';
-    if (progress >= 40) return 'bg-yellow-500';
-    return 'bg-blue-500';
+    if (progress >= 70) return 'bg-success-500';
+    if (progress >= 40) return 'bg-warning-500';
+    return 'bg-accent-500';
   };
 
   return (
@@ -91,23 +91,23 @@ export default function LearningPage() {
         ) : dashboard ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">{dashboard.totalEnrollments}</div>
+              <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.totalEnrollments}</div>
               <div className="text-[var(--text-secondary)]">Total Enrollments</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{dashboard.inProgress}</div>
+              <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboard.inProgress}</div>
               <div className="text-[var(--text-secondary)]">In Progress</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">{dashboard.completed}</div>
+              <div className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboard.completed}</div>
               <div className="text-[var(--text-secondary)]">Completed</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{dashboard.averageProgress?.toFixed(0) || 0}%</div>
+              <div className="text-3xl font-bold text-accent-800 dark:text-accent-600">{dashboard.averageProgress?.toFixed(0) || 0}%</div>
               <div className="text-[var(--text-secondary)]">Avg Progress</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">{dashboard.certificatesEarned}</div>
+              <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.certificatesEarned}</div>
               <div className="text-[var(--text-secondary)]">Certificates</div>
             </div>
           </div>
@@ -116,19 +116,19 @@ export default function LearningPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'catalog' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('catalog')}
           >
             Course Catalog
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'my-courses' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('my-courses')}
           >
             My Courses
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'certificates' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('certificates')}
           >
             Certificates
@@ -162,7 +162,7 @@ export default function LearningPage() {
                           <Image src={course.thumbnailUrl} alt={course.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                         </div>
                       ) : (
-                        <div className="w-full h-40 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 flex items-center justify-center">
+                        <div className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 dark:from-accent-600 dark:to-accent-900 flex items-center justify-center">
                           <span className="text-4xl text-white">📚</span>
                         </div>
                       )}
@@ -170,7 +170,7 @@ export default function LearningPage() {
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-semibold text-lg text-[var(--text-primary)]">{course.title}</h3>
                           {course.isMandatory && (
-                            <span className="px-2 py-1 bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 text-xs rounded-full">Mandatory</span>
+                            <span className="px-2 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 text-xs rounded-full">Mandatory</span>
                           )}
                         </div>
                         {course.shortDescription && (
@@ -234,7 +234,7 @@ export default function LearningPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-sky-700 dark:text-sky-400">{enrollment.progressPercentage?.toFixed(0) || 0}%</div>
+                          <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%</div>
                           <div className="text-sm text-[var(--text-secondary)]">Progress</div>
                         </div>
                       </div>
@@ -284,7 +284,7 @@ export default function LearningPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {certificates.length > 0 ? (
                   certificates.map((cert) => (
-                    <div key={cert.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 border-l-4 border-yellow-500 hover:shadow-lg transition-shadow">
+                    <div key={cert.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 border-l-4 border-warning-500 hover:shadow-lg transition-shadow">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>
@@ -294,7 +294,7 @@ export default function LearningPage() {
                           </div>
                         </div>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          cert.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
+                          cert.isActive ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
                         }`} aria-label={`Certificate status: ${cert.isActive ? 'Active' : 'Expired'}`}>
                           {cert.isActive ? 'Active' : 'Expired'}
                         </span>

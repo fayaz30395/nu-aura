@@ -109,7 +109,7 @@ export default function LeaveApprovalsPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -119,14 +119,14 @@ export default function LeaveApprovalsPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-4">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+          <div className="mb-6 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-4">
+            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+              <p className="text-sm text-danger-800 dark:text-danger-300">{error}</p>
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -137,16 +137,16 @@ export default function LeaveApprovalsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="skeuo-card rounded-xl p-6">
             <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Pending Requests</div>
-            <div className="skeuo-emboss text-3xl font-bold text-yellow-600 dark:text-yellow-500">{requests.length}</div>
+            <div className="skeuo-emboss text-3xl font-bold text-warning-600 dark:text-warning-500">{requests.length}</div>
           </div>
           <div className="skeuo-card rounded-xl p-6">
             <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Approved (This Month)</div>
-            <div className="skeuo-emboss text-3xl font-bold text-green-600 dark:text-green-500">0</div>
+            <div className="skeuo-emboss text-3xl font-bold text-success-600 dark:text-success-500">0</div>
             <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
           </div>
           <div className="skeuo-card rounded-xl p-6">
             <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Rejected (This Month)</div>
-            <div className="skeuo-emboss text-3xl font-bold text-red-600 dark:text-red-500">0</div>
+            <div className="skeuo-emboss text-3xl font-bold text-danger-600 dark:text-danger-500">0</div>
             <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
           </div>
         </div>
@@ -156,15 +156,15 @@ export default function LeaveApprovalsPage() {
           {!pendingData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-8 h-8 border-4 border-sky-200 dark:border-sky-900/30 border-t-sky-500 rounded-full animate-spin" aria-label="Loading leave requests" />
+                <div className="w-8 h-8 border-4 border-accent-200 dark:border-accent-900/30 border-t-accent-500 rounded-full animate-spin" aria-label="Loading leave requests" />
                 <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>
             </div>
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950/30 flex items-center justify-center">
-                  <CheckCircle className="w-8 h-8 text-green-500 dark:text-green-400" />
+                <div className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-950/30 flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-success-500 dark:text-success-400" />
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">All caught up!</h3>
@@ -217,7 +217,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleApproveClick(request.id)}
                               disabled={isProcessing}
-                              className="btn-primary px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-primary px-3 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium"
                             >
                               {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
                             </button>
@@ -226,7 +226,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleRejectClick(request.id)}
                               disabled={isProcessing}
-                              className="btn-secondary px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-secondary px-3 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium"
                             >
                               Reject
                             </button>

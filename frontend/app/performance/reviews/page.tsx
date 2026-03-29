@@ -192,7 +192,7 @@ export default function PerformanceReviewsPage() {
     const ratingValue = rating || 0;
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <span key={i} className={i <= ratingValue ? 'text-yellow-500' : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)]'}>
+        <span key={i} className={i <= ratingValue ? 'text-warning-500' : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)]'}>
           ★
         </span>
       );
@@ -221,7 +221,7 @@ export default function PerformanceReviewsPage() {
           </p>
           <button
             onClick={() => window.history.back()}
-            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
           >
             Go Back
           </button>
@@ -257,7 +257,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as ReviewType | 'ALL')}
-                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="SELF">Self Review</option>
@@ -274,7 +274,7 @@ export default function PerformanceReviewsPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as ReviewStatus | 'ALL')}
-                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full input-aura px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -351,7 +351,7 @@ export default function PerformanceReviewsPage() {
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(review)}
-                      className="flex-1 px-3 py-2 tint-info text-sky-700 dark:text-sky-400 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-3 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
                     >
                       View/Edit
                     </button>
@@ -359,7 +359,7 @@ export default function PerformanceReviewsPage() {
                   <PermissionGate permission={Permissions.REVIEW_DELETE}>
                     <button
                       onClick={() => openDeleteConfirm(review)}
-                      className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-3 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
                     >
                       Delete
                     </button>
@@ -395,7 +395,7 @@ export default function PerformanceReviewsPage() {
                           <option value="SKIP_LEVEL">Skip Level</option>
                         </select>
                         {errors.reviewType && (
-                          <p className="text-red-500 text-sm mt-1">{errors.reviewType.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.reviewType.message}</p>
                         )}
                       </div>
 
@@ -415,7 +415,7 @@ export default function PerformanceReviewsPage() {
                           <option value="REJECTED">Rejected</option>
                         </select>
                         {errors.status && (
-                          <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
                         )}
                       </div>
                     </div>
@@ -431,7 +431,7 @@ export default function PerformanceReviewsPage() {
                           className="w-full input-aura px-3 py-2 rounded-lg"
                         />
                         {errors.reviewPeriodStart && (
-                          <p className="text-red-500 text-sm mt-1">{errors.reviewPeriodStart.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodStart.message}</p>
                         )}
                       </div>
 
@@ -445,7 +445,7 @@ export default function PerformanceReviewsPage() {
                           className="w-full input-aura px-3 py-2 rounded-lg"
                         />
                         {errors.reviewPeriodEnd && (
-                          <p className="text-red-500 text-sm mt-1">{errors.reviewPeriodEnd.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodEnd.message}</p>
                         )}
                       </div>
                     </div>
@@ -463,7 +463,7 @@ export default function PerformanceReviewsPage() {
                         className="w-full input-aura px-3 py-2 rounded-lg"
                       />
                       {errors.overallRating && (
-                        <p className="text-red-500 text-sm mt-1">{errors.overallRating.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.overallRating.message}</p>
                       )}
                     </div>
 
@@ -477,7 +477,7 @@ export default function PerformanceReviewsPage() {
                         className="w-full input-aura px-3 py-2 rounded-lg"
                       />
                       {errors.strengths && (
-                        <p className="text-red-500 text-sm mt-1">{errors.strengths.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.strengths.message}</p>
                       )}
                     </div>
 
@@ -491,7 +491,7 @@ export default function PerformanceReviewsPage() {
                         className="w-full input-aura px-3 py-2 rounded-lg"
                       />
                       {errors.areasForImprovement && (
-                        <p className="text-red-500 text-sm mt-1">{errors.areasForImprovement.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.areasForImprovement.message}</p>
                       )}
                     </div>
 
@@ -505,7 +505,7 @@ export default function PerformanceReviewsPage() {
                         className="w-full input-aura px-3 py-2 rounded-lg"
                       />
                       {errors.goals && (
-                        <p className="text-red-500 text-sm mt-1">{errors.goals.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.goals.message}</p>
                       )}
                     </div>
 
@@ -519,7 +519,7 @@ export default function PerformanceReviewsPage() {
                         className="w-full input-aura px-3 py-2 rounded-lg"
                       />
                       {errors.reviewerComments && (
-                        <p className="text-red-500 text-sm mt-1">{errors.reviewerComments.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.reviewerComments.message}</p>
                       )}
                     </div>
 
@@ -533,7 +533,7 @@ export default function PerformanceReviewsPage() {
                         className="w-full input-aura px-3 py-2 rounded-lg"
                       />
                       {errors.employeeComments && (
-                        <p className="text-red-500 text-sm mt-1">{errors.employeeComments.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.employeeComments.message}</p>
                       )}
                     </div>
                   </div>
@@ -583,7 +583,7 @@ export default function PerformanceReviewsPage() {
                 <button
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex-1 btn-primary px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-50"
+                  className="flex-1 btn-primary px-4 py-2 rounded-lg bg-danger-600 hover:bg-danger-700 disabled:opacity-50"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
                 </button>

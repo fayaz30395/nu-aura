@@ -197,13 +197,13 @@ export default function CourseCatalogPage() {
 
         {/* Notifications */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
+          <div className="flex items-center gap-2 p-4 bg-danger-50 text-danger-700 rounded-lg border border-danger-200">
             <AlertCircle className="h-5 w-5 shrink-0" />
             <span className="text-sm">{error}</span>
           </div>
         )}
         {successMsg && (
-          <div className="flex items-center gap-2 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200">
+          <div className="flex items-center gap-2 p-4 bg-success-50 text-success-700 rounded-lg border border-success-200">
             <CheckCircle className="h-5 w-5 shrink-0" />
             <span className="text-sm">{successMsg}</span>
           </div>
@@ -251,7 +251,7 @@ export default function CourseCatalogPage() {
                 Try clearing the search or{' '}
                 <button
                   onClick={() => { setSearchQuery(''); setFilterMandatory(false); }}
-                  className="text-blue-600 hover:underline"
+                  className="text-accent-600 hover:underline"
                 >
                   reset filters
                 </button>
@@ -271,7 +271,7 @@ export default function CourseCatalogPage() {
                   className="border border-[var(--border-main)] hover:shadow-md transition-shadow flex flex-col"
                 >
                   {/* Thumbnail placeholder */}
-                  <div className="h-36 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+                  <div className="h-36 bg-gradient-to-br from-accent-50 to-accent-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
                     {course.thumbnailUrl ? (
                       <Image
                         src={course.thumbnailUrl}
@@ -281,10 +281,10 @@ export default function CourseCatalogPage() {
                         className="object-cover rounded-t-lg"
                       />
                     ) : (
-                      <GraduationCap className="h-12 w-12 text-indigo-300" />
+                      <GraduationCap className="h-12 w-12 text-accent-300" />
                     )}
                     {course.isMandatory && (
-                      <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                      <span className="absolute top-2 right-2 bg-danger-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
                         Mandatory
                       </span>
                     )}
@@ -312,7 +312,7 @@ export default function CourseCatalogPage() {
                         {course.skillsCovered.slice(0, 3).map((skill) => (
                           <span
                             key={skill}
-                            className="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded"
+                            className="text-xs bg-accent-50 text-accent-700 px-1.5 py-0.5 rounded"
                           >
                             {skill.trim()}
                           </span>
@@ -339,7 +339,7 @@ export default function CourseCatalogPage() {
                       </span>
                       {course.avgRating && (
                         <span className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
+                          <Star className="h-3 w-3 text-warning-400 fill-warning-400" />
                           {course.avgRating.toFixed(1)}
                         </span>
                       )}
@@ -361,7 +361,7 @@ export default function CourseCatalogPage() {
                           </span>
                         ) : isEnrolled ? (
                           <span className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <CheckCircle className="h-4 w-4 text-success-500" />
                             Enrolled
                           </span>
                         ) : (

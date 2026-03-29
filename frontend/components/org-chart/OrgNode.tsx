@@ -18,13 +18,13 @@ import { cn } from '@/lib/utils';
 // ── Level-based styling ─────────────────────────────────────────────────────
 
 const LEVEL_STYLES: Record<string, { bg: string; border: string; badge: string }> = {
-  CXO:            { bg: 'bg-sky-50 dark:bg-sky-950/40',     border: 'border-sky-400 dark:border-sky-600',     badge: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300' },
-  SVP:            { bg: 'bg-sky-50/80 dark:bg-sky-950/30',  border: 'border-sky-300 dark:border-sky-700',     badge: 'bg-sky-100 text-sky-700 dark:bg-sky-900/80 dark:text-sky-300' },
-  VP:             { bg: 'bg-blue-50 dark:bg-blue-950/40',   border: 'border-blue-400 dark:border-blue-600',   badge: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' },
-  DIRECTOR:       { bg: 'bg-blue-50/80 dark:bg-blue-950/30', border: 'border-blue-300 dark:border-blue-700', badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/80 dark:text-blue-300' },
-  SENIOR_MANAGER: { bg: 'bg-emerald-50 dark:bg-emerald-950/40', border: 'border-emerald-400 dark:border-emerald-600', badge: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300' },
-  MANAGER:        { bg: 'bg-emerald-50/80 dark:bg-emerald-950/30', border: 'border-emerald-300 dark:border-emerald-700', badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/80 dark:text-emerald-300' },
-  LEAD:           { bg: 'bg-amber-50 dark:bg-amber-950/40', border: 'border-amber-400 dark:border-amber-600', badge: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300' },
+  CXO:            { bg: 'bg-accent-50 dark:bg-accent-950/40',     border: 'border-accent-400 dark:border-accent-600',     badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300' },
+  SVP:            { bg: 'bg-accent-50/80 dark:bg-accent-950/30',  border: 'border-accent-300 dark:border-accent-700',     badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300' },
+  VP:             { bg: 'bg-accent-50 dark:bg-accent-950/40',   border: 'border-accent-400 dark:border-accent-600',   badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300' },
+  DIRECTOR:       { bg: 'bg-accent-50/80 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300' },
+  SENIOR_MANAGER: { bg: 'bg-success-50 dark:bg-success-950/40', border: 'border-success-400 dark:border-success-600', badge: 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-300' },
+  MANAGER:        { bg: 'bg-success-50/80 dark:bg-success-950/30', border: 'border-success-300 dark:border-success-700', badge: 'bg-success-100 text-success-700 dark:bg-success-900/80 dark:text-success-300' },
+  LEAD:           { bg: 'bg-warning-50 dark:bg-warning-950/40', border: 'border-warning-400 dark:border-warning-600', badge: 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-300' },
   SENIOR:         { bg: 'bg-slate-50 dark:bg-slate-800/60', border: 'border-slate-300 dark:border-slate-600', badge: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' },
   MID:            { bg: 'bg-slate-50/60 dark:bg-slate-800/40', border: 'border-slate-200 dark:border-slate-700', badge: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' },
   ENTRY:          { bg: 'bg-slate-50/40 dark:bg-slate-800/30', border: 'border-slate-200 dark:border-slate-700', badge: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' },
@@ -63,11 +63,11 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
           <img
             src={employee.profilePhotoUrl}
             alt={employee.fullName}
-            className="h-12 w-12 rounded-full object-cover border-2 border-sky-200 dark:border-sky-700"
+            className="h-12 w-12 rounded-full object-cover border-2 border-accent-200 dark:border-accent-700"
           />
         ) : (
-          <div className="h-12 w-12 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center border-2 border-sky-200 dark:border-sky-700">
-            <span className="text-sm font-bold text-sky-700 dark:text-sky-300">
+          <div className="h-12 w-12 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center border-2 border-accent-200 dark:border-accent-700">
+            <span className="text-sm font-bold text-accent-700 dark:text-accent-300">
               {getInitials(employee)}
             </span>
           </div>
@@ -85,18 +85,18 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       <div className="space-y-2 text-xs border-t border-[var(--border-subtle)] pt-3">
         {employee.workEmail && (
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-            <Mail className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400 flex-shrink-0" />
+            <Mail className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0" />
             <span className="truncate">{employee.workEmail}</span>
           </div>
         )}
         {employee.phoneNumber && (
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-            <Phone className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400 flex-shrink-0" />
+            <Phone className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0" />
             <span>{employee.phoneNumber}</span>
           </div>
         )}
         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-          <Users className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400 flex-shrink-0" />
+          <Users className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0" />
           <span>{directReportsCount} direct report{directReportsCount !== 1 ? 's' : ''}</span>
         </div>
       </div>
@@ -104,7 +104,7 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       {/* Link to full profile */}
       <Link
         href={`/employees/${employee.id}`}
-        className="mt-3 flex items-center justify-center gap-1.5 w-full rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-xs font-medium py-2 transition-colors"
+        className="mt-3 flex items-center justify-center gap-1.5 w-full rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-xs font-medium py-2 transition-colors"
       >
         View Full Profile
         <ExternalLink className="h-3 w-3" />
@@ -148,7 +148,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
           'min-w-[220px] max-w-[220px] p-3',
           style.bg,
           style.border,
-          isHighlighted && 'ring-2 ring-sky-500 ring-offset-2 dark:ring-offset-slate-900 shadow-lg scale-105',
+          isHighlighted && 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-slate-900 shadow-lg scale-105',
           !isHighlighted && 'hover:shadow-md hover:-translate-y-0.5',
         )}
         onClick={togglePopover}
@@ -200,13 +200,13 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
         {hasChildren && (
           <button
             onClick={toggleExpand}
-            className="absolute -bottom-3 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-sm flex items-center justify-center hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-colors z-10"
+            className="absolute -bottom-3 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-sm flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10"
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? (
               <ChevronDown className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
             ) : (
-              <span className="text-[10px] font-semibold text-sky-700 dark:text-sky-400">
+              <span className="text-[10px] font-semibold text-accent-700 dark:text-accent-400">
                 {children.length}
               </span>
             )}
@@ -277,7 +277,7 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
         className={cn(
           'flex items-center gap-3 py-2 px-3 rounded-lg transition-colors cursor-pointer',
           isHighlighted
-            ? 'bg-sky-100 dark:bg-sky-900/40 ring-1 ring-sky-400'
+            ? 'bg-accent-100 dark:bg-accent-900/40 ring-1 ring-accent-400'
             : 'hover:bg-slate-50 dark:hover:bg-slate-800/50',
         )}
         style={{ paddingLeft: `${node.depth * 24 + 12}px` }}
@@ -307,8 +307,8 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
             className="h-8 w-8 rounded-full object-cover border border-slate-200 dark:border-slate-600 flex-shrink-0"
           />
         ) : (
-          <div className="h-8 w-8 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-sky-700 dark:text-sky-300">
+          <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-bold text-accent-700 dark:text-accent-300">
               {getInitials(employee)}
             </span>
           </div>
@@ -343,7 +343,7 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
         <Link
           href={`/employees/${employee.id}`}
           onClick={e => e.stopPropagation()}
-          className="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 flex-shrink-0"
+          className="text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex-shrink-0"
           aria-label={`View ${employee.fullName}'s profile`}
         >
           <ExternalLink className="h-3.5 w-3.5" />

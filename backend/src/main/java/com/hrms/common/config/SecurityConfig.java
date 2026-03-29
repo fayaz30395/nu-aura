@@ -166,9 +166,11 @@ public class SecurityConfig {
                 .saml2Login(saml2 -> saml2
                         .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository)
                         .successHandler(samlAuthenticationSuccessHandler))
+                // Filter order: RateLimiting -> Tenant -> JWT -> (UsernamePasswordAuth)
+                // All positioned relative to standard UsernamePasswordAuthenticationFilter.
+                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(rateLimitingFilter, TenantFilter.class)
-                .addFilterAfter(jwtAuthenticationFilter, TenantFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // SEC-C02 FIX: CSRF can only be disabled in dev/test profiles.
         // In production, CSRF is always enforced regardless of the property value.

@@ -34,6 +34,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 import java.util.Optional;
 
+import org.springframework.http.ResponseCookie;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -106,6 +108,16 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         when(cookieConfig.isSecureCookie()).thenReturn(false);
+
+        // Stub CookieConfig to return ResponseCookie objects (controller uses response.addHeader("Set-Cookie", cookie.toString()))
+        when(cookieConfig.createAccessTokenCookie(anyString()))
+                .thenReturn(ResponseCookie.from("access_token", "test-token").path("/").build());
+        when(cookieConfig.createRefreshTokenCookie(anyString()))
+                .thenReturn(ResponseCookie.from("refresh_token", "test-token").path("/api/v1/auth").build());
+        when(cookieConfig.createClearAccessTokenCookie())
+                .thenReturn(ResponseCookie.from("access_token", "").path("/").maxAge(0).build());
+        when(cookieConfig.createClearRefreshTokenCookie())
+                .thenReturn(ResponseCookie.from("refresh_token", "").path("/api/v1/auth").maxAge(0).build());
 
         authResponse = AuthResponse.builder()
                 .accessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test-access-token")

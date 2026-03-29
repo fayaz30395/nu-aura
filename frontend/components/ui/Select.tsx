@@ -46,9 +46,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               // Default border
               !error && 'border-[var(--border-main)]',
               // Hover state
-              !error && !disabled && 'hover:border-sky-300 dark:hover:border-sky-700',
+              !error && !disabled && 'hover:border-accent-300 dark:hover:border-accent-700',
               // Focus state
-              !error && 'focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:focus:border-sky-400 dark:focus:ring-sky-400/20',
+              !error && 'focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:focus:border-accent-400 dark:focus:ring-accent-400/20',
               // Error state
               error && 'border-danger-500 focus:border-danger-500 focus:ring-2 focus:ring-danger-500/20',
               // Disabled

@@ -122,15 +122,15 @@ const getStatusColor = (status: LetterStatus) => {
     case LetterStatus.DRAFT:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
     case LetterStatus.PENDING_APPROVAL:
-      return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
+      return 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300';
     case LetterStatus.APPROVED:
-      return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
     case LetterStatus.ISSUED:
-      return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      return 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300';
     case LetterStatus.REVOKED:
-      return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+      return 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300';
     case LetterStatus.EXPIRED:
-      return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
+      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500';
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
   }
@@ -435,7 +435,7 @@ export default function LettersPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letters">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading letters...</span>
         </div>
       </AppLayout>
@@ -473,9 +473,9 @@ export default function LettersPage() {
 
         {/* Error Alert */}
         {lettersError && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{lettersError instanceof Error ? lettersError.message : 'Failed to load letters'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetchLetters()} className="ml-auto">
@@ -491,8 +491,8 @@ export default function LettersPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-sky-100 p-4 dark:bg-sky-900">
-                  <Files className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <Files className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Total Letters</p>
@@ -517,8 +517,8 @@ export default function LettersPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
-                  <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
+                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Pending Approval</p>
@@ -530,8 +530,8 @@ export default function LettersPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
-                  <FileCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
+                  <FileCheck className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Issued</p>
@@ -548,7 +548,7 @@ export default function LettersPage() {
             onClick={() => setActiveTab('letters')}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'letters'
-                ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
             }`}
           >
@@ -558,7 +558,7 @@ export default function LettersPage() {
             onClick={() => setActiveTab('templates')}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'templates'
-                ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
             }`}
           >
@@ -577,13 +577,13 @@ export default function LettersPage() {
                   placeholder="Search letters..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="">All Status</option>
                 <option value={LetterStatus.DRAFT}>Draft</option>
@@ -595,7 +595,7 @@ export default function LettersPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="">All Categories</option>
                 {Object.values(LetterCategory).map((cat) => (
@@ -649,9 +649,9 @@ export default function LettersPage() {
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-2">
-                                <div className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-sky-100 dark:bg-sky-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
+                                <div className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-accent-100 dark:bg-accent-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
                                   {letter.candidateId ? (
-                                    <UserPlus className="h-4 w-4 text-sky-700 dark:text-sky-400" />
+                                    <UserPlus className="h-4 w-4 text-accent-700 dark:text-accent-400" />
                                   ) : (
                                     <User className="h-4 w-4 text-[var(--text-secondary)]" />
                                   )}
@@ -661,7 +661,7 @@ export default function LettersPage() {
                                     {letter.candidateName || letter.employeeName || 'N/A'}
                                   </span>
                                   {letter.candidateId && (
-                                    <p className="text-xs text-sky-700 dark:text-sky-400">Candidate</p>
+                                    <p className="text-xs text-accent-700 dark:text-accent-400">Candidate</p>
                                   )}
                                 </div>
                               </div>
@@ -707,7 +707,7 @@ export default function LettersPage() {
                                     <PermissionGate permission={Permissions.LETTER_APPROVE} fallback={<div />}>
                                       <button
                                         onClick={() => handleApproveLetter(letter)}
-                                        className="w-full px-3 py-2 text-left text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-2"
+                                        className="w-full px-3 py-2 text-left text-sm text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 flex items-center gap-2"
                                       >
                                         <CheckCircle className="h-4 w-4" />
                                         Approve
@@ -719,7 +719,7 @@ export default function LettersPage() {
                                       <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
                                         <button
                                           onClick={() => handleIssueLetter(letter)}
-                                          className="w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2"
+                                          className="w-full px-3 py-2 text-left text-sm text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2"
                                         >
                                           <FileCheck className="h-4 w-4" />
                                           Issue Letter
@@ -729,7 +729,7 @@ export default function LettersPage() {
                                         <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
                                           <button
                                             onClick={() => handleIssueWithESign(letter)}
-                                            className="w-full px-3 py-2 text-left text-sm text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-900/20 flex items-center gap-2"
+                                            className="w-full px-3 py-2 text-left text-sm text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2"
                                           >
                                             <PenTool className="h-4 w-4" />
                                             Issue with E-Sign
@@ -752,7 +752,7 @@ export default function LettersPage() {
                                   {letter.status === LetterStatus.ISSUED && (
                                     <button
                                       onClick={() => handleRevokeLetter(letter)}
-                                      className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                      className="w-full px-3 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
                                     >
                                       <XCircle className="h-4 w-4" />
                                       Revoke
@@ -827,8 +827,8 @@ export default function LettersPage() {
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <div className="rounded-lg bg-sky-100 p-2 dark:bg-sky-900">
-                          <FileText className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                        <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
+                          <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                         </div>
                         <div>
                           <p className="text-xs text-[var(--text-muted)] font-mono">{template.code}</p>
@@ -842,7 +842,7 @@ export default function LettersPage() {
                       {template.description || 'No description'}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                         {getCategoryLabel(template.category)}
                       </span>
                       {template.requiresApproval && (
@@ -887,7 +887,7 @@ export default function LettersPage() {
                   <select
                     {...generateLetterForm.register('templateId')}
                     onChange={(e) => handleTemplateSelect(e.target.value)}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     <option value="">Select a template</option>
                     {templates.map((template) => (
@@ -897,7 +897,7 @@ export default function LettersPage() {
                     ))}
                   </select>
                   {generateLetterForm.formState.errors.templateId && (
-                    <p className="text-red-500 text-xs mt-1">{generateLetterForm.formState.errors.templateId.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
                     <p className="mt-1 text-xs text-[var(--text-muted)]">{selectedTemplate.description}</p>
@@ -911,11 +911,11 @@ export default function LettersPage() {
                   <input
                     type="text"
                     {...generateLetterForm.register('employeeId')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Enter employee ID"
                   />
                   {generateLetterForm.formState.errors.employeeId && (
-                    <p className="text-red-500 text-xs mt-1">{generateLetterForm.formState.errors.employeeId.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.employeeId.message}</p>
                   )}
                 </div>
 
@@ -926,7 +926,7 @@ export default function LettersPage() {
                   <input
                     type="text"
                     {...generateLetterForm.register('letterTitle')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Letter title (optional)"
                   />
                 </div>
@@ -939,10 +939,10 @@ export default function LettersPage() {
                     <input
                       type="date"
                       {...generateLetterForm.register('letterDate')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                     {generateLetterForm.formState.errors.letterDate && (
-                      <p className="text-red-500 text-xs mt-1">{generateLetterForm.formState.errors.letterDate.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.letterDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -952,7 +952,7 @@ export default function LettersPage() {
                     <input
                       type="date"
                       {...generateLetterForm.register('effectiveDate')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                   </div>
                 </div>
@@ -964,7 +964,7 @@ export default function LettersPage() {
                   <input
                     type="date"
                     {...generateLetterForm.register('expiryDate')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
                 </div>
 
@@ -975,7 +975,7 @@ export default function LettersPage() {
                   <textarea
                     rows={3}
                     {...generateLetterForm.register('additionalNotes')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Any additional notes..."
                   />
                 </div>
@@ -1003,8 +1003,8 @@ export default function LettersPage() {
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-4">
-              <div className="rounded-lg bg-sky-100 p-2 dark:bg-sky-900">
-                <FileText className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+              <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
+                <FileText className="h-6 w-6 text-accent-700 dark:text-accent-400" />
               </div>
               <div>
                 <p className="text-sm text-[var(--text-muted)] font-mono">{selectedLetter?.referenceNumber}</p>
@@ -1021,7 +1021,7 @@ export default function LettersPage() {
                   <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(selectedLetter.status)}`}>
                     {getStatusLabel(selectedLetter.status)}
                   </span>
-                  <span className="px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                  <span className="px-3 py-1 text-sm font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                     {getCategoryLabel(selectedLetter.category)}
                   </span>
                 </div>
@@ -1083,8 +1083,8 @@ export default function LettersPage() {
                 )}
 
                 {selectedLetter.approvedByName && (
-                  <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
+                  <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg">
+                    <p className="text-sm text-success-600 dark:text-success-400 flex items-center gap-2">
                       <CheckCircle className="h-4 w-4" />
                       Approved By
                     </p>
@@ -1142,7 +1142,7 @@ export default function LettersPage() {
                   <select
                     {...offerLetterForm.register('templateId')}
                     onChange={(e) => handleOfferTemplateSelect(e.target.value)}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     <option value="">Select an offer letter template</option>
                     {templates
@@ -1154,7 +1154,7 @@ export default function LettersPage() {
                       ))}
                   </select>
                   {offerLetterForm.formState.errors.templateId && (
-                    <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.templateId.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
                     <p className="mt-1 text-xs text-[var(--text-muted)]">{selectedTemplate.description}</p>
@@ -1168,7 +1168,7 @@ export default function LettersPage() {
                   <select
                     {...offerLetterForm.register('candidateId')}
                     onChange={(e) => handleCandidateSelect(e.target.value)}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     <option value="">Select a candidate</option>
                     {eligibleCandidates.map((candidate) => (
@@ -1178,10 +1178,10 @@ export default function LettersPage() {
                     ))}
                   </select>
                   {offerLetterForm.formState.errors.candidateId && (
-                    <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.candidateId.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.candidateId.message}</p>
                   )}
                   {eligibleCandidates.length === 0 && (
-                    <p className="mt-1 text-xs text-amber-600">No eligible candidates. Candidates must be in SELECTED status.</p>
+                    <p className="mt-1 text-xs text-warning-600">No eligible candidates. Candidates must be in SELECTED status.</p>
                   )}
                 </div>
 
@@ -1192,7 +1192,7 @@ export default function LettersPage() {
                   <input
                     type="text"
                     {...offerLetterForm.register('letterTitle')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Offer Letter (optional)"
                   />
                 </div>
@@ -1205,11 +1205,11 @@ export default function LettersPage() {
                     <input
                       type="text"
                       {...offerLetterForm.register('offeredDesignation')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder="e.g., Senior Software Engineer"
                     />
                     {offerLetterForm.formState.errors.offeredDesignation && (
-                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredDesignation.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredDesignation.message}</p>
                     )}
                   </div>
                   <div>
@@ -1220,11 +1220,11 @@ export default function LettersPage() {
                       type="number"
                       min="0"
                       {...offerLetterForm.register('offeredCtc', { valueAsNumber: true })}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder="e.g., 1500000"
                     />
                     {offerLetterForm.formState.errors.offeredCtc && (
-                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredCtc.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredCtc.message}</p>
                     )}
                   </div>
                 </div>
@@ -1237,10 +1237,10 @@ export default function LettersPage() {
                     <input
                       type="date"
                       {...offerLetterForm.register('proposedJoiningDate')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                     {offerLetterForm.formState.errors.proposedJoiningDate && (
-                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.proposedJoiningDate.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.proposedJoiningDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -1250,10 +1250,10 @@ export default function LettersPage() {
                     <input
                       type="date"
                       {...offerLetterForm.register('letterDate')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                     {offerLetterForm.formState.errors.letterDate && (
-                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.letterDate.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.letterDate.message}</p>
                     )}
                   </div>
                 </div>
@@ -1265,7 +1265,7 @@ export default function LettersPage() {
                   <input
                     type="date"
                     {...offerLetterForm.register('expiryDate')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
                 </div>
 
@@ -1276,7 +1276,7 @@ export default function LettersPage() {
                   <textarea
                     rows={3}
                     {...offerLetterForm.register('additionalNotes')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Any additional notes or special conditions..."
                   />
                 </div>
@@ -1286,7 +1286,7 @@ export default function LettersPage() {
                     <input
                       type="checkbox"
                       {...offerLetterForm.register('submitForApproval')}
-                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">Submit for approval</span>
                   </label>
@@ -1294,7 +1294,7 @@ export default function LettersPage() {
                     <input
                       type="checkbox"
                       {...offerLetterForm.register('sendForESign')}
-                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">Send for e-signature</span>
                   </label>

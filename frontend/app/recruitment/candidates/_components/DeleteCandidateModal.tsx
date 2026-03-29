@@ -26,8 +26,8 @@ export function DeleteCandidateModal({
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
       <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
         <div className="flex items-center mb-4">
-          <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+          <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+            <Trash2 className="h-6 w-6 text-danger-600 dark:text-danger-400" />
           </div>
           <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Candidate</h3>
         </div>

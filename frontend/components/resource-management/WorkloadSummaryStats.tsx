@@ -28,18 +28,18 @@ export function WorkloadSummaryStats({ summary, className }: WorkloadSummaryStat
       <StatItem
         label="Over"
         value={summary.overAllocatedCount}
-        color="text-red-600 dark:text-red-400"
+        color="text-danger-600 dark:text-danger-400"
         highlight={summary.overAllocatedCount > 0}
       />
       <StatItem
         label="Optimal"
         value={summary.optimalCount}
-        color="text-green-600 dark:text-green-400"
+        color="text-success-600 dark:text-success-400"
       />
       <StatItem
         label="Under"
         value={summary.underUtilizedCount}
-        color="text-amber-600 dark:text-amber-400"
+        color="text-warning-600 dark:text-warning-400"
       />
       <StatItem
         label="Unassigned"
@@ -52,7 +52,7 @@ export function WorkloadSummaryStats({ summary, className }: WorkloadSummaryStat
           <StatItem
             label="Pending"
             value={summary.pendingApprovals}
-            color="text-purple-600 dark:text-purple-400"
+            color="text-accent-800 dark:text-accent-600"
             highlight
           />
         </>

@@ -303,13 +303,13 @@ export default function AdminLayout({
           <div className="text-center">
             {!isReady ? (
               <div className="space-y-4">
-                <div className="h-12 w-12 rounded-full border-4 border-surface-200 border-t-sky-700 animate-spin mx-auto" />
+                <div className="h-12 w-12 rounded-full border-4 border-surface-200 border-t-accent-700 animate-spin mx-auto" />
                 <p className="text-surface-600">Loading...</p>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center mx-auto">
-                  <span className="text-red-600 text-lg">✕</span>
+                <div className="h-12 w-12 rounded-full bg-danger-100 flex items-center justify-center mx-auto">
+                  <span className="text-danger-600 text-lg">✕</span>
                 </div>
                 <h1 className="text-xl font-semibold text-surface-900">Access Denied</h1>
                 <p className="text-surface-600">You do not have permission to access the admin dashboard.</p>

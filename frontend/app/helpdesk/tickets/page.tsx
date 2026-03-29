@@ -213,7 +213,7 @@ export default function TicketListPage() {
               placeholder="Search by subject, ticket number, or requester..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
             />
           </div>
           <Button
@@ -223,7 +223,7 @@ export default function TicketListPage() {
           >
             Filters
             {hasActiveFilters && (
-              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-sky-700 text-white rounded-full">
+              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-accent-700 text-white rounded-full">
                 {[statusFilter, priorityFilter].filter(Boolean).length}
               </span>
             )}
@@ -383,7 +383,7 @@ export default function TicketListPage() {
                   className="input-aura w-full"
                   {...register('subject')}
                 />
-                {errors.subject && <p className="text-sm text-red-500 mt-1">{errors.subject.message}</p>}
+                {errors.subject && <p className="text-sm text-danger-500 mt-1">{errors.subject.message}</p>}
               </div>
 
               <div>
@@ -391,10 +391,10 @@ export default function TicketListPage() {
                 <textarea
                   placeholder="Provide details about your issue..."
                   rows={5}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 text-sm"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 text-sm"
                   {...register('description')}
                 />
-                {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description.message}</p>}
+                {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -468,7 +468,7 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
       onClick={onNavigate}
     >
       <td className="px-4 py-3 whitespace-nowrap">
-        <span className="text-sm font-mono text-sky-700 dark:text-sky-400">{ticket.ticketNumber || ticket.id.slice(0, 8)}</span>
+        <span className="text-sm font-mono text-accent-700 dark:text-accent-400">{ticket.ticketNumber || ticket.id.slice(0, 8)}</span>
       </td>
       <td className="px-4 py-3">
         <span className="text-sm font-medium text-[var(--text-primary)] line-clamp-1">{ticket.subject}</span>
@@ -507,7 +507,7 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
       <td className="px-4 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
         <PermissionGate permission={Permissions.HELPDESK_TICKET_RESOLVE}>
           <select
-            className="text-xs bg-transparent border border-[var(--border-main)] rounded px-1.5 py-1 text-[var(--text-secondary)] focus:outline-none focus:ring-1 focus:ring-sky-700"
+            className="text-xs bg-transparent border border-[var(--border-main)] rounded px-1.5 py-1 text-[var(--text-secondary)] focus:outline-none focus:ring-1 focus:ring-accent-700"
             value={ticket.status}
             onChange={(e) => onStatusChange(ticket.id, e.target.value as TicketStatus)}
           >

@@ -180,7 +180,7 @@ export default function StatutoryPage() {
                         {...form.register('employeeId')}
                       />
                       {form.formState.errors.employeeId && (
-                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.employeeId.message}</p>
+                        <p className="text-danger-600 text-xs mt-1">{form.formState.errors.employeeId.message}</p>
                       )}
                       <p className="text-[var(--text-muted)] text-xs mt-1">Enter the employee UUID</p>
                     </div>
@@ -198,7 +198,7 @@ export default function StatutoryPage() {
                         {...form.register('basicSalary')}
                       />
                       {form.formState.errors.basicSalary && (
-                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.basicSalary.message}</p>
+                        <p className="text-danger-600 text-xs mt-1">{form.formState.errors.basicSalary.message}</p>
                       )}
                       <p className="text-[var(--text-muted)] text-xs mt-1">Monthly basic component only</p>
                     </div>
@@ -216,7 +216,7 @@ export default function StatutoryPage() {
                         {...form.register('grossSalary')}
                       />
                       {form.formState.errors.grossSalary && (
-                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.grossSalary.message}</p>
+                        <p className="text-danger-600 text-xs mt-1">{form.formState.errors.grossSalary.message}</p>
                       )}
                       <p className="text-[var(--text-muted)] text-xs mt-1">Basic + all allowances</p>
                     </div>
@@ -236,7 +236,7 @@ export default function StatutoryPage() {
                         ))}
                       </select>
                       {form.formState.errors.state && (
-                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.state.message}</p>
+                        <p className="text-danger-600 text-xs mt-1">{form.formState.errors.state.message}</p>
                       )}
                       <p className="text-[var(--text-muted)] text-xs mt-1">Used for Professional Tax slab</p>
                     </div>

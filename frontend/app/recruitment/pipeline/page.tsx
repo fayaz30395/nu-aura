@@ -70,26 +70,26 @@ const STAGE_LABELS: Record<ApplicationStatus, string> = {
 };
 
 const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; badge: string; bg: string }> = {
-  [ApplicationStatus.APPLIED]:        { col: 'border-t-blue-500',    header: 'bg-blue-50',    badge: 'bg-blue-100 text-blue-700',       bg: 'bg-blue-50/50' },
-  [ApplicationStatus.SCREENING]:      { col: 'border-t-sky-500',    header: 'bg-sky-50',    badge: 'bg-sky-100 text-sky-700',       bg: 'bg-sky-50/50' },
-  [ApplicationStatus.PHONE_SCREEN]:   { col: 'border-t-cyan-500',    header: 'bg-cyan-50',    badge: 'bg-cyan-100 text-cyan-700',       bg: 'bg-cyan-50/50' },
-  [ApplicationStatus.INTERVIEW]:      { col: 'border-t-purple-500',  header: 'bg-purple-50',  badge: 'bg-purple-100 text-purple-700',   bg: 'bg-purple-50/50' },
-  [ApplicationStatus.TECHNICAL_ROUND]:{ col: 'border-t-indigo-500',  header: 'bg-indigo-50',  badge: 'bg-indigo-100 text-indigo-700',   bg: 'bg-indigo-50/50' },
-  [ApplicationStatus.HR_ROUND]:       { col: 'border-t-violet-500',  header: 'bg-violet-50',  badge: 'bg-violet-100 text-violet-700',   bg: 'bg-violet-50/50' },
-  [ApplicationStatus.OFFER_PENDING]:  { col: 'border-t-orange-500',  header: 'bg-orange-50',  badge: 'bg-orange-100 text-orange-700',   bg: 'bg-orange-50/50' },
-  [ApplicationStatus.OFFERED]:        { col: 'border-t-green-500',   header: 'bg-green-50',   badge: 'bg-green-100 text-green-700',     bg: 'bg-green-50/50' },
-  [ApplicationStatus.ACCEPTED]:       { col: 'border-t-emerald-500', header: 'bg-emerald-50', badge: 'bg-emerald-100 text-emerald-700', bg: 'bg-emerald-50/50' },
-  [ApplicationStatus.REJECTED]:       { col: 'border-t-red-500',     header: 'bg-red-50',     badge: 'bg-red-100 text-red-700',         bg: 'bg-red-50/50' },
+  [ApplicationStatus.APPLIED]:        { col: 'border-t-accent-500',    header: 'bg-accent-50',    badge: 'bg-accent-100 text-accent-700',       bg: 'bg-accent-50/50' },
+  [ApplicationStatus.SCREENING]:      { col: 'border-t-accent-500',    header: 'bg-accent-50',    badge: 'bg-accent-100 text-accent-700',       bg: 'bg-accent-50/50' },
+  [ApplicationStatus.PHONE_SCREEN]:   { col: 'border-t-accent-500',    header: 'bg-accent-50',    badge: 'bg-accent-100 text-accent-700',       bg: 'bg-accent-50/50' },
+  [ApplicationStatus.INTERVIEW]:      { col: 'border-t-accent-700',  header: 'bg-accent-50',  badge: 'bg-accent-100 text-accent-700',   bg: 'bg-accent-50/50' },
+  [ApplicationStatus.TECHNICAL_ROUND]:{ col: 'border-t-accent-700',  header: 'bg-accent-50',  badge: 'bg-accent-100 text-accent-700',   bg: 'bg-accent-50/50' },
+  [ApplicationStatus.HR_ROUND]:       { col: 'border-t-accent-800',  header: 'bg-accent-50',  badge: 'bg-accent-100 text-accent-700',   bg: 'bg-accent-50/50' },
+  [ApplicationStatus.OFFER_PENDING]:  { col: 'border-t-warning-500',  header: 'bg-warning-50',  badge: 'bg-warning-100 text-warning-700',   bg: 'bg-warning-50/50' },
+  [ApplicationStatus.OFFERED]:        { col: 'border-t-success-500',   header: 'bg-success-50',   badge: 'bg-success-100 text-success-700',     bg: 'bg-success-50/50' },
+  [ApplicationStatus.ACCEPTED]:       { col: 'border-t-success-600', header: 'bg-success-50', badge: 'bg-success-100 text-success-700', bg: 'bg-success-50/50' },
+  [ApplicationStatus.REJECTED]:       { col: 'border-t-danger-500',     header: 'bg-danger-50',     badge: 'bg-danger-100 text-danger-700',         bg: 'bg-danger-50/50' },
   [ApplicationStatus.WITHDRAWN]:      { col: 'border-t-[var(--border-main)]',    header: 'bg-[var(--bg-surface)]',    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',       bg: 'bg-[var(--bg-surface)]/50' },
 };
 
 const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
-  [ApplicationSource.WEBSITE]:  'tint-info text-blue-600',
-  [ApplicationSource.REFERRAL]: 'tint-success text-sky-700',
-  [ApplicationSource.JOB_BOARD]:'tint-info text-indigo-600',
-  [ApplicationSource.LINKEDIN]: 'tint-info text-sky-600',
-  [ApplicationSource.CAMPUS]:   'tint-purple text-purple-600',
-  [ApplicationSource.AGENCY]:   'tint-orange text-orange-600',
+  [ApplicationSource.WEBSITE]:  'tint-info text-accent-600',
+  [ApplicationSource.REFERRAL]: 'tint-success text-success-700',
+  [ApplicationSource.JOB_BOARD]:'tint-info text-accent-600',
+  [ApplicationSource.LINKEDIN]: 'tint-info text-accent-600',
+  [ApplicationSource.CAMPUS]:   'tint-accent text-accent-600',
+  [ApplicationSource.AGENCY]:   'tint-warning text-warning-600',
   [ApplicationSource.OTHER]:    'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
@@ -167,7 +167,7 @@ const StarRating: React.FC<StarRatingProps> = ({ value, readOnly = false, size =
       >
         <Star
           size={size}
-          className={i < value ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--text-muted)]'}
+          className={i < value ? 'fill-warning-400 text-warning-400' : 'text-[var(--text-muted)]'}
         />
       </button>
     ))}
@@ -308,7 +308,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       {/* Total Active */}
       <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <User size={14} className="text-sky-500" />
+          <User size={14} className="text-accent-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Active Pipeline</span>
         </div>
         <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{totalActive}</p>
@@ -318,7 +318,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       {/* Conversion Rate */}
       <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <TrendingUp size={14} className="text-green-500" />
+          <TrendingUp size={14} className="text-success-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Conversion Rate</span>
         </div>
         <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{conversionRate}%</p>
@@ -328,7 +328,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       {/* Avg Time in Stage */}
       <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <Clock size={14} className="text-orange-500" />
+          <Clock size={14} className="text-warning-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Avg. Time in Stage</span>
         </div>
         <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
@@ -338,7 +338,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       {/* Top Sources */}
       <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <BarChart3 size={14} className="text-indigo-500" />
+          <BarChart3 size={14} className="text-accent-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Top Sources</span>
         </div>
         {sourceBreakdown.length > 0 ? (
@@ -377,7 +377,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
   return (
     <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
       <p className="text-xs font-semibold text-[var(--text-secondary)] mb-3 flex items-center gap-1.5">
-        <TrendingUp size={13} className="text-sky-500" />
+        <TrendingUp size={13} className="text-accent-500" />
         Hiring Funnel
       </p>
       <div className="flex items-end gap-1.5 h-14">
@@ -828,10 +828,10 @@ export default function ApplicantPipelinePage() {
 
         {/* ── Drag Error Toast ───────────────────────────────────────────── */}
         {dragError && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
             <AlertCircle size={16} className="flex-shrink-0" />
             <span className="flex-1">{dragError}</span>
-            <button onClick={() => setDragError(null)} className="p-1 hover:bg-red-100 rounded">
+            <button onClick={() => setDragError(null)} className="p-1 hover:bg-danger-100 rounded">
               <X size={14} />
             </button>
           </div>
@@ -850,7 +850,7 @@ export default function ApplicantPipelinePage() {
           </div>
         ) : pipelineLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 size={32} className="animate-spin text-sky-500" />
+            <Loader2 size={32} className="animate-spin text-accent-500" />
             <span className="ml-3 text-[var(--text-muted)]">
               Loading pipeline for {selectedJob?.jobTitle ?? 'selected job'}...
             </span>
@@ -896,7 +896,7 @@ export default function ApplicantPipelinePage() {
                   placeholder="Search by candidate name..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
                 />
                 {searchQuery && (
                   <button
@@ -912,14 +912,14 @@ export default function ApplicantPipelinePage() {
                 onClick={() => setShowFilters(v => !v)}
                 className={`flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg transition-colors ${
                   hasActiveFilters
-                    ? 'border-sky-300 bg-sky-50 text-sky-700'
+                    ? 'border-accent-300 bg-accent-50 text-accent-700'
                     : 'border-[var(--border-main)] bg-white text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
                 <Filter size={14} />
                 Filters
                 {hasActiveFilters && (
-                  <span className="bg-sky-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  <span className="bg-accent-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                     {(sourceFilter ? 1 : 0) + (minRating > 0 ? 1 : 0)}
                   </span>
                 )}
@@ -929,7 +929,7 @@ export default function ApplicantPipelinePage() {
               {hasActiveFilters && (
                 <button
                   onClick={() => { setSearchQuery(''); setSourceFilter(''); setMinRating(0); }}
-                  className="text-xs text-sky-700 hover:text-sky-800 font-medium"
+                  className="text-xs text-accent-700 hover:text-accent-800 font-medium"
                 >
                   Clear all
                 </button>
@@ -944,7 +944,7 @@ export default function ApplicantPipelinePage() {
                   <select
                     value={sourceFilter}
                     onChange={e => setSourceFilter(e.target.value as ApplicationSource | '')}
-                    className="w-full px-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+                    className="w-full px-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20"
                   >
                     <option value="">All sources</option>
                     {Object.values(ApplicationSource).map(src => (
@@ -989,7 +989,7 @@ export default function ApplicantPipelinePage() {
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                             className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-4 ${colors.col} overflow-hidden transition-colors ${
-                              snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-sky-300` : 'bg-white'
+                              snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-accent-300` : 'bg-white'
                             }`}
                             style={{ maxHeight: 'calc(100vh - 380px)' }}
                           >
@@ -1025,7 +1025,7 @@ export default function ApplicantPipelinePage() {
                                           {...dragProvided.draggableProps}
                                           className={`bg-white border rounded-lg p-4 transition-all cursor-pointer group ${
                                             dragSnapshot.isDragging
-                                              ? 'shadow-lg border-sky-300 ring-2 ring-sky-200 rotate-1'
+                                              ? 'shadow-lg border-accent-300 ring-2 ring-accent-200 rotate-1'
                                               : 'border-[var(--border-main)] shadow-sm hover:shadow-md hover:border-[var(--border-main)]'
                                           } ${isMoving ? 'opacity-50' : ''}`}
                                           onClick={() => !dragSnapshot.isDragging && openDetailModal(applicant)}
@@ -1113,7 +1113,7 @@ export default function ApplicantPipelinePage() {
                                               type="button"
                                               disabled={isMoving}
                                               onClick={e => { e.stopPropagation(); handleMoveToNextStage(applicant); }}
-                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-sky-50 text-[var(--text-muted)] hover:text-sky-700 border border-[var(--border-main)] hover:border-sky-200 transition-all"
+                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-accent-50 text-[var(--text-muted)] hover:text-accent-700 border border-[var(--border-main)] hover:border-accent-200 transition-all"
                                             >
                                               {isMoving ? (
                                                 <Loader2 size={10} className="animate-spin" />
@@ -1393,7 +1393,7 @@ export default function ApplicantPipelinePage() {
               </div>
             )}
             {offerSuccess && (
-              <div className="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+              <div className="bg-success-50 border border-success-200 text-success-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
                 <svg className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
                 {offerSuccess}
               </div>
@@ -1452,7 +1452,7 @@ export default function ApplicantPipelinePage() {
                 onChange={e => setOfferForm(prev => ({ ...prev, proposedJoiningDate: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
                 disabled={offerLoading}
-                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
+                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
               />
             </div>
 
@@ -1469,7 +1469,7 @@ export default function ApplicantPipelinePage() {
               />
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-blue-700">
+            <div className="bg-accent-50 border border-accent-200 rounded-lg p-4 text-xs text-accent-700">
               The offer letter will be generated, a PDF created, and a signing link sent to the candidate&apos;s email.
               The applicant will be moved to <strong>Offered</strong> stage automatically.
             </div>

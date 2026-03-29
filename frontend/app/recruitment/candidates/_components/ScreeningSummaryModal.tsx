@@ -24,11 +24,11 @@ export function ScreeningSummaryModal({
         <div className="p-6">
           {/* Demo Mode Banner */}
           {screeningSummary.aiModelVersion === 'mock-v1' && (
-            <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700 flex items-start gap-4">
-              <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="mb-4 p-4 bg-warning-50 dark:bg-warning-900/20 rounded-lg border border-warning-200 dark:border-warning-700 flex items-start gap-4">
+              <Sparkles className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Demo Mode</p>
-                <p className="text-xs text-amber-700 dark:text-amber-400">Connect OpenAI for real AI scoring</p>
+                <p className="text-sm font-medium text-warning-800 dark:text-warning-300">Demo Mode</p>
+                <p className="text-xs text-warning-700 dark:text-warning-400">Connect OpenAI for real AI scoring</p>
               </div>
             </div>
           )}
@@ -36,7 +36,7 @@ export function ScreeningSummaryModal({
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Brain className="h-6 w-6 text-purple-500" />
+              <Brain className="h-6 w-6 text-accent-700" />
               AI Screening Summary
             </h2>
             <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
@@ -59,17 +59,17 @@ export function ScreeningSummaryModal({
 
             <div className="flex gap-4 items-center">
               <span className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
-                screeningSummary.fitLevel === 'HIGH' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
-                screeningSummary.fitLevel === 'MEDIUM' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
-                'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                screeningSummary.fitLevel === 'HIGH' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
+                screeningSummary.fitLevel === 'MEDIUM' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
+                'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
               }`}>
                 Fit Level: {screeningSummary.fitLevel}
               </span>
 
               <span className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
-                screeningSummary.recommendation === 'ADVANCE' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
-                screeningSummary.recommendation === 'HOLD' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
-                'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                screeningSummary.recommendation === 'ADVANCE' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
+                screeningSummary.recommendation === 'HOLD' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
+                'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
               }`}>
                 {screeningSummary.recommendation}
               </span>
@@ -81,14 +81,14 @@ export function ScreeningSummaryModal({
             {/* Left Column */}
             <div className="space-y-4">
               {screeningSummary.strengths && screeningSummary.strengths.length > 0 && (
-                <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
-                  <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-3 flex items-center gap-2">
+                <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-xl border border-success-200 dark:border-success-800">
+                  <p className="text-sm font-medium text-success-800 dark:text-success-300 mb-3 flex items-center gap-2">
                     <CheckCircle className="h-4 w-4" />
                     Strengths
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.strengths.map((strength, idx) => (
-                      <li key={idx} className="text-sm text-green-700 dark:text-green-400 flex items-start gap-2">
+                      <li key={idx} className="text-sm text-success-700 dark:text-success-400 flex items-start gap-2">
                         <CheckCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                         <span>{strength}</span>
                       </li>
@@ -98,14 +98,14 @@ export function ScreeningSummaryModal({
               )}
 
               {screeningSummary.followUpQuestions && screeningSummary.followUpQuestions.length > 0 && (
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-                  <p className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-3 flex items-center gap-2">
+                <div className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-xl border border-accent-200 dark:border-accent-800">
+                  <p className="text-sm font-medium text-accent-800 dark:text-accent-300 mb-3 flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
                     Follow-up Questions
                   </p>
                   <ol className="space-y-2 list-inside">
                     {screeningSummary.followUpQuestions.map((q, idx) => (
-                      <li key={idx} className="text-sm text-blue-700 dark:text-blue-400 flex gap-2">
+                      <li key={idx} className="text-sm text-accent-700 dark:text-accent-400 flex gap-2">
                         <span className="flex-shrink-0 font-medium">{idx + 1}.</span>
                         <span>{q}</span>
                       </li>
@@ -118,14 +118,14 @@ export function ScreeningSummaryModal({
             {/* Right Column */}
             <div className="space-y-4">
               {screeningSummary.gaps && screeningSummary.gaps.length > 0 && (
-                <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-200 dark:border-orange-800">
-                  <p className="text-sm font-medium text-orange-800 dark:text-orange-300 mb-3 flex items-center gap-2">
+                <div className="p-4 bg-warning-50 dark:bg-warning-900/20 rounded-xl border border-warning-200 dark:border-warning-800">
+                  <p className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-3 flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
                     Gaps
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.gaps.map((gap, idx) => (
-                      <li key={idx} className="text-sm text-orange-700 dark:text-orange-400 flex items-start gap-2">
+                      <li key={idx} className="text-sm text-warning-700 dark:text-warning-400 flex items-start gap-2">
                         <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                         <span>{gap}</span>
                       </li>
@@ -135,14 +135,14 @@ export function ScreeningSummaryModal({
               )}
 
               {screeningSummary.riskFlags && screeningSummary.riskFlags.length > 0 && (
-                <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
-                  <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-3 flex items-center gap-2">
+                <div className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-xl border border-danger-200 dark:border-danger-800">
+                  <p className="text-sm font-medium text-danger-800 dark:text-danger-300 mb-3 flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4" />
                     Risk Flags
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.riskFlags.map((flag, idx) => (
-                      <li key={idx} className="text-sm text-red-700 dark:text-red-400 flex items-start gap-2">
+                      <li key={idx} className="text-sm text-danger-700 dark:text-danger-400 flex items-start gap-2">
                         <ShieldAlert className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                         <span>{flag}</span>
                       </li>

@@ -185,8 +185,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-green-100 text-green-700 cursor-default'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-success-100 text-success-700 cursor-default'
+                    : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
@@ -211,8 +211,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-green-100 text-green-700 cursor-default'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-success-100 text-success-700 cursor-default'
+                    : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
@@ -232,7 +232,7 @@ export default function CoursePlayerPage() {
                     href={activeContent.documentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                    className="flex items-center gap-1 text-xs text-accent-600 hover:text-accent-800"
                   >
                     <ExternalLink className="h-3 w-3" />
                     Open in new tab
@@ -256,8 +256,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-green-100 text-green-700 cursor-default'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-success-100 text-success-700 cursor-default'
+                    : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
@@ -268,11 +268,11 @@ export default function CoursePlayerPage() {
 
       case 'QUIZ':
         return (
-          <div className="flex flex-col items-center justify-center h-64 bg-purple-50 rounded-lg border border-purple-200 gap-4">
-            <HelpCircle className="h-12 w-12 text-purple-400" />
+          <div className="flex flex-col items-center justify-center h-64 bg-accent-250 rounded-lg border border-accent-400 gap-4">
+            <HelpCircle className="h-12 w-12 text-accent-600" />
             <div className="text-center">
-              <p className="font-semibold text-purple-800">Quiz: {activeContent.title}</p>
-              <p className="text-sm text-purple-600 mt-1">
+              <p className="font-semibold text-accent-900">Quiz: {activeContent.title}</p>
+              <p className="text-sm text-accent-800 mt-1">
                 Quiz engine coming soon. Mark as complete to proceed.
               </p>
             </div>
@@ -281,8 +281,8 @@ export default function CoursePlayerPage() {
               disabled={contentStatus[activeContent.id] === 'completed'}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 contentStatus[activeContent.id] === 'completed'
-                  ? 'bg-green-100 text-green-700 cursor-default'
-                  : 'bg-purple-600 text-white hover:bg-purple-700'
+                  ? 'bg-success-100 text-success-700 cursor-default'
+                  : 'bg-accent-800 text-white hover:bg-accent-900'
               }`}
             >
               {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Take Quiz'}
@@ -300,7 +300,7 @@ export default function CoursePlayerPage() {
                 href={activeContent.videoUrl || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
+                className="px-4 py-2 bg-accent-600 text-white rounded-md text-sm font-medium hover:bg-accent-700"
               >
                 Open Link
               </a>
@@ -311,8 +311,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-green-100 text-green-700 cursor-default'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-success-100 text-success-700 cursor-default'
+                    : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
@@ -334,7 +334,7 @@ export default function CoursePlayerPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
         <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
+          <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-3" />
           <p className="text-[var(--text-muted)] text-sm">Loading course...</p>
         </div>
       </div>
@@ -349,8 +349,8 @@ export default function CoursePlayerPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error || 'Course not found'}</p>
-          <Link href="/learning" className="text-blue-600 hover:underline text-sm">
+          <p className="text-danger-600 mb-4">{error || 'Course not found'}</p>
+          <Link href="/learning" className="text-accent-600 hover:underline text-sm">
             ← Back to Learning
           </Link>
         </div>
@@ -389,7 +389,7 @@ export default function CoursePlayerPage() {
           <div className="hidden sm:flex items-center gap-2">
             <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-blue-600 rounded-full transition-all duration-500"
+                className="h-full bg-accent-600 rounded-full transition-all duration-500"
                 style={{ width: `${overallProgress}%` }}
               />
             </div>
@@ -444,21 +444,21 @@ export default function CoursePlayerPage() {
                         onClick={() => navigateTo(content.id)}
                         className={`w-full flex items-start gap-4 px-4 py-3 text-left transition-colors border-b border-[var(--border-main)] ${
                           isActive
-                            ? 'bg-blue-50 border-l-2 border-l-blue-600'
+                            ? 'bg-accent-50 border-l-2 border-l-accent-600'
                             : 'hover:bg-[var(--bg-surface)]'
                         }`}
                       >
                         <div className="shrink-0 mt-0.5">
                           {status === 'completed' ? (
-                            <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            <CheckCircle2 className="h-4 w-4 text-success-500" />
                           ) : status === 'in_progress' ? (
-                            <div className="h-4 w-4 rounded-full border-2 border-blue-500 bg-blue-100" />
+                            <div className="h-4 w-4 rounded-full border-2 border-accent-500 bg-accent-100" />
                           ) : (
                             <Circle className="h-4 w-4 text-[var(--text-muted)]" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-xs font-medium truncate ${isActive ? 'text-blue-700' : 'text-[var(--text-primary)]'}`}>
+                          <p className={`text-xs font-medium truncate ${isActive ? 'text-accent-700' : 'text-[var(--text-primary)]'}`}>
                             {contentIdx + 1}. {content.title}
                           </p>
                           <div className="flex items-center gap-1 mt-0.5">
@@ -494,7 +494,7 @@ export default function CoursePlayerPage() {
                     {activeContent.durationMinutes ? ` · ${activeContent.durationMinutes} min` : ''}
                   </span>
                   {contentStatus[activeContent.id] === 'completed' && (
-                    <span className="flex items-center gap-1 text-xs text-green-600 font-medium ml-2">
+                    <span className="flex items-center gap-1 text-xs text-success-600 font-medium ml-2">
                       <CheckCircle2 className="h-3.5 w-3.5" /> Completed
                     </span>
                   )}
@@ -515,7 +515,7 @@ export default function CoursePlayerPage() {
                 <button
                   onClick={goNext}
                   disabled={activeContentIdx >= allContents.length - 1}
-                  className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-4 py-2 bg-accent-600 text-white text-sm rounded-md hover:bg-accent-700 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   Next <ChevronRight className="h-4 w-4" />
                 </button>
@@ -535,8 +535,8 @@ export default function CoursePlayerPage() {
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
           <div className="skeuo-card p-8 max-w-sm w-full mx-4 text-center">
             <div className="flex justify-center mb-4">
-              <div className="p-4 bg-green-100 rounded-full">
-                <Award className="h-12 w-12 text-green-600" />
+              <div className="p-4 bg-success-100 rounded-full">
+                <Award className="h-12 w-12 text-success-600" />
               </div>
             </div>
             <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Course Complete!</h2>
@@ -546,7 +546,7 @@ export default function CoursePlayerPage() {
             </p>
             <div className="flex flex-col gap-2">
               {enrollment?.certificateId && (
-                <button className="w-full px-4 py-2 bg-green-600 text-white rounded-md font-medium hover:bg-green-700">
+                <button className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700">
                   Download Certificate
                 </button>
               )}

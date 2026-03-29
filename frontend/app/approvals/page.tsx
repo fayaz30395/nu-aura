@@ -34,21 +34,21 @@ const TAB_CONFIGS: TabConfig[] = [
     label: 'Pending',
     status: 'PENDING',
     icon: <Clock className="h-4 w-4" />,
-    color: 'text-amber-600 dark:text-amber-400',
+    color: 'text-warning-600 dark:text-warning-400',
   },
   {
     key: 'approved',
     label: 'Approved',
     status: 'APPROVED',
     icon: <CheckCircle className="h-4 w-4" />,
-    color: 'text-emerald-600 dark:text-emerald-400',
+    color: 'text-success-600 dark:text-success-400',
   },
   {
     key: 'rejected',
     label: 'Rejected',
     status: 'REJECTED',
     icon: <XCircle className="h-4 w-4" />,
-    color: 'text-red-600 dark:text-red-400',
+    color: 'text-danger-600 dark:text-danger-400',
   },
 ];
 
@@ -96,7 +96,7 @@ function ApprovalCard({ approval, onApprove, onReject, isLoading }: {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="border border-[var(--border-main)] hover:border-sky-400 transition-colors skeuo-card">
+      <Card className="border border-[var(--border-main)] hover:border-accent-400 transition-colors skeuo-card">
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -128,14 +128,14 @@ function ApprovalCard({ approval, onApprove, onReject, isLoading }: {
                 <Button
                   onClick={() => onApprove(approval.id)}
                   isLoading={isLoading}
-                  className="btn-primary h-9 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white border-0"
+                  className="btn-primary h-9 px-3 text-xs bg-success-600 hover:bg-success-700 text-white border-0"
                 >
                   Approve
                 </Button>
                 <Button
                   onClick={() => onReject(approval.id)}
                   isLoading={isLoading}
-                  className="btn-secondary h-9 px-3 text-xs bg-red-600 hover:bg-red-700 text-white border-0"
+                  className="btn-secondary h-9 px-3 text-xs bg-danger-600 hover:bg-danger-700 text-white border-0"
                 >
                   Reject
                 </Button>
@@ -216,11 +216,11 @@ export default function ApprovalsPage() {
     return (
       <AppLayout activeMenuItem="approvals">
         <div className="p-4 md:p-6 lg:p-8 max-w-[1200px] mx-auto">
-          <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-900/50 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-red-900 dark:text-red-200">Error Loading Approvals</h3>
-              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+              <h3 className="font-semibold text-danger-900 dark:text-danger-200">Error Loading Approvals</h3>
+              <p className="text-sm text-danger-700 dark:text-danger-300 mt-1">
                 {error instanceof Error ? error.message : 'Failed to load approvals'}
               </p>
             </div>
@@ -255,7 +255,7 @@ export default function ApprovalsPage() {
               }}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === tab.key
-                  ? 'text-sky-700 dark:text-sky-400 border-sky-700 dark:border-sky-400'
+                  ? 'text-accent-700 dark:text-accent-400 border-accent-700 dark:border-accent-400'
                   : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)]'
               }`}
             >
@@ -276,7 +276,7 @@ export default function ApprovalsPage() {
               setSearch(e.target.value);
               setPage(0);
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500/50 skeuo-input"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500/50 skeuo-input"
           />
         </div>
 

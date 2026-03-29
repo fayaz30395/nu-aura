@@ -15,7 +15,7 @@ export default function LWFError({
     <AppLayout>
       <Container size="sm" py="xl">
         <Group justify="center" mb="md">
-          <IconAlertTriangle size={48} color="var(--mantine-color-red-6)" />
+          <IconAlertTriangle size={48} color="var(--mantine-color-danger-6)" />
         </Group>
         <Title order={3} ta="center" mb="sm">
           Something went wrong

@@ -122,7 +122,7 @@ export default function MyContentPage() {
                 relative px-4 py-3 text-sm font-medium whitespace-nowrap
                 transition-colors duration-200 flex items-center gap-2
                 ${activeTab === tab.id
-                  ? 'text-[var(--sky-700)] dark:text-[var(--sky-400)]'
+                  ? 'text-[var(--accent-700)] dark:text-[var(--accent-400)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }
               `}
@@ -133,7 +133,7 @@ export default function MyContentPage() {
               <motion.span
                 className={`px-2 py-0.5 text-xs font-medium rounded-full transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-[var(--sky-100)] text-[var(--sky-800)] dark:bg-[var(--sky-950)] dark:text-[var(--sky-300)]'
+                    ? 'bg-[var(--accent-100)] text-[var(--accent-800)] dark:bg-[var(--accent-950)] dark:text-[var(--accent-300)]'
                     : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                 }`}
                 initial={false}
@@ -146,7 +146,7 @@ export default function MyContentPage() {
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="tab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--sky-700)] dark:bg-[var(--sky-400)]"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--accent-700)] dark:bg-[var(--accent-400)]"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}
@@ -217,9 +217,9 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, iconColor }: StatCardProps) {
   const colorMap = {
-    violet: 'bg-violet-100 dark:bg-violet-950 text-violet-600 dark:text-violet-400',
-    amber: 'bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400',
-    yellow: 'bg-yellow-100 dark:bg-yellow-950 text-yellow-600 dark:text-yellow-400',
+    violet: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
+    amber: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
+    yellow: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
   };
 
   return (
@@ -436,8 +436,8 @@ function ContentCard({
   onClick,
 }: ContentCardProps) {
   const colorMap = {
-    violet: 'text-violet-600 dark:text-violet-400',
-    amber: 'text-amber-600 dark:text-amber-400',
+    violet: 'text-accent-600 dark:text-accent-400',
+    amber: 'text-warning-600 dark:text-warning-400',
   };
 
   const getStatusClass = (st: string): string => {
@@ -507,9 +507,9 @@ function FavoriteCard({
   onClick,
 }: FavoriteCardProps) {
   const colorMap = {
-    violet: 'text-violet-600 dark:text-violet-400',
-    amber: 'text-amber-600 dark:text-amber-400',
-    yellow: 'text-yellow-600 dark:text-yellow-400',
+    violet: 'text-accent-600 dark:text-accent-400',
+    amber: 'text-warning-600 dark:text-warning-400',
+    yellow: 'text-warning-600 dark:text-warning-400',
   };
 
   const typeLabel = contentType.replace(/_/g, ' ').toLowerCase();
@@ -520,7 +520,7 @@ function FavoriteCard({
       className={`${card.interactive} ${card.padding} w-full text-left flex items-center gap-4`}
       {...dsMotion.cardHover}
     >
-      <StarIcon className="h-5 w-5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+      <StarIcon className="h-5 w-5 text-warning-500 fill-warning-500 flex-shrink-0" />
       <div className={`${colorMap[typeColor]} flex-shrink-0`}>
         <TypeIcon className={iconSize.cardInline} />
       </div>

@@ -267,7 +267,7 @@ export default function MyLeavesPage() {
     return (
       <AppLayout activeMenuItem="leaves">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
         </div>
       </AppLayout>
     );
@@ -278,7 +278,7 @@ export default function MyLeavesPage() {
     return (
       <AppLayout activeMenuItem="leaves">
         <div className="text-center py-12">
-          <AlertCircle className="h-16 w-16 mx-auto text-amber-400 mb-4" />
+          <AlertCircle className="h-16 w-16 mx-auto text-warning-400 mb-4" />
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
             {is403 ? 'Access Restricted' : 'Unable to Load Leave Data'}
           </h2>
@@ -303,7 +303,7 @@ export default function MyLeavesPage() {
           </p>
           <button
             onClick={() => router.push('/leave')}
-            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
           >
             View Leave Management
           </button>
@@ -325,7 +325,7 @@ export default function MyLeavesPage() {
           </div>
           <button
             onClick={() => setShowApplyModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors skeuo-button"
+            className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors skeuo-button"
           >
             <Plus className="h-4 w-4" />
             Apply for Leave
@@ -334,9 +334,9 @@ export default function MyLeavesPage() {
 
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <p className="text-green-800 dark:text-green-200 font-medium">
+          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <CheckCircle className="h-5 w-5 text-success-600" />
+            <p className="text-success-800 dark:text-success-200 font-medium">
               {successMessage}
             </p>
           </div>
@@ -344,9 +344,9 @@ export default function MyLeavesPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <p className="text-red-800 dark:text-red-200 font-medium">{error}</p>
+          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-5 w-5 text-danger-600" />
+            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
 
@@ -376,7 +376,7 @@ export default function MyLeavesPage() {
                           setEncashReason('');
                           setShowEncashModal(true);
                         }}
-                        className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-950/50 transition-colors"
+                        className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800 rounded-md hover:bg-success-100 dark:hover:bg-success-950/50 transition-colors"
                         title="Encash available leaves"
                       >
                         <Banknote className="h-3 w-3" />
@@ -390,7 +390,7 @@ export default function MyLeavesPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-secondary)]">Available</span>
-                      <span className="font-semibold text-green-600 dark:text-green-400 skeuo-emboss">
+                      <span className="font-semibold text-success-600 dark:text-success-400 skeuo-emboss">
                         {balance.available}
                       </span>
                     </div>
@@ -402,14 +402,14 @@ export default function MyLeavesPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-secondary)]">Pending</span>
-                      <span className="font-semibold text-yellow-600 dark:text-yellow-400 skeuo-emboss">
+                      <span className="font-semibold text-warning-600 dark:text-warning-400 skeuo-emboss">
                         {balance.pending}
                       </span>
                     </div>
                     {balance.encashed > 0 && (
                       <div className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">Encashed</span>
-                        <span className="font-semibold text-emerald-600 dark:text-emerald-400 skeuo-emboss">
+                        <span className="font-semibold text-success-600 dark:text-success-400 skeuo-emboss">
                           {balance.encashed}
                         </span>
                       </div>
@@ -419,7 +419,7 @@ export default function MyLeavesPage() {
                   <div className="mt-4">
                     <div className="h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-sky-500 to-sky-700 rounded-full transition-all"
+                        className="h-full bg-gradient-to-r from-accent-500 to-accent-700 rounded-full transition-all"
                         style={{
                           width: `${Math.min((balance.used / (balance.used + balance.available)) * 100, 100)}%`,
                         }}
@@ -444,7 +444,7 @@ export default function MyLeavesPage() {
                 <CardDescription>
                   Your past and current leave requests
                   {hasActiveFilters && (
-                    <span className="ml-2 text-sky-700 dark:text-sky-400">
+                    <span className="ml-2 text-accent-700 dark:text-accent-400">
                       ({filteredLeaveRequests.length} of {leaveRequests.length})
                     </span>
                   )}
@@ -457,7 +457,7 @@ export default function MyLeavesPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
-                    className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="PENDING">Pending</option>
@@ -469,7 +469,7 @@ export default function MyLeavesPage() {
                 <select
                   value={leaveTypeFilter}
                   onChange={(e) => setLeaveTypeFilter(e.target.value)}
-                  className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                  className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                 >
                   <option value="ALL">All Leave Types</option>
                   {leaveTypes.map((type) => (
@@ -511,7 +511,7 @@ export default function MyLeavesPage() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-4 px-4 py-2 text-sm text-sky-700 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/30 rounded-lg transition-colors"
+                  className="mt-4 px-4 py-2 text-sm text-accent-700 hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 rounded-lg transition-colors"
                 >
                   Clear Filters
                 </button>
@@ -555,10 +555,10 @@ export default function MyLeavesPage() {
                         {/* Approver Info for PENDING */}
                         {request.status === 'PENDING' && request.pendingApproverName && (
                           <div className="flex items-center gap-2 mt-3 text-sm">
-                            <User className="h-4 w-4 text-blue-500" />
+                            <User className="h-4 w-4 text-accent-500" />
                             <span className="text-[var(--text-secondary)]">
                               Pending approval from:{' '}
-                              <span className="font-medium text-blue-600 dark:text-blue-400">
+                              <span className="font-medium text-accent-600 dark:text-accent-400">
                                 {request.pendingApproverName}
                               </span>
                             </span>
@@ -576,7 +576,7 @@ export default function MyLeavesPage() {
                           </div>
                         )}
                         {request.rejectionReason && (
-                          <p className="text-sm text-red-600 dark:text-red-400 mt-2">
+                          <p className="text-sm text-danger-600 dark:text-danger-400 mt-2">
                             <span className="font-medium">Rejection Reason:</span>{' '}
                             {request.rejectionReason}
                           </p>
@@ -593,14 +593,14 @@ export default function MyLeavesPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEdit(request)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-sky-700 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/30 dark:hover:bg-sky-950/50 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 dark:bg-accent-950/30 dark:hover:bg-accent-950/50 rounded-lg transition-colors"
                           >
                             <Edit3 className="h-3 w-3" />
                             Edit
                           </button>
                           <button
                             onClick={() => handleCancelClick(request)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-950/50 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-danger-600 hover:text-danger-700 bg-danger-50 hover:bg-danger-100 dark:bg-danger-950/30 dark:hover:bg-danger-950/50 rounded-lg transition-colors"
                           >
                             <Ban className="h-3 w-3" />
                             Cancel
@@ -653,7 +653,7 @@ export default function MyLeavesPage() {
                     </label>
                     <select
                       {...registerLeave('leaveTypeId')}
-                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                     >
                       <option value="">Select leave type</option>
                       {leaveTypes.map((type) => (
@@ -662,7 +662,7 @@ export default function MyLeavesPage() {
                         </option>
                       ))}
                     </select>
-                    {leaveErrors.leaveTypeId && <p className="text-red-500 text-sm mt-1">{leaveErrors.leaveTypeId.message}</p>}
+                    {leaveErrors.leaveTypeId && <p className="text-danger-500 text-sm mt-1">{leaveErrors.leaveTypeId.message}</p>}
                   </div>
 
                   {/* Dates */}
@@ -674,9 +674,9 @@ export default function MyLeavesPage() {
                       <input
                         type="date"
                         {...registerLeave('startDate')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                       />
-                      {leaveErrors.startDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
+                      {leaveErrors.startDate && <p className="text-danger-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -686,9 +686,9 @@ export default function MyLeavesPage() {
                         type="date"
                         {...registerLeave('endDate')}
                         min={startDate}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                       />
-                      {leaveErrors.endDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.endDate.message}</p>}
+                      {leaveErrors.endDate && <p className="text-danger-500 text-sm mt-1">{leaveErrors.endDate.message}</p>}
                     </div>
                   </div>
 
@@ -698,7 +698,7 @@ export default function MyLeavesPage() {
                       type="checkbox"
                       id="halfDay"
                       {...registerLeave('isHalfDay')}
-                      className="w-4 h-4 text-sky-700 rounded focus:ring-sky-500"
+                      className="w-4 h-4 text-accent-700 rounded focus:ring-accent-500"
                     />
                     <label
                       htmlFor="halfDay"
@@ -709,9 +709,9 @@ export default function MyLeavesPage() {
                   </div>
 
                   {/* Total Days */}
-                  <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-lg">
+                  <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
                     <p className="text-sm text-[var(--text-secondary)]">
-                      Total Days: <span className="font-bold text-sky-700">{calculateDays()}</span>
+                      Total Days: <span className="font-bold text-accent-700">{calculateDays()}</span>
                     </p>
                   </div>
 
@@ -724,9 +724,9 @@ export default function MyLeavesPage() {
                       {...registerLeave('reason')}
                       rows={4}
                       placeholder="Please provide a reason for your leave..."
-                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-sky-500 dark:bg-[var(--bg-surface)]"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                     />
-                    {leaveErrors.reason && <p className="text-red-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
+                    {leaveErrors.reason && <p className="text-danger-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
                   </div>
 
                   {/* Actions */}
@@ -742,7 +742,7 @@ export default function MyLeavesPage() {
                     <button
                       type="submit"
                       disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                      className="flex items-center gap-2 px-6 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-6 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50"
                     >
                       {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
                         <>
@@ -779,8 +779,8 @@ export default function MyLeavesPage() {
               </div>
 
               <form onSubmit={handleCancelSubmit(onCancelSubmit)} className="p-6 space-y-4">
-                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-sm text-red-800 dark:text-red-200">
+                <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+                  <p className="text-sm text-danger-800 dark:text-danger-200">
                     Are you sure you want to cancel your{' '}
                     <span className="font-semibold">{getLeaveTypeName(cancellingRequest.leaveTypeId)}</span>{' '}
                     request for{' '}
@@ -799,9 +799,9 @@ export default function MyLeavesPage() {
                     {...registerCancel('reason')}
                     rows={3}
                     placeholder="Please provide a reason for cancelling this leave request..."
-                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-[var(--bg-surface)]"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-danger-500 dark:bg-[var(--bg-surface)]"
                   />
-                  {cancelErrors.reason && <p className="text-red-500 text-sm mt-1">{cancelErrors.reason.message}</p>}
+                  {cancelErrors.reason && <p className="text-danger-500 text-sm mt-1">{cancelErrors.reason.message}</p>}
                 </div>
 
                 <div className="flex items-center justify-end gap-4 pt-4">
@@ -816,7 +816,7 @@ export default function MyLeavesPage() {
                   <button
                     type="submit"
                     disabled={cancelLeaveRequest.isPending || cancelSubmitting}
-                    className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-6 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 transition-colors disabled:opacity-50"
                   >
                     {cancelLeaveRequest.isPending || cancelSubmitting ? (
                       <>
@@ -843,8 +843,8 @@ export default function MyLeavesPage() {
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                      <Banknote className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                    <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
+                      <Banknote className="h-5 w-5 text-success-600 dark:text-success-400" />
                     </div>
                     <div>
                       <h2 className="text-lg font-semibold text-[var(--text-primary)]">
@@ -866,17 +866,17 @@ export default function MyLeavesPage() {
 
               <div className="p-6 space-y-4">
                 {/* Balance Summary */}
-                <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+                <div className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+                    <span className="text-sm font-medium text-success-800 dark:text-success-300">
                       {leaveTypes.find((lt) => lt.id === encashBalance.leaveTypeId)?.leaveName || 'Leave Type'}
                     </span>
-                    <span className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
+                    <span className="text-lg font-bold text-success-700 dark:text-success-400">
                       {encashBalance.available} days available
                     </span>
                   </div>
                   {encashBalance.encashed > 0 && (
-                    <p className="text-xs text-emerald-600 dark:text-emerald-500">
+                    <p className="text-xs text-success-600 dark:text-success-500">
                       Previously encashed: {encashBalance.encashed} days
                     </p>
                   )}
@@ -912,9 +912,9 @@ export default function MyLeavesPage() {
                   />
                 </div>
 
-                <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-                  <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-amber-800 dark:text-amber-300">
+                <div className="flex items-start gap-2 p-3 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                  <AlertCircle className="h-4 w-4 text-warning-600 dark:text-warning-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-warning-800 dark:text-warning-300">
                     Encashment will be processed as part of your next payroll cycle. The amount will be calculated based on your current basic salary and applicable tax deductions.
                   </p>
                 </div>

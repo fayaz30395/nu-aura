@@ -16,8 +16,8 @@ export const chartColors = {
   /**
    * Primary chart colors - maps to Recharts color palette
    */
-  primary: () => getCSSVariable('--chart-primary', '#0057FF'),
-  secondary: () => getCSSVariable('--chart-secondary', '#4D8AFF'),
+  primary: () => getCSSVariable('--chart-primary', '#3a5fd9'),
+  secondary: () => getCSSVariable('--chart-secondary', '#7092ff'),
   success: () => getCSSVariable('--chart-success', '#16a34a'),
   warning: () => getCSSVariable('--chart-warning', '#f59e0b'),
   danger: () => getCSSVariable('--chart-danger', '#dc2626'),

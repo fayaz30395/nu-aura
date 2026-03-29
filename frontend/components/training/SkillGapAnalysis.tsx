@@ -27,7 +27,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+                <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
             </div>
         );
     }
@@ -36,7 +36,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
         return (
             <Card>
                 <CardContent className="p-8 text-center">
-                    <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto mb-3" />
+                    <AlertTriangle className="h-8 w-8 text-warning-500 mx-auto mb-3" />
                     <p className="text-surface-600 dark:text-surface-400 mb-4">
                         Failed to load skill gap analysis.
                     </p>
@@ -64,7 +64,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-xl font-bold text-surface-900 dark:text-white flex items-center gap-2">
-                        <Target className="h-5 w-5 text-sky-500" />
+                        <Target className="h-5 w-5 text-accent-500" />
                         Growth Roadmap: {report.employeeName}
                     </h2>
                     <p className="text-sm text-surface-600 dark:text-surface-400">
@@ -75,8 +75,8 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
 
             <div className="grid gap-4">
                 {report.gaps.map((gap, index) => (
-                    <Card key={index} className={`overflow-hidden border-l-4 ${gap.gapLevel === 'CRITICAL' ? 'border-l-red-500' :
-                        gap.gapLevel === 'MODERATE' ? 'border-l-amber-500' : 'border-l-blue-500'
+                    <Card key={index} className={`overflow-hidden border-l-4 ${gap.gapLevel === 'CRITICAL' ? 'border-l-danger-500' :
+                        gap.gapLevel === 'MODERATE' ? 'border-l-warning-500' : 'border-l-accent-500'
                         }`}>
                         <CardContent className="p-5">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -95,7 +95,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
                                     <div className="flex items-center gap-4">
                                         <div className="flex-1 bg-surface-100 dark:bg-surface-800 rounded-full h-2.5 max-w-xs relative">
                                             <div
-                                                className="bg-sky-500 h-2.5 rounded-full z-10 relative"
+                                                className="bg-accent-500 h-2.5 rounded-full z-10 relative"
                                                 style={{ width: `${(gap.currentLevel / 5) * 100}%` }}
                                             />
                                             <div
@@ -112,9 +112,9 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
                                 <div className="flex flex-col gap-2 min-w-[250px]">
                                     <p className="text-xs font-semibold text-surface-500 uppercase tracking-wider">Recommended Learning</p>
                                     {gap.recommendedCourses.map((course) => (
-                                        <div key={course.courseId} className="group flex items-center justify-between p-2 rounded-lg bg-surface-50 dark:bg-surface-900 border border-transparent hover:border-sky-200 transition-all">
+                                        <div key={course.courseId} className="group flex items-center justify-between p-2 rounded-lg bg-surface-50 dark:bg-surface-900 border border-transparent hover:border-accent-200 transition-all">
                                             <div className="flex items-center gap-2">
-                                                <BookOpen className="h-3.5 w-3.5 text-sky-500" />
+                                                <BookOpen className="h-3.5 w-3.5 text-accent-500" />
                                                 <span className="text-sm font-medium line-clamp-1">{course.title}</span>
                                             </div>
                                             <Badge variant="outline" size="sm" className="whitespace-nowrap">{course.difficulty}</Badge>
@@ -130,18 +130,18 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
                 ))}
             </div>
 
-            <Card className="bg-sky-50 dark:bg-sky-900/10 border-sky-100 dark:border-sky-900">
+            <Card className="bg-accent-50 dark:bg-accent-900/10 border-accent-100 dark:border-accent-900">
                 <CardContent className="p-4 flex items-center gap-4">
-                    <div className="bg-sky-500 rounded-full p-2">
+                    <div className="bg-accent-500 rounded-full p-2">
                         <ArrowUpRight className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                        <h4 className="font-semibold text-sky-900 dark:text-sky-100">Unlock your potential</h4>
-                        <p className="text-sm text-sky-700 dark:text-sky-300">
+                        <h4 className="font-semibold text-accent-900 dark:text-accent-100">Unlock your potential</h4>
+                        <p className="text-sm text-accent-700 dark:text-accent-300">
                             Closing these gaps will prepare you for the <strong>Senior Engineer</strong> role transition.
                         </p>
                     </div>
-                    <Button variant="outline" className="ml-auto border-sky-200 text-sky-700" onClick={() => window.location.href = '/training'}>
+                    <Button variant="outline" className="ml-auto border-accent-200 text-accent-700" onClick={() => window.location.href = '/training'}>
                         Explore Catalog
                     </Button>
                 </CardContent>

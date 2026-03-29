@@ -111,7 +111,7 @@ export default function AnalyticsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
           <p className="text-[var(--text-muted)] font-medium">Loading analytics...</p>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function AnalyticsPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-4 text-red-600">
+              <div className="flex items-center gap-4 text-danger-600">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Analytics</CardTitle>
               </div>
@@ -176,7 +176,7 @@ export default function AnalyticsPage() {
                   onClick={() => setTimeRange(range)}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     timeRange === range
-                      ? 'bg-sky-700 text-white'
+                      ? 'bg-accent-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
                   }`}
                 >
@@ -228,13 +228,13 @@ export default function AnalyticsPage() {
                   </p>
                   <div className="flex items-center gap-1 mt-2">
                     {analytics.headcount.growthPercentage >= 0 ? (
-                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      <TrendingUp className="h-4 w-4 text-success-600" />
                     ) : (
-                      <TrendingDown className="h-4 w-4 text-red-600" />
+                      <TrendingDown className="h-4 w-4 text-danger-600" />
                     )}
                     <span
                       className={`text-sm font-medium ${
-                        analytics.headcount.growthPercentage >= 0 ? 'text-green-600' : 'text-red-600'
+                        analytics.headcount.growthPercentage >= 0 ? 'text-success-600' : 'text-danger-600'
                       }`}
                     >
                       {Math.abs(analytics.headcount.growthPercentage)}%
@@ -242,8 +242,8 @@ export default function AnalyticsPage() {
                     <span className="text-xs text-[var(--text-muted)]">vs last month</span>
                   </div>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/30 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
               </div>
             </CardContent>
@@ -258,12 +258,12 @@ export default function AnalyticsPage() {
                     {analytics.attendance.attendancePercentage}%
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-sm text-green-600">{analytics.attendance.present}</span>
+                    <span className="text-sm text-success-600">{analytics.attendance.present}</span>
                     <span className="text-xs text-[var(--text-muted)]">present today</span>
                   </div>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center">
-                  <UserCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-900/30 flex items-center justify-center">
+                  <UserCheck className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
               </div>
             </CardContent>
@@ -278,12 +278,12 @@ export default function AnalyticsPage() {
                     {analytics.leave.utilizationPercentage}%
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-sm text-orange-600">{analytics.leave.pending}</span>
+                    <span className="text-sm text-warning-600">{analytics.leave.pending}</span>
                     <span className="text-xs text-[var(--text-muted)]">pending approvals</span>
                   </div>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-900/30 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
               </div>
             </CardContent>
@@ -299,14 +299,14 @@ export default function AnalyticsPage() {
                       {formatCurrency(analytics.payroll.currentMonth.total)}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm text-blue-600">
+                      <span className="text-sm text-accent-600">
                         {analytics.payroll.currentMonth.processed}
                       </span>
                       <span className="text-xs text-[var(--text-muted)]">processed</span>
                     </div>
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-                    <DollarSign className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/30 flex items-center justify-center">
+                    <DollarSign className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                   </div>
                 </div>
               </CardContent>
@@ -320,7 +320,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-sky-700" />
+                <Activity className="h-5 w-5 text-accent-700" />
                 Attendance Trend
               </CardTitle>
               <CardDescription>Daily attendance over time</CardDescription>
@@ -342,7 +342,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <UserCheck className="h-5 w-5 text-green-600" />
+                <UserCheck className="h-5 w-5 text-success-600" />
                 Today&apos;s Attendance
               </CardTitle>
               <CardDescription>Current attendance breakdown</CardDescription>
@@ -367,7 +367,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-purple-600" />
+                <Users className="h-5 w-5 text-accent-800" />
                 Department Distribution
               </CardTitle>
               <CardDescription>Employees by department</CardDescription>
@@ -389,7 +389,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-orange-600" />
+                <Calendar className="h-5 w-5 text-warning-600" />
                 Leave by Type
               </CardTitle>
               <CardDescription>Leave requests by category</CardDescription>
@@ -413,7 +413,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-blue-600" />
+                <DollarSign className="h-5 w-5 text-accent-600" />
                 Payroll Trend
               </CardTitle>
               <CardDescription>Monthly payroll costs over time</CardDescription>
@@ -431,7 +431,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-green-600" />
+                <TrendingUp className="h-5 w-5 text-success-600" />
                 Headcount Trend
               </CardTitle>
               <CardDescription>Employee count over time</CardDescription>
@@ -446,36 +446,36 @@ export default function AnalyticsPage() {
 
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
+          <Card className="bg-success-50 dark:bg-success-950/30 border-success-200 dark:border-success-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-green-700 dark:text-green-400">
+              <p className="text-3xl font-bold text-success-700 dark:text-success-400">
                 {analytics.attendance.onTime}
               </p>
-              <p className="text-sm text-green-600 dark:text-green-500 mt-1">On Time Today</p>
+              <p className="text-sm text-success-600 dark:text-success-500 mt-1">On Time Today</p>
             </CardContent>
           </Card>
-          <Card className="bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800">
+          <Card className="bg-warning-50 dark:bg-warning-950/30 border-warning-200 dark:border-warning-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-yellow-700 dark:text-yellow-400">
+              <p className="text-3xl font-bold text-warning-700 dark:text-warning-400">
                 {analytics.attendance.late}
               </p>
-              <p className="text-sm text-yellow-600 dark:text-yellow-500 mt-1">Late Today</p>
+              <p className="text-sm text-warning-600 dark:text-warning-500 mt-1">Late Today</p>
             </CardContent>
           </Card>
-          <Card className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
+          <Card className="bg-accent-50 dark:bg-accent-950/30 border-accent-200 dark:border-accent-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-blue-700 dark:text-blue-400">
+              <p className="text-3xl font-bold text-accent-700 dark:text-accent-400">
                 {analytics.headcount.newJoinees}
               </p>
-              <p className="text-sm text-blue-600 dark:text-blue-500 mt-1">New Joiners</p>
+              <p className="text-sm text-accent-600 dark:text-accent-500 mt-1">New Joiners</p>
             </CardContent>
           </Card>
-          <Card className="bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800">
+          <Card className="bg-danger-50 dark:bg-danger-950/30 border-danger-200 dark:border-danger-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-red-700 dark:text-red-400">
+              <p className="text-3xl font-bold text-danger-700 dark:text-danger-400">
                 {analytics.headcount.exits}
               </p>
-              <p className="text-sm text-red-600 dark:text-red-500 mt-1">Exits This Month</p>
+              <p className="text-sm text-danger-600 dark:text-danger-500 mt-1">Exits This Month</p>
             </CardContent>
           </Card>
         </div>
@@ -488,23 +488,23 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-950/30 rounded-xl">
-                <p className="text-4xl font-bold text-yellow-600 dark:text-yellow-400">
+              <div className="text-center p-4 bg-warning-50 dark:bg-warning-950/30 rounded-xl">
+                <p className="text-4xl font-bold text-warning-600 dark:text-warning-400">
                   {analytics.leave.pending}
                 </p>
-                <p className="text-sm text-yellow-700 dark:text-yellow-500 mt-2">Pending</p>
+                <p className="text-sm text-warning-700 dark:text-warning-500 mt-2">Pending</p>
               </div>
-              <div className="text-center p-4 bg-green-50 dark:bg-green-950/30 rounded-xl">
-                <p className="text-4xl font-bold text-green-600 dark:text-green-400">
+              <div className="text-center p-4 bg-success-50 dark:bg-success-950/30 rounded-xl">
+                <p className="text-4xl font-bold text-success-600 dark:text-success-400">
                   {analytics.leave.approved}
                 </p>
-                <p className="text-sm text-green-700 dark:text-green-500 mt-2">Approved</p>
+                <p className="text-sm text-success-700 dark:text-success-500 mt-2">Approved</p>
               </div>
-              <div className="text-center p-4 bg-red-50 dark:bg-red-950/30 rounded-xl">
-                <p className="text-4xl font-bold text-red-600 dark:text-red-400">
+              <div className="text-center p-4 bg-danger-50 dark:bg-danger-950/30 rounded-xl">
+                <p className="text-4xl font-bold text-danger-600 dark:text-danger-400">
                   {analytics.leave.rejected}
                 </p>
-                <p className="text-sm text-red-700 dark:text-red-500 mt-2">Rejected</p>
+                <p className="text-sm text-danger-700 dark:text-danger-500 mt-2">Rejected</p>
               </div>
             </div>
           </CardContent>

@@ -63,7 +63,7 @@ export default function ResourcesPage() {
       description: 'Horizontal allocation bars per employee, sorted by utilization',
       icon: TrendingUp,
       href: '/resources/capacity',
-      color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
+      color: 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400',
     },
     {
       title: 'Availability Calendar',
@@ -221,7 +221,7 @@ export default function ResourcesPage() {
               label="Total Employees"
               value={summary.totalEmployees}
               icon={Users}
-              color="text-sky-700 dark:text-sky-400"
+              color="text-accent-700 dark:text-accent-400"
             />
             <QuickStatCard
               label="Avg Allocation"
@@ -272,7 +272,7 @@ export default function ResourcesPage() {
                         {card.description}
                       </p>
                     </div>
-                    <div className="mt-4 flex items-center text-sm font-medium text-sky-700 dark:text-sky-400">
+                    <div className="mt-4 flex items-center text-sm font-medium text-accent-700 dark:text-accent-400">
                       View
                       <ArrowRight className="ml-1 h-4 w-4" />
                     </div>

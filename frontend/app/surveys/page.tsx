@@ -101,15 +101,15 @@ const _getStatusColor = (status: SurveyStatus) => {
 const _getTypeColor = (type: SurveyType) => {
   switch (type) {
     case SurveyType.ENGAGEMENT:
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
     case SurveyType.SATISFACTION:
-      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      return 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200';
     case SurveyType.PULSE:
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
     case SurveyType.EXIT:
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      return 'bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200';
     case SurveyType.FEEDBACK:
-      return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
+      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
   }
@@ -278,8 +278,8 @@ export default function SurveysPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
-                  <ClipboardList className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <ClipboardList className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Surveys</p>
@@ -291,8 +291,8 @@ export default function SurveysPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
-                  <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
+                  <Play className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Active</p>
@@ -317,8 +317,8 @@ export default function SurveysPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
-                  <CheckCircle className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
+                  <CheckCircle className="h-6 w-6 text-accent-800 dark:text-accent-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
@@ -330,8 +330,8 @@ export default function SurveysPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
-                  <Users className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
+                  <Users className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Responses</p>
@@ -387,7 +387,7 @@ export default function SurveysPage() {
         {/* Surveys Grid */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent"></div>
           </div>
         ) : filteredSurveys.length === 0 ? (
           <Card>
@@ -412,7 +412,7 @@ export default function SurveysPage() {
             {filteredSurveys.map((survey) => (
               <Card key={survey.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 text-white">
+                  <div className="bg-gradient-to-r from-accent-500 to-accent-800 p-4 text-white">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm opacity-80">{survey.surveyCode}</p>
@@ -500,7 +500,7 @@ export default function SurveysPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                           onClick={() => handleDeleteSurvey(survey.id)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -552,7 +552,7 @@ export default function SurveysPage() {
                     className="input-aura"
                   />
                   {errors.surveyCode && (
-                    <p className="mt-1 text-sm text-red-600">{errors.surveyCode.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.surveyCode.message}</p>
                   )}
                 </div>
                 <div>
@@ -569,7 +569,7 @@ export default function SurveysPage() {
                     ))}
                   </Select>
                   {errors.surveyType && (
-                    <p className="mt-1 text-sm text-red-600">{errors.surveyType.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.surveyType.message}</p>
                   )}
                 </div>
                 <div className="sm:col-span-2">
@@ -582,7 +582,7 @@ export default function SurveysPage() {
                     className="input-aura"
                   />
                   {errors.title && (
-                    <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.title.message}</p>
                   )}
                 </div>
                 <div className="sm:col-span-2">
@@ -595,7 +595,7 @@ export default function SurveysPage() {
                     rows={3}
                   />
                   {errors.description && (
-                    <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.description.message}</p>
                   )}
                 </div>
                 <div>
@@ -607,7 +607,7 @@ export default function SurveysPage() {
                     {...register('startDate')}
                   />
                   {errors.startDate && (
-                    <p className="mt-1 text-sm text-red-600">{errors.startDate.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.startDate.message}</p>
                   )}
                 </div>
                 <div>
@@ -619,7 +619,7 @@ export default function SurveysPage() {
                     {...register('endDate')}
                   />
                   {errors.endDate && (
-                    <p className="mt-1 text-sm text-red-600">{errors.endDate.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.endDate.message}</p>
                   )}
                 </div>
                 <div>
@@ -635,7 +635,7 @@ export default function SurveysPage() {
                     <option value="NEW_HIRE">New Hires</option>
                   </Select>
                   {errors.targetAudience && (
-                    <p className="mt-1 text-sm text-red-600">{errors.targetAudience.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.targetAudience.message}</p>
                   )}
                 </div>
                 <div>
@@ -652,7 +652,7 @@ export default function SurveysPage() {
                     ))}
                   </Select>
                   {errors.status && (
-                    <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.status.message}</p>
                   )}
                 </div>
                 <div className="sm:col-span-2">
@@ -660,14 +660,14 @@ export default function SurveysPage() {
                     <input
                       type="checkbox"
                       {...register('isAnonymous')}
-                      className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                      className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                     />
                     <span className="text-sm font-medium text-[var(--text-secondary)]">
                       Anonymous Survey (responses will not be linked to employees)
                     </span>
                   </label>
                   {errors.isAnonymous && (
-                    <p className="mt-1 text-sm text-red-600">{errors.isAnonymous.message}</p>
+                    <p className="mt-1 text-sm text-danger-600">{errors.isAnonymous.message}</p>
                   )}
                 </div>
               </div>

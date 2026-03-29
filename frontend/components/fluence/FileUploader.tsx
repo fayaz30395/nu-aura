@@ -121,8 +121,8 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
         className={cn(
           'border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer',
           isDragging
-            ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20'
-            : 'border-[var(--border-main)] hover:border-violet-400 hover:bg-violet-50/50 dark:hover:bg-violet-900/10',
+            ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+            : 'border-[var(--border-main)] hover:border-accent-400 hover:bg-accent-50/50 dark:hover:bg-accent-900/10',
           isUploading && 'pointer-events-none opacity-60'
         )}
         onClick={() => fileInputRef.current?.click()}
@@ -143,8 +143,8 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
         />
 
         <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-            <Upload className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+          <div className="w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+            <Upload className="h-6 w-6 text-accent-600 dark:text-accent-400" />
           </div>
 
           {selectedFile ? (

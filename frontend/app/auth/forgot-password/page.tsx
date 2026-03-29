@@ -69,14 +69,14 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl mb-4 shadow-lg shadow-sky-500/25">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl mb-4 shadow-lg shadow-accent-500/25">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-sky-700 to-sky-500 bg-clip-text text-transparent skeuo-emboss">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-700 to-accent-500 bg-clip-text text-transparent skeuo-emboss">
               NU-AURA
             </h1>
           </div>
@@ -86,8 +86,8 @@ export default function ForgotPasswordPage() {
               {isSsoUser ? (
                 <>
                   {/* Google SSO user — redirect to Google account */}
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-sky-100 dark:bg-sky-900/30 rounded-full mb-4">
-                    <ShieldCheck className="w-8 h-8 text-sky-700 dark:text-sky-400" />
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-full mb-4">
+                    <ShieldCheck className="w-8 h-8 text-accent-700 dark:text-accent-400" />
                   </div>
                   <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Google Sign-In Account
@@ -139,8 +139,8 @@ export default function ForgotPasswordPage() {
               ) : (
                 <>
                   {/* Local user — check email */}
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
-                    <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
+                    <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400" />
                   </div>
                   <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Check Your Email
@@ -158,7 +158,7 @@ export default function ForgotPasswordPage() {
                         setIsSubmitted(false);
                         setIsSsoUser(false);
                       }}
-                      className="text-sky-700 dark:text-sky-400 hover:underline font-medium"
+                      className="text-accent-700 dark:text-accent-400 hover:underline font-medium"
                     >
                       try again
                     </button>
@@ -179,14 +179,14 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl mb-4 shadow-lg shadow-sky-500/25">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl mb-4 shadow-lg shadow-accent-500/25">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-sky-700 to-sky-500 bg-clip-text text-transparent skeuo-emboss">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-700 to-accent-500 bg-clip-text text-transparent skeuo-emboss">
             NU-AURA
           </h1>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
@@ -206,10 +206,10 @@ export default function ForgotPasswordPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* Error Alert */}
               {error && (
-                <div className="flex items-start gap-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm text-red-700 dark:text-red-400">
+                    <p className="text-sm text-danger-700 dark:text-danger-400">
                       {error}
                     </p>
                   </div>
@@ -231,15 +231,15 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     disabled={isLoading}
                     placeholder="Enter your email"
-                    className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.email
-                        ? 'border-red-500 dark:border-red-500'
+                        ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                  <p className="text-sm text-danger-600 dark:text-danger-400 mt-1">
                     {errors.email.message}
                   </p>
                 )}
@@ -260,7 +260,7 @@ export default function ForgotPasswordPage() {
               <div className="text-center">
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 transition-colors"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to Sign In

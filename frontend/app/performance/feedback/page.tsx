@@ -139,10 +139,10 @@ export default function FeedbackPage() {
 
   const getTypeColor = (type: FeedbackType) => {
     switch (type) {
-      case 'PRAISE': return 'bg-green-100 text-green-800';
-      case 'CONSTRUCTIVE': return 'bg-yellow-100 text-yellow-800';
-      case 'GENERAL': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
-      case 'REQUEST': return 'bg-purple-100 text-purple-800';
+      case 'PRAISE': return 'bg-success-100 text-success-800';
+      case 'CONSTRUCTIVE': return 'bg-warning-100 text-warning-800';
+      case 'GENERAL': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'REQUEST': return 'bg-accent-300 text-accent-900';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
@@ -157,7 +157,7 @@ export default function FeedbackPage() {
     return (
       <AppLayout activeMenuItem="performance">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-600"></div>
         </div>
       </AppLayout>
     );
@@ -174,7 +174,7 @@ export default function FeedbackPage() {
                 resetFormHandler();
                 setShowModal(true);
               }}
-              className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
+              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
             >
               Give Feedback
             </button>
@@ -185,13 +185,13 @@ export default function FeedbackPage() {
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('received')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'received' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
+              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'received' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
             >
               Received Feedback ({receivedFeedback.length})
             </button>
             <button
               onClick={() => setActiveTab('given')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'given' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
+              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'given' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
             >
               Given Feedback ({givenFeedback.length})
             </button>
@@ -205,7 +205,7 @@ export default function FeedbackPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FeedbackType | 'ALL')}
-                className="w-full md:w-1/2 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full md:w-1/2 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="PRAISE">Praise</option>
@@ -233,7 +233,7 @@ export default function FeedbackPage() {
                     resetFormHandler();
                     setShowModal(true);
                   }}
-                  className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
+                  className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
                 >
                   Give Your First Feedback
                 </button>
@@ -256,12 +256,12 @@ export default function FeedbackPage() {
                         </span>
                       )}
                       {feedback.isAnonymous && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-accent-300 text-accent-900">
                           Anonymous
                         </span>
                       )}
                       {feedback.isPublic && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-accent-100 text-accent-800">
                           Public
                         </span>
                       )}
@@ -287,7 +287,7 @@ export default function FeedbackPage() {
                     <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                       <button
                         onClick={() => openEditModal(feedback)}
-                        className="flex-1 px-3 py-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100 text-sm font-medium"
+                        className="flex-1 px-3 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
                       >
                         Edit
                       </button>
@@ -295,7 +295,7 @@ export default function FeedbackPage() {
                     <PermissionGate permission={Permissions.REVIEW_DELETE}>
                       <button
                         onClick={() => openDeleteConfirm(feedback)}
-                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                        className="flex-1 px-3 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
                       >
                         Delete
                       </button>
@@ -324,10 +324,10 @@ export default function FeedbackPage() {
                         type="text"
                         placeholder="Enter employee ID"
                         {...register('recipientId')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.recipientId && (
-                        <p className="text-red-500 text-sm mt-1">{errors.recipientId.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.recipientId.message}</p>
                       )}
                     </div>
 
@@ -337,7 +337,7 @@ export default function FeedbackPage() {
                       </label>
                       <select
                         {...register('feedbackType')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       >
                         <option value="PRAISE">Praise</option>
                         <option value="CONSTRUCTIVE">Constructive</option>
@@ -345,7 +345,7 @@ export default function FeedbackPage() {
                         <option value="REQUEST">Request</option>
                       </select>
                       {errors.feedbackType && (
-                        <p className="text-red-500 text-sm mt-1">{errors.feedbackType.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.feedbackType.message}</p>
                       )}
                     </div>
 
@@ -357,10 +357,10 @@ export default function FeedbackPage() {
                         type="text"
                         placeholder="e.g., Communication, Leadership, Technical Skills"
                         {...register('category')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.category && (
-                        <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.category.message}</p>
                       )}
                     </div>
 
@@ -372,10 +372,10 @@ export default function FeedbackPage() {
                         rows={6}
                         placeholder="Provide detailed feedback..."
                         {...register('feedbackText')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.feedbackText && (
-                        <p className="text-red-500 text-sm mt-1">{errors.feedbackText.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.feedbackText.message}</p>
                       )}
                     </div>
 
@@ -384,7 +384,7 @@ export default function FeedbackPage() {
                         <input
                           type="checkbox"
                           {...register('isAnonymous')}
-                          className="w-4 h-4 text-sky-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-sky-500"
+                          className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">
                           Submit as anonymous
@@ -395,7 +395,7 @@ export default function FeedbackPage() {
                         <input
                           type="checkbox"
                           {...register('isPublic')}
-                          className="w-4 h-4 text-sky-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-sky-500"
+                          className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">
                           Make this feedback public
@@ -419,7 +419,7 @@ export default function FeedbackPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
+                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
                       >
                         {isSubmitting ? 'Saving...' : selectedFeedback ? 'Update' : 'Submit'}
                       </button>
@@ -452,7 +452,7 @@ export default function FeedbackPage() {
                   <button
                     onClick={handleDelete}
                     disabled={deleteMutation.isPending}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
                   >
                     {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
                   </button>

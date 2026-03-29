@@ -60,21 +60,21 @@ interface RoleMeta {
 }
 
 const ROLE_META: RoleMeta[] = [
-  { value: Roles.EMPLOYEE, label: 'Employee', description: 'Self-service: view own profile, request leave, mark attendance, view payslips', color: 'bg-blue-500', badgeClass: 'status-info',
+  { value: Roles.EMPLOYEE, label: 'Employee', description: 'Self-service: view own profile, request leave, mark attendance, view payslips', color: 'bg-accent-500', badgeClass: 'status-info',
     permissions: ['Self Profile', 'Leave Requests', 'Attendance (Self)', 'Payslips (Self)', 'Documents', 'Training', 'Recognition'] },
-  { value: Roles.TEAM_LEAD, label: 'Team Lead', description: 'Everything Employee gets + manage direct reports, approve team leave, view team attendance', color: 'bg-cyan-500', badgeClass: 'status-info',
+  { value: Roles.TEAM_LEAD, label: 'Team Lead', description: 'Everything Employee gets + manage direct reports, approve team leave, view team attendance', color: 'bg-accent-500', badgeClass: 'status-info',
     permissions: ['Team Visibility', 'Leave Approval (Team)', 'Attendance (Team)', 'Performance Reviews', 'Goal Management'] },
-  { value: Roles.MANAGER, label: 'Manager', description: 'Everything Team Lead gets + department view, timesheet approval, reporting access', color: 'bg-purple-500', badgeClass: 'status-purple',
+  { value: Roles.MANAGER, label: 'Manager', description: 'Everything Team Lead gets + department view, timesheet approval, reporting access', color: 'bg-accent-700', badgeClass: 'status-purple',
     permissions: ['Department View', 'Timesheet Approval', 'Reports', 'Expense Approval (Team)', 'Recruitment (Team View)'] },
-  { value: Roles.HR_MANAGER, label: 'HR Manager', description: 'Full HR operations: employee CRUD, leave management, recruitment, onboarding, benefits, compliance', color: 'bg-amber-500', badgeClass: 'status-warning',
+  { value: Roles.HR_MANAGER, label: 'HR Manager', description: 'Full HR operations: employee CRUD, leave management, recruitment, onboarding, benefits, compliance', color: 'bg-warning-500', badgeClass: 'status-warning',
     permissions: ['Employee CRUD', 'Leave Management', 'Recruitment', 'Onboarding/Exit', 'Benefits', 'Compensation', 'Compliance', 'Documents'] },
-  { value: Roles.HR_ADMIN, label: 'HR Admin', description: 'Everything HR Manager gets + system settings, role management, leave type config', color: 'bg-orange-500', badgeClass: 'status-orange',
+  { value: Roles.HR_ADMIN, label: 'HR Admin', description: 'Everything HR Manager gets + system settings, role management, leave type config', color: 'bg-warning-500', badgeClass: 'status-orange',
     permissions: ['All HR Manager +', 'Role Management', 'Settings', 'Leave Type Config', 'Shift Config', 'Custom Fields'] },
-  { value: Roles.RECRUITER, label: 'Recruiter', description: 'Recruitment pipeline, candidate management, interviews, offers, job boards', color: 'bg-teal-500', badgeClass: 'status-info',
+  { value: Roles.RECRUITER, label: 'Recruiter', description: 'Recruitment pipeline, candidate management, interviews, offers, job boards', color: 'bg-success-500', badgeClass: 'status-info',
     permissions: ['Job Openings', 'Candidates', 'Interviews', 'Offers', 'Job Boards', 'Preboarding'] },
-  { value: Roles.FINANCE_ADMIN, label: 'Finance Admin', description: 'Payroll processing, salary structures, statutory compliance, expense approvals', color: 'bg-emerald-500', badgeClass: 'status-success',
+  { value: Roles.FINANCE_ADMIN, label: 'Finance Admin', description: 'Payroll processing, salary structures, statutory compliance, expense approvals', color: 'bg-success-500', badgeClass: 'status-success',
     permissions: ['Payroll Runs', 'Salary Structures', 'Statutory', 'TDS/PF/ESI', 'Expense Approval', 'Compensation'] },
-  { value: Roles.SUPER_ADMIN, label: 'Super Admin', description: 'Bypasses ALL permission checks. Unrestricted access to every tenant, module, and data point in the system.', color: 'bg-red-500', badgeClass: 'status-danger',
+  { value: Roles.SUPER_ADMIN, label: 'Super Admin', description: 'Bypasses ALL permission checks. Unrestricted access to every tenant, module, and data point in the system.', color: 'bg-danger-500', badgeClass: 'status-danger',
     permissions: ['EVERYTHING — bypasses all RBAC'] },
 ];
 
@@ -105,7 +105,7 @@ function PermissionPreview({ roleCodes }: { roleCodes: string[] }) {
         className="flex items-center justify-between w-full text-left"
       >
         <div className="flex items-center gap-2">
-          <Eye className="h-4 w-4 text-sky-500" />
+          <Eye className="h-4 w-4 text-accent-500" />
           <span className="text-sm font-medium text-[var(--text-primary)]">
             Permission Summary — {allPerms.size} capability areas
           </span>
@@ -203,12 +203,12 @@ function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: 
             onClick={() => toggleRole(role.value)}
             className={`flex items-center gap-2 p-2 rounded-lg border text-left text-xs transition-all ${
               selectedRoles.includes(role.value)
-                ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
+                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/10'
                 : 'border-[var(--border-main)] hover:border-[var(--border-subtle)]'
             }`}
           >
             <div className={`h-3 w-3 rounded border flex items-center justify-center flex-shrink-0 ${
-              selectedRoles.includes(role.value) ? 'border-sky-500 bg-sky-500' : 'border-[var(--border-main)]'
+              selectedRoles.includes(role.value) ? 'border-accent-500 bg-accent-500' : 'border-[var(--border-main)]'
             }`}>
               {selectedRoles.includes(role.value) && <CheckCircle className="h-2 w-2 text-white" />}
             </div>
@@ -280,8 +280,8 @@ export default function AdminEmployeesPage() {
     return (
       <AdminPageContent className="p-8 flex items-center justify-center h-[60vh]">
         <div className="text-center space-y-4">
-          <div className="h-16 w-16 mx-auto rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
-            <Shield className="h-8 w-8 text-red-500" />
+          <div className="h-16 w-16 mx-auto rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
+            <Shield className="h-8 w-8 text-danger-500" />
           </div>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Access Denied</h2>
           <p className="text-sm text-[var(--text-muted)]">You need HR Admin or Employee Management permission to access this page.</p>
@@ -349,9 +349,9 @@ export default function AdminEmployeesPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.05 }}
         className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Users, value: totalElements, label: 'Total Employees', tint: 'tint-info', iconColor: 'text-sky-700' },
-          { icon: CheckCircle, value: employees.filter((e: Employee) => e.status === 'ACTIVE').length, label: 'Active', tint: 'tint-success', iconColor: 'text-emerald-600' },
-          { icon: Shield, value: rolesData?.length ?? 0, label: 'Roles Defined', tint: 'tint-warning', iconColor: 'text-amber-600' },
+          { icon: Users, value: totalElements, label: 'Total Employees', tint: 'tint-info', iconColor: 'text-accent-700' },
+          { icon: CheckCircle, value: employees.filter((e: Employee) => e.status === 'ACTIVE').length, label: 'Active', tint: 'tint-success', iconColor: 'text-success-600' },
+          { icon: Shield, value: rolesData?.length ?? 0, label: 'Roles Defined', tint: 'tint-warning', iconColor: 'text-warning-600' },
           { icon: Building2, value: departments?.content?.length ?? 0, label: 'Departments', tint: '', iconColor: 'text-[var(--text-secondary)]' },
         ].map(({ icon: Icon, value, label, tint, iconColor }) => (
           <div key={label} className="card-aura p-4">
@@ -389,8 +389,8 @@ export default function AdminEmployeesPage() {
               <NuAuraLoader message="Loading employees..." />
             ) : employeesError ? (
               <div className="flex flex-col items-center gap-4 py-12">
-                <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-red-500" />
+                <div className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
+                  <AlertCircle className="h-6 w-6 text-danger-500" />
                 </div>
                 <p className="text-[var(--text-secondary)]">Failed to load employees</p>
                 <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
@@ -415,7 +415,7 @@ export default function AdminEmployeesPage() {
                         <tr key={emp.id} className="hover:bg-[var(--bg-card-hover)] transition-colors">
                           <td>
                             <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-xs font-semibold text-sky-700 dark:text-sky-300">
+                              <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-xs font-semibold text-accent-700 dark:text-accent-300">
                                 {emp.firstName?.[0]}{emp.lastName?.[0]}
                               </div>
                               <div>
@@ -468,7 +468,7 @@ export default function AdminEmployeesPage() {
       <Modal isOpen={!!editingRoleForEmployee} onClose={() => setEditingRoleForEmployee(null)} size="md">
         <ModalHeader onClose={() => setEditingRoleForEmployee(null)}>
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-sky-500" />
+            <Shield className="h-5 w-5 text-accent-500" />
             <span>Edit Roles</span>
           </div>
         </ModalHeader>
@@ -484,7 +484,7 @@ export default function AdminEmployeesPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader onClose={handleCloseModal}>
             <div className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5 text-sky-500" />
+              <UserPlus className="h-5 w-5 text-accent-500" />
               <span>Create Employee & Assign Roles</span>
             </div>
           </ModalHeader>
@@ -498,10 +498,10 @@ export default function AdminEmployeesPage() {
               ].map(({ step, num, label }) => (
                 <button key={step} type="button" onClick={() => setFormStep(step)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    formStep === step ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300' : 'text-[var(--text-muted)]'
+                    formStep === step ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300' : 'text-[var(--text-muted)]'
                   }`}>
                   <div className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                    formStep === step ? 'bg-sky-500 text-white' : 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
+                    formStep === step ? 'bg-accent-500 text-white' : 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
                   }`}>{num}</div>
                   {label}
                 </button>
@@ -515,19 +515,19 @@ export default function AdminEmployeesPage() {
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Hash className="h-3.5 w-3.5 inline mr-1" />Employee Code *</label>
                     <input {...register('employeeCode')} className="input-aura w-full" placeholder="EMP-001" />
-                    {errors.employeeCode && <p className="text-xs text-red-500 mt-1">{errors.employeeCode.message}</p>}
+                    {errors.employeeCode && <p className="text-xs text-danger-500 mt-1">{errors.employeeCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Mail className="h-3.5 w-3.5 inline mr-1" />Work Email *</label>
                     <input {...register('workEmail')} type="email" className="input-aura w-full" placeholder="john@company.com" />
-                    {errors.workEmail && <p className="text-xs text-red-500 mt-1">{errors.workEmail.message}</p>}
+                    {errors.workEmail && <p className="text-xs text-danger-500 mt-1">{errors.workEmail.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><User className="h-3.5 w-3.5 inline mr-1" />First Name *</label>
                     <input {...register('firstName')} className="input-aura w-full" placeholder="John" />
-                    {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName.message}</p>}
+                    {errors.firstName && <p className="text-xs text-danger-500 mt-1">{errors.firstName.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Middle Name</label>
@@ -541,7 +541,7 @@ export default function AdminEmployeesPage() {
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Lock className="h-3.5 w-3.5 inline mr-1" />Initial Password *</label>
                   <input {...register('password')} type="password" className="input-aura w-full" placeholder="Min 8 chars, uppercase + lowercase + number" />
-                  {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>}
+                  {errors.password && <p className="text-xs text-danger-500 mt-1">{errors.password.message}</p>}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -553,7 +553,7 @@ export default function AdminEmployeesPage() {
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Calendar className="h-3.5 w-3.5 inline mr-1" />Joining Date *</label>
                     <input {...register('joiningDate')} type="date" className="input-aura w-full" />
-                    {errors.joiningDate && <p className="text-xs text-red-500 mt-1">{errors.joiningDate.message}</p>}
+                    {errors.joiningDate && <p className="text-xs text-danger-500 mt-1">{errors.joiningDate.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -593,7 +593,7 @@ export default function AdminEmployeesPage() {
                   <Shield className="h-4 w-4 text-[var(--text-secondary)]" />
                   <label className="text-sm font-medium text-[var(--text-secondary)]">Select Roles * <span className="text-xs text-[var(--text-muted)]">(multiple allowed)</span></label>
                 </div>
-                {errors.roleCodes && <p className="text-xs text-red-500 mb-2">{errors.roleCodes.message}</p>}
+                {errors.roleCodes && <p className="text-xs text-danger-500 mb-2">{errors.roleCodes.message}</p>}
 
                 <Controller
                   name="roleCodes"
@@ -617,13 +617,13 @@ export default function AdminEmployeesPage() {
                             }}
                             className={`flex items-start gap-4 p-4 rounded-xl border-2 transition-all text-left ${
                               isSelected
-                                ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
+                                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/10'
                                 : 'border-[var(--border-main)] hover:border-[var(--border-subtle)] bg-[var(--bg-card)]'
                             }`}
                           >
                             {/* Checkbox */}
                             <div className={`mt-0.5 h-4 w-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                              isSelected ? 'border-sky-500 bg-sky-500' : 'border-[var(--border-main)]'
+                              isSelected ? 'border-accent-500 bg-accent-500' : 'border-[var(--border-main)]'
                             }`}>
                               {isSelected && <CheckCircle className="h-2.5 w-2.5 text-white" />}
                             </div>
@@ -644,11 +644,11 @@ export default function AdminEmployeesPage() {
 
                 {/* Super Admin Warning */}
                 {selectedRoleCodes?.includes(Roles.SUPER_ADMIN) && (
-                  <div className="flex items-start gap-2 p-4 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
-                    <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-2 p-4 rounded-lg bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800">
+                    <AlertCircle className="h-4 w-4 text-danger-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-red-800 dark:text-red-200">Super Admin Access</p>
-                      <p className="text-xs text-red-600 dark:text-red-300 mt-0.5">
+                      <p className="text-sm font-medium text-danger-800 dark:text-danger-200">Super Admin Access</p>
+                      <p className="text-xs text-danger-600 dark:text-danger-300 mt-0.5">
                         This role bypasses ALL permission checks. The user will have unrestricted access to all tenants, modules, and data.
                       </p>
                     </div>

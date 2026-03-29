@@ -61,9 +61,9 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950">
           <div className="max-w-md w-full bg-[var(--bg-input)] rounded-lg shadow-lg p-8">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 mx-auto mb-4">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-danger-100 dark:bg-danger-900/30 mx-auto mb-4">
               <svg
-                className="w-6 h-6 text-red-600 dark:text-red-400"
+                className="w-6 h-6 text-danger-600 dark:text-danger-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -85,11 +85,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {/* Development: Show full error details */}
             {isDevelopment && this.state.error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-4 mb-6">
-                <p className="text-sm text-red-800 dark:text-red-300 font-mono break-all mb-2">
+              <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded p-4 mb-6">
+                <p className="text-sm text-danger-800 dark:text-danger-300 font-mono break-all mb-2">
                   <strong>Error:</strong> {this.state.error.message}
                 </p>
-                <p className="text-xs text-red-600 dark:text-red-400 font-mono break-all whitespace-pre-wrap max-h-40 overflow-auto">
+                <p className="text-xs text-danger-600 dark:text-danger-400 font-mono break-all whitespace-pre-wrap max-h-40 overflow-auto">
                   {this.state.error.stack}
                 </p>
               </div>
@@ -110,7 +110,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex gap-2">
               <button
                 onClick={() => this.setState({ hasError: false, error: undefined, errorId: undefined })}
-                className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 font-medium transition-colors"
+                className="flex-1 px-4 py-2 bg-accent-600 dark:bg-accent-500 text-white rounded-lg hover:bg-accent-700 dark:hover:bg-accent-600 font-medium transition-colors"
               >
                 Try Again
               </button>

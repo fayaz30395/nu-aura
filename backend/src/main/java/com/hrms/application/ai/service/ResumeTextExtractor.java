@@ -36,6 +36,11 @@ public class ResumeTextExtractor {
     public String extractText(byte[] fileBytes, String fileName) throws IOException, TikaException {
         log.debug("Extracting text from file: {} ({} bytes)", fileName, fileBytes.length);
 
+        if (fileBytes.length == 0) {
+            log.warn("Empty file provided: {}", fileName);
+            return "";
+        }
+
         try {
             String extractedText = tika.parseToString(new java.io.ByteArrayInputStream(fileBytes));
 

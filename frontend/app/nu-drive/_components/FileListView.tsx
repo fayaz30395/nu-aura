@@ -33,7 +33,7 @@ export function FileListView({ files, activeTab, onFileClick, onContextMenu }: F
                   {file.name}
                 </p>
                 {file.starred && (
-                  <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                  <Star className="h-4 w-4 text-warning-500 fill-warning-500 flex-shrink-0" />
                 )}
                 {file.shared && (
                   <Users className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />

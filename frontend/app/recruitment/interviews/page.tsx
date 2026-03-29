@@ -87,7 +87,7 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           placeholder={selectedOption ? selectedOption.label : placeholder}
-          className="w-full px-3 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+          className="w-full px-3 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
         />
         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
       </div>
@@ -101,8 +101,8 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-sky-50 transition-colors ${
-                  option.value === value ? 'bg-sky-50 text-sky-700' : 'text-[var(--text-primary)]'
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-accent-50 transition-colors ${
+                  option.value === value ? 'bg-accent-50 text-accent-700' : 'text-[var(--text-primary)]'
                 }`}
               >
                 <div className="font-medium">{option.label}</div>
@@ -114,7 +114,7 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
           )}
         </div>
       )}
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+      {error && <p className="text-danger-500 text-xs mt-1">{error}</p>}
     </div>
   );
 }
@@ -478,10 +478,10 @@ function InterviewsPage() {
 
 const getStatusColor = (status: InterviewStatus): string => {
   switch (status) {
-    case 'SCHEDULED': return 'bg-blue-100 text-blue-800';
-    case 'RESCHEDULED': return 'bg-yellow-100 text-yellow-800';
-    case 'COMPLETED': return 'bg-green-100 text-green-800';
-    case 'CANCELLED': return 'bg-red-100 text-red-800';
+    case 'SCHEDULED': return 'bg-accent-100 text-accent-800';
+    case 'RESCHEDULED': return 'bg-warning-100 text-warning-800';
+    case 'COMPLETED': return 'bg-success-100 text-success-800';
+    case 'CANCELLED': return 'bg-danger-100 text-danger-800';
     case 'NO_SHOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
   }
@@ -489,9 +489,9 @@ const getStatusColor = (status: InterviewStatus): string => {
 
 const getResultColor = (result?: InterviewResult): string => {
   switch (result) {
-    case 'SELECTED': return 'bg-green-100 text-green-800';
-    case 'REJECTED': return 'bg-red-100 text-red-800';
-    case 'ON_HOLD': return 'bg-yellow-100 text-yellow-800';
+    case 'SELECTED': return 'bg-success-100 text-success-800';
+    case 'REJECTED': return 'bg-danger-100 text-danger-800';
+    case 'ON_HOLD': return 'bg-warning-100 text-warning-800';
     case 'PENDING': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
   }
@@ -552,8 +552,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-sky-700" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-accent-700" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Total</p>
@@ -565,8 +565,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-accent-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Scheduled</p>
@@ -578,8 +578,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+                <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-success-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Completed</p>
@@ -591,8 +591,8 @@ const formatDateTime = (dateString?: string): string => {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-yellow-600" />
+                <div className="w-12 h-12 rounded-xl bg-warning-50 flex items-center justify-center">
+                  <AlertCircle className="h-6 w-6 text-warning-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Pending Decision</p>
@@ -614,13 +614,13 @@ const formatDateTime = (dateString?: string): string => {
                   placeholder="Search interviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
               >
                 <option value="">All Status</option>
                 <option value="SCHEDULED">Scheduled</option>
@@ -664,8 +664,8 @@ const formatDateTime = (dateString?: string): string => {
                       <tr key={interview.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-sky-100 rounded-xl flex items-center justify-center">
-                              <User className="h-5 w-5 text-sky-700" />
+                            <div className="flex-shrink-0 h-10 w-10 bg-accent-100 rounded-xl flex items-center justify-center">
+                              <User className="h-5 w-5 text-accent-700" />
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-[var(--text-primary)]">{interview.candidateName || 'Unknown'}</div>
@@ -694,7 +694,7 @@ const formatDateTime = (dateString?: string): string => {
                               href={interview.googleMeetLink || interview.meetingLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 mt-1 text-xs text-blue-600 hover:underline"
+                              className="inline-flex items-center gap-1 mt-1 text-xs text-accent-600 hover:underline"
                             >
                               <Video className="h-3 w-3" />
                               Join Meet
@@ -714,7 +714,7 @@ const formatDateTime = (dateString?: string): string => {
                               </span>
                             )}
                             {interview.rating && (
-                              <span className="flex items-center gap-1 text-sm text-yellow-600">
+                              <span className="flex items-center gap-1 text-sm text-warning-600">
                                 <Star className="h-4 w-4 fill-current" />
                                 {interview.rating}/5
                               </span>
@@ -726,7 +726,7 @@ const formatDateTime = (dateString?: string): string => {
                             {interview.status === 'SCHEDULED' && (
                               <button
                                 onClick={() => handleProvideFeedback(interview)}
-                                className="p-2 text-[var(--text-muted)] hover:text-green-600 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-success-600 transition-colors"
                                 title="Provide Feedback"
                               >
                                 <CheckCircle className="h-4 w-4" />
@@ -734,14 +734,14 @@ const formatDateTime = (dateString?: string): string => {
                             )}
                             <button
                               onClick={() => handleEdit(interview)}
-                              className="p-2 text-[var(--text-muted)] hover:text-sky-700 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => { setInterviewToDelete(interview); setShowDeleteModal(true); }}
-                              className="p-2 text-[var(--text-muted)] hover:text-red-600 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -837,7 +837,7 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('scheduledAt')}
                         className="input-aura"
                       />
-                      {errorsCreate.scheduledAt && <p className="text-red-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
+                      {errorsCreate.scheduledAt && <p className="text-danger-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Duration (minutes)</label>
@@ -848,7 +848,7 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('durationMinutes')}
                         className="input-aura"
                       />
-                      {errorsCreate.durationMinutes && <p className="text-red-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
+                      {errorsCreate.durationMinutes && <p className="text-danger-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
                     </div>
                   </div>
 
@@ -866,7 +866,7 @@ const formatDateTime = (dateString?: string): string => {
                   {!editingInterview && (
                     <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
                       <div className="flex items-center gap-2 flex-1">
-                        <Video className="h-5 w-5 text-blue-500" />
+                        <Video className="h-5 w-5 text-accent-500" />
                         <div>
                           <span className="text-sm font-medium text-[var(--text-secondary)]">Auto-create Google Meet</span>
                           <p className="text-xs text-[var(--text-muted)]">
@@ -894,8 +894,8 @@ const formatDateTime = (dateString?: string): string => {
                             });
                           }
                         }}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500/20 ${
-                          createMeetToggle ? 'bg-blue-500' : 'bg-[var(--bg-secondary)]'
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent-500/20 ${
+                          createMeetToggle ? 'bg-accent-500' : 'bg-[var(--bg-secondary)]'
                         } ${!hasValidGoogleToken() ? 'opacity-50 cursor-not-allowed' : ''}`}
                         disabled={!hasValidGoogleToken()}
                       >
@@ -910,7 +910,7 @@ const formatDateTime = (dateString?: string): string => {
 
                   {/* Time Slot Preview when Google Meet is enabled */}
                   {createMeetToggle && watchCreate('scheduledAt') && (
-                    <div className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700 flex items-center gap-2">
+                    <div className="px-3 py-2 rounded-lg bg-accent-50 border border-accent-200 text-xs text-accent-700 flex items-center gap-2">
                       <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>
                         Calendar event: {new Date(watchCreate('scheduledAt')).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
@@ -933,11 +933,11 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('meetingLink')}
                         placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}
                         disabled={createMeetToggle}
-                        className={`w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 ${
+                        className={`w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 ${
                           createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
                         }`}
                       />
-                      {errorsCreate.meetingLink && <p className="text-red-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
+                      {errorsCreate.meetingLink && <p className="text-danger-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
@@ -957,7 +957,7 @@ const formatDateTime = (dateString?: string): string => {
                         type="button"
                         onClick={handleGenerateQuestions}
                         disabled={generateQuestionsMutation.isPending}
-                        className="flex items-center gap-1 text-xs text-sky-700 hover:text-sky-700 disabled:opacity-50"
+                        className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-700 disabled:opacity-50"
                       >
                         <Sparkles className="h-3 w-3" />
                         Generate AI Questions
@@ -1014,8 +1014,8 @@ const formatDateTime = (dateString?: string): string => {
                           onClick={() => setValueFeedback('rating', rating)}
                           className={`p-2 rounded-xl transition-colors ${
                             watchFeedback('rating') === rating
-                              ? 'bg-yellow-100 text-yellow-600'
-                              : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-yellow-500'
+                              ? 'bg-warning-100 text-warning-600'
+                              : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-warning-500'
                           }`}
                         >
                           <Star className={`h-6 w-6 ${watchFeedback('rating') && watchFeedback('rating') >= rating ? 'fill-current' : ''}`} />
@@ -1045,7 +1045,7 @@ const formatDateTime = (dateString?: string): string => {
                       placeholder="Provide detailed feedback about the candidate's performance..."
                       className="input-aura"
                     />
-                    {errorsFeedback.feedback && <p className="text-red-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
+                    {errorsFeedback.feedback && <p className="text-danger-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
@@ -1067,8 +1067,8 @@ const formatDateTime = (dateString?: string): string => {
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 flex items-center justify-center">
-                  <Trash2 className="h-6 w-6 text-red-600" />
+                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
+                  <Trash2 className="h-6 w-6 text-danger-600" />
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h3>
               </div>
@@ -1094,7 +1094,7 @@ const formatDateTime = (dateString?: string): string => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-sky-500" />
+                    <Sparkles className="h-5 w-5 text-accent-500" />
                     <h2 className="text-2xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
                   <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
@@ -1113,9 +1113,9 @@ const formatDateTime = (dateString?: string): string => {
                             <div className="flex items-start justify-between gap-2">
                               <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                               <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
-                                q.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-                                q.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-red-100 text-red-700'
+                                q.difficulty === 'easy' ? 'bg-success-100 text-success-700' :
+                                q.difficulty === 'medium' ? 'bg-warning-100 text-warning-700' :
+                                'bg-danger-100 text-danger-700'
                               }`}>
                                 {q.difficulty}
                               </span>

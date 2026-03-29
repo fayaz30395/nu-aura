@@ -60,7 +60,7 @@ export function MailSidebar({
               onClick={() => onLabelSelect(label.id)}
               className={`w-full flex items-center justify-between gap-4 px-3 py-2 rounded-lg text-sm transition-colors ${
                 selectedLabel === label.id
-                  ? 'bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-400'
+                  ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-400'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
@@ -69,7 +69,7 @@ export function MailSidebar({
                 <span>{label.name}</span>
               </div>
               {label.id === 'INBOX' && unreadCount > 0 && (
-                <span className="px-2 py-0.5 bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-full text-xs font-medium">
+                <span className="px-2 py-0.5 bg-danger-100 dark:bg-danger-950 text-danger-600 dark:text-danger-400 rounded-full text-xs font-medium">
                   {unreadCount}
                 </span>
               )}

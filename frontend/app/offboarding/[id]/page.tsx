@@ -292,21 +292,21 @@ export default function SeparationDetailPage() {
         <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md">
           <Paper withBorder p="md" radius="md" className="bg-[var(--bg-card)]">
             <Group gap="xs" mb="xs">
-              <IconCalendar size={16} className="text-sky-700" />
+              <IconCalendar size={16} className="text-accent-700" />
               <Text size="xs" c="dimmed">Resignation Date</Text>
             </Group>
             <Text fw={600}>{exitProcess.resignationDate ? formatDate(exitProcess.resignationDate) : '-'}</Text>
           </Paper>
           <Paper withBorder p="md" radius="md" className="bg-[var(--bg-card)]">
             <Group gap="xs" mb="xs">
-              <IconCalendar size={16} className="text-sky-700" />
+              <IconCalendar size={16} className="text-accent-700" />
               <Text size="xs" c="dimmed">Last Working Day</Text>
             </Group>
             <Text fw={600}>{exitProcess.lastWorkingDate ? formatDate(exitProcess.lastWorkingDate) : '-'}</Text>
           </Paper>
           <Paper withBorder p="md" radius="md" className="bg-[var(--bg-card)]">
             <Group gap="xs" mb="xs">
-              <IconClock size={16} className="text-sky-700" />
+              <IconClock size={16} className="text-accent-700" />
               <Text size="xs" c="dimmed">Notice Period</Text>
             </Group>
             <Text fw={600}>
@@ -315,7 +315,7 @@ export default function SeparationDetailPage() {
           </Paper>
           <Paper withBorder p="md" radius="md" className="bg-[var(--bg-card)]">
             <Group gap="xs" mb="xs">
-              <IconCurrencyRupee size={16} className="text-sky-700" />
+              <IconCurrencyRupee size={16} className="text-accent-700" />
               <Text size="xs" c="dimmed">Settlement Amount</Text>
             </Group>
             <Text fw={600}>
@@ -420,7 +420,7 @@ export default function SeparationDetailPage() {
                 <Title order={5} mb="md">Clearance Progress</Title>
                 <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-3 mb-2">
                   <div
-                    className="bg-sky-700 h-3 rounded-full transition-all duration-500"
+                    className="bg-accent-700 h-3 rounded-full transition-all duration-500"
                     style={{ width: `${clearanceProgress}%` }}
                   />
                 </div>
@@ -431,7 +431,7 @@ export default function SeparationDetailPage() {
                 <Title order={5} mb="md">Asset Recovery Progress</Title>
                 <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-3 mb-2">
                   <div
-                    className="bg-sky-700 h-3 rounded-full transition-all duration-500"
+                    className="bg-accent-700 h-3 rounded-full transition-all duration-500"
                     style={{ width: `${assetProgress}%` }}
                   />
                 </div>
@@ -642,7 +642,7 @@ export default function SeparationDetailPage() {
                     <Text size="xs" c="dimmed" mb="xs">Total Deductions</Text>
                     <Text fw={700} size="xl" c="red.7">{formatCurrency(settlement.totalDeductions)}</Text>
                   </Paper>
-                  <Paper withBorder p="md" radius="md" className="bg-sky-50 dark:bg-sky-900/20">
+                  <Paper withBorder p="md" radius="md" className="bg-accent-50 dark:bg-accent-900/20">
                     <Text size="xs" c="dimmed" mb="xs">Net Payable</Text>
                     <Text fw={700} size="xl" c="sky.7">{formatCurrency(settlement.netPayable)}</Text>
                   </Paper>

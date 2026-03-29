@@ -134,7 +134,7 @@ export const ShareModal = React.memo(function ShareModal({
         </div>
         <div className="p-4 space-y-4">
           {shareSuccess && (
-            <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg">
+            <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg">
               <Check className="h-4 w-4" />
               <span className="text-sm">Shared successfully!</span>
             </div>

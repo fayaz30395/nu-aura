@@ -46,7 +46,7 @@ export default function SalaryStructuresPage() {
               </Badge>
               <button
                 onClick={() => router.push('/payroll/salary-structures/create')}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-800 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Create Structure
@@ -68,8 +68,8 @@ export default function SalaryStructuresPage() {
           {isError && !isLoading && (
             <Card withBorder shadow="xs" radius="md" p="xl" className="skeuo-card">
               <Stack align="center" gap="md" py="xl">
-                <div className="rounded-full bg-red-50 dark:bg-red-950/20 p-4">
-                  <AlertCircle className="w-12 h-12 text-red-500" />
+                <div className="rounded-full bg-danger-50 dark:bg-danger-950/20 p-4">
+                  <AlertCircle className="w-12 h-12 text-danger-500" />
                 </div>
                 <Title order={4} fw={500} ta="center" className="skeuo-emboss">
                   Failed to Load Salary Structures
@@ -96,7 +96,7 @@ export default function SalaryStructuresPage() {
                 </Text>
                 <button
                   onClick={() => router.push('/payroll/salary-structures/create')}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-800 rounded-lg transition-colors mt-2"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors mt-2"
                 >
                   <Plus className="w-4 h-4" />
                   Create Structure

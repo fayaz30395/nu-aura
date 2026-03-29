@@ -189,9 +189,9 @@ export const taskService = {
   getPriorityBadge(priority: TaskPriority): { bg: string; text: string } {
     const badges: Record<TaskPriority, { bg: string; text: string }> = {
       LOW: { bg: 'bg-[var(--bg-surface)] dark:bg-surface-800', text: 'text-[var(--text-secondary)]' },
-      MEDIUM: { bg: 'bg-blue-100 dark:bg-blue-900', text: 'text-blue-600 dark:text-blue-400' },
-      HIGH: { bg: 'bg-orange-100 dark:bg-orange-900', text: 'text-orange-600 dark:text-orange-400' },
-      CRITICAL: { bg: 'bg-red-100 dark:bg-red-900', text: 'text-red-600 dark:text-red-400' },
+      MEDIUM: { bg: 'bg-accent-100 dark:bg-accent-900', text: 'text-accent-600 dark:text-accent-400' },
+      HIGH: { bg: 'bg-warning-100 dark:bg-warning-900', text: 'text-warning-600 dark:text-warning-400' },
+      CRITICAL: { bg: 'bg-danger-100 dark:bg-danger-900', text: 'text-danger-600 dark:text-danger-400' },
     };
     return badges[priority] || badges.MEDIUM;
   },
@@ -203,10 +203,10 @@ export const taskService = {
     const badges: Record<TaskStatus, { bg: string; text: string }> = {
       BACKLOG: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
       TODO: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
-      IN_PROGRESS: { bg: 'bg-blue-100 dark:bg-blue-900', text: 'text-blue-700 dark:text-blue-300' },
-      IN_REVIEW: { bg: 'bg-purple-100 dark:bg-purple-900', text: 'text-purple-700 dark:text-purple-300' },
-      BLOCKED: { bg: 'bg-red-100 dark:bg-red-900', text: 'text-red-700 dark:text-red-300' },
-      DONE: { bg: 'bg-green-100 dark:bg-green-900', text: 'text-green-700 dark:text-green-300' },
+      IN_PROGRESS: { bg: 'bg-accent-100 dark:bg-accent-900', text: 'text-accent-700 dark:text-accent-300' },
+      IN_REVIEW: { bg: 'bg-accent-300 dark:bg-accent-900', text: 'text-accent-900 dark:text-accent-500' },
+      BLOCKED: { bg: 'bg-danger-100 dark:bg-danger-900', text: 'text-danger-700 dark:text-danger-300' },
+      DONE: { bg: 'bg-success-100 dark:bg-success-900', text: 'text-success-700 dark:text-success-300' },
       CANCELLED: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-muted)]' },
     };
     return badges[status] || badges.TODO;

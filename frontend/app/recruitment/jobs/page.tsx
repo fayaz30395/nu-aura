@@ -215,20 +215,20 @@ export default function JobOpeningsPage() {
 
   const getStatusColor = (status: JobStatus) => {
     switch (status) {
-      case 'OPEN': return 'bg-green-100 text-green-800';
+      case 'OPEN': return 'bg-success-100 text-success-800';
       case 'DRAFT': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-      case 'ON_HOLD': return 'bg-yellow-100 text-yellow-800';
-      case 'CLOSED': return 'bg-blue-100 text-blue-800';
-      case 'CANCELLED': return 'bg-red-100 text-red-800';
+      case 'ON_HOLD': return 'bg-warning-100 text-warning-800';
+      case 'CLOSED': return 'bg-accent-100 text-accent-800';
+      case 'CANCELLED': return 'bg-danger-100 text-danger-800';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
   };
 
   const getPriorityColor = (priority?: Priority) => {
     switch (priority) {
-      case 'URGENT': return 'bg-red-100 text-red-800';
-      case 'HIGH': return 'bg-orange-100 text-orange-800';
-      case 'MEDIUM': return 'bg-blue-100 text-blue-800';
+      case 'URGENT': return 'bg-danger-100 text-danger-800';
+      case 'HIGH': return 'bg-warning-100 text-warning-800';
+      case 'MEDIUM': return 'bg-accent-100 text-accent-800';
       case 'LOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
@@ -271,8 +271,8 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-sky-700" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-accent-700" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Total Jobs</p>
@@ -290,8 +290,8 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-green-600" />
+                <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-success-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Open</p>
@@ -328,8 +328,8 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-accent-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-muted)]">Closed</p>
@@ -343,8 +343,8 @@ export default function JobOpeningsPage() {
 
         {/* Error */}
         {jobOpeningsQuery.error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-            <p className="text-sm text-red-600">
+          <div className="p-4 bg-danger-50 border border-danger-200 rounded-xl">
+            <p className="text-sm text-danger-600">
               {jobOpeningsQuery.error instanceof Error ? jobOpeningsQuery.error.message : 'Failed to load job openings'}
             </p>
           </div>
@@ -361,13 +361,13 @@ export default function JobOpeningsPage() {
                   placeholder="Search job openings..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
               >
                 <option value="">All Status</option>
                 <option value="OPEN">Open</option>
@@ -468,14 +468,14 @@ export default function JobOpeningsPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => router.push(`/recruitment/candidates?jobId=${job.id}`)}
-                        className="p-2 text-[var(--text-muted)] hover:text-sky-700 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors"
                         title="View Candidates"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleEdit(job)}
-                        className="p-2 text-[var(--text-muted)] hover:text-sky-700 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors"
                         title="Edit"
                       >
                         <Edit2 className="h-4 w-4" />
@@ -483,7 +483,7 @@ export default function JobOpeningsPage() {
                       <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
                         <button
                           onClick={() => { setJobToDelete(job); setShowDeleteModal(true); }}
-                          className="p-2 text-[var(--text-muted)] hover:text-red-600 transition-colors"
+                          className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -522,7 +522,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="JOB-001"
                       />
-                      {errors.jobCode && <p className="text-xs text-red-600 mt-1">{errors.jobCode.message}</p>}
+                      {errors.jobCode && <p className="text-xs text-danger-600 mt-1">{errors.jobCode.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Title *</label>
@@ -532,7 +532,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="Senior Software Engineer"
                       />
-                      {errors.jobTitle && <p className="text-xs text-red-600 mt-1">{errors.jobTitle.message}</p>}
+                      {errors.jobTitle && <p className="text-xs text-danger-600 mt-1">{errors.jobTitle.message}</p>}
                     </div>
                   </div>
 
@@ -548,7 +548,7 @@ export default function JobOpeningsPage() {
                           <option key={dept.id} value={dept.id}>{dept.name}</option>
                         ))}
                       </select>
-                      {errors.departmentId && <p className="text-xs text-red-600 mt-1">{errors.departmentId.message}</p>}
+                      {errors.departmentId && <p className="text-xs text-danger-600 mt-1">{errors.departmentId.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring Manager</label>
@@ -561,7 +561,7 @@ export default function JobOpeningsPage() {
                           <option key={mgr.id} value={mgr.id}>{mgr.fullName}</option>
                         ))}
                       </select>
-                      {errors.hiringManagerId && <p className="text-xs text-red-600 mt-1">{errors.hiringManagerId.message}</p>}
+                      {errors.hiringManagerId && <p className="text-xs text-danger-600 mt-1">{errors.hiringManagerId.message}</p>}
                     </div>
                   </div>
 
@@ -574,7 +574,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="Remote / City"
                       />
-                      {errors.location && <p className="text-xs text-red-600 mt-1">{errors.location.message}</p>}
+                      {errors.location && <p className="text-xs text-danger-600 mt-1">{errors.location.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment Type</label>
@@ -588,7 +588,7 @@ export default function JobOpeningsPage() {
                         <option value="TEMPORARY">Temporary</option>
                         <option value="INTERNSHIP">Internship</option>
                       </select>
-                      {errors.employmentType && <p className="text-xs text-red-600 mt-1">{errors.employmentType.message}</p>}
+                      {errors.employmentType && <p className="text-xs text-danger-600 mt-1">{errors.employmentType.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of Openings</label>
@@ -598,7 +598,7 @@ export default function JobOpeningsPage() {
                         {...register('numberOfOpenings')}
                         className="input-aura"
                       />
-                      {errors.numberOfOpenings && <p className="text-xs text-red-600 mt-1">{errors.numberOfOpenings.message}</p>}
+                      {errors.numberOfOpenings && <p className="text-xs text-danger-600 mt-1">{errors.numberOfOpenings.message}</p>}
                     </div>
                   </div>
 
@@ -611,7 +611,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="50000"
                       />
-                      {errors.minSalary && <p className="text-xs text-red-600 mt-1">{errors.minSalary.message}</p>}
+                      {errors.minSalary && <p className="text-xs text-danger-600 mt-1">{errors.minSalary.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max Salary</label>
@@ -621,7 +621,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="80000"
                       />
-                      {errors.maxSalary && <p className="text-xs text-red-600 mt-1">{errors.maxSalary.message}</p>}
+                      {errors.maxSalary && <p className="text-xs text-danger-600 mt-1">{errors.maxSalary.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience Required</label>
@@ -631,7 +631,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="3-5 years"
                       />
-                      {errors.experienceRequired && <p className="text-xs text-red-600 mt-1">{errors.experienceRequired.message}</p>}
+                      {errors.experienceRequired && <p className="text-xs text-danger-600 mt-1">{errors.experienceRequired.message}</p>}
                     </div>
                   </div>
 
@@ -648,7 +648,7 @@ export default function JobOpeningsPage() {
                         <option value="CLOSED">Closed</option>
                         <option value="CANCELLED">Cancelled</option>
                       </select>
-                      {errors.status && <p className="text-xs text-red-600 mt-1">{errors.status.message}</p>}
+                      {errors.status && <p className="text-xs text-danger-600 mt-1">{errors.status.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Priority</label>
@@ -661,7 +661,7 @@ export default function JobOpeningsPage() {
                         <option value="HIGH">High</option>
                         <option value="URGENT">Urgent</option>
                       </select>
-                      {errors.priority && <p className="text-xs text-red-600 mt-1">{errors.priority.message}</p>}
+                      {errors.priority && <p className="text-xs text-danger-600 mt-1">{errors.priority.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing Date</label>
@@ -670,7 +670,7 @@ export default function JobOpeningsPage() {
                         {...register('closingDate')}
                         className="input-aura"
                       />
-                      {errors.closingDate && <p className="text-xs text-red-600 mt-1">{errors.closingDate.message}</p>}
+                      {errors.closingDate && <p className="text-xs text-danger-600 mt-1">{errors.closingDate.message}</p>}
                     </div>
                   </div>
 
@@ -681,7 +681,7 @@ export default function JobOpeningsPage() {
                         type="button"
                         onClick={handleGenerateJobDescription}
                         disabled={generateJDMutation.isPending}
-                        className="flex items-center gap-1 text-xs font-medium text-sky-700 hover:text-sky-700 disabled:opacity-50"
+                        className="flex items-center gap-1 text-xs font-medium text-accent-700 hover:text-accent-700 disabled:opacity-50"
                       >
                         <Sparkles className="h-3.5 w-3.5" />
                         Generate with AI
@@ -690,10 +690,10 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={4}
                       {...register('jobDescription')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="Describe the job role and responsibilities..."
                     />
-                    {errors.jobDescription && <p className="text-xs text-red-600 mt-1">{errors.jobDescription.message}</p>}
+                    {errors.jobDescription && <p className="text-xs text-danger-600 mt-1">{errors.jobDescription.message}</p>}
                   </div>
 
                   <div>
@@ -701,10 +701,10 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={3}
                       {...register('requirements')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="List the requirements..."
                     />
-                    {errors.requirements && <p className="text-xs text-red-600 mt-1">{errors.requirements.message}</p>}
+                    {errors.requirements && <p className="text-xs text-danger-600 mt-1">{errors.requirements.message}</p>}
                   </div>
 
                   <div>
@@ -712,10 +712,10 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={2}
                       {...register('skillsRequired')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="React, TypeScript, Node.js..."
                     />
-                    {errors.skillsRequired && <p className="text-xs text-red-600 mt-1">{errors.skillsRequired.message}</p>}
+                    {errors.skillsRequired && <p className="text-xs text-danger-600 mt-1">{errors.skillsRequired.message}</p>}
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
@@ -746,8 +746,8 @@ export default function JobOpeningsPage() {
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 flex items-center justify-center">
-                  <Trash2 className="h-6 w-6 text-red-600" />
+                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
+                  <Trash2 className="h-6 w-6 text-danger-600" />
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h3>
               </div>
@@ -783,7 +783,7 @@ export default function JobOpeningsPage() {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                    <Sparkles className="h-6 w-6 text-sky-700" />
+                    <Sparkles className="h-6 w-6 text-accent-700" />
                     Generated Job Description
                   </h2>
                   <button
@@ -796,7 +796,7 @@ export default function JobOpeningsPage() {
 
                 {generateJDMutation.isPending ? (
                   <div className="py-12 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700 mx-auto mb-4"></div>
                     <p className="text-[var(--text-muted)]">Generating job description with AI...</p>
                   </div>
                 ) : aiGeneratedJD ? (

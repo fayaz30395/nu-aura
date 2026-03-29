@@ -217,9 +217,9 @@ export default function AdminIntegrationsPage() {
     return (
       <div className="flex items-center gap-2">
         {isActive ? (
-          <div className="badge-status flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+          <div className="badge-status flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-100 dark:bg-success-900/30">
+            <CheckCircle2 className="h-4 w-4 text-success-600 dark:text-success-400" />
+            <span className="text-sm font-medium text-success-700 dark:text-success-300">
               Active
             </span>
           </div>
@@ -238,7 +238,7 @@ export default function AdminIntegrationsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-sky-700" />
+        <Loader2 className="h-8 w-8 animate-spin text-accent-700" />
       </div>
     );
   }
@@ -248,7 +248,7 @@ export default function AdminIntegrationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 shadow-lg shadow-sky-500/25">
+          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-lg shadow-accent-500/25">
             <Settings className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -323,8 +323,8 @@ export default function AdminIntegrationsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/30">
+                <Zap className="h-5 w-5 text-accent-800 dark:text-accent-600" />
               </div>
               <div>
                 <CardTitle>Integration Activity Log</CardTitle>
@@ -343,8 +343,8 @@ export default function AdminIntegrationsPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+                <MessageSquare className="h-5 w-5 text-accent-600 dark:text-accent-400" />
               </div>
               <div>
                 <CardTitle>SMS Notifications</CardTitle>
@@ -412,7 +412,7 @@ export default function AdminIntegrationsPage() {
               <div
                 className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
                   smsTestResult.success
-                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
+                    ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
                     : 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300'
                 }`}
               >
@@ -489,7 +489,7 @@ export default function AdminIntegrationsPage() {
               <div
                 className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
                   smsSendResult.success
-                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
+                    ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
                     : 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300'
                 }`}
               >
@@ -515,13 +515,13 @@ export default function AdminIntegrationsPage() {
 
           {/* Configuration Note */}
           {!smsStatus?.configured && (
-            <div className="flex items-start gap-4 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
+              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-amber-900 dark:text-amber-100">
+                <p className="font-medium text-warning-900 dark:text-warning-100">
                   SMS Integration Not Configured
                 </p>
-                <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                <p className="text-sm text-warning-700 dark:text-warning-300 mt-1">
                   To enable SMS notifications, configure the required SMS provider
                   credentials in the server environment. Contact your system administrator for details.
                 </p>
@@ -536,8 +536,8 @@ export default function AdminIntegrationsPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-                <CreditCard className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
+                <CreditCard className="h-5 w-5 text-success-600 dark:text-success-400" />
               </div>
               <div>
                 <CardTitle>Payment Gateway</CardTitle>
@@ -593,7 +593,7 @@ export default function AdminIntegrationsPage() {
               <div
                 className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
                   paymentTestResult.success
-                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
+                    ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
                     : 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300'
                 }`}
               >
@@ -628,13 +628,13 @@ export default function AdminIntegrationsPage() {
 
           {/* Configuration Note */}
           {!paymentStatus?.configured && (
-            <div className="flex items-start gap-4 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
+              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-amber-900 dark:text-amber-100">
+                <p className="font-medium text-warning-900 dark:text-warning-100">
                   Payment Gateway Not Configured
                 </p>
-                <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                <p className="text-sm text-warning-700 dark:text-warning-300 mt-1">
                   To enable payment processing, configure the required payment gateway
                   credentials in the server environment. Contact your system administrator for details.
                 </p>

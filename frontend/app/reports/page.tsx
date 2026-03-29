@@ -40,8 +40,8 @@ const reports: ReportConfig[] = [
     title: 'Employee Directory Report',
     description: 'Complete employee details with contact information, department, and employment status',
     icon: Users,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50 dark:bg-blue-950/20',
+    color: 'text-accent-600',
+    bgColor: 'bg-accent-50 dark:bg-accent-950/20',
     category: 'HR',
     endpoint: 'employee-directory',
     requiresDateRange: false,
@@ -52,8 +52,8 @@ const reports: ReportConfig[] = [
     title: 'Attendance Report',
     description: 'Daily attendance records with check-in/check-out times and work hours',
     icon: Calendar,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50 dark:bg-green-950/20',
+    color: 'text-success-600',
+    bgColor: 'bg-success-50 dark:bg-success-950/20',
     category: 'Attendance',
     endpoint: 'attendance',
     requiresDateRange: true,
@@ -64,8 +64,8 @@ const reports: ReportConfig[] = [
     title: 'Department Headcount Report',
     description: 'Department-wise employee distribution, active/inactive counts, and headcount analysis',
     icon: BarChart3,
-    color: 'text-pink-600',
-    bgColor: 'bg-pink-50 dark:bg-pink-950/20',
+    color: 'text-accent-800',
+    bgColor: 'bg-accent-250 dark:bg-pink-950/20',
     category: 'Analytics',
     endpoint: 'department-headcount',
     requiresDateRange: false,
@@ -75,8 +75,8 @@ const reports: ReportConfig[] = [
     title: 'Leave Report',
     description: 'Leave requests, balances, and utilization by employee and department',
     icon: FileText,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-50 dark:bg-orange-950/20',
+    color: 'text-warning-600',
+    bgColor: 'bg-warning-50 dark:bg-warning-950/20',
     category: 'Leave',
     endpoint: 'leave',
     requiresDateRange: true,
@@ -87,8 +87,8 @@ const reports: ReportConfig[] = [
     title: 'Payroll Report',
     description: 'Monthly payroll summary with earnings, deductions, and net salary',
     icon: DollarSign,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50 dark:bg-purple-950/20',
+    color: 'text-accent-800',
+    bgColor: 'bg-accent-250 dark:bg-accent-900/20',
     category: 'Payroll',
     endpoint: 'payroll',
     requiresDateRange: true,
@@ -99,8 +99,8 @@ const reports: ReportConfig[] = [
     title: 'Performance Report',
     description: 'Employee performance reviews, ratings, and goal achievements',
     icon: TrendingUp,
-    color: 'text-indigo-600',
-    bgColor: 'bg-indigo-50 dark:bg-indigo-950/20',
+    color: 'text-accent-600',
+    bgColor: 'bg-accent-50 dark:bg-accent-950/20',
     category: 'Performance',
     endpoint: 'performance',
     requiresDateRange: false,
@@ -184,58 +184,58 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                 onClick={() => setFormat('EXCEL')}
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
                   format === 'EXCEL'
-                    ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                    ? 'border-success-500 bg-success-50 dark:bg-success-950/20'
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
                 <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'EXCEL' ? 'text-green-600' : 'text-[var(--text-muted)]'}`}
+                  className={`h-6 w-6 ${format === 'EXCEL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'EXCEL' ? 'text-green-700' : 'text-[var(--text-secondary)]'}`}>
+                  <p className={`font-medium text-sm ${format === 'EXCEL' ? 'text-success-700' : 'text-[var(--text-secondary)]'}`}>
                     Excel
                   </p>
                   <p className="text-xs text-[var(--text-muted)]">.xlsx</p>
                 </div>
-                {format === 'EXCEL' && <Check className="h-4 w-4 text-green-600 absolute top-2 right-2" />}
+                {format === 'EXCEL' && <Check className="h-4 w-4 text-success-600 absolute top-2 right-2" />}
               </button>
 
               <button
                 onClick={() => setFormat('PDF')}
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
                   format === 'PDF'
-                    ? 'border-red-500 bg-red-50 dark:bg-red-950/20'
+                    ? 'border-danger-500 bg-danger-50 dark:bg-danger-950/20'
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
-                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-red-600' : 'text-[var(--text-muted)]'}`} />
+                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`} />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'PDF' ? 'text-red-700' : 'text-[var(--text-secondary)]'}`}>
+                  <p className={`font-medium text-sm ${format === 'PDF' ? 'text-danger-700' : 'text-[var(--text-secondary)]'}`}>
                     PDF
                   </p>
                   <p className="text-xs text-[var(--text-muted)]">.pdf</p>
                 </div>
-                {format === 'PDF' && <Check className="h-4 w-4 text-red-600 absolute top-2 right-2" />}
+                {format === 'PDF' && <Check className="h-4 w-4 text-danger-600 absolute top-2 right-2" />}
               </button>
 
               <button
                 onClick={() => setFormat('CSV')}
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
                   format === 'CSV'
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                    ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/20'
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
                 <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'CSV' ? 'text-blue-600' : 'text-[var(--text-muted)]'}`}
+                  className={`h-6 w-6 ${format === 'CSV' ? 'text-accent-600' : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'CSV' ? 'text-blue-700' : 'text-[var(--text-secondary)]'}`}>
+                  <p className={`font-medium text-sm ${format === 'CSV' ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
                     CSV
                   </p>
                   <p className="text-xs text-[var(--text-muted)]">.csv</p>
                 </div>
-                {format === 'CSV' && <Check className="h-4 w-4 text-blue-600 absolute top-2 right-2" />}
+                {format === 'CSV' && <Check className="h-4 w-4 text-accent-600 absolute top-2 right-2" />}
               </button>
             </div>
           </div>
@@ -244,7 +244,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
           {report.requiresDateRange && (
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                Date Range <span className="text-red-500">*</span>
+                Date Range <span className="text-danger-500">*</span>
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -253,7 +253,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
                   />
                 </div>
                 <div>
@@ -262,7 +262,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-surface)]"
                   />
                 </div>
               </div>
@@ -271,7 +271,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
 
           {/* Error */}
           {error && (
-            <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+            <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
               {error}
             </div>
           )}
@@ -359,10 +359,10 @@ export default function ReportsPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-4"
+            className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg flex items-center gap-4"
           >
-            <Check className="h-5 w-5 text-green-600" />
-            <span className="text-green-700 dark:text-green-400">{successMessage}</span>
+            <Check className="h-5 w-5 text-success-600" />
+            <span className="text-success-700 dark:text-success-400">{successMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -422,13 +422,13 @@ export default function ReportsPage() {
 
       {/* Info Card */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-        <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900">
+        <Card className="bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-900">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+              <FileText className="h-5 w-5 text-accent-600 dark:text-accent-400 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-blue-900 dark:text-blue-100">Report Generation Tips</h3>
-                <ul className="text-sm text-blue-700 dark:text-blue-300 mt-2 space-y-1">
+                <h3 className="font-semibold text-accent-900 dark:text-accent-100">Report Generation Tips</h3>
+                <ul className="text-sm text-accent-700 dark:text-accent-300 mt-2 space-y-1">
                   <li>• Excel format is recommended for data analysis and further processing</li>
                   <li>• PDF format is ideal for printing and sharing official documents</li>
                   <li>• CSV format provides raw data compatible with all spreadsheet applications</li>

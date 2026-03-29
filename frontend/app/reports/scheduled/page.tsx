@@ -51,12 +51,12 @@ const REPORT_TYPE_ICONS: Record<ReportType, React.ElementType> = {
 };
 
 const REPORT_TYPE_COLORS: Record<ReportType, string> = {
-  EMPLOYEE_DIRECTORY: 'text-blue-600 bg-blue-50 dark:bg-blue-950/20',
-  ATTENDANCE: 'text-green-600 bg-green-50 dark:bg-green-950/20',
-  LEAVE: 'text-orange-600 bg-orange-50 dark:bg-orange-950/20',
-  PAYROLL: 'text-purple-600 bg-purple-50 dark:bg-purple-950/20',
-  PERFORMANCE: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20',
-  DEPARTMENT_HEADCOUNT: 'text-pink-600 bg-pink-50 dark:bg-pink-950/20',
+  EMPLOYEE_DIRECTORY: 'text-accent-600 bg-accent-50 dark:bg-accent-950/20',
+  ATTENDANCE: 'text-success-600 bg-success-50 dark:bg-success-950/20',
+  LEAVE: 'text-warning-600 bg-warning-50 dark:bg-warning-950/20',
+  PAYROLL: 'text-accent-800 bg-accent-250 dark:bg-accent-900/20',
+  PERFORMANCE: 'text-accent-600 bg-accent-50 dark:bg-accent-950/20',
+  DEPARTMENT_HEADCOUNT: 'text-accent-800 bg-accent-250 dark:bg-pink-950/20',
 };
 
 // Zod schema for scheduled report form
@@ -244,7 +244,7 @@ export default function ScheduledReportsPage() {
               setSelectedReport(null);
               setShowModal(true);
             }}
-            className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 flex items-center gap-2"
+            className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
             New Schedule
@@ -264,7 +264,7 @@ export default function ScheduledReportsPage() {
                   onClick={() => setFilterActive(status)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     filterActive === status
-                      ? 'bg-sky-700 text-white'
+                      ? 'bg-accent-700 text-white'
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
                 >
@@ -293,7 +293,7 @@ export default function ScheduledReportsPage() {
                   setSelectedReport(null);
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
+                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
               >
                 Create Your First Schedule
               </button>
@@ -328,7 +328,7 @@ export default function ScheduledReportsPage() {
                       onClick={() => handleToggleStatus(report)}
                       className={`p-2 rounded-lg transition-colors ${
                         report.isActive
-                          ? 'bg-green-50 dark:bg-green-950/20 text-green-600 hover:bg-green-100'
+                          ? 'bg-success-50 dark:bg-success-950/20 text-success-600 hover:bg-success-100'
                           : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]'
                       }`}
                       title={report.isActive ? 'Pause schedule' : 'Activate schedule'}
@@ -369,7 +369,7 @@ export default function ScheduledReportsPage() {
                   <div className="flex items-center justify-between pt-4 border-t border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       {report.isActive ? (
-                        <span className="flex items-center gap-1 text-xs text-green-600">
+                        <span className="flex items-center gap-1 text-xs text-success-600">
                           <CheckCircle className="h-3 w-3" />
                           Active
                         </span>
@@ -388,14 +388,14 @@ export default function ScheduledReportsPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => openEditModal(report)}
-                        className="p-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100"
+                        className="p-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100"
                         title="Edit"
                       >
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => openDeleteConfirm(report)}
-                        className="p-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
+                        className="p-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100"
                         title="Delete"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -427,9 +427,9 @@ export default function ScheduledReportsPage() {
                         type="text"
                         placeholder="e.g., Weekly Attendance Report"
                         {...register('scheduleName')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                       />
-                      {errors.scheduleName && <p className="text-red-500 text-sm mt-1">{errors.scheduleName.message}</p>}
+                      {errors.scheduleName && <p className="text-danger-500 text-sm mt-1">{errors.scheduleName.message}</p>}
                     </div>
 
                     {/* Report Type */}
@@ -439,13 +439,13 @@ export default function ScheduledReportsPage() {
                       </label>
                       <select
                         {...register('reportType')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                       >
                         {Object.entries(REPORT_TYPE_LABELS).map(([value, label]) => (
                           <option key={value} value={value}>{label}</option>
                         ))}
                       </select>
-                      {errors.reportType && <p className="text-red-500 text-sm mt-1">{errors.reportType.message}</p>}
+                      {errors.reportType && <p className="text-danger-500 text-sm mt-1">{errors.reportType.message}</p>}
                     </div>
 
                     {/* Frequency */}
@@ -456,13 +456,13 @@ export default function ScheduledReportsPage() {
                         </label>
                         <select
                           {...register('frequency')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                         >
                           {Object.entries(FREQUENCY_LABELS).map(([value, label]) => (
                             <option key={value} value={value}>{label}</option>
                           ))}
                         </select>
-                        {errors.frequency && <p className="text-red-500 text-sm mt-1">{errors.frequency.message}</p>}
+                        {errors.frequency && <p className="text-danger-500 text-sm mt-1">{errors.frequency.message}</p>}
                       </div>
 
                       {/* Day Selection based on frequency */}
@@ -473,13 +473,13 @@ export default function ScheduledReportsPage() {
                           </label>
                           <select
                             {...register('dayOfWeek', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                           >
                             {Object.entries(DAY_OF_WEEK_LABELS).map(([value, label]) => (
                               <option key={value} value={value}>{label}</option>
                             ))}
                           </select>
-                          {errors.dayOfWeek && <p className="text-red-500 text-sm mt-1">{errors.dayOfWeek.message}</p>}
+                          {errors.dayOfWeek && <p className="text-danger-500 text-sm mt-1">{errors.dayOfWeek.message}</p>}
                         </div>
                       )}
 
@@ -490,13 +490,13 @@ export default function ScheduledReportsPage() {
                           </label>
                           <select
                             {...register('dayOfMonth', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                           >
                             {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
                               <option key={day} value={day}>{day}</option>
                             ))}
                           </select>
-                          {errors.dayOfMonth && <p className="text-red-500 text-sm mt-1">{errors.dayOfMonth.message}</p>}
+                          {errors.dayOfMonth && <p className="text-danger-500 text-sm mt-1">{errors.dayOfMonth.message}</p>}
                         </div>
                       )}
                     </div>
@@ -510,9 +510,9 @@ export default function ScheduledReportsPage() {
                         <input
                           type="time"
                           {...register('timeOfDay')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                         />
-                        {errors.timeOfDay && <p className="text-red-500 text-sm mt-1">{errors.timeOfDay.message}</p>}
+                        {errors.timeOfDay && <p className="text-danger-500 text-sm mt-1">{errors.timeOfDay.message}</p>}
                       </div>
 
                       {/* Export Format */}
@@ -522,13 +522,13 @@ export default function ScheduledReportsPage() {
                         </label>
                         <select
                           {...register('exportFormat')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                         >
                           <option value="EXCEL">Excel (.xlsx)</option>
                           <option value="PDF">PDF</option>
                           <option value="CSV">CSV</option>
                         </select>
-                        {errors.exportFormat && <p className="text-red-500 text-sm mt-1">{errors.exportFormat.message}</p>}
+                        {errors.exportFormat && <p className="text-danger-500 text-sm mt-1">{errors.exportFormat.message}</p>}
                       </div>
                     </div>
 
@@ -539,7 +539,7 @@ export default function ScheduledReportsPage() {
                       </label>
                       <select
                         {...register('departmentId')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                       >
                         <option value="">All Departments</option>
                         {departments.map((dept) => (
@@ -560,13 +560,13 @@ export default function ScheduledReportsPage() {
                               type="email"
                               placeholder="email@example.com"
                               {...register(`recipients.${index}.email`)}
-                              className="flex-1 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)]"
+                              className="flex-1 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                             />
                             {recipientFields.length > 1 && (
                               <button
                                 type="button"
                                 onClick={() => removeRecipient(index)}
-                                className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                                className="px-3 py-2 text-danger-600 hover:bg-danger-50 rounded-lg"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
@@ -576,13 +576,13 @@ export default function ScheduledReportsPage() {
                         <button
                           type="button"
                           onClick={() => appendRecipient({ email: '' })}
-                          className="text-sm text-sky-700 hover:text-sky-700 flex items-center gap-1"
+                          className="text-sm text-accent-700 hover:text-accent-700 flex items-center gap-1"
                         >
                           <Plus className="h-4 w-4" />
                           Add another recipient
                         </button>
                       </div>
-                      {errors.recipients && <p className="text-red-500 text-sm mt-1">Please check recipients</p>}
+                      {errors.recipients && <p className="text-danger-500 text-sm mt-1">Please check recipients</p>}
                     </div>
                   </div>
 
@@ -601,7 +601,7 @@ export default function ScheduledReportsPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
                     >
                       {loading ? 'Saving...' : selectedReport ? 'Update' : 'Create'}
                     </button>
@@ -633,7 +633,7 @@ export default function ScheduledReportsPage() {
                 <button
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
                 </button>

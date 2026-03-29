@@ -38,18 +38,18 @@ export default function EmployeeDashboardPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PRESENT':
-        return 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400';
+        return 'bg-success-100 dark:bg-success-950/30 text-success-800 dark:text-success-400';
       case 'ABSENT':
-        return 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400';
+        return 'bg-danger-100 dark:bg-danger-950/30 text-danger-800 dark:text-danger-400';
       case 'LATE':
-        return 'bg-orange-100 dark:bg-orange-950/30 text-orange-800 dark:text-orange-400';
+        return 'bg-warning-100 dark:bg-warning-950/30 text-warning-800 dark:text-warning-400';
       case 'LEAVE':
       case 'ON_LEAVE':
-        return 'bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400';
+        return 'bg-accent-100 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
       case 'WEEKLY_OFF':
-        return 'bg-purple-100 dark:bg-purple-950/30 text-purple-800 dark:text-purple-400';
+        return 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600';
       case 'HOLIDAY':
-        return 'bg-pink-100 dark:bg-pink-950/30 text-pink-800 dark:text-pink-400';
+        return 'bg-accent-300 dark:bg-pink-950/30 text-accent-900 dark:text-accent-600';
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
@@ -75,15 +75,15 @@ export default function EmployeeDashboardPage() {
   const getEventColor = (type: string) => {
     switch (type) {
       case 'HOLIDAY':
-        return 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400';
+        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400';
       case 'BIRTHDAY':
-        return 'bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400';
+        return 'bg-accent-250 dark:bg-pink-950/30 text-accent-800 dark:text-accent-600';
       case 'ANNIVERSARY':
-        return 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400';
+        return 'bg-accent-250 dark:bg-accent-900/30 text-accent-800 dark:text-accent-600';
       case 'MEETING':
-        return 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400';
+        return 'bg-warning-50 dark:bg-warning-950/30 text-warning-600 dark:text-warning-400';
       case 'TRAINING':
-        return 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400';
+        return 'bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400';
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
@@ -148,7 +148,7 @@ export default function EmployeeDashboardPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-4 text-red-600">
+              <div className="flex items-center gap-4 text-danger-600">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
@@ -213,12 +213,12 @@ export default function EmployeeDashboardPage() {
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {data.attendanceSummary.currentMonth.present}
                   </p>
-                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                  <p className="text-xs text-success-600 dark:text-success-400 mt-1">
                     {data.attendanceSummary.currentMonth.attendancePercentage}% attendance
                   </p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
               </div>
             </CardContent>
@@ -236,8 +236,8 @@ export default function EmployeeDashboardPage() {
                   </p>
                   <p className="text-xs text-[var(--text-muted)] mt-1">This year</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
-                  <Palmtree className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Palmtree className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
               </div>
             </CardContent>
@@ -255,8 +255,8 @@ export default function EmployeeDashboardPage() {
                   </p>
                   <p className="text-xs text-[var(--text-muted)] mt-1">Remaining</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
               </div>
             </CardContent>
@@ -274,8 +274,8 @@ export default function EmployeeDashboardPage() {
                   </p>
                   <p className="text-xs text-[var(--text-muted)] mt-1">Per day</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
               </div>
             </CardContent>
@@ -400,8 +400,8 @@ export default function EmployeeDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-sky-50 dark:bg-sky-950/30 rounded-xl">
-                    <Target className="h-8 w-8 text-sky-700 dark:text-sky-400 mx-auto" />
+                  <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
+                    <Target className="h-8 w-8 text-accent-700 dark:text-accent-400 mx-auto" />
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.currentGoals.length}
                     </p>
@@ -409,8 +409,8 @@ export default function EmployeeDashboardPage() {
                       Active Goals
                     </p>
                   </div>
-                  <div className="text-center p-4 bg-green-50 dark:bg-green-950/30 rounded-xl">
-                    <Award className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto" />
+                  <div className="text-center p-4 bg-success-50 dark:bg-success-950/30 rounded-xl">
+                    <Award className="h-8 w-8 text-success-600 dark:text-success-400 mx-auto" />
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.recentReviews.length}
                     </p>
@@ -418,8 +418,8 @@ export default function EmployeeDashboardPage() {
                       Reviews
                     </p>
                   </div>
-                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
-                    <GraduationCap className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto" />
+                  <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
+                    <GraduationCap className="h-8 w-8 text-accent-600 dark:text-accent-400 mx-auto" />
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.completedTrainings}
                     </p>
@@ -427,8 +427,8 @@ export default function EmployeeDashboardPage() {
                       Completed
                     </p>
                   </div>
-                  <div className="text-center p-4 bg-orange-50 dark:bg-orange-950/30 rounded-xl">
-                    <Briefcase className="h-8 w-8 text-orange-600 dark:text-orange-400 mx-auto" />
+                  <div className="text-center p-4 bg-warning-50 dark:bg-warning-950/30 rounded-xl">
+                    <Briefcase className="h-8 w-8 text-warning-600 dark:text-warning-400 mx-auto" />
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.upcomingTrainings}
                     </p>
@@ -456,9 +456,9 @@ export default function EmployeeDashboardPage() {
                           <span
                             className={`px-2 py-0.5 text-xs rounded-full ${
                               goal.status === 'COMPLETED'
-                                ? 'bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400'
+                                ? 'bg-success-100 text-success-700 dark:bg-success-950/30 dark:text-success-400'
                                 : goal.status === 'IN_PROGRESS'
-                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400'
+                                ? 'bg-accent-100 text-accent-700 dark:bg-accent-950/30 dark:text-accent-400'
                                 : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                             }`}
                           >
@@ -468,7 +468,7 @@ export default function EmployeeDashboardPage() {
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-sky-500 rounded-full transition-all"
+                              className="h-full bg-accent-500 rounded-full transition-all"
                               style={{ width: `${goal.progress}%` }}
                             />
                           </div>
@@ -531,7 +531,7 @@ export default function EmployeeDashboardPage() {
                         />
                       </div>
                       {balance.pending > 0 && (
-                        <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                        <p className="text-xs text-warning-600 dark:text-warning-400 mt-1">
                           {balance.pending} pending approval
                         </p>
                       )}

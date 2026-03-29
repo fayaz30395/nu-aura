@@ -68,15 +68,15 @@ const getCategoryIcon = (category: ProgramCategory) => {
 const getCategoryColor = (category: ProgramCategory) => {
   switch (category) {
     case ProgramCategory.PHYSICAL_FITNESS:
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
     case ProgramCategory.MENTAL_HEALTH:
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
     case ProgramCategory.NUTRITION:
-      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      return 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200';
     case ProgramCategory.SLEEP:
-      return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
+      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
     case ProgramCategory.STRESS_MANAGEMENT:
-      return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
+      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }
@@ -186,15 +186,15 @@ export default function WellnessPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border-green-200 dark:border-green-800">
+          <Card className="bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/30 dark:to-success-900/30 border-success-200 dark:border-success-800">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-green-500 p-4">
+                <div className="rounded-lg bg-success-500 p-4">
                   <Trophy className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-green-700 dark:text-green-300">Total Points</p>
-                  <p className="text-2xl font-bold text-green-900 dark:text-green-100">{stats.totalPoints}</p>
+                  <p className="text-sm text-success-700 dark:text-success-300">Total Points</p>
+                  <p className="text-2xl font-bold text-success-900 dark:text-success-100">{stats.totalPoints}</p>
                 </div>
               </div>
             </CardContent>
@@ -202,8 +202,8 @@ export default function WellnessPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-orange-100 p-4 dark:bg-orange-900">
-                  <Flame className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
+                  <Flame className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Current Streak</p>
@@ -215,8 +215,8 @@ export default function WellnessPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
-                  <Star className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
+                  <Star className="h-6 w-6 text-accent-800 dark:text-accent-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Level</p>
@@ -228,8 +228,8 @@ export default function WellnessPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
-                  <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <Target className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Active Challenges</p>
@@ -256,7 +256,7 @@ export default function WellnessPage() {
                     }}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                   >
-                    <Icon className="h-5 w-5 text-sky-500" />
+                    <Icon className="h-5 w-5 text-accent-500" />
                     <span className="text-sm font-medium text-[var(--text-secondary)]">{metric.label}</span>
                   </button>
                 );
@@ -288,7 +288,7 @@ export default function WellnessPage() {
 
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent"></div>
               </div>
             ) : activeTab === 'programs' ? (
               // Programs Grid
@@ -418,7 +418,7 @@ export default function WellnessPage() {
             <Card>
               <CardContent className="p-4">
                 <h3 className="flex items-center gap-2 text-lg font-semibold text-[var(--text-primary)] mb-4">
-                  <Crown className="h-5 w-5 text-yellow-500" />
+                  <Crown className="h-5 w-5 text-warning-500" />
                   Wellness Leaderboard
                 </h3>
                 {leaderboard.length === 0 ? (
@@ -430,9 +430,9 @@ export default function WellnessPage() {
                         key={entry.employeeId}
                         className="flex items-center gap-4 p-2 rounded-lg bg-[var(--bg-secondary)]"
                       >
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-500 text-white' :
+                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-warning-500 text-white' :
                             index === 1 ? 'bg-[var(--text-muted)] text-white' :
-                              index === 2 ? 'bg-amber-600 text-white' :
+                              index === 2 ? 'bg-warning-600 text-white' :
                                 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>
                           {index === 0 ? <Crown className="h-4 w-4" /> :
@@ -446,7 +446,7 @@ export default function WellnessPage() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-green-600 dark:text-green-400">
+                          <p className="font-bold text-success-600 dark:text-success-400">
                             {entry.points}
                           </p>
                           <p className="text-xs text-[var(--text-muted)]">pts</p>

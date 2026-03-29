@@ -110,15 +110,15 @@ const getCategoryLabel = (category: LetterCategory): string => {
 
 const getCategoryColor = (category: LetterCategory): string => {
   const colors: Partial<Record<LetterCategory, string>> = {
-    [LetterCategory.OFFER]: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-    [LetterCategory.APPOINTMENT]: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-    [LetterCategory.EXPERIENCE]: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-    [LetterCategory.RELIEVING]: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300',
-    [LetterCategory.SALARY_REVISION]: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-    [LetterCategory.WARNING]: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-    [LetterCategory.TERMINATION]: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+    [LetterCategory.OFFER]: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
+    [LetterCategory.APPOINTMENT]: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
+    [LetterCategory.EXPERIENCE]: 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500',
+    [LetterCategory.RELIEVING]: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
+    [LetterCategory.SALARY_REVISION]: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
+    [LetterCategory.WARNING]: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
+    [LetterCategory.TERMINATION]: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
   };
-  return colors[category] || 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300';
+  return colors[category] || 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
 };
 
 const formatDate = (date: string | undefined): string => {
@@ -143,7 +143,7 @@ function PlaceholderToolbar({ placeholders, onInsert }: PlaceholderToolbarProps)
   return (
     <div className="border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] p-3">
       <div className="flex items-center gap-2 mb-2">
-        <Variable className="h-4 w-4 text-sky-600" />
+        <Variable className="h-4 w-4 text-accent-600" />
         <span className="text-sm font-medium text-[var(--text-primary)]">
           Insert Placeholder
         </span>
@@ -169,7 +169,7 @@ function PlaceholderToolbar({ placeholders, onInsert }: PlaceholderToolbarProps)
                     type="button"
                     onClick={() => onInsert(`{{${item.key}}}`)}
                     title={`${item.label} — e.g. ${item.example}`}
-                    className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-sky-50 text-sky-700 border border-sky-200 rounded-md hover:bg-sky-100 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-800 dark:hover:bg-sky-900/50 transition-colors"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-50 text-accent-700 border border-accent-200 rounded-md hover:bg-accent-100 dark:bg-accent-900/30 dark:text-accent-300 dark:border-accent-800 dark:hover:bg-accent-900/50 transition-colors"
                   >
                     <Tag className="h-3 w-3" />
                     {item.label}
@@ -204,7 +204,7 @@ function TemplatePreviewModal({ templateId, templateName, isOpen, onClose }: Pre
       <ModalBody>
         {isLoading ? (
           <div className="flex items-center justify-center h-48">
-            <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
+            <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
             <span className="ml-2 text-[var(--text-secondary)]">Generating preview...</span>
           </div>
         ) : previewHtml ? (
@@ -448,7 +448,7 @@ export default function LetterTemplatesPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letter-templates">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading templates...</span>
         </div>
       </AppLayout>
@@ -478,9 +478,9 @@ export default function LetterTemplatesPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error instanceof Error ? error.message : 'Failed to load templates'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetch()} className="ml-auto">
@@ -500,13 +500,13 @@ export default function LetterTemplatesPage() {
               placeholder="Search templates by name or code..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
             />
           </div>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
           >
             <option value="">All Categories</option>
             {Object.values(LetterCategory).map((cat) => (
@@ -528,8 +528,8 @@ export default function LetterTemplatesPage() {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="rounded-lg bg-sky-100 p-2 dark:bg-sky-900/30">
-                        <FileText className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                      <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900/30">
+                        <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-[var(--text-primary)] line-clamp-1">
@@ -699,11 +699,11 @@ export default function LetterTemplatesPage() {
                   </label>
                   <input
                     {...form.register('name')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="e.g., Standard Offer Letter"
                   />
                   {form.formState.errors.name && (
-                    <p className="text-xs text-red-500 mt-1">{form.formState.errors.name.message}</p>
+                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.name.message}</p>
                   )}
                 </div>
                 <div>
@@ -713,11 +713,11 @@ export default function LetterTemplatesPage() {
                   <input
                     {...form.register('code')}
                     disabled={!!editingTemplate}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 font-mono"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 font-mono"
                     placeholder="e.g., OFFER_STANDARD"
                   />
                   {form.formState.errors.code && (
-                    <p className="text-xs text-red-500 mt-1">{form.formState.errors.code.message}</p>
+                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.code.message}</p>
                   )}
                 </div>
               </div>
@@ -730,7 +730,7 @@ export default function LetterTemplatesPage() {
                   </label>
                   <select
                     {...form.register('category')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     {Object.values(LetterCategory).map((cat) => (
                       <option key={cat} value={cat}>
@@ -739,7 +739,7 @@ export default function LetterTemplatesPage() {
                     ))}
                   </select>
                   {form.formState.errors.category && (
-                    <p className="text-xs text-red-500 mt-1">{form.formState.errors.category.message}</p>
+                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.category.message}</p>
                   )}
                 </div>
                 <div>
@@ -748,7 +748,7 @@ export default function LetterTemplatesPage() {
                   </label>
                   <input
                     {...form.register('description')}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     placeholder="Brief description of this template"
                   />
                 </div>
@@ -781,13 +781,13 @@ export default function LetterTemplatesPage() {
                       <textarea
                         {...field}
                         rows={18}
-                        className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono text-sm resize-y"
+                        className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 font-mono text-sm resize-y"
                         placeholder={'<p>Dear {{employee.name}},</p>\n<p>This is to certify that...</p>'}
                       />
                     )}
                   />
                   {form.formState.errors.templateContent && (
-                    <p className="text-xs text-red-500 mt-1">{form.formState.errors.templateContent.message}</p>
+                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.templateContent.message}</p>
                   )}
                 </div>
               </div>
@@ -800,7 +800,7 @@ export default function LetterTemplatesPage() {
                     <input
                       type="checkbox"
                       {...form.register('includeSignature')}
-                      className="h-4 w-4 rounded border-surface-300 text-sky-600 focus:ring-sky-500"
+                      className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
                     />
                     <label className="text-sm text-[var(--text-primary)]">Include Signature Block</label>
                   </div>
@@ -808,7 +808,7 @@ export default function LetterTemplatesPage() {
                     <input
                       type="checkbox"
                       {...form.register('includeCompanyLogo')}
-                      className="h-4 w-4 rounded border-surface-300 text-sky-600 focus:ring-sky-500"
+                      className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
                     />
                     <label className="text-sm text-[var(--text-primary)]">Include Company Logo</label>
                   </div>
@@ -818,7 +818,7 @@ export default function LetterTemplatesPage() {
                     </label>
                     <input
                       {...form.register('signatoryName')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., Rajesh Kumar"
                     />
                   </div>
@@ -828,7 +828,7 @@ export default function LetterTemplatesPage() {
                     </label>
                     <input
                       {...form.register('signatoryDesignation')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., Head of HR"
                     />
                   </div>
@@ -838,7 +838,7 @@ export default function LetterTemplatesPage() {
                     </label>
                     <input
                       {...form.register('signatureTitle')}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., For and on behalf of"
                     />
                   </div>
@@ -846,7 +846,7 @@ export default function LetterTemplatesPage() {
                     <input
                       type="checkbox"
                       {...form.register('requiresApproval')}
-                      className="h-4 w-4 rounded border-surface-300 text-sky-600 focus:ring-sky-500"
+                      className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
                     />
                     <label className="text-sm text-[var(--text-primary)]">Requires Approval Before Issuing</label>
                   </div>
@@ -866,7 +866,7 @@ export default function LetterTemplatesPage() {
                     <textarea
                       {...form.register('headerHtml')}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder="Custom header HTML..."
                     />
                   </div>
@@ -877,7 +877,7 @@ export default function LetterTemplatesPage() {
                     <textarea
                       {...form.register('footerHtml')}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder="Custom footer HTML..."
                     />
                   </div>
@@ -888,7 +888,7 @@ export default function LetterTemplatesPage() {
                     <textarea
                       {...form.register('cssStyles')}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder=".letter-body { font-family: 'Times New Roman'; }"
                     />
                   </div>

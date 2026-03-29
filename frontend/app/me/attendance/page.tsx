@@ -251,7 +251,7 @@ export default function MyAttendancePage() {
     return (
       <AppLayout activeMenuItem="my-attendance">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
         </div>
       </AppLayout>
     );
@@ -268,7 +268,7 @@ export default function MyAttendancePage() {
           </p>
           <button
             onClick={() => router.push('/attendance/team')}
-            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
           >
             View Team Attendance
           </button>
@@ -286,11 +286,11 @@ export default function MyAttendancePage() {
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800 font-medium">{error}</p>
+          <div className="p-4 bg-danger-50 border border-danger-200 rounded-lg">
+            <p className="text-danger-800 font-medium">{error}</p>
             <button
               onClick={() => setError(null)}
-              className="text-red-600 text-sm mt-2 underline"
+              className="text-danger-600 text-sm mt-2 underline"
             >
               Dismiss
             </button>
@@ -317,7 +317,7 @@ export default function MyAttendancePage() {
                       </p>
                     )}
                     {todayAttendance.isLate && (
-                      <p className="text-sm text-yellow-600 font-medium">
+                      <p className="text-sm text-warning-600 font-medium">
                         Late by {todayAttendance.lateByMinutes} minutes
                       </p>
                     )}
@@ -332,7 +332,7 @@ export default function MyAttendancePage() {
                   <button
                     onClick={handleCheckIn}
                     disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogIn className="h-5 w-5" />
                     {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In'}
@@ -342,7 +342,7 @@ export default function MyAttendancePage() {
                   <button
                     onClick={handleCheckOut}
                     disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogOut className="h-5 w-5" />
                     {checkIn.isPending || checkOut.isPending ? 'Checking Out...' : 'Check Out'}
@@ -352,7 +352,7 @@ export default function MyAttendancePage() {
                   <button
                     onClick={handleCheckIn}
                     disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogIn className="h-5 w-5" />
                     {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In Again'}
@@ -370,10 +370,10 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Present Days</p>
-                  <p className="text-3xl font-bold text-green-600 mt-2 skeuo-emboss">{monthStats.present}</p>
+                  <p className="text-3xl font-bold text-success-600 mt-2 skeuo-emboss">{monthStats.present}</p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+                <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-success-600" />
                 </div>
               </div>
             </CardContent>
@@ -384,10 +384,10 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Absent Days</p>
-                  <p className="text-3xl font-bold text-red-600 mt-2 skeuo-emboss">{monthStats.absent}</p>
+                  <p className="text-3xl font-bold text-danger-600 mt-2 skeuo-emboss">{monthStats.absent}</p>
                 </div>
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <XCircle className="h-6 w-6 text-red-600" />
+                <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
+                  <XCircle className="h-6 w-6 text-danger-600" />
                 </div>
               </div>
             </CardContent>
@@ -398,10 +398,10 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">On Leave</p>
-                  <p className="text-3xl font-bold text-blue-600 mt-2 skeuo-emboss">{monthStats.leave}</p>
+                  <p className="text-3xl font-bold text-accent-600 mt-2 skeuo-emboss">{monthStats.leave}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Coffee className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center">
+                  <Coffee className="h-6 w-6 text-accent-600" />
                 </div>
               </div>
             </CardContent>
@@ -412,12 +412,12 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Avg. Hours/Day</p>
-                  <p className="text-3xl font-bold text-purple-600 mt-2 skeuo-emboss">
+                  <p className="text-3xl font-bold text-accent-800 mt-2 skeuo-emboss">
                     {monthStats.avgHours.toFixed(1)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-purple-600" />
+                <div className="w-12 h-12 bg-accent-300 rounded-full flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-accent-800" />
                 </div>
               </div>
             </CardContent>
@@ -477,14 +477,14 @@ export default function MyAttendancePage() {
                       onClick={() => handleDateSelect(day)}
                       className={`aspect-square p-1 rounded-md border transition-all ${
                         isSelected
-                          ? 'border-sky-500 bg-sky-50 shadow-sm'
+                          ? 'border-accent-500 bg-accent-50 shadow-sm'
                           : 'border-[var(--border-subtle)] hover:border-[var(--border-main)] hover:bg-[var(--bg-surface)]'
-                      } ${isToday ? 'ring-2 ring-sky-300' : ''}`}
+                      } ${isToday ? 'ring-2 ring-accent-300' : ''}`}
                     >
                       <div className="flex flex-col items-center justify-center h-full gap-0.5">
                         <span
                           className={`text-xs font-medium ${
-                            isToday ? 'text-sky-700' : 'text-[var(--text-secondary)]'
+                            isToday ? 'text-accent-700' : 'text-[var(--text-secondary)]'
                           }`}
                         >
                           {day.getDate()}
@@ -544,17 +544,17 @@ export default function MyAttendancePage() {
                       )}
 
                       {selectedAttendance.isLate && (
-                        <div className="p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                          <p className="text-sm text-yellow-800 font-medium">
+                        <div className="p-2 bg-warning-50 border border-warning-200 rounded-lg">
+                          <p className="text-sm text-warning-800 font-medium">
                             Late by {selectedAttendance.lateByMinutes} minutes
                           </p>
                         </div>
                       )}
 
                       {selectedAttendance.regularizationRequested && (
-                        <div className="p-2 bg-blue-50 border border-blue-200 rounded-lg">
-                          <p className="text-sm text-blue-800 font-medium">Regularization Requested</p>
-                          <p className="text-xs text-blue-600 mt-1">
+                        <div className="p-2 bg-accent-50 border border-accent-200 rounded-lg">
+                          <p className="text-sm text-accent-800 font-medium">Regularization Requested</p>
+                          <p className="text-xs text-accent-600 mt-1">
                             Status: {selectedAttendance.regularizationApproved ? 'Approved' : 'Pending'}
                           </p>
                         </div>
@@ -567,7 +567,7 @@ export default function MyAttendancePage() {
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-sm font-medium text-[var(--text-secondary)]">Sessions</p>
                       {selectedDateTimeEntries.length > 0 && (
-                        <span className="text-sm font-bold text-sky-700">
+                        <span className="text-sm font-bold text-accent-700">
                           Total: {formatDuration(
                             selectedDateTimeEntries
                               .filter(e => e.entryType === 'REGULAR')
@@ -578,7 +578,7 @@ export default function MyAttendancePage() {
                     </div>
                     {isLoadingTimeEntries ? (
                       <div className="flex items-center justify-center py-4">
-                        <div className="w-6 h-6 border-2 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
                       </div>
                     ) : selectedDateTimeEntries.length === 0 ? (
                       <p className="text-sm text-[var(--text-muted)] py-2">No sessions recorded</p>
@@ -589,29 +589,29 @@ export default function MyAttendancePage() {
                             key={entry.id}
                             className={`p-2 rounded-lg border text-sm ${
                               entry.open
-                                ? 'bg-green-50 border-green-200'
+                                ? 'bg-success-50 border-success-200'
                                 : 'bg-[var(--bg-surface)] border-[var(--border-main)]'
                             }`}
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                  entry.open ? 'bg-green-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
+                                  entry.open ? 'bg-success-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
                                 }`}>
                                   {entry.sequenceNumber}
                                 </span>
                                 <div>
                                   <div className="flex items-center gap-1">
-                                    <LogIn className="h-3 w-3 text-green-600" />
+                                    <LogIn className="h-3 w-3 text-success-600" />
                                     <span>{formatTime(entry.checkInTime)}</span>
                                     {entry.checkOutTime ? (
                                       <>
                                         <span className="text-[var(--text-muted)] mx-1">-</span>
-                                        <LogOut className="h-3 w-3 text-blue-600" />
+                                        <LogOut className="h-3 w-3 text-accent-600" />
                                         <span>{formatTime(entry.checkOutTime)}</span>
                                       </>
                                     ) : (
-                                      <span className="text-green-600 ml-1 italic text-xs">Active</span>
+                                      <span className="text-success-600 ml-1 italic text-xs">Active</span>
                                     )}
                                   </div>
                                 </div>
@@ -632,7 +632,7 @@ export default function MyAttendancePage() {
                         setRegularizingRecord(selectedAttendance);
                         setShowRegularizationModal(true);
                       }}
-                      className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm"
+                      className="w-full px-4 py-2 bg-warning-600 text-white rounded-lg hover:bg-warning-700 transition-colors text-sm"
                     >
                       Request Regularization
                     </button>
@@ -662,7 +662,7 @@ export default function MyAttendancePage() {
               <textarea
                 value={regularizationReason}
                 onChange={(e) => setRegularizationReason(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 rows={4}
                 placeholder="Please explain why you need regularization..."
               />
@@ -681,7 +681,7 @@ export default function MyAttendancePage() {
               <button
                 onClick={handleRequestRegularization}
                 disabled={!regularizationReason.trim()}
-                className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Submit Request
               </button>

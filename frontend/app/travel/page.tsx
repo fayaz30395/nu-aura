@@ -67,38 +67,38 @@ export default function TravelPage() {
         icon: Clock,
       },
       SUBMITTED: {
-        bg: 'bg-blue-100 dark:bg-blue-900/30',
-        text: 'text-blue-700 dark:text-blue-400',
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
         icon: Clock,
       },
       PENDING_APPROVAL: {
-        bg: 'bg-amber-100 dark:bg-amber-900/30',
-        text: 'text-amber-700 dark:text-amber-400',
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
         icon: Clock,
       },
       APPROVED: {
-        bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-        text: 'text-emerald-700 dark:text-emerald-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: CheckCircle,
       },
       REJECTED: {
-        bg: 'bg-red-100 dark:bg-red-900/30',
-        text: 'text-red-700 dark:text-red-400',
+        bg: 'bg-danger-100 dark:bg-danger-900/30',
+        text: 'text-danger-700 dark:text-danger-400',
         icon: XCircle,
       },
       BOOKED: {
-        bg: 'bg-purple-100 dark:bg-purple-900/30',
-        text: 'text-purple-700 dark:text-purple-400',
+        bg: 'bg-accent-300 dark:bg-accent-900/30',
+        text: 'text-accent-900 dark:text-accent-600',
         icon: CheckCircle,
       },
       IN_PROGRESS: {
-        bg: 'bg-cyan-100 dark:bg-cyan-900/30',
-        text: 'text-cyan-700 dark:text-cyan-400',
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
         icon: Plane,
       },
       COMPLETED: {
-        bg: 'bg-green-100 dark:bg-green-900/30',
-        text: 'text-green-700 dark:text-green-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: CheckCircle,
       },
       CANCELLED: {
@@ -147,7 +147,7 @@ export default function TravelPage() {
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
             <p className="text-[var(--text-secondary)]">Loading travel requests...</p>
           </div>
         </div>
@@ -171,7 +171,7 @@ export default function TravelPage() {
           <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/travel/new')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-sky-500/30"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
             >
               <Plus className="h-5 w-5" />
               New Travel Request
@@ -193,7 +193,7 @@ export default function TravelPage() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all"
               />
             </div>
 
@@ -206,7 +206,7 @@ export default function TravelPage() {
                   setStatusFilter(e.target.value as TravelStatus | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -230,7 +230,7 @@ export default function TravelPage() {
                   setTypeFilter(e.target.value as TravelType | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Types</option>
                 <option value="BUSINESS">Business</option>
@@ -252,11 +252,11 @@ export default function TravelPage() {
         {/* Travel Requests List */}
         {error ? (
           <div className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)]">
-            <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+            <AlertCircle className="h-12 w-12 text-danger-500 mb-4" />
             <p className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
               onClick={() => void refetch()}
-              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
+              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
             >
               Retry
             </button>
@@ -282,14 +282,14 @@ export default function TravelPage() {
                 <div
                   key={request.id}
                   onClick={() => router.push(`/travel/${request.id}`)}
-                  className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200 cursor-pointer"
+                  className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-4">
                       {/* Header */}
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
-                          <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700">
+                          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                             <TypeIcon className="h-5 w-5 text-white" />
                           </div>
                           <div>
@@ -309,7 +309,7 @@ export default function TravelPage() {
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
+                        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
                       </div>
 
                       {/* Details */}
@@ -322,7 +322,7 @@ export default function TravelPage() {
                               {request.originCity} → {request.destinationCity}
                             </p>
                             {request.isInternational && (
-                              <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded">
+                              <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600 rounded">
                                 International
                               </span>
                             )}
@@ -367,7 +367,7 @@ export default function TravelPage() {
                               {formatCurrency(request.estimatedCost)}
                             </p>
                             {request.advanceRequired > 0 && (
-                              <p className="text-xs text-amber-600 dark:text-amber-400">
+                              <p className="text-xs text-warning-600 dark:text-warning-400">
                                 Advance: {formatCurrency(request.advanceRequired)}
                               </p>
                             )}

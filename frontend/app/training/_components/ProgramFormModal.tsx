@@ -121,7 +121,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </label>
               <Input {...register('programCode')} placeholder="e.g., TRN-001" />
               {errors.programCode && (
-                <p className="text-xs text-red-600 mt-1">{errors.programCode.message}</p>
+                <p className="text-xs text-danger-600 mt-1">{errors.programCode.message}</p>
               )}
             </div>
             <div>
@@ -130,7 +130,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </label>
               <Input {...register('programName')} placeholder="Enter program name" />
               {errors.programName && (
-                <p className="text-xs text-red-600 mt-1">{errors.programName.message}</p>
+                <p className="text-xs text-danger-600 mt-1">{errors.programName.message}</p>
               )}
             </div>
             <div className="sm:col-span-2">
@@ -217,7 +217,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
                 placeholder="Enter trainer email"
               />
               {errors.trainerEmail && (
-                <p className="text-xs text-red-600 mt-1">{errors.trainerEmail.message}</p>
+                <p className="text-xs text-danger-600 mt-1">{errors.trainerEmail.message}</p>
               )}
             </div>
             <div>
@@ -261,7 +261,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
                 <input
                   type="checkbox"
                   {...register('isMandatory')}
-                  className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                  className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                 />
                 <span className="text-sm font-medium text-[var(--text-secondary)]">
                   Mandatory Training

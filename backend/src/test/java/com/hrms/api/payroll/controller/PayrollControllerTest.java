@@ -24,6 +24,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.hrms.common.security.SecurityContext;
+import com.hrms.domain.user.RoleScope;
+import org.mockito.MockedStatic;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -67,6 +71,9 @@ class PayrollControllerTest {
 
     @MockBean
     private com.hrms.application.payroll.service.PayrollComponentService payrollComponentService;
+
+    @MockBean
+    private com.hrms.application.employee.service.EmployeeService employeeService;
 
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -426,13 +433,18 @@ class PayrollControllerTest {
             when(payslipService.getPayslipsByEmployeeId(eq(employeeId), any(Pageable.class)))
                     .thenReturn(page);
 
-            mockMvc.perform(get("/api/v1/payroll/payslips/employee/{employeeId}", employeeId)
-                            .param("page", "0")
-                            .param("size", "20"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.content.length()").value(1));
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(() -> SecurityContext.getPermissionScope(anyString())).thenReturn(RoleScope.ALL);
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(true);
 
-            verify(payslipService).getPayslipsByEmployeeId(eq(employeeId), any(Pageable.class));
+                mockMvc.perform(get("/api/v1/payroll/payslips/employee/{employeeId}", employeeId)
+                                .param("page", "0")
+                                .param("size", "20"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.content.length()").value(1));
+
+                verify(payslipService).getPayslipsByEmployeeId(eq(employeeId), any(Pageable.class));
+            }
         }
 
         @Test
@@ -440,15 +452,21 @@ class PayrollControllerTest {
         void shouldDownloadPayslipPdf() throws Exception {
             byte[] pdfBytes = "PDF content".getBytes();
 
+            when(payslipService.getPayslipById(eq(payslipId))).thenReturn(payslip);
             when(payslipPdfService.generatePayslipPdf(eq(payslipId)))
                     .thenReturn(pdfBytes);
 
-            mockMvc.perform(get("/api/v1/payroll/payslips/{id}/pdf", payslipId))
-                    .andExpect(status().isOk())
-                    .andExpect(header().string("Content-Type", "application/pdf"))
-                    .andExpect(header().exists("Content-Disposition"));
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(() -> SecurityContext.getPermissionScope(anyString())).thenReturn(RoleScope.ALL);
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(true);
 
-            verify(payslipPdfService).generatePayslipPdf(eq(payslipId));
+                mockMvc.perform(get("/api/v1/payroll/payslips/{id}/pdf", payslipId))
+                        .andExpect(status().isOk())
+                        .andExpect(header().string("Content-Type", "application/pdf"))
+                        .andExpect(header().exists("Content-Disposition"));
+
+                verify(payslipPdfService).generatePayslipPdf(eq(payslipId));
+            }
         }
 
         @Test
@@ -520,12 +538,17 @@ class PayrollControllerTest {
             when(salaryStructureService.getSalaryStructuresByEmployeeId(eq(employeeId)))
                     .thenReturn(structures);
 
-            mockMvc.perform(get("/api/v1/payroll/salary-structures/employee/{employeeId}", employeeId))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1));
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(() -> SecurityContext.getPermissionScope(anyString())).thenReturn(RoleScope.ALL);
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(true);
 
-            verify(salaryStructureService).getSalaryStructuresByEmployeeId(eq(employeeId));
+                mockMvc.perform(get("/api/v1/payroll/salary-structures/employee/{employeeId}", employeeId))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$").isArray())
+                        .andExpect(jsonPath("$.length()").value(1));
+
+                verify(salaryStructureService).getSalaryStructuresByEmployeeId(eq(employeeId));
+            }
         }
     }
 }

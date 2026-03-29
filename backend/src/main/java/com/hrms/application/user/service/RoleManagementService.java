@@ -136,17 +136,16 @@ public class RoleManagementService {
         Role updatedRole = roleRepository.save(role);
         log.info("Updated role: {} for tenant: {}", updatedRole.getCode(), tenantId);
 
-        // Audit log
-        Map<String, Object> oldAudit = Map.of(
-                "name", oldName,
-                "description", oldDescription,
-                "parentRoleId", oldParentRoleId
-        );
-        Map<String, Object> newAudit = Map.of(
-                "name", updatedRole.getName(),
-                "description", updatedRole.getDescription(),
-                "parentRoleId", updatedRole.getParentRoleId()
-        );
+        // Audit log — use HashMap because Map.of() does not accept null values
+        Map<String, Object> oldAudit = new HashMap<>();
+        oldAudit.put("name", oldName);
+        oldAudit.put("description", oldDescription);
+        oldAudit.put("parentRoleId", oldParentRoleId);
+
+        Map<String, Object> newAudit = new HashMap<>();
+        newAudit.put("name", updatedRole.getName());
+        newAudit.put("description", updatedRole.getDescription());
+        newAudit.put("parentRoleId", updatedRole.getParentRoleId());
         auditLogService.logAction("ROLE", updatedRole.getId(),
                 com.hrms.domain.audit.AuditLog.AuditAction.UPDATE,
                 oldAudit,

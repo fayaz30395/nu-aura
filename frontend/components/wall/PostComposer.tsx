@@ -35,10 +35,10 @@ const pollSchema = z.object({
 });
 
 const CELEBRATION_TYPES = [
-  { id: 'STAR', label: 'Star Performer', icon: Star, color: 'text-amber-500' },
+  { id: 'STAR', label: 'Star Performer', icon: Star, color: 'text-warning-500' },
   { id: 'HEART', label: 'Team Player', icon: Heart, color: 'text-rose-500' },
-  { id: 'TROPHY', label: 'Achievement', icon: Trophy, color: 'text-yellow-600' },
-  { id: 'THUMBSUP', label: 'Great Work', icon: ThumbsUp, color: 'text-sky-600' },
+  { id: 'TROPHY', label: 'Achievement', icon: Trophy, color: 'text-warning-600' },
+  { id: 'THUMBSUP', label: 'Great Work', icon: ThumbsUp, color: 'text-accent-600' },
 ] as const;
 
 const praiseSchema = z.object({
@@ -168,7 +168,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
               className={cn(
                 'flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors relative',
                 activeTab === tab.id
-                  ? 'text-sky-700 dark:text-sky-400'
+                  ? 'text-accent-700 dark:text-accent-400'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               )}
             >
@@ -177,7 +177,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="composerActiveTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-700 dark:bg-sky-400"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-700 dark:bg-accent-400"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
@@ -335,7 +335,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     <button
                       type="button"
                       onClick={() => append({ value: '' })}
-                      className="mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950 rounded-lg transition-colors"
+                      className="mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950 rounded-lg transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                       Add Option
@@ -428,7 +428,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                               className={cn(
                                 'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border',
                                 isSelected
-                                  ? 'border-sky-400 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-600'
+                                  ? 'border-accent-400 bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-600'
                                   : 'border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-secondary)]'
                               )}
                             >

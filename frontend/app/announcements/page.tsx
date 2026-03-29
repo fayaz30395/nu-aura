@@ -45,33 +45,33 @@ import {
 
 /** Maps each announcement category to a background class for the icon container. */
 const categoryIconBgColors: Record<AnnouncementCategory, string> = {
-  GENERAL: 'bg-blue-100 dark:bg-blue-900/30',
-  POLICY_UPDATE: 'bg-purple-100 dark:bg-purple-900/30',
-  EVENT: 'bg-green-100 dark:bg-green-900/30',
-  HOLIDAY: 'bg-yellow-100 dark:bg-yellow-900/30',
-  ACHIEVEMENT: 'bg-pink-100 dark:bg-pink-900/30',
-  URGENT: 'bg-red-100 dark:bg-red-900/30',
-  BENEFIT: 'bg-indigo-100 dark:bg-indigo-900/30',
-  TRAINING: 'bg-cyan-100 dark:bg-cyan-900/30',
-  SOCIAL: 'bg-orange-100 dark:bg-orange-900/30',
+  GENERAL: 'bg-accent-100 dark:bg-accent-900/30',
+  POLICY_UPDATE: 'bg-accent-300 dark:bg-accent-900/30',
+  EVENT: 'bg-success-100 dark:bg-success-900/30',
+  HOLIDAY: 'bg-warning-100 dark:bg-warning-900/30',
+  ACHIEVEMENT: 'bg-accent-300 dark:bg-accent-900/30',
+  URGENT: 'bg-danger-100 dark:bg-danger-900/30',
+  BENEFIT: 'bg-accent-100 dark:bg-accent-900/30',
+  TRAINING: 'bg-accent-100 dark:bg-accent-900/30',
+  SOCIAL: 'bg-warning-100 dark:bg-warning-900/30',
   IT_MAINTENANCE: 'bg-[var(--bg-surface)]',
-  HEALTH_SAFETY: 'bg-emerald-100 dark:bg-emerald-900/30',
+  HEALTH_SAFETY: 'bg-success-100 dark:bg-success-900/30',
   OTHER: 'bg-[var(--bg-surface)]',
 };
 
 /** Maps each announcement category to a text color class for the icon. */
 const categoryIconTextColors: Record<AnnouncementCategory, string> = {
-  GENERAL: 'text-blue-800 dark:text-blue-400',
-  POLICY_UPDATE: 'text-purple-800 dark:text-purple-400',
-  EVENT: 'text-green-800 dark:text-green-400',
-  HOLIDAY: 'text-yellow-800 dark:text-yellow-400',
-  ACHIEVEMENT: 'text-pink-800 dark:text-pink-400',
-  URGENT: 'text-red-800 dark:text-red-400',
-  BENEFIT: 'text-indigo-800 dark:text-indigo-400',
-  TRAINING: 'text-cyan-800 dark:text-cyan-400',
-  SOCIAL: 'text-orange-800 dark:text-orange-400',
+  GENERAL: 'text-accent-800 dark:text-accent-400',
+  POLICY_UPDATE: 'text-accent-900 dark:text-accent-600',
+  EVENT: 'text-success-800 dark:text-success-400',
+  HOLIDAY: 'text-warning-800 dark:text-warning-400',
+  ACHIEVEMENT: 'text-accent-900 dark:text-accent-600',
+  URGENT: 'text-danger-800 dark:text-danger-400',
+  BENEFIT: 'text-accent-800 dark:text-accent-400',
+  TRAINING: 'text-accent-800 dark:text-accent-400',
+  SOCIAL: 'text-warning-800 dark:text-warning-400',
   IT_MAINTENANCE: 'text-[var(--text-secondary)]',
-  HEALTH_SAFETY: 'text-emerald-800 dark:text-emerald-400',
+  HEALTH_SAFETY: 'text-success-800 dark:text-success-400',
   OTHER: 'text-[var(--text-secondary)]',
 };
 import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
@@ -252,7 +252,7 @@ export default function AnnouncementsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
-                <Megaphone className="w-8 h-8 text-sky-700" />
+                <Megaphone className="w-8 h-8 text-accent-700" />
                 Announcements
               </h1>
               <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -262,7 +262,7 @@ export default function AnnouncementsPage() {
             <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-sky-700 text-white rounded-xl hover:bg-sky-800 transition-colors font-medium shadow-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-sm"
               >
                 <Plus className="w-5 h-5" />
                 New Announcement
@@ -280,7 +280,7 @@ export default function AnnouncementsPage() {
             className="mb-8"
           >
             <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Pin className="w-5 h-5 text-yellow-500" />
+              <Pin className="w-5 h-5 text-warning-500" />
               Pinned
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -293,11 +293,11 @@ export default function AnnouncementsPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => handleAnnouncementClick(announcement)}
-                    className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-5 cursor-pointer hover:shadow-lg transition-all group"
+                    className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-5 cursor-pointer hover:shadow-lg transition-all group"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                        <Icon className="w-6 h-6 text-yellow-600" />
+                      <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
+                        <Icon className="w-6 h-6 text-warning-600" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
@@ -310,7 +310,7 @@ export default function AnnouncementsPage() {
                             </span>
                           ) : null}
                         </div>
-                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-yellow-600 transition-colors">
+                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-warning-600 transition-colors">
                           {announcement.title}
                         </h3>
                         <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
@@ -327,7 +327,7 @@ export default function AnnouncementsPage() {
                           </span>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-yellow-600 transition-colors" />
+                      <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-warning-600 transition-colors" />
                     </div>
                   </motion.div>
                 );
@@ -388,13 +388,13 @@ export default function AnnouncementsPage() {
           transition={{ delay: 0.3 }}
         >
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-sky-700" />
+            <Bell className="w-5 h-5 text-accent-700" />
             All Announcements
           </h2>
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-sky-700" />
+              <Loader2 className="w-8 h-8 animate-spin text-accent-700" />
             </div>
           ) : filteredAnnouncements.length === 0 ? (
             <EmptyState
@@ -416,7 +416,7 @@ export default function AnnouncementsPage() {
                     className={`bg-[var(--bg-card)] rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
                       announcement.isRead
                         ? 'border-l-[var(--border-main)]'
-                        : 'border-l-sky-600'
+                        : 'border-l-accent-600'
                     }`}
                   >
                     <div className="flex items-start gap-4">
@@ -432,12 +432,12 @@ export default function AnnouncementsPage() {
                             {priorityLabels[announcement.priority]}
                           </span>
                           {!announcement.isRead && (
-                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-400">
+                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400">
                               New
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-sky-700 transition-colors">
+                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-accent-700 transition-colors">
                           {announcement.title}
                         </h3>
                         <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
@@ -462,14 +462,14 @@ export default function AnnouncementsPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         {announcement.isPinned && (
-                          <Pin className="w-4 h-4 text-yellow-500" />
+                          <Pin className="w-4 h-4 text-warning-500" />
                         )}
                         {canEditAnnouncement(announcement) && (
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
                               <button
                                 onClick={(e) => handleEditAnnouncement(announcement, e)}
-                                className="p-1.5 text-[var(--text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
                                 title="Edit"
                               >
                                 <Edit2 className="w-4 h-4" />
@@ -481,7 +481,7 @@ export default function AnnouncementsPage() {
                                   e.stopPropagation();
                                   setShowDeleteConfirm(announcement.id);
                                 }}
-                                className="p-1.5 text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                className="p-1.5 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors"
                                 title="Delete"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -489,7 +489,7 @@ export default function AnnouncementsPage() {
                             </PermissionGate>
                           </div>
                         )}
-                        <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-sky-700 transition-colors" />
+                        <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
                       </div>
                     </div>
                   </motion.div>
@@ -540,7 +540,7 @@ export default function AnnouncementsPage() {
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
-                <div className="bg-gradient-to-r from-sky-700 to-sky-800 px-6 py-4 relative">
+                <div className="bg-gradient-to-r from-accent-700 to-accent-800 px-6 py-4 relative">
                   <button
                     onClick={() => setSelectedAnnouncement(null)}
                     className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
@@ -584,7 +584,7 @@ export default function AnnouncementsPage() {
                       {selectedAnnouncement.readCount} views
                     </span>
                     {selectedAnnouncement.isPinned && (
-                      <span className="flex items-center gap-1 text-yellow-600">
+                      <span className="flex items-center gap-1 text-warning-600">
                         <Pin className="w-4 h-4" />
                         Pinned
                       </span>
@@ -602,7 +602,7 @@ export default function AnnouncementsPage() {
                         href={selectedAnnouncement.attachmentUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sky-700 hover:text-sky-800 font-medium flex items-center gap-2"
+                        className="text-accent-700 hover:text-accent-800 font-medium flex items-center gap-2"
                       >
                         <BookOpen className="w-4 h-4" />
                         View Attachment
@@ -614,7 +614,7 @@ export default function AnnouncementsPage() {
                 {/* Modal Footer */}
                 <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between items-center">
                   <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-success-500" />
                     Marked as read
                   </div>
                   <div className="flex items-center gap-2">
@@ -627,7 +627,7 @@ export default function AnnouncementsPage() {
                               setSelectedAnnouncement(null);
                               setShowCreateModal(true);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 text-blue-600 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium"
+                            className="flex items-center gap-2 px-4 py-2 text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors font-medium"
                           >
                             <Edit2 className="w-4 h-4" />
                             Edit
@@ -638,7 +638,7 @@ export default function AnnouncementsPage() {
                             onClick={() => {
                               setShowDeleteConfirm(selectedAnnouncement.id);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 text-red-600 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-colors font-medium"
+                            className="flex items-center gap-2 px-4 py-2 text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors font-medium"
                           >
                             <Trash2 className="w-4 h-4" />
                             Delete
@@ -818,33 +818,33 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
             {/* Title */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Title <span className="text-red-500">*</span>
+                Title <span className="text-danger-500">*</span>
               </label>
               <input
                 type="text"
                 {...register('title')}
                 className={`input-aura ${
-                  errors.title ? '!border-red-500' : ''
+                  errors.title ? '!border-danger-500' : ''
                 }`}
                 placeholder="Enter announcement title"
               />
-              {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title.message}</p>}
+              {errors.title && <p className="text-xs text-danger-500 mt-1">{errors.title.message}</p>}
             </div>
 
             {/* Content */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Content <span className="text-red-500">*</span>
+                Content <span className="text-danger-500">*</span>
               </label>
               <textarea
                 {...register('content')}
                 rows={5}
                 className={`input-aura resize-none ${
-                  errors.content ? '!border-red-500' : ''
+                  errors.content ? '!border-danger-500' : ''
                 }`}
                 placeholder="Enter announcement content"
               />
-              {errors.content && <p className="text-xs text-red-500 mt-1">{errors.content.message}</p>}
+              {errors.content && <p className="text-xs text-danger-500 mt-1">{errors.content.message}</p>}
             </div>
 
             {/* Category and Priority */}
@@ -901,11 +901,11 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
             {watchTargetAudience === 'SPECIFIC_DEPARTMENTS' && (
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Select Departments <span className="text-red-500">*</span>
+                  Select Departments <span className="text-danger-500">*</span>
                 </label>
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="w-5 h-5 animate-spin text-sky-700" />
+                    <Loader2 className="w-5 h-5 animate-spin text-accent-700" />
                     <span className="ml-2 text-sm text-[var(--text-muted)]">Loading departments...</span>
                   </div>
                 ) : departments.length === 0 ? (
@@ -917,7 +917,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                         key={dept.id}
                         className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
                           targetDepartmentIds.includes(dept.id)
-                            ? 'bg-sky-100 dark:bg-sky-900/30 border border-sky-300 dark:border-sky-700'
+                            ? 'bg-accent-100 dark:bg-accent-900/30 border border-accent-300 dark:border-accent-700'
                             : 'hover:bg-[var(--bg-surface)] border border-transparent'
                         }`}
                       >
@@ -925,7 +925,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                           type="checkbox"
                           checked={targetDepartmentIds.includes(dept.id)}
                           onChange={() => toggleDepartment(dept.id)}
-                          className="w-4 h-4 text-sky-700 rounded focus:ring-sky-600"
+                          className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
                         />
                         <span className="text-sm text-[var(--text-secondary)] truncate">
                           {dept.name}
@@ -935,7 +935,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                   </div>
                 )}
                 {targetDepartmentIds.length > 0 && (
-                  <p className="mt-2 text-xs text-sky-700 dark:text-sky-400">
+                  <p className="mt-2 text-xs text-accent-700 dark:text-accent-400">
                     {targetDepartmentIds.length} department{targetDepartmentIds.length > 1 ? 's' : ''} selected
                   </p>
                 )}
@@ -948,7 +948,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 <input
                   type="checkbox"
                   {...register('isPinned')}
-                  className="w-4 h-4 text-sky-700 rounded focus:ring-sky-600"
+                  className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
                 />
                 <span className="text-sm text-[var(--text-secondary)]">Pin this announcement</span>
               </label>
@@ -956,7 +956,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 <input
                   type="checkbox"
                   {...register('sendEmail')}
-                  className="w-4 h-4 text-sky-700 rounded focus:ring-sky-600"
+                  className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
                 />
                 <span className="text-sm text-[var(--text-secondary)]">Send email notification</span>
               </label>
@@ -964,7 +964,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
 
             {/* Error */}
             {error && (
-              <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+              <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
                 {error}
               </div>
             )}

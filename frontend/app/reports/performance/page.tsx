@@ -73,9 +73,9 @@ export default function PerformanceReportsPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg"
+            className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg"
           >
-            <span className="text-green-700 dark:text-green-400">{successMessage}</span>
+            <span className="text-success-700 dark:text-success-400">{successMessage}</span>
           </motion.div>
         )}
 
@@ -88,7 +88,7 @@ export default function PerformanceReportsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-indigo-600" />
+                <TrendingUp className="h-5 w-5 text-accent-600" />
                 Performance Report Configuration
               </CardTitle>
               <CardDescription>
@@ -138,11 +138,11 @@ export default function PerformanceReportsPage() {
                       onClick={() => setFormat(fmt)}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
-                          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/20'
+                          ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/20'
                           : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
-                      <p className={`font-medium text-sm ${format === fmt ? 'text-indigo-700' : 'text-[var(--text-secondary)]'}`}>
+                      <p className={`font-medium text-sm ${format === fmt ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
                       <p className="text-xs text-[var(--text-muted)]">
@@ -155,9 +155,9 @@ export default function PerformanceReportsPage() {
 
               {/* Error */}
               {error && (
-                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
-                  <X className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
+                <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start gap-2">
+                  <X className="h-5 w-5 text-danger-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-danger-600 dark:text-danger-400">{error}</span>
                 </div>
               )}
 
@@ -187,13 +187,13 @@ export default function PerformanceReportsPage() {
 
         {/* Info Card */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-          <Card className="bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900">
+          <Card className="bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-900">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <TrendingUp className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mt-0.5" />
+                <TrendingUp className="h-5 w-5 text-accent-600 dark:text-accent-400 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-indigo-900 dark:text-indigo-100">Report Details</h3>
-                  <ul className="text-sm text-indigo-700 dark:text-indigo-300 mt-2 space-y-1">
+                  <h3 className="font-semibold text-accent-900 dark:text-accent-100">Report Details</h3>
+                  <ul className="text-sm text-accent-700 dark:text-accent-300 mt-2 space-y-1">
                     <li>• Includes employee code, name, department, and designation</li>
                     <li>• Shows review cycle, date, and reviewer information</li>
                     <li>• Displays overall rating and performance level</li>

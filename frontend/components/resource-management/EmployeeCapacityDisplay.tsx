@@ -56,7 +56,7 @@ export function EmployeeCapacityDisplay({
       {/* Header with employee info */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
             <User className="h-5 w-5" />
           </div>
           <div>
@@ -69,7 +69,7 @@ export function EmployeeCapacityDisplay({
           </div>
         </div>
         {capacity.hasPendingApprovals && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+          <span className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2.5 py-1 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
             <Clock className="h-3 w-3" />
             Pending Approval
           </span>
@@ -105,10 +105,10 @@ export function EmployeeCapacityDisplay({
             className={cn(
               'absolute left-0 top-0 h-full rounded-full transition-all duration-500',
               isOverAllocated
-                ? 'bg-gradient-to-r from-red-400 to-red-500'
+                ? 'bg-gradient-to-r from-danger-400 to-danger-500'
                 : isWarning
-                  ? 'bg-gradient-to-r from-amber-400 to-amber-500'
-                  : 'bg-gradient-to-r from-green-400 to-green-500'
+                  ? 'bg-gradient-to-r from-warning-400 to-warning-500'
+                  : 'bg-gradient-to-r from-success-400 to-success-500'
             )}
             style={{ width: `${(gaugePercentage / 150) * 100}%` }}
           />
@@ -140,7 +140,7 @@ export function EmployeeCapacityDisplay({
         </div>
         <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
           <p className="text-xs text-surface-500 dark:text-surface-400">Pending</p>
-          <p className="text-lg font-semibold text-amber-600 dark:text-amber-400">
+          <p className="text-lg font-semibold text-warning-600 dark:text-warning-400">
             {formatAllocationPercentage(capacity.pendingAllocation)}
           </p>
         </div>
@@ -150,8 +150,8 @@ export function EmployeeCapacityDisplay({
             className={cn(
               'text-lg font-semibold',
               capacity.availableCapacity < 0
-                ? 'text-red-600 dark:text-red-400'
-                : 'text-green-600 dark:text-green-400'
+                ? 'text-danger-600 dark:text-danger-400'
+                : 'text-success-600 dark:text-success-400'
             )}
           >
             {formatAllocationPercentage(Math.max(0, capacity.availableCapacity))}
@@ -177,7 +177,7 @@ export function EmployeeCapacityDisplay({
       {onViewDetails && (
         <button
           onClick={onViewDetails}
-          className="text-sm font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300"
+          className="text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
         >
           View full availability →
         </button>
@@ -209,7 +209,7 @@ function CompactCapacityDisplay({
         <div
           className={cn(
             'absolute left-0 top-0 h-full rounded-full',
-            isOverAllocated ? 'bg-red-500' : 'bg-green-500'
+            isOverAllocated ? 'bg-danger-500' : 'bg-success-500'
           )}
           style={{ width: `${Math.min((capacity.totalAllocation / 100) * 100, 100)}%` }}
         />
@@ -225,9 +225,9 @@ function CompactCapacityDisplay({
 
       {/* Status icon */}
       {isOverAllocated ? (
-        <AlertTriangle className="h-4 w-4 text-red-500" />
+        <AlertTriangle className="h-4 w-4 text-danger-500" />
       ) : capacity.hasPendingApprovals ? (
-        <Clock className="h-4 w-4 text-amber-500" />
+        <Clock className="h-4 w-4 text-warning-500" />
       ) : null}
     </div>
   );
@@ -238,9 +238,9 @@ function CompactCapacityDisplay({
  */
 function StatusBadge({ status, label }: { status: string; label: string }) {
   const bgColors: Record<string, string> = {
-    OVER_ALLOCATED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    OPTIMAL: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-    UNDER_UTILIZED: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    OVER_ALLOCATED: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
+    OPTIMAL: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
+    UNDER_UTILIZED: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
     UNASSIGNED: 'bg-surface-100 text-surface-700 dark:bg-surface-800 dark:text-surface-400',
   };
 
@@ -273,7 +273,7 @@ function AllocationRow({ allocation }: { allocation: AllocationBreakdown }) {
       className={cn(
         'flex items-center justify-between rounded-lg border p-4',
         allocation.isPendingApproval
-          ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20'
+          ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
           : 'border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-800'
       )}
     >
@@ -295,7 +295,7 @@ function AllocationRow({ allocation }: { allocation: AllocationBreakdown }) {
           {formatAllocationPercentage(allocation.allocationPercentage)}
         </p>
         {allocation.isPendingApproval && (
-          <span className="text-xs text-amber-600 dark:text-amber-400">Pending</span>
+          <span className="text-xs text-warning-600 dark:text-warning-400">Pending</span>
         )}
       </div>
     </div>

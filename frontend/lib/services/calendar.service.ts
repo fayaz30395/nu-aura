@@ -143,10 +143,10 @@ class CalendarService {
 
   getStatusColor(status: EventStatus): string {
     const colors: Record<EventStatus, string> = {
-      SCHEDULED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-      CONFIRMED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      TENTATIVE: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-      CANCELLED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+      SCHEDULED: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
+      CONFIRMED: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
+      TENTATIVE: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
+      CANCELLED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
       COMPLETED: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
     };
     return colors[status] || colors.SCHEDULED;
@@ -154,15 +154,15 @@ class CalendarService {
 
   getEventColor(eventType: EventType): string {
     const colors: Record<EventType, string> = {
-      MEETING: 'bg-blue-500',
-      APPOINTMENT: 'bg-purple-500',
-      TASK: 'bg-orange-500',
-      REMINDER: 'bg-yellow-500',
+      MEETING: 'bg-accent-500',
+      APPOINTMENT: 'bg-accent-700',
+      TASK: 'bg-warning-500',
+      REMINDER: 'bg-warning-500',
       OUT_OF_OFFICE: 'bg-[var(--text-muted)]',
-      HOLIDAY: 'bg-green-500',
-      TRAINING: 'bg-indigo-500',
+      HOLIDAY: 'bg-success-500',
+      TRAINING: 'bg-accent-500',
       INTERVIEW: 'bg-pink-500',
-      REVIEW: 'bg-sky-500',
+      REVIEW: 'bg-accent-500',
       OTHER: 'bg-[var(--text-muted)]',
     };
     return colors[eventType] || colors.OTHER;

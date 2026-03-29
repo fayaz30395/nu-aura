@@ -145,7 +145,7 @@ function CandidateCard({
           style={{
             ...provided.draggableProps.style,
             background: snapshot.isDragging
-              ? 'var(--mantine-color-blue-0)'
+              ? 'var(--mantine-color-accent-0)'
               : 'white',
             boxShadow: snapshot.isDragging
               ? '0 8px 24px rgba(0,0,0,0.15)'
@@ -296,12 +296,12 @@ function KanbanColumn({
               maxHeight: 'calc(100vh - 240px)',
               overflowY: 'auto',
               background: snapshot.isDraggingOver
-                ? 'var(--mantine-color-blue-0)'
+                ? 'var(--mantine-color-accent-0)'
                 : 'var(--mantine-color-gray-0)',
               borderRadius: 'var(--mantine-radius-md)',
               padding: 'var(--mantine-spacing-xs)',
               border: snapshot.isDraggingOver
-                ? '2px dashed var(--mantine-color-blue-4)'
+                ? '2px dashed var(--mantine-color-accent-4)'
                 : '2px solid transparent',
               transition: 'background 200ms ease, border 200ms ease',
             }}

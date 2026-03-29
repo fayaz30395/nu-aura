@@ -41,29 +41,29 @@ export default function HelpdeskPage() {
       label: 'SLA Compliance',
       value: getStatValue(() => `${dashboard.slaComplianceRate.toFixed(1)}%`),
       icon: CheckCircle2,
-      color: 'text-green-600',
-      bg: 'bg-green-50 dark:bg-green-950/20',
+      color: 'text-success-600',
+      bg: 'bg-success-50 dark:bg-success-950/20',
     },
     {
       label: 'Avg First Response',
       value: getStatValue(() => `${dashboard.averageFirstResponseMinutes} min`),
       icon: Clock,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50 dark:bg-blue-950/20',
+      color: 'text-accent-600',
+      bg: 'bg-accent-50 dark:bg-accent-950/20',
     },
     {
       label: 'Avg Resolution',
       value: getStatValue(() => `${dashboard.averageResolutionMinutes} min`),
       icon: BarChart3,
-      color: 'text-purple-600',
-      bg: 'bg-purple-50 dark:bg-purple-950/20',
+      color: 'text-accent-800',
+      bg: 'bg-accent-250 dark:bg-accent-900/20',
     },
     {
       label: 'Avg CSAT',
       value: getStatValue(() => `${dashboard.averageCSAT.toFixed(1)} / 5`),
       icon: Headphones,
-      color: 'text-orange-600',
-      bg: 'bg-orange-50 dark:bg-orange-950/20',
+      color: 'text-warning-600',
+      bg: 'bg-warning-50 dark:bg-warning-950/20',
     },
   ];
 
@@ -99,10 +99,10 @@ export default function HelpdeskPage() {
 
         {/* Pending Escalations */}
         {escalations.length > 0 && (
-          <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+          <div className="bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-5 h-5 text-amber-600" />
-              <h3 className="font-semibold text-amber-800 dark:text-amber-300">
+              <AlertTriangle className="w-5 h-5 text-warning-600" />
+              <h3 className="font-semibold text-warning-800 dark:text-warning-300">
                 Pending Escalations ({escalations.length})
               </h3>
             </div>
@@ -136,7 +136,7 @@ export default function HelpdeskPage() {
             className="flex items-center justify-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-3">
-              <Ticket className="w-5 h-5 text-sky-700 dark:text-sky-400" />
+              <Ticket className="w-5 h-5 text-accent-700 dark:text-accent-400" />
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Tickets</p>
                 <p className="text-xs text-[var(--text-muted)]">View and manage support tickets</p>
@@ -208,19 +208,19 @@ export default function HelpdeskPage() {
             <h3 className="font-semibold text-[var(--text-primary)] mb-3">Overview</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <p className="text-2xl font-bold text-green-600">{dashboard.slaMetCount}</p>
+                <p className="text-2xl font-bold text-success-600">{dashboard.slaMetCount}</p>
                 <p className="text-xs text-[var(--text-muted)]">SLAs Met</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-red-600">{dashboard.slaBreachedCount}</p>
+                <p className="text-2xl font-bold text-danger-600">{dashboard.slaBreachedCount}</p>
                 <p className="text-xs text-[var(--text-muted)]">SLAs Breached</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600">{dashboard.firstContactResolutions}</p>
+                <p className="text-2xl font-bold text-accent-600">{dashboard.firstContactResolutions}</p>
                 <p className="text-xs text-[var(--text-muted)]">First Contact Resolutions</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-purple-600">{activeSlaCount}</p>
+                <p className="text-2xl font-bold text-accent-800">{activeSlaCount}</p>
                 <p className="text-xs text-[var(--text-muted)]">Active SLA Policies</p>
               </div>
             </div>

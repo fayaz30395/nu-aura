@@ -113,7 +113,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           step.completed
                             ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] ring-2 ring-[var(--status-success-border)]'
                             : step.active
-                              ? 'bg-sky-500 text-white ring-4 ring-sky-500/30'
+                              ? 'bg-accent-500 text-white ring-4 ring-accent-500/30'
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                         }`}
                         animate={step.active ? { scale: [1, 1.08, 1] } : {}}
@@ -125,7 +125,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         <p
                           className={`text-xs font-semibold ${
                             step.active
-                              ? 'text-sky-700 dark:text-sky-400'
+                              ? 'text-accent-700 dark:text-accent-400'
                               : step.completed
                                 ? 'text-[var(--status-success-text)]'
                                 : 'text-[var(--text-muted)]'
@@ -166,7 +166,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                       >
                         <div>
                           <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
-                            Which date do you want to regularize? <span className="text-red-500">*</span>
+                            Which date do you want to regularize? <span className="text-danger-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -178,7 +178,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             <motion.p
                               initial={{ opacity: 0, y: -4 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="text-red-500 text-sm mt-2"
+                              className="text-danger-500 text-sm mt-2"
                             >
                               {errors.attendanceDate.message}
                             </motion.p>
@@ -211,7 +211,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                               <motion.p
                                 initial={{ opacity: 0, y: -4 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="text-red-500 text-xs mt-2"
+                                className="text-danger-500 text-xs mt-2"
                               >
                                 {errors.requestedCheckIn.message}
                               </motion.p>
@@ -230,7 +230,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                               <motion.p
                                 initial={{ opacity: 0, y: -4 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="text-red-500 text-xs mt-2"
+                                className="text-danger-500 text-xs mt-2"
                               >
                                 {errors.requestedCheckOut.message}
                               </motion.p>
@@ -277,7 +277,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
 
                         <div>
                           <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
-                            Why do you need this regularization? <span className="text-red-500">*</span>
+                            Why do you need this regularization? <span className="text-danger-500">*</span>
                           </label>
                           <textarea
                             {...register('reason')}
@@ -290,7 +290,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                               <motion.p
                                 initial={{ opacity: 0, y: -4 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="text-red-500 text-sm"
+                                className="text-danger-500 text-sm"
                               >
                                 {errors.reason.message}
                               </motion.p>
@@ -298,9 +298,9 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             <p
                               className={`text-xs ml-auto font-medium ${
                                 reasonValue.length > 450
-                                  ? 'text-red-500'
+                                  ? 'text-danger-500'
                                   : reasonValue.length > 400
-                                    ? 'text-yellow-600 dark:text-yellow-400'
+                                    ? 'text-warning-600 dark:text-warning-400'
                                     : 'text-[var(--text-muted)]'
                               }`}
                             >
@@ -322,7 +322,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                                 onClick={() => onQuickReason(template)}
                                 whileHover={{ scale: 1.05, y: -1 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="px-3 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-sky-400 hover:text-sky-700 dark:hover:text-sky-400 transition-all"
+                                className="px-3 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-accent-400 hover:text-accent-700 dark:hover:text-accent-400 transition-all"
                               >
                                 {template}
                               </motion.button>
@@ -359,7 +359,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                       <Button
                         type="button"
                         onClick={onNext}
-                        className="w-full bg-sky-500 hover:bg-sky-700 text-white font-medium"
+                        className="w-full bg-accent-500 hover:bg-accent-700 text-white font-medium"
                       >
                         Next
                       </Button>
@@ -368,7 +368,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         type="submit"
                         disabled={isPending || isSubmitting}
                         onClick={handleSubmit(onSubmit)}
-                        className="w-full bg-sky-500 hover:bg-sky-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-accent-500 hover:bg-accent-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className="h-4 w-4 mr-2" />
                         {isPending || isSubmitting ? 'Submitting...' : 'Submit Request'}

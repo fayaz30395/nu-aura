@@ -21,36 +21,36 @@ const SUB_PAGES = [
     label: 'Payroll Runs',
     description: 'Create and manage payroll processing runs for each pay period',
     icon: Banknote,
-    gradient: 'from-sky-500 to-sky-700',
-    hoverBorder: 'hover:border-sky-300 dark:hover:border-sky-700',
-    hoverText: 'group-hover:text-sky-500',
+    gradient: 'from-accent-500 to-accent-700',
+    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
+    hoverText: 'group-hover:text-accent-500',
   },
   {
     href: '/payroll/payslips',
     label: 'Payslips',
     description: 'View and download employee payslips with salary breakdowns',
     icon: FileText,
-    gradient: 'from-cyan-500 to-cyan-600',
-    hoverBorder: 'hover:border-cyan-300 dark:hover:border-cyan-700',
-    hoverText: 'group-hover:text-cyan-500',
+    gradient: 'from-accent-500 to-accent-600',
+    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
+    hoverText: 'group-hover:text-accent-500',
   },
   {
     href: '/payroll/structures',
     label: 'Salary Structures',
     description: 'Define salary structures with configurable allowances and deductions',
     icon: Layers,
-    gradient: 'from-purple-500 to-purple-600',
-    hoverBorder: 'hover:border-purple-300 dark:hover:border-purple-700',
-    hoverText: 'group-hover:text-purple-500',
+    gradient: 'from-accent-500 to-accent-600',
+    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
+    hoverText: 'group-hover:text-accent-500',
   },
   {
     href: '/payroll/bulk-processing',
     label: 'Bulk Processing',
     description: 'Process payroll for multiple employees at once with a guided wizard',
     icon: Settings,
-    gradient: 'from-amber-500 to-amber-600',
-    hoverBorder: 'hover:border-amber-300 dark:hover:border-amber-700',
-    hoverText: 'group-hover:text-amber-500',
+    gradient: 'from-warning-500 to-warning-600',
+    hoverBorder: 'hover:border-warning-300 dark:hover:border-warning-700',
+    hoverText: 'group-hover:text-warning-500',
   },
 ] as const;
 
@@ -105,7 +105,7 @@ export default function PayrollPage() {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Payroll Management</h1>

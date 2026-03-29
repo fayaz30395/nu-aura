@@ -24,8 +24,8 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
       <Card className="skeuo-card">
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
-              <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+              <BookOpen className="h-6 w-6 text-accent-600 dark:text-accent-400" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">My Enrollments</p>
@@ -37,8 +37,8 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
       <Card className="skeuo-card">
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
-              <PlayCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+            <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
+              <PlayCircle className="h-6 w-6 text-warning-600 dark:text-warning-400" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Progress</p>
@@ -50,8 +50,8 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
       <Card className="skeuo-card">
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
-              <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
+            <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
+              <Award className="h-6 w-6 text-success-600 dark:text-success-400" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
@@ -63,8 +63,8 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
       <Card className="skeuo-card">
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
-              <GraduationCap className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <div className="rounded-lg bg-accent-700 p-4 dark:bg-accent-800">
+              <GraduationCap className="h-6 w-6 text-white dark:text-accent-200" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Available Programs</p>

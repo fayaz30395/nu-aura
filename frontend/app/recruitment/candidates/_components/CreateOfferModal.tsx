@@ -26,7 +26,7 @@ export function CreateOfferModal({
 }: CreateOfferModalProps) {
   if (!open || !candidate) return null;
 
-  const inputCls = 'w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500';
+  const inputCls = 'w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
@@ -41,8 +41,8 @@ export function CreateOfferModal({
             </button>
           </div>
 
-          <div className="mb-4 p-4 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
-            <p className="text-sm text-teal-700 dark:text-teal-300">
+          <div className="mb-4 p-4 bg-success-50 dark:bg-success-900/20 rounded-xl">
+            <p className="text-sm text-success-700 dark:text-success-300">
               Creating offer letter for <strong>{candidate.fullName}</strong>
             </p>
           </div>
@@ -56,7 +56,7 @@ export function CreateOfferModal({
                 className={inputCls}
               />
               {offerForm.formState.errors.offeredSalary && (
-                <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.offeredSalary.message}</p>
+                <p className="text-xs text-danger-500 mt-1">{offerForm.formState.errors.offeredSalary.message}</p>
               )}
             </div>
 
@@ -77,7 +77,7 @@ export function CreateOfferModal({
                 className={inputCls}
               />
               {offerForm.formState.errors.joiningDate && (
-                <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.joiningDate.message}</p>
+                <p className="text-xs text-danger-500 mt-1">{offerForm.formState.errors.joiningDate.message}</p>
               )}
             </div>
 

@@ -60,8 +60,8 @@ interface DefaultErrorFallbackProps {
 
 function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20">
-      <div className="text-red-500 dark:text-red-400 mb-3">
+    <div className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-xl border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+      <div className="text-danger-500 dark:text-danger-400 mb-3">
         <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
@@ -71,15 +71,15 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
           />
         </svg>
       </div>
-      <h3 className="text-sm font-semibold text-red-700 dark:text-red-300 mb-1">
+      <h3 className="text-sm font-semibold text-danger-700 dark:text-danger-300 mb-1">
         Something went wrong
       </h3>
-      <p className="text-xs text-red-600 dark:text-red-400 mb-4 text-center max-w-sm">
+      <p className="text-xs text-danger-600 dark:text-danger-400 mb-4 text-center max-w-sm">
         {error?.message || 'An unexpected error occurred. The team has been notified.'}
       </p>
       <button
         onClick={onReset}
-        className="px-4 py-1.5 text-xs font-medium rounded-lg bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
+        className="px-4 py-1.5 text-xs font-medium rounded-lg bg-danger-100 dark:bg-danger-900/40 text-danger-700 dark:text-danger-300 hover:bg-danger-200 dark:hover:bg-danger-900/60 transition-colors"
       >
         Try again
       </button>

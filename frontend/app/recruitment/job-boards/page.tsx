@@ -33,19 +33,19 @@ interface JobOpening {
 }
 
 const boardConfig: Record<string, { color: string; logo: string }> = {
-  NAUKRI:   { color: 'bg-blue-600',   logo: '🇮🇳 Naukri' },
-  INDEED:   { color: 'bg-purple-600', logo: '🌐 Indeed' },
-  LINKEDIN: { color: 'bg-blue-700',   logo: '💼 LinkedIn' },
-  SHINE:    { color: 'bg-green-600',  logo: '✨ Shine' },
-  MONSTER:  { color: 'bg-orange-600', logo: '👾 Monster' },
+  NAUKRI:   { color: 'bg-accent-600',   logo: '🇮🇳 Naukri' },
+  INDEED:   { color: 'bg-accent-700', logo: '🌐 Indeed' },
+  LINKEDIN: { color: 'bg-accent-600',   logo: '💼 LinkedIn' },
+  SHINE:    { color: 'bg-success-600',  logo: '✨ Shine' },
+  MONSTER:  { color: 'bg-warning-600', logo: '👾 Monster' },
 };
 
 const statusIcon: Record<string, { icon: typeof Clock; color: string }> = {
-  PENDING: { icon: Clock,         color: 'text-yellow-500' },
-  ACTIVE:  { icon: CheckCircle,   color: 'text-green-600' },
-  PAUSED:  { icon: AlertCircle,   color: 'text-orange-500' },
+  PENDING: { icon: Clock,         color: 'text-warning-500' },
+  ACTIVE:  { icon: CheckCircle,   color: 'text-success-600' },
+  PAUSED:  { icon: AlertCircle,   color: 'text-warning-500' },
   EXPIRED: { icon: XCircle,       color: 'text-[var(--text-muted)]' },
-  FAILED:  { icon: XCircle,       color: 'text-red-500' },
+  FAILED:  { icon: XCircle,       color: 'text-danger-500' },
 };
 
 const ALL_BOARDS: JobBoardPosting['boardName'][] = ['NAUKRI', 'INDEED', 'LINKEDIN', 'SHINE', 'MONSTER'];
@@ -122,10 +122,10 @@ export default function JobBoardsPage() {
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Active Postings', value: postings.filter(p => p.status === 'ACTIVE').length, color: 'text-green-600' },
-            { label: 'Total Applications', value: postings.reduce((s, p) => s + p.applicationsCount, 0), color: 'text-blue-600' },
-            { label: 'Total Views', value: postings.reduce((s, p) => s + p.viewsCount, 0), color: 'text-purple-600' },
-            { label: 'Failed Postings', value: postings.filter(p => p.status === 'FAILED').length, color: 'text-red-600' },
+            { label: 'Active Postings', value: postings.filter(p => p.status === 'ACTIVE').length, color: 'text-success-600' },
+            { label: 'Total Applications', value: postings.reduce((s, p) => s + p.applicationsCount, 0), color: 'text-accent-600' },
+            { label: 'Total Views', value: postings.reduce((s, p) => s + p.viewsCount, 0), color: 'text-accent-700' },
+            { label: 'Failed Postings', value: postings.filter(p => p.status === 'FAILED').length, color: 'text-danger-600' },
           ].map((stat: { label: string; value: number; color: string }) => (
             <Card key={stat.label}>
               <CardContent className="pt-4">
@@ -144,8 +144,8 @@ export default function JobBoardsPage() {
               onClick={() => setFilterStatus(s)}
               className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                 filterStatus === s
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-blue-400'
+                  ? 'bg-accent-600 text-white border-accent-600'
+                  : 'bg-white text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-accent-400'
               }`}
             >
               {s}
@@ -183,7 +183,7 @@ export default function JobBoardsPage() {
                             <span className="font-medium text-[var(--text-primary)]">{posting.status}</span>
                             {posting.externalUrl && (
                               <a href={posting.externalUrl} target="_blank" rel="noopener noreferrer"
-                                className="text-blue-500 hover:underline">
+                                className="text-accent-500 hover:underline">
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
                             )}
@@ -193,17 +193,17 @@ export default function JobBoardsPage() {
                             {posting.externalJobId && ` · External: ${posting.externalJobId}`}
                           </p>
                           {posting.errorMessage && (
-                            <p className="text-xs text-red-600 mt-1">{posting.errorMessage}</p>
+                            <p className="text-xs text-danger-600 mt-1">{posting.errorMessage}</p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-6 text-sm text-[var(--text-secondary)]">
                         <div className="text-center">
-                          <p className="text-lg font-bold text-blue-700">{posting.applicationsCount}</p>
+                          <p className="text-lg font-bold text-accent-700">{posting.applicationsCount}</p>
                           <p className="text-xs text-[var(--text-muted)]">Applications</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-lg font-bold text-purple-700">{posting.viewsCount}</p>
+                          <p className="text-lg font-bold text-accent-600">{posting.viewsCount}</p>
                           <p className="text-xs text-[var(--text-muted)]">Views</p>
                         </div>
                         {posting.status === 'ACTIVE' && (
@@ -274,7 +274,7 @@ export default function JobBoardsPage() {
                   })}
                 </div>
                 {selectedBoards.length === 0 && (
-                  <p className="text-xs text-red-500 mt-1">Select at least one board</p>
+                  <p className="text-xs text-danger-500 mt-1">Select at least one board</p>
                 )}
               </div>
               <p className="text-xs text-[var(--text-muted)] bg-[var(--bg-surface)] p-4 rounded-md">

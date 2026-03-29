@@ -226,7 +226,7 @@ export default function ShiftPatternsPage() {
             <PermissionGate permission={Permissions.SHIFT_MANAGE}>
               <button
                 onClick={openCreate}
-                className="flex items-center gap-2 px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium"
               >
                 <Plus className="w-4 h-4" />
                 Add Pattern
@@ -265,7 +265,7 @@ export default function ShiftPatternsPage() {
                     <span
                       className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         pattern.isActive
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
                           : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                       }`}
                     >
@@ -285,7 +285,7 @@ export default function ShiftPatternsPage() {
                     <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
                       <button
                         onClick={() => openEdit(pattern)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         Edit
@@ -294,7 +294,7 @@ export default function ShiftPatternsPage() {
                         onClick={() => {
                           if (confirm('Delete this pattern?')) deleteMutation.mutate(pattern.id);
                         }}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         Delete
@@ -343,7 +343,7 @@ export default function ShiftPatternsPage() {
                       </label>
                       <input
                         {...form.register('name')}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         placeholder="e.g., 4-on-2-off Rotation"
                       />
                     </div>
@@ -355,7 +355,7 @@ export default function ShiftPatternsPage() {
                       <textarea
                         {...form.register('description')}
                         rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                       />
                     </div>
 
@@ -366,7 +366,7 @@ export default function ShiftPatternsPage() {
                         </label>
                         <select
                           {...form.register('rotationType')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         >
                           {ROTATION_TYPES.map((t) => (
                             <option key={t.value} value={t.value}>
@@ -386,7 +386,7 @@ export default function ShiftPatternsPage() {
                           })}
                           min={1}
                           max={60}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -407,7 +407,7 @@ export default function ShiftPatternsPage() {
                                 next[idx] = e.target.value;
                                 setPatternSlots(next);
                               }}
-                              className="w-full px-1 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-700"
+                              className="w-full px-1 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-accent-700"
                             >
                               <option value="OFF">OFF</option>
                               {activeShifts.map((s) => (
@@ -444,7 +444,7 @@ export default function ShiftPatternsPage() {
                       <button
                         type="submit"
                         disabled={createMutation.isPending || updateMutation.isPending}
-                        className="px-4 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-800 rounded-lg disabled:opacity-50"
+                        className="px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg disabled:opacity-50"
                       >
                         {createMutation.isPending || updateMutation.isPending
                           ? 'Saving...'

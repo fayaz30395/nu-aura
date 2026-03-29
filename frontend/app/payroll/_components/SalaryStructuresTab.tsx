@@ -41,7 +41,7 @@ export function SalaryStructuresTab({
             <select
               value={structureFilter}
               onChange={(e) => onFilterChange(e.target.value as 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'ALL')}
-              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
               <option value="ALL">All Status</option>
               <option value="ACTIVE">Active</option>
@@ -53,7 +53,7 @@ export function SalaryStructuresTab({
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreateStructure}
-            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
+            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
           >
             Create Structure
           </button>
@@ -101,12 +101,12 @@ export function SalaryStructuresTab({
 
               {structure.allowances && structure.allowances.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="font-semibold text-sm mb-2 text-green-700">Allowances</h4>
+                  <h4 className="font-semibold text-sm mb-2 text-success-700">Allowances</h4>
                   <div className="space-y-1">
                     {structure.allowances.map((allow, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">{allow.name}</span>
-                        <span className="text-green-600 font-medium">{formatCurrency(allow.amount)}</span>
+                        <span className="text-success-600 font-medium">{formatCurrency(allow.amount)}</span>
                       </div>
                     ))}
                   </div>
@@ -115,12 +115,12 @@ export function SalaryStructuresTab({
 
               {structure.deductions && structure.deductions.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="font-semibold text-sm mb-2 text-red-700">Deductions</h4>
+                  <h4 className="font-semibold text-sm mb-2 text-danger-700">Deductions</h4>
                   <div className="space-y-1">
                     {structure.deductions.map((ded, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">{ded.name}</span>
-                        <span className="text-red-600 font-medium">{formatCurrency(ded.amount)}</span>
+                        <span className="text-danger-600 font-medium">{formatCurrency(ded.amount)}</span>
                       </div>
                     ))}
                   </div>
@@ -131,7 +131,7 @@ export function SalaryStructuresTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onEditStructure(structure)}
-                    className="flex-1 px-3 py-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100 text-sm font-medium"
+                    className="flex-1 px-3 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
                   >
                     Edit
                   </button>
@@ -139,7 +139,7 @@ export function SalaryStructuresTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onDeleteStructure(structure)}
-                    className="flex-1 px-3 py-2 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/60 text-sm font-medium"
+                    className="flex-1 px-3 py-2 bg-danger-50 dark:bg-danger-900/40 text-danger-600 dark:text-danger-400 rounded hover:bg-danger-100 dark:hover:bg-danger-900/60 text-sm font-medium"
                   >
                     Delete
                   </button>

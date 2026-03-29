@@ -111,9 +111,9 @@ export default function SecuritySettingsPage() {
 
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <Check className="h-5 w-5 text-green-600" />
-            <p className="text-green-800 dark:text-green-200 font-medium">
+          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <Check className="h-5 w-5 text-success-600" />
+            <p className="text-success-800 dark:text-success-200 font-medium">
               Security settings updated successfully!
             </p>
           </div>
@@ -121,9 +121,9 @@ export default function SecuritySettingsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <p className="text-red-800 dark:text-red-200 font-medium">{error}</p>
+          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-5 w-5 text-danger-600" />
+            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
 
@@ -144,40 +144,40 @@ export default function SecuritySettingsPage() {
               {!isMfaLoading && !isMfaError && mfaStatusData && (
                 <div className={`p-4 rounded-lg border-2 ${
                   mfaStatusData.enabled
-                    ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800'
-                    : 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800'
+                    ? 'bg-success-50 dark:bg-success-950/20 border-success-200 dark:border-success-800'
+                    : 'bg-warning-50 dark:bg-warning-950/20 border-warning-200 dark:border-warning-800'
                 }`}>
                   <div className="flex items-start gap-4">
                     <div className={`p-2 rounded-full ${
                       mfaStatusData.enabled
-                        ? 'bg-green-100 dark:bg-green-900/30'
-                        : 'bg-amber-100 dark:bg-amber-900/30'
+                        ? 'bg-success-100 dark:bg-success-900/30'
+                        : 'bg-warning-100 dark:bg-warning-900/30'
                     }`}>
                       {mfaStatusData.enabled ? (
-                        <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                        <Check className="h-5 w-5 text-success-600 dark:text-success-400" />
                       ) : (
-                        <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                        <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                       )}
                     </div>
                     <div className="flex-1">
                       <p className={`font-medium ${
                         mfaStatusData.enabled
-                          ? 'text-green-900 dark:text-green-100'
-                          : 'text-amber-900 dark:text-amber-100'
+                          ? 'text-success-900 dark:text-success-100'
+                          : 'text-warning-900 dark:text-warning-100'
                       }`}>
                         {mfaStatusData.enabled ? 'Two-Factor Authentication Enabled' : 'Two-Factor Authentication Disabled'}
                       </p>
                       {mfaStatusData.enabled && mfaStatusData.setupAt && (
                         <p className={`text-sm mt-1 ${
                           mfaStatusData.enabled
-                            ? 'text-green-700 dark:text-green-300'
-                            : 'text-amber-700 dark:text-amber-300'
+                            ? 'text-success-700 dark:text-success-300'
+                            : 'text-warning-700 dark:text-warning-300'
                         }`}>
                           Enabled on {formatDate(mfaStatusData.setupAt)}
                         </p>
                       )}
                       {!mfaStatusData.enabled && (
-                        <p className="text-sm mt-1 text-amber-700 dark:text-amber-300">
+                        <p className="text-sm mt-1 text-warning-700 dark:text-warning-300">
                           Your account is not protected by two-factor authentication. We recommend enabling it.
                         </p>
                       )}
@@ -190,7 +190,7 @@ export default function SecuritySettingsPage() {
               {isMfaLoading && (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin">
-                    <div className="w-8 h-8 border-4 border-[var(--border-main)] border-t-sky-700 rounded-full" />
+                    <div className="w-8 h-8 border-4 border-[var(--border-main)] border-t-accent-700 rounded-full" />
                   </div>
                 </div>
               )}
@@ -198,7 +198,7 @@ export default function SecuritySettingsPage() {
               {/* Error State */}
               {isMfaError && (
                 <div className="flex items-center justify-center py-8">
-                  <p className="text-red-600 dark:text-red-400">Failed to load MFA status</p>
+                  <p className="text-danger-600 dark:text-danger-400">Failed to load MFA status</p>
                 </div>
               )}
 
@@ -239,7 +239,7 @@ export default function SecuritySettingsPage() {
                         maxLength={6}
                         placeholder="000000"
                         disabled={disableMfaMutation.isPending}
-                        className="w-full px-4 py-2 text-center text-xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50"
+                        className="w-full px-4 py-2 text-center text-xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50"
                         autoComplete="off"
                         {...register('code', {
                           onChange: (e) => {
@@ -247,7 +247,7 @@ export default function SecuritySettingsPage() {
                           },
                         })}
                       />
-                      {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>}
+                      {errors.code && <p className="text-danger-500 text-sm mt-1">{errors.code.message}</p>}
                       <div className="flex gap-4">
                         <Button
                           type="button"
@@ -317,8 +317,8 @@ export default function SecuritySettingsPage() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-start gap-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
-                  <Laptop className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex-shrink-0">
+                  <Laptop className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-[var(--text-primary)]">This Device</p>

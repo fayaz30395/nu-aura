@@ -81,7 +81,7 @@ export function EmailList({
       {isLoading ? (
         <div className="flex items-center justify-center py-16">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
+            <div className="w-10 h-10 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
             <p className="text-[var(--text-muted)]">Loading emails...</p>
           </div>
         </div>
@@ -108,7 +108,7 @@ export function EmailList({
               key={email.id}
               onClick={() => onEmailClick(email.id)}
               className={`flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors ${
-                !email.isRead ? 'bg-blue-50/50' : ''
+                !email.isRead ? 'bg-accent-50/50' : ''
               }`}
             >
               <button
@@ -118,8 +118,8 @@ export function EmailList({
                 }}
                 className={`flex-shrink-0 ${
                   email.isStarred
-                    ? 'text-yellow-500'
-                    : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-yellow-500'
+                    ? 'text-warning-500'
+                    : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-warning-500'
                 }`}
               >
                 <Star className={`h-5 w-5 ${email.isStarred ? 'fill-current' : ''}`} />

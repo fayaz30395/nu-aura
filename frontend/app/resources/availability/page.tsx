@@ -157,7 +157,7 @@ export default function AvailabilityCalendarPage() {
                 <select
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}
-                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-sky-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
+                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
                 >
                   <option value="">All Departments</option>
                   {/* Department options would be loaded from API */}
@@ -171,7 +171,7 @@ export default function AvailabilityCalendarPage() {
                     type="checkbox"
                     checked={includeLeaves}
                     onChange={(e) => setIncludeLeaves(e.target.checked)}
-                    className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
                   Show Leaves
                 </label>
@@ -180,7 +180,7 @@ export default function AvailabilityCalendarPage() {
                     type="checkbox"
                     checked={includeHolidays}
                     onChange={(e) => setIncludeHolidays(e.target.checked)}
-                    className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
                   Show Holidays
                 </label>
@@ -196,7 +196,7 @@ export default function AvailabilityCalendarPage() {
               label="Total Employees"
               value={summaryStats.totalEmployees}
               icon={Users}
-              color="text-sky-700"
+              color="text-accent-700"
             />
             <SummaryCard
               label="Available Today"
@@ -214,7 +214,7 @@ export default function AvailabilityCalendarPage() {
               label="On Leave Today"
               value={summaryStats.onLeaveToday}
               icon={Calendar}
-              color="text-purple-600"
+              color="text-accent-800"
             />
           </div>
         )}
@@ -244,7 +244,7 @@ export default function AvailabilityCalendarPage() {
                 onClick={() => setViewMode('week')}
                 className={`px-4 py-2 text-sm font-medium ${
                   viewMode === 'week'
-                    ? 'bg-sky-700 text-white'
+                    ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 } rounded-l-lg`}
               >
@@ -254,7 +254,7 @@ export default function AvailabilityCalendarPage() {
                 onClick={() => setViewMode('month')}
                 className={`px-4 py-2 text-sm font-medium ${
                   viewMode === 'month'
-                    ? 'bg-sky-700 text-white'
+                    ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 } rounded-r-lg`}
               >

@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * NU-AURA Theme - Tailwind CSS Configuration
- * Aesthetic: Precision Blue (Professional, elegant enterprise)
+ * Aesthetic: Single Hue Blue (Professional, elegant enterprise)
  * Philosophy: Human clarity + tactical depth + calm momentum
  *
  * Design Principles:
@@ -13,31 +13,31 @@
  */
 
 const gray = {
-  50: '#F9F9F9',
-  100: '#F0F0F0',
-  200: '#E8E8E8',
-  300: '#DCDCDC',
-  400: '#C0C0C0',
-  500: '#909090',
-  600: '#707070',
-  700: '#505050',
-  800: '#303030',
-  900: '#191919',
-  950: '#0D0D0D',
+  50: '#f8f9fb',
+  100: '#f0f1f5',
+  200: '#e2e4ea',
+  300: '#d1d4dc',
+  400: '#a1a6b4',
+  500: '#71778a',
+  600: '#545a6e',
+  700: '#3d4255',
+  800: '#282c3a',
+  900: '#1a1d28',
+  950: '#0f1118',
 };
 
 const blue = {
-  50: '#EBF0FF',
-  100: '#D6E0FF',
-  200: '#ADC2FF',
-  300: '#85A3FF',
-  400: '#5C85FF',
-  500: '#0057FF',
-  600: '#004ACC',
-  700: '#003ECB',
-  800: '#002F9A',
-  900: '#001F66',
-  950: '#001033',
+  50: '#f0f4ff',
+  100: '#dce4ff',
+  200: '#b8c9ff',
+  300: '#94adff',
+  400: '#7092ff',
+  500: '#4d77ff',
+  600: '#3a5fd9',
+  700: '#2a48b3',
+  800: '#1c328d',
+  900: '#101e66',
+  950: '#081240',
 };
 
 const semanticColors = {

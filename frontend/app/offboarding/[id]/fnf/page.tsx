@@ -547,7 +547,7 @@ export default function FnFSettlementPage() {
           </SimpleGrid>
 
           {/* Net Payable */}
-          <Paper withBorder p="md" radius="md" mt="md" className="bg-sky-50 dark:bg-sky-900/20">
+          <Paper withBorder p="md" radius="md" mt="md" className="bg-accent-50 dark:bg-accent-900/20">
             <Group justify="space-between">
               <Title order={3}>Net Payable</Title>
               <Title order={3} c={liveNet >= 0 ? 'sky.7' : 'red.7'}>

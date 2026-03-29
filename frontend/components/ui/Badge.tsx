@@ -14,7 +14,7 @@ const badgeVariants = cva(
           'bg-surface-100 text-surface-700 dark:bg-surface-700 dark:text-surface-200',
         // Primary
         primary:
-          'bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300',
+          'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300',
         // Secondary
         secondary:
           'bg-surface-200 text-surface-700 dark:bg-surface-600 dark:text-surface-200',
@@ -36,7 +36,7 @@ const badgeVariants = cva(
         outline:
           'bg-transparent border border-surface-300 text-surface-700 dark:border-surface-600 dark:text-surface-200',
         'outline-primary':
-          'bg-transparent border border-sky-300 text-sky-700 dark:border-sky-700 dark:text-sky-300',
+          'bg-transparent border border-accent-300 text-accent-700 dark:border-accent-700 dark:text-accent-300',
         'outline-success':
           'bg-transparent border border-success-300 text-success-700 dark:border-success-700 dark:text-success-300',
         'outline-danger':

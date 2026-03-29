@@ -110,7 +110,7 @@ export function PayrollRunsTab({
                           <button
                             onClick={() => onProcessRun(run)}
                             disabled={loading}
-                            className="px-2 py-1 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded text-xs hover:bg-sky-100 disabled:opacity-50"
+                            className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded text-xs hover:bg-accent-100 disabled:opacity-50"
                           >
                             Process
                           </button>
@@ -121,7 +121,7 @@ export function PayrollRunsTab({
                           <button
                             onClick={() => onApproveRun(run)}
                             disabled={loading}
-                            className="px-2 py-1 bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded text-xs hover:bg-green-100 dark:hover:bg-green-900/60 disabled:opacity-50"
+                            className="px-2 py-1 bg-success-50 dark:bg-success-900/40 text-success-600 dark:text-success-400 rounded text-xs hover:bg-success-100 dark:hover:bg-success-900/60 disabled:opacity-50"
                           >
                             Approve
                           </button>
@@ -130,7 +130,7 @@ export function PayrollRunsTab({
                       <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                         <button
                           onClick={() => onEditRun(run)}
-                          className="px-2 py-1 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded text-xs hover:bg-sky-100"
+                          className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded text-xs hover:bg-accent-100"
                         >
                           Edit
                         </button>
@@ -138,7 +138,7 @@ export function PayrollRunsTab({
                       <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                         <button
                           onClick={() => onDeleteRun(run)}
-                          className="px-2 py-1 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded text-xs hover:bg-red-100 dark:hover:bg-red-900/60"
+                          className="px-2 py-1 bg-danger-50 dark:bg-danger-900/40 text-danger-600 dark:text-danger-400 rounded text-xs hover:bg-danger-100 dark:hover:bg-danger-900/60"
                         >
                           Delete
                         </button>

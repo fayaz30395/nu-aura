@@ -213,13 +213,13 @@ export default function TeamAttendancePage() {
         {/* Error Alert */}
         {error && (
           <motion.div
-            className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-2"
+            className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-2"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm text-red-800 dark:text-red-300">{error?.message || 'Failed to load team attendance.'}</p>
+              <p className="text-sm text-danger-800 dark:text-danger-300">{error?.message || 'Failed to load team attendance.'}</p>
             </div>
           </motion.div>
         )}
@@ -322,15 +322,15 @@ export default function TeamAttendancePage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="card-aura h-full border-l-4 border-l-green-500">
+              <Card className="card-aura h-full border-l-4 border-l-success-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <div className="w-10 h-10 rounded-lg bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">Present</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.present}</p>
-                    <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                    <p className="text-xs text-success-600 dark:text-success-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.present / stats.total) * 100)}%` : '0%'}
                     </p>
                   </div>
@@ -343,15 +343,15 @@ export default function TeamAttendancePage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="card-aura h-full border-l-4 border-l-red-500">
+              <Card className="card-aura h-full border-l-4 border-l-danger-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
-                    <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <div className="w-10 h-10 rounded-lg bg-danger-50 dark:bg-danger-950/30 flex items-center justify-center">
+                    <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">Absent</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.absent}</p>
-                    <p className="text-xs text-red-600 dark:text-red-400 font-medium">
+                    <p className="text-xs text-danger-600 dark:text-danger-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.absent / stats.total) * 100)}%` : '0%'}
                     </p>
                   </div>
@@ -364,15 +364,15 @@ export default function TeamAttendancePage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="card-aura h-full border-l-4 border-l-orange-500">
+              <Card className="card-aura h-full border-l-4 border-l-warning-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center">
-                    <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                  <div className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
+                    <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">Late</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.late}</p>
-                    <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">
+                    <p className="text-xs text-warning-600 dark:text-warning-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.late / stats.total) * 100)}%` : '0%'}
                     </p>
                   </div>
@@ -385,15 +385,15 @@ export default function TeamAttendancePage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="card-aura h-full border-l-4 border-l-blue-500">
+              <Card className="card-aura h-full border-l-4 border-l-accent-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">On Leave</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.onLeave}</p>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                    <p className="text-xs text-accent-600 dark:text-accent-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.onLeave / stats.total) * 100)}%` : '0%'}
                     </p>
                   </div>
@@ -453,7 +453,7 @@ export default function TeamAttendancePage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-sm"
+              className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm"
             >
               <option value="all">All Statuses</option>
               <option value="PRESENT">Present</option>
@@ -542,7 +542,7 @@ export default function TeamAttendancePage() {
                                 <span className="text-[var(--text-secondary)] min-w-max">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
                                 <div className="w-16 h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                                   <div
-                                    className="h-full bg-green-500 transition-all"
+                                    className="h-full bg-success-500 transition-all"
                                     style={{
                                       width: `${Math.min(((record.totalWorkHours || 0) / 8) * 100, 100)}%`,
                                     }}
@@ -575,7 +575,7 @@ export default function TeamAttendancePage() {
                             </td>
                             <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                               {record.isRegularization && (
-                                <span className="text-orange-600 dark:text-orange-400 font-medium text-xs">Regularized</span>
+                                <span className="text-warning-600 dark:text-warning-400 font-medium text-xs">Regularized</span>
                               )}
                               {record.remarks && (
                                 <div className="text-xs text-[var(--text-muted)] truncate max-w-xs" title={record.remarks}>
@@ -630,16 +630,16 @@ export default function TeamAttendancePage() {
                     transition={{ delay: index * 0.03, duration: 0.25 }}
                   >
                     <Card className={`card-aura h-full hover:shadow-lg transition-all border-t-4 ${
-                      record.status === 'PRESENT' ? 'border-t-green-500' :
-                      record.status === 'ABSENT' ? 'border-t-red-500' :
-                      record.status === 'LATE' ? 'border-t-orange-500' :
-                      record.status === 'LEAVE' ? 'border-t-blue-500' :
-                      record.status === 'HALF_DAY' ? 'border-t-yellow-500' :
+                      record.status === 'PRESENT' ? 'border-t-success-500' :
+                      record.status === 'ABSENT' ? 'border-t-danger-500' :
+                      record.status === 'LATE' ? 'border-t-warning-500' :
+                      record.status === 'LEAVE' ? 'border-t-accent-500' :
+                      record.status === 'HALF_DAY' ? 'border-t-warning-500' :
                       'border-t-[var(--border-main)]'
                     }`}>
                       <CardContent className="p-6 flex flex-col gap-4">
                         <div className="flex items-start justify-between gap-2">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-sky-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             {record.employeeId.substring(0, 2).toUpperCase()}
                           </div>
                           <span className={`badge-status ${
@@ -683,7 +683,7 @@ export default function TeamAttendancePage() {
                           </div>
                           <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all"
+                              className="h-full bg-gradient-to-r from-accent-400 to-accent-600 transition-all"
                               style={{
                                 width: `${Math.min(((record.totalWorkHours || 0) / 8) * 100, 100)}%`,
                               }}
@@ -692,8 +692,8 @@ export default function TeamAttendancePage() {
                         </div>
 
                         {record.lateByMinutes && record.lateByMinutes > 0 && (
-                          <div className="px-3 py-2 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800">
-                            <p className="text-xs font-medium text-orange-700 dark:text-orange-400">
+                          <div className="px-3 py-2 rounded-lg bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800">
+                            <p className="text-xs font-medium text-warning-700 dark:text-warning-400">
                               Late by {record.lateByMinutes} minutes
                             </p>
                           </div>
@@ -728,11 +728,11 @@ export default function TeamAttendancePage() {
             <Card
               isClickable
               onClick={() => router.push('/attendance')}
-              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-sky-500"
+              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-accent-500"
             >
               <CardContent className="p-6">
-                <div className="w-10 h-10 rounded-lg bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center mb-4">
-                  <Clock className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
+                  <Clock className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">My Attendance</h3>
                 <p className="text-xs text-[var(--text-muted)]">View your own records</p>
@@ -747,11 +747,11 @@ export default function TeamAttendancePage() {
             <Card
               isClickable
               onClick={() => router.push('/attendance/regularization')}
-              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-orange-500"
+              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-warning-500"
             >
               <CardContent className="p-6">
-                <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center mb-4">
-                  <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                <div className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center mb-4">
+                  <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Regularizations</h3>
                 <p className="text-xs text-[var(--text-muted)]">Review corrections</p>
@@ -766,11 +766,11 @@ export default function TeamAttendancePage() {
             <Card
               isClickable
               onClick={() => window.print()}
-              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-purple-500"
+              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-accent-700"
             >
               <CardContent className="p-6">
-                <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center mb-4">
-                  <Printer className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
+                  <Printer className="h-5 w-5 text-accent-800 dark:text-accent-600" />
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Print Report</h3>
                 <p className="text-xs text-[var(--text-muted)]">Generate PDF</p>

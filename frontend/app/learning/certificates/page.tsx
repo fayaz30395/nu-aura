@@ -108,9 +108,9 @@ export default function CertificateGalleryPage() {
 
   const getStatusBadge = (isActive: boolean) => {
     if (isActive) {
-      return <span className="badge-status px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 rounded-full text-xs font-semibold">Active</span>;
+      return <span className="badge-status px-3 py-1 bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300 rounded-full text-xs font-semibold">Active</span>;
     }
-    return <span className="badge-status px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 rounded-full text-xs font-semibold">Expired</span>;
+    return <span className="badge-status px-3 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 rounded-full text-xs font-semibold">Expired</span>;
   };
 
   const formatDate = (date: string) => {
@@ -126,7 +126,7 @@ export default function CertificateGalleryPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/learning" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 w-fit text-sm">
+          <Link href="/learning" className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
           <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">My Certificates</h1>
@@ -137,17 +137,17 @@ export default function CertificateGalleryPage() {
         {!isLoading && certificates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md p-6">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{certificates.length}</div>
+              <div className="text-3xl font-bold text-accent-600 dark:text-accent-400">{certificates.length}</div>
               <div className="text-[var(--text-secondary)] text-sm">Total Certificates</div>
             </div>
             <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md p-6">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+              <div className="text-3xl font-bold text-success-600 dark:text-success-400">
                 {certificates.filter(c => c.isActive).length}
               </div>
               <div className="text-[var(--text-secondary)] text-sm">Active Credentials</div>
             </div>
             <div className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md p-6">
-              <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+              <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">
                 {certificates.reduce((sum, c) => sum + (c.scoreAchieved || 0), 0) / Math.max(certificates.length, 1) | 0}%
               </div>
               <div className="text-[var(--text-secondary)] text-sm">Average Score</div>
@@ -166,7 +166,7 @@ export default function CertificateGalleryPage() {
                 placeholder="Search by course name or certificate number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               />
             </div>
 
@@ -176,7 +176,7 @@ export default function CertificateGalleryPage() {
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               >
                 <option value="ALL">All Time</option>
                 <option value="LAST_30">Last 30 Days</option>
@@ -191,7 +191,7 @@ export default function CertificateGalleryPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
+              <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-3" />
               <p className="text-[var(--text-muted)]">Loading certificates...</p>
             </div>
           </div>
@@ -200,14 +200,14 @@ export default function CertificateGalleryPage() {
             {filteredCerts.map((cert) => (
               <div
                 key={cert.id}
-                className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-surface-700 dark:to-surface-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-l-4 border-yellow-500"
+                className="bg-gradient-to-br from-accent-50 to-accent-250 dark:from-surface-700 dark:to-surface-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border-l-4 border-warning-500"
               >
                 {/* Header */}
                 <div className="p-6">
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="flex items-center gap-4 flex-1">
-                      <div className="p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                        <Award className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                      <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
+                        <Award className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold text-[var(--text-primary)] text-sm line-clamp-2">{cert.courseTitle}</h3>
@@ -228,7 +228,7 @@ export default function CertificateGalleryPage() {
                         title="Copy certificate number"
                       >
                         {copiedId === cert.certificateNumber ? (
-                          <Check className="h-4 w-4 text-green-600" />
+                          <Check className="h-4 w-4 text-success-600" />
                         ) : (
                           <Copy className="h-4 w-4 text-[var(--text-secondary)]" />
                         )}
@@ -256,7 +256,7 @@ export default function CertificateGalleryPage() {
                     {cert.scoreAchieved && (
                       <div className="flex items-center justify-between text-[var(--text-primary)]">
                         <span className="text-[var(--text-secondary)]">Score</span>
-                        <span className="font-bold text-blue-600 dark:text-blue-400">{cert.scoreAchieved}%</span>
+                        <span className="font-bold text-accent-600 dark:text-accent-400">{cert.scoreAchieved}%</span>
                       </div>
                     )}
                   </div>
@@ -265,7 +265,7 @@ export default function CertificateGalleryPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => handleDownload(cert.id, cert.certificateNumber)}
-                      className="btn-primary flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium transition-colors"
+                      className="btn-primary flex items-center justify-center gap-1 px-3 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 text-xs font-medium transition-colors"
                       title="Download PDF"
                     >
                       <Download className="h-4 w-4" />
@@ -281,7 +281,7 @@ export default function CertificateGalleryPage() {
                     </button>
                     <button
                       onClick={() => handleShareLinkedIn(cert)}
-                      className="flex items-center justify-center gap-1 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-xs font-medium transition-colors"
+                      className="flex items-center justify-center gap-1 px-3 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 text-xs font-medium transition-colors"
                       title="Share on LinkedIn"
                     >
                       <Share2 className="h-4 w-4" />
@@ -291,10 +291,10 @@ export default function CertificateGalleryPage() {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-900/20 dark:to-purple-900/20 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
+                <div className="px-6 py-3 bg-gradient-to-r from-accent-500/10 to-accent-700/10 dark:from-accent-900/20 dark:to-accent-900/20 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
                   <a
                     href={`/learning/certificates/${cert.id}/verify`}
-                    className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1 w-fit"
+                    className="text-xs font-medium text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex items-center gap-1 w-fit"
                   >
                     Verify Certificate
                     <ExternalLink className="h-3 w-3" />
@@ -320,7 +320,7 @@ export default function CertificateGalleryPage() {
                   setSearchQuery('');
                   setDateFilter('ALL');
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm inline-flex items-center gap-2"
+                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm inline-flex items-center gap-2"
               >
                 Clear Filters
               </button>
@@ -328,7 +328,7 @@ export default function CertificateGalleryPage() {
             {!searchQuery && dateFilter === 'ALL' && (
               <Link
                 href="/learning"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm inline-flex items-center gap-2 ml-2"
+                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm inline-flex items-center gap-2 ml-2"
               >
                 Start Learning
               </Link>

@@ -20,11 +20,11 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'SUCCESS':
-        return <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />;
+        return <CheckCircle2 className="h-5 w-5 text-success-600 dark:text-success-400" />;
       case 'FAILED':
-        return <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />;
+        return <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400" />;
       case 'SKIPPED':
-        return <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />;
+        return <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />;
       default:
         return null;
     }
@@ -33,11 +33,11 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'SUCCESS':
-        return 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300';
+        return 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300';
       case 'FAILED':
-        return 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300';
+        return 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300';
       case 'SKIPPED':
-        return 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300';
+        return 'bg-warning-50 dark:bg-warning-900/20 text-warning-700 dark:text-warning-300';
       default:
         return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
@@ -54,7 +54,7 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
   if (isLoading && !data) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-sky-700" />
+        <Loader2 className="h-6 w-6 animate-spin text-accent-700" />
       </div>
     );
   }
@@ -141,8 +141,8 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
 
       {/* Error Message */}
       {data.content.some((e: IntegrationEventLog) => e.status === 'FAILED') && (
-        <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-          <p className="text-sm text-red-700 dark:text-red-300">
+        <div className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
+          <p className="text-sm text-danger-700 dark:text-danger-300">
             Some events failed. Check error messages above for details.
           </p>
         </div>

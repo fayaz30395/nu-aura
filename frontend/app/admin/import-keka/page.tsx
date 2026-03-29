@@ -345,15 +345,15 @@ export default function KekaImportPage() {
 
           {/* Error Alert */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-3 flex-shrink-0 mt-0.5" />
+            <div className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start">
+              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mr-3 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-red-800 dark:text-red-100 font-medium">Error</p>
-                <p className="text-red-700 dark:text-red-200 text-sm mt-1">{error}</p>
+                <p className="text-danger-800 dark:text-danger-100 font-medium">Error</p>
+                <p className="text-danger-700 dark:text-danger-200 text-sm mt-1">{error}</p>
               </div>
               <button
                 onClick={() => setError(null)}
-                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 ml-2"
+                className="text-danger-600 dark:text-danger-400 hover:text-danger-800 dark:hover:text-danger-200 ml-2"
               >
                 ×
               </button>
@@ -391,11 +391,11 @@ export default function KekaImportPage() {
               </div>
 
               {/* Instructions */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              <div className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-6">
+                <h4 className="font-semibold text-accent-900 dark:text-accent-100 mb-2">
                   How to export from KEKA:
                 </h4>
-                <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside">
+                <ol className="text-sm text-accent-800 dark:text-accent-200 space-y-1 list-decimal list-inside">
                   <li>Log in to KEKA HRMS</li>
                   <li>Go to Employees &gt; Employee List</li>
                   <li>Click Export to CSV or Excel</li>
@@ -412,9 +412,9 @@ export default function KekaImportPage() {
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive
-                      ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30'
+                      ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30'
                       : selectedFile
-                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                      ? 'border-success-500 bg-success-50 dark:bg-success-900/20'
                       : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                   }`}
                   onDragEnter={handleDrag}
@@ -432,7 +432,7 @@ export default function KekaImportPage() {
 
                   {selectedFile ? (
                     <div className="flex flex-col items-center">
-                      <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
+                      <CheckCircle className="w-12 h-12 text-success-500 mb-3" />
                       <p className="text-lg font-medium text-[var(--text-primary)]">
                         {selectedFile.name}
                       </p>
@@ -504,11 +504,11 @@ export default function KekaImportPage() {
               </div>
 
               {unmappedColumns.length > 0 && (
-                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg flex items-start mb-6">
-                  <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-3 flex-shrink-0 mt-0.5" />
+                <div className="p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg flex items-start mb-6">
+                  <AlertTriangle className="w-5 h-5 text-warning-600 dark:text-warning-400 mr-3 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-yellow-800 dark:text-yellow-100 font-medium">Unmapped Columns</p>
-                    <p className="text-yellow-700 dark:text-yellow-200 text-sm mt-1">
+                    <p className="text-warning-800 dark:text-warning-100 font-medium">Unmapped Columns</p>
+                    <p className="text-warning-700 dark:text-warning-200 text-sm mt-1">
                       {unmappedColumns.length} column(s) are not mapped. These will be skipped during
                       import.
                     </p>
@@ -568,7 +568,7 @@ export default function KekaImportPage() {
                         </Table.Td>
                         <Table.Td>
                           {mapping.targetField ? (
-                            <CheckCircle className="w-5 h-5 text-green-500" />
+                            <CheckCircle className="w-5 h-5 text-success-500" />
                           ) : (
                             <XCircle className="w-5 h-5 text-[var(--text-muted)]" />
                           )}
@@ -600,35 +600,35 @@ export default function KekaImportPage() {
             <div className="skeuo-card p-6 space-y-6">
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <p className="text-sm text-blue-600 dark:text-blue-300 font-medium">
+                <div className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
+                  <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
                     Total Rows
                   </p>
-                  <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                  <p className="text-2xl font-bold text-accent-900 dark:text-accent-100">
                     {preview.totalRows}
                   </p>
                 </div>
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-                  <p className="text-sm text-green-600 dark:text-green-300 font-medium">
+                <div className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
+                  <p className="text-sm text-success-600 dark:text-success-300 font-medium">
                     Valid
                   </p>
-                  <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                  <p className="text-2xl font-bold text-success-900 dark:text-success-100">
                     {preview.validRows}
                   </p>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                  <p className="text-sm text-yellow-600 dark:text-yellow-300 font-medium">
+                <div className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
+                  <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
                     Warnings
                   </p>
-                  <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-100">
+                  <p className="text-2xl font-bold text-warning-900 dark:text-warning-100">
                     {preview.warnings.length}
                   </p>
                 </div>
-                <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
-                  <p className="text-sm text-red-600 dark:text-red-300 font-medium">
+                <div className="bg-danger-50 dark:bg-danger-900/20 p-4 rounded-lg border border-danger-200 dark:border-danger-800">
+                  <p className="text-sm text-danger-600 dark:text-danger-300 font-medium">
                     Errors
                   </p>
-                  <p className="text-2xl font-bold text-red-900 dark:text-red-100">
+                  <p className="text-2xl font-bold text-danger-900 dark:text-danger-100">
                     {preview.errorRows}
                   </p>
                 </div>
@@ -636,16 +636,16 @@ export default function KekaImportPage() {
 
               {/* Error Details */}
               {preview.errors.length > 0 && (
-                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="font-semibold text-red-800 dark:text-red-100 mb-2">Import Errors</p>
+                <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+                  <p className="font-semibold text-danger-800 dark:text-danger-100 mb-2">Import Errors</p>
                   <div className="text-sm space-y-1">
                     {preview.errors.slice(0, 5).map((err, idx) => (
-                      <div key={idx} className="text-red-700 dark:text-red-200">
+                      <div key={idx} className="text-danger-700 dark:text-danger-200">
                         Row {err.row}, {err.field}: {err.message}
                       </div>
                     ))}
                     {preview.errors.length > 5 && (
-                      <div className="text-red-700 dark:text-red-200 font-medium">
+                      <div className="text-danger-700 dark:text-danger-200 font-medium">
                         +{preview.errors.length - 5} more errors
                       </div>
                     )}
@@ -792,8 +792,8 @@ export default function KekaImportPage() {
               </div>
 
               {/* Summary */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-lg mb-6">
-                <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+              <div className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 p-4 rounded-lg mb-6">
+                <p className="text-sm font-medium text-accent-900 dark:text-accent-100">
                   Ready to import {preview.validRows} valid employee records
                 </p>
               </div>
@@ -823,17 +823,17 @@ export default function KekaImportPage() {
                   <h3 className="text-lg font-semibold text-[var(--text-primary)] flex items-center">
                     {result.status === 'SUCCESS' ? (
                       <>
-                        <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
+                        <CheckCircle className="w-6 h-6 text-success-500 mr-2" />
                         Import Completed
                       </>
                     ) : result.status === 'PARTIAL_SUCCESS' ? (
                       <>
-                        <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
+                        <AlertTriangle className="w-6 h-6 text-warning-500 mr-2" />
                         Partial Success
                       </>
                     ) : (
                       <>
-                        <XCircle className="w-6 h-6 text-red-500 mr-2" />
+                        <XCircle className="w-6 h-6 text-danger-500 mr-2" />
                         Import Failed
                       </>
                     )}
@@ -854,35 +854,35 @@ export default function KekaImportPage() {
 
               {/* Summary Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <p className="text-sm text-blue-600 dark:text-blue-300 font-medium">
+                <div className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
+                  <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
                     Total Processed
                   </p>
-                  <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                  <p className="text-2xl font-bold text-accent-900 dark:text-accent-100">
                     {result.totalProcessed}
                   </p>
                 </div>
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-                  <p className="text-sm text-green-600 dark:text-green-300 font-medium">
+                <div className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
+                  <p className="text-sm text-success-600 dark:text-success-300 font-medium">
                     Created
                   </p>
-                  <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                  <p className="text-2xl font-bold text-success-900 dark:text-success-100">
                     {result.created}
                   </p>
                 </div>
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-                  <p className="text-sm text-purple-600 dark:text-purple-300 font-medium">
+                <div className="bg-accent-250 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-400 dark:border-accent-900">
+                  <p className="text-sm text-accent-800 dark:text-accent-500 font-medium">
                     Updated
                   </p>
-                  <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                  <p className="text-2xl font-bold text-accent-900 dark:text-accent-300">
                     {result.updated}
                   </p>
                 </div>
-                <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
-                  <p className="text-sm text-orange-600 dark:text-orange-300 font-medium">
+                <div className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
+                  <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
                     Skipped
                   </p>
-                  <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+                  <p className="text-2xl font-bold text-warning-900 dark:text-warning-100">
                     {result.skipped}
                   </p>
                 </div>
@@ -897,16 +897,16 @@ export default function KekaImportPage() {
 
               {/* Errors */}
               {result.errors.length > 0 && (
-                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="font-semibold text-red-800 dark:text-red-100 mb-2">Import Errors</p>
+                <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+                  <p className="font-semibold text-danger-800 dark:text-danger-100 mb-2">Import Errors</p>
                   <div className="text-sm space-y-1 mb-3">
                     {result.errors.slice(0, 5).map((err, idx) => (
-                      <div key={idx} className="text-red-700 dark:text-red-200">
+                      <div key={idx} className="text-danger-700 dark:text-danger-200">
                         Row {err.row}, {err.field}: {err.message}
                       </div>
                     ))}
                     {result.errors.length > 5 && (
-                      <div className="text-red-700 dark:text-red-200 font-medium">
+                      <div className="text-danger-700 dark:text-danger-200 font-medium">
                         +{result.errors.length - 5} more errors
                       </div>
                     )}

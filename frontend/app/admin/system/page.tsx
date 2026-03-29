@@ -121,7 +121,7 @@ export default function SystemDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 shadow-lg shadow-blue-500/25">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 shadow-lg shadow-accent-500/25">
             <Server className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -159,8 +159,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Total Tenants
             </Text>
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-              <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+              <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400" />
             </div>
           </Group>
           <div className="space-y-2">
@@ -185,8 +185,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Active Users
             </Text>
-            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-              <Users className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
+              <Users className="h-5 w-5 text-success-600 dark:text-success-400" />
             </div>
           </Group>
           <div className="space-y-2">
@@ -209,8 +209,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Total Employees
             </Text>
-            <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-              <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+            <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/30">
+              <TrendingUp className="h-5 w-5 text-accent-800 dark:text-accent-600" />
             </div>
           </Group>
           <div className="space-y-2">
@@ -233,8 +233,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Pending Approvals
             </Text>
-            <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
-              <Zap className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30">
+              <Zap className="h-5 w-5 text-warning-600 dark:text-warning-400" />
             </div>
           </Group>
           <div className="space-y-2">

@@ -255,9 +255,9 @@ export default function CustomFieldsPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-400 rounded-lg">
+          <div className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/20 border border-danger-400 dark:border-danger-600 text-danger-700 dark:text-danger-400 rounded-lg">
             {error}
-            <button onClick={() => setError(null)} className="ml-2 text-red-900 dark:text-red-200">
+            <button onClick={() => setError(null)} className="ml-2 text-danger-900 dark:text-danger-200">
               &times;
             </button>
           </div>
@@ -335,7 +335,7 @@ export default function CustomFieldsPage() {
                       <div className="text-sm font-medium text-[var(--text-primary)]">
                         {definition.fieldName}
                         {definition.isRequired && (
-                          <span className="ml-1 text-red-500">*</span>
+                          <span className="ml-1 text-danger-500">*</span>
                         )}
                       </div>
                       <div className="text-xs text-[var(--text-muted)]">
@@ -343,7 +343,7 @@ export default function CustomFieldsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300">
                         {ENTITY_TYPE_INFO[definition.entityType].label}
                       </span>
                     </td>
@@ -358,7 +358,7 @@ export default function CustomFieldsPage() {
                         onClick={() => handleToggleActive(definition)}
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           definition.isActive
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                            ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
                             : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                         }`}
                       >
@@ -368,13 +368,13 @@ export default function CustomFieldsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => openEditModal(definition)}
-                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3"
+                        className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 mr-3"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteField(definition)}
-                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                        className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300"
                       >
                         Delete
                       </button>
@@ -421,7 +421,7 @@ export default function CustomFieldsPage() {
                       placeholder="e.g., blood_group"
                       disabled={showEditModal}
                     />
-                    {errors.fieldCode && <p className="text-red-500 text-sm mt-1">{errors.fieldCode.message}</p>}
+                    {errors.fieldCode && <p className="text-danger-500 text-sm mt-1">{errors.fieldCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -433,7 +433,7 @@ export default function CustomFieldsPage() {
                       className="input-aura"
                       placeholder="e.g., Blood Group"
                     />
-                    {errors.fieldName && <p className="text-red-500 text-sm mt-1">{errors.fieldName.message}</p>}
+                    {errors.fieldName && <p className="text-danger-500 text-sm mt-1">{errors.fieldName.message}</p>}
                   </div>
                 </div>
 
@@ -447,7 +447,7 @@ export default function CustomFieldsPage() {
                     rows={2}
                     placeholder="Optional description..."
                   />
-                  {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+                  {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
@@ -472,7 +472,7 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.entityType && <p className="text-red-500 text-sm mt-1">{errors.entityType.message}</p>}
+                    {errors.entityType && <p className="text-danger-500 text-sm mt-1">{errors.entityType.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -495,7 +495,7 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.fieldType && <p className="text-red-500 text-sm mt-1">{errors.fieldType.message}</p>}
+                    {errors.fieldType && <p className="text-danger-500 text-sm mt-1">{errors.fieldType.message}</p>}
                   </div>
                 </div>
 
@@ -510,7 +510,7 @@ export default function CustomFieldsPage() {
                       className="input-aura"
                       placeholder="e.g., Personal, Emergency Contact"
                     />
-                    {errors.fieldGroup && <p className="text-red-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
+                    {errors.fieldGroup && <p className="text-danger-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -521,7 +521,7 @@ export default function CustomFieldsPage() {
                       {...register('displayOrder')}
                       className="input-aura"
                     />
-                    {errors.displayOrder && <p className="text-red-500 text-sm mt-1">{errors.displayOrder.message}</p>}
+                    {errors.displayOrder && <p className="text-danger-500 text-sm mt-1">{errors.displayOrder.message}</p>}
                   </div>
                 </div>
 
@@ -536,7 +536,7 @@ export default function CustomFieldsPage() {
                       rows={4}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
                     />
-                    {errors.optionsText && <p className="text-red-500 text-sm mt-1">{errors.optionsText.message}</p>}
+                    {errors.optionsText && <p className="text-danger-500 text-sm mt-1">{errors.optionsText.message}</p>}
                   </div>
                 )}
 
@@ -551,7 +551,7 @@ export default function CustomFieldsPage() {
                       className="input-aura"
                       placeholder="Placeholder text..."
                     />
-                    {errors.placeholder && <p className="text-red-500 text-sm mt-1">{errors.placeholder.message}</p>}
+                    {errors.placeholder && <p className="text-danger-500 text-sm mt-1">{errors.placeholder.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -562,7 +562,7 @@ export default function CustomFieldsPage() {
                       {...register('defaultValue')}
                       className="input-aura"
                     />
-                    {errors.defaultValue && <p className="text-red-500 text-sm mt-1">{errors.defaultValue.message}</p>}
+                    {errors.defaultValue && <p className="text-danger-500 text-sm mt-1">{errors.defaultValue.message}</p>}
                   </div>
                 </div>
 
@@ -587,7 +587,7 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.viewVisibility && <p className="text-red-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
+                    {errors.viewVisibility && <p className="text-danger-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -609,7 +609,7 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.editVisibility && <p className="text-red-500 text-sm mt-1">{errors.editVisibility.message}</p>}
+                    {errors.editVisibility && <p className="text-danger-500 text-sm mt-1">{errors.editVisibility.message}</p>}
                   </div>
                 </div>
 
@@ -623,7 +623,7 @@ export default function CustomFieldsPage() {
                           type="checkbox"
                           checked={value}
                           onChange={(e) => onChange(e.target.checked)}
-                          className="rounded text-sky-700 focus:ring-blue-500"
+                          className="rounded text-accent-700 focus:ring-accent-500"
                         />
                         <span className="text-sm text-[var(--text-secondary)]">Required</span>
                       </label>
@@ -638,7 +638,7 @@ export default function CustomFieldsPage() {
                           type="checkbox"
                           checked={value}
                           onChange={(e) => onChange(e.target.checked)}
-                          className="rounded text-sky-700 focus:ring-blue-500"
+                          className="rounded text-accent-700 focus:ring-accent-500"
                         />
                         <span className="text-sm text-[var(--text-secondary)]">Searchable</span>
                       </label>
@@ -653,7 +653,7 @@ export default function CustomFieldsPage() {
                           type="checkbox"
                           checked={value}
                           onChange={(e) => onChange(e.target.checked)}
-                          className="rounded text-sky-700 focus:ring-blue-500"
+                          className="rounded text-accent-700 focus:ring-accent-500"
                         />
                         <span className="text-sm text-[var(--text-secondary)]">Show in List View</span>
                       </label>

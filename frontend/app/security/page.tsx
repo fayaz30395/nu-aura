@@ -26,25 +26,25 @@ export default function SecurityPage() {
       icon: Shield,
       name: 'SOC 2 Type II',
       description: 'Audited security controls and processes',
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-accent-500 to-accent-600',
     },
     {
       icon: Globe,
       name: 'GDPR Compliant',
       description: 'EU data protection regulation compliance',
-      color: 'from-green-500 to-green-600',
+      color: 'from-success-500 to-success-600',
     },
     {
       icon: FileCheck,
       name: 'ISO 27001',
       description: 'Information security management',
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-accent-700 to-accent-800',
     },
     {
       icon: Lock,
       name: 'Privacy Shield',
       description: 'Cross-border data transfer framework',
-      color: 'from-orange-500 to-orange-600',
+      color: 'from-warning-500 to-warning-600',
     },
   ];
 
@@ -326,7 +326,7 @@ export default function SecurityPage() {
               },
             ].map((stat, index) => (
               <Card key={index} padding="lg" className="text-center">
-                <stat.icon className="h-10 w-10 text-sky-700 dark:text-sky-400 mx-auto mb-3" />
+                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-3" />
                 <div className="text-3xl font-bold text-[var(--text-primary)] mb-1">
                   {stat.value}
                 </div>

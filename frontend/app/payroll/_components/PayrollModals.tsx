@@ -51,7 +51,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   placeholder="e.g., November 2024 Payroll"
                 />
                 {formHook.formState.errors.runName && (
-                  <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.runName.message}</p>
+                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.runName.message}</p>
                 )}
               </div>
 
@@ -64,7 +64,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
                   )}
                 </div>
                 <div>
@@ -75,7 +75,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
                   )}
                 </div>
               </div>
@@ -88,7 +88,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   className="input-aura w-full px-3 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.paymentDate && (
-                  <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
+                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
                 )}
               </div>
 
@@ -164,7 +164,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.employeeId && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
                   )}
                 </div>
                 <div>
@@ -175,7 +175,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollRunId && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollRunId.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollRunId.message}</p>
                   )}
                 </div>
               </div>
@@ -189,7 +189,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
                   )}
                 </div>
                 <div>
@@ -200,7 +200,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
                   )}
                 </div>
               </div>
@@ -213,7 +213,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   className="input-aura w-full px-3 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.paymentDate && (
-                  <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
+                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
                 )}
               </div>
 
@@ -227,7 +227,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.baseSalary && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
                   )}
                 </div>
                 <div>
@@ -324,7 +324,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.employeeId && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
                   )}
                 </div>
                 <div>
@@ -335,7 +335,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                     className="input-aura w-full px-3 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.effectiveDate && (
-                    <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.effectiveDate.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.effectiveDate.message}</p>
                   )}
                 </div>
               </div>
@@ -349,18 +349,18 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   className="input-aura w-full px-3 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.baseSalary && (
-                  <p className="text-red-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
+                  <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
                 )}
               </div>
 
               {/* Allowances */}
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold text-green-700">Allowances</h3>
+                  <h3 className="font-semibold text-success-700">Allowances</h3>
                   <button
                     type="button"
                     onClick={() => appendAllowance({ name: '', amount: 0, type: 'FIXED', description: '' })}
-                    className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                    className="px-3 py-1 text-sm bg-success-100 text-success-700 rounded hover:bg-success-200"
                   >
                     Add Allowance
                   </button>
@@ -388,7 +388,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                       <button
                         type="button"
                         onClick={() => removeAllowance(idx)}
-                        className="px-2 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
+                        className="px-2 py-2 bg-danger-100 text-danger-600 rounded hover:bg-danger-200"
                       >
                         Remove
                       </button>
@@ -400,11 +400,11 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
               {/* Deductions */}
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold text-red-700">Deductions</h3>
+                  <h3 className="font-semibold text-danger-700">Deductions</h3>
                   <button
                     type="button"
                     onClick={() => appendDeduction({ name: '', amount: 0, type: 'FIXED', description: '' })}
-                    className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                    className="px-3 py-1 text-sm bg-danger-100 text-danger-700 rounded hover:bg-danger-200"
                   >
                     Add Deduction
                   </button>
@@ -432,7 +432,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                       <button
                         type="button"
                         onClick={() => removeDeduction(idx)}
-                        className="px-2 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
+                        className="px-2 py-2 bg-danger-100 text-danger-600 rounded hover:bg-danger-200"
                       >
                         Remove
                       </button>
@@ -500,7 +500,7 @@ export const DeleteConfirmModal = React.memo(function DeleteConfirmModal({
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 skeuo-button"
+            className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 skeuo-button"
           >
             {loading ? 'Deleting...' : 'Delete'}
           </button>

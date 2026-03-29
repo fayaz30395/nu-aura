@@ -92,21 +92,21 @@ export default function EmploymentChangeRequestsPage() {
     switch (status) {
       case 'PENDING':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400">
             <Clock className="h-3 w-3" />
             Pending
           </span>
         );
       case 'APPROVED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400">
             <CheckCircle className="h-3 w-3" />
             Approved
           </span>
         );
       case 'REJECTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400">
             <XCircle className="h-3 w-3" />
             Rejected
           </span>
@@ -123,14 +123,14 @@ export default function EmploymentChangeRequestsPage() {
 
   const getChangeTypeBadge = (type: ChangeType) => {
     const colors: Record<ChangeType, string> = {
-      PROMOTION: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-      DEMOTION: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-      TRANSFER: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-      ROLE_CHANGE: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
-      MANAGER_CHANGE: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
-      STATUS_CHANGE: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
-      CONFIRMATION: 'bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-400',
-      MULTIPLE: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
+      PROMOTION: 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600',
+      DEMOTION: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
+      TRANSFER: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
+      ROLE_CHANGE: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
+      MANAGER_CHANGE: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
+      STATUS_CHANGE: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
+      CONFIRMATION: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
+      MULTIPLE: 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600',
     };
 
     return (
@@ -154,7 +154,7 @@ export default function EmploymentChangeRequestsPage() {
         <span className="text-sm font-medium text-[var(--text-secondary)] w-40">{label}:</span>
         <span className="text-sm text-[var(--text-muted)]">{currentValue || 'N/A'}</span>
         <ArrowRight className="h-4 w-4 text-[var(--text-muted)]" />
-        <span className="text-sm font-medium text-sky-700 dark:text-sky-400">{newValue || 'N/A'}</span>
+        <span className="text-sm font-medium text-accent-700 dark:text-accent-400">{newValue || 'N/A'}</span>
       </div>
     );
   };
@@ -165,7 +165,7 @@ export default function EmploymentChangeRequestsPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -180,7 +180,7 @@ export default function EmploymentChangeRequestsPage() {
               onClick={() => setFilter('pending')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'pending'
-                  ? 'bg-sky-700 text-white'
+                  ? 'bg-accent-700 text-white'
                   : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
@@ -190,7 +190,7 @@ export default function EmploymentChangeRequestsPage() {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'all'
-                  ? 'bg-sky-700 text-white'
+                  ? 'bg-accent-700 text-white'
                   : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
@@ -205,7 +205,7 @@ export default function EmploymentChangeRequestsPage() {
             <div className="text-sm text-[var(--text-secondary)] mb-1">
               {filter === 'pending' ? 'Pending Requests' : 'Total Requests'}
             </div>
-            <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">
+            <div className="text-3xl font-bold text-warning-600 dark:text-warning-500">
               {requests.length}
             </div>
           </div>
@@ -235,8 +235,8 @@ export default function EmploymentChangeRequestsPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                        <span className="text-sm font-medium text-sky-700 dark:text-sky-400">
+                      <div className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                        <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
                           {request.employeeName?.charAt(0) || 'E'}
                         </span>
                       </div>
@@ -350,10 +350,10 @@ export default function EmploymentChangeRequestsPage() {
                           </div>
                           {request.rejectionReason && (
                             <div>
-                              <span className="text-sm font-medium text-red-600 dark:text-red-400">
+                              <span className="text-sm font-medium text-danger-600 dark:text-danger-400">
                                 Rejection Reason:
                               </span>
-                              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                              <p className="text-sm text-danger-700 dark:text-danger-300 mt-1">
                                 {request.rejectionReason}
                               </p>
                             </div>
@@ -379,7 +379,7 @@ export default function EmploymentChangeRequestsPage() {
                           <button
                             onClick={() => setApproveConfirm(request.id)}
                             disabled={approveMutation.isPending || rejectMutation.isPending}
-                            className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium transition-colors"
+                            className="flex-1 px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 font-medium transition-colors"
                           >
                             {approveMutation.isPending ? 'Processing...' : 'Approve Changes'}
                           </button>
@@ -388,7 +388,7 @@ export default function EmploymentChangeRequestsPage() {
                           <button
                             onClick={() => setShowRejectModal(request.id)}
                             disabled={approveMutation.isPending || rejectMutation.isPending}
-                            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium transition-colors"
+                            className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 font-medium transition-colors"
                           >
                             Reject
                           </button>
@@ -433,7 +433,7 @@ export default function EmploymentChangeRequestsPage() {
               <button
                 onClick={() => handleReject(showRejectModal)}
                 disabled={rejectMutation.isPending || !rejectionReason.trim()}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium"
+                className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 font-medium"
               >
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
               </button>

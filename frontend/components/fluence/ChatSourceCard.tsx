@@ -9,7 +9,7 @@ import type { ChatSource } from '@/lib/types/fluence-chat';
 const typeConfig: Record<string, { icon: React.ElementType; label: string; color: string }> = {
   wiki: { icon: BookOpen, label: 'Wiki', color: 'text-info-500 bg-info-50 dark:bg-info-950/30' },
   blog: { icon: Newspaper, label: 'Article', color: 'text-accent-500 bg-accent-50 dark:bg-accent-950/30' },
-  template: { icon: FileStack, label: 'Template', color: 'text-sky-500 bg-sky-50 dark:bg-sky-950/30' },
+  template: { icon: FileStack, label: 'Template', color: 'text-accent-500 bg-accent-50 dark:bg-accent-950/30' },
 };
 
 interface ChatSourceCardProps {
@@ -33,7 +33,7 @@ export const ChatSourceCard: React.FC<ChatSourceCardProps> = ({ source }) => {
         <Icon className="h-3 w-3" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors">
+        <p className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
           {source.title}
         </p>
         {source.excerpt && (

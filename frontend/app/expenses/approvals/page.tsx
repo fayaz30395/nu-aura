@@ -86,11 +86,11 @@ export default function ExpenseApprovalsPage() {
 
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-sky-700" />
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-700" />
             </div>
           ) : claims.length === 0 ? (
             <div className="text-center py-20">
-              <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
+              <CheckCircle className="w-12 h-12 text-success-400 mx-auto mb-3" />
               <p className="text-lg font-medium text-surface-700 dark:text-surface-300">All caught up!</p>
               <p className="text-surface-500">No pending expense claims to approve.</p>
             </div>
@@ -129,7 +129,7 @@ export default function ExpenseApprovalsPage() {
                       <td className="px-4 py-3">
                         <button
                           onClick={() => router.push(`/expenses/${claim.id}`)}
-                          className="text-sky-700 hover:underline font-medium"
+                          className="text-accent-700 hover:underline font-medium"
                         >
                           {claim.claimNumber}
                         </button>
@@ -158,14 +158,14 @@ export default function ExpenseApprovalsPage() {
                           <button
                             onClick={() => handleApprove(claim.id)}
                             disabled={approveMutation.isPending}
-                            className="p-1.5 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
+                            className="p-1.5 text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 rounded transition-colors"
                             title="Approve"
                           >
                             <CheckCircle className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => openReject(claim)}
-                            className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                            className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors"
                             title="Reject"
                           >
                             <XCircle className="w-4 h-4" />
@@ -195,7 +195,7 @@ export default function ExpenseApprovalsPage() {
                     onChange={(e) => setRejectReason(e.target.value)}
                     rows={3}
                     placeholder="Explain why this claim is being rejected..."
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                 </div>
               </div>
@@ -207,7 +207,7 @@ export default function ExpenseApprovalsPage() {
               <button
                 onClick={handleReject}
                 disabled={!rejectReason.trim() || rejectMutation.isPending}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50"
               >
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject Claim'}
               </button>

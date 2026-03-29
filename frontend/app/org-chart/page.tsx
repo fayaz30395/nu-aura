@@ -32,7 +32,7 @@ interface StatItemProps {
 function StatItem({ icon, label, value }: StatItemProps) {
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <div className="h-9 w-9 rounded-lg bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center flex-shrink-0">
+      <div className="h-9 w-9 rounded-lg bg-accent-100 dark:bg-accent-900/40 flex items-center justify-center flex-shrink-0">
         {icon}
       </div>
       <div>
@@ -67,7 +67,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
         className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Building2 className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+          <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />
           <h3 className="font-semibold text-sm text-[var(--text-primary)]">{departmentName}</h3>
         </div>
         <span className="text-xs text-[var(--text-secondary)] bg-[var(--bg-card)] px-2 py-0.5 rounded-full">
@@ -94,7 +94,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
                 className={cn(
                   'flex items-center gap-3 p-2 rounded-lg transition-colors',
                   emp.id === highlightedId
-                    ? 'bg-sky-100 dark:bg-sky-900/40 ring-1 ring-sky-400'
+                    ? 'bg-accent-100 dark:bg-accent-900/40 ring-1 ring-accent-400'
                     : 'hover:bg-slate-50 dark:hover:bg-slate-800/50',
                 )}
               >
@@ -106,8 +106,8 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
                     className="h-8 w-8 rounded-full object-cover border border-slate-200 dark:border-slate-600 flex-shrink-0"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-bold text-sky-700 dark:text-sky-300">
+                  <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-accent-700 dark:text-accent-300">
                       {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) ?? ''}
                     </span>
                   </div>
@@ -119,7 +119,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
                       {emp.fullName}
                     </p>
                     {manager?.id === emp.id && (
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300">
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                         Head
                       </span>
                     )}
@@ -137,7 +137,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
 
                 <Link
                   href={`/employees/${emp.id}`}
-                  className="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 flex-shrink-0"
+                  className="text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex-shrink-0"
                   aria-label={`View ${emp.fullName}'s profile`}
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -247,22 +247,22 @@ export default function OrgChartPage() {
         {/* ── Stats Bar ──────────────────────────────────────────── */}
         <div className="skeuo-card mb-5 grid grid-cols-2 lg:grid-cols-4 divide-x divide-[var(--border-subtle)]">
           <StatItem
-            icon={<Users className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            icon={<Users className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400" />}
             label="Total Employees"
             value={stats.totalEmployees}
           />
           <StatItem
-            icon={<Building2 className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            icon={<Building2 className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400" />}
             label="Departments"
             value={stats.totalDepartments}
           />
           <StatItem
-            icon={<GitBranch className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            icon={<GitBranch className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400" />}
             label="Avg Span of Control"
             value={stats.averageSpanOfControl}
           />
           <StatItem
-            icon={<Layers className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            icon={<Layers className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400" />}
             label="Hierarchy Depth"
             value={stats.maxDepth}
           />
@@ -287,7 +287,7 @@ export default function OrgChartPage() {
             <div className="mt-2 text-xs text-[var(--text-secondary)]">
               {searchMatchCount > 0 ? (
                 <span>
-                  Found <span className="font-semibold text-sky-700 dark:text-sky-400">{searchMatchCount}</span> match{searchMatchCount !== 1 ? 'es' : ''} for &quot;{searchQuery}&quot;
+                  Found <span className="font-semibold text-accent-700 dark:text-accent-400">{searchMatchCount}</span> match{searchMatchCount !== 1 ? 'es' : ''} for &quot;{searchQuery}&quot;
                 </span>
               ) : (
                 <span>No matches found for &quot;{searchQuery}&quot;</span>
@@ -300,7 +300,7 @@ export default function OrgChartPage() {
         {error ? (
           <div className="skeuo-card p-6">
             <div className="flex items-center justify-center h-64">
-              <div className="text-center text-red-600 dark:text-red-400">
+              <div className="text-center text-danger-600 dark:text-danger-400">
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -356,19 +356,19 @@ export default function OrgChartPage() {
         <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[var(--text-secondary)]">
           <span className="font-medium mr-1">Legend:</span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-sky-100 border border-sky-400" />
+            <span className="inline-block w-3 h-3 rounded bg-accent-100 border border-accent-400" />
             Executive
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-blue-100 border border-blue-400" />
+            <span className="inline-block w-3 h-3 rounded bg-accent-100 border border-accent-400" />
             Director/VP
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-emerald-100 border border-emerald-400" />
+            <span className="inline-block w-3 h-3 rounded bg-success-100 border border-success-400" />
             Manager
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-amber-100 border border-amber-400" />
+            <span className="inline-block w-3 h-3 rounded bg-warning-100 border border-warning-400" />
             Lead
           </span>
           <span className="flex items-center gap-1">

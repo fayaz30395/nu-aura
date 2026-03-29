@@ -87,7 +87,7 @@ const RatingStars = ({
         >
           <Star
             className={`h-6 w-6 ${
-              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--text-muted)]'
+              star <= rating ? 'fill-warning-400 text-warning-400' : 'text-[var(--text-muted)]'
             }`}
           />
         </button>
@@ -199,22 +199,22 @@ export default function FeedbackResponseForm({
           </div>
           <div className="text-right">
             <div className="text-sm text-[var(--text-muted)]">Progress</div>
-            <div className="text-2xl font-bold text-blue-600">{progressPercentage}%</div>
+            <div className="text-2xl font-bold text-accent-600">{progressPercentage}%</div>
           </div>
         </div>
 
         {/* Progress Bar */}
         <div className="mt-3 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-500 transition-all duration-300"
+            className="h-full bg-accent-500 transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
 
         {/* Anonymous Notice */}
         {isAnonymous && reviewerType !== 'SELF' && (
-          <div className="mt-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-            <p className="text-xs text-purple-700 flex items-center gap-2">
+          <div className="mt-3 p-4 bg-accent-250 border border-accent-400 rounded-lg">
+            <p className="text-xs text-accent-900 flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
               Your feedback will be anonymous and combined with other responses
             </p>
@@ -229,7 +229,7 @@ export default function FeedbackResponseForm({
             onClick={() => setActiveSection('ratings')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'ratings'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-accent-500 text-accent-600'
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
@@ -240,7 +240,7 @@ export default function FeedbackResponseForm({
             onClick={() => setActiveSection('feedback')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'feedback'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-accent-500 text-accent-600'
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
@@ -254,7 +254,7 @@ export default function FeedbackResponseForm({
         {activeSection === 'ratings' && (
           <div className="space-y-6">
             {/* Overall Rating */}
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <div className="p-4 bg-accent-50 rounded-lg border border-accent-100">
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)]">Overall Performance</h3>
@@ -318,7 +318,7 @@ export default function FeedbackResponseForm({
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Key Strengths <span className="text-red-500">*</span>
+                Key Strengths <span className="text-danger-500">*</span>
               </label>
               <p className="text-xs text-[var(--text-muted)] mb-2">
                 What does this person do particularly well? Provide specific examples.
@@ -327,7 +327,7 @@ export default function FeedbackResponseForm({
                 value={formData.strengths}
                 onChange={(e) => updateText('strengths', e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Excellent at breaking down complex problems into actionable tasks..."
               />
               <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
@@ -337,7 +337,7 @@ export default function FeedbackResponseForm({
 
             <div>
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Areas for Improvement <span className="text-red-500">*</span>
+                Areas for Improvement <span className="text-danger-500">*</span>
               </label>
               <p className="text-xs text-[var(--text-muted)] mb-2">
                 What areas could this person develop or improve?
@@ -346,7 +346,7 @@ export default function FeedbackResponseForm({
                 value={formData.areasForImprovement}
                 onChange={(e) => updateText('areasForImprovement', e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Could benefit from more proactive communication with stakeholders..."
               />
               <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
@@ -365,7 +365,7 @@ export default function FeedbackResponseForm({
                 value={formData.developmentSuggestions}
                 onChange={(e) => updateText('developmentSuggestions', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Leadership training, mentorship in project management..."
               />
             </div>
@@ -381,7 +381,7 @@ export default function FeedbackResponseForm({
                 value={formData.additionalComments}
                 onChange={(e) => updateText('additionalComments', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Optional additional feedback..."
               />
             </div>
@@ -390,9 +390,9 @@ export default function FeedbackResponseForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="mt-6 p-4 bg-danger-50 border border-danger-200 rounded-lg flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-danger-700">{error}</p>
           </div>
         )}
       </div>

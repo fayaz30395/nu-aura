@@ -38,8 +38,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Manage user roles and access permissions',
     icon: Shield,
     href: '/admin/roles',
-    color: 'text-sky-700 dark:text-sky-400',
-    bgColor: 'bg-sky-100 dark:bg-sky-900/30',
+    color: 'text-accent-700 dark:text-accent-400',
+    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
   },
   {
     id: 'permissions',
@@ -56,8 +56,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Configure leave types and policies',
     icon: Calendar,
     href: '/admin/leave-types',
-    color: 'text-emerald-600 dark:text-emerald-400',
-    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
+    color: 'text-success-600 dark:text-success-400',
+    bgColor: 'bg-success-100 dark:bg-success-900/30',
   },
   {
     id: 'holidays',
@@ -65,8 +65,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Manage company holidays and calendar',
     icon: Palmtree,
     href: '/admin/holidays',
-    color: 'text-amber-600 dark:text-amber-400',
-    bgColor: 'bg-amber-100 dark:bg-amber-900/30',
+    color: 'text-warning-600 dark:text-warning-400',
+    bgColor: 'bg-warning-100 dark:bg-warning-900/30',
   },
   {
     id: 'shifts',
@@ -74,8 +74,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Configure work shifts and schedules',
     icon: Clock,
     href: '/admin/shifts',
-    color: 'text-blue-600 dark:text-blue-400',
-    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+    color: 'text-accent-600 dark:text-accent-400',
+    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
   },
   {
     id: 'office-locations',
@@ -92,8 +92,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Configure org structure and reporting lines',
     icon: Building2,
     href: '/admin/org-hierarchy',
-    color: 'text-violet-600 dark:text-violet-400',
-    bgColor: 'bg-violet-100 dark:bg-violet-900/30',
+    color: 'text-accent-600 dark:text-accent-400',
+    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
   },
   {
     id: 'custom-fields',
@@ -101,8 +101,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Add custom fields to employee profiles',
     icon: Layers,
     href: '/admin/custom-fields',
-    color: 'text-cyan-600 dark:text-cyan-400',
-    bgColor: 'bg-cyan-100 dark:bg-cyan-900/30',
+    color: 'text-accent-600 dark:text-accent-400',
+    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
   },
 ];
 
@@ -132,7 +132,7 @@ export default function AdminSettingsPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 shadow-lg shadow-sky-500/25">
+        <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-lg shadow-accent-500/25">
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
@@ -152,7 +152,7 @@ export default function AdminSettingsPage() {
           return (
             <Card
               key={card.id}
-              className="group cursor-pointer hover:shadow-lg hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200"
+              className="group cursor-pointer hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200"
               onClick={() => handleCardClick(card.href)}
             >
               <CardContent className="p-5">
@@ -160,9 +160,9 @@ export default function AdminSettingsPage() {
                   <div className={`p-4 rounded-xl ${card.bgColor}`}>
                     <Icon className={`h-6 w-6 ${card.color}`} />
                   </div>
-                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors">
+                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
                   {card.title}
                 </h3>
                 <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -189,8 +189,8 @@ export default function AdminSettingsPage() {
               onClick={() => router.push('/admin/leave-requests')}
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
-              <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-                <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
+                <Calendar className="h-5 w-5 text-success-600 dark:text-success-400" />
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Leave Requests</p>
@@ -202,8 +202,8 @@ export default function AdminSettingsPage() {
               onClick={() => router.push('/employees')}
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
-              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+                <Users className="h-5 w-5 text-accent-600 dark:text-accent-400" />
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Employees</p>
@@ -215,8 +215,8 @@ export default function AdminSettingsPage() {
               onClick={() => router.push('/departments')}
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
-              <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-                <Building2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+                <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400" />
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Departments</p>

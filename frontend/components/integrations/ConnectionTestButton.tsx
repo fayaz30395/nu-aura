@@ -68,16 +68,16 @@ export function ConnectionTestButton({ connectorId, isDisabled }: ConnectionTest
         <div
           className={`flex items-start gap-3 p-4 rounded-lg ${
             testResult.success
-              ? 'bg-emerald-50 dark:bg-emerald-900/20'
-              : 'bg-red-50 dark:bg-red-900/20'
+              ? 'bg-success-50 dark:bg-success-900/20'
+              : 'bg-danger-50 dark:bg-danger-900/20'
           }`}
         >
           {testResult.success ? (
-            <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5 text-success-600 dark:text-success-400" />
           ) : (
-            <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5 text-red-600 dark:text-red-400" />
+            <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5 text-danger-600 dark:text-danger-400" />
           )}
-          <div className={testResult.success ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'}>
+          <div className={testResult.success ? 'text-success-700 dark:text-success-300' : 'text-danger-700 dark:text-danger-300'}>
             <p className="text-sm font-medium">{testResult.message}</p>
             {testResult.latencyMs > 0 && (
               <p className="text-xs mt-1 opacity-75">Latency: {testResult.latencyMs}ms</p>

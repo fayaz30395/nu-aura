@@ -43,7 +43,7 @@ export default function CandidateDetailPage() {
       <AppLayout activeMenuItem="recruitment">
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700" />
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700" />
             <p className="mt-4 text-[var(--text-secondary)]">Loading candidate details...</p>
           </div>
         </div>
@@ -116,8 +116,8 @@ export default function CandidateDetailPage() {
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-6">
             <div className="flex items-center gap-6">
-              <div className="flex-shrink-0 h-20 w-20 bg-sky-100 dark:bg-sky-900/30 rounded-2xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-sky-700 dark:text-sky-300">
+              <div className="flex-shrink-0 h-20 w-20 bg-accent-100 dark:bg-accent-900/30 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
                   {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
                 </span>
               </div>
@@ -309,7 +309,7 @@ export default function CandidateDetailPage() {
                 {candidate.offerAcceptedDate && (
                   <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Offer Accepted</p>
-                    <p className="text-sm font-semibold text-green-700 dark:text-green-400">
+                    <p className="text-sm font-semibold text-success-700 dark:text-success-400">
                       {formatDate(candidate.offerAcceptedDate)}
                     </p>
                   </div>
@@ -317,14 +317,14 @@ export default function CandidateDetailPage() {
                 {candidate.offerDeclinedDate && (
                   <div className="p-3 bg-[var(--bg-secondary)] rounded-xl">
                     <p className="text-xs text-[var(--text-muted)]">Offer Declined</p>
-                    <p className="text-sm font-semibold text-red-700 dark:text-red-400">
+                    <p className="text-sm font-semibold text-danger-700 dark:text-danger-400">
                       {formatDate(candidate.offerDeclinedDate)}
                     </p>
                   </div>
                 )}
               </div>
               {candidate.offerDeclineReason && (
-                <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-200 dark:border-red-800">
+                <div className="mt-4 p-3 bg-danger-50 dark:bg-danger-900/10 rounded-xl border border-danger-200 dark:border-danger-800">
                   <p className="text-xs text-[var(--text-muted)]">Decline Reason</p>
                   <p className="text-sm text-[var(--text-primary)]">{candidate.offerDeclineReason}</p>
                 </div>
@@ -380,7 +380,7 @@ export default function CandidateDetailPage() {
                       href={candidate.resumeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm text-sky-700 dark:text-sky-400 hover:underline"
+                      className="inline-flex items-center gap-1.5 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                       View Resume

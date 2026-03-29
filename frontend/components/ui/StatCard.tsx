@@ -32,60 +32,60 @@ const variantConfig = {
     accent: 'bg-surface-500',
   },
   primary: {
-    bg: 'bg-gradient-to-br from-sky-50 to-sky-100/50 dark:from-sky-950/50 dark:to-sky-900/30',
-    border: 'border-sky-200/50 dark:border-sky-800/50',
-    iconBg: 'bg-sky-500/10 dark:bg-sky-500/20',
-    iconColor: 'text-sky-700 dark:text-sky-400',
-    accent: 'bg-sky-500',
+    bg: 'bg-gradient-to-br from-accent-50 to-accent-100/50 dark:from-accent-950/50 dark:to-accent-900/30',
+    border: 'border-accent-200/50 dark:border-accent-800/50',
+    iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
+    iconColor: 'text-accent-700 dark:text-accent-400',
+    accent: 'bg-accent-500',
   },
   purple: {
     bg: 'stat-gradient-purple',
-    border: 'border-sky-200/50 dark:border-sky-800/50',
-    iconBg: 'bg-sky-500/10 dark:bg-sky-500/20',
-    iconColor: 'text-sky-700 dark:text-sky-400',
-    accent: 'bg-sky-500',
+    border: 'border-accent-200/50 dark:border-accent-800/50',
+    iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
+    iconColor: 'text-accent-700 dark:text-accent-400',
+    accent: 'bg-accent-500',
   },
   success: {
-    bg: 'bg-gradient-to-br from-green-50 to-emerald-100/50 dark:from-green-950/50 dark:to-emerald-900/30',
-    border: 'border-green-200/50 dark:border-green-800/50',
-    iconBg: 'bg-green-500/10 dark:bg-green-500/20',
-    iconColor: 'text-green-600 dark:text-green-400',
-    accent: 'bg-green-500',
+    bg: 'bg-gradient-to-br from-success-50 to-success-100/50 dark:from-success-950/50 dark:to-success-900/30',
+    border: 'border-success-200/50 dark:border-success-800/50',
+    iconBg: 'bg-success-500/10 dark:bg-success-500/20',
+    iconColor: 'text-success-600 dark:text-success-400',
+    accent: 'bg-success-500',
   },
   teal: {
     bg: 'stat-gradient-primary',
-    border: 'border-sky-200/50 dark:border-sky-800/50',
-    iconBg: 'bg-sky-500/10 dark:bg-sky-500/20',
-    iconColor: 'text-sky-700 dark:text-sky-400',
-    accent: 'bg-sky-500',
+    border: 'border-accent-200/50 dark:border-accent-800/50',
+    iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
+    iconColor: 'text-accent-700 dark:text-accent-400',
+    accent: 'bg-accent-500',
   },
   warning: {
-    bg: 'bg-gradient-to-br from-amber-50 to-orange-100/50 dark:from-amber-950/50 dark:to-orange-900/30',
-    border: 'border-amber-200/50 dark:border-amber-800/50',
-    iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
-    accent: 'bg-amber-500',
+    bg: 'bg-gradient-to-br from-warning-50 to-warning-100/50 dark:from-warning-950/50 dark:to-warning-900/30',
+    border: 'border-warning-200/50 dark:border-warning-800/50',
+    iconBg: 'bg-warning-500/10 dark:bg-warning-500/20',
+    iconColor: 'text-warning-600 dark:text-warning-400',
+    accent: 'bg-warning-500',
   },
   orange: {
     bg: 'stat-gradient-orange',
-    border: 'border-orange-200/50 dark:border-orange-800/50',
-    iconBg: 'bg-orange-500/10 dark:bg-orange-500/20',
-    iconColor: 'text-orange-600 dark:text-orange-400',
-    accent: 'bg-orange-500',
+    border: 'border-warning-200/50 dark:border-warning-800/50',
+    iconBg: 'bg-warning-500/10 dark:bg-warning-500/20',
+    iconColor: 'text-warning-600 dark:text-warning-400',
+    accent: 'bg-warning-500',
   },
   destructive: {
-    bg: 'bg-gradient-to-br from-red-50 to-rose-100/50 dark:from-red-950/50 dark:to-rose-900/30',
-    border: 'border-red-200/50 dark:border-red-800/50',
-    iconBg: 'bg-red-500/10 dark:bg-red-500/20',
-    iconColor: 'text-red-600 dark:text-red-400',
-    accent: 'bg-red-500',
+    bg: 'bg-gradient-to-br from-danger-50 to-rose-100/50 dark:from-danger-950/50 dark:to-rose-900/30',
+    border: 'border-danger-200/50 dark:border-danger-800/50',
+    iconBg: 'bg-danger-500/10 dark:bg-danger-500/20',
+    iconColor: 'text-danger-600 dark:text-danger-400',
+    accent: 'bg-danger-500',
   },
   blue: {
     bg: 'stat-gradient-blue',
-    border: 'border-blue-200/50 dark:border-blue-800/50',
-    iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-    accent: 'bg-blue-500',
+    border: 'border-accent-200/50 dark:border-accent-800/50',
+    iconBg: 'bg-accent-500/10 dark:bg-accent-500/20',
+    iconColor: 'text-accent-600 dark:text-accent-400',
+    accent: 'bg-accent-500',
   },
 };
 
@@ -158,8 +158,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
                   className={cn(
                     'text-xs font-semibold shrink-0',
                     trend.isPositive
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-red-600 dark:text-red-400'
+                      ? 'text-success-600 dark:text-success-400'
+                      : 'text-danger-600 dark:text-danger-400'
                   )}
                 >
                   {trend.isPositive ? '+' : ''}{trend.value}%
@@ -219,8 +219,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               className={cn(
                 'flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
                 trend.isPositive
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                  : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                  ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
+                  : 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
               )}
             >
               {trend.isPositive ? (

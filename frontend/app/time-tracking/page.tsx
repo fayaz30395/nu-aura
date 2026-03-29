@@ -70,18 +70,18 @@ export default function TimeTrackingPage() {
         icon: FileText,
       },
       SUBMITTED: {
-        bg: 'bg-amber-100 dark:bg-amber-900/30',
-        text: 'text-amber-700 dark:text-amber-400',
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
         icon: Clock,
       },
       APPROVED: {
-        bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-        text: 'text-emerald-700 dark:text-emerald-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: CheckCircle,
       },
       REJECTED: {
-        bg: 'bg-red-100 dark:bg-red-900/30',
-        text: 'text-red-700 dark:text-red-400',
+        bg: 'bg-danger-100 dark:bg-danger-900/30',
+        text: 'text-danger-700 dark:text-danger-400',
         icon: XCircle,
       },
     };
@@ -110,7 +110,7 @@ export default function TimeTrackingPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
             <p className="text-[var(--text-secondary)]">Loading time entries...</p>
           </div>
         </div>
@@ -123,11 +123,11 @@ export default function TimeTrackingPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-red-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500" />
             <p className="text-[var(--text-secondary)]">{error instanceof Error ? error.message : 'Failed to load time entries'}</p>
             <button
               onClick={() => queryClient.invalidateQueries({ queryKey: ['time-tracking'] })}
-              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
+              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
             >
               Retry
             </button>
@@ -155,7 +155,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-sky-500/30"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
             >
               <Plus className="h-5 w-5" />
               Log Time
@@ -167,7 +167,7 @@ export default function TimeTrackingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                 <Timer className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function TimeTrackingPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function TimeTrackingPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-warning-500 to-warning-600">
                 <Clock className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -233,17 +233,17 @@ export default function TimeTrackingPage() {
         {/* Bulk Submit */}
         {draftEntries.length > 0 && (
           <PermissionGate permission={Permissions.TIME_TRACKING_UPDATE}>
-            <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+            <div className="flex items-center justify-between bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
               <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-amber-500" />
-                <span className="text-sm text-amber-700 dark:text-amber-400">
+                <AlertCircle className="h-5 w-5 text-warning-500" />
+                <span className="text-sm text-warning-700 dark:text-warning-400">
                   You have {draftEntries.length} draft entries ready to submit
                 </span>
               </div>
               <button
                 onClick={handleSubmitSelected}
                 disabled={selectedEntries.length === 0 || submitMultipleMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors disabled:opacity-50"
               >
                 {submitMultipleMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -270,7 +270,7 @@ export default function TimeTrackingPage() {
               <p className="text-[var(--text-muted)]">No time entries found</p>
               <button
                 onClick={() => router.push('/time-tracking/new')}
-                className="mt-4 text-sky-700 dark:text-sky-400 hover:text-sky-700 text-sm font-medium"
+                className="mt-4 text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
               >
                 Log your first time entry
               </button>
@@ -356,7 +356,7 @@ export default function TimeTrackingPage() {
                             {timeTrackingService.formatHours(entry.hoursWorked)}
                           </span>
                           {entry.isBillable && (
-                            <span className="ml-2 text-xs text-green-600 dark:text-green-400">
+                            <span className="ml-2 text-xs text-success-600 dark:text-success-400">
                               (Billable)
                             </span>
                           )}
@@ -377,7 +377,7 @@ export default function TimeTrackingPage() {
                         <td className="px-5 py-4">
                           <button
                             onClick={() => router.push(`/time-tracking/${entry.id}`)}
-                            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 text-sm font-medium"
+                            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
                           >
                             View
                           </button>
@@ -396,13 +396,13 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200 text-left"
+              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 group-hover:scale-110 transition-transform">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
                   <Plus className="h-5 w-5 text-white" />
                 </div>
-                <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
+                <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
               </div>
               <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
                 Log Time
@@ -415,13 +415,13 @@ export default function TimeTrackingPage() {
 
           <button
             onClick={() => router.push('/time-tracking?view=week')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Weekly View

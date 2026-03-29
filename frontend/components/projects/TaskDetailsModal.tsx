@@ -152,15 +152,15 @@ export function TaskDetailsModal({
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'project':
-        return 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300';
+        return 'bg-accent-100 text-accent-700 dark:bg-accent-900/50 dark:text-accent-300';
       case 'task':
-        return 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300';
+        return 'bg-accent-300 text-accent-900 dark:bg-accent-900/50 dark:text-accent-500';
       case 'milestone':
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300';
+        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300';
       case 'deadline':
-        return 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300';
+        return 'bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300';
       case 'phase':
-        return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300';
+        return 'bg-accent-100 text-accent-700 dark:bg-accent-900/50 dark:text-accent-300';
       default:
         return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
@@ -241,13 +241,13 @@ export function TaskDetailsModal({
           {(isDelayed || isAtRisk) && (
             <div className="flex flex-wrap gap-2">
               {isDelayed && (
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300">
                   <AlertCircle className="w-4 h-4" />
                   Delayed
                 </span>
               )}
               {isAtRisk && !isDelayed && (
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
                   <AlertCircle className="w-4 h-4" />
                   At Risk
                 </span>
@@ -311,7 +311,7 @@ export function TaskDetailsModal({
                   <button
                     onClick={isEditingProgress ? handleSaveProgress : handleStartEditProgress}
                     disabled={isSaving}
-                    className="text-sm text-sky-700 hover:text-sky-700 flex items-center gap-1"
+                    className="text-sm text-accent-700 hover:text-accent-700 flex items-center gap-1"
                   >
                     {isEditingProgress ? (
                       <>
@@ -339,7 +339,7 @@ export function TaskDetailsModal({
                   />
                   <div className="flex justify-between text-sm text-surface-500">
                     <span>0%</span>
-                    <span className="font-medium text-sky-700">{editProgress}%</span>
+                    <span className="font-medium text-accent-700">{editProgress}%</span>
                     <span>100%</span>
                   </div>
                 </div>
@@ -347,14 +347,14 @@ export function TaskDetailsModal({
                 <div className="space-y-2">
                   <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-sky-500 rounded-full transition-all duration-300"
+                      className="h-full bg-accent-500 rounded-full transition-all duration-300"
                       style={{ width: `${normalizedTask.progress}%` }}
                     />
                   </div>
                   <div className="flex justify-between text-sm text-surface-500">
                     <span>{normalizedTask.progress}% complete</span>
                     {normalizedTask.progress === 100 && (
-                      <span className="flex items-center gap-1 text-green-600">
+                      <span className="flex items-center gap-1 text-success-600">
                         <CheckCircle className="w-4 h-4" />
                         Completed
                       </span>
@@ -391,8 +391,8 @@ export function TaskDetailsModal({
                       <span
                         className={`ml-2 text-sm ${
                           normalizedTask.actualHours > normalizedTask.estimatedHours
-                            ? 'text-red-600'
-                            : 'text-green-600'
+                            ? 'text-danger-600'
+                            : 'text-success-600'
                         }`}
                       >
                         (
@@ -421,7 +421,7 @@ export function TaskDetailsModal({
                     className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center text-sky-700 font-medium">
+                      <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center text-accent-700 font-medium">
                         {assignee.employeeName
                           .split(' ')
                           .map((n) => n[0])

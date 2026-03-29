@@ -169,7 +169,7 @@ export default function PaymentConfigPage() {
     return (
       <AppLayout activeMenuItem="payments">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
         </div>
       </AppLayout>
     );
@@ -180,7 +180,7 @@ export default function PaymentConfigPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <Settings className="w-8 h-8 text-sky-700" />
+          <Settings className="w-8 h-8 text-accent-700" />
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Payment Configuration
@@ -193,13 +193,13 @@ export default function PaymentConfigPage() {
 
         {/* Notifications */}
         {savedMessage && (
-          <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg flex items-center gap-2 text-green-800 dark:text-green-300">
+          <div className="mb-6 p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
             <CheckCircle className="w-5 h-5" />
             {savedMessage}
           </div>
         )}
         {errorMessage && (
-          <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg flex items-center gap-2 text-red-800 dark:text-red-300">
+          <div className="mb-6 p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
             <AlertCircle className="w-5 h-5" />
             {errorMessage}
           </div>
@@ -218,8 +218,8 @@ export default function PaymentConfigPage() {
                   onClick={() => setSelectedProvider(provider)}
                   className={`p-4 rounded-lg border-2 transition-colors text-left ${
                     isSelected
-                      ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20'
-                      : 'border-[var(--border-main)] hover:border-sky-300 dark:hover:border-sky-700'
+                      ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+                      : 'border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700'
                   }`}
                 >
                   <div className="flex justify-between items-center">
@@ -232,7 +232,7 @@ export default function PaymentConfigPage() {
                       </p>
                     </div>
                     {config?.isActive && (
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300">
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300">
                         Active
                       </span>
                     )}
@@ -256,7 +256,7 @@ export default function PaymentConfigPage() {
                 <input
                   type="checkbox"
                   {...register('testMode')}
-                  className="w-5 h-5 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                  className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                 />
                 <span className="text-sm font-medium text-[var(--text-secondary)]">
                   Test Mode (use sandbox credentials)
@@ -276,7 +276,7 @@ export default function PaymentConfigPage() {
                 placeholder='{&#10;  "api_key": "your_api_key",&#10;  "api_secret": "your_api_secret"&#10;}'
               />
               {errors.credentialsJson && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.credentialsJson.message}</p>
+                <p className="mt-1 text-sm text-danger-600 dark:text-danger-400">{errors.credentialsJson.message}</p>
               )}
               <p className="mt-1 text-xs text-[var(--text-secondary)]">
                 Enter your provider credentials as JSON. Check your provider dashboard for API keys.
@@ -320,7 +320,7 @@ export default function PaymentConfigPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || saveConfigMutation.isPending}
-                className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
               >
                 {isSubmitting || saveConfigMutation.isPending ? (
                   <>
@@ -336,7 +336,7 @@ export default function PaymentConfigPage() {
                 type="button"
                 onClick={handleTestConnection}
                 disabled={testingConnection || testConnectionMutation.isPending}
-                className="px-6 py-2 border border-sky-500 text-sky-700 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                className="px-6 py-2 border border-accent-500 text-accent-700 rounded-lg hover:bg-accent-50 dark:hover:bg-accent-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
               >
                 {testingConnection || testConnectionMutation.isPending ? (
                   <>
@@ -355,21 +355,21 @@ export default function PaymentConfigPage() {
             <div
               className={`mt-4 p-4 rounded-lg border ${
                 testResult.success
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700'
-                  : 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700'
+                  ? 'bg-success-50 dark:bg-success-900/20 border-success-300 dark:border-success-700'
+                  : 'bg-danger-50 dark:bg-danger-900/20 border-danger-300 dark:border-danger-700'
               }`}
             >
               <div className="flex items-center gap-2">
                 {testResult.success ? (
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
                 ) : (
-                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400" />
                 )}
                 <p
                   className={`text-sm font-medium ${
                     testResult.success
-                      ? 'text-green-800 dark:text-green-300'
-                      : 'text-red-800 dark:text-red-300'
+                      ? 'text-success-800 dark:text-success-300'
+                      : 'text-danger-800 dark:text-danger-300'
                   }`}
                 >
                   {testResult.message}
@@ -408,7 +408,7 @@ export default function PaymentConfigPage() {
                         handleToggleActive(config.provider, e.target.checked)
                       }
                       disabled={toggleConfigMutation.isPending}
-                      className="w-5 h-5 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500 disabled:opacity-50"
+                      className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500 disabled:opacity-50"
                     />
                     <span className="text-sm font-medium text-[var(--text-secondary)]">
                       {config.isActive ? 'Active' : 'Inactive'}

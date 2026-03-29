@@ -55,7 +55,7 @@ export function OrgChartFilters({
           placeholder="Search by name, designation, or code..."
           value={searchQuery}
           onChange={e => onSearchChange(e.target.value)}
-          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
+          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
         />
         {searchQuery && (
           <button
@@ -77,7 +77,7 @@ export function OrgChartFilters({
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all',
               viewMode === opt.value
-                ? 'bg-sky-700 text-white shadow-sm'
+                ? 'bg-accent-700 text-white shadow-sm'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]',
             )}
             aria-pressed={viewMode === opt.value}
@@ -92,7 +92,7 @@ export function OrgChartFilters({
       <select
         value={selectedDepartment}
         onChange={e => onDepartmentChange(e.target.value)}
-        className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
+        className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
       >
         <option value="">All Departments</option>
         {departments.map(dept => (
@@ -107,7 +107,7 @@ export function OrgChartFilters({
         <select
           value={maxDepth}
           onChange={e => onMaxDepthChange(Number(e.target.value))}
-          className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
+          className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-slate-900 transition-shadow"
         >
           {DEPTH_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>

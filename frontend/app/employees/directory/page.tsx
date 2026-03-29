@@ -92,11 +92,11 @@ const levelOptions = [
 ];
 
 const statusOptions = [
-  { value: 'ACTIVE', label: 'Active', color: 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400' },
+  { value: 'ACTIVE', label: 'Active', color: 'bg-success-100 dark:bg-success-950/30 text-success-800 dark:text-success-400' },
   { value: 'INACTIVE', label: 'Inactive', color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]' },
-  { value: 'ON_LEAVE', label: 'On Leave', color: 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400' },
-  { value: 'PROBATION', label: 'Probation', color: 'bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400' },
-  { value: 'TERMINATED', label: 'Terminated', color: 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400' },
+  { value: 'ON_LEAVE', label: 'On Leave', color: 'bg-warning-100 dark:bg-warning-950/30 text-warning-800 dark:text-warning-400' },
+  { value: 'PROBATION', label: 'Probation', color: 'bg-accent-100 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400' },
+  { value: 'TERMINATED', label: 'Terminated', color: 'bg-danger-100 dark:bg-danger-950/30 text-danger-800 dark:text-danger-400' },
 ];
 
 export default function TeamDirectory() {
@@ -199,14 +199,14 @@ export default function TeamDirectory() {
 
   const getRandomColor = (name: string) => {
     const colors = [
-      'bg-blue-500',
-      'bg-green-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-sky-500',
-      'bg-orange-500',
-      'bg-cyan-500',
+      'bg-accent-500',
+      'bg-success-500',
+      'bg-accent-700',
+      'bg-accent-700',
+      'bg-accent-500',
+      'bg-accent-500',
+      'bg-warning-500',
+      'bg-accent-500',
     ];
     const index = name?.charCodeAt(0) % colors.length || 0;
     return colors[index];
@@ -223,7 +223,7 @@ export default function TeamDirectory() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
-                <Users className="w-7 h-7 text-sky-700 dark:text-sky-400" />
+                <Users className="w-7 h-7 text-accent-700 dark:text-accent-400" />
                 Team Directory
               </h1>
               <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -235,7 +235,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('grid')}
                 aria-label="Grid view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'grid'
-                    ? 'bg-sky-100 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400'
+                    ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
               >
@@ -245,7 +245,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('list')}
                 aria-label="List view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'list'
-                    ? 'bg-sky-100 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400'
+                    ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
               >
@@ -284,7 +284,7 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`px-4 py-3 border rounded-xl transition-colors flex items-center gap-2 ${showFilters
-                      ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400'
+                      ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
                       : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                     }`}
                 >
@@ -293,7 +293,7 @@ export default function TeamDirectory() {
                   {(filters.departmentIds.length > 0 ||
                     filters.jobRoles.length > 0 ||
                     filters.levels.length > 0) && (
-                      <span className="w-2 h-2 bg-sky-700 rounded-full" />
+                      <span className="w-2 h-2 bg-accent-700 rounded-full" />
                     )}
                 </button>
               </div>
@@ -436,7 +436,7 @@ export default function TeamDirectory() {
         {/* Employee Grid/List */}
         {isPending ? (
           <div className="flex justify-center items-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-sky-700" />
+            <Loader2 className="w-8 h-8 animate-spin text-accent-700" />
           </div>
         ) : (
           <>
@@ -506,7 +506,7 @@ export default function TeamDirectory() {
                               href={`mailto:${employee.personalEmail}`}
                               onClick={(e) => e.stopPropagation()}
                               aria-label={`Email ${employee.fullName}`}
-                              className="p-2 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                              className="p-2 bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400 rounded-lg hover:bg-accent-100 dark:hover:bg-accent-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
                             >
                               <Mail className="w-4 h-4" />
                             </a>
@@ -516,7 +516,7 @@ export default function TeamDirectory() {
                               href={`tel:${employee.phoneNumber}`}
                               onClick={(e) => e.stopPropagation()}
                               aria-label={`Call ${employee.fullName}`}
-                              className="p-2 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+                              className="p-2 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg hover:bg-success-100 dark:hover:bg-success-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2"
                             >
                               <Phone className="w-4 h-4" />
                             </a>
@@ -611,7 +611,7 @@ export default function TeamDirectory() {
                                   href={`mailto:${employee.personalEmail}`}
                                   onClick={(e) => e.stopPropagation()}
                                   aria-label={`Email ${employee.fullName}`}
-                                  className="p-2 text-[var(--text-muted)] hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-md"
+                                  className="p-2 text-[var(--text-muted)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
                                 >
                                   <Mail className="w-4 h-4" />
                                 </a>
@@ -621,7 +621,7 @@ export default function TeamDirectory() {
                                   href={`tel:${employee.phoneNumber}`}
                                   onClick={(e) => e.stopPropagation()}
                                   aria-label={`Call ${employee.fullName}`}
-                                  className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:hover:text-green-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 rounded-md"
+                                  className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2 rounded-md"
                                 >
                                   <Phone className="w-4 h-4" />
                                 </a>
@@ -661,7 +661,7 @@ export default function TeamDirectory() {
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
                       className={`w-10 h-10 rounded-xl font-medium transition-colors ${filters.page === pageNum
-                          ? 'bg-sky-500 text-white'
+                          ? 'bg-accent-500 text-white'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                     >
@@ -797,7 +797,7 @@ export default function TeamDirectory() {
                         </div>
                         <a
                           href={`tel:${selectedEmployee.phoneNumber}`}
-                          className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                          className="px-3 py-1.5 bg-success-600 text-white text-sm rounded-lg hover:bg-success-700 transition-colors"
                         >
                           Call
                         </a>

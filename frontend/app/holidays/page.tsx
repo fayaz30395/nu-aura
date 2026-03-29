@@ -33,12 +33,12 @@ const holidayFormSchema = z.object({
 type HolidayFormData = z.infer<typeof holidayFormSchema>;
 
 const HOLIDAY_TYPE_COLORS: Record<HolidayType, string> = {
-  NATIONAL: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-  REGIONAL: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  OPTIONAL: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  RESTRICTED: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  FESTIVAL: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-  COMPANY_EVENT: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+  NATIONAL: 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-300',
+  REGIONAL: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300',
+  OPTIONAL: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300',
+  RESTRICTED: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300',
+  FESTIVAL: 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-500',
+  COMPANY_EVENT: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300',
 };
 
 const HOLIDAY_TYPES: HolidayType[] = ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTRICTED', 'FESTIVAL', 'COMPANY_EVENT'];
@@ -251,7 +251,7 @@ export default function HolidaysPage() {
                 setEditingHoliday(null);
                 setShowModal(true);
               }}
-              className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 bg-accent-500 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition-colors text-sm font-medium"
             >
               <Plus className="h-4 w-4" />
               Add Holiday
@@ -262,13 +262,13 @@ export default function HolidaysPage() {
 
       {/* Error Message */}
       {(uiError || queryError) && (
-        <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg relative">
+        <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-3 rounded-lg relative">
           <span className="block sm:inline text-sm">
             {uiError || (queryError instanceof Error ? queryError.message : 'An error occurred')}
           </span>
           <button
             onClick={() => setUiError(null)}
-            className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-500 dark:text-red-400"
+            className="absolute top-0 bottom-0 right-0 px-4 py-3 text-danger-500 dark:text-danger-400"
           >
             <span className="text-xl">&times;</span>
           </button>
@@ -283,19 +283,19 @@ export default function HolidaysPage() {
         </div>
         <div className="card-aura p-4">
           <div className="text-caption text-[var(--text-secondary)]">National</div>
-          <div className="text-stat-medium text-red-600 dark:text-red-400">
+          <div className="text-stat-medium text-danger-600 dark:text-danger-400">
             {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
           </div>
         </div>
         <div className="card-aura p-4">
           <div className="text-caption text-[var(--text-secondary)]">Optional</div>
-          <div className="text-stat-medium text-yellow-600 dark:text-yellow-400">
+          <div className="text-stat-medium text-warning-600 dark:text-warning-400">
             {holidays.filter((h) => h.isOptional).length}
           </div>
         </div>
         <div className="card-aura p-4">
           <div className="text-caption text-[var(--text-secondary)]">Upcoming (30d)</div>
-          <div className="text-stat-medium text-sky-700 dark:text-sky-400">
+          <div className="text-stat-medium text-accent-700 dark:text-accent-400">
             {upcomingHolidays.length}
           </div>
         </div>
@@ -303,17 +303,17 @@ export default function HolidaysPage() {
 
       {/* Upcoming Holidays Banner */}
       {upcomingHolidays.length > 0 && (
-        <div className="card-aura p-4 mb-6 border-l-4 border-l-sky-500">
+        <div className="card-aura p-4 mb-6 border-l-4 border-l-accent-500">
           <h3 className="text-card-title text-[var(--text-primary)] mb-2">Coming Up</h3>
           <div className="flex flex-wrap gap-4">
             {upcomingHolidays.slice(0, 3).map((h) => (
               <div key={h.id} className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-sky-500" />
+                <CalendarDays className="h-4 w-4 text-accent-500" />
                 <span className="text-sm font-medium text-[var(--text-primary)]">{h.holidayName}</span>
                 <span className="text-xs text-[var(--text-muted)]">
                   {new Date(h.holidayDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </span>
-                <span className="text-xs font-medium text-sky-700 dark:text-sky-400">
+                <span className="text-xs font-medium text-accent-700 dark:text-accent-400">
                   {getDaysUntil(h.holidayDate)}
                 </span>
               </div>
@@ -328,7 +328,7 @@ export default function HolidaysPage() {
           onClick={() => setFilterType('ALL')}
           className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
             filterType === 'ALL'
-              ? 'bg-sky-500 text-white'
+              ? 'bg-accent-500 text-white'
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
           }`}
         >
@@ -343,7 +343,7 @@ export default function HolidaysPage() {
               onClick={() => setFilterType(type)}
               className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
                 filterType === type
-                  ? 'bg-sky-500 text-white'
+                  ? 'bg-accent-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
@@ -414,12 +414,12 @@ export default function HolidaysPage() {
                               {holiday.holidayType.replace('_', ' ')}
                             </span>
                             {holiday.isOptional && (
-                              <span className="px-2 py-0.5 text-xs font-medium rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                              <span className="px-2 py-0.5 text-xs font-medium rounded bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
                                 Optional
                               </span>
                             )}
                             {holiday.isRestricted && (
-                              <span className="px-2 py-0.5 text-xs font-medium rounded bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+                              <span className="px-2 py-0.5 text-xs font-medium rounded bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
                                 Restricted
                               </span>
                             )}
@@ -437,14 +437,14 @@ export default function HolidaysPage() {
                         <div className="flex items-center gap-1 ml-4">
                           <button
                             onClick={() => handleEdit(holiday)}
-                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors"
+                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors"
                             title="Edit holiday"
                           >
                             <Pencil className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(holiday)}
-                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors"
                             title="Delete holiday"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -510,7 +510,7 @@ export default function HolidaysPage() {
                       placeholder="e.g. New Year's Day, Independence Day"
                     />
                     {form.formState.errors.holidayName && (
-                      <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayName.message}</p>
+                      <p className="mt-1 text-xs text-danger-500">{form.formState.errors.holidayName.message}</p>
                     )}
                   </div>
 
@@ -525,7 +525,7 @@ export default function HolidaysPage() {
                         className="input-aura w-full"
                       />
                       {form.formState.errors.holidayDate && (
-                        <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayDate.message}</p>
+                        <p className="mt-1 text-xs text-danger-500">{form.formState.errors.holidayDate.message}</p>
                       )}
                     </div>
                     <div>
@@ -563,7 +563,7 @@ export default function HolidaysPage() {
                       <input
                         type="checkbox"
                         {...form.register('isOptional')}
-                        className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] rounded"
+                        className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] rounded"
                       />
                       <span className="ml-2 text-sm text-[var(--text-secondary)]">Optional Holiday</span>
                       <span className="ml-2 text-xs text-[var(--text-muted)]">(Employees can choose to work)</span>
@@ -572,7 +572,7 @@ export default function HolidaysPage() {
                       <input
                         type="checkbox"
                         {...form.register('isRestricted')}
-                        className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] rounded"
+                        className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] rounded"
                       />
                       <span className="ml-2 text-sm text-[var(--text-secondary)]">Restricted Holiday</span>
                       <span className="ml-2 text-xs text-[var(--text-muted)]">(Limited to certain employees)</span>
@@ -627,7 +627,7 @@ export default function HolidaysPage() {
                   <button
                     type="submit"
                     disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50 transition-colors text-sm font-medium"
+                    className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 transition-colors text-sm font-medium"
                   >
                     {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending
                       ? 'Saving...'

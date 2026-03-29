@@ -23,8 +23,8 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
   title,
   description,
   comingSoon = false,
-  gradientFrom = 'from-blue-500',
-  gradientTo = 'to-purple-600',
+  gradientFrom = 'from-accent-500',
+  gradientTo = 'to-accent-600',
   iconSize = 'md',
 }) => {
   const iconDimensions = {
@@ -80,7 +80,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
           <motion.div
             key={i}
             className={`absolute w-1 h-1 ${
-              i % 2 === 0 ? 'bg-sky-400' : 'bg-violet-400'
+              i % 2 === 0 ? 'bg-accent-400' : 'bg-accent-500'
             } rounded-full opacity-40`}
             initial={{
               x: Math.random() * 100 + '%',
@@ -137,7 +137,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
         {/* Coming Soon Badge */}
         {comingSoon && (
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 text-sm font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 text-sm font-medium"
             variants={itemVariants}
             animate={{ y: [0, -4, 0] }}
             transition={{ duration: 2, repeat: Infinity }}

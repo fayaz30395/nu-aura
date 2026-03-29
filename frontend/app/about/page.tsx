@@ -115,10 +115,10 @@ export default function AboutPage() {
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card padding="lg" className="border-l-4 border-l-sky-500">
+            <Card padding="lg" className="border-l-4 border-l-accent-500">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center">
+                  <Target className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-3">
@@ -172,7 +172,7 @@ export default function AboutPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card padding="lg" className="text-center h-full">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center mx-auto mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center mx-auto mb-4">
                     <value.icon className="h-7 w-7 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
@@ -211,7 +211,7 @@ export default function AboutPage() {
                 className="flex gap-6"
               >
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center text-white font-bold shadow-lg">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold shadow-lg">
                     {milestone.year}
                   </div>
                 </div>
@@ -240,7 +240,7 @@ export default function AboutPage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <stat.icon className="h-10 w-10 text-sky-700 dark:text-sky-400 mx-auto mb-3" />
+                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-3" />
                 <div className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-1">
                   {stat.value}
                 </div>

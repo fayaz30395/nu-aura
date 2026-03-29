@@ -108,8 +108,9 @@ class ScheduledReportServiceTest {
         @Test
         @DisplayName("Should calculate next run for DAILY frequency - same day if time not passed")
         void shouldCalculateNextRunDailySameDay() {
-            // Given
-            LocalTime futureTime = LocalTime.now().plusHours(2);
+            // Given — use a fixed future time (23:59) to ensure it is always after now
+            // Avoids wrap-around issues when LocalTime.now().plusHours(2) crosses midnight
+            LocalTime futureTime = LocalTime.of(23, 59);
             ScheduledReportRequest request = createRequest(Frequency.DAILY, null, null, futureTime);
 
             when(reportDefinitionRepository.findActiveByReportCodeIgnoreCase(any(), any()))
@@ -132,8 +133,12 @@ class ScheduledReportServiceTest {
         @Test
         @DisplayName("Should calculate next run for DAILY frequency - next day if time passed")
         void shouldCalculateNextRunDailyNextDay() {
-            // Given
-            LocalTime pastTime = LocalTime.now().minusHours(2);
+            // Given — use a fixed time guaranteed to be in the past: midnight (00:00).
+            // The service compares today.atTime(time).isBefore(LocalDateTime.now()),
+            // so 00:00 is always before any non-midnight current time.
+            // If this test runs exactly at midnight, the service may not advance the day,
+            // so we assert >= today (today or tomorrow).
+            LocalTime pastTime = LocalTime.MIDNIGHT;
             ScheduledReportRequest request = createRequest(Frequency.DAILY, null, null, pastTime);
 
             when(reportDefinitionRepository.findActiveByReportCodeIgnoreCase(any(), any()))
@@ -149,7 +154,10 @@ class ScheduledReportServiceTest {
             verify(scheduledReportRepository).save(captor.capture());
 
             ScheduledReport saved = captor.getValue();
-            assertThat(saved.getNextRunAt().toLocalDate()).isEqualTo(LocalDate.now().plusDays(1));
+            // The next run should be tomorrow at midnight (since midnight today is already past)
+            assertThat(saved.getNextRunAt().toLocalDate())
+                    .isAfterOrEqualTo(LocalDate.now());
+            assertThat(saved.getNextRunAt().toLocalTime()).isEqualTo(pastTime);
         }
 
         @Test

@@ -92,7 +92,7 @@ export function TeamPresenceWidget({
           <SkeletonChips />
         ) : onLeaveEmployees.length === 0 ? (
           <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <CheckCircle2 className="h-4 w-4 text-success-500" />
             <p className="text-xs text-[var(--text-muted)]">Everyone is working today</p>
           </div>
         ) : (
@@ -122,7 +122,7 @@ export function TeamPresenceWidget({
           <SkeletonChips />
         ) : remoteWorkers.length === 0 ? (
           <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
-            <CheckCircle2 className="h-4 w-4 text-blue-500" />
+            <CheckCircle2 className="h-4 w-4 text-accent-500" />
             <p className="text-xs text-[var(--text-muted)]">No one is working remotely today</p>
           </div>
         ) : (
@@ -131,7 +131,7 @@ export function TeamPresenceWidget({
               <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
                 <div className="relative">
                   <Avatar name={e.employeeName} />
-                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500 dark:border-[var(--bg-main)]" />
+                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-success-500 dark:border-[var(--bg-main)]" />
                 </div>
                 <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
               </div>

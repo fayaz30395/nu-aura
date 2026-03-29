@@ -27,9 +27,9 @@ import { formatCurrency } from '@/lib/utils';
 
 function OfferPortalLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center">
       <div className="animate-pulse text-center">
-        <Loader2 className="h-12 w-12 text-sky-500 animate-spin mx-auto mb-4" />
+        <Loader2 className="h-12 w-12 text-accent-500 animate-spin mx-auto mb-4" />
         <p className="text-[var(--text-secondary)]">Loading offer details...</p>
       </div>
     </div>
@@ -142,11 +142,11 @@ function OfferPortalPage() {
 
   if (error && !offer) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+            <div className="w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="h-8 w-8 text-danger-600 dark:text-danger-400" />
             </div>
             <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
               Unable to Load Offer
@@ -168,12 +168,12 @@ function OfferPortalPage() {
   const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1]?.charAt(0) : '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-sky-100 dark:bg-sky-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <FileText className="h-10 w-10 text-sky-700 dark:text-sky-400" />
+          <div className="w-20 h-20 bg-accent-100 dark:bg-accent-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <FileText className="h-10 w-10 text-accent-700 dark:text-accent-400" />
           </div>
           <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
             Your Offer Letter
@@ -185,9 +185,9 @@ function OfferPortalPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
               </div>
@@ -197,17 +197,17 @@ function OfferPortalPage() {
 
         {/* Status Banner */}
         {isOfferAccepted && (
-          <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
+          <Card className="border-success-200 dark:border-success-800 bg-success-50 dark:bg-success-900/20">
             <CardContent className="p-6 text-center">
-              <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-3" />
-              <h2 className="text-xl font-bold text-green-700 dark:text-green-300 mb-2">
+              <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400 mx-auto mb-3" />
+              <h2 className="text-xl font-bold text-success-700 dark:text-success-300 mb-2">
                 Offer Accepted!
               </h2>
-              <p className="text-green-600 dark:text-green-400">
+              <p className="text-success-600 dark:text-success-400">
                 Thank you for accepting our offer. We look forward to having you on our team!
               </p>
               {offer?.offerAcceptedDate && (
-                <p className="text-sm text-green-500 mt-2">
+                <p className="text-sm text-success-500 mt-2">
                   Accepted on {formatDate(offer.offerAcceptedDate)}
                 </p>
               )}
@@ -216,17 +216,17 @@ function OfferPortalPage() {
         )}
 
         {isOfferDeclined && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-6 text-center">
-              <XCircle className="h-12 w-12 text-red-600 dark:text-red-400 mx-auto mb-3" />
-              <h2 className="text-xl font-bold text-red-700 dark:text-red-300 mb-2">
+              <XCircle className="h-12 w-12 text-danger-600 dark:text-danger-400 mx-auto mb-3" />
+              <h2 className="text-xl font-bold text-danger-700 dark:text-danger-300 mb-2">
                 Offer Declined
               </h2>
-              <p className="text-red-600 dark:text-red-400">
+              <p className="text-danger-600 dark:text-danger-400">
                 This offer has been declined. Thank you for considering us.
               </p>
               {offer?.offerDeclinedDate && (
-                <p className="text-sm text-red-500 mt-2">
+                <p className="text-sm text-danger-500 mt-2">
                   Declined on {formatDate(offer.offerDeclinedDate)}
                 </p>
               )}
@@ -238,8 +238,8 @@ function OfferPortalPage() {
         <Card className="skeuo-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-sky-100 dark:bg-sky-900/30 rounded-xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-sky-700 dark:text-sky-300">
+              <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
                   {firstInitial}{lastInitial}
                 </span>
               </div>
@@ -297,7 +297,7 @@ function OfferPortalPage() {
           <Card>
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <FileText className="h-5 w-5 text-sky-500" />
+                <FileText className="h-5 w-5 text-accent-500" />
                 Offer Letter Document
               </h3>
               <div className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -316,7 +316,7 @@ function OfferPortalPage() {
                     href={offer.offerLetterUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
                   >
                     <Download className="h-4 w-4" />
                     Download PDF
@@ -340,7 +340,7 @@ function OfferPortalPage() {
               <div className="flex gap-4">
                 <Button
                   onClick={() => setShowAcceptModal(true)}
-                  className="btn-primary flex-1 bg-green-600 hover:bg-green-700"
+                  className="btn-primary flex-1 bg-success-600 hover:bg-success-700"
                   disabled={acceptMutation.isPending || declineMutation.isPending}
                 >
                   <CheckCircle className="h-5 w-5 mr-2" />
@@ -349,7 +349,7 @@ function OfferPortalPage() {
                 <Button
                   variant="outline"
                   onClick={() => setShowDeclineModal(true)}
-                  className="flex-1 border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+                  className="flex-1 border-danger-300 text-danger-600 hover:bg-danger-50 dark:border-danger-700 dark:text-danger-400 dark:hover:bg-danger-900/20"
                   disabled={acceptMutation.isPending || declineMutation.isPending}
                 >
                   <XCircle className="h-5 w-5 mr-2" />
@@ -366,7 +366,7 @@ function OfferPortalPage() {
             <Mail className="h-6 w-6 text-[var(--text-muted)] mx-auto mb-2" />
             <p className="text-[var(--text-secondary)]">
               Have questions? Contact HR at{' '}
-              <a href="mailto:hr@company.com" className="text-sky-700 hover:underline">
+              <a href="mailto:hr@company.com" className="text-accent-700 hover:underline">
                 hr@company.com
               </a>
             </p>
@@ -380,8 +380,8 @@ function OfferPortalPage() {
           <Card className="max-w-md w-full">
             <CardContent className="p-6">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400" />
                 </div>
                 <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
                   Accept Offer
@@ -399,7 +399,7 @@ function OfferPortalPage() {
                   type="date"
                   value={confirmedJoiningDate}
                   onChange={(e) => setConfirmedJoiningDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
                 <p className="text-xs text-[var(--text-muted)] mt-1">
                   Please confirm your expected joining date
@@ -418,7 +418,7 @@ function OfferPortalPage() {
                 <Button
                   onClick={handleAcceptOffer}
                   disabled={acceptMutation.isPending}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="flex-1 bg-success-600 hover:bg-success-700"
                 >
                   {acceptMutation.isPending ? (
                     <>
@@ -441,8 +441,8 @@ function OfferPortalPage() {
           <Card className="max-w-md w-full">
             <CardContent className="p-6">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+                <div className="w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <XCircle className="h-8 w-8 text-danger-600 dark:text-danger-400" />
                 </div>
                 <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
                   Decline Offer
@@ -461,7 +461,7 @@ function OfferPortalPage() {
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder="Please share your reason..."
-                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
               </div>
 

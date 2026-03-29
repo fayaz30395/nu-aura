@@ -25,7 +25,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'leave',
     label: 'Leave Requests',
     description: 'Notifications about leave applications and approvals',
-    icon: <Bell className="h-5 w-5 text-blue-500" />,
+    icon: <Bell className="h-5 w-5 text-accent-500" />,
     email: true,
     push: true,
     inApp: true,
@@ -34,7 +34,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'attendance',
     label: 'Attendance Alerts',
     description: 'Alerts for check-in reminders and missed punches',
-    icon: <Bell className="h-5 w-5 text-green-500" />,
+    icon: <Bell className="h-5 w-5 text-success-500" />,
     email: true,
     push: false,
     inApp: true,
@@ -43,7 +43,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'approvals',
     label: 'Approval Workflows',
     description: 'Updates on pending approvals and workflow status',
-    icon: <MessageSquare className="h-5 w-5 text-orange-500" />,
+    icon: <MessageSquare className="h-5 w-5 text-warning-500" />,
     email: true,
     push: true,
     inApp: true,
@@ -52,7 +52,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'announcements',
     label: 'Company Announcements',
     description: 'Organization-wide updates and news',
-    icon: <Mail className="h-5 w-5 text-purple-500" />,
+    icon: <Mail className="h-5 w-5 text-accent-700" />,
     email: true,
     push: false,
     inApp: true,
@@ -123,7 +123,7 @@ export default function NotificationSettingsPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading preferences...</span>
         </div>
       </AppLayout>
@@ -175,7 +175,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'email')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.email ? 'bg-sky-700' : 'bg-[var(--border-main)]'
+                        pref.email ? 'bg-accent-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -190,7 +190,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'push')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.push ? 'bg-sky-700' : 'bg-[var(--border-main)]'
+                        pref.push ? 'bg-accent-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -205,7 +205,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'inApp')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors ${
-                        pref.inApp ? 'bg-sky-700' : 'bg-[var(--border-main)]'
+                        pref.inApp ? 'bg-accent-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span

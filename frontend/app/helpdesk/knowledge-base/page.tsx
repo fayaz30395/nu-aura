@@ -82,12 +82,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      'HR Policies': 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-      'IT Support': 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
-      'Payroll': 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300',
-      'Leave & Attendance': 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300',
-      'Benefits': 'bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300',
-      'Company Policies': 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300',
+      'HR Policies': 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300',
+      'IT Support': 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500',
+      'Payroll': 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300',
+      'Leave & Attendance': 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300',
+      'Benefits': 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500',
+      'Company Policies': 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300',
     };
     return colors[category] || 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   };
@@ -106,7 +106,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
           <div className="flex items-start gap-4 mb-3">
             <FileText className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-1" />
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold text-[var(--text-primary)] group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors truncate">
+              <h3 className="text-base font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors truncate">
                 {article.title}
               </h3>
               <Badge
@@ -202,7 +202,7 @@ const ArticleDetailModal: React.FC<{
             </h4>
 
             {submitStatus === 'success' && (
-              <div className="p-4 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 flex gap-2 mb-4 text-sm">
+              <div className="p-4 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300 flex gap-2 mb-4 text-sm">
                 <CheckCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                 Thank you for your feedback!
               </div>
@@ -214,7 +214,7 @@ const ArticleDetailModal: React.FC<{
                 size="sm"
                 onClick={() => handleHelpful(true)}
                 disabled={feedbackMutation.isPending || isHelpful === true}
-                className={isHelpful === true ? 'bg-green-600 hover:bg-green-700' : ''}
+                className={isHelpful === true ? 'bg-success-600 hover:bg-success-700' : ''}
               >
                 <ThumbsUp className="h-4 w-4 mr-2" />
                 Helpful
@@ -224,7 +224,7 @@ const ArticleDetailModal: React.FC<{
                 size="sm"
                 onClick={() => handleHelpful(false)}
                 disabled={feedbackMutation.isPending || isHelpful === false}
-                className={isHelpful === false ? 'bg-red-600 hover:bg-red-700' : ''}
+                className={isHelpful === false ? 'bg-danger-600 hover:bg-danger-700' : ''}
               >
                 <ThumbsDown className="h-4 w-4 mr-2" />
                 Not Helpful
@@ -434,7 +434,7 @@ export default function KnowledgeBasePage() {
                   }}
                   className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
                     selectedCategory === ''
-                      ? 'bg-sky-700 text-white'
+                      ? 'bg-accent-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
@@ -451,7 +451,7 @@ export default function KnowledgeBasePage() {
                       }}
                       className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
                         selectedCategory === category
-                          ? 'bg-sky-700 text-white'
+                          ? 'bg-accent-700 text-white'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                       }`}
                     >
@@ -487,7 +487,7 @@ export default function KnowledgeBasePage() {
                   placeholder="Search articles..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
             </div>
@@ -558,8 +558,8 @@ export default function KnowledgeBasePage() {
           {createArticleSuccess ? (
             <ModalBody>
               <div className="py-8 text-center">
-                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                   Article Created
@@ -584,7 +584,7 @@ export default function KnowledgeBasePage() {
                       {...registerArticle('title')}
                     />
                     {articleErrors.title && (
-                      <p className="text-sm text-red-500 mt-1">{articleErrors.title.message}</p>
+                      <p className="text-sm text-danger-500 mt-1">{articleErrors.title.message}</p>
                     )}
                   </div>
 
@@ -600,7 +600,7 @@ export default function KnowledgeBasePage() {
                       ))}
                     </select>
                     {articleErrors.category && (
-                      <p className="text-sm text-red-500 mt-1">{articleErrors.category.message}</p>
+                      <p className="text-sm text-danger-500 mt-1">{articleErrors.category.message}</p>
                     )}
                   </div>
 
@@ -611,11 +611,11 @@ export default function KnowledgeBasePage() {
                     <textarea
                       placeholder="Write the article content here..."
                       rows={8}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                       {...registerArticle('content')}
                     />
                     {articleErrors.content && (
-                      <p className="text-sm text-red-500 mt-1">{articleErrors.content.message}</p>
+                      <p className="text-sm text-danger-500 mt-1">{articleErrors.content.message}</p>
                     )}
                   </div>
                 </div>
@@ -656,8 +656,8 @@ export default function KnowledgeBasePage() {
         {createTicketSuccess ? (
           <ModalBody>
             <div className="py-8 text-center">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+              <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400" />
               </div>
               <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                 Ticket Submitted
@@ -682,7 +682,7 @@ export default function KnowledgeBasePage() {
                     {...registerTicket('subject')}
                   />
                   {ticketErrors.subject && (
-                    <p className="text-sm text-red-500 mt-1">{ticketErrors.subject.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{ticketErrors.subject.message}</p>
                   )}
                 </div>
 
@@ -693,11 +693,11 @@ export default function KnowledgeBasePage() {
                   <textarea
                     placeholder="Provide more details about your issue..."
                     rows={6}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                     {...registerTicket('description')}
                   />
                   {ticketErrors.description && (
-                    <p className="text-sm text-red-500 mt-1">{ticketErrors.description.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{ticketErrors.description.message}</p>
                   )}
                 </div>
 
@@ -715,7 +715,7 @@ export default function KnowledgeBasePage() {
                     <option value="URGENT">Urgent</option>
                   </select>
                   {ticketErrors.priority && (
-                    <p className="text-sm text-red-500 mt-1">{ticketErrors.priority.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{ticketErrors.priority.message}</p>
                   )}
                 </div>
               </div>
