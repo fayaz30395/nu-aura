@@ -18,7 +18,6 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,6 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final DomainEventPublisher domainEventPublisher;
     private final WorkflowService workflowService;
 
-    @Autowired
     public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
                                LeaveBalanceService leaveBalanceService,
                                WebSocketNotificationService webSocketNotificationService,

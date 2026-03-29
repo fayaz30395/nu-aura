@@ -132,6 +132,16 @@ const performanceModules = [
     lightColor: 'bg-rose-50',
     textColor: 'text-rose-600',
   },
+  {
+    id: 'competency-matrix',
+    title: 'Competency Matrix',
+    description: 'Manage competency frameworks, assess skills, and identify gaps',
+    href: '/performance/competency-matrix',
+    icon: BarChart3,
+    color: 'bg-sky-500',
+    lightColor: 'bg-sky-50',
+    textColor: 'text-sky-700',
+  },
 ];
 
 const StatCard = ({

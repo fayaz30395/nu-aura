@@ -21,7 +21,6 @@ import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.metrics.MetricsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,35 +49,38 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AuthService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
+    private final UserAppAccessRepository userAppAccessRepository;
+    private final JwtTokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailNotificationService emailNotificationService;
+    private final ImplicitRoleService implicitRoleService;
+    private final MetricsService metricsService;
+    private final PasswordPolicyService passwordPolicyService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private UserAppAccessRepository userAppAccessRepository;
-
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private EmailNotificationService emailNotificationService;
-
-    @Autowired
-    private ImplicitRoleService implicitRoleService;
-
-    @Autowired
-    private MetricsService metricsService;
-
-    @Autowired
-    private PasswordPolicyService passwordPolicyService;
+    public AuthService(AuthenticationManager authenticationManager,
+                       UserRepository userRepository,
+                       EmployeeRepository employeeRepository,
+                       UserAppAccessRepository userAppAccessRepository,
+                       JwtTokenProvider tokenProvider,
+                       PasswordEncoder passwordEncoder,
+                       EmailNotificationService emailNotificationService,
+                       ImplicitRoleService implicitRoleService,
+                       MetricsService metricsService,
+                       PasswordPolicyService passwordPolicyService) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.employeeRepository = employeeRepository;
+        this.userAppAccessRepository = userAppAccessRepository;
+        this.tokenProvider = tokenProvider;
+        this.passwordEncoder = passwordEncoder;
+        this.emailNotificationService = emailNotificationService;
+        this.implicitRoleService = implicitRoleService;
+        this.metricsService = metricsService;
+        this.passwordPolicyService = passwordPolicyService;
+    }
 
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;

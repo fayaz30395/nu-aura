@@ -24,18 +24,18 @@ import {
   RefreshCw,
   Shield,
 } from 'lucide-react';
-import {
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-} from 'recharts';
+import dynamic from 'next/dynamic';
+import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+
+const ExecutiveHeadcountChart = dynamic(
+  () => import('./ExecutiveCharts').then((mod) => ({ default: mod.ExecutiveHeadcountChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+
+const ExecutiveDeptPieChart = dynamic(
+  () => import('./ExecutiveCharts').then((mod) => ({ default: mod.ExecutiveDeptPieChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -272,34 +272,7 @@ export default function ExecutiveDashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data.trendCharts.headcountTrend}>
-                    <defs>
-                      <linearGradient id="colorHeadcount" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                    <XAxis dataKey="period" tick={{ fill: 'var(--chart-muted)', fontSize: 12 }} />
-                    <YAxis tick={{ fill: 'var(--chart-muted)', fontSize: 12 }} />
-                    <Tooltip
-                      contentStyle={{
-                        borderRadius: '8px',
-                        border: 'none',
-                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#6366F1"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#colorHeadcount)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <ExecutiveHeadcountChart data={data.trendCharts.headcountTrend} />
               </CardContent>
             </Card>
           )}
@@ -314,25 +287,11 @@ export default function ExecutiveDashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie
-                      data={data.workforceSummary.byDepartment}
-                      dataKey="count"
-                      nameKey="category"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      label={({ name, percent }) => `${name || ''} (${((percent || 0) * 100).toFixed(0)}%)`}
-                      labelLine={true}
-                    >
-                      {data.workforceSummary.byDepartment.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => formatNumber(value as number)} />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
+                <ExecutiveDeptPieChart
+                  data={data.workforceSummary.byDepartment}
+                  colors={COLORS}
+                  formatNumber={formatNumber}
+                />
               </CardContent>
             </Card>
           )}

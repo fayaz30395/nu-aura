@@ -13,7 +13,6 @@ import com.hrms.infrastructure.performance.repository.PerformanceReviewRepositor
 import com.hrms.infrastructure.performance.repository.ReviewCompetencyRepository;
 import com.hrms.infrastructure.performance.repository.ReviewCycleRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,17 +27,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PerformanceReviewService {
 
-    @Autowired
-    private PerformanceReviewRepository reviewRepository;
+    private final PerformanceReviewRepository reviewRepository;
+    private final ReviewCompetencyRepository competencyRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ReviewCycleRepository reviewCycleRepository;
 
-    @Autowired
-    private ReviewCompetencyRepository competencyRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private ReviewCycleRepository reviewCycleRepository;
+    public PerformanceReviewService(PerformanceReviewRepository reviewRepository,
+                                    ReviewCompetencyRepository competencyRepository,
+                                    EmployeeRepository employeeRepository,
+                                    ReviewCycleRepository reviewCycleRepository) {
+        this.reviewRepository = reviewRepository;
+        this.competencyRepository = competencyRepository;
+        this.employeeRepository = employeeRepository;
+        this.reviewCycleRepository = reviewCycleRepository;
+    }
 
     @Transactional
     public ReviewResponse createReview(ReviewRequest request) {

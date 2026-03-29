@@ -8,5 +8,7 @@ public enum AuthProvider {
     /** User authenticates with email + password */
     LOCAL,
     /** User authenticates via Google SSO */
-    GOOGLE
+    GOOGLE,
+    /** User authenticates via SAML 2.0 SSO (Okta, Azure AD, OneLogin, etc.) */
+    SAML
 }

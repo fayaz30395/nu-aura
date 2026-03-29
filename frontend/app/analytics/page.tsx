@@ -2,23 +2,33 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from 'recharts';
+import dynamic from 'next/dynamic';
+import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+
+const AnalyticsAttendanceTrendChart = dynamic(
+  () => import('./AnalyticsCharts').then((mod) => ({ default: mod.AnalyticsAttendanceTrendChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const AnalyticsAttendancePieChart = dynamic(
+  () => import('./AnalyticsCharts').then((mod) => ({ default: mod.AnalyticsAttendancePieChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const AnalyticsDeptBarChart = dynamic(
+  () => import('./AnalyticsCharts').then((mod) => ({ default: mod.AnalyticsDeptBarChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const AnalyticsLeavePieChart = dynamic(
+  () => import('./AnalyticsCharts').then((mod) => ({ default: mod.AnalyticsLeavePieChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const AnalyticsPayrollChart = dynamic(
+  () => import('./AnalyticsCharts').then((mod) => ({ default: mod.AnalyticsPayrollChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const AnalyticsHeadcountChart = dynamic(
+  () => import('./AnalyticsCharts').then((mod) => ({ default: mod.AnalyticsHeadcountChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
 import {
   TrendingUp,
   TrendingDown,
@@ -318,28 +328,7 @@ export default function AnalyticsPage() {
             <CardContent>
               <div className="h-[300px]">
                 {attendanceTrendData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={attendanceTrendData}>
-                      <defs>
-                        <linearGradient id="attendanceGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor={chartColors.info()} stopOpacity={0.3} />
-                          <stop offset="95%" stopColor={chartColors.info()} stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-                      <XAxis dataKey="label" tick={{ fontSize: 12 }} stroke={chartColors.muted()} />
-                      <YAxis tick={{ fontSize: 12 }} stroke={chartColors.muted()} />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        name="Attendance"
-                        stroke={chartColors.info()}
-                        fill="url(#attendanceGradient)"
-                        strokeWidth={2}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  <AnalyticsAttendanceTrendChart data={attendanceTrendData} />
                 ) : (
                   <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
                     No attendance trend data available
@@ -361,31 +350,7 @@ export default function AnalyticsPage() {
             <CardContent>
               <div className="h-[300px] flex items-center">
                 {attendancePieData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={attendancePieData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {attendancePieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend
-                        verticalAlign="bottom"
-                        height={36}
-                        formatter={(value) => (
-                          <span className="text-sm text-[var(--text-secondary)]">{value}</span>
-                        )}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <AnalyticsAttendancePieChart data={attendancePieData} />
                 ) : (
                   <div className="w-full text-center text-[var(--text-muted)]">
                     No attendance data available
@@ -410,21 +375,7 @@ export default function AnalyticsPage() {
             <CardContent>
               <div className="h-[300px]">
                 {departmentData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={departmentData} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-                      <XAxis type="number" tick={{ fontSize: 12 }} stroke={chartColors.muted()} />
-                      <YAxis
-                        type="category"
-                        dataKey="department"
-                        tick={{ fontSize: 12 }}
-                        stroke={chartColors.muted()}
-                        width={100}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Bar dataKey="count" name="Employees" fill={chartColors.secondary()} radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <AnalyticsDeptBarChart data={departmentData} />
                 ) : (
                   <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
                     No department data available
@@ -446,36 +397,7 @@ export default function AnalyticsPage() {
             <CardContent>
               <div className="h-[300px]">
                 {leaveDistributionData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={leaveDistributionData.map(d => ({
-                          name: d.leaveType,
-                          value: d.count,
-                          color: d.color || COLORS[0]
-                        }))}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                        nameKey="name"
-                      >
-                        {leaveDistributionData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color || COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend
-                        verticalAlign="bottom"
-                        height={36}
-                        formatter={(value) => (
-                          <span className="text-sm text-[var(--text-secondary)]">{value}</span>
-                        )}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <AnalyticsLeavePieChart data={leaveDistributionData} colors={COLORS} />
                 ) : (
                   <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
                     No leave distribution data available
@@ -498,35 +420,7 @@ export default function AnalyticsPage() {
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={payrollTrendData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-                    <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke={chartColors.muted()} />
-                    <YAxis
-                      tick={{ fontSize: 12 }}
-                      stroke={chartColors.muted()}
-                      tickFormatter={(value) =>
-                        new Intl.NumberFormat('en-IN', {
-                          notation: 'compact',
-                          compactDisplay: 'short',
-                        }).format(value)
-                      }
-                    />
-                    <Tooltip
-                      formatter={(value) => [formatCurrency(value as number), 'Payroll']}
-                      labelFormatter={(label) => `Month: ${label}`}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="amount"
-                      name="Payroll"
-                      stroke={chartColors.info()}
-                      strokeWidth={3}
-                      dot={{ fill: chartColors.info(), strokeWidth: 2 }}
-                      activeDot={{ r: 8 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                <AnalyticsPayrollChart data={payrollTrendData} />
               </div>
             </CardContent>
           </Card>
@@ -544,28 +438,7 @@ export default function AnalyticsPage() {
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={headcountTrendData}>
-                    <defs>
-                      <linearGradient id="headcountGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={chartColors.success()} stopOpacity={0.3} />
-                        <stop offset="95%" stopColor={chartColors.success()} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-                    <XAxis dataKey="label" tick={{ fontSize: 12 }} stroke={chartColors.muted()} />
-                    <YAxis tick={{ fontSize: 12 }} stroke={chartColors.muted()} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Area
-                      type="monotone"
-                      dataKey="value"
-                      name="Headcount"
-                      stroke={chartColors.success()}
-                      fill="url(#headcountGradient)"
-                      strokeWidth={2}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <AnalyticsHeadcountChart data={headcountTrendData} />
               </div>
             </CardContent>
           </Card>

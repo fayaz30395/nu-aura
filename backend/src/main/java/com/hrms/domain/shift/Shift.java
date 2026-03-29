@@ -99,6 +99,18 @@ public class Shift {
     private String colorCode; // For UI calendar display
 
     @Builder.Default
+    @Column(name = "is_flexible")
+    private Boolean isFlexible = false;
+
+    @Builder.Default
+    @Column(name = "flexible_window_minutes")
+    private Integer flexibleWindowMinutes = 0;
+
+    @Builder.Default
+    @Column(name = "min_gap_between_shifts_hours")
+    private Integer minGapBetweenShiftsHours = 11;
+
+    @Builder.Default
     @Column(name = "allows_overtime")
     private Boolean allowsOvertime = true;
 

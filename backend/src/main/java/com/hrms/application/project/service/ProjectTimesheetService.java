@@ -12,7 +12,6 @@ import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,6 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     private final TimeEntryValidator timeEntryValidator;
     private final WorkflowService workflowService;
 
-    @Autowired
     public ProjectTimesheetService(ProjectTimeEntryRepository timeEntryRepository,
                                    HrmsProjectMemberRepository projectMemberRepository,
                                    EmployeeRepository employeeRepository,

@@ -219,4 +219,21 @@ public class ExpenseClaimController {
     public ResponseEntity<ExpenseClaim.ExpenseStatus[]> getStatuses() {
         return ResponseEntity.ok(ExpenseClaim.ExpenseStatus.values());
     }
+
+    @PostMapping("/{claimId}/reimburse")
+    @RequiresPermission(Permission.EXPENSE_MANAGE)
+    public ResponseEntity<ExpenseClaimResponse> markAsReimbursed(
+            @PathVariable @NotNull UUID claimId,
+            @NotBlank @Size(max = 255) @RequestParam String reimbursementRef) {
+        log.info("Marking expense claim as reimbursed: {}", claimId);
+        return ResponseEntity.ok(expenseClaimService.markAsReimbursed(claimId, reimbursementRef));
+    }
+
+    @GetMapping("/validate-policy")
+    @RequiresPermission(Permission.EXPENSE_CREATE)
+    public ResponseEntity<java.util.List<String>> validatePolicy(
+            @RequestParam @NotNull java.util.UUID employeeId,
+            @RequestParam @NotNull java.math.BigDecimal amount) {
+        return ResponseEntity.ok(expenseClaimService.validatePolicy(employeeId, amount));
+    }
 }

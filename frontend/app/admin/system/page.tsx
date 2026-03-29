@@ -25,7 +25,13 @@ import {
   ActionIcon,
   Modal,
 } from '@mantine/core';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
+import dynamic from 'next/dynamic';
+import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+
+const GrowthChart = dynamic(
+  () => import('./GrowthChart'),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import {
@@ -261,47 +267,7 @@ export default function SystemDashboard() {
         </Group>
 
         {growthData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={growthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis
-                dataKey="month"
-                stroke="#64748b"
-                style={{ fontSize: '12px' }}
-              />
-              <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
-              <RechartsTooltip
-                contentStyle={{
-                  backgroundColor: '#1e293b',
-                  border: '1px solid #475569',
-                  borderRadius: '6px',
-                }}
-                labelStyle={{ color: '#e2e8f0' }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="tenants"
-                stroke="#3b82f6"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="activeUsers"
-                stroke="#10b981"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="employees"
-                stroke="#8b5cf6"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <GrowthChart data={growthData} />
         ) : (
           <div className="h-80 flex items-center justify-center text-[var(--text-muted)]">
             Loading chart data...

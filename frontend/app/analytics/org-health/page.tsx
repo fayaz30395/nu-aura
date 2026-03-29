@@ -16,20 +16,25 @@ import {
     Zap,
     Clock,
 } from 'lucide-react';
-import {
-    BarChart,
-    Bar,
-    PieChart,
-    Pie,
-    Cell,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    AreaChart,
-    Area
-} from 'recharts';
+import dynamic from 'next/dynamic';
+import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+
+const RetentionSparkline = dynamic(
+  () => import('./OrgHealthCharts').then((mod) => ({ default: mod.RetentionSparkline })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const EngagementSparkline = dynamic(
+  () => import('./OrgHealthCharts').then((mod) => ({ default: mod.EngagementSparkline })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const GenderPieChart = dynamic(
+  () => import('./OrgHealthCharts').then((mod) => ({ default: mod.GenderPieChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+const TenureBarChart = dynamic(
+  () => import('./OrgHealthCharts').then((mod) => ({ default: mod.TenureBarChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -132,17 +137,7 @@ export default function OrganizationHealthPage() {
                                     </div>
                                 </div>
                                 <div className="h-24">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={turnover.trend}>
-                                            <defs>
-                                                <linearGradient id="retentionGrad" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor={chartColors.success()} stopOpacity={0.2} />
-                                                    <stop offset="95%" stopColor={chartColors.success()} stopOpacity={0} />
-                                                </linearGradient>
-                                            </defs>
-                                            <Area type="monotone" dataKey="value" stroke={chartColors.success()} fill="url(#retentionGrad)" strokeWidth={2} dot={false} />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
+                                    <RetentionSparkline data={turnover.trend} />
                                 </div>
                             </CardContent>
                         </Card>
@@ -166,11 +161,7 @@ export default function OrganizationHealthPage() {
                                     </div>
                                 </div>
                                 <div className="h-24">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={engagement.engagementTrend}>
-                                            <Bar dataKey="value" fill={chartColors.warning()} radius={[4, 4, 0, 0]} />
-                                        </BarChart>
-                                    </ResponsiveContainer>
+                                    <EngagementSparkline data={engagement.engagementTrend} />
                                 </div>
                             </CardContent>
                         </Card>
@@ -188,19 +179,10 @@ export default function OrganizationHealthPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="h-64">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart>
-                                        <Pie
-                                            data={Object.entries(diversity.genderDistribution).map(([name, value]) => ({ name, value }))}
-                                            cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={5} dataKey="value"
-                                        >
-                                            {Object.entries(diversity.genderDistribution).map((_, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip />
-                                    </PieChart>
-                                </ResponsiveContainer>
+                                <GenderPieChart
+                                  data={Object.entries(diversity.genderDistribution).map(([name, value]) => ({ name, value }))}
+                                  colors={COLORS}
+                                />
                             </div>
                             <div className="flex justify-center gap-4 mt-4">
                                 {Object.entries(diversity.genderDistribution).map(([name, _], idx) => (
@@ -222,15 +204,7 @@ export default function OrganizationHealthPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="h-64">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={Object.entries(tenure.tenureDistribution).map(([label, value]) => ({ label, value }))}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.1} />
-                                        <XAxis dataKey="label" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-                                        <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} />
-                                        <Bar dataKey="value" fill={chartColors.secondary()} radius={[4, 4, 0, 0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                                <TenureBarChart data={Object.entries(tenure.tenureDistribution).map(([label, value]) => ({ label, value }))} />
                             </div>
                             <div className="text-center mt-4">
                                 <span className="text-sm font-semibold text-[var(--text-primary)]">Avg Tenure: {tenure.averageTenureYears} Years</span>

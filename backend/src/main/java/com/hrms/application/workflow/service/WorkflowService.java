@@ -18,7 +18,6 @@ import com.hrms.domain.event.workflow.ApprovalTaskAssignedEvent;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.leave.LeaveRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -51,7 +50,6 @@ public class WorkflowService {
     /** Callback handlers indexed by entity type — populated at startup. */
     private Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> callbackHandlerMap = Collections.emptyMap();
 
-    @Autowired
     public WorkflowService(
             WorkflowDefinitionRepository workflowDefinitionRepository,
             ApprovalStepRepository approvalStepRepository,
@@ -65,7 +63,7 @@ public class WorkflowService {
             DomainEventPublisher domainEventPublisher,
             AuditLogService auditLogService,
             LeaveRequestRepository leaveRequestRepository,
-            @Autowired(required = false) List<ApprovalCallbackHandler> callbackHandlers) {
+            @org.springframework.lang.Nullable List<ApprovalCallbackHandler> callbackHandlers) {
         this.workflowDefinitionRepository = workflowDefinitionRepository;
         this.approvalStepRepository = approvalStepRepository;
         this.workflowExecutionRepository = workflowExecutionRepository;

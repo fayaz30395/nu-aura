@@ -8,7 +8,6 @@ import com.hrms.application.performance.service.PerformanceReviewService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +23,11 @@ import java.util.UUID;
 @RequestMapping("/api/v1/reviews")
 public class PerformanceReviewController {
 
-    @Autowired
-    private PerformanceReviewService reviewService;
+    private final PerformanceReviewService reviewService;
+
+    public PerformanceReviewController(PerformanceReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
 
     @PostMapping
     @RequiresPermission(Permission.REVIEW_CREATE)

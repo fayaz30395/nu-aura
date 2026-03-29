@@ -9,7 +9,6 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
 import com.hrms.infrastructure.project.repository.ProjectEmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +20,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ResourceAllocationService {
 
-    @Autowired
-    private ProjectEmployeeRepository projectEmployeeRepository;
+    private final ProjectEmployeeRepository projectEmployeeRepository;
+    private final HrmsProjectRepository projectRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private HrmsProjectRepository projectRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    public ResourceAllocationService(ProjectEmployeeRepository projectEmployeeRepository,
+                                     HrmsProjectRepository projectRepository,
+                                     EmployeeRepository employeeRepository) {
+        this.projectEmployeeRepository = projectEmployeeRepository;
+        this.projectRepository = projectRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     /**
      * Returns allocation summary per employee: total %, per-project breakdown, over-allocation flag.

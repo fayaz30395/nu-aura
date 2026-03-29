@@ -292,6 +292,38 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
+          {/* SAML SSO Configuration */}
+          <Card className="lg:col-span-2 skeuo-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 skeuo-emboss">
+                <Shield className="h-5 w-5" />
+                SAML SSO Configuration
+              </CardTitle>
+              <CardDescription>Configure enterprise SAML 2.0 Single Sign-On</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] skeuo-surface">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
+                    <Globe className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-[var(--text-primary)]">SAML 2.0 Identity Provider</p>
+                    <p className="text-sm text-[var(--text-muted)] mt-0.5">
+                      Connect Okta, Azure AD, OneLogin, or any SAML 2.0 compatible IdP for enterprise SSO
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => router.push('/settings/sso')}
+                  className="px-4 py-2 text-sm font-medium rounded-lg bg-sky-700 text-white hover:bg-sky-800 transition-colors"
+                >
+                  Configure SSO
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Notification Preferences */}
           <Card className="lg:col-span-2 skeuo-card">
             <CardHeader>

@@ -101,6 +101,9 @@ export interface MonthlyStatutoryContribution {
     professionalTax: number;
     // TDS
     tdsDeducted: number;
+    // LWF
+    lwfEmployeeContribution: number;
+    lwfEmployerContribution: number;
     createdAt: string;
     updatedAt: string;
 }

@@ -253,8 +253,7 @@ export default function OffboardingPage() {
   };
 
   const handleViewDetails = (process: ExitProcess) => {
-    setSelectedProcess(process);
-    setShowDetailModal(true);
+    router.push(`/offboarding/${process.id}`);
   };
 
   const handleDeleteClick = (process: ExitProcess) => {

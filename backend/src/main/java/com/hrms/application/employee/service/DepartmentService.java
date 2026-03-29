@@ -13,7 +13,6 @@ import com.hrms.domain.employee.Department;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -29,14 +28,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DepartmentService {
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
+    private final AuditLogService auditLogService;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private AuditLogService auditLogService;
+    public DepartmentService(DepartmentRepository departmentRepository,
+                             EmployeeRepository employeeRepository,
+                             AuditLogService auditLogService) {
+        this.departmentRepository = departmentRepository;
+        this.employeeRepository = employeeRepository;
+        this.auditLogService = auditLogService;
+    }
 
     @Transactional
     @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)

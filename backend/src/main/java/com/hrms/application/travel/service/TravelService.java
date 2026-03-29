@@ -14,7 +14,6 @@ import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.travel.repository.TravelRequestRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,6 @@ public class TravelService implements ApprovalCallbackHandler {
     private final TravelRequestRepository travelRequestRepository;
     private final WorkflowService workflowService;
 
-    @Autowired
     public TravelService(TravelRequestRepository travelRequestRepository,
                          @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
         this.travelRequestRepository = travelRequestRepository;

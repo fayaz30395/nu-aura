@@ -8,6 +8,7 @@ import {
   LetterTemplatesResponse,
   GeneratedLettersResponse,
   LetterCategory,
+  PlaceholderItem,
 } from '../types/letter';
 
 const BASE_URL = '/letters';
@@ -168,5 +169,31 @@ export const letterService = {
     await apiClient.post(`${BASE_URL}/${letterId}/downloaded`, null, {
       params: { employeeId },
     });
+  },
+
+  // Clone template
+  cloneTemplate: async (templateId: string): Promise<LetterTemplate> => {
+    const response = await apiClient.post<LetterTemplate>(`${BASE_URL}/templates/${templateId}/clone`);
+    return response.data;
+  },
+
+  // Preview template with sample data
+  previewTemplate: async (templateId: string): Promise<string> => {
+    const response = await apiClient.get<string>(`${BASE_URL}/templates/${templateId}/preview`);
+    return response.data;
+  },
+
+  // Get available placeholders
+  getPlaceholders: async (): Promise<Record<string, PlaceholderItem[]>> => {
+    const response = await apiClient.get<Record<string, PlaceholderItem[]>>(`${BASE_URL}/placeholders`);
+    return response.data;
+  },
+
+  // Bulk generate letters for multiple employees
+  bulkGenerate: async (templateId: string, employeeIds: string[]): Promise<GeneratedLetter[]> => {
+    const response = await apiClient.post<GeneratedLetter[]>(`${BASE_URL}/bulk-generate`, employeeIds, {
+      params: { templateId },
+    });
+    return response.data;
   },
 };

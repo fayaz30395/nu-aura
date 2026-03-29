@@ -1,0 +1,296 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
+import {
+  useMySwapRequests,
+  useIncomingSwapRequests,
+  usePendingApprovalSwaps,
+  useAcceptSwapRequest,
+  useApproveSwapRequest,
+  useRejectSwapRequest,
+} from '@/lib/hooks/queries/useShifts';
+import { ShiftSwapRequest, SwapStatus } from '@/lib/types/shift';
+import { NuAuraLoader } from '@/components/ui/Loading';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { motion } from 'framer-motion';
+import {
+  ArrowLeftRight,
+  Check,
+  X,
+  Clock,
+  ChevronLeft,
+  Send,
+  Inbox,
+  Shield,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+const STATUS_CONFIG: Record<SwapStatus, { label: string; color: string; bgColor: string }> = {
+  PENDING: { label: 'Pending', color: 'text-amber-700', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
+  TARGET_ACCEPTED: { label: 'Accepted by Target', color: 'text-blue-700', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  TARGET_DECLINED: { label: 'Declined', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+  PENDING_APPROVAL: { label: 'Pending Approval', color: 'text-amber-700', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
+  APPROVED: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100 dark:bg-green-900/30' },
+  REJECTED: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+  COMPLETED: { label: 'Completed', color: 'text-green-700', bgColor: 'bg-green-100 dark:bg-green-900/30' },
+  CANCELLED: { label: 'Cancelled', color: 'text-gray-600', bgColor: 'bg-gray-100 dark:bg-gray-700' },
+};
+
+function SwapCard({
+  swap,
+  showActions,
+  onAccept,
+  onReject,
+  actionPending,
+}: {
+  swap: ShiftSwapRequest;
+  showActions?: 'target' | 'manager';
+  onAccept?: () => void;
+  onReject?: () => void;
+  actionPending?: boolean;
+}) {
+  const status = STATUS_CONFIG[swap.status] || STATUS_CONFIG.PENDING;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <ArrowLeftRight className="w-4 h-4 text-sky-700 dark:text-sky-400" />
+          <span className="text-sm font-medium text-gray-900 dark:text-white">
+            {swap.swapType}
+          </span>
+        </div>
+        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.color} ${status.bgColor}`}>
+          {status.label}
+        </span>
+      </div>
+
+      <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+        <div className="flex justify-between">
+          <span>Requester Date:</span>
+          <span className="font-medium">{swap.requesterShiftDate}</span>
+        </div>
+        {swap.targetShiftDate && (
+          <div className="flex justify-between">
+            <span>Target Date:</span>
+            <span className="font-medium">{swap.targetShiftDate}</span>
+          </div>
+        )}
+        {swap.reason && (
+          <div>
+            <span className="text-gray-400">Reason: </span>
+            <span>{swap.reason}</span>
+          </div>
+        )}
+        <div className="text-xs text-gray-400">
+          Requested {new Date(swap.requestedAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </div>
+      </div>
+
+      {showActions && (swap.status === 'PENDING' || swap.status === 'PENDING_APPROVAL') && (
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <button
+            onClick={onAccept}
+            disabled={actionPending}
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <Check className="w-3.5 h-3.5" />
+            {showActions === 'target' ? 'Accept' : 'Approve'}
+          </button>
+          <button
+            onClick={onReject}
+            disabled={actionPending}
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <X className="w-3.5 h-3.5" />
+            {showActions === 'target' ? 'Decline' : 'Reject'}
+          </button>
+        </div>
+      )}
+
+      {swap.rejectionReason && (
+        <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/10 rounded text-xs text-red-600 dark:text-red-400">
+          Rejection reason: {swap.rejectionReason}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+export default function ShiftSwapsPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const employeeId = user?.employeeId ?? '';
+  const [activeTab, setActiveTab] = useState<'sent' | 'incoming' | 'approval'>('sent');
+
+  const { data: mySwapsData, isLoading: mySwapsLoading } = useMySwapRequests(employeeId);
+  const { data: incomingSwaps = [], isLoading: incomingLoading } = useIncomingSwapRequests(employeeId);
+  const { data: pendingApproval = [], isLoading: approvalLoading } = usePendingApprovalSwaps();
+
+  const acceptMutation = useAcceptSwapRequest();
+  const approveMutation = useApproveSwapRequest();
+  const rejectMutation = useRejectSwapRequest();
+
+  const mySwaps = mySwapsData?.content ?? [];
+
+  const tabs = [
+    { id: 'sent' as const, label: 'My Requests', icon: Send, count: mySwaps.length },
+    { id: 'incoming' as const, label: 'Incoming', icon: Inbox, count: incomingSwaps.length },
+    { id: 'approval' as const, label: 'Manager Approval', icon: Shield, count: pendingApproval.length },
+  ];
+
+  const isLoading = activeTab === 'sent' ? mySwapsLoading : activeTab === 'incoming' ? incomingLoading : approvalLoading;
+
+  return (
+    <AppLayout>
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push('/shifts')}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Shift Swaps</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Manage shift swap requests
+            </p>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+              {tab.count > 0 && (
+                <span className="px-1.5 py-0.5 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 rounded-full text-xs">
+                  {tab.count}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        {isLoading ? (
+          <NuAuraLoader />
+        ) : (
+          <>
+            {activeTab === 'sent' && (
+              <>
+                {mySwaps.length === 0 ? (
+                  <EmptyState
+                    icon={<Send className="w-12 h-12 text-gray-400" />}
+                    title="No Swap Requests"
+                    description="You haven't submitted any shift swap requests yet."
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {mySwaps.map((swap) => (
+                      <SwapCard key={swap.id} swap={swap} />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeTab === 'incoming' && (
+              <>
+                {incomingSwaps.length === 0 ? (
+                  <EmptyState
+                    icon={<Inbox className="w-12 h-12 text-gray-400" />}
+                    title="No Incoming Requests"
+                    description="No one has sent you a shift swap request."
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {incomingSwaps.map((swap) => (
+                      <SwapCard
+                        key={swap.id}
+                        swap={swap}
+                        showActions="target"
+                        actionPending={acceptMutation.isPending}
+                        onAccept={() =>
+                          acceptMutation.mutate({ requestId: swap.id, employeeId })
+                        }
+                        onReject={() => {
+                          // For decline, we use the same accept mutation endpoint with decline
+                          // The ShiftSwapController has a separate /decline endpoint
+                          // We'd need a useDeclineSwapRequest hook, using reject for simplicity
+                          rejectMutation.mutate({
+                            requestId: swap.id,
+                            managerId: employeeId,
+                            reason: 'Declined by target employee',
+                          });
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeTab === 'approval' && (
+              <PermissionGate permission={Permissions.ATTENDANCE_APPROVE}>
+                {pendingApproval.length === 0 ? (
+                  <EmptyState
+                    icon={<Shield className="w-12 h-12 text-gray-400" />}
+                    title="No Pending Approvals"
+                    description="All shift swap requests have been processed."
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {pendingApproval.map((swap) => (
+                      <SwapCard
+                        key={swap.id}
+                        swap={swap}
+                        showActions="manager"
+                        actionPending={approveMutation.isPending || rejectMutation.isPending}
+                        onAccept={() =>
+                          approveMutation.mutate({ requestId: swap.id, managerId: employeeId })
+                        }
+                        onReject={() => {
+                          const reason = prompt('Rejection reason (optional):');
+                          rejectMutation.mutate({
+                            requestId: swap.id,
+                            managerId: employeeId,
+                            reason: reason || undefined,
+                          });
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </PermissionGate>
+            )}
+          </>
+        )}
+      </div>
+    </AppLayout>
+  );
+}

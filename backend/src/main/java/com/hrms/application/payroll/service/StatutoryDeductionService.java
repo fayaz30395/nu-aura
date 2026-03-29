@@ -1,12 +1,14 @@
 package com.hrms.application.payroll.service;
 
 import com.hrms.application.payroll.dto.StatutoryDeductions;
+import com.hrms.application.statutory.service.LWFService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class StatutoryDeductionService {
+
+    private final LWFService lwfService;
 
     // ─── PF constants ─────────────────────────────────────────────────────────
     /** PF wage ceiling (₹15,000/month) above which employer contribution is capped. */
@@ -84,8 +88,34 @@ public class StatutoryDeductionService {
             BigDecimal grossSalary,
             String state) {
 
-        log.debug("Calculating statutory deductions: employeeId={}, basic={}, gross={}, state={}",
-                employeeId, basicSalary, grossSalary, state);
+        // Delegate to the overloaded method with current month/year
+        LocalDate now = LocalDate.now();
+        return calculate(employeeId, basicSalary, grossSalary, state,
+                now.getMonthValue(), now.getYear());
+    }
+
+    /**
+     * Calculates all India statutory deductions including LWF for a specific payroll period.
+     *
+     * @param employeeId  UUID of the employee
+     * @param basicSalary monthly basic salary in INR
+     * @param grossSalary monthly gross salary in INR
+     * @param state       Indian state code or name
+     * @param month       payroll month (1-12)
+     * @param year        payroll year
+     * @return a fully populated {@link StatutoryDeductions} DTO
+     */
+    @Transactional(readOnly = true)
+    public StatutoryDeductions calculate(
+            UUID employeeId,
+            BigDecimal basicSalary,
+            BigDecimal grossSalary,
+            String state,
+            int month,
+            int year) {
+
+        log.debug("Calculating statutory deductions: employeeId={}, basic={}, gross={}, state={}, period={}/{}",
+                employeeId, basicSalary, grossSalary, state, month, year);
 
         BigDecimal employeePf  = calculateEmployeePf(basicSalary);
         BigDecimal employerPf  = calculateEmployerPf(basicSalary);
@@ -94,14 +124,21 @@ public class StatutoryDeductionService {
         BigDecimal pt          = calculateProfessionalTax(grossSalary, state);
         BigDecimal tds         = calculateMonthlyTds(grossSalary);
 
+        // LWF — fixed amount based on state rules, only in applicable months
+        BigDecimal employeeLwf = lwfService.calculateLWFForEmployee(
+                employeeId, state, grossSalary, month, year);
+        BigDecimal employerLwf = lwfService.getEmployerContribution(state, month, year);
+
         BigDecimal totalEmployee = employeePf
                 .add(employeeEsi)
                 .add(pt)
                 .add(tds)
+                .add(employeeLwf)
                 .setScale(2, RoundingMode.HALF_UP);
 
         BigDecimal totalEmployer = employerPf
                 .add(employerEsi)
+                .add(employerLwf)
                 .setScale(2, RoundingMode.HALF_UP);
 
         return StatutoryDeductions.builder()
@@ -112,6 +149,8 @@ public class StatutoryDeductionService {
                 .employerEsi(employerEsi)
                 .professionalTax(pt)
                 .tdsMonthly(tds)
+                .employeeLwf(employeeLwf)
+                .employerLwf(employerLwf)
                 .totalEmployeeDeductions(totalEmployee)
                 .totalEmployerContributions(totalEmployer)
                 .build();

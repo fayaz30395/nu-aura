@@ -11,7 +11,6 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.ProjectEmployeeRepository;
 import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,14 +26,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectService {
 
-        @Autowired
-        private HrmsProjectRepository projectRepository;
+        private final HrmsProjectRepository projectRepository;
+        private final ProjectEmployeeRepository projectEmployeeRepository;
+        private final EmployeeRepository employeeRepository;
 
-        @Autowired
-        private ProjectEmployeeRepository projectEmployeeRepository;
-
-        @Autowired
-        private EmployeeRepository employeeRepository;
+        public ProjectService(HrmsProjectRepository projectRepository,
+                              ProjectEmployeeRepository projectEmployeeRepository,
+                              EmployeeRepository employeeRepository) {
+                this.projectRepository = projectRepository;
+                this.projectEmployeeRepository = projectEmployeeRepository;
+                this.employeeRepository = employeeRepository;
+        }
 
         @Transactional
         public ProjectResponse createProject(CreateProjectRequest request) {

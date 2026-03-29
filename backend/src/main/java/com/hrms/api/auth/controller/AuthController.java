@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -27,17 +26,20 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Authentication", description = "Authentication endpoints")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+    private final MfaService mfaService;
+    private final CookieConfig cookieConfig;
+    private final JwtTokenProvider tokenProvider;
 
-    @Autowired
-    private MfaService mfaService;
-
-    @Autowired
-    private CookieConfig cookieConfig;
-
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    public AuthController(AuthService authService,
+                          MfaService mfaService,
+                          CookieConfig cookieConfig,
+                          JwtTokenProvider tokenProvider) {
+        this.authService = authService;
+        this.mfaService = mfaService;
+        this.cookieConfig = cookieConfig;
+        this.tokenProvider = tokenProvider;
+    }
 
     @PostMapping("/login")
     @Operation(summary = "Login with email and password", description = "Authenticate user with email and password. If MFA is enabled, response will indicate MFA is required.")

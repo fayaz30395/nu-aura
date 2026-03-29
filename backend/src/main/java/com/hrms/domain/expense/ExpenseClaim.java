@@ -88,12 +88,31 @@ public class ExpenseClaim extends TenantAware {
     @Column(length = 1000)
     private String notes;
 
+    @Column(nullable = false, length = 255)
+    @Builder.Default
+    private String title = "";
+
+    @Column(name = "policy_id")
+    private UUID policyId;
+
+    @Column(name = "reimbursed_at")
+    private LocalDateTime reimbursedAt;
+
+    @Column(name = "reimbursement_ref", length = 200)
+    private String reimbursementRef;
+
+    @Column(name = "total_items")
+    @Builder.Default
+    private int totalItems = 0;
+
     public enum ExpenseStatus {
         DRAFT,
         SUBMITTED,
         PENDING_APPROVAL,
         APPROVED,
         REJECTED,
+        PROCESSING,
+        REIMBURSED,
         PAID,
         CANCELLED
     }
@@ -150,9 +169,25 @@ public class ExpenseClaim extends TenantAware {
         this.paymentReference = paymentReference;
     }
 
+    public void markAsReimbursed(String reimbursementRef) {
+        if (this.status != ExpenseStatus.APPROVED && this.status != ExpenseStatus.PROCESSING) {
+            throw new IllegalStateException("Can only reimburse approved or processing expense claims");
+        }
+        this.status = ExpenseStatus.REIMBURSED;
+        this.reimbursedAt = LocalDateTime.now();
+        this.reimbursementRef = reimbursementRef;
+    }
+
+    public void markAsProcessing() {
+        if (this.status != ExpenseStatus.APPROVED) {
+            throw new IllegalStateException("Can only start processing approved expense claims");
+        }
+        this.status = ExpenseStatus.PROCESSING;
+    }
+
     public void cancel() {
-        if (this.status == ExpenseStatus.PAID) {
-            throw new IllegalStateException("Cannot cancel paid expense claims");
+        if (this.status == ExpenseStatus.PAID || this.status == ExpenseStatus.REIMBURSED) {
+            throw new IllegalStateException("Cannot cancel paid/reimbursed expense claims");
         }
         this.status = ExpenseStatus.CANCELLED;
     }
