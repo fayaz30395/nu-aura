@@ -528,10 +528,10 @@ class SecurityContextTest {
         }
 
         @Test
-        @DisplayName("Should return true with empty permission array")
+        @DisplayName("Should return false with empty permission array")
         void shouldReturnTrueWithEmptyPermissionArray() {
-            // When/Then
-            assertThat(SecurityContext.hasAnyPermission()).isTrue();
+            // When/Then - no permissions to check means none matched
+            assertThat(SecurityContext.hasAnyPermission()).isFalse();
         }
     }
 

@@ -220,7 +220,7 @@ class RateLimitFilterTest {
             // Given
             String userId = "user-345";
             String tenantId = "tenant-678";
-            when(request.getRequestURI()).thenReturn("/api/v1/payroll/report.csv");
+            when(request.getRequestURI()).thenReturn("/api/v1/payroll/export/csv");
             when(request.getHeader("X-User-ID")).thenReturn(userId);
             when(request.getHeader("X-Tenant-ID")).thenReturn(tenantId);
 
@@ -242,7 +242,7 @@ class RateLimitFilterTest {
             // Given
             String userId = "user-901";
             String tenantId = "tenant-234";
-            when(request.getRequestURI()).thenReturn("/api/v1/document/contract.pdf");
+            when(request.getRequestURI()).thenReturn("/api/v1/reports/export/pdf");
             when(request.getHeader("X-User-ID")).thenReturn(userId);
             when(request.getHeader("X-Tenant-ID")).thenReturn(tenantId);
 
@@ -443,12 +443,12 @@ class RateLimitFilterTest {
         @Test
         @DisplayName("Should resolve X-Forwarded-For header for proxy requests")
         void shouldResolveXForwardedForHeader() throws ServletException, IOException {
-            // Given
+            // Given - remoteAddr must be a trusted proxy for X-Forwarded-For to be used
             when(request.getRequestURI()).thenReturn("/api/v1/auth/login");
             when(request.getHeader("X-User-ID")).thenReturn(null);
             when(request.getHeader("X-Tenant-ID")).thenReturn(null);
             when(request.getHeader("X-Forwarded-For")).thenReturn("203.0.113.45, 192.0.2.1");
-            when(request.getRemoteAddr()).thenReturn("192.0.2.1");
+            when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
             RateLimitResult result = new RateLimitResult(true, 9, 60);
             ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
@@ -466,13 +466,13 @@ class RateLimitFilterTest {
         @Test
         @DisplayName("Should resolve X-Real-IP header for nginx proxy requests")
         void shouldResolveXRealIpHeader() throws ServletException, IOException {
-            // Given
+            // Given - remoteAddr must be a trusted proxy for X-Real-IP to be used
             when(request.getRequestURI()).thenReturn("/api/v1/auth/login");
             when(request.getHeader("X-User-ID")).thenReturn(null);
             when(request.getHeader("X-Tenant-ID")).thenReturn(null);
             when(request.getHeader("X-Forwarded-For")).thenReturn(null);
             when(request.getHeader("X-Real-IP")).thenReturn("198.51.100.42");
-            when(request.getRemoteAddr()).thenReturn("192.0.2.1");
+            when(request.getRemoteAddr()).thenReturn("10.0.0.1");
 
             RateLimitResult result = new RateLimitResult(true, 9, 60);
             ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);

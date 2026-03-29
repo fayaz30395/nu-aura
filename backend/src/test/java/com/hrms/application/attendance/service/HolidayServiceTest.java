@@ -28,6 +28,9 @@ class HolidayServiceTest {
     @Mock
     private HolidayRepository holidayRepository;
 
+    @Mock
+    private com.hrms.application.audit.service.AuditLogService auditLogService;
+
     @InjectMocks
     private HolidayService holidayService;
 
@@ -110,7 +113,7 @@ class HolidayServiceTest {
                     .containsExactly(
                             "Independence Day",
                             LocalDate.of(2024, 8, 15),
-                            "NATIONAL"
+                            Holiday.HolidayType.NATIONAL
                     );
 
             assertThat(result.getTenantId()).isEqualTo(tenantId);
@@ -284,7 +287,7 @@ class HolidayServiceTest {
                     .containsExactly(
                             "Women's Day",
                             newDate,
-                            "OPTIONAL",
+                            Holiday.HolidayType.OPTIONAL,
                             "International Women's Day",
                             true,
                             false,
@@ -506,13 +509,15 @@ class HolidayServiceTest {
             // Arrange
             when(holidayRepository.findById(holidayId))
                     .thenReturn(Optional.of(testHoliday));
+            when(holidayRepository.save(any(Holiday.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             // Act
             holidayService.deleteHoliday(holidayId);
 
-            // Assert
+            // Assert - soft delete uses save(), not delete()
             verify(holidayRepository, times(1)).findById(holidayId);
-            verify(holidayRepository, times(1)).delete(testHoliday);
+            verify(holidayRepository, times(1)).save(testHoliday);
         }
 
         @Test

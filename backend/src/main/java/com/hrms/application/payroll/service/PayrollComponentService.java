@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.SimpleEvaluationContext;
@@ -287,7 +288,7 @@ public class PayrollComponentService {
         // to prevent arbitrary method invocations via DB-stored payroll formulas (RCE vector).
         // forReadOnlyDataBinding() alone — withInstanceMethods() removed to further restrict surface.
         SimpleEvaluationContext context = SimpleEvaluationContext
-                .forReadOnlyDataBinding()
+                .forPropertyAccessors(new MapAccessor())
                 .withRootObject(componentValues)
                 .build();
 

@@ -169,6 +169,10 @@ class AuthServiceTest {
                         request.setPassword("password123");
                         request.setTenantId(null);
 
+                        // The login method now calls findByEmail first to auto-detect tenant
+                        when(userRepository.findByEmail("test@example.com"))
+                                        .thenReturn(Optional.of(user));
+
                         Authentication authentication = mock(Authentication.class);
                         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                                         .thenReturn(authentication);

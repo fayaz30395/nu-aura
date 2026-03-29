@@ -117,6 +117,7 @@ class RecruitmentControllerTest {
         void shouldCreateJobOpeningSuccessfully() throws Exception {
             JobOpeningRequest request = new JobOpeningRequest();
             request.setJobTitle("Software Engineer");
+            request.setDepartmentId(UUID.randomUUID());
             request.setJobDescription("Senior software engineer position");
 
             when(recruitmentManagementService.createJobOpening(any(JobOpeningRequest.class)))
@@ -125,7 +126,7 @@ class RecruitmentControllerTest {
             mockMvc.perform(post("/api/v1/recruitment/job-openings")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.jobTitle").value("Software Engineer"))
                     .andExpect(jsonPath("$.status").value("OPEN"));
@@ -150,6 +151,7 @@ class RecruitmentControllerTest {
         void shouldUpdateJobOpeningSuccessfully() throws Exception {
             JobOpeningRequest request = new JobOpeningRequest();
             request.setJobTitle("Senior Software Engineer");
+            request.setDepartmentId(UUID.randomUUID());
             request.setJobDescription("Updated job description");
 
             JobOpeningResponse updatedResponse = JobOpeningResponse.builder()
@@ -263,7 +265,7 @@ class RecruitmentControllerTest {
             mockMvc.perform(post("/api/v1/recruitment/candidates")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.fullName").value("John Doe"))
                     .andExpect(jsonPath("$.email").value("john@example.com"));
 
@@ -392,6 +394,7 @@ class RecruitmentControllerTest {
             CreateOfferRequest request = CreateOfferRequest.builder()
                     .positionTitle("Software Engineer")
                     .offeredSalary(new java.math.BigDecimal("100000.0"))
+                    .joiningDate(java.time.LocalDate.now().plusMonths(1))
                     .build();
 
             when(recruitmentManagementService.createOffer(eq(candidateId), any(CreateOfferRequest.class)))
@@ -400,7 +403,7 @@ class RecruitmentControllerTest {
             mockMvc.perform(post("/api/v1/recruitment/candidates/{id}/offer", candidateId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
 
             verify(recruitmentManagementService).createOffer(eq(candidateId), any(CreateOfferRequest.class));
         }

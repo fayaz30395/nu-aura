@@ -242,6 +242,9 @@ public class SecurityContext {
      * Permission hierarchy: MANAGE implies all actions (MARK, READ, VIEW_ALL, VIEW_TEAM, etc.)
      */
     public static boolean hasPermission(String permission) {
+        if (permission == null) {
+            return false;
+        }
         Set<String> permissions = getCurrentPermissions();
 
         // Check for system admin (bypasses all)

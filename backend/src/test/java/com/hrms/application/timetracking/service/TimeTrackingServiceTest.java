@@ -160,7 +160,7 @@ class TimeTrackingServiceTest {
             TimeEntryDto result = timeTrackingService.createEntry(request);
 
             // Assert
-            assertThat(result.getStatus()).isEqualTo("DRAFT");
+            assertThat(result.getStatus()).isEqualTo(com.hrms.domain.timetracking.TimeEntry.TimeEntryStatus.DRAFT);
         }
 
         @Test
