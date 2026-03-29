@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useCallback, ReactNode } from 'react';
+import React, { useEffect, useRef, useCallback, useId, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { modalVariants, overlayVariants } from '@/lib/animations/variants';
 import { X } from 'lucide-react';
@@ -35,6 +35,8 @@ interface ModalFooterProps {
 
 const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+const ModalTitleIdContext = React.createContext<string | undefined>(undefined);
+
 const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
@@ -45,6 +47,8 @@ const Modal: React.FC<ModalProps> = ({
   closeOnEscape = true,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const generatedId = useId();
+  const titleId = `modal-title-${generatedId}`;
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   // QA-003: Focus trap — trap Tab/Shift+Tab within modal
@@ -106,12 +110,14 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   return (
+    <ModalTitleIdContext.Provider value={titleId}>
     <AnimatePresence>
       {isOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           aria-modal="true"
           role="dialog"
+          aria-labelledby={titleId}
         >
           {/* Backdrop */}
           <motion.div
@@ -149,6 +155,7 @@ const Modal: React.FC<ModalProps> = ({
         </div>
       )}
     </AnimatePresence>
+    </ModalTitleIdContext.Provider>
   );
 };
 
@@ -158,6 +165,8 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
   onClose,
   showCloseButton = true,
 }) => {
+  const titleId = React.useContext(ModalTitleIdContext);
+
   return (
     <div
       className={cn(
@@ -168,7 +177,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
     >
       <div className="flex-1 min-w-0">
         {typeof children === 'string' ? (
-          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 truncate">
+          <h2 id={titleId} className="text-xl font-semibold text-surface-900 dark:text-surface-50 truncate">
             {children}
           </h2>
         ) : (

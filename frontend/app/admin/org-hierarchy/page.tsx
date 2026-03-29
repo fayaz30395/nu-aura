@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Employee } from '@/lib/types/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -57,14 +57,14 @@ export default function OrgHierarchyPage() {
   const loading = isLoading;
 
   // Build hierarchy when employees data changes
-  if (employees.length > 0 && hierarchy.length === 0) {
-    const tree = buildEmployeeTree(employees);
-    setHierarchy(tree);
-    // Auto-expand root level
-    if (expandedNodes.size === 0) {
+  useEffect(() => {
+    if (employees.length > 0 && hierarchy.length === 0) {
+      const tree = buildEmployeeTree(employees);
+      setHierarchy(tree);
+      // Auto-expand root level
       setExpandedNodes(new Set(tree.map(e => e.id)));
     }
-  }
+  }, [employees, hierarchy.length]);
 
   // R2-008 FIX: return null immediately after router.push() so the component
   // stops rendering and doesn't briefly expose privileged UI before navigation.

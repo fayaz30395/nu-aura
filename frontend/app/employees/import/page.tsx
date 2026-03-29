@@ -76,6 +76,11 @@ export default function EmployeeImportPage() {
       return;
     }
 
+    if (file.size > 10 * 1024 * 1024) {
+      setError('File size must be under 10MB');
+      return;
+    }
+
     setSelectedFile(file);
     setError(null);
   };

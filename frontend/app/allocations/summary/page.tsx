@@ -199,7 +199,7 @@ export default function AllocationSummaryPage() {
             {formatPercent(row.allocationPercent)}
           </span>
           {row.overAllocated && (
-            <Badge variant="destructive" size="sm" title="Peak > 100%">
+            <Badge variant="danger" size="sm" title="Peak > 100%">
               Over-cap at peak
             </Badge>
           )}

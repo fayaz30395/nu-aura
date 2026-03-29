@@ -625,7 +625,7 @@ export default function DashboardPage() {
                   </Button>
                 )}
                 {canCheckOut && (
-                  <Button variant="destructive" onClick={handleCheckOut} isLoading={isClockingIn} leftIcon={<LogOut className="h-4 w-4" />}>
+                  <Button variant="danger" onClick={handleCheckOut} isLoading={isClockingIn} leftIcon={<LogOut className="h-4 w-4" />}>
                     Check Out
                   </Button>
                 )}

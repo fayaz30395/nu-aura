@@ -110,13 +110,16 @@ export function SkeletonChart({ height = 'h-64' }: { height?: string }) {
         <div className="skeleton-aura h-8 w-24 rounded-lg" />
       </div>
       <div className="flex items-end gap-2 h-[calc(100%-4rem)]">
-        {Array.from({ length: 7 }).map((_, i) => (
-          <div
-            key={i}
-            className="skeleton-aura flex-1 rounded-t"
-            style={{ height: `${30 + Math.random() * 60}%` }}
-          />
-        ))}
+        {(() => {
+          const heights = [65, 45, 80, 55, 70, 40, 75, 50, 85, 60];
+          return Array.from({ length: 7 }).map((_, i) => (
+            <div
+              key={i}
+              className="skeleton-aura flex-1 rounded-t"
+              style={{ height: `${heights[i % heights.length]}%` }}
+            />
+          ));
+        })()}
       </div>
     </div>
   );

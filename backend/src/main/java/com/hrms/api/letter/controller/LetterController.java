@@ -7,6 +7,7 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.letter.LetterTemplate.LetterCategory;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -223,7 +224,7 @@ public class LetterController {
     @RequiresPermission(LETTER_GENERATE)
     public ResponseEntity<java.util.List<GeneratedLetterResponse>> bulkGenerate(
             @RequestParam UUID templateId,
-            @RequestBody java.util.List<UUID> employeeIds) {
+            @Valid @NotEmpty @RequestBody List<UUID> employeeIds) {
         UUID generatedBy = SecurityContext.getCurrentEmployeeId();
         log.info("Bulk generating letters for {} employees using template: {}", employeeIds.size(), templateId);
         return ResponseEntity.status(HttpStatus.CREATED)

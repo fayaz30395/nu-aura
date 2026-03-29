@@ -194,7 +194,7 @@ export default function ProbationPage() {
 
   if (!hasHydrated) return null;
   if (!isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
     return null;
   }
 
@@ -582,6 +582,9 @@ export default function ProbationPage() {
                           )
                         )}
                       </select>
+                      {errors.evaluationType && (
+                        <p className="text-sm text-danger-500 mt-1">{errors.evaluationType.message}</p>
+                      )}
                     </div>
 
                     {/* Recommendation */}
@@ -601,6 +604,9 @@ export default function ProbationPage() {
                           </option>
                         ))}
                       </select>
+                      {errors.recommendation && (
+                        <p className="text-sm text-danger-500 mt-1">{errors.recommendation.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -631,6 +637,9 @@ export default function ProbationPage() {
                               </option>
                             ))}
                           </select>
+                          {errors[field.name] && (
+                            <p className="text-sm text-danger-500 mt-1">{errors[field.name]?.message}</p>
+                          )}
                         </div>
                       ))}
                     </div>

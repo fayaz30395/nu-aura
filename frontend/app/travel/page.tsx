@@ -44,7 +44,7 @@ export default function TravelPage() {
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
 

@@ -137,7 +137,7 @@ export default function NewEventPage() {
   if (!hasHydrated) return null;
 
   if (!isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
     return null;
   }
 

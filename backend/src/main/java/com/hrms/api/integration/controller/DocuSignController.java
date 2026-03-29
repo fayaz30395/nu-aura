@@ -399,7 +399,17 @@ public class DocuSignController {
         // If completed, update time
         if ("COMPLETED".equals(event.getStatus()) || "completed".equalsIgnoreCase(event.getStatus())) {
             try {
-                // TODO: Download PDF from DocuSign and upload to MinIO to get the signedDocUrl
+                // TODO(P1): Download signed PDF from DocuSign after completion and store in MinIO.
+                // Current behavior: signedDocUrl points to DocuSign's temporary URL which expires.
+                // Required: Call DocuSign API to download document bytes, upload to MinIO, update signedDocUrl.
+                //
+                // Implementation steps:
+                //   1. Call GET /v2.1/accounts/{accountId}/envelopes/{envelopeId}/documents/{documentId}
+                //      with Authorization: Bearer <access_token> to download PDF bytes.
+                //   2. Upload the bytes to MinIO via MinioClient.putObject() into the "signed-documents" bucket.
+                //   3. Generate a presigned or permanent MinIO URL and set envelope.setSignedDocUrl(minioUrl).
+                //   4. Call envelopeRepository.save(envelope) — already done below, so just set the field here.
+                //   5. Handle DocuSign API errors (rate limits, expired tokens) with retry logic.
                 envelope.setCompletedAt(java.time.Instant.now());
             } catch (Exception e) {
                 log.error("Failed to process completed envelope: {}", envelope.getId(), e);

@@ -255,7 +255,7 @@ export default function HomePage() {
               variant="secondary"
               size="sm"
               className="w-full text-xs font-medium rounded-lg h-8 border-accent-200 dark:border-accent-800 text-brand-600 dark:text-accent-400 hover:bg-brand-25 dark:hover:bg-accent-950"
-              onClick={() => router.push('/leave/request')}
+              onClick={() => router.push('/leave/apply')}
             >
               Request Leave
             </Button>

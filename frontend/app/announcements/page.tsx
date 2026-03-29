@@ -42,6 +42,21 @@ import {
   getCategoryLabel,
   CreateAnnouncementRequest,
 } from '@/lib/services/announcement.service';
+import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
+import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { createLogger } from '@/lib/utils/logger';
+import { useDebounce } from '@/lib/hooks/useDebounce';
+import {
+  useActiveAnnouncements,
+  usePinnedAnnouncements,
+  useCreateAnnouncement,
+  useUpdateAnnouncement,
+  useDeleteAnnouncement,
+  useMarkAnnouncementRead,
+} from '@/lib/hooks/queries/useAnnouncements';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 
 /** Maps each announcement category to a background class for the icon container. */
 const categoryIconBgColors: Record<AnnouncementCategory, string> = {
@@ -74,21 +89,6 @@ const categoryIconTextColors: Record<AnnouncementCategory, string> = {
   HEALTH_SAFETY: 'text-success-800 dark:text-success-400',
   OTHER: 'text-[var(--text-secondary)]',
 };
-import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { createLogger } from '@/lib/utils/logger';
-import { useDebounce } from '@/lib/hooks/useDebounce';
-import {
-  useActiveAnnouncements,
-  usePinnedAnnouncements,
-  useCreateAnnouncement,
-  useUpdateAnnouncement,
-  useDeleteAnnouncement,
-  useMarkAnnouncementRead,
-} from '@/lib/hooks/queries/useAnnouncements';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 
 const logger = createLogger('Announcements');
 
@@ -715,6 +715,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
   const {
     register,
     watch,
+    reset,
     handleSubmit: formHandleSubmit,
     formState: { errors },
   } = useForm<AnnouncementFormData>({
@@ -731,6 +732,11 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
   });
 
   const watchTargetAudience = watch('targetAudience');
+
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
   // Load departments when SPECIFIC_DEPARTMENTS is selected
   useEffect(() => {
@@ -805,7 +811,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-[var(--text-muted)]" />
@@ -974,7 +980,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
           <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1 btn-secondary"
             >
               Cancel

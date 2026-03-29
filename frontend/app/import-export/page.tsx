@@ -147,6 +147,10 @@ function FileDropZone({
     const files = Array.from(e.dataTransfer.files);
     const accepted = files.find(isAcceptedFile);
     if (accepted) {
+      if (accepted.size > 10 * 1024 * 1024) {
+        notifications.show({ title: 'File Too Large', message: 'File size must be under 10MB', color: 'red' });
+        return;
+      }
       onFileDrop(accepted);
     } else if (files.length > 0) {
       notifications.show({ title: 'Invalid File', message: 'Please upload a .csv, .xlsx, or .xls file', color: 'red' });
@@ -158,6 +162,11 @@ function FileDropZone({
     if (files && files.length > 0) {
       const accepted = Array.from(files).find(isAcceptedFile);
       if (accepted) {
+        if (accepted.size > 10 * 1024 * 1024) {
+          notifications.show({ title: 'File Too Large', message: 'File size must be under 10MB', color: 'red' });
+          if (inputRef.current) inputRef.current.value = '';
+          return;
+        }
         onFileDrop(accepted);
       } else {
         notifications.show({ title: 'Invalid File', message: 'Please upload a .csv, .xlsx, or .xls file', color: 'red' });

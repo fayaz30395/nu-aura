@@ -101,7 +101,7 @@ export default function MyLearningPage() {
 
   // Auth check
   if (hasHydrated && !isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
   }
 
   const handleContinue = async (enrollment: CourseEnrollment) => {

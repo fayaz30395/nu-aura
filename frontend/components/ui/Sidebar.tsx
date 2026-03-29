@@ -358,7 +358,7 @@ const SidebarMenuItem: React.FC<{
 
       {/* Tooltip for collapsed state (all items) */}
       {isCollapsed && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-accent-500 rounded-full text-xs text-white">
@@ -397,6 +397,8 @@ const SidebarMenuItem: React.FC<{
         className={commonClasses}
         style={activeStyles}
         disabled={item.disabled}
+        aria-expanded={hasChildren ? isFlyoverOpen : undefined}
+        aria-haspopup={hasChildren ? 'true' : undefined}
       >
         {content}
       </button>
@@ -424,6 +426,7 @@ const SectionDivider: React.FC<{
   return (
     <button
       onClick={() => onToggleSection(sectionId)}
+      aria-expanded={isSectionExpanded}
       className="w-full flex items-center justify-between px-4 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
     >
       <span
@@ -684,6 +687,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {sectionIndex === 0 && !isCollapsed && (
                     <button
                       onClick={() => handleToggleSection(section.id)}
+                      aria-expanded={isSectionExpanded}
                       className="w-full flex items-center justify-between px-4 py-2.5 group rounded-md transition-all duration-200"
                     >
                       <span

@@ -151,7 +151,7 @@ export default function ReferralsPage() {
 
   if (!hasHydrated) return null;
   if (!isAuthenticated) {
-    router.push('/login');
+    router.push('/auth/login');
     return null;
   }
 

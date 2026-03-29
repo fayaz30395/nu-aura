@@ -111,7 +111,7 @@ export default function NewTravelRequestPage() {
 
   useEffect(() => {
     if (!hasHydrated) return;
-    if (!isAuthenticated) router.push('/login');
+    if (!isAuthenticated) router.push('/auth/login');
   }, [isAuthenticated, hasHydrated, router]);
 
   const watchedAccommodation = watch('accommodationRequired');

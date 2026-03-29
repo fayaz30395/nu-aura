@@ -10,6 +10,7 @@ import {
   CreateExpenseAdvanceRequest,
   ExpenseStatus,
 } from '@/lib/types/expense';
+import { notifications } from '@mantine/notifications';
 
 // Query keys for cache management
 export const expenseKeys = {
@@ -321,6 +322,13 @@ export function useAddExpenseItem() {
       queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(variables.claimId) });
       queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
     },
+    onError: (error: Error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message || 'Failed to add expense item. Please try again.',
+        color: 'red',
+      });
+    },
   });
 }
 
@@ -345,6 +353,13 @@ export function useDeleteExpenseItem() {
       queryClient.invalidateQueries({ queryKey: expenseKeys.claimItems(variables.claimId) });
       queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(variables.claimId) });
       queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+    },
+    onError: (error: Error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message || 'Failed to delete expense item. Please try again.',
+        color: 'red',
+      });
     },
   });
 }

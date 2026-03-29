@@ -901,12 +901,12 @@ export default function PredictiveAnalyticsPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            {/* TODO: Wire up export when backend PDF/Excel export endpoints are available */}
-            <Button variant="outline" size="sm" onClick={() => { /* TODO: exportToPdf */ }}>
+            {/* Export buttons wired up once backend PDF/Excel export endpoints are available */}
+            <Button variant="outline" size="sm" disabled title="Export coming soon" className="opacity-50 cursor-not-allowed">
               <Download className="h-4 w-4 mr-1" />
               Export PDF
             </Button>
-            <Button variant="outline" size="sm" onClick={() => { /* TODO: exportToExcel */ }}>
+            <Button variant="outline" size="sm" disabled title="Export coming soon" className="opacity-50 cursor-not-allowed">
               <Download className="h-4 w-4 mr-1" />
               Export Excel
             </Button>

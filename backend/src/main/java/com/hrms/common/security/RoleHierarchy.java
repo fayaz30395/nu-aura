@@ -506,7 +506,14 @@ public final class RoleHierarchy {
 
     private static Set<String> getTravelAdminPermissions() {
         return new HashSet<>(Arrays.asList(
-            // Travel/Expense Management
+            // Travel - Full Access (M-2: was missing from original set)
+            Permission.TRAVEL_VIEW,
+            Permission.TRAVEL_CREATE,
+            Permission.TRAVEL_UPDATE,
+            Permission.TRAVEL_APPROVE,
+            Permission.TRAVEL_VIEW_ALL,
+            Permission.TRAVEL_MANAGE,
+            // Expense Management
             Permission.EXPENSE_VIEW_ALL,
             Permission.EXPENSE_APPROVE,
             // Employee view

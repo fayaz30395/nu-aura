@@ -184,7 +184,7 @@ public class RestrictedHolidayController {
     @RequiresPermission(Permission.LEAVE_APPROVE)
     public ResponseEntity<SelectionResponse> rejectSelection(
             @PathVariable UUID selectionId,
-            @RequestBody(required = false) SelectionActionRequest request) {
+            @Valid @RequestBody(required = false) SelectionActionRequest request) {
         String reason = request != null ? request.getRejectionReason() : null;
         return ResponseEntity.ok(service.rejectSelection(selectionId, reason));
     }

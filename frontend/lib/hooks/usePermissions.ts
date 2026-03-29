@@ -31,7 +31,7 @@ export const Permissions = {
   LEAVE_APPROVE: 'LEAVE:APPROVE',
   LEAVE_REJECT: 'LEAVE:REJECT',
   LEAVE_CANCEL: 'LEAVE:CANCEL',
-  LEAVE_APPLY: 'LEAVE:APPLY',
+  LEAVE_APPLY: 'LEAVE:REQUEST', // H-1: backend only has LEAVE:REQUEST (not LEAVE:APPLY)
   LEAVE_VIEW_ALL: 'LEAVE:VIEW_ALL',
   LEAVE_VIEW_TEAM: 'LEAVE:VIEW_TEAM',
   LEAVE_VIEW_SELF: 'LEAVE:VIEW_SELF',
@@ -202,9 +202,10 @@ export const Permissions = {
 
   // Payment Gateway
   PAYMENT_VIEW: 'PAYMENT:VIEW',
-  PAYMENT_PROCESS: 'PAYMENT:PROCESS',
+  PAYMENT_PROCESS: 'PAYMENT:PROCESS', // kept for backward compat
+  PAYMENT_INITIATE: 'PAYMENT:INITIATE', // H-2: backend uses PAYMENT:INITIATE
   PAYMENT_REFUND: 'PAYMENT:REFUND',
-  PAYMENT_CONFIG: 'PAYMENT:CONFIG',
+  PAYMENT_CONFIG: 'PAYMENT:CONFIG_MANAGE', // H-2: backend uses PAYMENT:CONFIG_MANAGE (not PAYMENT:CONFIG)
 
   // Helpdesk
   HELPDESK_TICKET_CREATE: 'HELPDESK:TICKET_CREATE',
@@ -523,16 +524,28 @@ export type PermissionCode = (typeof Permissions)[keyof typeof Permissions];
 export const Roles = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   TENANT_ADMIN: 'TENANT_ADMIN',
+  // M-3: HR_ADMIN does not exist in backend — maps to HR_MANAGER. Kept here for UI display only.
   HR_ADMIN: 'HR_ADMIN',
   HR_MANAGER: 'HR_MANAGER',
+  HR_EXECUTIVE: 'HR_EXECUTIVE',
   DEPARTMENT_HEAD: 'DEPARTMENT_HEAD',
+  DEPARTMENT_MANAGER: 'DEPARTMENT_MANAGER',
   TEAM_LEAD: 'TEAM_LEAD',
+  // L-1: MANAGER is not a real backend role — use DEPARTMENT_MANAGER or TEAM_LEAD instead
   MANAGER: 'MANAGER',
   EMPLOYEE: 'EMPLOYEE',
   FINANCE_ADMIN: 'FINANCE_ADMIN',
   PAYROLL_ADMIN: 'PAYROLL_ADMIN',
   RECRUITER: 'RECRUITER',
+  RECRUITMENT_ADMIN: 'RECRUITMENT_ADMIN',
   TRAINER: 'TRAINER',
+  PROJECT_ADMIN: 'PROJECT_ADMIN',
+  ASSET_MANAGER: 'ASSET_MANAGER',
+  EXPENSE_MANAGER: 'EXPENSE_MANAGER',
+  HELPDESK_ADMIN: 'HELPDESK_ADMIN',
+  TRAVEL_ADMIN: 'TRAVEL_ADMIN',
+  COMPLIANCE_OFFICER: 'COMPLIANCE_OFFICER',
+  LMS_ADMIN: 'LMS_ADMIN',
 } as const;
 
 export type RoleCode = (typeof Roles)[keyof typeof Roles];
@@ -710,9 +723,10 @@ export function usePermissions(): UsePermissionsReturn {
   const isManager = useMemo(
     () =>
       hasAnyRole(
-        Roles.MANAGER,
+        Roles.MANAGER, // L-1: not a real backend role; kept for compat
         Roles.TEAM_LEAD,
         Roles.DEPARTMENT_HEAD,
+        Roles.DEPARTMENT_MANAGER,
         Roles.HR_MANAGER,
         Roles.HR_ADMIN,
         Roles.SUPER_ADMIN,

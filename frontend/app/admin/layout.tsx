@@ -19,6 +19,7 @@ import {
   Server,
   Upload,
 } from 'lucide-react';
+import { useUnreadNotificationCount } from '@/lib/hooks/queries/useNotifications';
 
 export default function AdminLayout({
   children,
@@ -30,19 +31,19 @@ export default function AdminLayout({
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const { permissions, roles, hasPermission, isReady } = usePermissions();
   const { user } = useAuth();
+  const { data: unreadCount } = useUnreadNotificationCount();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
     [roles]
   );
 
-  // BUG-017: Check if user has admin-level roles to access /admin route
-  // SuperAdmin bypasses all checks per CLAUDE.md
-  // HR_ADMIN, HR_MANAGER, and TENANT_ADMIN are allowed admin access
+  // H-4: Only SUPER_ADMIN, TENANT_ADMIN, and HR_MANAGER have admin area access.
+  // HR_MANAGER replaces the non-existent HR_ADMIN backend role (M-3).
+  // Note: plain HR_MANAGER users may receive 403 on some admin API calls — acceptable UX.
   const hasAdminAccess = useMemo(
     () =>
       isSuperAdmin ||
       roles.includes(Roles.TENANT_ADMIN) ||
-      roles.includes(Roles.HR_ADMIN) ||
       roles.includes(Roles.HR_MANAGER),
     [isSuperAdmin, roles]
   );
@@ -372,7 +373,7 @@ export default function AdminLayout({
             showMenuButton={true}
             userName={user?.fullName ?? 'User'}
             userRole={userRoleDisplay}
-            notificationCount={3}
+            notificationCount={unreadCount ?? 0}
             onLogout={handleLogout}
             onProfile={() => router.push('/admin/profile')}
             onSettings={() => router.push('/admin/settings')}

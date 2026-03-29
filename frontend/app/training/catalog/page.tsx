@@ -123,7 +123,7 @@ export default function CourseCatalogPage() {
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push('/auth/login');
       return;
     }
     loadCatalog(0);

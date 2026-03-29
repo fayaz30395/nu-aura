@@ -6,6 +6,7 @@ import {
   CreateTimeEntryRequest,
   TimeEntryStatus,
 } from '@/lib/types/time-tracking';
+import { notifications } from '@mantine/notifications';
 
 export const timeTrackingKeys = {
   all: ['time-tracking'] as const,
@@ -149,6 +150,13 @@ export function useCreateTimeEntry() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
     },
+    onError: (error: Error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message || 'Failed to create time entry. Please try again.',
+        color: 'red',
+      });
+    },
   });
 }
 
@@ -165,6 +173,13 @@ export function useUpdateTimeEntry() {
       queryClient.invalidateQueries({ queryKey: timeTrackingKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
     },
+    onError: (error: Error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message || 'Failed to update time entry. Please try again.',
+        color: 'red',
+      });
+    },
   });
 }
 
@@ -178,6 +193,13 @@ export function useDeleteTimeEntry() {
     mutationFn: (id: string) => timeTrackingService.deleteEntry(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+    },
+    onError: (error: Error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message || 'Failed to delete time entry. Please try again.',
+        color: 'red',
+      });
     },
   });
 }

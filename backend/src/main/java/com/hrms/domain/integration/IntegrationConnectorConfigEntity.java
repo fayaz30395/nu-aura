@@ -1,5 +1,6 @@
 package com.hrms.domain.integration;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
@@ -55,9 +56,10 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
      * JSON-serialized configuration settings.
      * Includes API keys, URLs, feature flags, and other sensitive data.
      *
-     * TODO: When EncryptedStringConverter is available, add:
-     * @Convert(converter = EncryptedStringConverter.class)
+     * CRIT-3 FIX: Field-level AES-256-GCM encryption via EncryptedStringConverter.
+     * The encryption key is loaded from the ENCRYPTION_KEY environment variable.
      */
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(name = "config_json", nullable = false, columnDefinition = "TEXT")
     private String configJson;
 

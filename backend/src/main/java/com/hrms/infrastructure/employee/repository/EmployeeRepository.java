@@ -125,6 +125,42 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     Long countByTenantIdAndJoiningDateBetween(UUID tenantId, LocalDate startDate, LocalDate endDate);
 
+    /**
+     * Batch query: returns hire counts grouped by (year, month) for a date range.
+     * Each element is Object[]{year (Integer), month (Integer), count (Long)}.
+     * Replaces 12 individual countByTenantIdAndJoiningDateBetween calls in trend-chart generation.
+     */
+    @Query("SELECT FUNCTION('YEAR', e.joiningDate), FUNCTION('MONTH', e.joiningDate), COUNT(e) " +
+           "FROM Employee e " +
+           "WHERE e.tenantId = :tenantId " +
+           "  AND e.joiningDate >= :startDate " +
+           "  AND e.joiningDate <= :endDate " +
+           "GROUP BY FUNCTION('YEAR', e.joiningDate), FUNCTION('MONTH', e.joiningDate)")
+    List<Object[]> countHiresByTenantIdAndJoiningDateRange(
+        @Param("tenantId")  UUID tenantId,
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate")   LocalDate endDate
+    );
+
+    /**
+     * Batch query: returns termination counts grouped by (year, month) for a date range.
+     * Each element is Object[]{year (Integer), month (Integer), count (Long)}.
+     * Replaces 12 individual countByTenantIdAndStatusAndExitDateBetween calls in trend-chart generation.
+     */
+    @Query("SELECT FUNCTION('YEAR', e.exitDate), FUNCTION('MONTH', e.exitDate), COUNT(e) " +
+           "FROM Employee e " +
+           "WHERE e.tenantId = :tenantId " +
+           "  AND e.status = :status " +
+           "  AND e.exitDate >= :startDate " +
+           "  AND e.exitDate <= :endDate " +
+           "GROUP BY FUNCTION('YEAR', e.exitDate), FUNCTION('MONTH', e.exitDate)")
+    List<Object[]> countTerminationsByTenantIdAndExitDateRange(
+        @Param("tenantId")  UUID tenantId,
+        @Param("status")    Employee.EmployeeStatus status,
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate")   LocalDate endDate
+    );
+
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.joiningDate >= :startDate AND e.joiningDate <= :endDate AND e.status = :status")
     List<Employee> findByTenantIdAndJoiningDateBetweenAndStatus(@Param("tenantId") UUID tenantId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") Employee.EmployeeStatus status);
 

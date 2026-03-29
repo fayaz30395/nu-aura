@@ -33,7 +33,8 @@ import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('RolesPage');
 
-const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+// H-4: HR_MANAGER excluded — they get 403 on admin API calls. M-3: HR_ADMIN does not exist in backend.
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_MANAGER];
 
 const createRoleFormSchema = z.object({
   code: z.string().min(1, 'Code is required').max(50),

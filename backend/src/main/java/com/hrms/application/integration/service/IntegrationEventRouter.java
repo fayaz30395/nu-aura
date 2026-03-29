@@ -3,10 +3,15 @@ package com.hrms.application.integration.service;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.integration.IntegrationConnectorConfigEntity;
 import com.hrms.domain.integration.IntegrationEvent;
+import com.hrms.domain.kafka.FailedKafkaEvent;
+import com.hrms.domain.kafka.FailedKafkaEvent.FailedEventStatus;
+import com.hrms.infrastructure.kafka.repository.FailedKafkaEventRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +38,8 @@ public class IntegrationEventRouter {
     private final ConnectorRegistry connectorRegistry;
     private final IntegrationConnectorConfigService configService;
     private final IntegrationEventLogService eventLogService;
+    private final FailedKafkaEventRepository failedKafkaEventRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * Asynchronously routes an integration event to all active connectors
@@ -130,27 +137,60 @@ public class IntegrationEventRouter {
     }
 
     /**
-     * Publishes a failed event to the Dead Letter Topic (DLT) for manual investigation.
+     * Stores a failed integration event in the {@code failed_kafka_events} table for
+     * admin inspection and replay.
      *
-     * <p><strong>TODO:</strong> Implement Kafka DLT integration. This method should:
-     * <ul>
-     *   <li>Serialize the event and error details</li>
-     *   <li>Publish to the Kafka DLT topic (e.g., "nu-aura.integrations-dlt")</li>
-     *   <li>Include error context (exception stack trace, timestamp, connector ID)</li>
-     *   <li>Store in the FailedKafkaEvent table as a fallback</li>
-     * </ul>
+     * <p>CRIT-4 FIX: Previously a no-op. Now persists the event following the same
+     * pattern used by {@code DeadLetterHandler.persistIfAbsent()}. The "topic" column
+     * is set to {@code "integration-events.dlt"} and targetTopic to
+     * {@code "integration-events"} so the admin replay API can route it correctly.</p>
      *
-     * @param event the integration event that failed
+     * @param event       the integration event that failed
      * @param connectorId the connector that failed to process the event
-     * @param exception the exception thrown by the connector
+     * @param exception   the exception thrown by the connector
      */
-    private void publishToDlt(IntegrationEvent event, String connectorId, Exception exception) {
-        log.warn("TODO: Publishing failed event to DLT: event={}, connector={}",
-            event.eventType(), connectorId);
+    @Transactional
+    void publishToDlt(IntegrationEvent event, String connectorId, Exception exception) {
+        log.warn("SEC: Publishing failed integration event to DLT store: eventType={}, connector={}, error={}",
+            event.eventType(), connectorId, exception.getMessage());
 
-        // TODO: Implement Kafka DLT integration
-        // 1. Create a DLT message with event + error context
-        // 2. Publish to Kafka DLT topic
-        // 3. Store in FailedKafkaEvent table as fallback
+        try {
+            // Serialize the event with connector + error context into a compact JSON payload
+            String payload = objectMapper.writeValueAsString(java.util.Map.of(
+                "eventType", event.eventType(),
+                "entityType", event.entityType() != null ? event.entityType() : "",
+                "entityId", event.entityId() != null ? event.entityId().toString() : "",
+                "tenantId", event.tenantId() != null ? event.tenantId().toString() : "",
+                "connectorId", connectorId,
+                "errorMessage", exception.getMessage() != null ? exception.getMessage() : ""
+            ));
+
+            boolean truncated = payload.length() > FailedKafkaEvent.MAX_PAYLOAD_LENGTH;
+            String storedPayload = truncated
+                ? payload.substring(0, FailedKafkaEvent.MAX_PAYLOAD_LENGTH)
+                : payload;
+
+            FailedKafkaEvent failedEvent = FailedKafkaEvent.builder()
+                .topic("integration-events.dlt")
+                .partition(0)
+                .offset(-1L)
+                .payload(storedPayload)
+                .payloadTruncated(truncated)
+                .errorMessage(exception.getMessage())
+                .status(FailedEventStatus.PENDING_REPLAY)
+                .targetTopic("integration-events")
+                .replayCount(0)
+                .build();
+
+            failedKafkaEventRepository.save(failedEvent);
+
+            log.info("SEC: Failed integration event persisted to DLT store: eventType={}, connector={}",
+                event.eventType(), connectorId);
+
+        } catch (Exception persistenceException) {
+            // Log but do not rethrow — DLT storage failure must not mask the original error
+            log.error("SEC: Failed to persist integration event to DLT store: eventType={}, connector={}, persistenceError={}",
+                event.eventType(), connectorId, persistenceException.getMessage(), persistenceException);
+        }
     }
 }

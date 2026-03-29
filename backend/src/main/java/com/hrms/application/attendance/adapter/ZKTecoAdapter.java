@@ -2,6 +2,7 @@ package com.hrms.application.attendance.adapter;
 
 import com.hrms.api.attendance.dto.BiometricPunchRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -12,8 +13,13 @@ import java.util.List;
  * TODO: Implement ZKTeco SDK push/pull protocol integration.
  * ZKTeco devices typically communicate via their proprietary PUSH protocol
  * or can be polled using the ZK Web API.
+ *
+ * <p>This bean is only registered when {@code app.biometric.zkteco.enabled=true} is set
+ * in application properties. This prevents the unimplemented stub from being loaded
+ * (and polluting BiometricAdapter discovery) in environments where ZKTeco is not in use.
  */
 @Component
+@ConditionalOnProperty(name = "app.biometric.zkteco.enabled", havingValue = "true", matchIfMissing = false)
 @Slf4j
 public class ZKTecoAdapter implements BiometricAdapter {
 

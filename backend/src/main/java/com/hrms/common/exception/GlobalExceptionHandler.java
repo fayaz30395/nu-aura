@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -470,6 +471,27 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Conflict",
                 "This record was modified by another user. Please refresh and try again.", path);
         errorResponse.setErrorCode("CONCURRENT_MODIFICATION");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
+     * LOW-4 FIX: Handle file upload size violations with a client-friendly 413 response.
+     * Previously fell through to the generic Exception handler and returned 500.
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSize(
+            MaxUploadSizeExceededException ex, WebRequest request) {
+
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.PAYLOAD_TOO_LARGE;
+
+        logError("upload", "max_upload_size_exceeded", ex, status, path);
+        recordErrorMetric("upload", "max_upload_size_exceeded", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Payload Too Large",
+                "File size exceeds maximum allowed limit", path);
+        errorResponse.setErrorCode("FILE_TOO_LARGE");
 
         return jsonResponse(status, errorResponse);
     }

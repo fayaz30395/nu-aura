@@ -5,6 +5,7 @@ import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Download, RefreshCw, AlertTriangle, TrendingDown, Shield, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 
@@ -107,13 +108,13 @@ export default function AttritionReportPage() {
             <p className="text-sm text-[var(--text-muted)] mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => refetch()} disabled={loading} className="flex items-center gap-1.5 px-4 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50">
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
-            </button>
+            <Button variant="secondary" size="sm" onClick={() => refetch()} disabled={loading} leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />}>
+              Refresh
+            </Button>
             <PermissionGate permission={Permissions.ANALYTICS_EXPORT}>
-              <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-4 py-2 text-sm bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50">
-                <Download className="h-4 w-4" /> Export CSV
-              </button>
+              <Button variant="primary" size="sm" onClick={exportCSV} disabled={filtered.length === 0} leftIcon={<Download className="h-4 w-4" />}>
+                Export CSV
+              </Button>
             </PermissionGate>
           </div>
         </div>
@@ -162,11 +163,11 @@ export default function AttritionReportPage() {
               onChange={e => setMinScore(Number(e.target.value))}
               className="w-16 text-sm border border-[var(--border-main)] rounded px-2 py-1"
             />
-            <button onClick={() => refetch()} className="text-xs px-2 py-1 bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] rounded">Apply</button>
+            <Button variant="primary" size="sm" onClick={() => refetch()}>Apply</Button>
           </div>
           <span className="text-xs text-[var(--text-muted)]">{filtered.length} employees shown</span>
           {selectedRisk !== 'ALL' && (
-            <button onClick={() => setSelectedRisk('ALL')} className="text-xs text-accent-600 hover:underline">Clear filter</button>
+            <Button variant="ghost" size="sm" onClick={() => setSelectedRisk('ALL')}>Clear filter</Button>
           )}
         </div>
 

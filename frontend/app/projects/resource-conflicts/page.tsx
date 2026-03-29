@@ -149,6 +149,7 @@ export default function ResourceConflictsPage() {
                       </td>
                       <td className="px-4 py-4">
                         <Button size="sm" variant="outline" className="text-success-700 border-success-200 dark:text-success-400 dark:border-success-700 text-xs"
+                          disabled={resolveMutation.isPending}
                           onClick={() => resolveMutation.mutate(c.id)}>
                           Resolve
                         </Button>

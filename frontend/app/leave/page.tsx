@@ -38,7 +38,7 @@ export default function LeavePage() {
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push('/auth/login');
       return;
     }
   }, [isAuthenticated, hasHydrated, router]);
@@ -162,7 +162,7 @@ export default function LeavePage() {
                 Retry
               </button>
               <button
-                onClick={() => window.location.href = '/me/dashboard'}
+                onClick={() => router.push('/me/dashboard')}
                 className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors text-sm font-medium border border-[var(--border-main)]"
               >
                 Go to Home

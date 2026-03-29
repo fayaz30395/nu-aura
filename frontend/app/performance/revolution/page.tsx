@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import {
     Target,
@@ -21,12 +21,14 @@ const PerformanceSpiderChart = dynamic(
   { loading: () => <ChartLoadingFallback />, ssr: false }
 );
 import { AppLayout } from '@/components/layout';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useOKRGraph, usePerformanceSpider } from '@/lib/hooks/queries/usePerformance';
 
 export default function PerformanceRevolutionPage() {
-    const [currentUserId] = useState('me');
+    const { user } = useAuth();
+    const currentUserId = user?.employeeId || 'me';
     const okrGraphQuery = useOKRGraph();
     const performanceSpiderQuery = usePerformanceSpider(currentUserId);
 
@@ -48,7 +50,7 @@ export default function PerformanceRevolutionPage() {
                         <Button variant="outline" size="sm" onClick={() => { okrGraphQuery.refetch(); performanceSpiderQuery.refetch(); }} leftIcon={<RefreshCw className="h-4 w-4" />}>
                             Refresh
                         </Button>
-                        <Button variant="primary" size="sm" className="btn-primary" leftIcon={<Share2 className="h-4 w-4" />}>
+                        <Button variant="primary" size="sm" className="btn-primary opacity-50 cursor-not-allowed" disabled title="Coming soon" leftIcon={<Share2 className="h-4 w-4" />}>
                             Share Progress
                         </Button>
                     </div>

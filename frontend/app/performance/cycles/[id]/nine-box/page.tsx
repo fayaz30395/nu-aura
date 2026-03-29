@@ -1,5 +1,7 @@
 'use client';
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -42,13 +44,13 @@ const BOX_LABELS: Record<string, string> = {
 };
 
 const BOX_COLORS: Record<string, string> = {
-  'low-low': '#fee2e2',
-  'low-med': '#fef3c7',
-  'low-high': '#fef3c7',
-  'med-low': '#fef3c7',
-  'med-med': '#d1fae5',
-  'med-high': '#bbf7d0',
-  'high-low': '#d1fae5',
+  'low-low': 'var(--status-danger-bg)',
+  'low-med': 'var(--status-warning-bg)',
+  'low-high': 'var(--status-warning-bg)',
+  'med-low': 'var(--status-warning-bg)',
+  'med-med': 'var(--status-success-bg)',
+  'med-high': 'var(--status-success-border)',
+  'high-low': 'var(--status-success-bg)',
   'high-med': '#6ee7b7',
   'high-high': '#34d399',
 };
@@ -93,6 +95,7 @@ export default function NineBoxPage() {
 
   return (
     <AppLayout>
+      <PermissionGate permission={Permissions.CALIBRATION_VIEW}>
       <Stack gap="lg" p="md">
         <Group justify="space-between">
         <div>
@@ -131,7 +134,7 @@ export default function NineBoxPage() {
                     w={140}
                     h={120}
                     p="xs"
-                    style={{ backgroundColor: BOX_COLORS[key], border: '1px solid #e5e7eb', overflow: 'hidden' }}
+                    style={{ backgroundColor: BOX_COLORS[key], border: '1px solid var(--border-subtle)', overflow: 'hidden' }}
                   >
                     <Text size="xs" fw={600} mb={4} c="dark.7">
                       {BOX_LABELS[key]} ({employees.length})
@@ -165,12 +168,13 @@ export default function NineBoxPage() {
       <SimpleGrid cols={3} spacing="xs">
         {Object.entries(BOX_LABELS).map(([key, label]) => (
           <Group key={key} gap={6}>
-            <div style={{ width: 12, height: 12, borderRadius: 2, backgroundColor: BOX_COLORS[key], border: '1px solid #ccc' }} />
+            <div style={{ width: 12, height: 12, borderRadius: 2, backgroundColor: BOX_COLORS[key], border: '1px solid var(--border-main)' }} />
             <Text size="xs">{label}</Text>
           </Group>
         ))}
       </SimpleGrid>
       </Stack>
+      </PermissionGate>
     </AppLayout>
   );
 }

@@ -545,7 +545,7 @@ export default function LetterTemplatesPage() {
                         <Badge variant="outline" className="text-xs">System</Badge>
                       )}
                       {!template.isActive && (
-                        <Badge variant="destructive" className="text-xs">Inactive</Badge>
+                        <Badge variant="danger" className="text-xs">Inactive</Badge>
                       )}
                     </div>
                   </div>
@@ -611,7 +611,7 @@ export default function LetterTemplatesPage() {
                     <PermissionGate permission={Permissions.LETTER_TEMPLATE_MANAGE}>
                       <Button
                         size="sm"
-                        variant="destructive"
+                        variant="danger"
                         onClick={() => setShowDeleteConfirm(template.id)}
                         disabled={!!template.isSystemTemplate}
                       >
@@ -951,7 +951,7 @@ export default function LetterTemplatesPage() {
               Cancel
             </Button>
             <Button
-              variant="destructive"
+              variant="danger"
               onClick={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
               disabled={deleteMutation.isPending}
             >
