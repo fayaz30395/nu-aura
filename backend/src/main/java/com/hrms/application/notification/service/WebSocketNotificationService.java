@@ -50,7 +50,7 @@ public class WebSocketNotificationService {
      */
     @Transactional
     public void sendToTenant(UUID tenantId, NotificationMessage notification) {
-        String destination = "/topic/tenant." + tenantId + ".notifications";
+        String destination = "/topic/tenant/" + tenantId + "/notifications";
         notification.setTimestamp(LocalDateTime.now());
         notification.setId(UUID.randomUUID());
 
@@ -75,7 +75,7 @@ public class WebSocketNotificationService {
      */
     @Transactional
     public void sendToDepartment(UUID departmentId, NotificationMessage notification) {
-        String destination = "/topic/department." + departmentId + ".notifications";
+        String destination = "/topic/department/" + departmentId + "/notifications";
         notification.setTimestamp(LocalDateTime.now());
         notification.setId(UUID.randomUUID());
 
@@ -85,16 +85,13 @@ public class WebSocketNotificationService {
     }
 
     /**
-     * Broadcast notification to all connected users.
+     * Broadcast notification to all connected users in the current tenant.
+     * Falls back to tenant-scoped broadcast via {@link #sendToCurrentTenant(NotificationMessage)}.
      */
     public void broadcast(NotificationMessage notification) {
-        String destination = "/topic/broadcast";
-        notification.setTimestamp(LocalDateTime.now());
-        notification.setId(UUID.randomUUID());
-
-        redisWebSocketRelay.convertAndSend(destination, notification);
-
-        log.debug("Broadcast notification: {}", notification.getTitle());
+        // Delegate to tenant-scoped broadcast to enforce tenant isolation.
+        // A global /topic/broadcast without tenantId would leak messages across tenants.
+        sendToCurrentTenant(notification);
     }
 
     // ======================== Convenience Methods ========================

@@ -261,14 +261,34 @@ public class PayrollComponentService {
     /**
      * Evaluates a single SpEL formula using the already-computed component values as variables.
      */
+    /**
+     * SEC: Validate a SpEL expression to reject dangerous patterns that could lead to RCE.
+     * Must be called before evaluating any user/DB-supplied formula.
+     */
+    private void validateSpelExpression(String expr) {
+        if (expr == null || expr.isBlank()) {
+            throw new BusinessException("Formula expression must not be blank");
+        }
+        String[] dangerousPatterns = {"T(", "new ", ".class", "getClass", "forName", "Runtime", "Process", "exec(", "invoke("};
+        String normalized = expr.toLowerCase();
+        for (String pattern : dangerousPatterns) {
+            if (normalized.contains(pattern.toLowerCase())) {
+                throw new BusinessException(
+                        "SEC: Formula contains forbidden pattern '" + pattern + "'. Expression rejected: " + expr);
+            }
+        }
+    }
+
     private BigDecimal evaluateFormula(String formula, Map<String, BigDecimal> componentValues) {
+        // SEC: Validate formula before evaluation to block injection attacks
+        validateSpelExpression(formula);
+
         // SEC-FIX: Use SimpleEvaluationContext (read-only) instead of StandardEvaluationContext
         // to prevent arbitrary method invocations via DB-stored payroll formulas (RCE vector).
-        // withInstanceMethods() is required so BigDecimal arithmetic (add, multiply, etc.) works.
+        // forReadOnlyDataBinding() alone — withInstanceMethods() removed to further restrict surface.
         SimpleEvaluationContext context = SimpleEvaluationContext
                 .forReadOnlyDataBinding()
                 .withRootObject(componentValues)
-                .withInstanceMethods()
                 .build();
 
         // Set each component code as a variable in the SpEL context

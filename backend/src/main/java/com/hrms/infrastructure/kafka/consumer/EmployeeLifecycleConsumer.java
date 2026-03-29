@@ -84,8 +84,8 @@ public class EmployeeLifecycleConsumer {
             TenantContext.setCurrentTenant(tenantId);
         }
         try {
-            // Check idempotency (distributed via Redis)
-            if (idempotencyService.isProcessed(eventId)) {
+            // Atomic idempotency check-and-claim via Redis SETNX
+            if (!idempotencyService.tryProcess(eventId)) {
                 log.debug("Employee lifecycle event {} already processed, skipping", eventId);
                 acknowledgment.acknowledge();
                 return;
@@ -106,9 +106,6 @@ public class EmployeeLifecycleConsumer {
                     throw new IllegalArgumentException("Unknown event type: " + eventTypeEnum);
                 }
             }
-
-            // Mark as processed in Redis
-            idempotencyService.markProcessed(eventId);
 
             // Commit offset
             acknowledgment.acknowledge();

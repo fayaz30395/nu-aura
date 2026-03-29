@@ -74,8 +74,8 @@ public class ApprovalEventConsumer {
             TenantContext.setCurrentTenant(tenantId);
         }
         try {
-            // Check idempotency: skip if already processed (distributed via Redis)
-            if (idempotencyService.isProcessed(eventId)) {
+            // Atomic idempotency check-and-claim via Redis SETNX
+            if (!idempotencyService.tryProcess(eventId)) {
                 log.debug("Event {} already processed, skipping", eventId);
                 acknowledgment.acknowledge();
                 return;
@@ -92,9 +92,6 @@ public class ApprovalEventConsumer {
             } else {
                 log.warn("Unknown approval status: {}", status);
             }
-
-            // Mark event as processed in Redis
-            idempotencyService.markProcessed(eventId);
 
             // Commit offset
             acknowledgment.acknowledge();

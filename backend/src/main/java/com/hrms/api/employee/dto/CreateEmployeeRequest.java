@@ -80,6 +80,10 @@ public class CreateEmployeeRequest {
 
     private Boolean selfManaged;
 
+    private Employee.EmployeeLevel level;
+
+    private Employee.JobRole jobRole;
+
     @NotNull(message = "Employment type is required")
     private Employee.EmploymentType employmentType;
 

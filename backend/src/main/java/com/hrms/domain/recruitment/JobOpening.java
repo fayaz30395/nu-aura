@@ -2,6 +2,7 @@ package com.hrms.domain.recruitment;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@SQLRestriction("is_deleted = false")
 @Table(name = "job_openings")
 @Data
 @EntityListeners(AuditingEntityListener.class)

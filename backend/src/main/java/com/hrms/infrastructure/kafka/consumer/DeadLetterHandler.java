@@ -75,7 +75,8 @@ public class DeadLetterHandler {
                 KafkaTopics.APPROVALS_DLT,
                 KafkaTopics.NOTIFICATIONS_DLT,
                 KafkaTopics.AUDIT_DLT,
-                KafkaTopics.EMPLOYEE_LIFECYCLE_DLT
+                KafkaTopics.EMPLOYEE_LIFECYCLE_DLT,
+                KafkaTopics.FLUENCE_CONTENT_DLT
         ).forEach(topic -> dltCounters.put(topic, buildCounter(topic)));
     }
 
@@ -94,7 +95,8 @@ public class DeadLetterHandler {
                     KafkaTopics.APPROVALS_DLT,
                     KafkaTopics.NOTIFICATIONS_DLT,
                     KafkaTopics.AUDIT_DLT,
-                    KafkaTopics.EMPLOYEE_LIFECYCLE_DLT
+                    KafkaTopics.EMPLOYEE_LIFECYCLE_DLT,
+                    KafkaTopics.FLUENCE_CONTENT_DLT
             },
             groupId = KafkaTopics.GROUP_DLT_HANDLER,
             containerFactory = "dltListenerContainerFactory"

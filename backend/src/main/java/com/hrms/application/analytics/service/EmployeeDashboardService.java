@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hrms.domain.payroll.Payslip;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -28,8 +30,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -348,64 +352,76 @@ public class EmployeeDashboardService {
     private PayrollSummary buildPayrollSummary(UUID tenantId, UUID employeeId) {
         YearMonth currentMonth = YearMonth.now();
         YearMonth lastMonth = currentMonth.minusMonths(1);
+        int currentYear = currentMonth.getYear();
 
+        // Single query: fetch all payslips for current year (eliminates N+1)
+        List<Payslip> currentYearPayslips;
+        try {
+            currentYearPayslips = payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, currentYear);
+        } catch (Exception e) {
+            log.warn("Could not fetch payslip data for year {}: {}", currentYear, e.getMessage());
+            currentYearPayslips = new ArrayList<>();
+        }
+
+        // Also fetch previous year payslips for the 6-month pay trend (if trend crosses year boundary)
+        List<Payslip> previousYearPayslips;
+        try {
+            previousYearPayslips = payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, currentYear - 1);
+        } catch (Exception e) {
+            log.warn("Could not fetch payslip data for year {}: {}", currentYear - 1, e.getMessage());
+            previousYearPayslips = new ArrayList<>();
+        }
+
+        // Index by month for O(1) lookup
+        Map<Integer, Payslip> currentYearByMonth = currentYearPayslips.stream()
+                .collect(Collectors.toMap(Payslip::getPayPeriodMonth, Function.identity(), (a, b) -> a));
+        Map<Integer, Payslip> previousYearByMonth = previousYearPayslips.stream()
+                .collect(Collectors.toMap(Payslip::getPayPeriodMonth, Function.identity(), (a, b) -> a));
+
+        // Last month's payslip details
         BigDecimal lastGross = BigDecimal.ZERO;
         BigDecimal lastNet = BigDecimal.ZERO;
         BigDecimal lastDeductions = BigDecimal.ZERO;
         BigDecimal lastTaxes = BigDecimal.ZERO;
 
-        try {
-            // Get last month's payslip details
-            Object[] payslipData = payslipRepository.findPayslipDetailsByEmployeeIdAndYearAndMonth(
-                    tenantId, employeeId, lastMonth.getYear(), lastMonth.getMonthValue());
-            if (payslipData != null) {
-                lastGross = payslipData[0] != null ? (BigDecimal) payslipData[0] : BigDecimal.ZERO;
-                lastNet = payslipData[1] != null ? (BigDecimal) payslipData[1] : BigDecimal.ZERO;
-                lastDeductions = payslipData[2] != null ? (BigDecimal) payslipData[2] : BigDecimal.ZERO;
-                lastTaxes = payslipData[3] != null ? (BigDecimal) payslipData[3] : BigDecimal.ZERO;
-            }
-        } catch (Exception e) {
-            log.warn("Could not fetch payslip data: {}", e.getMessage());
+        Payslip lastMonthPayslip = lastMonth.getYear() == currentYear
+                ? currentYearByMonth.get(lastMonth.getMonthValue())
+                : previousYearByMonth.get(lastMonth.getMonthValue());
+        if (lastMonthPayslip != null) {
+            lastGross = lastMonthPayslip.getGrossSalary() != null ? lastMonthPayslip.getGrossSalary() : BigDecimal.ZERO;
+            lastNet = lastMonthPayslip.getNetSalary() != null ? lastMonthPayslip.getNetSalary() : BigDecimal.ZERO;
+            lastDeductions = lastMonthPayslip.getTotalDeductions() != null ? lastMonthPayslip.getTotalDeductions() : BigDecimal.ZERO;
+            lastTaxes = lastMonthPayslip.getIncomeTax() != null ? lastMonthPayslip.getIncomeTax() : BigDecimal.ZERO;
         }
 
-        // YTD calculations
+        // YTD calculations from in-memory data
         BigDecimal ytdGross = BigDecimal.ZERO;
         BigDecimal ytdNet = BigDecimal.ZERO;
         BigDecimal ytdDeductions = BigDecimal.ZERO;
         BigDecimal ytdTaxes = BigDecimal.ZERO;
 
-        int currentYear = currentMonth.getYear();
-        for (int month = 1; month <= currentMonth.getMonthValue(); month++) {
-            try {
-                Object[] data = payslipRepository.findPayslipDetailsByEmployeeIdAndYearAndMonth(
-                        tenantId, employeeId, currentYear, month);
-                if (data != null) {
-                    ytdGross = ytdGross.add(data[0] != null ? (BigDecimal) data[0] : BigDecimal.ZERO);
-                    ytdNet = ytdNet.add(data[1] != null ? (BigDecimal) data[1] : BigDecimal.ZERO);
-                    ytdDeductions = ytdDeductions.add(data[2] != null ? (BigDecimal) data[2] : BigDecimal.ZERO);
-                    ytdTaxes = ytdTaxes.add(data[3] != null ? (BigDecimal) data[3] : BigDecimal.ZERO);
-                }
-            } catch (Exception e) {
-                // Skip months without payslips
+        for (Payslip p : currentYearPayslips) {
+            if (p.getPayPeriodMonth() <= currentMonth.getMonthValue()) {
+                ytdGross = ytdGross.add(p.getGrossSalary() != null ? p.getGrossSalary() : BigDecimal.ZERO);
+                ytdNet = ytdNet.add(p.getNetSalary() != null ? p.getNetSalary() : BigDecimal.ZERO);
+                ytdDeductions = ytdDeductions.add(p.getTotalDeductions() != null ? p.getTotalDeductions() : BigDecimal.ZERO);
+                ytdTaxes = ytdTaxes.add(p.getIncomeTax() != null ? p.getIncomeTax() : BigDecimal.ZERO);
             }
         }
 
-        // Pay trend (6 months)
+        // Pay trend (6 months) from in-memory data
         List<PayTrendPoint> payTrend = new ArrayList<>();
         for (int i = 5; i >= 0; i--) {
             YearMonth month = currentMonth.minusMonths(i);
             BigDecimal gross = BigDecimal.ZERO;
             BigDecimal net = BigDecimal.ZERO;
 
-            try {
-                Object[] data = payslipRepository.findPayslipDetailsByEmployeeIdAndYearAndMonth(
-                        tenantId, employeeId, month.getYear(), month.getMonthValue());
-                if (data != null) {
-                    gross = data[0] != null ? (BigDecimal) data[0] : BigDecimal.ZERO;
-                    net = data[1] != null ? (BigDecimal) data[1] : BigDecimal.ZERO;
-                }
-            } catch (Exception e) {
-                // Use zero for missing months
+            Payslip p = month.getYear() == currentYear
+                    ? currentYearByMonth.get(month.getMonthValue())
+                    : previousYearByMonth.get(month.getMonthValue());
+            if (p != null) {
+                gross = p.getGrossSalary() != null ? p.getGrossSalary() : BigDecimal.ZERO;
+                net = p.getNetSalary() != null ? p.getNetSalary() : BigDecimal.ZERO;
             }
 
             payTrend.add(PayTrendPoint.builder()

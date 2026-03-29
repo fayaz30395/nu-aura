@@ -133,12 +133,13 @@ public class LetterPdfService {
                 addSignatureSection(document, template);
             }
 
-            document.close();
             return out.toByteArray();
 
         } catch (DocumentException e) {
             log.error("Error generating PDF for letter {}: {}", letter.getId(), e.getMessage(), e);
             throw new BusinessException("Failed to generate PDF: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) document.close();
         }
     }
 

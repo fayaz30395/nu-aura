@@ -107,11 +107,12 @@ public class PayslipPdfService {
             // Add footer
             addFooter(document);
 
-            document.close();
             return out.toByteArray();
         } catch (RuntimeException e) {
             log.error("Error generating payslip PDF: {}", e.getMessage(), e);
             throw new DocumentException("Failed to generate payslip PDF: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) document.close();
         }
     }
 

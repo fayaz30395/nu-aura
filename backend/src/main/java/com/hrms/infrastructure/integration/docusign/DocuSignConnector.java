@@ -608,9 +608,14 @@ public class DocuSignConnector implements IntegrationConnector {
      */
     private boolean verifyHmacSignature(String body, String signature, String hmacSecret) {
         try {
-            if (hmacSecret == null || hmacSecret.isBlank() || signature == null) {
-                log.warn("HMAC verification skipped: missing secret or signature");
-                return true; // Skip verification if not configured
+            if (hmacSecret == null || hmacSecret.isBlank()) {
+                log.error("SEC: HMAC verification failed — HMAC secret is not configured. " +
+                        "Rejecting webhook to prevent signature bypass.");
+                return false;
+            }
+            if (signature == null || signature.isBlank()) {
+                log.error("SEC: HMAC verification failed — signature header is missing from webhook request.");
+                return false;
             }
 
             Mac mac = Mac.getInstance("HmacSHA256");
@@ -623,7 +628,10 @@ public class DocuSignConnector implements IntegrationConnector {
             byte[] hash = mac.doFinal(body.getBytes(StandardCharsets.UTF_8));
             String computed = Base64.getEncoder().encodeToString(hash);
 
-            return computed.equals(signature);
+            // SEC: Use constant-time comparison to prevent timing side-channel attacks
+            return java.security.MessageDigest.isEqual(
+                    computed.getBytes(StandardCharsets.UTF_8),
+                    signature.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error("Error verifying HMAC signature: {}", e.getMessage());
             return false;

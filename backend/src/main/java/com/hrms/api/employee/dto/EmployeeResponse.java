@@ -18,6 +18,7 @@ import java.util.UUID;
 public class EmployeeResponse {
 
     private UUID id;
+    private UUID userId;
     private String employeeCode;
     private String firstName;
     private String middleName;
@@ -57,6 +58,7 @@ public class EmployeeResponse {
     private String bankName;
     private String bankIfscCode;
     private String taxId;
+    private String profilePhotoUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<EmployeeResponse> subordinates;
@@ -64,6 +66,7 @@ public class EmployeeResponse {
     public static EmployeeResponse fromEmployee(Employee employee) {
         return EmployeeResponse.builder()
                 .id(employee.getId())
+                .userId(employee.getUser() != null ? employee.getUser().getId() : null)
                 .employeeCode(employee.getEmployeeCode())
                 .firstName(employee.getFirstName())
                 .middleName(employee.getMiddleName())
@@ -98,6 +101,7 @@ public class EmployeeResponse {
                 .bankName(employee.getBankName())
                 .bankIfscCode(employee.getBankIfscCode())
                 .taxId(employee.getTaxId())
+                .profilePhotoUrl(employee.getAvatarUrl())
                 .createdAt(employee.getCreatedAt())
                 .updatedAt(employee.getUpdatedAt())
                 .build();

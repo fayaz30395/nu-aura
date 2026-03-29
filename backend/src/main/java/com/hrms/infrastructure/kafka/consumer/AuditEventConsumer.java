@@ -16,6 +16,8 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PreDestroy;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -76,8 +78,8 @@ public class AuditEventConsumer {
             TenantContext.setCurrentTenant(event.getTenantId());
         }
         try {
-            // Check idempotency (distributed via Redis)
-            if (idempotencyService.isProcessed(eventId)) {
+            // Atomic idempotency check-and-claim via Redis SETNX
+            if (!idempotencyService.tryProcess(eventId)) {
                 log.debug("Audit event {} already processed, skipping", eventId);
                 acknowledgment.acknowledge();
                 return;
@@ -86,28 +88,25 @@ public class AuditEventConsumer {
             log.debug("Processing audit event: action={}, entity={}, user={}, tenant={}",
                     event.getAction(), event.getEntityType(), event.getUserId(), event.getTenantId());
 
-            // Add to batch
+            // Add to batch; persist and ACK only after successful DB write
             synchronized (eventBatch) {
                 eventBatch.add(event);
 
-                // Persist batch if size reached
+                // Persist batch if size reached, then ACK all events in the batch
                 if (eventBatch.size() >= BATCH_SIZE) {
                     persistAuditBatch(eventBatch);
                     eventBatch.clear();
                 }
             }
 
-            // Mark as processed in Redis
-            idempotencyService.markProcessed(eventId);
-
-            // Always acknowledge (even if persistence fails, we don't retry)
+            // ACK after persist — if JVM crashes before this line, Kafka will redeliver
             acknowledgment.acknowledge();
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             // Log error but don't throw; audit events should never block business operations
             log.error("Error processing audit event {}: {}", eventId, e.getMessage(), e);
-            // Still acknowledge to move forward
-            acknowledgment.acknowledge();
+            // Do NOT acknowledge on failure — Kafka will redeliver after consumer restart
+            // This prevents data loss at the cost of potential reprocessing (idempotency handles dedup)
         } finally {
             TenantContext.clear();
         }
@@ -158,8 +157,9 @@ public class AuditEventConsumer {
 
     /**
      * Flush any remaining events in the batch on shutdown.
-     * Called by Spring during graceful shutdown.
+     * Called by Spring during graceful shutdown via @PreDestroy.
      */
+    @PreDestroy
     public void flushPendingEvents() {
         synchronized (eventBatch) {
             if (!eventBatch.isEmpty()) {

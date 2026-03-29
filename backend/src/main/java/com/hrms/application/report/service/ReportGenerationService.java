@@ -51,9 +51,9 @@ public class ReportGenerationService {
         String filename = String.format("payslip_%s_%d_%02d.pdf", employeeId, year, month);
         String monthName = LocalDate.of(year, month, 1).getMonth().toString();
 
+        Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Document document = new Document(PageSize.A4, 50, 50, 50, 50);
             PdfWriter.getInstance(document, outputStream);
             document.open();
 
@@ -112,6 +112,8 @@ public class ReportGenerationService {
         } catch (DocumentException e) {
             log.error("Failed to generate payslip for employee {}", employeeId, e);
             throw new BusinessException("Failed to generate payslip: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) document.close();
         }
     }
 
@@ -126,9 +128,9 @@ public class ReportGenerationService {
                 startDate.format(DateTimeFormatter.ISO_DATE),
                 endDate.format(DateTimeFormatter.ISO_DATE));
 
+        Document document = new Document(PageSize.A4.rotate(), 50, 50, 50, 50);
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Document document = new Document(PageSize.A4.rotate(), 50, 50, 50, 50);
             PdfWriter.getInstance(document, outputStream);
             document.open();
 
@@ -177,6 +179,8 @@ public class ReportGenerationService {
         } catch (DocumentException e) {
             log.error("Failed to generate attendance report for {}", entityId, e);
             throw new BusinessException("Failed to generate attendance report: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) document.close();
         }
     }
 
@@ -187,9 +191,9 @@ public class ReportGenerationService {
     public ReportResult generateLeaveReport(UUID entityId, int year, Map<String, Object> leaveData) {
         String filename = String.format("leave_report_%s_%d.pdf", entityId, year);
 
+        Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Document document = new Document(PageSize.A4, 50, 50, 50, 50);
             PdfWriter.getInstance(document, outputStream);
             document.open();
 
@@ -238,6 +242,8 @@ public class ReportGenerationService {
         } catch (DocumentException e) {
             log.error("Failed to generate leave report for {}", entityId, e);
             throw new BusinessException("Failed to generate leave report: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) document.close();
         }
     }
 
@@ -251,9 +257,9 @@ public class ReportGenerationService {
                 employeeId,
                 LocalDate.now().format(DateTimeFormatter.ISO_DATE));
 
+        Document document = new Document(PageSize.A4, 72, 72, 72, 72);
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Document document = new Document(PageSize.A4, 72, 72, 72, 72);
             PdfWriter.getInstance(document, outputStream);
             document.open();
 
@@ -320,6 +326,8 @@ public class ReportGenerationService {
         } catch (DocumentException e) {
             log.error("Failed to generate {} letter for employee {}", letterType, employeeId, e);
             throw new BusinessException("Failed to generate letter: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) document.close();
         }
     }
 
@@ -333,9 +341,9 @@ public class ReportGenerationService {
                 reportPeriod,
                 LocalDate.now().format(DateTimeFormatter.ISO_DATE));
 
+        Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Document document = new Document(PageSize.A4, 50, 50, 50, 50);
             PdfWriter.getInstance(document, outputStream);
             document.open();
 
@@ -397,6 +405,8 @@ public class ReportGenerationService {
         } catch (DocumentException e) {
             log.error("Failed to generate analytics report", e);
             throw new BusinessException("Failed to generate analytics report: " + e.getMessage());
+        } finally {
+            if (document.isOpen()) document.close();
         }
     }
 

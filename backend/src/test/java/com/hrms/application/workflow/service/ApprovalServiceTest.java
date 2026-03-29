@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,7 +66,6 @@ class ApprovalServiceTest {
             assertThat(result).isEqualTo(5);
 
             verify(stepExecutionRepository, times(1)).countPendingForUser(tenantId, userId);
-            verify(TenantContext, times(1)).requireCurrentTenant();
         }
 
         @Test
@@ -130,8 +128,8 @@ class ApprovalServiceTest {
             // Act
             approvalService.getPendingApprovalsCount(userId);
 
-            // Assert
-            verify(TenantContext, times(1)).requireCurrentTenant();
+            // Assert - TenantContext.requireCurrentTenant was called (verified via mockStatic)
+            tenantContextMock.verify(TenantContext::requireCurrentTenant, atLeastOnce());
         }
 
         @Test

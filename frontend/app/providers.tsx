@@ -1,6 +1,6 @@
 'use client';
 
-import { QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useState, useEffect } from 'react';
 import { Notifications } from '@mantine/notifications';
@@ -13,7 +13,8 @@ import { useTokenRefresh } from '@/lib/hooks/useTokenRefresh';
 import { useSessionTimeout } from '@/lib/hooks/useSessionTimeout';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { env } from '@/lib/config';
-import { initGlobalErrorHandlers, createQueryErrorHandler } from '@/lib/utils/error-handler';
+import { initGlobalErrorHandlers } from '@/lib/utils/error-handler';
+import { getQueryClient } from '@/lib/queryClient';
 
 // Import Mantine core styles
 import '@mantine/core/styles.css';
@@ -42,35 +43,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     initGlobalErrorHandlers();
   }, []);
 
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        mutationCache: new MutationCache({
-          onError: (error) => {
-            // Global error handler for all mutations
-            // Shows user-friendly error notifications
-            createQueryErrorHandler()(error as Error);
-          },
-        }),
-        defaultOptions: {
-          queries: {
-            // Data is fresh for 5 minutes after fetching
-            staleTime: 5 * 60 * 1000,
-            // Retry failed requests up to 2 times (3 total attempts)
-            retry: 2,
-            // Don't refetch when window regains focus (reduces unnecessary requests)
-            refetchOnWindowFocus: false,
-            // Set a reasonable timeout for queries
-            gcTime: 10 * 60 * 1000, // 10 minutes
-          },
-          mutations: {
-            retry: 1,
-            // Note: onError handler can still be defined per-mutation for custom behavior
-            // The global MutationCache.onError above runs for all mutations
-          },
-        },
-      })
-  );
+  const [queryClient] = useState(() => getQueryClient());
 
   const content = (
     <QueryClientProvider client={queryClient}>

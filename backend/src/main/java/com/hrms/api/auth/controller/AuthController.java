@@ -196,49 +196,16 @@ public class AuthController {
      * Uses ResponseCookie for proper SameSite support.
      */
     private void setAuthCookies(HttpServletResponse response, String accessToken, String refreshToken) {
-        // Access token cookie - sent with all requests
-        ResponseCookie accessCookie = ResponseCookie.from(CookieConfig.ACCESS_TOKEN_COOKIE, accessToken)
-                .httpOnly(true)
-                .secure(cookieConfig.isSecureCookie())
-                .path("/")
-                .maxAge(3600) // 1 hour
-                .sameSite("Strict")
-                .build();
-
-        // Refresh token cookie - only sent to auth endpoints
-        ResponseCookie refreshCookie = ResponseCookie.from(CookieConfig.REFRESH_TOKEN_COOKIE, refreshToken)
-                .httpOnly(true)
-                .secure(cookieConfig.isSecureCookie())
-                .path("/api/v1/auth")
-                .maxAge(86400) // 24 hours
-                .sameSite("Strict")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        // SEC: Delegate to CookieConfig which sets HttpOnly, Secure, SameSite=Strict, Path
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createAccessTokenCookie(accessToken).toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createRefreshTokenCookie(refreshToken).toString());
     }
 
     /**
      * Clear auth cookies (for logout).
      */
     private void clearAuthCookies(HttpServletResponse response) {
-        ResponseCookie clearAccessCookie = ResponseCookie.from(CookieConfig.ACCESS_TOKEN_COOKIE, "")
-                .httpOnly(true)
-                .secure(cookieConfig.isSecureCookie())
-                .path("/")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
-
-        ResponseCookie clearRefreshCookie = ResponseCookie.from(CookieConfig.REFRESH_TOKEN_COOKIE, "")
-                .httpOnly(true)
-                .secure(cookieConfig.isSecureCookie())
-                .path("/api/v1/auth")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, clearAccessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, clearRefreshCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createClearAccessTokenCookie().toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieConfig.createClearRefreshTokenCookie().toString());
     }
 }

@@ -2,6 +2,7 @@ package com.hrms.domain.wall.model;
 
 import com.hrms.domain.employee.Employee;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.TenantId;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@SQLRestriction("is_deleted = false")
 @Table(name = "post_comments", indexes = {
     @Index(name = "idx_post_comment_tenant", columnList = "tenant_id"),
     @Index(name = "idx_post_comment_post", columnList = "post_id"),

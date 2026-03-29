@@ -69,8 +69,8 @@ public class NotificationEventConsumer {
             TenantContext.setCurrentTenant(tenantId);
         }
         try {
-            // Check idempotency (distributed via Redis)
-            if (idempotencyService.isProcessed(eventId)) {
+            // Atomic idempotency check-and-claim via Redis SETNX
+            if (!idempotencyService.tryProcess(eventId)) {
                 log.debug("Notification event {} already processed, skipping", eventId);
                 acknowledgment.acknowledge();
                 return;
@@ -91,17 +91,14 @@ public class NotificationEventConsumer {
                 }
             }
 
-            // Mark as processed in Redis
-            idempotencyService.markProcessed(eventId);
             acknowledgment.acknowledge();
 
             log.info("Successfully processed notification event: {}", eventId);
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
-            log.error("Error processing notification event {}: {}", eventId, e.getMessage(), e);
-
-            // Handle retry logic
-            handleRetry(event, acknowledgment);
+            log.error("Failed to process notification event: {}", eventId, e);
+            // Re-throw to let DefaultErrorHandler handle retry + DLT routing
+            throw e;
         } finally {
             TenantContext.clear();
         }
@@ -264,42 +261,4 @@ public class NotificationEventConsumer {
         }
     }
 
-    /**
-     * Handle retry logic for failed notifications.
-     * Implements exponential backoff by republishing to Kafka.
-     */
-    private void handleRetry(NotificationEvent event, Acknowledgment acknowledgment) {
-        Integer currentRetry = event.getRetryCount() != null ? event.getRetryCount() : 0;
-        Integer maxRetries = event.getMaxRetries() != null ? event.getMaxRetries() : 3;
-
-        if (currentRetry < maxRetries) {
-            // Increment retry count and republish
-            event.setRetryCount(currentRetry + 1);
-
-            long backoffMs = calculateBackoff(currentRetry);
-            log.warn("Notification event {} will be retried in {}ms (attempt {}/{})",
-                    event.getEventId(), backoffMs, currentRetry + 1, maxRetries);
-
-            // Republish event with incremented retry count
-            // In a real implementation, this would use a Kafka template with delayed sending
-            // For now, we log and don't acknowledge to allow Kafka broker to retry
-            log.info("Event {} republished for retry with backoff {}ms", event.getEventId(), backoffMs);
-
-            // Don't acknowledge; let Kafka retry based on partition leader timeout
-        } else {
-            // Max retries exceeded; move to DLT (will happen automatically based on Kafka config)
-            log.error("Notification event {} exceeded max retries ({}/{}), moving to DLT",
-                    event.getEventId(), currentRetry, maxRetries);
-            // Don't acknowledge; consumer group will move it based on redelivery config
-        }
-    }
-
-    /**
-     * Calculate exponential backoff duration.
-     * Formula: baseDelay * (2 ^ retryCount)
-     */
-    private long calculateBackoff(int retryCount) {
-        long baseDelay = 1000; // 1 second
-        return baseDelay * (long) Math.pow(2, retryCount);
-    }
 }

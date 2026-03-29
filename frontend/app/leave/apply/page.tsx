@@ -18,7 +18,7 @@ const leaveFormSchema = z.object({
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
   isHalfDay: z.boolean().default(false),
-  halfDayPeriod: z.enum(['MORNING', 'AFTERNOON']).optional(),
+  halfDayPeriod: z.enum(['FIRST_HALF', 'SECOND_HALF']).optional(),
   reason: z.string().min(1, 'Reason is required').max(1000, 'Reason must not exceed 1000 characters'),
   documentPath: z.string().optional(),
 });
@@ -193,7 +193,7 @@ export default function ApplyLeavePage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
-                      value="MORNING"
+                      value="FIRST_HALF"
                       {...register('halfDayPeriod')}
                       className="w-4 h-4 text-sky-700"
                     />
@@ -202,7 +202,7 @@ export default function ApplyLeavePage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
-                      value="AFTERNOON"
+                      value="SECOND_HALF"
                       {...register('halfDayPeriod')}
                       className="w-4 h-4 text-sky-700"
                     />

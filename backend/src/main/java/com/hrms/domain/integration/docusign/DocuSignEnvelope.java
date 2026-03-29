@@ -6,6 +6,7 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -38,6 +39,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@SQLRestriction("is_deleted = false")
 @Table(name = "docusign_envelopes", indexes = {
     @Index(name = "idx_docusign_envelope_tenant_entity", columnList = "tenant_id, entity_type, entity_id"),
     @Index(name = "idx_docusign_envelope_id", columnList = "envelope_id"),

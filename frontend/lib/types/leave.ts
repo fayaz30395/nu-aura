@@ -64,7 +64,7 @@ export type LeaveRequestStatus =
   | 'REJECTED'
   | 'CANCELLED';
 
-export type HalfDayPeriod = 'MORNING' | 'AFTERNOON';
+export type HalfDayPeriod = 'FIRST_HALF' | 'SECOND_HALF';
 
 export interface LeaveRequest {
   id: string;
