@@ -10,7 +10,7 @@ services:
     container_name: hrms-redis
     restart: unless-stopped
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:6380:6379"  # mapped to 6380 to avoid conflict with local Redis on 6379
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-devRedis123!}
@@ -66,7 +66,7 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server=localhost:9092"]
+      test: ["CMD-SHELL", "/bin/kafka-broker-api-versions --bootstrap-server=localhost:9092"]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -95,23 +95,12 @@ services:
     networks:
       - hrms_network
 
-  minio:
-    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
-    container_name: hrms-minio
-    restart: unless-stopped
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env}
-    volumes:
-      - minio_data:/data
-    command: server /data --console-address ":9001"
-    networks:
-      - hrms_network
+  # minio removed — using Google Drive for file storage
 
+  # backend and frontend run locally in dev (./start-backend.sh + npm run dev)
+  # Use 'docker-compose --profile app up -d' to run them in containers instead
   backend:
+    profiles: ["app"]
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -124,8 +113,6 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
-      minio:
-        condition: service_started
       elasticsearch:
         condition: service_healthy
     environment:
@@ -137,9 +124,6 @@ services:
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-devRedis123!}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
       APP_SECURITY_ENCRYPTION_KEY: ${APP_SECURITY_ENCRYPTION_KEY:?APP_SECURITY_ENCRYPTION_KEY must be set in .env}
       FRONTEND_URL: http://localhost:3000
@@ -147,6 +131,7 @@ services:
       - hrms_network
 
   frontend:
+    profiles: ["app"]
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -175,14 +160,11 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
-    depends_on:
-      - backend
     networks:
       - hrms_network
 
 volumes:
   redis_data:
-  minio_data:
   prometheus_data:
   zookeeper_data:
   zookeeper_logs:

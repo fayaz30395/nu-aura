@@ -47,6 +47,12 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'compact' | 'minimal';
   logo?: React.ReactNode;
   logoCollapsed?: React.ReactNode;
+  /**
+   * Optional prefix for the localStorage key used to persist section collapse state.
+   * Allows multiple sidebar instances (e.g., main app vs admin) to maintain independent state.
+   * Defaults to '' (uses the base key 'sidebar-collapsed-sections').
+   */
+  storageKeyPrefix?: string;
 }
 
 const STORAGE_KEY_COLLAPSED = 'sidebar-collapsed';
@@ -450,6 +456,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       onCollapsedChange,
       collapsible = true,
       variant: _variant = 'default',
+      storageKeyPrefix = '',
       ..._props
     },
     ref
@@ -460,12 +467,18 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const [flyoverTriggerRect, setFlyoverTriggerRect] = useState<DOMRect | null>(null);
     const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
+    // Build a namespaced storage key so multiple sidebar instances (main app vs admin)
+    // maintain independent section-collapse state.
+    const sectionStorageKey = storageKeyPrefix
+      ? `${storageKeyPrefix}-${STORAGE_KEY_COLLAPSED_SECTIONS}`
+      : STORAGE_KEY_COLLAPSED_SECTIONS;
+
     // Load collapsed section state from localStorage
     // NOTE: Sidebar collapsed state (expand/collapse) is managed by AppLayout to avoid
     // dual-source race conditions. Only section collapse (which sections are open) is local.
     useEffect(() => {
       if (typeof window !== 'undefined') {
-        const savedCollapsedSections = localStorage.getItem(STORAGE_KEY_COLLAPSED_SECTIONS);
+        const savedCollapsedSections = localStorage.getItem(sectionStorageKey);
         if (savedCollapsedSections) {
           try {
             const parsed = JSON.parse(savedCollapsedSections);
@@ -475,7 +488,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           }
         }
       }
-    }, []);
+    }, [sectionStorageKey]);
 
     // Sync with prop changes
     useEffect(() => {
@@ -516,13 +529,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         } else {
           newSet.add(sectionId);
         }
-        // Persist to localStorage
+        // Persist to localStorage using the namespaced key
         if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEY_COLLAPSED_SECTIONS, JSON.stringify([...newSet]));
+          localStorage.setItem(sectionStorageKey, JSON.stringify([...newSet]));
         }
         return newSet;
       });
-    }, []);
+    }, [sectionStorageKey]);
 
     // Group items by section
     const groupedItems = React.useMemo(() => {

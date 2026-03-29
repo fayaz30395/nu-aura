@@ -299,20 +299,20 @@ export default function AdminLayout({
   if (!isReady || !hasAdminAccess) {
     return (
       <DarkModeProvider>
-        <div className="flex h-screen items-center justify-center bg-surface-50">
+        <div className="flex h-screen items-center justify-center bg-[var(--bg-page)]">
           <div className="text-center">
             {!isReady ? (
               <div className="space-y-4">
-                <div className="h-12 w-12 rounded-full border-4 border-surface-200 border-t-accent-700 animate-spin mx-auto" />
-                <p className="text-surface-600">Loading...</p>
+                <div className="h-12 w-12 rounded-full border-4 border-[var(--border-subtle)] border-t-accent-700 animate-spin mx-auto" />
+                <p className="text-[var(--text-secondary)]">Loading...</p>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="h-12 w-12 rounded-full bg-danger-100 flex items-center justify-center mx-auto">
-                  <span className="text-danger-600 text-lg">✕</span>
+                <div className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center mx-auto">
+                  <span className="text-danger-600 dark:text-danger-400 text-lg">✕</span>
                 </div>
-                <h1 className="text-xl font-semibold text-surface-900">Access Denied</h1>
-                <p className="text-surface-600">You do not have permission to access the admin dashboard.</p>
+                <h1 className="text-xl font-semibold text-[var(--text-primary)]">Access Denied</h1>
+                <p className="text-[var(--text-secondary)]">You do not have permission to access the admin dashboard.</p>
               </div>
             )}
           </div>
@@ -323,7 +323,7 @@ export default function AdminLayout({
 
   return (
     <DarkModeProvider>
-      <div className="flex h-screen overflow-hidden bg-surface-50">
+      <div className="flex h-screen overflow-hidden bg-[var(--bg-page)]">
         {/* Sidebar — fixed width, stable layout */}
         <aside
           className="hidden md:flex flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
@@ -339,6 +339,7 @@ export default function AdminLayout({
             collapsed={isCollapsed}
             onCollapsedChange={handleCollapsedChange}
             collapsible={true}
+            storageKeyPrefix="admin"
             className="h-full"
           />
         </aside>
@@ -356,6 +357,7 @@ export default function AdminLayout({
                 activeId={getActiveId()}
                 onItemClick={handleItemClick}
                 collapsible={false}
+                storageKeyPrefix="admin"
                 className="h-full"
               />
             </div>
@@ -377,7 +379,7 @@ export default function AdminLayout({
           />
 
           {/* Scrollable content area */}
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto bg-[var(--bg-page)]">
             {children}
           </main>
         </div>

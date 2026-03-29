@@ -12,5 +12,6 @@
     "ralph-loop@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true
   },
-  "teammateDisplayMode": "iterm2"
+  "teammateDisplayMode": "iterm2",
+  "teammate-mode": "in-process"
 }
