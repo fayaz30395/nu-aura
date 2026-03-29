@@ -39,7 +39,7 @@ export default function FeaturesPage() {
       id: 'core',
       name: 'Core HR',
       icon: Users,
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-accent-500 to-accent-600',
       features: [
         {
           title: 'Employee Directory',
@@ -81,7 +81,7 @@ export default function FeaturesPage() {
       id: 'attendance',
       name: 'Attendance & Time',
       icon: Clock,
-      color: 'from-emerald-500 to-emerald-600',
+      color: 'from-success-500 to-success-600',
       features: [
         {
           title: 'Smart Check-in/out',
@@ -122,7 +122,7 @@ export default function FeaturesPage() {
       id: 'leave',
       name: 'Leave Management',
       icon: Calendar,
-      color: 'from-violet-500 to-purple-600',
+      color: 'from-accent-700 to-accent-800',
       features: [
         {
           title: 'Leave Policies',
@@ -163,7 +163,7 @@ export default function FeaturesPage() {
       id: 'payroll',
       name: 'Payroll & Compensation',
       icon: DollarSign,
-      color: 'from-amber-500 to-orange-500',
+      color: 'from-warning-500 to-warning-500',
       features: [
         {
           title: 'Salary Processing',
@@ -204,7 +204,7 @@ export default function FeaturesPage() {
       id: 'performance',
       name: 'Performance & Goals',
       icon: TrendingUp,
-      color: 'from-pink-500 to-rose-600',
+      color: 'from-accent-700 to-rose-600',
       features: [
         {
           title: 'OKRs & Goals',
@@ -245,7 +245,7 @@ export default function FeaturesPage() {
       id: 'recruitment',
       name: 'Recruitment & ATS',
       icon: UserPlus,
-      color: 'from-cyan-500 to-blue-500',
+      color: 'from-accent-500 to-accent-500',
       features: [
         {
           title: 'Job Management',
@@ -286,7 +286,7 @@ export default function FeaturesPage() {
       id: 'learning',
       name: 'Learning & Development',
       icon: BookOpen,
-      color: 'from-indigo-500 to-purple-600',
+      color: 'from-accent-500 to-accent-800',
       features: [
         {
           title: 'Course Catalog',
@@ -327,7 +327,7 @@ export default function FeaturesPage() {
       id: 'benefits',
       name: 'Benefits & Wellness',
       icon: Heart,
-      color: 'from-rose-500 to-pink-600',
+      color: 'from-rose-500 to-accent-800',
       features: [
         {
           title: 'Benefits Administration',
@@ -424,7 +424,7 @@ export default function FeaturesPage() {
                 onClick={() => setActiveTab(module.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === module.id
-                    ? 'bg-sky-500 text-white shadow-lg'
+                    ? 'bg-accent-500 text-white shadow-lg'
                     : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-main)]'
                 }`}
               >
@@ -491,8 +491,8 @@ export default function FeaturesPage() {
                 key={index}
                 className="flex flex-col items-center gap-4 group cursor-pointer"
               >
-                <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-sky-500 group-hover:shadow-card-hover transition-all">
-                  <integration.icon className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-sky-500 transition-colors" />
+                <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-accent-500 group-hover:shadow-card-hover transition-all">
+                  <integration.icon className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-accent-500 transition-colors" />
                 </div>
                 <span className="text-sm font-medium text-[var(--text-muted)]">
                   {integration.name}

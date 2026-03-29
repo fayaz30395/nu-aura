@@ -50,14 +50,14 @@ export function WelcomeBanner({
       />
 
       <div className="relative z-10">
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-blue-200/70 mb-1">
+        <p className="text-xs font-medium uppercase tracking-[0.15em] text-accent-200/70 mb-1">
           {today}
         </p>
         <h1 className="text-2xl font-bold text-white tracking-tight leading-tight">
           {greeting}, {firstName}
         </h1>
         {(designation || department) && (
-          <p className="mt-1.5 text-sm text-blue-100/60 font-medium">
+          <p className="mt-1.5 text-sm text-accent-100/60 font-medium">
             {designation}{designation && department ? ' \u00B7 ' : ''}{department}
           </p>
         )}
@@ -104,8 +104,8 @@ export function QuickAccessWidget({
                 className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-3 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/30">
-                    <AlertCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-warning-100 dark:bg-warning-900/30">
+                    <AlertCircle className="h-3.5 w-3.5 text-warning-600 dark:text-warning-400" />
                   </div>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Pending Approvals
@@ -126,8 +126,8 @@ export function QuickAccessWidget({
                 className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-3 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                    <Clock className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                  <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+                    <Clock className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />
                   </div>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Pending Timesheets
@@ -148,8 +148,8 @@ export function QuickAccessWidget({
                 className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-3 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-                    <AlertCircle className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" />
+                  <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+                    <AlertCircle className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />
                   </div>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Profile Updates
@@ -176,7 +176,7 @@ export function QuickAccessWidget({
             <span className="text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] transition-colors">Inbox</span>
           </div>
           {inboxCount > 0 && (
-            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-xs font-semibold text-white">
+            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-danger-500 text-xs font-semibold text-white">
               {inboxCount}
             </span>
           )}

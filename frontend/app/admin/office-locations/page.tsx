@@ -203,7 +203,7 @@ export default function OfficeLocationsPage() {
               setEditingId(null);
               setShowForm(true);
             }}
-            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700"
+            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
           >
             Add Location
           </button>
@@ -222,7 +222,7 @@ export default function OfficeLocationsPage() {
                   {...register('name')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                {errors.name && <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Address *</label>
@@ -231,7 +231,7 @@ export default function OfficeLocationsPage() {
                   {...register('address')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
+                {errors.address && <p className="text-danger-500 text-sm mt-1">{errors.address.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">City *</label>
@@ -240,7 +240,7 @@ export default function OfficeLocationsPage() {
                   {...register('city')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
+                {errors.city && <p className="text-danger-500 text-sm mt-1">{errors.city.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">State *</label>
@@ -249,7 +249,7 @@ export default function OfficeLocationsPage() {
                   {...register('state')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
+                {errors.state && <p className="text-danger-500 text-sm mt-1">{errors.state.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Country *</label>
@@ -258,7 +258,7 @@ export default function OfficeLocationsPage() {
                   {...register('country')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
+                {errors.country && <p className="text-danger-500 text-sm mt-1">{errors.country.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Postal Code</label>
@@ -267,7 +267,7 @@ export default function OfficeLocationsPage() {
                   {...register('postalCode')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
+                {errors.postalCode && <p className="text-danger-500 text-sm mt-1">{errors.postalCode.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Latitude *</label>
@@ -277,7 +277,7 @@ export default function OfficeLocationsPage() {
                   {...register('latitude')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.latitude && <p className="text-red-500 text-sm mt-1">{errors.latitude.message}</p>}
+                {errors.latitude && <p className="text-danger-500 text-sm mt-1">{errors.latitude.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Longitude *</label>
@@ -287,7 +287,7 @@ export default function OfficeLocationsPage() {
                   {...register('longitude')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.longitude && <p className="text-red-500 text-sm mt-1">{errors.longitude.message}</p>}
+                {errors.longitude && <p className="text-danger-500 text-sm mt-1">{errors.longitude.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Geofence Radius (meters) *</label>
@@ -298,7 +298,7 @@ export default function OfficeLocationsPage() {
                   min="10"
                   max="10000"
                 />
-                {errors.geofenceRadius && <p className="text-red-500 text-sm mt-1">{errors.geofenceRadius.message}</p>}
+                {errors.geofenceRadius && <p className="text-danger-500 text-sm mt-1">{errors.geofenceRadius.message}</p>}
               </div>
               <div className="flex items-end">
                 <button
@@ -313,7 +313,7 @@ export default function OfficeLocationsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
-                  className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
+                  className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
                 >
                   {isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingId ? 'Update' : 'Create')}
                 </button>
@@ -354,7 +354,7 @@ export default function OfficeLocationsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="font-medium">{location.name}</div>
                       {location.isDefault && (
-                        <span className="text-xs text-sky-700 dark:text-sky-400">Default</span>
+                        <span className="text-xs text-accent-700 dark:text-accent-400">Default</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -371,7 +371,7 @@ export default function OfficeLocationsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        location.isActive ? 'bg-green-100 text-green-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
+                        location.isActive ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
                       }`}>
                         {location.isActive ? 'Active' : 'Inactive'}
                       </span>
@@ -379,13 +379,13 @@ export default function OfficeLocationsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleEdit(location)}
-                        className="text-sky-700 dark:text-sky-400 hover:text-sky-800 mr-4"
+                        className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(location)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-danger-600 hover:text-danger-800"
                       >
                         Delete
                       </button>

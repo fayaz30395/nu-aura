@@ -74,10 +74,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const styles = {
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800',
+    success: 'bg-success-50 border-success-200 text-success-800',
+    error: 'bg-danger-50 border-danger-200 text-danger-800',
+    warning: 'bg-warning-50 border-warning-200 text-warning-800',
+    info: 'bg-accent-50 border-accent-200 text-accent-800',
   };
 
   const icons = {

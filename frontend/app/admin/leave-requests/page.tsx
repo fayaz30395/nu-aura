@@ -135,7 +135,7 @@ export default function AdminLeaveRequestsPage() {
       <>
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700 mx-auto"></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading leave requests...</p>
           </div>
         </div>
@@ -152,7 +152,7 @@ export default function AdminLeaveRequestsPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded">
+          <div className="mb-4 p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 rounded">
             {error instanceof Error ? error.message : 'Failed to load leave requests'}
           </div>
         )}
@@ -165,7 +165,7 @@ export default function AdminLeaveRequestsPage() {
               onClick={() => setSelectedStatus(status)}
               className={`px-6 py-3 font-medium transition-colors ${
                 selectedStatus === status
-                  ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400'
+                  ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
               }`}
             >
@@ -246,7 +246,7 @@ export default function AdminLeaveRequestsPage() {
                               setSelectedRequest(request);
                               setShowApproveModal(true);
                             }}
-                            className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300"
+                            className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300"
                           >
                             Approve
                           </button>
@@ -255,7 +255,7 @@ export default function AdminLeaveRequestsPage() {
                               setSelectedRequest(request);
                               setShowRejectModal(true);
                             }}
-                            className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                            className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300"
                           >
                             Reject
                           </button>
@@ -289,7 +289,7 @@ export default function AdminLeaveRequestsPage() {
                 value={approvalComments}
                 onChange={(e) => setApprovalComments(e.target.value)}
                 rows={3}
-                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Add any comments..."
               />
             </div>
@@ -307,7 +307,7 @@ export default function AdminLeaveRequestsPage() {
               </button>
               <button
                 onClick={handleApprove}
-                className="btn-primary px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                className="btn-primary px-4 py-2 bg-success-600 text-white rounded-md hover:bg-success-700 disabled:opacity-50"
                 disabled={approveMutation.isPending}
               >
                 {approveMutation.isPending ? 'Approving...' : 'Approve'}
@@ -327,13 +327,13 @@ export default function AdminLeaveRequestsPage() {
             </p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Rejection Reason <span className="text-red-500">*</span>
+                Rejection Reason <span className="text-danger-500">*</span>
               </label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Explain why this request is being rejected..."
                 required
               />
@@ -352,7 +352,7 @@ export default function AdminLeaveRequestsPage() {
               </button>
               <button
                 onClick={handleReject}
-                className="btn-secondary px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+                className="btn-secondary px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50"
                 disabled={rejectMutation.isPending || !rejectionReason.trim()}
               >
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}

@@ -171,7 +171,7 @@ export default function PreboardingPortalPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-sky-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-accent-500 border-t-transparent" />
       </div>
     );
   }
@@ -181,7 +181,7 @@ export default function PreboardingPortalPage() {
       <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <AlertCircle className="h-12 w-12 text-danger-500 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Error</h2>
             <p className="text-[var(--text-muted)]">{error}</p>
           </CardContent>
@@ -200,11 +200,11 @@ export default function PreboardingPortalPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-sky-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-accent-500 flex items-center justify-center mx-auto mb-4">
             <Building2 className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Welcome, {data.firstName}!</h1>
@@ -216,11 +216,11 @@ export default function PreboardingPortalPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-[var(--text-secondary)]">Overall Progress</span>
-              <span className="text-sm font-bold text-sky-700">{data.completionPercentage}%</span>
+              <span className="text-sm font-bold text-accent-700">{data.completionPercentage}%</span>
             </div>
             <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-3">
               <div
-                className="bg-gradient-to-r from-sky-500 to-sky-700 h-3 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-accent-500 to-accent-700 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${data.completionPercentage}%` }}
               />
             </div>
@@ -238,9 +238,9 @@ export default function PreboardingPortalPage() {
               <button className={`flex flex-col items-center cursor-pointer ${idx === activeStep ? 'opacity-100' : 'opacity-60'}`}>
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-colors ${
                   step.complete
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-success-500 text-white'
                     : idx === activeStep
-                    ? 'bg-sky-500 text-white'
+                    ? 'bg-accent-500 text-white'
                     : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                 }`}>
                   {step.complete ? <CheckCircle2 className="h-5 w-5" /> : <step.icon className="h-5 w-5" />}
@@ -249,7 +249,7 @@ export default function PreboardingPortalPage() {
               </button>
               {idx < steps.length - 1 && (
                 <div className="flex-1 h-0.5 mx-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] relative top-[-12px]">
-                  <div className={`h-full transition-all ${step.complete ? 'bg-green-500 w-full' : 'w-0'}`} />
+                  <div className={`h-full transition-all ${step.complete ? 'bg-success-500 w-full' : 'w-0'}`} />
                 </div>
               )}
             </div>
@@ -266,12 +266,12 @@ export default function PreboardingPortalPage() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Date of Birth *</label>
                     <Input type="date" {...registerPersonalInfo('dateOfBirth')} />
-                    {personalInfoErrors.dateOfBirth && <span className="text-red-500 text-sm">{personalInfoErrors.dateOfBirth.message}</span>}
+                    {personalInfoErrors.dateOfBirth && <span className="text-danger-500 text-sm">{personalInfoErrors.dateOfBirth.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Phone Number</label>
                     <Input placeholder="+91 9876543210" {...registerPersonalInfo('phoneNumber')} />
-                    {personalInfoErrors.phoneNumber && <span className="text-red-500 text-sm">{personalInfoErrors.phoneNumber.message}</span>}
+                    {personalInfoErrors.phoneNumber && <span className="text-danger-500 text-sm">{personalInfoErrors.phoneNumber.message}</span>}
                   </div>
                 </div>
                 <div>
@@ -281,36 +281,36 @@ export default function PreboardingPortalPage() {
                     rows={2}
                     {...registerPersonalInfo('address')}
                   />
-                  {personalInfoErrors.address && <span className="text-red-500 text-sm">{personalInfoErrors.address.message}</span>}
+                  {personalInfoErrors.address && <span className="text-danger-500 text-sm">{personalInfoErrors.address.message}</span>}
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <Input placeholder="City" {...registerPersonalInfo('city')} />
-                    {personalInfoErrors.city && <span className="text-red-500 text-sm">{personalInfoErrors.city.message}</span>}
+                    {personalInfoErrors.city && <span className="text-danger-500 text-sm">{personalInfoErrors.city.message}</span>}
                   </div>
                   <div>
                     <Input placeholder="State" {...registerPersonalInfo('state')} />
-                    {personalInfoErrors.state && <span className="text-red-500 text-sm">{personalInfoErrors.state.message}</span>}
+                    {personalInfoErrors.state && <span className="text-danger-500 text-sm">{personalInfoErrors.state.message}</span>}
                   </div>
                   <div>
                     <Input placeholder="Postal Code" {...registerPersonalInfo('postalCode')} />
-                    {personalInfoErrors.postalCode && <span className="text-red-500 text-sm">{personalInfoErrors.postalCode.message}</span>}
+                    {personalInfoErrors.postalCode && <span className="text-danger-500 text-sm">{personalInfoErrors.postalCode.message}</span>}
                   </div>
                   <div>
                     <Input placeholder="Country" {...registerPersonalInfo('country')} />
-                    {personalInfoErrors.country && <span className="text-red-500 text-sm">{personalInfoErrors.country.message}</span>}
+                    {personalInfoErrors.country && <span className="text-danger-500 text-sm">{personalInfoErrors.country.message}</span>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Emergency Contact Name</label>
                     <Input {...registerPersonalInfo('emergencyContactName')} />
-                    {personalInfoErrors.emergencyContactName && <span className="text-red-500 text-sm">{personalInfoErrors.emergencyContactName.message}</span>}
+                    {personalInfoErrors.emergencyContactName && <span className="text-danger-500 text-sm">{personalInfoErrors.emergencyContactName.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Emergency Contact Number</label>
                     <Input {...registerPersonalInfo('emergencyContactNumber')} />
-                    {personalInfoErrors.emergencyContactNumber && <span className="text-red-500 text-sm">{personalInfoErrors.emergencyContactNumber.message}</span>}
+                    {personalInfoErrors.emergencyContactNumber && <span className="text-danger-500 text-sm">{personalInfoErrors.emergencyContactNumber.message}</span>}
                   </div>
                 </div>
                 <div className="flex justify-end pt-4">
@@ -329,24 +329,24 @@ export default function PreboardingPortalPage() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Bank Name *</label>
                     <Input {...registerBankDetails('bankName')} />
-                    {bankDetailsErrors.bankName && <span className="text-red-500 text-sm">{bankDetailsErrors.bankName.message}</span>}
+                    {bankDetailsErrors.bankName && <span className="text-danger-500 text-sm">{bankDetailsErrors.bankName.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Account Number *</label>
                     <Input {...registerBankDetails('bankAccountNumber')} />
-                    {bankDetailsErrors.bankAccountNumber && <span className="text-red-500 text-sm">{bankDetailsErrors.bankAccountNumber.message}</span>}
+                    {bankDetailsErrors.bankAccountNumber && <span className="text-danger-500 text-sm">{bankDetailsErrors.bankAccountNumber.message}</span>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">IFSC Code *</label>
                     <Input {...registerBankDetails('bankIfscCode')} />
-                    {bankDetailsErrors.bankIfscCode && <span className="text-red-500 text-sm">{bankDetailsErrors.bankIfscCode.message}</span>}
+                    {bankDetailsErrors.bankIfscCode && <span className="text-danger-500 text-sm">{bankDetailsErrors.bankIfscCode.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">PAN Number *</label>
                     <Input placeholder="ABCDE1234F" {...registerBankDetails('taxId')} />
-                    {bankDetailsErrors.taxId && <span className="text-red-500 text-sm">{bankDetailsErrors.taxId.message}</span>}
+                    {bankDetailsErrors.taxId && <span className="text-danger-500 text-sm">{bankDetailsErrors.taxId.message}</span>}
                   </div>
                 </div>
                 <div className="flex justify-between pt-4">
@@ -363,36 +363,36 @@ export default function PreboardingPortalPage() {
               <div className="space-y-4">
                 <h2 className="text-lg font-semibold mb-4">Document Upload</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className={`p-4 border-2 ${data.photoUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  <Card className={`p-4 border-2 ${data.photoUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
+                      {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Passport Photo</p>
                         <p className="text-xs text-[var(--text-muted)]">{data.photoUploaded ? 'Uploaded' : 'Required'}</p>
                       </div>
                     </div>
                   </Card>
-                  <Card className={`p-4 border-2 ${data.idProofUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  <Card className={`p-4 border-2 ${data.idProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
+                      {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">ID Proof</p>
                         <p className="text-xs text-[var(--text-muted)]">{data.idProofUploaded ? 'Uploaded' : 'Aadhar/Passport'}</p>
                       </div>
                     </div>
                   </Card>
-                  <Card className={`p-4 border-2 ${data.addressProofUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  <Card className={`p-4 border-2 ${data.addressProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
+                      {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Address Proof</p>
                         <p className="text-xs text-[var(--text-muted)]">{data.addressProofUploaded ? 'Uploaded' : 'Optional'}</p>
                       </div>
                     </div>
                   </Card>
-                  <Card className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                  <Card className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
+                      {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Education Docs</p>
                         <p className="text-xs text-[var(--text-muted)]">{data.educationDocsUploaded ? 'Uploaded' : 'Degrees/Certificates'}</p>
@@ -416,7 +416,7 @@ export default function PreboardingPortalPage() {
                 <h2 className="text-lg font-semibold mb-4">Offer Letter</h2>
                 {data.offerLetterSigned ? (
                   <div className="text-center py-8">
-                    <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                    <CheckCircle2 className="h-16 w-16 text-success-500 mx-auto mb-4" />
                     <h3 className="text-xl font-bold text-[var(--text-primary)]">All Done!</h3>
                     <p className="text-[var(--text-muted)] mt-2">You have completed your pre-boarding checklist. See you on {new Date(data.expectedJoiningDate).toLocaleDateString()}!</p>
                   </div>
@@ -424,7 +424,7 @@ export default function PreboardingPortalPage() {
                   <>
                     <Card className="p-4 bg-[var(--bg-secondary)]/50">
                       <div className="flex items-start gap-4">
-                        <FileText className="h-6 w-6 text-sky-500 mt-1" />
+                        <FileText className="h-6 w-6 text-accent-500 mt-1" />
                         <div>
                           <p className="font-medium">Employment Offer Letter</p>
                           <p className="text-sm text-[var(--text-muted)] mt-1">

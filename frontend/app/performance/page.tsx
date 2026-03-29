@@ -48,9 +48,9 @@ const performanceModules = [
     description: 'Set and track individual, team, and organizational goals',
     href: '/performance/goals',
     icon: Flag,
-    color: 'bg-blue-500',
-    lightColor: 'bg-blue-50',
-    textColor: 'text-blue-600',
+    color: 'bg-accent-500',
+    lightColor: 'bg-accent-50',
+    textColor: 'text-accent-600',
   },
   {
     id: 'okr',
@@ -58,9 +58,9 @@ const performanceModules = [
     description: 'Objectives and Key Results for strategic alignment',
     href: '/performance/okr',
     icon: SlidersHorizontal,
-    color: 'bg-purple-500',
-    lightColor: 'bg-purple-50',
-    textColor: 'text-purple-600',
+    color: 'bg-accent-700',
+    lightColor: 'bg-accent-50',
+    textColor: 'text-accent-600',
   },
   {
     id: 'reviews',
@@ -68,9 +68,9 @@ const performanceModules = [
     description: 'Conduct and manage employee performance reviews',
     href: '/performance/reviews',
     icon: ClipboardCheck,
-    color: 'bg-green-500',
-    lightColor: 'bg-green-50',
-    textColor: 'text-green-600',
+    color: 'bg-success-500',
+    lightColor: 'bg-success-50',
+    textColor: 'text-success-600',
   },
   {
     id: '360-feedback',
@@ -78,9 +78,9 @@ const performanceModules = [
     description: 'Multi-rater feedback from peers, managers, and direct reports',
     href: '/performance/360-feedback',
     icon: Users,
-    color: 'bg-orange-500',
-    lightColor: 'bg-orange-50',
-    textColor: 'text-orange-600',
+    color: 'bg-warning-500',
+    lightColor: 'bg-warning-50',
+    textColor: 'text-warning-600',
   },
   {
     id: 'feedback',
@@ -88,9 +88,9 @@ const performanceModules = [
     description: 'Give and receive ongoing feedback throughout the year',
     href: '/performance/feedback',
     icon: MessageSquare,
-    color: 'bg-sky-500',
-    lightColor: 'bg-sky-50',
-    textColor: 'text-sky-700',
+    color: 'bg-accent-500',
+    lightColor: 'bg-accent-50',
+    textColor: 'text-accent-700',
   },
   {
     id: 'cycles',
@@ -98,9 +98,9 @@ const performanceModules = [
     description: 'Manage review periods and deadlines',
     href: '/performance/cycles',
     icon: CalendarDays,
-    color: 'bg-indigo-500',
-    lightColor: 'bg-indigo-50',
-    textColor: 'text-indigo-600',
+    color: 'bg-accent-500',
+    lightColor: 'bg-accent-50',
+    textColor: 'text-accent-600',
   },
   {
     id: 'pip',
@@ -108,9 +108,9 @@ const performanceModules = [
     description: 'Create and track Performance Improvement Plans with check-ins',
     href: '/performance/pip',
     icon: AlertCircle,
-    color: 'bg-red-500',
-    lightColor: 'bg-red-50',
-    textColor: 'text-red-600',
+    color: 'bg-danger-500',
+    lightColor: 'bg-danger-50',
+    textColor: 'text-danger-600',
   },
   {
     id: 'calibration',
@@ -118,9 +118,9 @@ const performanceModules = [
     description: 'Finalize ratings with distribution view and bell-curve check',
     href: '/performance/calibration',
     icon: Sliders,
-    color: 'bg-violet-500',
-    lightColor: 'bg-violet-50',
-    textColor: 'text-violet-600',
+    color: 'bg-accent-500',
+    lightColor: 'bg-accent-50',
+    textColor: 'text-accent-600',
   },
   {
     id: '9box',
@@ -138,9 +138,9 @@ const performanceModules = [
     description: 'Manage competency frameworks, assess skills, and identify gaps',
     href: '/performance/competency-matrix',
     icon: BarChart3,
-    color: 'bg-sky-500',
-    lightColor: 'bg-sky-50',
-    textColor: 'text-sky-700',
+    color: 'bg-accent-500',
+    lightColor: 'bg-accent-50',
+    textColor: 'text-accent-700',
   },
 ];
 
@@ -248,28 +248,28 @@ export default function PerformancePage() {
               value={stats.activeGoals}
               subtitle={`${stats.completedGoals} completed`}
               icon={Flag}
-              color="bg-blue-500"
+              color="bg-accent-500"
             />
             <StatCard
               title="Goal Progress"
               value={`${stats.averageProgress}%`}
               subtitle="Average across all goals"
               icon={TrendingUp}
-              color="bg-green-500"
+              color="bg-success-500"
             />
             <StatCard
               title="OKR Objectives"
               value={stats.okrObjectives}
               subtitle={`${stats.okrProgress}% progress`}
               icon={SlidersHorizontal}
-              color="bg-purple-500"
+              color="bg-accent-700"
             />
             <StatCard
               title="Pending Reviews"
               value={stats.pending360Reviews}
               subtitle="360 feedback requests"
               icon={Clock}
-              color="bg-orange-500"
+              color="bg-warning-500"
             />
           </>
         )}
@@ -277,24 +277,24 @@ export default function PerformancePage() {
 
       {/* Quick Actions */}
       {stats.pending360Reviews > 0 && (
-        <div className="mb-8 p-4 tint-orange border border-[var(--status-orange-border)] rounded-lg">
+        <div className="mb-8 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-orange-100 dark:bg-orange-900/40 rounded-lg">
-                <Clock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              <div className="p-2 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
+                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <p className="font-medium text-orange-800 dark:text-orange-300">
+                <p className="font-medium text-warning-800 dark:text-warning-300">
                   You have {stats.pending360Reviews} pending 360 feedback request(s)
                 </p>
-                <p className="text-sm text-orange-600 dark:text-orange-400">
+                <p className="text-sm text-warning-600 dark:text-warning-400">
                   Complete your feedback to help your colleagues grow
                 </p>
               </div>
             </div>
             <Link
               href="/performance/360-feedback"
-              className="px-4 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-warning-600 hover:bg-warning-700 dark:bg-warning-700 dark:hover:bg-warning-600 text-white rounded-lg text-sm font-medium transition-colors"
             >
               Review Now
             </Link>
@@ -317,7 +317,7 @@ export default function PerformancePage() {
                   <module.icon className={`h-5 w-5 ${module.textColor}`} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
                     {module.title}
                   </h3>
                   <p className="text-xs text-[var(--text-muted)] mt-0.5">{module.description}</p>
@@ -335,21 +335,21 @@ export default function PerformancePage() {
         <h2 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-3 skeuo-emboss">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
-            <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />
+            <CheckCircle className="h-6 w-6 text-accent-600 dark:text-accent-400 mb-2" />
             <h3 className="font-medium text-[var(--text-primary)]">Set SMART Goals</h3>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
               Make goals Specific, Measurable, Achievable, Relevant, and Time-bound
             </p>
           </div>
           <div className="p-4 tint-success rounded-lg border border-[var(--status-success-border)]">
-            <MessageSquare className="h-6 w-6 text-green-600 dark:text-green-400 mb-2" />
+            <MessageSquare className="h-6 w-6 text-success-600 dark:text-success-400 mb-2" />
             <h3 className="font-medium text-[var(--text-primary)]">Give Regular Feedback</h3>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
               Continuous feedback helps improve performance year-round
             </p>
           </div>
           <div className="p-4 tint-purple rounded-lg border border-[var(--status-purple-border)]">
-            <BarChart3 className="h-6 w-6 text-purple-600 dark:text-purple-400 mb-2" />
+            <BarChart3 className="h-6 w-6 text-accent-800 dark:text-accent-600 mb-2" />
             <h3 className="font-medium text-[var(--text-primary)]">Track Progress</h3>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
               Update your goals and OKRs regularly to stay on track

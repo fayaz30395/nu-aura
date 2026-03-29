@@ -233,11 +233,11 @@ export default function AdminDashboardPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`badge-status inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
                         user.userStatus === 'ACTIVE'
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                          ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300'
                           : user.userStatus === 'INACTIVE'
                           ? 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                           : user.userStatus === 'SUSPENDED'
-                          ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                          ? 'bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-300'
                           : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
                       }`}>
                         {user.userStatus}
@@ -306,7 +306,7 @@ export default function AdminDashboardPage() {
               className="input-aura w-full px-3 py-2 text-sm rounded-xl"
             />
             {roleErrors.email && (
-              <p className="text-xs text-red-500 mt-1">{roleErrors.email.message}</p>
+              <p className="text-xs text-danger-500 mt-1">{roleErrors.email.message}</p>
             )}
           </div>
           <div>
@@ -324,7 +324,7 @@ export default function AdminDashboardPage() {
               ))}
             </select>
             {roleErrors.role && (
-              <p className="text-xs text-red-500 mt-1">{roleErrors.role.message}</p>
+              <p className="text-xs text-danger-500 mt-1">{roleErrors.role.message}</p>
             )}
           </div>
         </div>
@@ -332,7 +332,7 @@ export default function AdminDashboardPage() {
           <button
             type="submit"
             disabled={updateRoleMutation.isPending}
-            className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-sky-700 text-white hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-accent-700 text-white hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {updateRoleMutation.isPending ? 'Updating...' : 'Assign / Update Role'}
           </button>
@@ -380,24 +380,24 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
     switch (status?.toUpperCase()) {
       case 'UP':
         return {
-          color: 'bg-green-100 dark:bg-green-900/30',
-          badge: 'bg-green-500',
+          color: 'bg-success-100 dark:bg-success-900/30',
+          badge: 'bg-success-500',
           text: 'System UP',
-          textColor: 'text-green-700 dark:text-green-300',
+          textColor: 'text-success-700 dark:text-success-300',
         };
       case 'DEGRADED':
         return {
-          color: 'bg-amber-100 dark:bg-amber-900/30',
-          badge: 'bg-amber-500',
+          color: 'bg-warning-100 dark:bg-warning-900/30',
+          badge: 'bg-warning-500',
           text: 'System Degraded',
-          textColor: 'text-amber-700 dark:text-amber-300',
+          textColor: 'text-warning-700 dark:text-warning-300',
         };
       default:
         return {
-          color: 'bg-red-100 dark:bg-red-900/30',
-          badge: 'bg-red-500',
+          color: 'bg-danger-100 dark:bg-danger-900/30',
+          badge: 'bg-danger-500',
           text: 'System Down',
-          textColor: 'text-red-700 dark:text-red-300',
+          textColor: 'text-danger-700 dark:text-danger-300',
         };
     }
   };
@@ -472,25 +472,25 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
             const isUnavailable = status === 'UNAVAILABLE';
             const isDegraded = status === 'DEGRADED';
 
-            let componentColor = 'bg-red-50 dark:bg-red-900/20';
-            let dotColor = 'bg-red-500';
-            let textColor = 'text-red-700 dark:text-red-300';
+            let componentColor = 'bg-danger-50 dark:bg-danger-900/20';
+            let dotColor = 'bg-danger-500';
+            let textColor = 'text-danger-700 dark:text-danger-300';
             let statusLabel = 'Down';
 
             if (isUp) {
-              componentColor = 'bg-green-50 dark:bg-green-900/20';
-              dotColor = 'bg-green-500';
-              textColor = 'text-green-700 dark:text-green-300';
+              componentColor = 'bg-success-50 dark:bg-success-900/20';
+              dotColor = 'bg-success-500';
+              textColor = 'text-success-700 dark:text-success-300';
               statusLabel = 'Operational';
             } else if (isDegraded) {
-              componentColor = 'bg-orange-50 dark:bg-orange-900/20';
-              dotColor = 'bg-orange-500';
-              textColor = 'text-orange-700 dark:text-orange-300';
+              componentColor = 'bg-warning-50 dark:bg-warning-900/20';
+              dotColor = 'bg-warning-500';
+              textColor = 'text-warning-700 dark:text-warning-300';
               statusLabel = 'Degraded';
             } else if (isUnavailable) {
-              componentColor = 'bg-red-50 dark:bg-red-900/20';
-              dotColor = 'bg-red-500';
-              textColor = 'text-red-700 dark:text-red-300';
+              componentColor = 'bg-danger-50 dark:bg-danger-900/20';
+              dotColor = 'bg-danger-500';
+              textColor = 'text-danger-700 dark:text-danger-300';
               statusLabel = 'Unavailable';
             }
 
@@ -526,8 +526,8 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
 
       {/* Helper message for unavailable services */}
       {!isLoading && health?.status === 'DEGRADED' && (
-        <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-          <p className="text-sm text-amber-800 dark:text-amber-300">
+        <div className="mt-6 p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+          <p className="text-sm text-warning-800 dark:text-warning-300">
             <span className="font-medium">⚠️ System Degraded:</span> Some services may be temporarily unavailable. Try refreshing the status or contact your system administrator if the issue persists.
           </p>
         </div>

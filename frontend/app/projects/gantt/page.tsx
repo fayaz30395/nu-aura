@@ -179,7 +179,7 @@ export default function GanttChartPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-sky-700" />
+        <Loader2 className="h-8 w-8 animate-spin text-accent-700" />
       </div>
     );
   }
@@ -201,7 +201,7 @@ export default function GanttChartPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="p-4 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 shadow-lg">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-accent-800 shadow-lg">
             <Calendar className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -240,8 +240,8 @@ export default function GanttChartPage() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-              <Target className="h-5 w-5 text-emerald-600" />
+            <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
+              <Target className="h-5 w-5 text-success-600" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-muted)]">Completed</p>
@@ -273,8 +273,8 @@ export default function GanttChartPage() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-              <Target className="h-5 w-5 text-violet-600" />
+            <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+              <Target className="h-5 w-5 text-accent-600" />
             </div>
             <div>
               <p className="text-sm text-[var(--text-muted)]">Avg Progress</p>
@@ -416,8 +416,8 @@ export default function GanttChartPage() {
 
             {ganttTasks.length === 0 && (
               <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="w-16 h-16 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-4">
-                  <BarChart3 className="h-8 w-8 text-sky-500" />
+                <div className="w-16 h-16 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-4">
+                  <BarChart3 className="h-8 w-8 text-accent-500" />
                 </div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Gantt View Coming Soon</h2>
                 <p className="text-sm text-[var(--text-muted)] max-w-md">

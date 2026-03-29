@@ -177,9 +177,9 @@ export default function HelpdeskSLAPage() {
 
   const getEscalationLevelColor = (level: string) => {
     switch (level) {
-      case 'FIRST': return 'bg-yellow-100 text-yellow-800';
-      case 'SECOND': return 'bg-orange-100 text-orange-800';
-      case 'THIRD': return 'bg-red-100 text-red-800';
+      case 'FIRST': return 'bg-warning-100 text-warning-800';
+      case 'SECOND': return 'bg-warning-100 text-warning-800';
+      case 'THIRD': return 'bg-danger-100 text-danger-800';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
@@ -219,22 +219,22 @@ export default function HelpdeskSLAPage() {
         {dashboardData && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</div>
+              <div className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</div>
               <div className="text-[var(--text-secondary)]">SLA Compliance</div>
               <div className="text-sm text-[var(--text-muted)] mt-1">
                 {dashboardData.slaMetCount} met / {dashboardData.slaBreachedCount} breached
               </div>
             </div>
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
+              <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg First Response</div>
             </div>
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
+              <div className="text-3xl font-bold text-accent-800 dark:text-accent-600">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg Resolution Time</div>
             </div>
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
+              <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
               <div className="text-[var(--text-secondary)]">Avg CSAT Score</div>
               <div className="text-sm text-[var(--text-muted)] mt-1">
                 {dashboardData.firstContactResolutions} FCR
@@ -246,19 +246,19 @@ export default function HelpdeskSLAPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('dashboard')}
           >
             Dashboard
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'slas' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'slas' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('slas')}
           >
             SLA Policies
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-sky-500 text-sky-700 dark:text-sky-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('escalations')}
           >
             Pending Escalations
@@ -281,7 +281,7 @@ export default function HelpdeskSLAPage() {
                     className="input-aura"
                   />
                   {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                    <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>
                   )}
                 </div>
                 <div>
@@ -318,7 +318,7 @@ export default function HelpdeskSLAPage() {
                     min="1"
                   />
                   {errors.firstResponseMinutes && (
-                    <p className="text-red-500 text-sm mt-1">{errors.firstResponseMinutes.message}</p>
+                    <p className="text-danger-500 text-sm mt-1">{errors.firstResponseMinutes.message}</p>
                   )}
                 </div>
                 <div>
@@ -330,7 +330,7 @@ export default function HelpdeskSLAPage() {
                     min="1"
                   />
                   {errors.resolutionMinutes && (
-                    <p className="text-red-500 text-sm mt-1">{errors.resolutionMinutes.message}</p>
+                    <p className="text-danger-500 text-sm mt-1">{errors.resolutionMinutes.message}</p>
                   )}
                 </div>
                 <div>
@@ -438,8 +438,8 @@ export default function HelpdeskSLAPage() {
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-4">
                       <div
                         className={`h-4 rounded-full ${
-                          (dashboardData.slaComplianceRate || 0) >= 90 ? 'bg-green-500' :
-                          (dashboardData.slaComplianceRate || 0) >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                          (dashboardData.slaComplianceRate || 0) >= 90 ? 'bg-success-500' :
+                          (dashboardData.slaComplianceRate || 0) >= 70 ? 'bg-warning-500' : 'bg-danger-500'
                         }`}
                         style={{ width: `${dashboardData.slaComplianceRate || 0}%` }}
                       />
@@ -449,19 +449,19 @@ export default function HelpdeskSLAPage() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-sm text-[var(--text-secondary)] mb-1">SLA Met</div>
-                      <div className="text-2xl font-bold text-green-600">{dashboardData.slaMetCount}</div>
+                      <div className="text-2xl font-bold text-success-600">{dashboardData.slaMetCount}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-sm text-[var(--text-secondary)] mb-1">SLA Breached</div>
-                      <div className="text-2xl font-bold text-red-600">{dashboardData.slaBreachedCount}</div>
+                      <div className="text-2xl font-bold text-danger-600">{dashboardData.slaBreachedCount}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-sm text-[var(--text-secondary)] mb-1">First Contact Resolutions</div>
-                      <div className="text-2xl font-bold text-sky-700 dark:text-sky-400">{dashboardData.firstContactResolutions}</div>
+                      <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{dashboardData.firstContactResolutions}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-sm text-[var(--text-secondary)] mb-1">Customer Satisfaction</div>
-                      <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-2xl font-bold text-accent-800">
                         {dashboardData.averageCSAT ? `${dashboardData.averageCSAT.toFixed(1)}/5` : 'N/A'}
                       </div>
                     </div>
@@ -512,7 +512,7 @@ export default function HelpdeskSLAPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 rounded-full text-xs ${
-                            sla.isActive ? 'bg-green-100 text-green-800' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
+                            sla.isActive ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                           }`}>
                             {sla.isActive ? 'Active' : 'Inactive'}
                           </span>
@@ -521,13 +521,13 @@ export default function HelpdeskSLAPage() {
                           <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
                             <button
                               onClick={() => handleEdit(sla)}
-                              className="text-sky-700 dark:text-sky-400 hover:text-sky-700 mr-4"
+                              className="text-accent-700 dark:text-accent-400 hover:text-accent-700 mr-4"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleDelete(sla)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-danger-600 hover:text-danger-800"
                             >
                               Delete
                             </button>
@@ -563,7 +563,7 @@ export default function HelpdeskSLAPage() {
                               {escalation.escalationReason.replace('_', ' ')}
                             </span>
                             {escalation.isAutoEscalated && (
-                              <span className="px-2 py-1 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded-full text-xs">
+                              <span className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded-full text-xs">
                                 Auto-Escalated
                               </span>
                             )}

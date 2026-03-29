@@ -26,15 +26,15 @@ interface EmployeePoint {
 type SortField = 'name' | 'performance' | 'potential';
 
 const BOX_CONFIG: Record<string, { label: string; sublabel: string; bg: string; border: string; text: string }> = {
-  '1-1': { label: 'Deadwood', sublabel: 'Low Performance • Low Potential', bg: 'bg-red-50 dark:bg-red-900/10', border: 'border-red-200 dark:border-red-800', text: 'text-red-700 dark:text-red-400' },
-  '2-1': { label: 'Dilemma', sublabel: 'Medium Performance • Low Potential', bg: 'bg-orange-50 dark:bg-orange-900/10', border: 'border-orange-200 dark:border-orange-800', text: 'text-orange-700 dark:text-orange-400' },
-  '3-1': { label: 'Highly Skilled', sublabel: 'High Performance • Low Potential', bg: 'bg-yellow-50 dark:bg-yellow-900/10', border: 'border-yellow-200 dark:border-yellow-800', text: 'text-yellow-700 dark:text-yellow-400' },
-  '1-2': { label: 'Inconsistent Player', sublabel: 'Low Performance • Medium Potential', bg: 'bg-amber-50 dark:bg-amber-900/10', border: 'border-amber-200 dark:border-amber-800', text: 'text-amber-700 dark:text-amber-400' },
-  '2-2': { label: 'Core Player', sublabel: 'Medium Performance • Medium Potential', bg: 'bg-blue-50 dark:bg-blue-900/10', border: 'border-blue-200 dark:border-blue-800', text: 'text-blue-700 dark:text-blue-400' },
-  '3-2': { label: 'High Performer', sublabel: 'High Performance • Medium Potential', bg: 'bg-indigo-50 dark:bg-indigo-900/10', border: 'border-indigo-200 dark:border-indigo-800', text: 'text-indigo-700 dark:text-indigo-400' },
-  '1-3': { label: 'Growth Employee', sublabel: 'Low Performance • High Potential', bg: 'bg-sky-50 dark:bg-sky-900/10', border: 'border-sky-200 dark:border-sky-800', text: 'text-sky-700 dark:text-sky-400' },
-  '2-3': { label: 'Future Star', sublabel: 'Medium Performance • High Potential', bg: 'bg-green-50 dark:bg-green-900/10', border: 'border-green-200 dark:border-green-800', text: 'text-green-700 dark:text-green-400' },
-  '3-3': { label: 'Star', sublabel: 'High Performance • High Potential', bg: 'bg-emerald-50 dark:bg-emerald-900/10', border: 'border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-400' },
+  '1-1': { label: 'Deadwood', sublabel: 'Low Performance • Low Potential', bg: 'bg-danger-50 dark:bg-danger-900/10', border: 'border-danger-200 dark:border-danger-800', text: 'text-danger-700 dark:text-danger-400' },
+  '2-1': { label: 'Dilemma', sublabel: 'Medium Performance • Low Potential', bg: 'bg-warning-50 dark:bg-warning-900/10', border: 'border-warning-200 dark:border-warning-800', text: 'text-warning-700 dark:text-warning-400' },
+  '3-1': { label: 'Highly Skilled', sublabel: 'High Performance • Low Potential', bg: 'bg-warning-50 dark:bg-warning-900/10', border: 'border-warning-200 dark:border-warning-800', text: 'text-warning-700 dark:text-warning-400' },
+  '1-2': { label: 'Inconsistent Player', sublabel: 'Low Performance • Medium Potential', bg: 'bg-warning-50 dark:bg-warning-900/10', border: 'border-warning-200 dark:border-warning-800', text: 'text-warning-700 dark:text-warning-400' },
+  '2-2': { label: 'Core Player', sublabel: 'Medium Performance • Medium Potential', bg: 'bg-accent-50 dark:bg-accent-900/10', border: 'border-accent-200 dark:border-accent-800', text: 'text-accent-700 dark:text-accent-400' },
+  '3-2': { label: 'High Performer', sublabel: 'High Performance • Medium Potential', bg: 'bg-accent-50 dark:bg-accent-900/10', border: 'border-accent-200 dark:border-accent-800', text: 'text-accent-700 dark:text-accent-400' },
+  '1-3': { label: 'Growth Employee', sublabel: 'Low Performance • High Potential', bg: 'bg-accent-50 dark:bg-accent-900/10', border: 'border-accent-200 dark:border-accent-800', text: 'text-accent-700 dark:text-accent-400' },
+  '2-3': { label: 'Future Star', sublabel: 'Medium Performance • High Potential', bg: 'bg-success-50 dark:bg-success-900/10', border: 'border-success-200 dark:border-success-800', text: 'text-success-700 dark:text-success-400' },
+  '3-3': { label: 'Star', sublabel: 'High Performance • High Potential', bg: 'bg-success-50 dark:bg-success-900/10', border: 'border-success-200 dark:border-success-800', text: 'text-success-700 dark:text-success-400' },
 };
 
 function toBand(value: number): 1 | 2 | 3 {
@@ -105,7 +105,7 @@ function NineBoxGrid({
                     onClick={() => onSelectBox(isSelected ? null : key)}
                     className={`flex-1 min-w-[140px] min-h-[140px] rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-lg ${meta.bg} ${meta.border} ${
                       isSelected
-                        ? 'ring-2 ring-sky-500 ring-offset-2 dark:ring-offset-surface-800'
+                        ? 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-surface-800'
                         : ''
                     }`}
                   >
@@ -349,7 +349,7 @@ export default function NineBoxPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -367,9 +367,9 @@ export default function NineBoxPage() {
         </div>
 
         {/* Info Banner */}
-        <div className="flex items-start gap-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
-          <Info size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-blue-800 dark:text-blue-300">
+        <div className="flex items-start gap-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg px-4 py-3">
+          <Info size={16} className="text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-accent-800 dark:text-accent-300">
             <strong>X-axis:</strong> Performance = manager review rating.
             <strong className="ml-3">Y-axis:</strong> Potential = derived from self vs manager gap. Click cells to view
             employees and override potential scores.
@@ -380,8 +380,8 @@ export default function NineBoxPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                <Users className="text-purple-600 dark:text-purple-400" size={20} />
+              <div className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
+                <Users className="text-accent-800 dark:text-accent-600" size={20} />
               </div>
               <div>
                 <p className="text-xs text-[var(--text-muted)]">Total Plotted</p>
@@ -392,8 +392,8 @@ export default function NineBoxPage() {
 
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                <TrendingUp className="text-emerald-600 dark:text-emerald-400" size={20} />
+              <div className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                <TrendingUp className="text-success-600 dark:text-success-400" size={20} />
               </div>
               <div>
                 <p className="text-xs text-[var(--text-muted)]">Stars</p>
@@ -404,8 +404,8 @@ export default function NineBoxPage() {
 
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                <Target className="text-blue-600 dark:text-blue-400" size={20} />
+              <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                <Target className="text-accent-600 dark:text-accent-400" size={20} />
               </div>
               <div>
                 <p className="text-xs text-[var(--text-muted)]">High Performers</p>
@@ -416,8 +416,8 @@ export default function NineBoxPage() {
 
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                <Grid3x3 className="text-green-600 dark:text-green-400" size={20} />
+              <div className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                <Grid3x3 className="text-success-600 dark:text-success-400" size={20} />
               </div>
               <div>
                 <p className="text-xs text-[var(--text-muted)]">High Potential</p>
@@ -429,7 +429,7 @@ export default function NineBoxPage() {
 
         {reviewsLoading ? (
           <div className="flex items-center justify-center py-20">
-            <RefreshCw size={24} className="animate-spin text-sky-500 mr-3" />
+            <RefreshCw size={24} className="animate-spin text-accent-500 mr-3" />
             <span className="text-[var(--text-muted)]">Loading reviews...</span>
           </div>
         ) : points.length === 0 && selectedCycleId ? (
@@ -514,7 +514,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                             />
                           </td>
                         </tr>
@@ -544,7 +544,7 @@ export default function NineBoxPage() {
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                   />
                 </div>
               </div>
@@ -610,7 +610,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                             />
                           </td>
                           <td className="px-4 py-2.5 text-center">

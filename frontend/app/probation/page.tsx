@@ -45,17 +45,17 @@ import type {
 const getStatusConfig = (status: ProbationStatus) => {
   switch (status) {
     case 'ACTIVE':
-      return { bg: 'bg-sky-100 dark:bg-sky-900/30', text: 'text-sky-700 dark:text-sky-400', label: 'Active' };
+      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Active' };
     case 'EXTENDED':
-      return { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-400', label: 'Extended' };
+      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'Extended' };
     case 'CONFIRMED':
-      return { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400', label: 'Confirmed' };
+      return { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', label: 'Confirmed' };
     case 'FAILED':
-      return { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', label: 'Failed' };
+      return { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Failed' };
     case 'TERMINATED':
-      return { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', label: 'Terminated' };
+      return { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Terminated' };
     case 'ON_HOLD':
-      return { bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-400', label: 'On Hold' };
+      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'On Hold' };
     default:
       return { bg: 'bg-gray-100 dark:bg-gray-900/30', text: 'text-gray-700 dark:text-gray-400', label: status };
   }
@@ -274,7 +274,7 @@ export default function ProbationPage() {
                       <p className="text-xs text-[var(--text-muted)]">
                         {probation.durationMonths} months
                         {probation.extensionCount > 0 && (
-                          <span className="text-amber-600 dark:text-amber-400">
+                          <span className="text-warning-600 dark:text-warning-400">
                             {' '}(+{probation.totalExtensionDays}d ext.)
                           </span>
                         )}
@@ -288,7 +288,7 @@ export default function ProbationPage() {
                       {statusConfig.label}
                     </span>
                     {probation.isOverdue && (
-                      <span className="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                      <span className="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400">
                         Overdue
                       </span>
                     )}
@@ -297,9 +297,9 @@ export default function ProbationPage() {
                     <span
                       className={`text-sm font-medium ${
                         probation.daysRemaining <= 7
-                          ? 'text-red-600 dark:text-red-400'
+                          ? 'text-danger-600 dark:text-danger-400'
                           : probation.daysRemaining <= 30
-                            ? 'text-amber-600 dark:text-amber-400'
+                            ? 'text-warning-600 dark:text-warning-400'
                             : 'text-[var(--text-primary)]'
                       }`}
                     >
@@ -316,7 +316,7 @@ export default function ProbationPage() {
                   <td className="px-6 py-4">
                     {probation.averageRating ? (
                       <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                        <Star className="h-4 w-4 text-warning-500 fill-warning-500" />
                         <span className="text-sm font-medium text-[var(--text-primary)]">
                           {probation.averageRating.toFixed(1)}
                         </span>
@@ -332,7 +332,7 @@ export default function ProbationPage() {
                           <>
                             <button
                               onClick={() => handleStartEvaluation(probation)}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-400 transition-colors"
+                              className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors"
                             >
                               Evaluate
                             </button>
@@ -345,7 +345,7 @@ export default function ProbationPage() {
                                   })
                                 }
                                 disabled={confirmEmployee.isPending}
-                                className="text-xs px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 transition-colors disabled:opacity-50"
+                                className="text-xs px-2.5 py-1 rounded-lg bg-success-100 text-success-700 hover:bg-success-200 dark:bg-success-900/30 dark:text-success-400 transition-colors disabled:opacity-50"
                               >
                                 Confirm
                               </button>
@@ -417,11 +417,11 @@ export default function ProbationPage() {
         {statistics && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
-              { label: 'Active', value: statistics.totalActiveProbations, icon: Users, gradient: 'from-sky-500 to-sky-700' },
-              { label: 'Overdue', value: statistics.overdueCount, icon: AlertTriangle, gradient: 'from-red-500 to-red-600' },
-              { label: 'Ending This Week', value: statistics.endingThisWeek, icon: Clock, gradient: 'from-amber-500 to-amber-600' },
-              { label: 'Evaluations Due', value: statistics.evaluationsDue, icon: ClipboardList, gradient: 'from-purple-500 to-purple-600' },
-              { label: 'Confirmed (Month)', value: statistics.confirmationsThisMonth, icon: CheckCircle, gradient: 'from-emerald-500 to-emerald-600' },
+              { label: 'Active', value: statistics.totalActiveProbations, icon: Users, gradient: 'from-accent-500 to-accent-700' },
+              { label: 'Overdue', value: statistics.overdueCount, icon: AlertTriangle, gradient: 'from-danger-500 to-danger-600' },
+              { label: 'Ending This Week', value: statistics.endingThisWeek, icon: Clock, gradient: 'from-warning-500 to-warning-600' },
+              { label: 'Evaluations Due', value: statistics.evaluationsDue, icon: ClipboardList, gradient: 'from-accent-700 to-accent-800' },
+              { label: 'Confirmed (Month)', value: statistics.confirmationsThisMonth, icon: CheckCircle, gradient: 'from-success-500 to-success-600' },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -452,7 +452,7 @@ export default function ProbationPage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.key
-                    ? 'border-sky-700 text-sky-700 dark:text-sky-400'
+                    ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
                 }`}
               >
@@ -464,7 +464,7 @@ export default function ProbationPage() {
                 onClick={() => setActiveTab('evaluate')}
                 className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'evaluate'
-                    ? 'border-sky-700 text-sky-700 dark:text-sky-400'
+                    ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -541,9 +541,9 @@ export default function ProbationPage() {
           <PermissionGate permission={Permissions.PROBATION_MANAGE}>
             <div className="max-w-3xl">
               {submitSuccess ? (
-                <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-6 text-center">
-                  <CheckCircle className="h-12 w-12 text-emerald-600 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-300">
+                <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
+                  <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-success-800 dark:text-success-300">
                     Evaluation Submitted Successfully!
                   </h3>
                 </div>
@@ -572,7 +572,7 @@ export default function ProbationPage() {
                       </label>
                       <select
                         {...register('evaluationType')}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       >
                         {(Object.entries(EVALUATION_TYPE_LABELS) as [EvaluationType, string][]).map(
                           ([value, label]) => (
@@ -591,7 +591,7 @@ export default function ProbationPage() {
                       </label>
                       <select
                         {...register('recommendation')}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       >
                         {(
                           Object.entries(RECOMMENDATION_LABELS) as [ProbationRecommendation, string][]
@@ -623,7 +623,7 @@ export default function ProbationPage() {
                           </label>
                           <select
                             {...register(field.name)}
-                            className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                            className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                           >
                             {[1, 2, 3, 4, 5].map((v) => (
                               <option key={v} value={v}>
@@ -645,7 +645,7 @@ export default function ProbationPage() {
                       <textarea
                         {...register('strengths')}
                         rows={3}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 resize-none"
+                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                         placeholder="Key strengths observed..."
                       />
                     </div>
@@ -656,7 +656,7 @@ export default function ProbationPage() {
                       <textarea
                         {...register('areasForImprovement')}
                         rows={3}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 resize-none"
+                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                         placeholder="Areas needing improvement..."
                       />
                     </div>
@@ -669,7 +669,7 @@ export default function ProbationPage() {
                     <textarea
                       {...register('managerComments')}
                       rows={3}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 resize-none"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                       placeholder="Additional comments..."
                     />
                   </div>
@@ -680,7 +680,7 @@ export default function ProbationPage() {
                       type="checkbox"
                       {...register('isFinalEvaluation')}
                       id="isFinal"
-                      className="h-4 w-4 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-700"
+                      className="h-4 w-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-700"
                     />
                     <label
                       htmlFor="isFinal"
@@ -705,14 +705,14 @@ export default function ProbationPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting || addEvaluation.isPending}
-                      className="px-5 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-800 rounded-xl shadow-lg shadow-sky-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-5 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {addEvaluation.isPending ? 'Submitting...' : 'Submit Evaluation'}
                     </button>
                   </div>
 
                   {addEvaluation.isError && (
-                    <p className="text-sm text-red-500 mt-2">
+                    <p className="text-sm text-danger-500 mt-2">
                       Failed to submit evaluation. Please try again.
                     </p>
                   )}

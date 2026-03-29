@@ -72,7 +72,7 @@ export function RejectRequestModal({
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
-                        Reason for Rejection <span className="text-red-500">*</span>
+                        Reason for Rejection <span className="text-danger-500">*</span>
                       </label>
                       <textarea
                         {...register('reason')}
@@ -85,7 +85,7 @@ export function RejectRequestModal({
                           <motion.p
                             initial={{ opacity: 0, y: -4 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-red-500 text-sm"
+                            className="text-danger-500 text-sm"
                           >
                             {errors.reason.message}
                           </motion.p>
@@ -93,9 +93,9 @@ export function RejectRequestModal({
                         <p
                           className={`text-xs ml-auto font-medium ${
                             rejectReasonValue.length > 450
-                              ? 'text-red-500'
+                              ? 'text-danger-500'
                               : rejectReasonValue.length > 400
-                                ? 'text-yellow-600 dark:text-yellow-400'
+                                ? 'text-warning-600 dark:text-warning-400'
                                 : 'text-[var(--text-muted)]'
                           }`}
                         >
@@ -125,7 +125,7 @@ export function RejectRequestModal({
                       type="submit"
                       disabled={isPending || isSubmitting}
                       onClick={handleSubmit(onSubmit)}
-                      className="w-full bg-red-600 hover:bg-red-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-danger-600 hover:bg-danger-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <ThumbsDown className="h-4 w-4 mr-2" />
                       {isPending || isSubmitting ? 'Rejecting...' : 'Reject Request'}

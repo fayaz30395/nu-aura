@@ -93,9 +93,9 @@ export default function LearningPathsPage() {
 
   const getDifficultyColor = (level: string) => {
     switch (level) {
-      case 'BEGINNER': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
-      case 'INTERMEDIATE': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
-      case 'ADVANCED': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
+      case 'BEGINNER': return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+      case 'INTERMEDIATE': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+      case 'ADVANCED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
@@ -103,8 +103,8 @@ export default function LearningPathsPage() {
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'NOT_STARTED': return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
-      case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-700';
-      case 'COMPLETED': return 'bg-green-100 text-green-700';
+      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-700';
+      case 'COMPLETED': return 'bg-success-100 text-success-700';
       default: return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
     }
   };
@@ -114,7 +114,7 @@ export default function LearningPathsPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/learning" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 w-fit text-sm">
+          <Link href="/learning" className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
           <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
@@ -132,7 +132,7 @@ export default function LearningPathsPage() {
                 placeholder="Search learning paths..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
               />
             </div>
 
@@ -142,7 +142,7 @@ export default function LearningPathsPage() {
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
               >
                 <option value="ALL">All Difficulty Levels</option>
                 <option value="BEGINNER">Beginner</option>
@@ -157,7 +157,7 @@ export default function LearningPathsPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
+              <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-3" />
               <p className="text-[var(--text-muted)]">Loading learning paths...</p>
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function LearningPathsPage() {
                     />
                   </div>
                 ) : (
-                  <div className="w-full h-40 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                  <div className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 flex items-center justify-center">
                     <Zap className="h-12 w-12 text-white opacity-50" />
                   </div>
                 )}
@@ -235,7 +235,7 @@ export default function LearningPathsPage() {
                       </div>
                       <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-blue-600 transition-all duration-300"
+                          className="h-full bg-accent-600 transition-all duration-300"
                           style={{ width: `${path.progressPercentage}%` }}
                         />
                       </div>
@@ -246,7 +246,7 @@ export default function LearningPathsPage() {
                   {path.isEnrolled ? (
                     <button
                       onClick={() => router.push(`/learning/paths/${path.id}`)}
-                      className="btn-primary w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center justify-center gap-2"
+                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm flex items-center justify-center gap-2"
                     >
                       {path.status === 'COMPLETED' ? (
                         <>
@@ -262,7 +262,7 @@ export default function LearningPathsPage() {
                     <button
                       onClick={() => handleEnrollPath(path.id)}
                       disabled={enrollPathMutation.isPending}
-                      className="btn-primary w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
                     >
                       {enrollPathMutation.isPending ? (
                         <>
@@ -297,7 +297,7 @@ export default function LearningPathsPage() {
                   setSearchQuery('');
                   setSelectedDifficulty('ALL');
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm"
+                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm"
               >
                 Clear Filters
               </button>

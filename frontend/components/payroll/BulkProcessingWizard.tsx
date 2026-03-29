@@ -183,7 +183,7 @@ export const BulkProcessingWizard: React.FC = () => {
         <Card variant="elevated">
           <CardContent className="p-8">
             <div className="flex flex-col items-center justify-center text-center space-y-4">
-              <Construction className="h-16 w-16 text-amber-500" />
+              <Construction className="h-16 w-16 text-warning-500" />
               <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
                 Coming Soon
               </h2>
@@ -222,7 +222,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       className={cn(
                         'w-12 h-12 rounded-full flex items-center justify-center transition-all',
                         isCompleted && 'bg-success-500 text-white',
-                        isActive && 'bg-sky-500 text-white ring-4 ring-sky-100 dark:ring-sky-900',
+                        isActive && 'bg-accent-500 text-white ring-4 ring-accent-100 dark:ring-accent-900',
                         !isActive && !isCompleted && 'bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
                       )}
                     >
@@ -236,7 +236,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       <p
                         className={cn(
                           'text-sm font-medium',
-                          isActive && 'text-sky-700 dark:text-sky-400',
+                          isActive && 'text-accent-700 dark:text-accent-400',
                           !isActive && 'text-surface-600 dark:text-surface-400'
                         )}
                       >
@@ -261,7 +261,7 @@ export const BulkProcessingWizard: React.FC = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg flex items-start gap-2">
+        <div className="p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-200 rounded-lg flex items-start gap-2">
           <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
           <div className="flex-1">
             <p className="font-medium">Error</p>
@@ -269,7 +269,7 @@ export const BulkProcessingWizard: React.FC = () => {
           </div>
           <button
             onClick={() => setError(null)}
-            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+            className="text-danger-600 dark:text-danger-400 hover:text-danger-800 dark:hover:text-danger-200"
           >
             <X className="h-5 w-5" />
           </button>
@@ -300,7 +300,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search employees..."
-                    className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
                 <Button
@@ -325,7 +325,7 @@ export const BulkProcessingWizard: React.FC = () => {
                 <div className="max-h-[400px] overflow-y-auto">
                   {loading ? (
                     <div className="flex items-center justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+                      <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
                     </div>
                   ) : filteredEmployees.length === 0 ? (
                     <div className="text-center py-12 text-surface-600 dark:text-surface-400">
@@ -342,12 +342,12 @@ export const BulkProcessingWizard: React.FC = () => {
                             className={cn(
                               'flex items-center gap-4 p-4 cursor-pointer transition-colors',
                               'hover:bg-surface-50 dark:hover:bg-surface-800/50',
-                              isSelected && 'bg-sky-50 dark:bg-sky-950/30'
+                              isSelected && 'bg-accent-50 dark:bg-accent-950/30'
                             )}
                           >
                             <div className="flex-shrink-0">
                               {isSelected ? (
-                                <CheckCircle2 className="h-6 w-6 text-sky-500" />
+                                <CheckCircle2 className="h-6 w-6 text-accent-500" />
                               ) : (
                                 <Circle className="h-6 w-6 text-surface-400" />
                               )}
@@ -404,7 +404,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     value={runName}
                     onChange={(e) => setRunName(e.target.value)}
                     placeholder="e.g., December 2024 Payroll"
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
 
@@ -417,7 +417,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       type="date"
                       value={payrollPeriodStart}
                       onChange={(e) => setPayrollPeriodStart(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                     />
                   </div>
 
@@ -429,7 +429,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       type="date"
                       value={payrollPeriodEnd}
                       onChange={(e) => setPayrollPeriodEnd(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                     />
                   </div>
                 </div>
@@ -442,7 +442,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     type="date"
                     value={paymentDate}
                     onChange={(e) => setPaymentDate(e.target.value)}
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
 
@@ -503,35 +503,35 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {/* Total Summary */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-lg">
-                  <p className="text-sm text-sky-700 dark:text-sky-400 mb-1">
+                <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
+                  <p className="text-sm text-accent-700 dark:text-accent-400 mb-1">
                     Total Employees
                   </p>
-                  <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">
+                  <p className="text-2xl font-bold text-accent-700 dark:text-accent-300">
                     {previewData.length}
                   </p>
                 </div>
-                <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                  <p className="text-sm text-green-600 dark:text-green-400 mb-1">
+                <div className="p-4 bg-success-50 dark:bg-success-950/30 rounded-lg">
+                  <p className="text-sm text-success-600 dark:text-success-400 mb-1">
                     Total Gross
                   </p>
-                  <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  <p className="text-2xl font-bold text-success-700 dark:text-success-300">
                     {formatCurrency(previewData.reduce((sum, emp) => sum + emp.grossAmount, 0))}
                   </p>
                 </div>
-                <div className="p-4 bg-red-50 dark:bg-red-950/30 rounded-lg">
-                  <p className="text-sm text-red-600 dark:text-red-400 mb-1">
+                <div className="p-4 bg-danger-50 dark:bg-danger-950/30 rounded-lg">
+                  <p className="text-sm text-danger-600 dark:text-danger-400 mb-1">
                     Total Deductions
                   </p>
-                  <p className="text-2xl font-bold text-red-700 dark:text-red-300">
+                  <p className="text-2xl font-bold text-danger-700 dark:text-danger-300">
                     {formatCurrency(previewData.reduce((sum, emp) => sum + emp.totalDeductions, 0))}
                   </p>
                 </div>
-                <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-                  <p className="text-sm text-blue-600 dark:text-blue-400 mb-1">
+                <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
+                  <p className="text-sm text-accent-600 dark:text-accent-400 mb-1">
                     Total Net
                   </p>
-                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                  <p className="text-2xl font-bold text-accent-700 dark:text-accent-300">
                     {formatCurrency(previewData.reduce((sum, emp) => sum + emp.netAmount, 0))}
                   </p>
                 </div>
@@ -572,16 +572,16 @@ export const BulkProcessingWizard: React.FC = () => {
                           <td className="px-4 py-3 text-sm text-right text-surface-900 dark:text-surface-50">
                             {formatCurrency(emp.baseSalary)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right text-green-600 dark:text-green-400">
+                          <td className="px-4 py-3 text-sm text-right text-success-600 dark:text-success-400">
                             {formatCurrency(emp.totalAllowances)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right text-red-600 dark:text-red-400">
+                          <td className="px-4 py-3 text-sm text-right text-danger-600 dark:text-danger-400">
                             {formatCurrency(emp.totalDeductions)}
                           </td>
                           <td className="px-4 py-3 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
                             {formatCurrency(emp.grossAmount)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right font-bold text-sky-700 dark:text-sky-400">
+                          <td className="px-4 py-3 text-sm text-right font-bold text-accent-700 dark:text-accent-400">
                             {formatCurrency(emp.netAmount)}
                           </td>
                         </tr>
@@ -599,7 +599,7 @@ export const BulkProcessingWizard: React.FC = () => {
               <div className="text-center">
                 {processingStatus === 'processing' ? (
                   <>
-                    <Loader2 className="h-16 w-16 animate-spin text-sky-500 mx-auto mb-4" />
+                    <Loader2 className="h-16 w-16 animate-spin text-accent-500 mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
                       Processing Payroll
                     </h2>
@@ -632,11 +632,11 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {processingResult && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-lg text-center">
-                    <p className="text-sm text-sky-700 dark:text-sky-400 mb-1">
+                  <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg text-center">
+                    <p className="text-sm text-accent-700 dark:text-accent-400 mb-1">
                       Payroll Run ID
                     </p>
-                    <p className="text-lg font-bold text-sky-700 dark:text-sky-300">
+                    <p className="text-lg font-bold text-accent-700 dark:text-accent-300">
                       {processingResult.payrollRunId}
                     </p>
                   </div>

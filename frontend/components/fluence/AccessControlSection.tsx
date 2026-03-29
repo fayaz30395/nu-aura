@@ -65,9 +65,9 @@ export default function AccessControlSection({
   }));
 
   return (
-    <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
+    <Card className="border-accent-200 dark:border-accent-800 bg-accent-50/50 dark:bg-accent-950/20">
       <CardContent className="pt-4 space-y-4">
-        <div className="flex items-center gap-2 text-sm font-medium text-blue-700 dark:text-blue-300">
+        <div className="flex items-center gap-2 text-sm font-medium text-accent-700 dark:text-accent-300">
           <Shield className="w-4 h-4" />
           Access Control
         </div>

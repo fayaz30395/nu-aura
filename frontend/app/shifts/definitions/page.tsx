@@ -218,7 +218,7 @@ export default function ShiftDefinitionsPage() {
             <PermissionGate permission={Permissions.SHIFT_MANAGE}>
               <button
                 onClick={openCreate}
-                className="flex items-center gap-2 px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium"
               >
                 <Plus className="w-4 h-4" />
                 Add Shift
@@ -258,12 +258,12 @@ export default function ShiftDefinitionsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
-                      {shift.isNightShift && <Moon className="w-4 h-4 text-indigo-500" />}
-                      {shift.isFlexible && <Zap className="w-4 h-4 text-amber-500" />}
+                      {shift.isNightShift && <Moon className="w-4 h-4 text-accent-500" />}
+                      {shift.isFlexible && <Zap className="w-4 h-4 text-warning-500" />}
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           shift.isActive
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                            ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
                             : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                         }`}
                       >
@@ -303,7 +303,7 @@ export default function ShiftDefinitionsPage() {
                     <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
                       <button
                         onClick={() => openEdit(shift)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-sky-700 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         Edit
@@ -312,7 +312,7 @@ export default function ShiftDefinitionsPage() {
                         onClick={() => {
                           if (confirm('Delete this shift?')) deleteMutation.mutate(shift.id);
                         }}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         Delete
@@ -387,11 +387,11 @@ export default function ShiftDefinitionsPage() {
                         <input
                           {...form.register('shiftCode')}
                           disabled={!!editingShift}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 disabled:opacity-50"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 disabled:opacity-50"
                           placeholder="e.g., GEN"
                         />
                         {form.formState.errors.shiftCode && (
-                          <p className="text-xs text-red-500 mt-1">
+                          <p className="text-xs text-danger-500 mt-1">
                             {form.formState.errors.shiftCode.message}
                           </p>
                         )}
@@ -402,11 +402,11 @@ export default function ShiftDefinitionsPage() {
                         </label>
                         <input
                           {...form.register('shiftName')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                           placeholder="e.g., General Shift"
                         />
                         {form.formState.errors.shiftName && (
-                          <p className="text-xs text-red-500 mt-1">
+                          <p className="text-xs text-danger-500 mt-1">
                             {form.formState.errors.shiftName.message}
                           </p>
                         )}
@@ -422,7 +422,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="time"
                           {...form.register('startTime')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -432,7 +432,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="time"
                           {...form.register('endTime')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -445,7 +445,7 @@ export default function ShiftDefinitionsPage() {
                         </label>
                         <select
                           {...form.register('shiftType')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         >
                           {SHIFT_TYPES.map((t) => (
                             <option key={t.value} value={t.value}>
@@ -505,7 +505,7 @@ export default function ShiftDefinitionsPage() {
                                     }}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                                       isSelected
-                                        ? 'bg-sky-700 text-white'
+                                        ? 'bg-accent-700 text-white'
                                         : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200'
                                     }`}
                                   >
@@ -528,7 +528,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('gracePeriodInMinutes')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -538,7 +538,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('breakDurationMinutes')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -548,7 +548,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('minGapBetweenShiftsHours')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -571,7 +571,7 @@ export default function ShiftDefinitionsPage() {
                               onClick={() => field.onChange(!field.value)}
                               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                                 field.value
-                                  ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400'
+                                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
                                   : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                               }`}
                             >
@@ -592,7 +592,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('flexibleWindowMinutes')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     )}
@@ -609,7 +609,7 @@ export default function ShiftDefinitionsPage() {
                       <button
                         type="submit"
                         disabled={createMutation.isPending || updateMutation.isPending}
-                        className="px-4 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-800 rounded-lg disabled:opacity-50 transition-colors"
+                        className="px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg disabled:opacity-50 transition-colors"
                       >
                         {createMutation.isPending || updateMutation.isPending
                           ? 'Saving...'

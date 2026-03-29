@@ -177,12 +177,12 @@ export default function HolidayCalendarManagementPage() {
 
   const getHolidayTypeColor = (type: HolidayType) => {
     const colors: Record<HolidayType, string> = {
-      NATIONAL: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
-      REGIONAL: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-      OPTIONAL: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
-      RESTRICTED: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300',
-      FESTIVAL: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
-      COMPANY_EVENT: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+      NATIONAL: 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300',
+      REGIONAL: 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
+      OPTIONAL: 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
+      RESTRICTED: 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
+      FESTIVAL: 'bg-accent-300 text-accent-900 dark:bg-accent-900/50 dark:text-accent-500',
+      COMPANY_EVENT: 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300',
     };
     return colors[type];
   };
@@ -248,13 +248,13 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Error Message */}
         {(uiError || queryError) && (
-          <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded relative">
+          <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-3 rounded relative">
             <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
             >
-              <span className="text-red-500 dark:text-red-400 text-xl">&times;</span>
+              <span className="text-danger-500 dark:text-danger-400 text-xl">&times;</span>
             </button>
           </div>
         )}
@@ -267,19 +267,19 @@ export default function HolidayCalendarManagementPage() {
           </div>
           <div className="skeuo-card p-4">
             <div className="text-sm text-[var(--text-secondary)]">National</div>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-danger-600">
               {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
             </div>
           </div>
           <div className="skeuo-card p-4">
             <div className="text-sm text-[var(--text-secondary)]">Optional</div>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-warning-600">
               {holidays.filter((h) => h.isOptional).length}
             </div>
           </div>
           <div className="skeuo-card p-4">
             <div className="text-sm text-[var(--text-secondary)]">Restricted</div>
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="text-2xl font-bold text-warning-600">
               {holidays.filter((h) => h.isRestricted).length}
             </div>
           </div>
@@ -332,12 +332,12 @@ export default function HolidayCalendarManagementPage() {
                                   {holiday.holidayType.replace('_', ' ')}
                                 </span>
                                 {holiday.isOptional && (
-                                  <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 font-semibold rounded">
+                                  <span className="px-2 py-1 text-xs bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300 font-semibold rounded">
                                     Optional
                                   </span>
                                 )}
                                 {holiday.isRestricted && (
-                                  <span className="px-2 py-1 text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300 font-semibold rounded">
+                                  <span className="px-2 py-1 text-xs bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300 font-semibold rounded">
                                     Restricted
                                   </span>
                                 )}
@@ -353,13 +353,13 @@ export default function HolidayCalendarManagementPage() {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleEdit(holiday)}
-                            className="text-sky-700 hover:text-blue-900 px-3 py-1"
+                            className="text-accent-700 hover:text-accent-900 px-3 py-1"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(holiday)}
-                            className="text-red-600 hover:text-red-900 px-3 py-1"
+                            className="text-danger-600 hover:text-danger-900 px-3 py-1"
                           >
                             Delete
                           </button>
@@ -425,7 +425,7 @@ export default function HolidayCalendarManagementPage() {
                           placeholder="New Year's Day, Independence Day"
                         />
                         {form.formState.errors.holidayName && (
-                          <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayName.message}</p>
+                          <p className="mt-1 text-xs text-danger-500">{form.formState.errors.holidayName.message}</p>
                         )}
                       </div>
 
@@ -440,7 +440,7 @@ export default function HolidayCalendarManagementPage() {
                             className="input-aura"
                           />
                           {form.formState.errors.holidayDate && (
-                            <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayDate.message}</p>
+                            <p className="mt-1 text-xs text-danger-500">{form.formState.errors.holidayDate.message}</p>
                           )}
                         </div>
                         <div>
@@ -482,7 +482,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isOptional')}
-                          className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">Optional Holiday</span>
                         <span className="ml-2 text-xs text-[var(--text-muted)]">(Employees can choose to work)</span>
@@ -492,7 +492,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isRestricted')}
-                          className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
                         <span className="ml-2 text-sm text-[var(--text-secondary)]">Restricted Holiday</span>
                         <span className="ml-2 text-xs text-[var(--text-muted)]">(Limited to certain employees)</span>

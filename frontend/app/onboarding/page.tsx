@@ -58,10 +58,10 @@ export default function OnboardingPage() {
     });
 
     const stats = [
-        { label: 'Active', value: processes.filter(p => p.status === 'IN_PROGRESS').length, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-        { label: 'Upcoming', value: processes.filter(p => p.status === 'NOT_STARTED').length, icon: Calendar, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-        { label: 'Completed', value: processes.filter(p => p.status === 'COMPLETED').length, icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-        { label: 'Avg. Days', value: '12', icon: Clock, color: 'text-sky-500', bg: 'bg-sky-500/10' }
+        { label: 'Active', value: processes.filter(p => p.status === 'IN_PROGRESS').length, icon: Zap, color: 'text-warning-500', bg: 'bg-warning-500/10' },
+        { label: 'Upcoming', value: processes.filter(p => p.status === 'NOT_STARTED').length, icon: Calendar, color: 'text-accent-500', bg: 'bg-accent-500/10' },
+        { label: 'Completed', value: processes.filter(p => p.status === 'COMPLETED').length, icon: ShieldCheck, color: 'text-success-500', bg: 'bg-success-500/10' },
+        { label: 'Avg. Days', value: '12', icon: Clock, color: 'text-accent-500', bg: 'bg-accent-500/10' }
     ];
 
     return (
@@ -74,7 +74,7 @@ export default function OnboardingPage() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
                         <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
-                            Talent <span className="text-sky-700">Onboarding</span>
+                            Talent <span className="text-accent-700">Onboarding</span>
                         </h1>
                         <p className="text-[var(--text-muted)] font-bold max-w-md skeuo-deboss">
                             Orchestrate the first 90 days of your new joiners with precision and care.
@@ -95,7 +95,7 @@ export default function OnboardingPage() {
                         <PermissionGate permission={Permissions.ONBOARDING_CREATE}>
                             <Button
                                 variant="primary"
-                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-sky-500/20 rounded-xl py-3 px-5"
+                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-accent-500/20 rounded-xl py-3 px-5"
                                 leftIcon={<UserPlus className="h-4 w-4" />}
                                 onClick={() => router.push('/onboarding/new')}
                             >
@@ -120,7 +120,7 @@ export default function OnboardingPage() {
                                         <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color}`}>
                                             <stat.icon className="h-5 w-5" />
                                         </div>
-                                        <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+                                        <TrendingUp className="h-3.5 w-3.5 text-success-500" />
                                     </div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5 skeuo-deboss">{stat.label}</p>
                                     <p className="text-2xl font-black text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
@@ -212,11 +212,11 @@ export default function OnboardingPage() {
                                         >
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                                                 <div className="flex items-center gap-6">
-                                                    <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-sky-500/20 to-indigo-600/20 flex items-center justify-center text-sky-700 dark:text-sky-400 font-black text-2xl shadow-inner border border-white/20">
+                                                    <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-accent-500/20 to-accent-600/20 flex items-center justify-center text-accent-700 dark:text-accent-400 font-black text-2xl shadow-inner border border-white/20">
                                                         {process.employeeName?.charAt(0) || 'U'}
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-xl font-black text-[var(--text-primary)] group-hover:text-sky-700 transition-colors">
+                                                        <h3 className="text-xl font-black text-[var(--text-primary)] group-hover:text-accent-700 transition-colors">
                                                             {process.employeeName || `Employee ${process.employeeId.substring(0, 8)}`}
                                                         </h3>
                                                         <div className="flex items-center gap-4 mt-1 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">
@@ -225,7 +225,7 @@ export default function OnboardingPage() {
                                                                 Starts {new Date(process.startDate).toLocaleDateString()}
                                                             </span>
                                                             {process.assignedBuddyName && (
-                                                                <span className="flex items-center gap-1.5 text-indigo-500">
+                                                                <span className="flex items-center gap-1.5 text-accent-500">
                                                                     <Users className="h-3.5 w-3.5" />
                                                                     Buddy: {process.assignedBuddyName}
                                                                 </span>
@@ -242,10 +242,10 @@ export default function OnboardingPage() {
                                                                 <motion.div
                                                                     initial={{ width: 0 }}
                                                                     animate={{ width: `${process.completionPercentage}%` }}
-                                                                    className="h-full bg-gradient-to-r from-sky-500 to-indigo-500 rounded-full"
+                                                                    className="h-full bg-gradient-to-r from-accent-500 to-accent-500 rounded-full"
                                                                 />
                                                             </div>
-                                                            <span className="text-sm font-black text-sky-700">{process.completionPercentage}%</span>
+                                                            <span className="text-sm font-black text-accent-700">{process.completionPercentage}%</span>
                                                         </div>
                                                     </div>
 
@@ -257,7 +257,7 @@ export default function OnboardingPage() {
                                                     </Badge>
 
                                                     <div className="h-10 w-10 flex items-center justify-center rounded-2xl bg-[var(--bg-input)] shadow-sm border border-[var(--border-main)] opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                                                        <ChevronRight className="h-5 w-5 text-sky-700" />
+                                                        <ChevronRight className="h-5 w-5 text-accent-700" />
                                                     </div>
                                                 </div>
                                             </div>

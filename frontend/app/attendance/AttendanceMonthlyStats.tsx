@@ -18,10 +18,10 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
   monthStats,
 }: AttendanceMonthlyStatsProps) {
   const stats: Array<{ label: string; value: number | string; total: number | null; icon: React.ElementType; color: string; textColor: string; tintClass: string }> = [
-    { label: 'Present', value: monthStats.present, total: monthStats.businessDays, icon: CheckCircle, color: 'from-emerald-500 to-green-600', textColor: 'text-emerald-600 dark:text-emerald-400', tintClass: 'tint-success' },
-    { label: 'Absent', value: monthStats.absent, total: monthStats.businessDays, icon: AlertCircle, color: 'from-red-500 to-rose-600', textColor: 'text-red-600 dark:text-red-400', tintClass: 'tint-danger' },
-    { label: 'Late Arrivals', value: monthStats.late, total: monthStats.present, icon: AlertTriangle, color: 'from-amber-500 to-orange-600', textColor: 'text-amber-600 dark:text-amber-400', tintClass: 'tint-warning' },
-    { label: 'Overtime', value: `${monthStats.overtimeTotal.toFixed(1)}h`, total: null, icon: Zap, color: 'from-blue-500 to-cyan-600', textColor: 'text-blue-600 dark:text-blue-400', tintClass: 'tint-info' },
+    { label: 'Present', value: monthStats.present, total: monthStats.businessDays, icon: CheckCircle, color: 'from-success-500 to-success-600', textColor: 'text-success-600 dark:text-success-400', tintClass: 'tint-success' },
+    { label: 'Absent', value: monthStats.absent, total: monthStats.businessDays, icon: AlertCircle, color: 'from-danger-500 to-danger-600', textColor: 'text-danger-600 dark:text-danger-400', tintClass: 'tint-danger' },
+    { label: 'Late Arrivals', value: monthStats.late, total: monthStats.present, icon: AlertTriangle, color: 'from-warning-500 to-warning-600', textColor: 'text-warning-600 dark:text-warning-400', tintClass: 'tint-warning' },
+    { label: 'Overtime', value: `${monthStats.overtimeTotal.toFixed(1)}h`, total: null, icon: Zap, color: 'from-accent-500 to-accent-600', textColor: 'text-accent-600 dark:text-accent-400', tintClass: 'tint-info' },
   ];
 
   return (

@@ -28,7 +28,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
     <div className={cn('relative', className)} style={{ width: dimension, height: dimension }}>
       {/* Center core - pulsing */}
       <motion.div
-        className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-gradient-to-br from-sky-500 to-sky-700"
+        className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-gradient-to-br from-accent-500 to-accent-700"
         animate={{
           scale: [1, 1.3, 1],
           opacity: [0.8, 1, 0.8],
@@ -46,7 +46,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: 360 }}
         transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-br from-sky-400 to-sky-700 shadow-lg shadow-sky-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-lg shadow-accent-500/50" />
       </motion.div>
 
       {/* Orbit ring 2 - middle */}
@@ -55,7 +55,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: -360 }}
         transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 shadow-lg shadow-teal-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 shadow-lg shadow-accent-500/50" />
       </motion.div>
 
       {/* Orbit ring 3 - inner */}
@@ -64,7 +64,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: 360 }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-br from-sky-400 to-sky-700 shadow-lg shadow-sky-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-lg shadow-accent-500/50" />
       </motion.div>
 
       {/* Orbiting particles */}
@@ -81,7 +81,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
           }}
         >
           <div
-            className="absolute w-0.5 h-0.5 rounded-full bg-sky-300"
+            className="absolute w-0.5 h-0.5 rounded-full bg-accent-300"
             style={{
               top: '10%',
               left: '50%',
@@ -135,9 +135,9 @@ export function GradientRingSpinner({ size = 'md', className }: Omit<PremiumSpin
         {/* Gradient definition */}
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0369A1" />
-            <stop offset="50%" stopColor="#0284C7" />
-            <stop offset="100%" stopColor="#38BDF8" />
+            <stop offset="0%" stopColor="#1e3a8a" />
+            <stop offset="50%" stopColor="#3b82f6" />
+            <stop offset="100%" stopColor="#60a5fa" />
           </linearGradient>
         </defs>
       </svg>
@@ -156,7 +156,7 @@ export function PulseDotsSpinner({ size = 'md', className }: Omit<PremiumSpinner
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="rounded-full bg-gradient-to-br from-sky-500 to-sky-700"
+          className="rounded-full bg-gradient-to-br from-accent-500 to-accent-700"
           style={{ width: dotSize, height: dotSize }}
           animate={{
             scale: [1, 1.5, 1],
@@ -186,7 +186,7 @@ export function WaveBarsSpinner({ size = 'md', className }: Omit<PremiumSpinnerP
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.div
           key={i}
-          className="rounded-full bg-gradient-to-t from-sky-700 to-sky-400"
+          className="rounded-full bg-gradient-to-t from-accent-700 to-accent-400"
           style={{ width: barWidth }}
           animate={{
             height: [maxHeight * 0.3, maxHeight, maxHeight * 0.3],
@@ -214,7 +214,7 @@ export function ExpandingRingSpinner({ size = 'md', className }: Omit<PremiumSpi
       {[0, 1].map((i) => (
         <motion.div
           key={i}
-          className="absolute inset-0 rounded-full border-4 border-sky-500"
+          className="absolute inset-0 rounded-full border-4 border-accent-500"
           initial={{ scale: 0.5, opacity: 1 }}
           animate={{
             scale: [0.5, 1.5],

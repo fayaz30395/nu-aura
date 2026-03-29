@@ -120,15 +120,15 @@ type FeedbackFormData = z.infer<typeof feedbackSchema>;
 function getStatusBadge(status: MeetingStatus | undefined) {
   switch (status) {
     case 'SCHEDULED':
-      return { label: 'Scheduled', classes: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' };
+      return { label: 'Scheduled', classes: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400' };
     case 'IN_PROGRESS':
-      return { label: 'In Progress', classes: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' };
+      return { label: 'In Progress', classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' };
     case 'COMPLETED':
-      return { label: 'Completed', classes: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' };
+      return { label: 'Completed', classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' };
     case 'CANCELLED':
-      return { label: 'Cancelled', classes: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' };
+      return { label: 'Cancelled', classes: 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400' };
     case 'RESCHEDULED':
-      return { label: 'Rescheduled', classes: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400' };
+      return { label: 'Rescheduled', classes: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400' };
     case 'NO_SHOW':
       return { label: 'No Show', classes: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' };
     default:
@@ -152,9 +152,9 @@ function getMeetingTypeLabel(type: MeetingType | undefined): string {
 
 function getPriorityColor(priority: MeetingAgendaPriority | MeetingActionPriority | undefined): string {
   switch (priority) {
-    case 'URGENT': return 'text-red-600 dark:text-red-400';
-    case 'HIGH': return 'text-orange-600 dark:text-orange-400';
-    case 'MEDIUM': return 'text-yellow-600 dark:text-yellow-400';
+    case 'URGENT': return 'text-danger-600 dark:text-danger-400';
+    case 'HIGH': return 'text-warning-600 dark:text-warning-400';
+    case 'MEDIUM': return 'text-warning-600 dark:text-warning-400';
     case 'LOW': return 'text-gray-500 dark:text-gray-400';
     default: return 'text-gray-500';
   }
@@ -162,11 +162,11 @@ function getPriorityColor(priority: MeetingAgendaPriority | MeetingActionPriorit
 
 function getActionStatusColor(status: MeetingActionStatus): string {
   switch (status) {
-    case 'OPEN': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-    case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-    case 'COMPLETED': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-    case 'CANCELLED': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-    case 'CARRIED_OVER': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+    case 'OPEN': return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
+    case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+    case 'COMPLETED': return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+    case 'CANCELLED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
+    case 'CARRIED_OVER': return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
     default: return 'bg-gray-100 text-gray-800';
   }
 }
@@ -523,7 +523,7 @@ export default function OneOnOnePage() {
                           href={meeting.meetingLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-sky-700 dark:text-sky-400 hover:underline"
+                          className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:underline"
                         >
                           <Video className="h-4 w-4" /> Join
                         </a>
@@ -549,7 +549,7 @@ export default function OneOnOnePage() {
                           <button
                             onClick={handleStartMeeting}
                             disabled={startMutation.isPending}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors"
                           >
                             <Play className="h-3.5 w-3.5" /> Start
                           </button>
@@ -558,7 +558,7 @@ export default function OneOnOnePage() {
                       <PermissionGate permission={Permissions.MEETING_CREATE}>
                         <button
                           onClick={() => setShowCompleteModal(true)}
-                          className="flex items-center gap-1 px-3 py-1.5 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
                         >
                           <CheckCircle2 className="h-3.5 w-3.5" /> Complete
                         </button>
@@ -571,7 +571,7 @@ export default function OneOnOnePage() {
                       </button>
                       <button
                         onClick={() => setShowCancelModal(true)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm border border-red-300 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        className="flex items-center gap-1 px-3 py-1.5 text-sm border border-danger-300 text-danger-600 dark:text-danger-400 rounded-lg hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors"
                       >
                         <Ban className="h-3.5 w-3.5" /> Cancel
                       </button>
@@ -589,7 +589,7 @@ export default function OneOnOnePage() {
                       onClick={() => setDetailTab(tab)}
                       className={`flex-1 px-4 py-3 text-sm font-medium transition-colors capitalize ${
                         detailTab === tab
-                          ? 'border-b-2 border-sky-700 text-sky-700 dark:text-sky-400'
+                          ? 'border-b-2 border-accent-700 text-accent-700 dark:text-accent-400'
                           : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                       }`}
                     >
@@ -607,7 +607,7 @@ export default function OneOnOnePage() {
                         {isActive && (
                           <button
                             onClick={() => setShowAgendaForm(!showAgendaForm)}
-                            className="flex items-center gap-1 text-sm text-sky-700 dark:text-sky-400 hover:underline"
+                            className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                           >
                             <Plus className="h-4 w-4" /> Add Point
                           </button>
@@ -621,17 +621,17 @@ export default function OneOnOnePage() {
                               <input
                                 {...agendaForm.register('title')}
                                 placeholder="What would you like to discuss?"
-                                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {agendaForm.formState.errors.title && (
-                                <p className="text-xs text-red-500 mt-1">{agendaForm.formState.errors.title.message}</p>
+                                <p className="text-xs text-danger-500 mt-1">{agendaForm.formState.errors.title.message}</p>
                               )}
                             </div>
                             <textarea
                               {...agendaForm.register('description')}
                               placeholder="Additional details (optional)"
                               rows={2}
-                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
                             <div className="flex gap-3">
                               <select
@@ -662,7 +662,7 @@ export default function OneOnOnePage() {
                               <button
                                 type="submit"
                                 disabled={addAgendaMutation.isPending}
-                                className="px-4 py-2 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors"
+                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
                               >
                                 {addAgendaMutation.isPending ? 'Adding...' : 'Add'}
                               </button>
@@ -690,7 +690,7 @@ export default function OneOnOnePage() {
                               key={item.id}
                               className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${
                                 item.isDiscussed
-                                  ? 'bg-green-50/50 dark:bg-green-900/10 border-green-200 dark:border-green-800'
+                                  ? 'bg-success-50/50 dark:bg-success-900/10 border-success-200 dark:border-success-800'
                                   : 'bg-[var(--bg-card)] border-[var(--border-main)]'
                               }`}
                             >
@@ -707,9 +707,9 @@ export default function OneOnOnePage() {
                                 className="mt-0.5 flex-shrink-0"
                               >
                                 {item.isDiscussed ? (
-                                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                                  <CheckCircle2 className="h-5 w-5 text-success-600" />
                                 ) : (
-                                  <CircleDot className="h-5 w-5 text-[var(--text-muted)] hover:text-sky-700" />
+                                  <CircleDot className="h-5 w-5 text-[var(--text-muted)] hover:text-accent-700" />
                                 )}
                               </button>
                               <div className="flex-1 min-w-0">
@@ -732,14 +732,14 @@ export default function OneOnOnePage() {
                                   <p className="text-xs text-[var(--text-muted)] mt-0.5">{item.description}</p>
                                 )}
                                 {item.discussionNotes && (
-                                  <p className="text-xs text-green-700 dark:text-green-400 mt-1 italic">{item.discussionNotes}</p>
+                                  <p className="text-xs text-success-700 dark:text-success-400 mt-1 italic">{item.discussionNotes}</p>
                                 )}
                                 <span className="text-xs text-[var(--text-muted)]">Added by {item.addedBy?.toLowerCase()}</span>
                               </div>
                               {isActive && !item.isDiscussed && (
                                 <button
                                   onClick={() => deleteAgendaMutation.mutate({ meetingId: selectedMeetingId, itemId: item.id })}
-                                  className="text-[var(--text-muted)] hover:text-red-500 transition-colors"
+                                  className="text-[var(--text-muted)] hover:text-danger-500 transition-colors"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
@@ -760,7 +760,7 @@ export default function OneOnOnePage() {
                           <PermissionGate permission={Permissions.MEETING_CREATE}>
                             <button
                               onClick={() => setShowActionForm(!showActionForm)}
-                              className="flex items-center gap-1 text-sm text-sky-700 dark:text-sky-400 hover:underline"
+                              className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                             >
                               <Plus className="h-4 w-4" /> Add Action
                             </button>
@@ -774,25 +774,25 @@ export default function OneOnOnePage() {
                             <input
                               {...actionForm.register('title')}
                               placeholder="Action item title"
-                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
                             {actionForm.formState.errors.title && (
-                              <p className="text-xs text-red-500">{actionForm.formState.errors.title.message}</p>
+                              <p className="text-xs text-danger-500">{actionForm.formState.errors.title.message}</p>
                             )}
                             <textarea
                               {...actionForm.register('description')}
                               placeholder="Description (optional)"
                               rows={2}
-                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
                             <div className="grid grid-cols-2 gap-3">
                               <input
                                 {...actionForm.register('assigneeId')}
                                 placeholder="Assignee Employee ID"
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {actionForm.formState.errors.assigneeId && (
-                                <p className="text-xs text-red-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
+                                <p className="text-xs text-danger-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
                               )}
                               <select
                                 {...actionForm.register('assigneeRole')}
@@ -806,7 +806,7 @@ export default function OneOnOnePage() {
                               <input
                                 type="date"
                                 {...actionForm.register('dueDate')}
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700"
+                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               <select
                                 {...actionForm.register('priority')}
@@ -822,7 +822,7 @@ export default function OneOnOnePage() {
                               <button
                                 type="submit"
                                 disabled={createActionMutation.isPending}
-                                className="px-4 py-2 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors"
+                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
                               >
                                 {createActionMutation.isPending ? 'Adding...' : 'Add Action'}
                               </button>
@@ -857,7 +857,7 @@ export default function OneOnOnePage() {
                                     {item.status.replace('_', ' ')}
                                   </span>
                                   {item.isOverdue && (
-                                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 font-medium">
+                                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400 font-medium">
                                       Overdue
                                     </span>
                                   )}
@@ -894,7 +894,7 @@ export default function OneOnOnePage() {
                                         data: { status: 'COMPLETED' },
                                       })
                                     }
-                                    className="text-xs px-2 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition-colors"
+                                    className="text-xs px-2 py-1 rounded bg-success-600 text-white hover:bg-success-700 transition-colors"
                                     title="Mark Complete"
                                   >
                                     <Check className="h-3 w-3" />
@@ -921,7 +921,7 @@ export default function OneOnOnePage() {
                           onChange={(e) => setSharedNotes(e.target.value)}
                           rows={5}
                           placeholder="Write shared meeting notes..."
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -934,13 +934,13 @@ export default function OneOnOnePage() {
                           onChange={(e) => setPrivateNotes(e.target.value)}
                           rows={4}
                           placeholder="Write your private notes..."
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <button
                         onClick={handleSaveNotes}
                         disabled={updateNotesMutation.isPending}
-                        className="flex items-center gap-1 px-4 py-2 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
                       >
                         <Send className="h-3.5 w-3.5" />
                         {updateNotesMutation.isPending ? 'Saving...' : 'Save Notes'}
@@ -964,7 +964,7 @@ export default function OneOnOnePage() {
                             {[1, 2, 3, 4, 5].map((s) => (
                               <Star
                                 key={s}
-                                className={`h-5 w-5 ${s <= (meeting.employeeRating || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                                className={`h-5 w-5 ${s <= (meeting.employeeRating || 0) ? 'text-warning-400 fill-warning-400' : 'text-gray-300'}`}
                               />
                             ))}
                           </div>
@@ -992,7 +992,7 @@ export default function OneOnOnePage() {
                                         >
                                           <Star
                                             className={`h-7 w-7 transition-colors ${
-                                              s <= field.value ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 hover:text-yellow-300'
+                                              s <= field.value ? 'text-warning-400 fill-warning-400' : 'text-gray-300 hover:text-warning-300'
                                             }`}
                                           />
                                         </button>
@@ -1007,14 +1007,14 @@ export default function OneOnOnePage() {
                                   {...feedbackForm.register('feedback')}
                                   rows={3}
                                   placeholder="How was this meeting?"
-                                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                                 />
                               </div>
                               <div className="flex gap-2">
                                 <button
                                   type="submit"
                                   disabled={submitFeedbackMutation.isPending}
-                                  className="px-4 py-2 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg"
+                                  className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg"
                                 >
                                   {submitFeedbackMutation.isPending ? 'Submitting...' : 'Submit Feedback'}
                                 </button>
@@ -1033,7 +1033,7 @@ export default function OneOnOnePage() {
                               <p className="text-[var(--text-muted)] mb-3">No feedback submitted yet.</p>
                               <button
                                 onClick={() => setShowFeedbackForm(true)}
-                                className="px-4 py-2 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors"
+                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
                               >
                                 Submit Feedback
                               </button>
@@ -1062,7 +1062,7 @@ export default function OneOnOnePage() {
                       onChange={(e) => setCancelReason(e.target.value)}
                       placeholder="Reason for cancellation..."
                       rows={3}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700 mb-4"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
                     />
                     <div className="flex justify-end gap-2">
                       <button
@@ -1074,7 +1074,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleCancelMeeting}
                         disabled={!cancelReason || cancelMutation.isPending}
-                        className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-50"
+                        className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg disabled:opacity-50"
                       >
                         {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Meeting'}
                       </button>
@@ -1095,7 +1095,7 @@ export default function OneOnOnePage() {
                           type="date"
                           value={rescheduleDate}
                           onChange={(e) => setRescheduleDate(e.target.value)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -1104,7 +1104,7 @@ export default function OneOnOnePage() {
                           type="time"
                           value={rescheduleTime}
                           onChange={(e) => setRescheduleTime(e.target.value)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -1118,7 +1118,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleRescheduleMeeting}
                         disabled={!rescheduleDate || !rescheduleTime || rescheduleMutation.isPending}
-                        className="px-4 py-2 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg disabled:opacity-50"
+                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg disabled:opacity-50"
                       >
                         {rescheduleMutation.isPending ? 'Rescheduling...' : 'Reschedule'}
                       </button>
@@ -1137,7 +1137,7 @@ export default function OneOnOnePage() {
                       onChange={(e) => setCompleteSummary(e.target.value)}
                       placeholder="Meeting summary (optional)..."
                       rows={4}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700 mb-4"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
                     />
                     <div className="flex justify-end gap-2">
                       <button
@@ -1149,7 +1149,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleCompleteMeeting}
                         disabled={completeMutation.isPending}
-                        className="px-4 py-2 text-sm bg-sky-700 hover:bg-sky-800 text-white rounded-lg"
+                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg"
                       >
                         {completeMutation.isPending ? 'Completing...' : 'Complete'}
                       </button>
@@ -1190,10 +1190,10 @@ export default function OneOnOnePage() {
                 <input
                   {...scheduleForm.register('title')}
                   placeholder="Weekly 1-on-1 check-in"
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.title && (
-                  <p className="text-xs text-red-500 mt-1">{scheduleForm.formState.errors.title.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.title.message}</p>
                 )}
               </div>
 
@@ -1203,10 +1203,10 @@ export default function OneOnOnePage() {
                 <input
                   {...scheduleForm.register('employeeId')}
                   placeholder="Enter employee ID"
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.employeeId && (
-                  <p className="text-xs text-red-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
                 )}
               </div>
 
@@ -1217,7 +1217,7 @@ export default function OneOnOnePage() {
                   {...scheduleForm.register('description')}
                   placeholder="Meeting agenda or description..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
 
@@ -1228,10 +1228,10 @@ export default function OneOnOnePage() {
                   <input
                     type="date"
                     {...scheduleForm.register('meetingDate')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.meetingDate && (
-                    <p className="text-xs text-red-500 mt-1">{scheduleForm.formState.errors.meetingDate.message}</p>
+                    <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.meetingDate.message}</p>
                   )}
                 </div>
                 <div>
@@ -1239,10 +1239,10 @@ export default function OneOnOnePage() {
                   <input
                     type="time"
                     {...scheduleForm.register('startTime')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.startTime && (
-                    <p className="text-xs text-red-500 mt-1">{scheduleForm.formState.errors.startTime.message}</p>
+                    <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.startTime.message}</p>
                   )}
                 </div>
                 <div>
@@ -1252,7 +1252,7 @@ export default function OneOnOnePage() {
                     {...scheduleForm.register('durationMinutes')}
                     min={15}
                     max={480}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                 </div>
               </div>
@@ -1280,7 +1280,7 @@ export default function OneOnOnePage() {
                   <input
                     {...scheduleForm.register('location')}
                     placeholder="Office / Virtual"
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                 </div>
               </div>
@@ -1291,7 +1291,7 @@ export default function OneOnOnePage() {
                 <input
                   {...scheduleForm.register('meetingLink')}
                   placeholder="https://meet.google.com/..."
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
 
@@ -1301,7 +1301,7 @@ export default function OneOnOnePage() {
                   <input
                     type="checkbox"
                     {...scheduleForm.register('isRecurring')}
-                    className="h-4 w-4 rounded border-gray-300 text-sky-700 focus:ring-sky-700"
+                    className="h-4 w-4 rounded border-gray-300 text-accent-700 focus:ring-accent-700"
                   />
                   <span className="text-sm font-medium text-[var(--text-primary)]">Make this a recurring meeting</span>
                 </label>
@@ -1324,7 +1324,7 @@ export default function OneOnOnePage() {
                       <input
                         type="date"
                         {...scheduleForm.register('recurrenceEndDate')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-700"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                       />
                     </div>
                   </div>
@@ -1336,7 +1336,7 @@ export default function OneOnOnePage() {
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-6 py-2.5 text-sm font-medium bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors disabled:opacity-50"
+                  className="px-6 py-2.5 text-sm font-medium bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50"
                 >
                   {createMutation.isPending ? 'Scheduling...' : 'Schedule Meeting'}
                 </button>
@@ -1374,7 +1374,7 @@ export default function OneOnOnePage() {
           <PermissionGate permission={Permissions.MEETING_CREATE}>
             <button
               onClick={() => setView('schedule')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-sky-700 hover:bg-sky-800 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium rounded-lg transition-colors"
             >
               <Plus className="h-4 w-4" /> Schedule Meeting
             </button>
@@ -1397,28 +1397,28 @@ export default function OneOnOnePage() {
                 value={dashboard?.upcomingMeetings ?? 0}
                 subtitle="Scheduled meetings"
                 icon={Calendar}
-                color="bg-sky-600"
+                color="bg-accent-600"
               />
               <StatCard
                 title="Pending Actions"
                 value={pendingActionsQuery.data?.length ?? 0}
                 subtitle="Items to complete"
                 icon={ListChecks}
-                color="bg-amber-500"
+                color="bg-warning-500"
               />
               <StatCard
                 title="Overdue Actions"
                 value={overdueActionsQuery.data?.length ?? 0}
                 subtitle="Past due date"
                 icon={AlertCircle}
-                color="bg-red-500"
+                color="bg-danger-500"
               />
               <StatCard
                 title="Completion Rate"
                 value={`${Math.round((dashboard?.actionItemCompletionRate as number) || 0)}%`}
                 subtitle="Action items completed"
                 icon={CheckCircle2}
-                color="bg-green-500"
+                color="bg-success-500"
               />
             </>
           )}
@@ -1426,16 +1426,16 @@ export default function OneOnOnePage() {
 
         {/* Overdue Actions Banner */}
         {(overdueActionsQuery.data?.length || 0) > 0 && (
-          <div className="mb-6 p-4 tint-orange border border-[var(--status-orange-border)] rounded-lg">
+          <div className="mb-6 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-orange-100 dark:bg-orange-900/40 rounded-lg">
-                <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              <div className="p-2 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <p className="font-medium text-orange-800 dark:text-orange-300">
+                <p className="font-medium text-warning-800 dark:text-warning-300">
                   You have {overdueActionsQuery.data?.length} overdue action item(s)
                 </p>
-                <p className="text-sm text-orange-600 dark:text-orange-400">
+                <p className="text-sm text-warning-600 dark:text-warning-400">
                   Review and complete your pending action items
                 </p>
               </div>
@@ -1455,7 +1455,7 @@ export default function OneOnOnePage() {
                 onClick={() => { setActiveTab(tab.key); setPage(0); }}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                   activeTab === tab.key
-                    ? 'border-b-2 border-sky-700 text-sky-700 dark:text-sky-400'
+                    ? 'border-b-2 border-accent-700 text-accent-700 dark:text-accent-400'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -1508,7 +1508,7 @@ export default function OneOnOnePage() {
                     onClick={() => { setSelectedMeetingId(m.id); setView('detail'); }}
                     className="w-full text-left p-4 hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-4"
                   >
-                    <div className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400">
+                    <div className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400">
                       <span className="text-xs font-medium uppercase">
                         {new Date(m.meetingDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}
                       </span>

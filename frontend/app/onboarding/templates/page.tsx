@@ -44,11 +44,11 @@ export default function TemplatesPage() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
                         <div className="flex items-center gap-4">
-                            <div className="p-2 bg-sky-500/10 rounded-xl">
-                                <Layout className="h-6 w-6 text-sky-700" />
+                            <div className="p-2 bg-accent-500/10 rounded-xl">
+                                <Layout className="h-6 w-6 text-accent-700" />
                             </div>
                             <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
-                                Checklist <span className="text-sky-700">Templates</span>
+                                Checklist <span className="text-accent-700">Templates</span>
                             </h1>
                         </div>
                         <p className="text-[var(--text-muted)] font-bold max-w-md">
@@ -59,7 +59,7 @@ export default function TemplatesPage() {
                     <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                         <Button
                             variant="primary"
-                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-sky-700 to-indigo-600 border-0 shadow-xl shadow-sky-500/20 rounded-2xl py-6 px-8"
+                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-2xl py-6 px-8"
                             leftIcon={<Plus className="h-4 w-4" />}
                             onClick={() => router.push('/onboarding/templates/new')}
                         >
@@ -76,7 +76,7 @@ export default function TemplatesPage() {
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                                 <Input
                                     placeholder="Search templates..."
-                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-sky-500"
+                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-accent-500"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -112,15 +112,15 @@ export default function TemplatesPage() {
                                             >
                                                 <CardContent className="p-6 h-full flex flex-col">
                                                     <div className="flex justify-between items-start mb-4">
-                                                        <div className="p-4 bg-indigo-500/10 rounded-2xl">
-                                                            <ClipboardList className="h-6 w-6 text-indigo-600" />
+                                                        <div className="p-4 bg-accent-500/10 rounded-2xl">
+                                                            <ClipboardList className="h-6 w-6 text-accent-600" />
                                                         </div>
-                                                        <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-indigo-500/20 text-indigo-600">
+                                                        <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
                                                             Blueprint
                                                         </Badge>
                                                     </div>
 
-                                                    <h3 className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-sky-700 transition-colors">
+                                                    <h3 className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-accent-700 transition-colors">
                                                         {template.name}
                                                     </h3>
                                                     <p className="text-sm text-[var(--text-muted)] font-bold mb-6 flex-grow line-clamp-2">

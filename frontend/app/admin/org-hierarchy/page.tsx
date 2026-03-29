@@ -94,16 +94,16 @@ export default function OrgHierarchyPage() {
 
   const getLevelColor = (level?: string) => {
     const colors: Record<string, { bg: string; border: string; text: string }> = {
-      'CXO': { bg: 'bg-purple-50', border: 'border-purple-300', text: 'text-purple-700' },
-      'SVP': { bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700' },
-      'VP': { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-700' },
-      'DIRECTOR': { bg: 'bg-cyan-50', border: 'border-cyan-300', text: 'text-cyan-700' },
-      'SENIOR_MANAGER': { bg: 'bg-sky-50', border: 'border-sky-300', text: 'text-sky-700' },
-      'MANAGER': { bg: 'bg-green-50', border: 'border-green-300', text: 'text-green-700' },
-      'LEAD': { bg: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-700' },
-      'SENIOR': { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-700' },
-      'MID': { bg: 'bg-red-50', border: 'border-red-300', text: 'text-red-700' },
-      'ENTRY': { bg: 'bg-pink-50', border: 'border-pink-300', text: 'text-pink-700' },
+      'CXO': { bg: 'bg-accent-250', border: 'border-accent-500', text: 'text-accent-900' },
+      'SVP': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
+      'VP': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
+      'DIRECTOR': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
+      'SENIOR_MANAGER': { bg: 'bg-accent-50', border: 'border-accent-300', text: 'text-accent-700' },
+      'MANAGER': { bg: 'bg-success-50', border: 'border-success-300', text: 'text-success-700' },
+      'LEAD': { bg: 'bg-warning-50', border: 'border-warning-300', text: 'text-warning-700' },
+      'SENIOR': { bg: 'bg-warning-50', border: 'border-warning-300', text: 'text-warning-700' },
+      'MID': { bg: 'bg-danger-50', border: 'border-danger-300', text: 'text-danger-700' },
+      'ENTRY': { bg: 'bg-accent-250', border: 'border-accent-500', text: 'text-accent-900' },
     };
     return level && colors[level] ? colors[level] : { bg: 'bg-[var(--bg-secondary)]/50', border: 'border-[var(--border-main)] dark:border-[var(--border-main)]', text: 'text-[var(--text-secondary)]' };
   };
@@ -136,7 +136,7 @@ export default function OrgHierarchyPage() {
                   `}>
                     {getInitials(employee.fullName)}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 border-2 border-white rounded-full h-4 w-4"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-success-500 border-2 border-white rounded-full h-4 w-4"></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-base truncate">
@@ -193,10 +193,10 @@ export default function OrgHierarchyPage() {
                   </span>
                 )}
                 {employee.status && (
-                  <span className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                      employee.status === 'ON_LEAVE' ? 'bg-yellow-100 text-yellow-800' :
-                        employee.status === 'ON_NOTICE' ? 'bg-orange-100 text-orange-800' :
-                          'bg-red-100 text-red-800'
+                  <span className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? 'bg-success-100 text-success-800' :
+                      employee.status === 'ON_LEAVE' ? 'bg-warning-100 text-warning-800' :
+                        employee.status === 'ON_NOTICE' ? 'bg-warning-100 text-warning-800' :
+                          'bg-danger-100 text-danger-800'
                     }`}>
                     {employee.status.replace(/_/g, ' ')}
                   </span>
@@ -260,7 +260,7 @@ export default function OrgHierarchyPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss flex items-center space-x-4">
-            <svg className="h-8 w-8 text-sky-700" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="h-8 w-8 text-accent-700" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
             </svg>
             <span>Organization Chart</span>
@@ -324,19 +324,19 @@ export default function OrgHierarchyPage() {
           {loading ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-700 mx-auto"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-accent-700 mx-auto"></div>
                 <p className="mt-6 text-[var(--text-secondary)] font-medium">Loading organization chart...</p>
               </div>
             </div>
           ) : error ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
-                <div className="mx-auto h-16 w-16 text-red-500 mb-4">
+                <div className="mx-auto h-16 w-16 text-danger-500 mb-4">
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="text-red-600 font-medium mb-4">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
+                <p className="text-danger-600 font-medium mb-4">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
               </div>
             </div>
           ) : hierarchy.length === 0 ? (

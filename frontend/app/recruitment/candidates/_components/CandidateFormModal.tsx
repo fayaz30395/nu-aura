@@ -40,7 +40,7 @@ export function CandidateFormModal({
 }: CandidateFormModalProps) {
   if (!open) return null;
 
-  const inputCls = 'w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500';
+  const inputCls = 'w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
@@ -66,7 +66,7 @@ export function CandidateFormModal({
                   placeholder="CAN-001"
                 />
                 {candidateForm.formState.errors.candidateCode && (
-                  <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.candidateCode.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.candidateCode.message}</p>
                 )}
               </div>
               <div>
@@ -81,7 +81,7 @@ export function CandidateFormModal({
                   ))}
                 </select>
                 {candidateForm.formState.errors.jobOpeningId && (
-                  <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.jobOpeningId.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.jobOpeningId.message}</p>
                 )}
               </div>
             </div>
@@ -95,7 +95,7 @@ export function CandidateFormModal({
                   className={inputCls}
                 />
                 {candidateForm.formState.errors.firstName && (
-                  <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
                 )}
               </div>
               <div>
@@ -106,7 +106,7 @@ export function CandidateFormModal({
                   className={inputCls}
                 />
                 {candidateForm.formState.errors.lastName && (
-                  <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
                 )}
               </div>
             </div>
@@ -120,7 +120,7 @@ export function CandidateFormModal({
                   className={inputCls}
                 />
                 {candidateForm.formState.errors.email && (
-                  <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.email.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.email.message}</p>
                 )}
               </div>
               <div>
@@ -131,7 +131,7 @@ export function CandidateFormModal({
                   className={inputCls}
                 />
                 {candidateForm.formState.errors.phone && (
-                  <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
                 )}
               </div>
             </div>
@@ -254,7 +254,7 @@ export function CandidateFormModal({
                   placeholder="https://..."
                 />
                 {candidateForm.formState.errors.resumeUrl && (
-                  <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.resumeUrl.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{candidateForm.formState.errors.resumeUrl.message}</p>
                 )}
               </div>
             </div>

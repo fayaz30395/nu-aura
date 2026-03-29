@@ -299,29 +299,29 @@ export default function ImplicitRolesPage() {
           <button
             onClick={handleRecomputeAll}
             disabled={recomputeMutation.isPending}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 whitespace-nowrap"
+            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 disabled:opacity-50 whitespace-nowrap"
           >
             Recompute All
           </button>
         </div>
 
         {selectedRules.length > 0 && (
-          <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex justify-between items-center">
-            <span className="text-sm text-blue-900 dark:text-blue-100">
+          <div className="mb-4 p-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg flex justify-between items-center">
+            <span className="text-sm text-accent-900 dark:text-accent-100">
               {selectedRules.length} rule(s) selected
             </span>
             <div className="flex gap-2">
               <button
                 onClick={handleBulkActivate}
                 disabled={bulkActivateMutation.isPending}
-                className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-success-500 text-white rounded hover:bg-success-600 disabled:opacity-50"
               >
                 Activate
               </button>
               <button
                 onClick={handleBulkDeactivate}
                 disabled={bulkDeactivateMutation.isPending}
-                className="px-3 py-1 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-warning-500 text-white rounded hover:bg-warning-600 disabled:opacity-50"
               >
                 Deactivate
               </button>
@@ -418,7 +418,7 @@ export default function ImplicitRolesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
                     <button
                       onClick={() => openAffectedUsersModal(rule)}
-                      className="text-sky-700 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300 underline"
+                      className="text-accent-700 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 underline"
                     >
                       {rule.affectedUserCount} users
                     </button>
@@ -427,7 +427,7 @@ export default function ImplicitRolesPage() {
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         rule.isActive
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                          ? 'bg-success-100 text-success-700 dark:bg-success-900/20 dark:text-success-400'
                           : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                       }`}
                     >
@@ -437,13 +437,13 @@ export default function ImplicitRolesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                     <button
                       onClick={() => openEditModal(rule)}
-                      className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                      className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeleteRule(rule)}
-                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                      className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300"
                     >
                       Delete
                     </button>
@@ -473,7 +473,7 @@ export default function ImplicitRolesPage() {
                     placeholder="e.g., Manager Auto-Role"
                   />
                   {createForm.formState.errors.ruleName && (
-                    <p className="mt-1 text-xs text-red-500">{createForm.formState.errors.ruleName.message}</p>
+                    <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.ruleName.message}</p>
                   )}
                 </div>
 
@@ -492,7 +492,7 @@ export default function ImplicitRolesPage() {
                     ))}
                   </select>
                   {createForm.formState.errors.conditionType && (
-                    <p className="mt-1 text-xs text-red-500">
+                    <p className="mt-1 text-xs text-danger-500">
                       {createForm.formState.errors.conditionType.message}
                     </p>
                   )}
@@ -516,7 +516,7 @@ export default function ImplicitRolesPage() {
                     ))}
                   </select>
                   {createForm.formState.errors.targetRoleId && (
-                    <p className="mt-1 text-xs text-red-500">
+                    <p className="mt-1 text-xs text-danger-500">
                       {createForm.formState.errors.targetRoleId.message}
                     </p>
                   )}
@@ -604,7 +604,7 @@ export default function ImplicitRolesPage() {
                     className="input-aura"
                   />
                   {editForm.formState.errors.ruleName && (
-                    <p className="mt-1 text-xs text-red-500">{editForm.formState.errors.ruleName.message}</p>
+                    <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.ruleName.message}</p>
                   )}
                 </div>
 
@@ -781,7 +781,7 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
                       <span
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           userRole.isActive
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                            ? 'bg-success-100 text-success-700 dark:bg-success-900/20 dark:text-success-400'
                             : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                         }`}
                       >
@@ -796,7 +796,7 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
         )}
 
         {usersQuery.error && (
-          <p className="text-red-500 text-sm mt-4">Failed to load affected users</p>
+          <p className="text-danger-500 text-sm mt-4">Failed to load affected users</p>
         )}
 
         <div className="flex justify-end mt-6">

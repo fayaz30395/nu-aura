@@ -398,7 +398,7 @@ export default function EditBlogPost() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="gap-2 bg-amber-600 hover:bg-amber-700"
+                className="gap-2 bg-warning-600 hover:bg-warning-700"
               >
                 <Save className="w-4 h-4" />
                 {isSubmitting ? 'Saving...' : 'Save Changes'}

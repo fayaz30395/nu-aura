@@ -55,22 +55,22 @@ export function FeedbackSynthesisModal({
             )}
 
             {feedbackSynthesis.agreements && feedbackSynthesis.agreements.length > 0 && (
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
-                <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-2">Agreements</p>
+              <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-xl">
+                <p className="text-sm font-medium text-success-800 dark:text-success-300 mb-2">Agreements</p>
                 <ul className="list-disc list-inside space-y-1">
                   {feedbackSynthesis.agreements.map((agreement, idx) => (
-                    <li key={idx} className="text-sm text-green-700 dark:text-green-400">{agreement}</li>
+                    <li key={idx} className="text-sm text-success-700 dark:text-success-400">{agreement}</li>
                   ))}
                 </ul>
               </div>
             )}
 
             {feedbackSynthesis.disagreements && feedbackSynthesis.disagreements.length > 0 && (
-              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
-                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">Disagreements</p>
+              <div className="p-4 bg-warning-50 dark:bg-warning-900/20 rounded-xl">
+                <p className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-2">Disagreements</p>
                 <ul className="list-disc list-inside space-y-1">
                   {feedbackSynthesis.disagreements.map((disagreement, idx) => (
-                    <li key={idx} className="text-sm text-yellow-700 dark:text-yellow-400">{disagreement}</li>
+                    <li key={idx} className="text-sm text-warning-700 dark:text-warning-400">{disagreement}</li>
                   ))}
                 </ul>
               </div>

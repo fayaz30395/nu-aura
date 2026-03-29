@@ -282,9 +282,9 @@ export function CreateAllocationModal({
         <div className="flex items-center gap-2">
           <span>Add Allocation</span>
           <div className="flex items-center gap-2 text-sm font-normal text-surface-500">
-            <span className={step === 'project' ? 'text-sky-700 font-medium' : ''}>1. Project</span>
+            <span className={step === 'project' ? 'text-accent-700 font-medium' : ''}>1. Project</span>
             <ArrowRight className="h-4 w-4" />
-            <span className={step === 'employees' ? 'text-sky-700 font-medium' : ''}>2. Employees</span>
+            <span className={step === 'employees' ? 'text-accent-700 font-medium' : ''}>2. Employees</span>
           </div>
         </div>
       </ModalHeader>
@@ -292,7 +292,7 @@ export function CreateAllocationModal({
       <ModalBody className="space-y-5">
         {loadingData ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-sky-700" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-700" />
           </div>
         ) : step === 'project' ? (
           <ProjectStep
@@ -327,7 +327,7 @@ export function CreateAllocationModal({
 
         {/* Error */}
         {error && (
-          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-700 dark:text-red-300 flex items-center gap-2">
+          <div className="rounded-lg bg-danger-50 dark:bg-danger-900/20 p-4 text-danger-700 dark:text-danger-300 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 flex-shrink-0" />
             {error}
           </div>

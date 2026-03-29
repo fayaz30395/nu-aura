@@ -227,17 +227,17 @@ export interface UtilizationFilterOptions {
 
 // Utility functions
 export const getUtilizationColor = (rate: number): string => {
-  if (rate >= 90) return 'text-green-600 dark:text-green-400';
-  if (rate >= 75) return 'text-blue-600 dark:text-blue-400';
-  if (rate >= 50) return 'text-yellow-600 dark:text-yellow-400';
-  return 'text-red-600 dark:text-red-400';
+  if (rate >= 90) return 'text-success-600 dark:text-success-400';
+  if (rate >= 75) return 'text-accent-600 dark:text-accent-400';
+  if (rate >= 50) return 'text-warning-600 dark:text-warning-400';
+  return 'text-danger-600 dark:text-danger-400';
 };
 
 export const getUtilizationBgColor = (rate: number): string => {
-  if (rate >= 90) return 'bg-green-100 dark:bg-green-900/30';
-  if (rate >= 75) return 'bg-blue-100 dark:bg-blue-900/30';
-  if (rate >= 50) return 'bg-yellow-100 dark:bg-yellow-900/30';
-  return 'bg-red-100 dark:bg-red-900/30';
+  if (rate >= 90) return 'bg-success-100 dark:bg-success-900/30';
+  if (rate >= 75) return 'bg-accent-100 dark:bg-accent-900/30';
+  if (rate >= 50) return 'bg-warning-100 dark:bg-warning-900/30';
+  return 'bg-danger-100 dark:bg-danger-900/30';
 };
 
 export const formatHours = (hours: number): string => {

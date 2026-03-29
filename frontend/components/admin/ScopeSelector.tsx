@@ -74,7 +74,7 @@ export function ScopeSelector({
             disabled={disabled}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border transition-colors ${
               value === scope
-                ? 'bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500'
+                ? 'bg-accent-600 text-white border-accent-600 dark:bg-accent-500 dark:border-accent-500'
                 : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-main)] hover:bg-[var(--bg-card-hover)]'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             title={SCOPE_DESCRIPTIONS[scope]}

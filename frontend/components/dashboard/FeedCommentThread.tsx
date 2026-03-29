@@ -127,10 +127,10 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
             <button
               onClick={handleLikeComment}
               className={`inline-flex items-center gap-0.5 text-[10px] font-medium transition-colors ${
-                liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
-              <Heart className={`h-2.5 w-2.5 ${liked ? 'fill-red-500' : ''}`} />
+              <Heart className={`h-2.5 w-2.5 ${liked ? 'fill-danger-500' : ''}`} />
               {localLikes > 0 ? localLikes : 'Like'}
             </button>
             {depth < MAX_REPLY_DEPTH && (
@@ -160,14 +160,14 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
                   }
                 }}
                 placeholder="Write a reply..."
-                className="flex-1 px-2 py-1 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-sky-500"
+                className="flex-1 px-2 py-1 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
                 disabled={isSubmittingReply}
                 autoFocus
               />
               <button
                 onClick={handleSubmitReply}
                 disabled={!replyText.trim() || isSubmittingReply}
-                className="px-2 py-1 text-xs font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Send className="h-3 w-3" />
               </button>
@@ -179,7 +179,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
             <button
               onClick={handleLoadReplies}
               disabled={isLoadingReplies}
-              className="text-[10px] font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 mt-1 transition-colors disabled:opacity-50"
+              className="text-[10px] font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 mt-1 transition-colors disabled:opacity-50"
             >
               {isLoadingReplies ? 'Loading...' : `View ${comment.replyCount || childReplies.length} ${(comment.replyCount || childReplies.length) === 1 ? 'reply' : 'replies'}`}
             </button>

@@ -33,17 +33,21 @@ public class KekaImportHistory extends TenantAware {
     @Column(nullable = false)
     private Integer totalRows;
 
-    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
-    private Integer createdCount;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer createdCount = 0;
 
-    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
-    private Integer updatedCount;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer updatedCount = 0;
 
-    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
-    private Integer skippedCount;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer skippedCount = 0;
 
-    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
-    private Integer errorCount;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer errorCount = 0;
 
     @Column(nullable = false)
     private Long duration; // milliseconds

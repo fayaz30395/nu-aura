@@ -1,12 +1,6 @@
 package com.hrms.application.ai.service;
 
 import com.hrms.api.recruitment.dto.ai.ResumeParseResponse;
-import com.hrms.infrastructure.ai.repository.CandidateMatchScoreRepository;
-import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
-import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
-import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tika.exception.TikaException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -24,48 +17,43 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the AIRecruitmentService facade's file-parsing delegation.
+ *
+ * <p>AIRecruitmentService delegates to {@link ResumeParserService}, so we mock
+ * that sub-service (and the other two required constructor args) and verify
+ * delegation behaviour.
+ */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("AIRecruitmentService File Parsing Tests")
 class AIRecruitmentServiceFileParsingTest {
 
     @Mock
-    private CandidateRepository candidateRepository;
+    private ResumeParserService resumeParser;
 
     @Mock
-    private JobOpeningRepository jobOpeningRepository;
+    private CandidateMatchingService candidateMatching;
 
     @Mock
-    private InterviewRepository interviewRepository;
-
-    @Mock
-    private CandidateMatchScoreRepository matchScoreRepository;
-
-    @Mock
-    private RestTemplate restTemplate;
-
-    @Mock
-    private ResumeTextExtractor resumeTextExtractor;
-
-    @Mock
-    private ObjectMapper objectMapper;
+    private InterviewGenerationService interviewGeneration;
 
     @InjectMocks
     private AIRecruitmentService aiRecruitmentService;
 
     @Test
     @DisplayName("Should parse resume from file bytes successfully")
-    void testParseResumeFromFile() throws IOException, TikaException {
+    void testParseResumeFromFile() {
         // Arrange
         byte[] fileBytes = "John Doe\nSoftware Engineer\nEmail: john@example.com".getBytes();
-        String extractedText = "John Doe Software Engineer Email: john@example.com";
 
-        when(resumeTextExtractor.extractText(fileBytes, "resume.pdf"))
-                .thenReturn(extractedText);
+        ResumeParseResponse expected = ResumeParseResponse.builder()
+                .success(true)
+                .fullName("John Doe")
+                .build();
 
-        // Mock the AI response (simplified for test)
-        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
-                .thenReturn(createMockAIResumeParseDTO());
+        when(resumeParser.parseResumeFromFile(fileBytes, "resume.pdf"))
+                .thenReturn(expected);
 
         // Act
         ResumeParseResponse response = aiRecruitmentService.parseResumeFromFile(fileBytes, "resume.pdf");
@@ -73,17 +61,23 @@ class AIRecruitmentServiceFileParsingTest {
         // Assert
         assertThat(response).isNotNull();
         assertThat(response.isSuccess()).isTrue();
-        verify(resumeTextExtractor).extractText(fileBytes, "resume.pdf");
+        assertThat(response.getFullName()).isEqualTo("John Doe");
+        verify(resumeParser).parseResumeFromFile(fileBytes, "resume.pdf");
     }
 
     @Test
     @DisplayName("Should handle Tika extraction failure gracefully")
-    void testParseResumeFromFileWithTikaException() throws IOException, TikaException {
+    void testParseResumeFromFileWithTikaException() {
         // Arrange
         byte[] fileBytes = new byte[]{1, 2, 3};
 
-        when(resumeTextExtractor.extractText(fileBytes, "invalid.pdf"))
-                .thenThrow(new TikaException("Failed to parse PDF"));
+        ResumeParseResponse errorResponse = ResumeParseResponse.builder()
+                .success(false)
+                .message("Failed to extract text from document: Failed to parse PDF")
+                .build();
+
+        when(resumeParser.parseResumeFromFile(fileBytes, "invalid.pdf"))
+                .thenReturn(errorResponse);
 
         // Act
         ResumeParseResponse response = aiRecruitmentService.parseResumeFromFile(fileBytes, "invalid.pdf");
@@ -96,12 +90,17 @@ class AIRecruitmentServiceFileParsingTest {
 
     @Test
     @DisplayName("Should handle IO error when reading file")
-    void testParseResumeFromFileWithIOException() throws IOException, TikaException {
+    void testParseResumeFromFileWithIOException() {
         // Arrange
         byte[] fileBytes = new byte[]{1, 2, 3};
 
-        when(resumeTextExtractor.extractText(fileBytes, "corrupted.pdf"))
-                .thenThrow(new IOException("File read error"));
+        ResumeParseResponse errorResponse = ResumeParseResponse.builder()
+                .success(false)
+                .message("Failed to read file: File read error")
+                .build();
+
+        when(resumeParser.parseResumeFromFile(fileBytes, "corrupted.pdf"))
+                .thenReturn(errorResponse);
 
         // Act
         ResumeParseResponse response = aiRecruitmentService.parseResumeFromFile(fileBytes, "corrupted.pdf");
@@ -114,12 +113,17 @@ class AIRecruitmentServiceFileParsingTest {
 
     @Test
     @DisplayName("Should reject empty extracted text from file")
-    void testParseResumeFromFileWithEmptyExtractedText() throws IOException, TikaException {
+    void testParseResumeFromFileWithEmptyExtractedText() {
         // Arrange
         byte[] fileBytes = new byte[]{1, 2, 3};
 
-        when(resumeTextExtractor.extractText(fileBytes, "empty.pdf"))
-                .thenReturn("");
+        ResumeParseResponse errorResponse = ResumeParseResponse.builder()
+                .success(false)
+                .message("No text content could be extracted from the file.")
+                .build();
+
+        when(resumeParser.parseResumeFromFile(fileBytes, "empty.pdf"))
+                .thenReturn(errorResponse);
 
         // Act
         ResumeParseResponse response = aiRecruitmentService.parseResumeFromFile(fileBytes, "empty.pdf");
@@ -132,16 +136,17 @@ class AIRecruitmentServiceFileParsingTest {
 
     @Test
     @DisplayName("Should parse resume from base64 content successfully")
-    void testParseResumeFromBase64() throws IOException, TikaException {
+    void testParseResumeFromBase64() {
         // Arrange
-        String base64Content = "Sm9obiBEb2UKU29mdHdhcmUgRW5naW5lZXI="; // "John Doe\nSoftware Engineer" in base64
-        String extractedText = "John Doe Software Engineer";
+        String base64Content = "Sm9obiBEb2UKU29mdHdhcmUgRW5naW5lZXI=";
 
-        when(resumeTextExtractor.extractText(any(byte[].class), eq("resume.pdf")))
-                .thenReturn(extractedText);
+        ResumeParseResponse expected = ResumeParseResponse.builder()
+                .success(true)
+                .fullName("John Doe")
+                .build();
 
-        when(objectMapper.readValue(anyString(), any(Class.class)))
-                .thenReturn(createMockAIResumeParseDTO());
+        when(resumeParser.parseResumeFromBase64(base64Content, "resume.pdf"))
+                .thenReturn(expected);
 
         // Act
         ResumeParseResponse response = aiRecruitmentService.parseResumeFromBase64(base64Content, "resume.pdf");
@@ -149,6 +154,7 @@ class AIRecruitmentServiceFileParsingTest {
         // Assert
         assertThat(response).isNotNull();
         assertThat(response.isSuccess()).isTrue();
+        verify(resumeParser).parseResumeFromBase64(base64Content, "resume.pdf");
     }
 
     @Test
@@ -156,6 +162,14 @@ class AIRecruitmentServiceFileParsingTest {
     void testParseResumeFromInvalidBase64() {
         // Arrange
         String invalidBase64 = "!!!Invalid Base64!!!";
+
+        ResumeParseResponse errorResponse = ResumeParseResponse.builder()
+                .success(false)
+                .message("Invalid base64 encoding: Illegal base64 character")
+                .build();
+
+        when(resumeParser.parseResumeFromBase64(invalidBase64, "resume.pdf"))
+                .thenReturn(errorResponse);
 
         // Act
         ResumeParseResponse response = aiRecruitmentService.parseResumeFromBase64(invalidBase64, "resume.pdf");
@@ -168,12 +182,17 @@ class AIRecruitmentServiceFileParsingTest {
 
     @Test
     @DisplayName("Should handle base64 decoding with Tika exception")
-    void testParseResumeFromBase64WithTikaException() throws IOException, TikaException {
+    void testParseResumeFromBase64WithTikaException() {
         // Arrange
         String base64Content = "Sm9obiBEb2U=";
 
-        when(resumeTextExtractor.extractText(any(byte[].class), anyString()))
-                .thenThrow(new TikaException("Parsing failed"));
+        ResumeParseResponse errorResponse = ResumeParseResponse.builder()
+                .success(false)
+                .message("Failed to extract text from document: Parsing failed")
+                .build();
+
+        when(resumeParser.parseResumeFromBase64(base64Content, "resume.pdf"))
+                .thenReturn(errorResponse);
 
         // Act
         ResumeParseResponse response = aiRecruitmentService.parseResumeFromBase64(base64Content, "resume.pdf");
@@ -182,10 +201,5 @@ class AIRecruitmentServiceFileParsingTest {
         assertThat(response).isNotNull();
         assertThat(response.isSuccess()).isFalse();
         assertThat(response.getMessage()).contains("Failed to extract text from document");
-    }
-
-    // Helper method to create a mock AIResumeParseDTO
-    private Object createMockAIResumeParseDTO() {
-        return new Object(); // Simplified for this test
     }
 }

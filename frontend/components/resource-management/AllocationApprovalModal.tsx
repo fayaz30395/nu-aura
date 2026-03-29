@@ -60,7 +60,7 @@ export function AllocationApprovalModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader onClose={onClose}>
-        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+        <div className="flex items-center gap-2 text-warning-600 dark:text-warning-400">
           <AlertTriangle className="h-5 w-5" />
           <span>Over-Allocation Warning</span>
         </div>
@@ -68,14 +68,14 @@ export function AllocationApprovalModal({
 
       <ModalBody className="space-y-6">
         {/* Warning message */}
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
+        <div className="rounded-lg border border-warning-200 bg-warning-50 p-4 dark:border-warning-800 dark:bg-warning-900/20">
           <div className="flex gap-2">
-            <AlertTriangle className="h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+            <AlertTriangle className="h-5 w-5 flex-shrink-0 text-warning-600 dark:text-warning-400" />
             <div className="space-y-1">
-              <p className="font-medium text-amber-800 dark:text-amber-200">
+              <p className="font-medium text-warning-800 dark:text-warning-200">
                 This assignment will result in over-allocation
               </p>
-              <p className="text-sm text-amber-700 dark:text-amber-300">
+              <p className="text-sm text-warning-700 dark:text-warning-300">
                 {employeeCapacity.employeeName} will be allocated at{' '}
                 <strong>{formatAllocationPercentage(resultingAllocation)}</strong>, which exceeds 100%.
                 This requires approval from their manager.
@@ -109,7 +109,7 @@ export function AllocationApprovalModal({
               <p className="text-xs uppercase tracking-wide text-surface-500 dark:text-surface-400">
                 Proposed Addition
               </p>
-              <p className="mt-1 text-2xl font-bold text-sky-700 dark:text-sky-400">
+              <p className="mt-1 text-2xl font-bold text-accent-700 dark:text-accent-400">
                 +{formatAllocationPercentage(proposedAllocation)}
               </p>
             </div>
@@ -118,11 +118,11 @@ export function AllocationApprovalModal({
             <ArrowRight className="h-6 w-6 flex-shrink-0 text-surface-400" />
 
             {/* Resulting allocation */}
-            <div className="flex-1 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-              <p className="text-xs uppercase tracking-wide text-red-600 dark:text-red-400">
+            <div className="flex-1 rounded-lg border border-danger-200 bg-danger-50 p-4 dark:border-danger-800 dark:bg-danger-900/20">
+              <p className="text-xs uppercase tracking-wide text-danger-600 dark:text-danger-400">
                 Resulting Total
               </p>
-              <p className="mt-1 text-2xl font-bold text-red-600 dark:text-red-400">
+              <p className="mt-1 text-2xl font-bold text-danger-600 dark:text-danger-400">
                 {formatAllocationPercentage(resultingAllocation)}
               </p>
             </div>
@@ -132,8 +132,8 @@ export function AllocationApprovalModal({
         {/* Project details */}
         <div className="rounded-lg border border-surface-200 p-4 dark:border-surface-700">
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900">
-              <Briefcase className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-100 dark:bg-accent-900">
+              <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400" />
             </div>
             <div>
               <p className="font-medium text-surface-900 dark:text-surface-50">
@@ -192,14 +192,14 @@ export function AllocationApprovalModal({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explain why this over-allocation is necessary..."
-              className="w-full rounded-lg border border-surface-200 bg-white p-4 text-sm placeholder:text-surface-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-surface-700 dark:bg-surface-800 dark:placeholder:text-surface-500"
+              className="w-full rounded-lg border border-surface-200 bg-white p-4 text-sm placeholder:text-surface-400 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-surface-700 dark:bg-surface-800 dark:placeholder:text-surface-500"
               rows={3}
             />
           </div>
         ) : (
           <button
             onClick={() => setShowReasonInput(true)}
-            className="text-sm text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300"
+            className="text-sm text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
           >
             + Add reason for this allocation
           </button>
@@ -231,7 +231,7 @@ export function AllocationApprovalModal({
             variant="outline"
             onClick={handleProceedAnyway}
             disabled={isSubmitting}
-            className="border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-900/20"
+            className="border-warning-300 text-warning-700 hover:bg-warning-50 dark:border-warning-700 dark:text-warning-400 dark:hover:bg-warning-900/20"
           >
             Skip Approval (Admin)
           </Button>

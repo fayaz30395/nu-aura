@@ -3,6 +3,8 @@ package com.hrms.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -27,8 +29,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // Note: The SimpleMessageBroker remains for local session dispatch.
         // Cross-pod fan-out is handled by RedisWebSocketRelay (Redis Pub/Sub)
         // which publishes to all pods before each pod delivers locally.
+        ThreadPoolTaskScheduler heartbeatScheduler = new ThreadPoolTaskScheduler();
+        heartbeatScheduler.setPoolSize(1);
+        heartbeatScheduler.setThreadNamePrefix("ws-heartbeat-");
+        heartbeatScheduler.initialize();
+
         config.enableSimpleBroker("/topic", "/queue")
-                .setHeartbeatValue(new long[]{10000, 10000}); // server→client and client→server heartbeat: 10s
+                .setHeartbeatValue(new long[]{10000, 10000}) // server→client and client→server heartbeat: 10s
+                .setTaskScheduler(heartbeatScheduler);
 
         // Designate the prefix for messages that are bound for methods annotated with
         // @MessageMapping

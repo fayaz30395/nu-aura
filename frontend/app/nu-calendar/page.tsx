@@ -414,7 +414,7 @@ function CalendarContent() {
       '10': 'bg-basil-500',
       '11': 'bg-tomato-500',
     };
-    return colors[event.colorId || ''] || 'bg-sky-500';
+    return colors[event.colorId || ''] || 'bg-accent-500';
   };
 
   const handleConnectClick = () => {
@@ -435,7 +435,7 @@ function CalendarContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
           <p className="text-[var(--text-muted)] font-medium">Loading NU-Calendar...</p>
         </div>
       </div>
@@ -451,7 +451,7 @@ function CalendarContent() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
               <CalendarIcon className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -489,7 +489,7 @@ function CalendarContent() {
                 variant="ghost"
                 size="sm"
                 onClick={clearToken}
-                className="text-[var(--text-muted)] hover:text-red-600"
+                className="text-[var(--text-muted)] hover:text-danger-600"
               >
                 Disconnect
               </Button>
@@ -499,9 +499,9 @@ function CalendarContent() {
 
         {/* Error State */}
         {error && (
-          <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30">
+          <Card className="border-danger-200 dark:border-danger-900 bg-danger-50 dark:bg-danger-950/30">
             <CardContent className="py-4">
-              <div className="flex items-center gap-4 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
                 <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
@@ -517,8 +517,8 @@ function CalendarContent() {
           <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
             <CardContent className="py-16">
               <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center mx-auto mb-6">
-                  <CalendarIcon className="h-10 w-10 text-purple-600 dark:text-purple-400" />
+                <div className="w-20 h-20 rounded-full bg-accent-250 dark:bg-accent-900/30 flex items-center justify-center mx-auto mb-6">
+                  <CalendarIcon className="h-10 w-10 text-accent-800 dark:text-accent-600" />
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   Connect to Google Calendar
@@ -573,7 +573,7 @@ function CalendarContent() {
                         onClick={() => setViewMode(mode)}
                         className={`px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
                           viewMode === mode
-                            ? 'bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-400'
+                            ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-400'
                             : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                       >
@@ -619,7 +619,7 @@ function CalendarContent() {
                           <div
                             className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1 ${
                               isToday
-                                ? 'bg-sky-500 text-white'
+                                ? 'bg-accent-500 text-white'
                                 : isCurrentMonth
                                   ? 'text-[var(--text-primary)]'
                                   : 'text-[var(--text-muted)]'
@@ -763,7 +763,7 @@ function CalendarContent() {
                         </p>
                       </div>
                       {event.hangoutLink && (
-                        <Video className="h-4 w-4 text-blue-500" />
+                        <Video className="h-4 w-4 text-accent-500" />
                       )}
                     </div>
                   ))}
@@ -849,9 +849,9 @@ function CalendarContent() {
                           </p>
                           {attendee.responseStatus && (
                             <p className={`text-xs ${
-                              attendee.responseStatus === 'accepted' ? 'text-green-500' :
-                              attendee.responseStatus === 'declined' ? 'text-red-500' :
-                              'text-yellow-500'
+                              attendee.responseStatus === 'accepted' ? 'text-success-500' :
+                              attendee.responseStatus === 'declined' ? 'text-danger-500' :
+                              'text-warning-500'
                             }`}>
                               {attendee.responseStatus}
                             </p>
@@ -879,7 +879,7 @@ function CalendarContent() {
                   onClick={() => {
                     deleteEvent(selectedEvent.id);
                   }}
-                  className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                  className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30"
                   leftIcon={<Trash2 className="h-4 w-4" />}
                 >
                   Delete
@@ -981,7 +981,7 @@ function CalendarContent() {
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                   placeholder="Add description"
                   rows={3}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 />
               </div>
 

@@ -82,23 +82,23 @@ function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
           <div className="space-y-4">
             <div>
               <Input placeholder="First Name *" {...register('firstName')} />
-              {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName.message}</span>}
+              {errors.firstName && <span className="text-danger-500 text-sm">{errors.firstName.message}</span>}
             </div>
             <div>
               <Input placeholder="Last Name" {...register('lastName')} />
-              {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName.message}</span>}
+              {errors.lastName && <span className="text-danger-500 text-sm">{errors.lastName.message}</span>}
             </div>
             <div>
               <Input type="email" placeholder="Email *" {...register('email')} />
-              {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+              {errors.email && <span className="text-danger-500 text-sm">{errors.email.message}</span>}
             </div>
             <div>
               <Input type="date" {...register('joiningDate')} />
-              {errors.joiningDate && <span className="text-red-500 text-sm">{errors.joiningDate.message}</span>}
+              {errors.joiningDate && <span className="text-danger-500 text-sm">{errors.joiningDate.message}</span>}
             </div>
             <div>
               <Input placeholder="Designation" {...register('designation')} />
-              {errors.designation && <span className="text-red-500 text-sm">{errors.designation.message}</span>}
+              {errors.designation && <span className="text-danger-500 text-sm">{errors.designation.message}</span>}
             </div>
           </div>
           <div className="flex justify-end gap-2 mt-6">
@@ -128,11 +128,11 @@ export default function PreboardingPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'COMPLETED': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'IN_PROGRESS': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-      case 'INVITED': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'CONVERTED': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
-      case 'CANCELLED': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      case 'COMPLETED': return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+      case 'IN_PROGRESS': return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
+      case 'INVITED': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+      case 'CONVERTED': return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
+      case 'CANCELLED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
   };
@@ -193,8 +193,8 @@ export default function PreboardingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
+                <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Total Candidates</p>
@@ -205,8 +205,8 @@ export default function PreboardingPage() {
 
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-900/20 flex items-center justify-center">
-                <Mail className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+              <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-900/20 flex items-center justify-center">
+                <Mail className="h-6 w-6 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Invited</p>
@@ -217,8 +217,8 @@ export default function PreboardingPage() {
 
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-accent-600 dark:text-accent-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">In Progress</p>
@@ -229,8 +229,8 @@ export default function PreboardingPage() {
 
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-900/20 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Completed</p>
@@ -286,8 +286,8 @@ export default function PreboardingPage() {
                   <div key={candidate.id} className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                          <span className="text-sm font-medium text-sky-700 dark:text-sky-400">
+                        <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
                             {candidate.firstName[0]}{candidate.lastName?.[0] || ''}
                           </span>
                         </div>
@@ -309,7 +309,7 @@ export default function PreboardingPage() {
                         <div className="flex items-center gap-2">
                           <div className="w-24 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                             <div
-                              className="bg-sky-500 h-2 rounded-full transition-all"
+                              className="bg-accent-500 h-2 rounded-full transition-all"
                               style={{ width: `${candidate.completionPercentage}%` }}
                             />
                           </div>

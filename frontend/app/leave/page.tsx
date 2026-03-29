@@ -78,20 +78,20 @@ export default function LeavePage() {
     switch (status) {
       case 'APPROVED':
         return {
-          bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-          text: 'text-emerald-700 dark:text-emerald-400',
+          bg: 'bg-success-100 dark:bg-success-900/30',
+          text: 'text-success-700 dark:text-success-400',
           icon: CheckCircle,
         };
       case 'PENDING':
         return {
-          bg: 'bg-amber-100 dark:bg-amber-900/30',
-          text: 'text-amber-700 dark:text-amber-400',
+          bg: 'bg-warning-100 dark:bg-warning-900/30',
+          text: 'text-warning-700 dark:text-warning-400',
           icon: Clock,
         };
       case 'REJECTED':
         return {
-          bg: 'bg-red-100 dark:bg-red-900/30',
-          text: 'text-red-700 dark:text-red-400',
+          bg: 'bg-danger-100 dark:bg-danger-900/30',
+          text: 'text-danger-700 dark:text-danger-400',
           icon: XCircle,
         };
       case 'CANCELLED':
@@ -102,8 +102,8 @@ export default function LeavePage() {
         };
       default:
         return {
-          bg: 'bg-sky-100 dark:bg-sky-900/30',
-          text: 'text-sky-700 dark:text-sky-400',
+          bg: 'bg-accent-100 dark:bg-accent-900/30',
+          text: 'text-accent-700 dark:text-accent-400',
           icon: HelpCircle,
         };
     }
@@ -120,12 +120,12 @@ export default function LeavePage() {
 
   const getLeaveTypeGradient = (colorCode: string | undefined, index: number) => {
     const gradients = [
-      'from-sky-500 to-sky-700',
-      'from-emerald-500 to-emerald-600',
-      'from-amber-500 to-amber-600',
-      'from-purple-500 to-purple-600',
-      'from-pink-500 to-pink-600',
-      'from-cyan-500 to-cyan-600',
+      'from-accent-500 to-accent-700',
+      'from-success-500 to-success-600',
+      'from-warning-500 to-warning-600',
+      'from-accent-600 to-accent-700',
+      'from-accent-400 to-accent-600',
+      'from-accent-500 to-accent-600',
     ];
     return gradients[index % gradients.length];
   };
@@ -157,7 +157,7 @@ export default function LeavePage() {
             <div className="flex gap-2">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors text-sm font-medium"
               >
                 Retry
               </button>
@@ -195,7 +195,7 @@ export default function LeavePage() {
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-sky-500/30 skeuo-button"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
             >
               <Plus className="h-5 w-5" />
               Apply for Leave
@@ -275,7 +275,7 @@ export default function LeavePage() {
             </h2>
             <button
               onClick={() => router.push('/leave/my-leaves')}
-              className="flex items-center gap-1 text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 text-sm font-medium transition-colors"
+              className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 text-sm font-medium transition-colors"
             >
               View All
               <ChevronRight className="h-4 w-4" />
@@ -386,13 +386,13 @@ export default function LeavePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-sky-300 dark:hover:border-sky-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Apply for Leave
@@ -404,13 +404,13 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
                 <FileText className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               My Leaves
@@ -422,13 +422,13 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/calendar')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Leave Calendar

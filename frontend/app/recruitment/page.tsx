@@ -284,8 +284,8 @@ export default function RecruitmentDashboard() {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <div className="h-16 w-16 rounded-2xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-6">
-            <Briefcase className="h-8 w-8 text-sky-700 dark:text-sky-400" />
+          <div className="h-16 w-16 rounded-2xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
+            <Briefcase className="h-8 w-8 text-accent-700 dark:text-accent-400" />
           </div>
           <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
             Welcome to Recruitment
@@ -394,7 +394,7 @@ export default function RecruitmentDashboard() {
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Calendar className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 Interviews Today
               </CardTitle>
             </CardHeader>
@@ -420,8 +420,8 @@ export default function RecruitmentDashboard() {
                       transition={{ delay: index * 0.1 }}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="h-10 w-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                          <User className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                        <div className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                          <User className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                         </div>
                         <div className="flex-1">
                           <h4 className="font-semibold text-[var(--text-primary)]">
@@ -455,7 +455,7 @@ export default function RecruitmentDashboard() {
           <Card className="h-fit">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                 Active Job Openings
               </CardTitle>
             </CardHeader>
@@ -574,7 +574,7 @@ export default function RecruitmentDashboard() {
                   {/* Lazy-load sentinel with spinner */}
                   {hasMore && (
                     <div ref={loadMoreRef} className="flex justify-center items-center py-4">
-                      <Loader2 className="h-4 w-4 animate-spin text-sky-700 dark:text-sky-400 mr-2" />
+                      <Loader2 className="h-4 w-4 animate-spin text-accent-700 dark:text-accent-400 mr-2" />
                       <span className="text-xs text-[var(--text-muted)]">
                         Loading more candidates...
                       </span>

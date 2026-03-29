@@ -65,7 +65,7 @@ export function ProjectStep({
           onClick={() => onUseExistingProjectChange(false)}
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             !useExistingProject
-              ? 'bg-[var(--bg-surface)] shadow text-sky-700'
+              ? 'bg-[var(--bg-surface)] shadow text-accent-700'
               : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
           }`}
         >
@@ -77,7 +77,7 @@ export function ProjectStep({
           onClick={() => onUseExistingProjectChange(true)}
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             useExistingProject
-              ? 'bg-[var(--bg-surface)] shadow text-sky-700'
+              ? 'bg-[var(--bg-surface)] shadow text-accent-700'
               : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
           }`}
         >

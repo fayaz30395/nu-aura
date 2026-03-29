@@ -173,12 +173,12 @@ export default function TemplateEditorPage() {
                             className="rounded-2xl h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                             onClick={() => router.back()}
                         >
-                            <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-700 transition-colors" />
+                            <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
                         </Button>
                         <div>
                             <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss flex items-center gap-4">
-                                Blueprint <span className="text-sky-700">Editor</span>
-                                <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-indigo-500/20 text-indigo-600">
+                                Blueprint <span className="text-accent-700">Editor</span>
+                                <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
                                     V1.0
                                 </Badge>
                             </h1>
@@ -188,7 +188,7 @@ export default function TemplateEditorPage() {
 
                     <Button
                         variant="primary"
-                        className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-sky-700 to-indigo-600 border-0 shadow-xl shadow-sky-500/20 rounded-2xl py-6 px-10"
+                        className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-2xl py-6 px-10"
                         leftIcon={<Save className="h-4 w-4" />}
                         isLoading={updateTemplateMutation.isPending && !editingTask}
                         onClick={handleSaveTemplate}
@@ -211,7 +211,7 @@ export default function TemplateEditorPage() {
                                 <div className="space-y-4">
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Template Title</label>
                                     <Input
-                                        className="input-aura rounded-2xl bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-sky-500"
+                                        className="input-aura rounded-2xl bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-accent-500"
                                         value={localTemplate?.name || ''}
                                         onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, name: e.target.value } : null)}
                                     />
@@ -220,7 +220,7 @@ export default function TemplateEditorPage() {
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Mission Description</label>
                                     <textarea
                                         rows={5}
-                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-4 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-sky-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-4 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
                                         value={localTemplate?.description || ''}
                                         onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, description: e.target.value } : null)}
                                     />
@@ -228,14 +228,14 @@ export default function TemplateEditorPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-0 bg-indigo-600/5 dark:bg-indigo-600/10 border-l-4 border-indigo-600 rounded-2xl shadow-xl shadow-indigo-500/10">
+                        <Card className="border-0 bg-accent-600/5 dark:bg-accent-600/10 border-l-4 border-accent-600 rounded-2xl shadow-xl shadow-accent-500/10">
                             <CardContent className="p-8 space-y-4">
-                                <div className="flex items-center gap-2 text-indigo-600 font-black uppercase tracking-widest text-xs">
+                                <div className="flex items-center gap-2 text-accent-600 font-black uppercase tracking-widest text-xs">
                                     <AlertCircle className="h-4 w-4" />
                                     Orchestration Sync
                                 </div>
-                                <p className="text-sm font-bold text-indigo-700 dark:text-indigo-400">
-                                    Changes made here will affect all <span className="underline decoration-indigo-400 decoration-2">future</span> onboarding processes initiated with this template.
+                                <p className="text-sm font-bold text-accent-700 dark:text-accent-400">
+                                    Changes made here will affect all <span className="underline decoration-accent-400 decoration-2">future</span> onboarding processes initiated with this template.
                                 </p>
                             </CardContent>
                         </Card>
@@ -252,7 +252,7 @@ export default function TemplateEditorPage() {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="rounded-xl font-black tracking-widest uppercase text-xs border-sky-500/20 text-sky-700 hover:bg-sky-500 hover:text-white transition-all transform hover:scale-105"
+                                    className="rounded-xl font-black tracking-widest uppercase text-xs border-accent-500/20 text-accent-700 hover:bg-accent-500 hover:text-white transition-all transform hover:scale-105"
                                     leftIcon={<Plus className="h-3.5 w-3.5" />}
                                     onClick={handleAddTask}
                                 >
@@ -292,7 +292,7 @@ export default function TemplateEditorPage() {
                                                                     <Clock className="h-3 w-3" />
                                                                     Due Day {task.estimatedDaysFromStart || 7}
                                                                 </div>
-                                                                <div className="flex items-center gap-1.5 text-xs font-black text-sky-500 uppercase tracking-widest">
+                                                                <div className="flex items-center gap-1.5 text-xs font-black text-accent-500 uppercase tracking-widest">
                                                                     <Zap className="h-3 w-3" />
                                                                     {task.priority || 'MEDIUM'}
                                                                 </div>
@@ -351,7 +351,7 @@ export default function TemplateEditorPage() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-2xl overflow-hidden border-t-8 border-sky-700"
+                        className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-2xl overflow-hidden border-t-8 border-accent-700"
                     >
                         <div className="p-12 space-y-10">
                             <div className="flex items-center justify-between">
@@ -371,7 +371,7 @@ export default function TemplateEditorPage() {
                                 <div className="col-span-full space-y-4">
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Task Objective</label>
                                     <Input
-                                        className="input-aura rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-sky-500"
+                                        className="input-aura rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-accent-500"
                                         placeholder="e.g., Set up workstation and systems"
                                         value={taskForm.taskName}
                                         onChange={(e) => setTaskForm({ ...taskForm, taskName: e.target.value })}
@@ -382,7 +382,7 @@ export default function TemplateEditorPage() {
                                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Tactical Description</label>
                                     <textarea
                                         rows={3}
-                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-sky-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
                                         placeholder="Detailed instructions for this specific step..."
                                         value={taskForm.description || ''}
                                         onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
@@ -395,7 +395,7 @@ export default function TemplateEditorPage() {
                                         Category
                                     </label>
                                     <select
-                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-sky-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
                                         value={taskForm.category}
                                         onChange={(e) => setTaskForm({ ...taskForm, category: e.target.value as OnboardingTaskCategory })}
                                     >
@@ -414,7 +414,7 @@ export default function TemplateEditorPage() {
                                         Priority
                                     </label>
                                     <select
-                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-sky-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
                                         value={taskForm.priority}
                                         onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as OnboardingTaskPriority })}
                                     >
@@ -431,7 +431,7 @@ export default function TemplateEditorPage() {
                                     </label>
                                     <Input
                                         type="number"
-                                        className="rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black focus:ring-2 focus:ring-sky-500"
+                                        className="rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black focus:ring-2 focus:ring-accent-500"
                                         value={taskForm.estimatedDaysFromStart || 0}
                                         onChange={(e) => setTaskForm({ ...taskForm, estimatedDaysFromStart: parseInt(e.target.value) || 0 })}
                                     />
@@ -441,7 +441,7 @@ export default function TemplateEditorPage() {
                                     <input
                                         type="checkbox"
                                         id="mandatory"
-                                        className="h-5 w-5 rounded-md border-sky-500 text-sky-700 focus:ring-sky-500"
+                                        className="h-5 w-5 rounded-md border-accent-500 text-accent-700 focus:ring-accent-500"
                                         checked={taskForm.isMandatory}
                                         onChange={(e) => setTaskForm({ ...taskForm, isMandatory: e.target.checked })}
                                     />
@@ -453,7 +453,7 @@ export default function TemplateEditorPage() {
 
                             <div className="pt-10 flex gap-4">
                                 <Button
-                                    className="btn-primary flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-sky-700 to-indigo-600 border-0 shadow-xl shadow-sky-500/20 rounded-2xl py-6"
+                                    className="btn-primary flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-2xl py-6"
                                     leftIcon={<Save className="h-4 w-4" />}
                                     isLoading={addTaskMutation.isPending || updateTaskMutation.isPending}
                                     onClick={handleSaveTask}

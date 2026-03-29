@@ -61,17 +61,17 @@ type ApiKeyFormData = z.infer<typeof apiKeySchema>;
 // ─── Device Type Config ─────────────────────────────────────────────────────
 
 const DEVICE_TYPES: Record<string, { label: string; color: string }> = {
-  FINGERPRINT: { label: 'Fingerprint', color: 'bg-blue-100 text-blue-700' },
-  FACE: { label: 'Face Recognition', color: 'bg-purple-100 text-purple-700' },
-  IRIS: { label: 'Iris Scanner', color: 'bg-teal-100 text-teal-700' },
-  CARD: { label: 'Card Reader', color: 'bg-amber-100 text-amber-700' },
-  MULTI_MODAL: { label: 'Multi-Modal', color: 'bg-sky-100 text-sky-700' },
+  FINGERPRINT: { label: 'Fingerprint', color: 'bg-accent-100 text-accent-700' },
+  FACE: { label: 'Face Recognition', color: 'bg-accent-300 text-accent-900' },
+  IRIS: { label: 'Iris Scanner', color: 'bg-success-100 text-success-700' },
+  CARD: { label: 'Card Reader', color: 'bg-warning-100 text-warning-700' },
+  MULTI_MODAL: { label: 'Multi-Modal', color: 'bg-accent-100 text-accent-700' },
 };
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  PENDING: { bg: 'bg-yellow-50', text: 'text-yellow-700', dot: 'bg-yellow-500' },
-  PROCESSED: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
-  FAILED: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
+  PENDING: { bg: 'bg-warning-50', text: 'text-warning-700', dot: 'bg-warning-500' },
+  PROCESSED: { bg: 'bg-success-50', text: 'text-success-700', dot: 'bg-success-500' },
+  FAILED: { bg: 'bg-danger-50', text: 'text-danger-700', dot: 'bg-danger-500' },
   DUPLICATE: { bg: 'bg-gray-50', text: 'text-gray-500', dot: 'bg-gray-400' },
 };
 
@@ -92,7 +92,7 @@ export default function BiometricDevicesPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Fingerprint className="h-7 w-7 text-sky-700" />
+                <Fingerprint className="h-7 w-7 text-accent-700" />
                 Biometric Devices
               </h1>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -113,7 +113,7 @@ export default function BiometricDevicesPage() {
                 onClick={() => { setActiveTab(key); setPage(0); }}
                 className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                   activeTab === key
-                    ? 'bg-white text-sky-700 shadow-sm dark:bg-gray-700 dark:text-sky-400'
+                    ? 'bg-white text-accent-700 shadow-sm dark:bg-gray-700 dark:text-accent-400'
                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >
@@ -205,7 +205,7 @@ function DeviceListPanel({
         </p>
         <Button
           onClick={() => setShowRegisterModal(true)}
-          className="bg-sky-700 hover:bg-sky-800 text-white"
+          className="bg-accent-700 hover:bg-accent-800 text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
           Register Device
@@ -316,7 +316,7 @@ function DeviceCard({
                 {device.deviceName}
               </h3>
               {device.isOnline ? (
-                <Wifi className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <Wifi className="h-4 w-4 text-success-500 flex-shrink-0" />
               ) : (
                 <WifiOff className="h-4 w-4 text-gray-400 flex-shrink-0" />
               )}
@@ -338,14 +338,14 @@ function DeviceCard({
             </p>
             <p className="text-[10px] text-gray-500">Today</p>
           </div>
-          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-2 text-center">
-            <p className="text-lg font-bold text-red-600 dark:text-red-400">
+          <div className="rounded-lg bg-danger-50 dark:bg-danger-900/20 p-2 text-center">
+            <p className="text-lg font-bold text-danger-600 dark:text-danger-400">
               {device.failedPunchesToday}
             </p>
             <p className="text-[10px] text-gray-500">Failed</p>
           </div>
-          <div className="rounded-lg bg-yellow-50 dark:bg-yellow-900/20 p-2 text-center">
-            <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
+          <div className="rounded-lg bg-warning-50 dark:bg-warning-900/20 p-2 text-center">
+            <p className="text-lg font-bold text-warning-600 dark:text-warning-400">
               {device.pendingPunches}
             </p>
             <p className="text-[10px] text-gray-500">Pending</p>
@@ -367,14 +367,14 @@ function DeviceCard({
         <div className="mt-4 flex items-center gap-2 border-t border-gray-100 dark:border-gray-700 pt-3">
           <button
             onClick={onViewLogs}
-            className="flex items-center gap-1 text-xs text-sky-700 hover:text-sky-800 dark:text-sky-400 font-medium"
+            className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-800 dark:text-accent-400 font-medium"
           >
             <Eye className="h-3.5 w-3.5" />
             Logs
           </button>
           <button
             onClick={onSync}
-            className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
+            className="flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 font-medium"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             Sync
@@ -382,7 +382,7 @@ function DeviceCard({
           {device.isActive && (
             <button
               onClick={onDeactivate}
-              className="flex items-center gap-1 text-xs text-red-500 hover:text-red-600 font-medium ml-auto"
+              className="flex items-center gap-1 text-xs text-danger-500 hover:text-danger-600 font-medium ml-auto"
             >
               <XCircle className="h-3.5 w-3.5" />
               Deactivate
@@ -437,11 +437,11 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             </label>
             <input
               {...register('deviceName')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="e.g., Main Entrance Scanner"
             />
             {errors.deviceName && (
-              <p className="mt-1 text-xs text-red-500">{errors.deviceName.message}</p>
+              <p className="mt-1 text-xs text-danger-500">{errors.deviceName.message}</p>
             )}
           </div>
 
@@ -452,7 +452,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             </label>
             <select
               {...register('deviceType')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               {Object.entries(DEVICE_TYPES).map(([key, { label }]) => (
                 <option key={key} value={key}>
@@ -461,7 +461,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
               ))}
             </select>
             {errors.deviceType && (
-              <p className="mt-1 text-xs text-red-500">{errors.deviceType.message}</p>
+              <p className="mt-1 text-xs text-danger-500">{errors.deviceType.message}</p>
             )}
           </div>
 
@@ -472,11 +472,11 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             </label>
             <input
               {...register('serialNumber')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="e.g., ZK-2024-001"
             />
             {errors.serialNumber && (
-              <p className="mt-1 text-xs text-red-500">{errors.serialNumber.message}</p>
+              <p className="mt-1 text-xs text-danger-500">{errors.serialNumber.message}</p>
             )}
           </div>
 
@@ -488,7 +488,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
               </label>
               <input
                 {...register('manufacturer')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., ZKTeco"
               />
             </div>
@@ -498,7 +498,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
               </label>
               <input
                 {...register('model')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., SpeedFace V5L"
               />
             </div>
@@ -512,7 +512,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
               </label>
               <input
                 {...register('ipAddress')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., 192.168.1.100"
               />
             </div>
@@ -522,7 +522,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
               </label>
               <input
                 {...register('locationName')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., Building A, Floor 1"
               />
             </div>
@@ -536,7 +536,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             <textarea
               {...register('notes')}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="Additional notes..."
             />
           </div>
@@ -549,7 +549,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             <Button
               type="submit"
               disabled={isSubmitting || registerMutation.isPending}
-              className="bg-sky-700 hover:bg-sky-800 text-white"
+              className="bg-accent-700 hover:bg-accent-800 text-white"
             >
               {registerMutation.isPending ? 'Registering...' : 'Register Device'}
             </Button>
@@ -583,7 +583,7 @@ function DeviceLogsDrawer({
       >
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <Activity className="h-5 w-5 text-sky-700" />
+            <Activity className="h-5 w-5 text-accent-700" />
             Punch Logs
           </h3>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -658,7 +658,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
             <p className="text-sm font-medium text-gray-900 dark:text-white">
               {log.employeeIdentifier}
               <span className={`ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold ${
-                log.punchType === 'IN' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                log.punchType === 'IN' ? 'bg-success-100 text-success-700' : 'bg-warning-100 text-warning-700'
               }`}>
                 {log.punchType}
               </span>
@@ -673,7 +673,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
         </span>
       </div>
       {log.errorMessage && (
-        <p className="mt-1.5 text-xs text-red-500 dark:text-red-400 pl-6">
+        <p className="mt-1.5 text-xs text-danger-500 dark:text-danger-400 pl-6">
           {log.errorMessage}
         </p>
       )}
@@ -703,7 +703,7 @@ function PendingPunchesPanel({
           onClick={() => reprocessMutation.mutate()}
           disabled={reprocessMutation.isPending}
           variant="outline"
-          className="border-sky-700 text-sky-700 hover:bg-sky-50"
+          className="border-accent-700 text-accent-700 hover:bg-accent-50"
         >
           <RefreshCw className={`mr-2 h-4 w-4 ${reprocessMutation.isPending ? 'animate-spin' : ''}`} />
           Reprocess Failed
@@ -719,7 +719,7 @@ function PendingPunchesPanel({
       ) : data?.content.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <CheckCircle className="h-12 w-12 text-green-500 mb-3" />
+            <CheckCircle className="h-12 w-12 text-success-500 mb-3" />
             <p className="text-gray-500 dark:text-gray-400">All punches have been processed</p>
           </CardContent>
         </Card>
@@ -781,7 +781,7 @@ function ApiKeysPanel({
         </p>
         <Button
           onClick={() => setShowModal(true)}
-          className="bg-sky-700 hover:bg-sky-800 text-white"
+          className="bg-accent-700 hover:bg-accent-800 text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
           Generate Key
@@ -790,14 +790,14 @@ function ApiKeysPanel({
 
       {/* New Key Banner */}
       {newKey && (
-        <div className="rounded-lg border-2 border-green-300 bg-green-50 p-4 dark:bg-green-900/20 dark:border-green-700">
+        <div className="rounded-lg border-2 border-success-300 bg-success-50 p-4 dark:bg-success-900/20 dark:border-success-700">
           <div className="flex items-start gap-2">
-            <Key className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <Key className="h-5 w-5 text-success-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-green-800 dark:text-green-300">
+              <p className="text-sm font-semibold text-success-800 dark:text-success-300">
                 API Key Generated - Copy it now!
               </p>
-              <p className="mt-1 text-xs text-green-700 dark:text-green-400">
+              <p className="mt-1 text-xs text-success-700 dark:text-success-400">
                 This key will not be shown again.
               </p>
               <code className="mt-2 block break-all rounded bg-white px-3 py-2 text-xs font-mono text-gray-900 dark:bg-gray-800 dark:text-white">
@@ -852,7 +852,7 @@ function ApiKeysPanel({
                   {key.lastUsedAt && (
                     <span>Last used: {new Date(key.lastUsedAt).toLocaleDateString()}</span>
                   )}
-                  <span className={key.isActive ? 'text-green-600' : 'text-red-500'}>
+                  <span className={key.isActive ? 'text-success-600' : 'text-danger-500'}>
                     {key.isActive ? 'Active' : 'Revoked'}
                   </span>
                 </div>
@@ -861,7 +861,7 @@ function ApiKeysPanel({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                  className="text-danger-500 hover:text-danger-600 hover:bg-danger-50"
                   onClick={() => revokeMutation.mutate(key.id)}
                   disabled={revokeMutation.isPending}
                 >
@@ -932,15 +932,15 @@ function GenerateApiKeyModal({
             </label>
             <input
               {...register('keyName')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="e.g., Main Entrance Device Key"
             />
             {errors.keyName && (
-              <p className="mt-1 text-xs text-red-500">{errors.keyName.message}</p>
+              <p className="mt-1 text-xs text-danger-500">{errors.keyName.message}</p>
             )}
           </div>
 
-          <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3">
+          <p className="text-xs text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-900/20 rounded-lg p-3">
             The API key will only be shown once after generation. Make sure to copy and store it securely.
           </p>
 
@@ -951,7 +951,7 @@ function GenerateApiKeyModal({
             <Button
               type="submit"
               disabled={generateMutation.isPending}
-              className="bg-sky-700 hover:bg-sky-800 text-white"
+              className="bg-accent-700 hover:bg-accent-800 text-white"
             >
               {generateMutation.isPending ? 'Generating...' : 'Generate'}
             </Button>

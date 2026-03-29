@@ -46,8 +46,18 @@ public class WorkflowService {
     private final AuditLogService auditLogService;
     private final LeaveRequestRepository leaveRequestRepository;
 
-    /** Callback handlers indexed by entity type — populated at startup. */
-    private Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> callbackHandlerMap = Collections.emptyMap();
+    /**
+     * Callback handlers indexed by entity type — built lazily on first access
+     * to break the circular dependency between WorkflowService and its callback handlers.
+     */
+    private volatile Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> callbackHandlerMap;
+
+    /**
+     * Stored for lazy initialization. Marked @Lazy to break circular dependency
+     * (handlers like RecruitmentManagementService depend on WorkflowService).
+     */
+    @org.springframework.lang.Nullable
+    private final List<ApprovalCallbackHandler> callbackHandlers;
 
     public WorkflowService(
             WorkflowDefinitionRepository workflowDefinitionRepository,
@@ -62,7 +72,7 @@ public class WorkflowService {
             DomainEventPublisher domainEventPublisher,
             AuditLogService auditLogService,
             LeaveRequestRepository leaveRequestRepository,
-            @org.springframework.lang.Nullable List<ApprovalCallbackHandler> callbackHandlers) {
+            @org.springframework.context.annotation.Lazy @org.springframework.lang.Nullable List<ApprovalCallbackHandler> callbackHandlers) {
         this.workflowDefinitionRepository = workflowDefinitionRepository;
         this.approvalStepRepository = approvalStepRepository;
         this.workflowExecutionRepository = workflowExecutionRepository;
@@ -75,17 +85,31 @@ public class WorkflowService {
         this.domainEventPublisher = domainEventPublisher;
         this.auditLogService = auditLogService;
         this.leaveRequestRepository = leaveRequestRepository;
-        if (callbackHandlers != null && !callbackHandlers.isEmpty()) {
-            this.callbackHandlerMap = callbackHandlers.stream()
-                    .collect(Collectors.toMap(
-                            ApprovalCallbackHandler::getEntityType,
-                            Function.identity(),
-                            (a, b) -> {
-                                log.warn("Duplicate ApprovalCallbackHandler for entity type {}; keeping first", a.getEntityType());
-                                return a;
-                            }));
-            log.info("Registered {} approval callback handlers: {}", callbackHandlerMap.size(), callbackHandlerMap.keySet());
+        this.callbackHandlers = callbackHandlers;
+    }
+
+    /** Returns the callback handler map, building it lazily on first access. */
+    private Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> getCallbackHandlerMap() {
+        if (callbackHandlerMap == null) {
+            synchronized (this) {
+                if (callbackHandlerMap == null) {
+                    if (callbackHandlers != null && !callbackHandlers.isEmpty()) {
+                        callbackHandlerMap = callbackHandlers.stream()
+                                .collect(Collectors.toMap(
+                                        ApprovalCallbackHandler::getEntityType,
+                                        Function.identity(),
+                                        (a, b) -> {
+                                            log.warn("Duplicate ApprovalCallbackHandler for entity type {}; keeping first", a.getEntityType());
+                                            return a;
+                                        }));
+                        log.info("Registered {} approval callback handlers: {}", callbackHandlerMap.size(), callbackHandlerMap.keySet());
+                    } else {
+                        callbackHandlerMap = Collections.emptyMap();
+                    }
+                }
+            }
         }
+        return callbackHandlerMap;
     }
 
     /**
@@ -756,7 +780,7 @@ public class WorkflowService {
      * Wrapped in try-catch to prevent callback failures from breaking the approval flow.
      */
     private void invokeCallback(WorkflowExecution execution, UUID actingUser, String comments) {
-        ApprovalCallbackHandler handler = callbackHandlerMap.get(execution.getEntityType());
+        ApprovalCallbackHandler handler = getCallbackHandlerMap().get(execution.getEntityType());
         if (handler == null) {
             log.debug("No callback handler registered for entity type: {}", execution.getEntityType());
             return;

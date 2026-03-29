@@ -122,7 +122,7 @@ export default function LeaveCalendarPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -135,7 +135,7 @@ export default function LeaveCalendarPage() {
               onClick={() => setViewMode('my')}
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'my'
-                  ? 'bg-sky-500 text-white'
+                  ? 'bg-accent-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
@@ -145,7 +145,7 @@ export default function LeaveCalendarPage() {
               onClick={() => setViewMode('team')}
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'team'
-                  ? 'bg-sky-500 text-white'
+                  ? 'bg-accent-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
@@ -199,7 +199,7 @@ export default function LeaveCalendarPage() {
               </div>
             ))}
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-danger-500" />
               <span className="text-sm text-[var(--text-primary)]">Holiday</span>
             </div>
           </div>
@@ -230,16 +230,16 @@ export default function LeaveCalendarPage() {
                     key={index}
                     className={`min-h-24 border rounded-lg p-2 ${
                       day.isToday
-                        ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30'
+                        ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30'
                         : day.isCurrentMonth
                         ? 'border-[var(--border-main)] bg-[var(--bg-card)]'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)]/50'
-                    } ${day.holiday ? 'bg-red-50 dark:bg-red-900/20' : ''}`}
+                    } ${day.holiday ? 'bg-danger-50 dark:bg-danger-900/20' : ''}`}
                   >
                     <div
                       className={`text-sm font-medium mb-1 ${
                         day.isToday
-                          ? 'text-sky-700 dark:text-sky-400'
+                          ? 'text-accent-700 dark:text-accent-400'
                           : day.isCurrentMonth
                           ? 'text-[var(--text-primary)]'
                           : 'text-[var(--text-muted)]'
@@ -249,7 +249,7 @@ export default function LeaveCalendarPage() {
                     </div>
 
                     {day.holiday && (
-                      <div className="text-xs text-red-600 dark:text-red-400 font-medium mb-1">
+                      <div className="text-xs text-danger-600 dark:text-danger-400 font-medium mb-1">
                         Holiday
                       </div>
                     )}
@@ -288,7 +288,7 @@ export default function LeaveCalendarPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
             <div className="text-sm text-[var(--text-secondary)] mb-1">Total Leaves This Month</div>
-            <div className="text-3xl font-bold text-sky-700 dark:text-sky-400">
+            <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">
               {leaves.filter(l => {
                 const leaveStart = new Date(l.startDate);
                 return leaveStart.getMonth() === currentDate.getMonth() &&
@@ -298,13 +298,13 @@ export default function LeaveCalendarPage() {
           </div>
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
             <div className="text-sm text-[var(--text-secondary)] mb-1">Pending Approvals</div>
-            <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">
+            <div className="text-3xl font-bold text-warning-600 dark:text-warning-500">
               {leaves.filter(l => l.status === 'PENDING').length}
             </div>
           </div>
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
             <div className="text-sm text-[var(--text-secondary)] mb-1">Upcoming Leaves</div>
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-500">
+            <div className="text-3xl font-bold text-accent-600 dark:text-accent-500">
               {leaves.filter(l => new Date(l.startDate) > new Date()).length}
             </div>
           </div>
@@ -316,7 +316,7 @@ export default function LeaveCalendarPage() {
             onClick={() => router.push('/leave/apply')}
             className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
           >
-            <div className="text-sky-700 dark:text-sky-400 mb-2">
+            <div className="text-accent-700 dark:text-accent-400 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
@@ -329,7 +329,7 @@ export default function LeaveCalendarPage() {
             onClick={() => router.push('/leave/my-leaves')}
             className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
           >
-            <div className="text-green-600 dark:text-green-500 mb-2">
+            <div className="text-success-600 dark:text-success-500 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>

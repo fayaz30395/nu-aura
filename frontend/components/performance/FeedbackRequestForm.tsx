@@ -123,10 +123,10 @@ export default function FeedbackRequestForm({
 
       <div className="px-6 py-4">
         {/* Subject Employee */}
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+        <div className="mb-6 p-4 bg-accent-50 rounded-lg">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Users className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-accent-100 rounded-lg">
+              <Users className="h-5 w-5 text-accent-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-[var(--text-primary)]">Feedback Subject</p>
@@ -141,7 +141,7 @@ export default function FeedbackRequestForm({
           <div className="space-y-2 text-sm text-[var(--text-secondary)]">
             {includePeers && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0" />
                 <span>
                   Select {minPeers} to {maxPeers} peer reviewers who work closely with the subject
                 </span>
@@ -149,13 +149,13 @@ export default function FeedbackRequestForm({
             )}
             {includeManager && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0" />
                 <span>Manager feedback will be requested automatically</span>
               </div>
             )}
             {includeDirectReports && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0" />
                 <span>Direct report feedback will be requested automatically</span>
               </div>
             )}
@@ -177,7 +177,7 @@ export default function FeedbackRequestForm({
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search employees by name or email..."
-                className="w-full pl-10 pr-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 disabled={selectedPeers.length >= maxPeers}
               />
             </div>
@@ -201,7 +201,7 @@ export default function FeedbackRequestForm({
                         </p>
                       </div>
                       {selectedPeers.some((p) => p.employeeId === employee.id) && (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        <CheckCircle className="h-5 w-5 text-success-500" />
                       )}
                     </div>
                   </button>
@@ -226,8 +226,8 @@ export default function FeedbackRequestForm({
                   className="flex items-center justify-between p-4 bg-[var(--bg-surface)] rounded-lg"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-sm font-medium text-blue-700">
+                    <div className="h-8 w-8 rounded-full bg-accent-100 flex items-center justify-center">
+                      <span className="text-sm font-medium text-accent-700">
                         {peer.employeeName.charAt(0)}
                       </span>
                     </div>
@@ -253,9 +253,9 @@ export default function FeedbackRequestForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-danger-700">{error}</p>
           </div>
         )}
 
@@ -265,14 +265,14 @@ export default function FeedbackRequestForm({
             <div className="flex items-center gap-2">
               {canSubmit ? (
                 <>
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  <span className="text-sm text-green-700">
+                  <CheckCircle className="h-5 w-5 text-success-500" />
+                  <span className="text-sm text-success-700">
                     Ready to submit ({selectedPeers.length} peers selected)
                   </span>
                 </>
               ) : (
                 <>
-                  <AlertCircle className="h-5 w-5 text-yellow-500" />
+                  <AlertCircle className="h-5 w-5 text-warning-500" />
                   <span className="text-sm text-[var(--text-secondary)]">
                     Select at least {minPeers} peer reviewer(s) to continue
                   </span>

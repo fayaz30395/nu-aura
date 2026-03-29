@@ -110,7 +110,7 @@ export default function ApplyLeavePage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -136,7 +136,7 @@ export default function ApplyLeavePage() {
                   </option>
                 ))}
               </select>
-              {errors.leaveTypeId && <p className="text-red-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
+              {errors.leaveTypeId && <p className="text-danger-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
               {balance && (
                 <div className="mt-2 text-sm text-[var(--text-secondary)]">
                   Available Balance: <span className="font-semibold">{balance.available} days</span>
@@ -154,7 +154,7 @@ export default function ApplyLeavePage() {
                 {...register('startDate')}
                 className="input-aura"
               />
-              {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
+              {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
 
             {/* End Date */}
@@ -168,7 +168,7 @@ export default function ApplyLeavePage() {
                 min={startDate}
                 className="input-aura"
               />
-              {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
+              {errors.endDate && <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>
 
             {/* Half Day */}
@@ -177,7 +177,7 @@ export default function ApplyLeavePage() {
                 <input
                   type="checkbox"
                   {...register('isHalfDay')}
-                  className="w-4 h-4 text-sky-700"
+                  className="w-4 h-4 text-accent-700"
                 />
                 <span className="text-sm font-medium text-[var(--text-secondary)]">Half Day Leave</span>
               </label>
@@ -195,7 +195,7 @@ export default function ApplyLeavePage() {
                       type="radio"
                       value="FIRST_HALF"
                       {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-sky-700"
+                      className="w-4 h-4 text-accent-700"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">First Half (Morning)</span>
                   </label>
@@ -204,19 +204,19 @@ export default function ApplyLeavePage() {
                       type="radio"
                       value="SECOND_HALF"
                       {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-sky-700"
+                      className="w-4 h-4 text-accent-700"
                     />
                     <span className="text-sm text-[var(--text-secondary)]">Second Half (Afternoon)</span>
                   </label>
                 </div>
-                {errors.halfDayPeriod && <p className="text-red-500 text-sm mt-1">{errors.halfDayPeriod.message}</p>}
+                {errors.halfDayPeriod && <p className="text-danger-500 text-sm mt-1">{errors.halfDayPeriod.message}</p>}
               </div>
             )}
 
             {/* Total Days */}
-            <div className="md:col-span-2 bg-sky-50 dark:bg-sky-950/30 p-4 rounded-lg">
+            <div className="md:col-span-2 bg-accent-50 dark:bg-accent-950/30 p-4 rounded-lg">
               <div className="text-sm text-[var(--text-secondary)]">Total Days Requested:</div>
-              <div className="text-2xl font-bold text-sky-700 dark:text-sky-400">{totalDays} days</div>
+              <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{totalDays} days</div>
             </div>
 
             {/* Reason */}
@@ -230,7 +230,7 @@ export default function ApplyLeavePage() {
                 className="input-aura"
                 placeholder="Please provide a reason for your leave..."
               />
-              {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}
+              {errors.reason && <p className="text-danger-500 text-sm mt-1">{errors.reason.message}</p>}
             </div>
           </div>
 

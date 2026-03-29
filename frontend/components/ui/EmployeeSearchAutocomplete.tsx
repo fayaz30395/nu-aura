@@ -153,13 +153,13 @@ export function EmployeeSearchAutocomplete({
       {label && (
         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-danger-500 ml-1">*</span>}
         </label>
       )}
       <div className="relative">
         {value ? (
           <div className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
-            <div className="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center text-sky-700 dark:text-sky-300 text-xs font-medium">
+            <div className="w-7 h-7 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-xs font-medium">
               {getInitials(value.name)}
             </div>
             <span className="flex-1 text-surface-900 dark:text-surface-100 text-sm">
@@ -197,7 +197,7 @@ export function EmployeeSearchAutocomplete({
               aria-expanded={isOpen}
               aria-controls="employee-search-results"
               id="employee-search-input"
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </>
         )}
@@ -224,7 +224,7 @@ export function EmployeeSearchAutocomplete({
                     : ''
                   }`}
               >
-                <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center text-sky-700 dark:text-sky-300 text-sm font-medium flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium flex-shrink-0">
                   {getInitials(name)}
                 </div>
                 <div className="flex-1 min-w-0">

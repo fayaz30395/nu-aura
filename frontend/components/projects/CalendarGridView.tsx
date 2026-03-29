@@ -63,14 +63,14 @@ export function CalendarGridView({
             key={day.toISOString()}
             className={`min-h-[120px] p-2 bg-[var(--bg-card)] ${
               !isCurrentMonth ? 'bg-surface-50/50 dark:bg-surface-900/50 text-surface-400' : ''
-            } ${isToday(day) ? 'bg-sky-50/30 dark:bg-sky-900/10' : ''}`}
+            } ${isToday(day) ? 'bg-accent-50/30 dark:bg-accent-900/10' : ''}`}
             onClick={() => onDateChange(day)}
           >
             <div className="flex items-center justify-between mb-2">
               <span
                 className={`text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full ${
                   isToday(day)
-                    ? 'bg-sky-500 text-white'
+                    ? 'bg-accent-500 text-white'
                     : 'text-surface-700 dark:text-surface-300'
                 }`}
               >
@@ -105,7 +105,7 @@ export function CalendarGridView({
               ))}
               {dayEvents.length > 4 && (
                 <button 
-                  className="w-full text-center text-xs text-surface-500 hover:text-sky-700 dark:hover:text-sky-400 p-1"
+                  className="w-full text-center text-xs text-surface-500 hover:text-accent-700 dark:hover:text-accent-400 p-1"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDateChange(day);

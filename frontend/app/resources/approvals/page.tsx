@@ -141,7 +141,7 @@ export default function ApprovalsPage() {
                 onClick={() => setActiveTab(tab.key as TabKey)}
                 className={`flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                   activeTab === tab.key
-                    ? 'border-sky-700 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                    ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
@@ -236,7 +236,7 @@ export default function ApprovalsPage() {
                       </div>
                       <div className="mt-3 grid grid-cols-2 gap-4 text-center">
                         <div>
-                          <p className="text-lg font-semibold text-sky-700 dark:text-sky-400">
+                          <p className="text-lg font-semibold text-accent-700 dark:text-accent-400">
                             +{formatAllocationPercentage(selectedRequest.requestedAllocation)}
                           </p>
                           <p className="text-xs text-[var(--text-muted)]">Requested</p>
@@ -323,7 +323,7 @@ export default function ApprovalsPage() {
               value={approveComment}
               onChange={(e) => setApproveComment(e.target.value)}
               placeholder="Add a comment for the requester..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
             />
           </div>
@@ -359,7 +359,7 @@ export default function ApprovalsPage() {
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Explain why this request is being rejected..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
               required
             />
@@ -405,15 +405,15 @@ function RequestCard({
   return (
     <Card
       className={`cursor-pointer transition-all ${statusColors[request.status]} ${
-        isSelected ? 'ring-2 ring-sky-500' : ''
+        isSelected ? 'ring-2 ring-accent-500' : ''
       }`}
       onClick={onClick}
     >
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 dark:bg-sky-900/30">
-              <User className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30">
+              <User className="h-5 w-5 text-accent-700 dark:text-accent-400" />
             </div>
             <div>
               <p className="font-medium text-[var(--text-primary)]">

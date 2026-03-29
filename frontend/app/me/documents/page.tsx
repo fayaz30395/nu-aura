@@ -74,7 +74,7 @@ const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; colo
   PENDING: { icon: <Clock className="h-4 w-4" />, color: 'text-warning-600', bgColor: 'bg-warning-100 dark:bg-warning-900/30' },
   IN_PROGRESS: { icon: <AlertCircle className="h-4 w-4" />, color: 'text-info-600', bgColor: 'bg-info-100 dark:bg-info-900/30' },
   GENERATED: { icon: <CheckCircle className="h-4 w-4" />, color: 'text-success-600', bgColor: 'bg-success-100 dark:bg-success-900/30' },
-  DELIVERED: { icon: <Truck className="h-4 w-4" />, color: 'text-sky-700', bgColor: 'bg-sky-100 dark:bg-sky-900/30' },
+  DELIVERED: { icon: <Truck className="h-4 w-4" />, color: 'text-accent-700', bgColor: 'bg-accent-100 dark:bg-accent-900/30' },
   REJECTED: { icon: <XCircle className="h-4 w-4" />, color: 'text-danger-600', bgColor: 'bg-danger-100 dark:bg-danger-900/30' },
   CANCELLED: { icon: <X className="h-4 w-4" />, color: 'text-[var(--text-muted)]', bgColor: 'bg-[var(--bg-secondary)]' },
 };
@@ -211,7 +211,7 @@ export default function MyDocumentsPage() {
           </p>
           <button
             onClick={() => router.push('/documents')}
-            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
           >
             Go to Document Management
           </button>
@@ -421,10 +421,10 @@ export default function MyDocumentsPage() {
                   {...register('purpose')}
                   placeholder="Why do you need this document?"
                   rows={3}
-                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.purpose ? 'border-red-500' : ''}`}
+                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.purpose ? 'border-danger-500' : ''}`}
                 />
                 {errors.purpose && (
-                  <p className="mt-1 text-xs text-red-500">{errors.purpose.message}</p>
+                  <p className="mt-1 text-xs text-danger-500">{errors.purpose.message}</p>
                 )}
               </div>
 
@@ -450,10 +450,10 @@ export default function MyDocumentsPage() {
                   type="date"
                   {...register('requiredByDate')}
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.requiredByDate ? 'border-red-500' : ''}`}
+                  className={`input-aura w-full px-3 py-2 rounded-lg ${errors.requiredByDate ? 'border-danger-500' : ''}`}
                 />
                 {errors.requiredByDate && (
-                  <p className="mt-1 text-xs text-red-500">{errors.requiredByDate.message}</p>
+                  <p className="mt-1 text-xs text-danger-500">{errors.requiredByDate.message}</p>
                 )}
               </div>
 
@@ -469,7 +469,7 @@ export default function MyDocumentsPage() {
                         type="radio"
                         {...register('deliveryMode')}
                         value={mode}
-                        className="text-sky-700"
+                        className="text-accent-700"
                       />
                       <span className="text-sm text-[var(--text-secondary)] capitalize">
                         {mode.toLowerCase()}

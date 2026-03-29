@@ -39,26 +39,26 @@ const ENTITY_TYPE_CONFIG: Record<
   WorkflowEntityType,
   { label: string; bg: string; text: string }
 > = {
-  LEAVE_REQUEST: { label: 'Leave', bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300' },
-  EXPENSE_CLAIM: { label: 'Expense', bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-300' },
-  TRAVEL_REQUEST: { label: 'Travel', bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300' },
-  LOAN_REQUEST: { label: 'Loan', bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300' },
+  LEAVE_REQUEST: { label: 'Leave', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
+  EXPENSE_CLAIM: { label: 'Expense', bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
+  TRAVEL_REQUEST: { label: 'Travel', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
+  LOAN_REQUEST: { label: 'Loan', bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
   ASSET_REQUEST: { label: 'Asset', bg: 'bg-slate-100 dark:bg-slate-800/30', text: 'text-slate-700 dark:text-slate-300' },
-  TIMESHEET: { label: 'Timesheet', bg: 'bg-cyan-100 dark:bg-cyan-900/30', text: 'text-cyan-700 dark:text-cyan-300' },
-  RESIGNATION: { label: 'Resignation', bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-300' },
-  SALARY_REVISION: { label: 'Salary Revision', bg: 'bg-violet-100 dark:bg-violet-900/30', text: 'text-violet-700 dark:text-violet-300' },
-  PROMOTION: { label: 'Promotion', bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-300' },
-  TRANSFER: { label: 'Transfer', bg: 'bg-indigo-100 dark:bg-indigo-900/30', text: 'text-indigo-700 dark:text-indigo-300' },
-  ONBOARDING: { label: 'Onboarding', bg: 'bg-teal-100 dark:bg-teal-900/30', text: 'text-teal-700 dark:text-teal-300' },
+  TIMESHEET: { label: 'Timesheet', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
+  RESIGNATION: { label: 'Resignation', bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-300' },
+  SALARY_REVISION: { label: 'Salary Revision', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
+  PROMOTION: { label: 'Promotion', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
+  TRANSFER: { label: 'Transfer', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
+  ONBOARDING: { label: 'Onboarding', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
   OFFBOARDING: { label: 'Offboarding', bg: 'bg-rose-100 dark:bg-rose-900/30', text: 'text-rose-700 dark:text-rose-300' },
-  DOCUMENT_REQUEST: { label: 'Document', bg: 'bg-sky-100 dark:bg-sky-900/30', text: 'text-sky-700 dark:text-sky-300' },
-  POLICY_ACKNOWLEDGMENT: { label: 'Policy', bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-300' },
+  DOCUMENT_REQUEST: { label: 'Document', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
+  POLICY_ACKNOWLEDGMENT: { label: 'Policy', bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500' },
   TRAINING_REQUEST: { label: 'Training', bg: 'bg-lime-100 dark:bg-lime-900/30', text: 'text-lime-700 dark:text-lime-300' },
-  REIMBURSEMENT: { label: 'Reimbursement', bg: 'bg-yellow-100 dark:bg-yellow-900/30', text: 'text-yellow-700 dark:text-yellow-300' },
+  REIMBURSEMENT: { label: 'Reimbursement', bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
   OVERTIME: { label: 'Overtime', bg: 'bg-fuchsia-100 dark:bg-fuchsia-900/30', text: 'text-fuchsia-700 dark:text-fuchsia-300' },
-  SHIFT_CHANGE: { label: 'Shift Change', bg: 'bg-pink-100 dark:bg-pink-900/30', text: 'text-pink-700 dark:text-pink-300' },
-  WORK_FROM_HOME: { label: 'WFH', bg: 'bg-teal-100 dark:bg-teal-900/30', text: 'text-teal-700 dark:text-teal-300' },
-  RECRUITMENT_OFFER: { label: 'Recruitment', bg: 'bg-violet-100 dark:bg-violet-900/30', text: 'text-violet-700 dark:text-violet-300' },
+  SHIFT_CHANGE: { label: 'Shift Change', bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500' },
+  WORK_FROM_HOME: { label: 'WFH', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
+  RECRUITMENT_OFFER: { label: 'Recruitment', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
   CUSTOM: { label: 'Custom', bg: 'bg-gray-100 dark:bg-gray-800/30', text: 'text-gray-700 dark:text-gray-300' },
 };
 
@@ -128,7 +128,7 @@ export default function WorkflowListPage() {
           <EmptyState
             title="Access denied"
             description="You do not have permission to view workflow definitions."
-            icon={<XCircle className="h-12 w-12 text-red-500" />}
+            icon={<XCircle className="h-12 w-12 text-danger-500" />}
           />
         </div>
       </AppLayout>
@@ -176,7 +176,7 @@ export default function WorkflowListPage() {
                   onClick={() => { setStatusFilter(s); setPage(0); }}
                   className={`rounded-full px-3 py-1 font-medium transition-colors ${
                     statusFilter === s
-                      ? 'bg-sky-700 text-white'
+                      ? 'bg-accent-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:text-[var(--text-muted)]'
                   }`}
                 >
@@ -192,7 +192,7 @@ export default function WorkflowListPage() {
                 setEntityTypeFilter(e.target.value as WorkflowEntityType | 'ALL');
                 setPage(0);
               }}
-              className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-primary)] focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-primary)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
             >
               <option value="ALL">All types</option>
               {Object.entries(ENTITY_TYPE_CONFIG).map(([key, cfg]) => (
@@ -211,7 +211,7 @@ export default function WorkflowListPage() {
               placeholder="Search workflows..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
             />
           </div>
         </div>
@@ -282,15 +282,15 @@ export default function WorkflowListPage() {
                           <span
                             className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${
                               wf.isActive
-                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                                ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-300'
                                 : 'bg-gray-100 text-gray-600 dark:bg-gray-800/30 dark:text-gray-400'
                             }`}
                           >
-                            <span className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
+                            <span className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? 'bg-success-500' : 'bg-gray-400'}`} />
                             {wf.isActive ? 'Active' : 'Inactive'}
                           </span>
                           {wf.isDefault && (
-                            <span className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
+                            <span className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-accent-100 px-2 py-0.5 text-xs font-semibold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
                               <Shield className="h-3 w-3" />
                               Default
                             </span>
@@ -347,7 +347,7 @@ export default function WorkflowListPage() {
                                     </button>
                                     <button
                                       type="button"
-                                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20"
                                       onClick={() => {
                                         setDeleteTarget(wf);
                                         setMenuOpenId(null);
@@ -408,7 +408,7 @@ export default function WorkflowListPage() {
       {/* Deactivate Confirmation Modal */}
       <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="md">
         <ModalHeader onClose={() => setDeleteTarget(null)}>
-          <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
             <Power className="h-5 w-5" />
             Deactivate Workflow
           </div>
@@ -426,7 +426,7 @@ export default function WorkflowListPage() {
           </Button>
           <Button
             variant="primary"
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-danger-600 hover:bg-danger-700"
             onClick={handleDeactivate}
             disabled={deactivateMutation.isPending}
           >

@@ -29,38 +29,38 @@ export default function LoanDetailPage() {
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
       PENDING: {
-        bg: 'bg-amber-100 dark:bg-amber-900/30',
-        text: 'text-amber-700 dark:text-amber-400',
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
         icon: Clock,
       },
       APPROVED: {
-        bg: 'bg-blue-100 dark:bg-blue-900/30',
-        text: 'text-blue-700 dark:text-blue-400',
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
         icon: CheckCircle,
       },
       REJECTED: {
-        bg: 'bg-red-100 dark:bg-red-900/30',
-        text: 'text-red-700 dark:text-red-400',
+        bg: 'bg-danger-100 dark:bg-danger-900/30',
+        text: 'text-danger-700 dark:text-danger-400',
         icon: XCircle,
       },
       DISBURSED: {
-        bg: 'bg-purple-100 dark:bg-purple-900/30',
-        text: 'text-purple-700 dark:text-purple-400',
+        bg: 'bg-accent-300 dark:bg-accent-900/30',
+        text: 'text-accent-900 dark:text-accent-600',
         icon: Banknote,
       },
       ACTIVE: {
-        bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-        text: 'text-emerald-700 dark:text-emerald-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: TrendingUp,
       },
       CLOSED: {
-        bg: 'bg-green-100 dark:bg-green-900/30',
-        text: 'text-green-700 dark:text-green-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: CheckCircle,
       },
       DEFAULTED: {
-        bg: 'bg-red-200 dark:bg-red-900/50',
-        text: 'text-red-800 dark:text-red-300',
+        bg: 'bg-danger-200 dark:bg-danger-900/50',
+        text: 'text-danger-800 dark:text-danger-300',
         icon: AlertCircle,
       },
       CANCELLED: {
@@ -77,7 +77,7 @@ export default function LoanDetailPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
             <p className="text-[var(--text-secondary)]">Loading loan details...</p>
           </div>
         </div>
@@ -94,13 +94,13 @@ export default function LoanDetailPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-red-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500" />
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Loan not found'}
             </p>
             <button
               onClick={() => router.push('/loans')}
-              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
+              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
             >
               Back to Loans
             </button>
@@ -149,8 +149,8 @@ export default function LoanDetailPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-4 mb-3">
-              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+                <DollarSign className="h-5 w-5 text-accent-600 dark:text-accent-400" />
               </div>
               <span className="text-sm text-[var(--text-muted)]">
                 {loan.totalAmount ? 'Total Amount' : 'Principal Amount'}
@@ -163,8 +163,8 @@ export default function LoanDetailPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-4 mb-3">
-              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
+                <TrendingUp className="h-5 w-5 text-success-600 dark:text-success-400" />
               </div>
               <span className="text-sm text-[var(--text-muted)]">Amount Repaid</span>
             </div>
@@ -175,8 +175,8 @@ export default function LoanDetailPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-4 mb-3">
-              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
-                <Wallet className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
+                <Wallet className="h-5 w-5 text-danger-600 dark:text-danger-400" />
               </div>
               <span className="text-sm text-[var(--text-muted)]">
                 Outstanding Amount
@@ -195,13 +195,13 @@ export default function LoanDetailPage() {
               <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                 Repayment Progress
               </h3>
-              <span className="text-sm font-medium text-sky-700 dark:text-sky-400">
+              <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
                 {progress.toFixed(1)}% Complete
               </span>
             </div>
             <div className="h-3 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-sky-500 to-sky-700 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-accent-500 to-accent-700 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
@@ -328,14 +328,14 @@ export default function LoanDetailPage() {
 
         {/* Rejection Reason */}
         {loan.status === 'REJECTED' && loan.rejectedReason && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
+          <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-2xl p-6">
             <div className="flex items-center gap-4 mb-3">
-              <XCircle className="h-5 w-5 text-red-500" />
-              <h3 className="text-lg font-semibold text-red-700 dark:text-red-400">
+              <XCircle className="h-5 w-5 text-danger-500" />
+              <h3 className="text-lg font-semibold text-danger-700 dark:text-danger-400">
                 Rejection Reason
               </h3>
             </div>
-            <p className="text-red-600 dark:text-red-300">{loan.rejectedReason}</p>
+            <p className="text-danger-600 dark:text-danger-300">{loan.rejectedReason}</p>
           </div>
         )}
 

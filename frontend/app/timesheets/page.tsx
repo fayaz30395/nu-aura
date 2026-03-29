@@ -270,7 +270,7 @@ export default function TimesheetsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading timesheets...</span>
         </div>
       </AppLayout>
@@ -322,8 +322,8 @@ export default function TimesheetsPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-sky-100 p-4 dark:bg-sky-900">
-                  <Timer className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <Timer className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Total Hours</p>
@@ -469,7 +469,7 @@ export default function TimesheetsPage() {
                               </td>
                             );
                           })}
-                          <td className="px-3 py-2 text-center font-bold text-sky-700 dark:text-sky-400">
+                          <td className="px-3 py-2 text-center font-bold text-accent-700 dark:text-accent-400">
                             {rowTotal > 0 ? `${rowTotal}h` : '—'}
                           </td>
                         </tr>
@@ -493,7 +493,7 @@ export default function TimesheetsPage() {
                         </td>
                       );
                     })}
-                    <td className="px-3 py-3 text-center font-bold text-sky-700 dark:text-sky-400">
+                    <td className="px-3 py-3 text-center font-bold text-accent-700 dark:text-accent-400">
                       {currentWeekTimesheet?.totalHours || 0}h
                     </td>
                   </tr>
@@ -623,8 +623,8 @@ export default function TimesheetsPage() {
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-4">
-              <div className="rounded-lg bg-sky-100 p-2 dark:bg-sky-900">
-                <FileSpreadsheet className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+              <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
+                <FileSpreadsheet className="h-6 w-6 text-accent-700 dark:text-accent-400" />
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -831,7 +831,7 @@ export default function TimesheetsPage() {
                     type="checkbox"
                     checked={entryForm.isBillable}
                     onChange={(e) => setEntryForm({ ...entryForm, isBillable: e.target.checked })}
-                    className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
                   <span className="text-sm text-[var(--text-secondary)]">Billable</span>
                 </label>
@@ -840,7 +840,7 @@ export default function TimesheetsPage() {
                     type="checkbox"
                     checked={entryForm.isOvertime || false}
                     onChange={(e) => setEntryForm({ ...entryForm, isOvertime: e.target.checked })}
-                    className="rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
                   <span className="text-sm text-[var(--text-secondary)]">Overtime</span>
                 </label>

@@ -222,7 +222,7 @@ export default function CreateTemplatePage() {
                 type="button"
                 onClick={handleSave}
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-700 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors shadow-sm"
               >
                 <Send className="w-4 h-4" />
                 {isSubmitting ? 'Saving...' : 'Save Template'}
@@ -247,7 +247,7 @@ export default function CreateTemplatePage() {
               autoFocus
             />
             {errors.name && (
-              <p className="text-xs text-red-500 mt-1">
+              <p className="text-xs text-danger-500 mt-1">
                 {errors.name.message}
               </p>
             )}
@@ -309,7 +309,7 @@ export default function CreateTemplatePage() {
                   rows={3}
                 />
                 {errors.description && (
-                  <p className="text-xs text-red-500 mt-1">
+                  <p className="text-xs text-danger-500 mt-1">
                     {errors.description.message}
                   </p>
                 )}
@@ -331,7 +331,7 @@ export default function CreateTemplatePage() {
                       }
                       className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg transition-all ${
                         selectedIcon === icon
-                          ? 'bg-sky-500/10 ring-1 ring-sky-500/30 scale-110'
+                          ? 'bg-accent-500/10 ring-1 ring-accent-500/30 scale-110'
                           : 'hover:bg-[var(--bg-secondary)]'
                       }`}
                     >
@@ -384,7 +384,7 @@ export default function CreateTemplatePage() {
                   type="button"
                   onClick={handleSave}
                   disabled={isSubmitting}
-                  className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-700 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors"
                 >
                   <Save className="w-4 h-4" />
                   {isSubmitting ? 'Saving...' : 'Save Template'}

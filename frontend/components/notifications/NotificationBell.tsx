@@ -190,7 +190,7 @@ export const NotificationBell: React.FC = () => {
       >
         <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-danger-600 rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -202,7 +202,7 @@ export const NotificationBell: React.FC = () => {
             <h3 className="text-lg font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <button onClick={handleMarkAllAsRead} className="text-sm text-blue-600 hover:text-blue-800">
+                <button onClick={handleMarkAllAsRead} className="text-sm text-accent-600 hover:text-accent-800">
                   <CheckCheck className="h-4 w-4" />
                 </button>
               )}
@@ -225,7 +225,7 @@ export const NotificationBell: React.FC = () => {
                     key={notification.id}
                     className={`p-4 border-b dark:border-surface-700 transition-colors ${
                       !notification.isRead
-                        ? 'bg-blue-50 dark:bg-blue-900/20'
+                        ? 'bg-accent-50 dark:bg-accent-900/20'
                         : 'hover:bg-[var(--bg-surface)] '
                     } ${hasRoute ? 'cursor-pointer' : ''}`}
                     onClick={() => hasRoute && handleNotificationClick(notification)}
@@ -251,7 +251,7 @@ export const NotificationBell: React.FC = () => {
                         {!notification.isRead && (
                           <button
                             onClick={() => handleMarkAsRead(notification.id)}
-                            className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                            className="p-1 text-accent-600 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
                             title="Mark as read"
                           >
                             <Check className="h-4 w-4" />
@@ -259,7 +259,7 @@ export const NotificationBell: React.FC = () => {
                         )}
                         <button
                           onClick={() => handleDelete(notification.id)}
-                          className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                          className="p-1 text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-300"
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />

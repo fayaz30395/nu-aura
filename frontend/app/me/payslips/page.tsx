@@ -143,7 +143,7 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-700 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
         </div>
       </AppLayout>
     );
@@ -160,7 +160,7 @@ export default function MyPayslipsPage() {
           </p>
           <button
             onClick={() => router.push('/payroll')}
-            className="mt-6 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors"
+            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors"
           >
             Go to Payroll Management
           </button>
@@ -187,7 +187,7 @@ export default function MyPayslipsPage() {
           {isAdmin && user?.employeeId && !isAdminView && (
             <button
               onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 rounded-lg hover:bg-sky-200 dark:hover:bg-sky-900/50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors"
             >
               <Users className="h-4 w-4" />
               View All Employees
@@ -196,7 +196,7 @@ export default function MyPayslipsPage() {
           {isAdminView && user?.employeeId && (
             <button
               onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 rounded-lg hover:bg-sky-200 dark:hover:bg-sky-900/50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors"
             >
               <FileText className="h-4 w-4" />
               View My Payslips
@@ -215,8 +215,8 @@ export default function MyPayslipsPage() {
                     {filteredPayslips.length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-950/30 rounded-full flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
+                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
               </div>
             </CardContent>
@@ -232,8 +232,8 @@ export default function MyPayslipsPage() {
                       {new Set(filteredPayslips.map(p => p.employeeId)).size}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/30 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
+                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                   </div>
                 </div>
               </CardContent>
@@ -251,8 +251,8 @@ export default function MyPayslipsPage() {
                     {formatCurrency(yearlyTotal)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 bg-success-100 dark:bg-success-950/30 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
               </div>
             </CardContent>
@@ -269,8 +269,8 @@ export default function MyPayslipsPage() {
                     {formatCurrency(yearlyAverage)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-950/30 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <div className="w-12 h-12 bg-accent-300 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
+                  <DollarSign className="h-6 w-6 text-accent-800 dark:text-accent-600" />
                 </div>
               </div>
             </CardContent>
@@ -312,9 +312,9 @@ export default function MyPayslipsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <p className="text-red-800 dark:text-red-200 font-medium">{error}</p>
+          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-5 w-5 text-danger-600" />
+            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
 
@@ -341,12 +341,12 @@ export default function MyPayslipsPage() {
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-sky-100 dark:bg-sky-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Calendar className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                        <div className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Calendar className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                         </div>
                         <div>
                           {isAdminView && payslip.employeeName && (
-                            <p className="text-sm font-medium text-sky-700 dark:text-sky-400 mb-1">
+                            <p className="text-sm font-medium text-accent-700 dark:text-accent-400 mb-1">
                               {payslip.employeeName}
                             </p>
                           )}
@@ -375,7 +375,7 @@ export default function MyPayslipsPage() {
                       <div className="flex flex-col md:items-end gap-2">
                         <div className="space-y-1">
                           <p className="text-sm text-[var(--text-secondary)]">Net Salary</p>
-                          <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                          <p className="text-2xl font-bold text-success-600 dark:text-success-400">
                             {formatCurrency(payslip.netAmount)}
                           </p>
                         </div>
@@ -449,7 +449,7 @@ export default function MyPayslipsPage() {
                                     <span className="text-[var(--text-secondary)]">
                                       {deduction.name}
                                     </span>
-                                    <span className="text-red-600 dark:text-red-400 font-medium">
+                                    <span className="text-danger-600 dark:text-danger-400 font-medium">
                                       -{formatCurrency(deduction.amount)}
                                     </span>
                                   </div>

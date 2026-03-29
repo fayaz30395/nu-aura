@@ -150,7 +150,7 @@ export default function SettingsPage() {
       <button
         onClick={() => onChange(!enabled)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          enabled ? 'bg-sky-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
+          enabled ? 'bg-accent-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
         }`}
       >
         <span
@@ -175,9 +175,9 @@ export default function SettingsPage() {
 
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <Check className="h-5 w-5 text-green-600" />
-            <p className="text-green-800 dark:text-green-200 font-medium">
+          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <Check className="h-5 w-5 text-success-600" />
+            <p className="text-success-800 dark:text-success-200 font-medium">
               Settings updated successfully!
             </p>
           </div>
@@ -185,9 +185,9 @@ export default function SettingsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <p className="text-red-800 dark:text-red-200 font-medium">{error}</p>
+          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-5 w-5 text-danger-600" />
+            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
 
@@ -241,7 +241,7 @@ export default function SettingsPage() {
                 <button
                   onClick={toggleDarkMode}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    isDark ? 'bg-sky-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
+                    isDark ? 'bg-accent-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
                   }`}
                 >
                   <span
@@ -304,8 +304,8 @@ export default function SettingsPage() {
             <CardContent>
               <div className="flex items-center justify-between p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] skeuo-surface">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
-                    <Globe className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                  <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
+                    <Globe className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                   </div>
                   <div>
                     <p className="font-medium text-[var(--text-primary)]">SAML 2.0 Identity Provider</p>
@@ -316,7 +316,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => router.push('/settings/sso')}
-                  className="px-4 py-2 text-sm font-medium rounded-lg bg-sky-700 text-white hover:bg-sky-800 transition-colors"
+                  className="px-4 py-2 text-sm font-medium rounded-lg bg-accent-700 text-white hover:bg-accent-800 transition-colors"
                 >
                   Configure SSO
                 </button>
@@ -340,7 +340,7 @@ export default function SettingsPage() {
                   onClick={() => setActiveNotificationTab('channels')}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeNotificationTab === 'channels'
-                      ? 'border-sky-700 text-sky-700'
+                      ? 'border-accent-700 text-accent-700'
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
@@ -353,7 +353,7 @@ export default function SettingsPage() {
                   onClick={() => setActiveNotificationTab('categories')}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeNotificationTab === 'categories'
-                      ? 'border-sky-700 text-sky-700'
+                      ? 'border-accent-700 text-accent-700'
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
@@ -462,7 +462,7 @@ export default function SettingsPage() {
               {/* Summary */}
               <div className="mt-4 p-4 bg-[var(--bg-surface)] rounded-lg">
                 <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <Check className="h-4 w-4 text-success-600" />
                   <span className="text-[var(--text-secondary)]">
                     {[emailNotifications, pushNotifications, smsNotifications].filter(Boolean).length} delivery channel(s) enabled,{' '}
                     {[leaveNotifications, attendanceNotifications, payrollNotifications, performanceNotifications,
@@ -476,7 +476,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleNotificationSave}
                   disabled={updatePrefsMutation.isPending}
-                  className="flex items-center gap-2 px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 skeuo-button"
+                  className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50 skeuo-button"
                 >
                   {updatePrefsMutation.isPending ? (
                     <>
@@ -505,16 +505,16 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                      <Shield className="h-5 w-5 text-green-600" />
+                    <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-full">
+                      <Shield className="h-5 w-5 text-success-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                      <p className="text-sm font-medium text-success-900 dark:text-success-100">
                         Account Secure
                       </p>
-                      <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                      <p className="text-xs text-success-700 dark:text-success-300 mt-1">
                         Your password meets security requirements
                       </p>
                     </div>

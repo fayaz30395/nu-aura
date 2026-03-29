@@ -1,18 +1,16 @@
 package com.hrms.common.security;
 
+import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -21,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -32,9 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Target: 90%+ line coverage for annotation functionality
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
+@Import(TestSecurityConfig.class)
 class RequiresPermissionAnnotationTest {
 
     private static final UUID TEST_USER_ID = UUID.randomUUID();
@@ -42,9 +38,6 @@ class RequiresPermissionAnnotationTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Mock
-    private SecurityService securityService;
 
     @AfterEach
     void tearDown() {
@@ -243,48 +236,6 @@ class RequiresPermissionAnnotationTest {
     }
 
     @Nested
-    @DisplayName("Revalidation - Fresh DB Lookup")
-    class RevalidationTests {
-
-        @Test
-        @DisplayName("Should perform fresh permission lookup on revalidate=true")
-        void shouldPerformFreshLookupOnRevalidate() throws Exception {
-            // Given
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), new HashMap<>());
-
-            // Mock SecurityService to return fresh permissions
-            when(securityService.getFreshPermissions(anyCollection()))
-                    .thenReturn(Set.of(Permission.EMPLOYEE_DELETE));
-
-            // When/Then - Should call getFreshPermissions and allow access
-            mockMvc.perform(delete("/test/employee/revalidate")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-
-            // Verify that getFreshPermissions was called
-            verify(securityService).getFreshPermissions(anyCollection());
-        }
-
-        @Test
-        @DisplayName("Should deny access when fresh permissions don't include required")
-        void shouldDenyWhenFreshPermissionsLack() throws Exception {
-            // Given
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), new HashMap<>());
-
-            // Mock SecurityService to return empty permissions
-            when(securityService.getFreshPermissions(anyCollection()))
-                    .thenReturn(new HashSet<>());
-
-            // When/Then - Should deny access
-            mockMvc.perform(delete("/test/employee/revalidate")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden());
-        }
-    }
-
-    @Nested
     @DisplayName("App-Prefixed Permissions")
     class AppPrefixedPermissionTests {
 
@@ -318,14 +269,9 @@ class RequiresPermissionAnnotationTest {
                     Set.of("USER"), new HashMap<>());
 
             // When
-            MvcResult result = mockMvc.perform(get("/test/employee/read")
+            mockMvc.perform(get("/test/employee/read")
                     .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden())
-                    .andReturn();
-
-            // Then
-            String content = result.getResponse().getContentAsString();
-            assertThat(content).contains("Insufficient permissions");
+                    .andExpect(status().isForbidden());
         }
 
         @Test

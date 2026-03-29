@@ -232,7 +232,7 @@ export default function ShiftsManagementPage() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
-                <Clock className="h-8 w-8 text-sky-700" />
+                <Clock className="h-8 w-8 text-accent-700" />
                 Shift Management
               </h1>
               <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
@@ -254,13 +254,13 @@ export default function ShiftsManagementPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg relative animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="mb-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-3 rounded-lg relative animate-in fade-in slide-in-from-top-2 duration-300">
               <span className="block sm:inline">{error}</span>
               <button
                 onClick={() => setError(null)}
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
               >
-                <span className="text-red-500 text-xl">&times;</span>
+                <span className="text-danger-500 text-xl">&times;</span>
               </button>
             </div>
           )}
@@ -269,7 +269,7 @@ export default function ShiftsManagementPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoading ? (
               <div className="col-span-full flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700"></div>
               </div>
             ) : shifts.length === 0 ? (
               <div className="col-span-full flex flex-col items-center py-12 text-[var(--text-muted)]">
@@ -293,8 +293,8 @@ export default function ShiftsManagementPage() {
                       <span
                         className={`px-3 py-1 text-xs font-semibold rounded-full ${
                           shift.isActive
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                            : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
+                            ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-400'
+                            : 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-400'
                         }`}
                       >
                         {shift.isActive ? 'Active' : 'Inactive'}
@@ -324,17 +324,17 @@ export default function ShiftsManagementPage() {
 
                     <div className="flex flex-wrap gap-2 mb-4">
                       {shift.isNightShift && (
-                        <span className="px-2 py-1 text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-400 rounded">
+                        <span className="px-2 py-1 text-xs bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-400 rounded">
                           Night Shift
                         </span>
                       )}
                       {shift.allowsOvertime && (
-                        <span className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400 rounded">
+                        <span className="px-2 py-1 text-xs bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600 rounded">
                           OT: {shift.overtimeMultiplier}x
                         </span>
                       )}
                       {(shift.gracePeriodInMinutes ?? 0) > 0 && (
-                        <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded">
+                        <span className="px-2 py-1 text-xs bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-400 rounded">
                           Grace: {shift.gracePeriodInMinutes}m
                         </span>
                       )}
@@ -343,21 +343,21 @@ export default function ShiftsManagementPage() {
                     <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-main)]">
                       <button
                         onClick={() => handleEdit(shift)}
-                        className="p-2 text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/30 rounded-lg transition-colors"
+                        className="p-2 text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 rounded-lg transition-colors"
                         title="Edit"
                       >
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleToggleActive(shift)}
-                        className="p-2 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/30 rounded-lg transition-colors"
+                        className="p-2 text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-900/30 rounded-lg transition-colors"
                         title={shift.isActive ? 'Deactivate' : 'Activate'}
                       >
                         {shift.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
                       </button>
                       <button
                         onClick={() => handleDelete(shift)}
-                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
+                        className="p-2 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 rounded-lg transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -421,7 +421,7 @@ export default function ShiftsManagementPage() {
                             placeholder="DS, NS, GS"
                           />
                           {form.formState.errors.shiftCode && (
-                            <p className="mt-1 text-xs text-red-500">{form.formState.errors.shiftCode.message}</p>
+                            <p className="mt-1 text-xs text-danger-500">{form.formState.errors.shiftCode.message}</p>
                           )}
                         </div>
                         <div>
@@ -435,7 +435,7 @@ export default function ShiftsManagementPage() {
                             placeholder="Day Shift, Night Shift"
                           />
                           {form.formState.errors.shiftName && (
-                            <p className="mt-1 text-xs text-red-500">{form.formState.errors.shiftName.message}</p>
+                            <p className="mt-1 text-xs text-danger-500">{form.formState.errors.shiftName.message}</p>
                           )}
                         </div>
                       </div>
@@ -473,7 +473,7 @@ export default function ShiftsManagementPage() {
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
                           placeholder="Brief description of this shift..."
                         />
                       </div>
@@ -592,7 +592,7 @@ export default function ShiftsManagementPage() {
                             <input
                               type="checkbox"
                               {...form.register('isNightShift')}
-                              className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                              className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
                             <span className="ml-2 text-sm text-[var(--text-secondary)]">Night Shift</span>
                           </label>
@@ -601,7 +601,7 @@ export default function ShiftsManagementPage() {
                             <input
                               type="checkbox"
                               {...form.register('allowsOvertime')}
-                              className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                              className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
                             <span className="ml-2 text-sm text-[var(--text-secondary)]">Allows Overtime</span>
                           </label>
@@ -610,7 +610,7 @@ export default function ShiftsManagementPage() {
                             <input
                               type="checkbox"
                               {...form.register('isActive')}
-                              className="h-4 w-4 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                              className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
                             <span className="ml-2 text-sm text-[var(--text-secondary)]">Active</span>
                           </label>

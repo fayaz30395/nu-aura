@@ -14,6 +14,7 @@ import com.hrms.infrastructure.platform.repository.UserAppAccessRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,7 @@ public class SamlAuthenticationHandler {
                                      RoleRepository roleRepository,
                                      UserAppAccessRepository userAppAccessRepository,
                                      JwtTokenProvider tokenProvider,
-                                     PasswordEncoder passwordEncoder,
+                                     @Lazy PasswordEncoder passwordEncoder,
                                      ObjectMapper objectMapper) {
         this.samlIdpRepository = samlIdpRepository;
         this.userRepository = userRepository;

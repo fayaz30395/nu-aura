@@ -249,12 +249,12 @@ class ContractService {
   getStatusColor(status: ContractStatus): string {
     const colors: Record<ContractStatus, string> = {
       DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
-      PENDING_REVIEW: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-      PENDING_SIGNATURES: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
-      ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      EXPIRED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      TERMINATED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      RENEWED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+      PENDING_REVIEW: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
+      PENDING_SIGNATURES: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
+      ACTIVE: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
+      EXPIRED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
+      TERMINATED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
+      RENEWED: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
     };
     return colors[status] || colors.DRAFT;
   }

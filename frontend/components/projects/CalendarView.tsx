@@ -189,7 +189,7 @@ export function CalendarView({
             <div
               className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full ${
                 isSelected
-                  ? 'bg-sky-500 text-white'
+                  ? 'bg-accent-500 text-white'
                   : isCurrentMonth
                     ? 'text-surface-900 dark:text-surface-100'
                     : 'text-surface-400 dark:text-surface-600'
@@ -231,7 +231,7 @@ export function CalendarView({
             <div
               className={`text-lg font-medium mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full ${
                 isToday(day)
-                  ? 'bg-sky-500 text-white'
+                  ? 'bg-accent-500 text-white'
                   : 'text-surface-900 dark:text-surface-100'
               }`}
             >
@@ -321,12 +321,12 @@ export function CalendarView({
               {/* Current time indicator */}
               {isToday(day) && (
                 <div
-                  className="absolute left-0 right-0 h-0.5 bg-red-500 z-10 pointer-events-none"
+                  className="absolute left-0 right-0 h-0.5 bg-danger-500 z-10 pointer-events-none"
                   style={{
                     top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                   }}
                 >
-                  <div className="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full" />
+                  <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full" />
                 </div>
               )}
             </div>
@@ -413,12 +413,12 @@ export function CalendarView({
             {/* Current time indicator */}
             {isToday(currentDate) && (
               <div
-                className="absolute left-0 right-0 h-0.5 bg-red-500 z-10 pointer-events-none"
+                className="absolute left-0 right-0 h-0.5 bg-danger-500 z-10 pointer-events-none"
                 style={{
                   top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                 }}
               >
-                <div className="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full" />
+                <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full" />
               </div>
             )}
           </div>
@@ -463,7 +463,7 @@ export function CalendarView({
               onClick={() => setViewType(type)}
               className={`px-3 py-1.5 text-sm rounded-md capitalize transition-colors ${
                 viewType === type
-                  ? 'bg-[var(--bg-surface)] text-sky-700 dark:text-sky-400 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-accent-700 dark:text-accent-400 shadow-sm'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
               }`}
             >

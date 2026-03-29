@@ -94,9 +94,9 @@ export default function PayrollReportsPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg"
+            className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg"
           >
-            <span className="text-green-700 dark:text-green-400">{successMessage}</span>
+            <span className="text-success-700 dark:text-success-400">{successMessage}</span>
           </motion.div>
         )}
 
@@ -109,7 +109,7 @@ export default function PayrollReportsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-purple-600" />
+                <DollarSign className="h-5 w-5 text-accent-800" />
                 Payroll Report Configuration
               </CardTitle>
               <CardDescription>
@@ -120,7 +120,7 @@ export default function PayrollReportsPage() {
               {/* Date Range */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                  Payroll Period <span className="text-red-500">*</span>
+                  Payroll Period <span className="text-danger-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -156,11 +156,11 @@ export default function PayrollReportsPage() {
                       onClick={() => setFormat(fmt)}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
-                          ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/20'
+                          ? 'border-accent-700 bg-accent-250 dark:bg-accent-900/20'
                           : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
-                      <p className={`font-medium text-sm ${format === fmt ? 'text-purple-700' : 'text-[var(--text-secondary)]'}`}>
+                      <p className={`font-medium text-sm ${format === fmt ? 'text-accent-900' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
                       <p className="text-xs text-[var(--text-muted)]">
@@ -173,9 +173,9 @@ export default function PayrollReportsPage() {
 
               {/* Error */}
               {error && (
-                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
-                  <X className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
+                <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start gap-2">
+                  <X className="h-5 w-5 text-danger-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-danger-600 dark:text-danger-400">{error}</span>
                 </div>
               )}
 
@@ -203,13 +203,13 @@ export default function PayrollReportsPage() {
 
         {/* Info Card */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-          <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900">
+          <Card className="bg-accent-250 dark:bg-accent-900/20 border-accent-400 dark:border-accent-900">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <DollarSign className="h-5 w-5 text-purple-600 dark:text-purple-400 mt-0.5" />
+                <DollarSign className="h-5 w-5 text-accent-800 dark:text-accent-600 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-purple-900 dark:text-purple-100">Report Details</h3>
-                  <ul className="text-sm text-purple-700 dark:text-purple-300 mt-2 space-y-1">
+                  <h3 className="font-semibold text-accent-900 dark:text-accent-300">Report Details</h3>
+                  <ul className="text-sm text-accent-900 dark:text-accent-500 mt-2 space-y-1">
                     <li>• Includes employee code, name, department, and designation</li>
                     <li>• Shows basic salary, allowances, and total earnings</li>
                     <li>• Displays deductions breakdown and net salary</li>

@@ -223,12 +223,12 @@ export default function ReportBuilderPage() {
         </div>
 
         {error && (
-          <div className="rounded-md bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          <div className="rounded-md bg-danger-50 border border-danger-200 p-4 text-sm text-danger-700">
             {error}
           </div>
         )}
         {savedMsg && (
-          <div className="rounded-md bg-green-50 border border-green-200 p-4 text-sm text-green-700">
+          <div className="rounded-md bg-success-50 border border-success-200 p-4 text-sm text-success-700">
             {savedMsg}
           </div>
         )}
@@ -245,7 +245,7 @@ export default function ReportBuilderPage() {
                     onClick={() => changeModule(m.value)}
                     className={`px-3 py-2 rounded-md text-sm font-medium border transition-colors ${
                       module === m.value
-                        ? 'bg-blue-600 text-white border-blue-600'
+                        ? 'bg-accent-600 text-white border-accent-600'
                         : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:bg-[var(--bg-surface)]'
                     }`}
                   >
@@ -264,7 +264,7 @@ export default function ReportBuilderPage() {
                       type="checkbox"
                       checked={selectedCols.includes(col.key)}
                       onChange={() => toggleColumn(col.key)}
-                      className="rounded border-[var(--border-strong)] text-blue-600"
+                      className="rounded border-[var(--border-strong)] text-accent-600"
                     />
                     <span className="text-sm text-[var(--text-primary)]">{col.label}</span>
                   </label>
@@ -281,7 +281,7 @@ export default function ReportBuilderPage() {
                 {filters.length < 5 && (
                   <button
                     onClick={addFilter}
-                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                    className="text-xs text-accent-600 hover:text-accent-800 font-medium"
                   >
                     + Add Filter
                   </button>
@@ -316,7 +316,7 @@ export default function ReportBuilderPage() {
                       </select>
                       <button
                         onClick={() => removeFilter(i)}
-                        className="text-red-400 hover:text-red-600 text-xs px-1"
+                        className="text-danger-400 hover:text-danger-600 text-xs px-1"
                       >
                         ✕
                       </button>
@@ -389,7 +389,7 @@ export default function ReportBuilderPage() {
                   <button
                     onClick={handlePreview}
                     disabled={loading || selectedCols.length === 0}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded disabled:opacity-50"
+                    className="w-full bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium py-2 rounded disabled:opacity-50"
                   >
                     {loading ? 'Loading…' : 'Preview Results'}
                   </button>

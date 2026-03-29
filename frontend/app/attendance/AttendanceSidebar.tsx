@@ -11,9 +11,9 @@ import { STANDARD_WORK_HOURS, calculateHours, WeekStats } from './utils';
 // ─── Quick Action Links ───────────────────────────────────────────────────────
 
 const QUICK_ACTIONS = [
-  { href: '/attendance/my-attendance', icon: History, title: 'Attendance History', desc: 'View complete records & calendar', gradient: 'from-indigo-500 to-blue-600', hoverColor: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400' },
-  { href: '/attendance/regularization', icon: ClipboardCheck, title: 'Regularization', desc: 'Request corrections', gradient: 'from-orange-500 to-amber-600', hoverColor: 'group-hover:text-orange-600 dark:group-hover:text-orange-400' },
-  { href: '/attendance/team', icon: Users, title: 'Team Attendance', desc: 'Monitor your team', gradient: 'from-emerald-500 to-teal-600', hoverColor: 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400' },
+  { href: '/attendance/my-attendance', icon: History, title: 'Attendance History', desc: 'View complete records & calendar', gradient: 'from-accent-500 to-accent-600', hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400' },
+  { href: '/attendance/regularization', icon: ClipboardCheck, title: 'Regularization', desc: 'Request corrections', gradient: 'from-accent-500 to-accent-600', hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400' },
+  { href: '/attendance/team', icon: Users, title: 'Team Attendance', desc: 'Monitor your team', gradient: 'from-accent-500 to-accent-600', hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400' },
 ] as const;
 
 export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
@@ -37,7 +37,7 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
                     <h3 className={`text-sm font-bold text-[var(--text-primary)] ${action.hoverColor} transition-colors`}>{action.title}</h3>
                     <p className="text-xs text-[var(--text-muted)] mt-0.5">{action.desc}</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                  <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
                 </div>
               </CardContent>
             </Card>
@@ -65,7 +65,7 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
     <Card className="skeuo-card card-aura border border-[var(--border-main)] shadow-sm">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-4">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-sm">
             <CalendarDays className="h-3.5 w-3.5 text-white" />
           </div>
           <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">Upcoming Holidays</h4>
@@ -83,7 +83,7 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
                   </div>
                 </div>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  daysAway === 0 ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
+                  daysAway === 0 ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400' :
                   'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                 }`}>
                   {daysAway === 0 ? 'Today' : daysAway === 1 ? 'Tomorrow' : `${daysAway}d away`}
@@ -116,7 +116,7 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
     <Card className="skeuo-card card-aura border border-[var(--border-main)] shadow-sm">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-4">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-sm">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-sm">
             <Coffee className="h-3.5 w-3.5 text-white" />
           </div>
           <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">This Week</h4>
@@ -125,11 +125,11 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="font-medium text-[var(--text-secondary)]">Present Days</span>
-              <span className="font-bold text-emerald-600 dark:text-emerald-400">{weekStats.presentDays}/5</span>
+              <span className="font-bold text-success-600 dark:text-success-400">{weekStats.presentDays}/5</span>
             </div>
             <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-success-500 to-success-600 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, (weekStats.presentDays / 5) * 100)}%` }}
               />
             </div>
@@ -137,13 +137,13 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="font-medium text-[var(--text-secondary)]">Total Hours</span>
-              <span className="font-bold text-sky-700 dark:text-sky-400">
+              <span className="font-bold text-accent-700 dark:text-accent-400">
                 {totalWeekHours.toFixed(1)}h / {STANDARD_WORK_HOURS * 5}h
               </span>
             </div>
             <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-sky-500 to-blue-500 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-accent-500 to-accent-600 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, (totalWeekHours / (STANDARD_WORK_HOURS * 5)) * 100)}%` }}
               />
             </div>

@@ -244,14 +244,14 @@ export default function PricingPage() {
                   variant={plan.popular ? 'elevated' : 'default'}
                   padding="lg"
                   className={`h-full ${
-                    plan.popular ? 'ring-2 ring-sky-500/50 scale-105' : ''
+                    plan.popular ? 'ring-2 ring-accent-500/50 scale-105' : ''
                   }`}
                 >
                   <CardHeader className="pb-6">
                     <div
                       className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
                         plan.popular
-                          ? 'from-sky-500 to-sky-700'
+                          ? 'from-accent-500 to-accent-700'
                           : 'from-surface-600 to-surface-700'
                       } flex items-center justify-center mb-4`}
                     >
@@ -385,7 +385,7 @@ export default function PricingPage() {
                   className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <HelpCircle className="h-5 w-5 text-sky-700 dark:text-sky-400 flex-shrink-0" />
+                    <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0" />
                     <span className="font-medium text-[var(--text-primary)]">
                       {faq.question}
                     </span>

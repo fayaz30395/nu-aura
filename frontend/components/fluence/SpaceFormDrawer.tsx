@@ -181,7 +181,7 @@ export function SpaceFormDrawer({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Type className="h-4 w-4" />
-            Space Name <span className="text-red-500">*</span>
+            Space Name <span className="text-danger-500">*</span>
           </label>
           <input
             {...register('name')}
@@ -190,7 +190,7 @@ export function SpaceFormDrawer({
             autoFocus
           />
           {errors.name && (
-            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+            <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>
           )}
         </div>
 
@@ -207,7 +207,7 @@ export function SpaceFormDrawer({
             className="input-aura w-full resize-none"
           />
           {errors.description && (
-            <p className="text-xs text-red-500 mt-1">{errors.description.message}</p>
+            <p className="text-xs text-danger-500 mt-1">{errors.description.message}</p>
           )}
         </div>
 
@@ -231,7 +231,7 @@ export function SpaceFormDrawer({
                     onClick={() => field.onChange(emoji)}
                     className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all duration-150 border ${
                       field.value === emoji
-                        ? 'border-[var(--sky-700)] bg-[var(--sky-700)]/10 ring-2 ring-[var(--sky-700)]/30'
+                        ? 'border-[var(--accent-700)] bg-[var(--accent-700)]/10 ring-2 ring-[var(--accent-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'
                     }`}
                   >
@@ -284,7 +284,7 @@ export function SpaceFormDrawer({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Eye className="h-4 w-4" />
-            Visibility <span className="text-red-500">*</span>
+            Visibility <span className="text-danger-500">*</span>
           </label>
           <Controller
             name="visibility"
@@ -299,7 +299,7 @@ export function SpaceFormDrawer({
                     onClick={() => field.onChange(opt.value)}
                     className={`w-full text-left px-4 py-3 rounded-lg border transition-all duration-150 ${
                       field.value === opt.value
-                        ? 'border-[var(--sky-700)] bg-[var(--sky-700)]/5 ring-1 ring-[var(--sky-700)]/30'
+                        ? 'border-[var(--accent-700)] bg-[var(--accent-700)]/5 ring-1 ring-[var(--accent-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'
                     }`}
                   >
@@ -315,7 +315,7 @@ export function SpaceFormDrawer({
             )}
           />
           {errors.visibility && (
-            <p className="text-xs text-red-500 mt-1">{errors.visibility.message}</p>
+            <p className="text-xs text-danger-500 mt-1">{errors.visibility.message}</p>
           )}
         </div>
 

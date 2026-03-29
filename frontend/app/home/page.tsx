@@ -148,7 +148,7 @@ export default function HomePage() {
       <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center max-w-sm">
-            <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
+            <AlertCircle className="h-10 w-10 text-danger-400 mx-auto mb-3" />
             <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">Something went wrong</h2>
             <p className="text-sm text-[var(--text-muted)] mb-4">
               {error instanceof Error ? error.message : 'Failed to load dashboard data'}
@@ -169,7 +169,7 @@ export default function HomePage() {
         {/* ═══ WELCOME STRIP ═══ */}
         <div className="bg-[var(--bg-sidebar)] rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-theme-md dark:shadow-dark-md">
           <div>
-            <div className="flex items-center gap-2 text-brand-300 dark:text-sky-300 text-xs font-medium mb-0.5 uppercase tracking-wide">
+            <div className="flex items-center gap-2 text-accent-300 dark:text-accent-300 text-xs font-medium mb-0.5 uppercase tracking-wide">
               {greeting.icon}
               <span>{greeting.text}</span>
             </div>
@@ -193,13 +193,13 @@ export default function HomePage() {
           <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide skeuo-deboss">Attendance</h3>
-              <button onClick={() => router.push('/attendance')} className="text-xs text-brand-500 dark:text-sky-400 hover:text-brand-600 dark:hover:text-sky-300 font-medium">
+              <button onClick={() => router.push('/attendance')} className="text-xs text-accent-500 dark:text-accent-400 hover:text-accent-600 dark:hover:text-accent-300 font-medium">
                 View
               </button>
             </div>
             <div className="flex items-center gap-4 mb-3">
-              <div className="w-10 h-10 rounded-full bg-brand-50 dark:bg-sky-950 flex items-center justify-center">
-                <Clock className="w-4 h-4 text-brand-500 dark:text-sky-400" />
+              <div className="w-10 h-10 rounded-full bg-accent-50 dark:bg-accent-950 flex items-center justify-center">
+                <Clock className="w-4 h-4 text-accent-500 dark:text-accent-400" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-[var(--text-primary)]">
@@ -233,7 +233,7 @@ export default function HomePage() {
           <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide skeuo-deboss">Leave</h3>
-              <button onClick={() => router.push('/leave')} className="text-xs text-brand-500 dark:text-sky-400 hover:text-brand-600 dark:hover:text-sky-300 font-medium">
+              <button onClick={() => router.push('/leave')} className="text-xs text-accent-500 dark:text-accent-400 hover:text-accent-600 dark:hover:text-accent-300 font-medium">
                 Details
               </button>
             </div>
@@ -254,7 +254,7 @@ export default function HomePage() {
             <Button
               variant="secondary"
               size="sm"
-              className="w-full text-xs font-medium rounded-lg h-8 border-brand-200 dark:border-sky-800 text-brand-600 dark:text-sky-400 hover:bg-brand-25 dark:hover:bg-sky-950"
+              className="w-full text-xs font-medium rounded-lg h-8 border-accent-200 dark:border-accent-800 text-brand-600 dark:text-accent-400 hover:bg-brand-25 dark:hover:bg-accent-950"
               onClick={() => router.push('/leave/request')}
             >
               Request Leave
@@ -262,22 +262,22 @@ export default function HomePage() {
           </div>
 
           {/* Next Holiday */}
-          <div className="bg-brand-500 dark:bg-sky-700 rounded-xl p-4 text-white relative overflow-hidden shadow-theme-sm dark:shadow-dark-sm">
+          <div className="bg-accent-500 dark:bg-accent-700 rounded-xl p-4 text-white relative overflow-hidden shadow-theme-sm dark:shadow-dark-sm">
             <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-1/2 translate-x-1/3" />
-            <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-brand-600/50 dark:bg-sky-700/50 translate-y-1/3 -translate-x-1/4" />
-            <h3 className="text-xs font-semibold text-brand-100 dark:text-sky-200 uppercase tracking-wide mb-3 relative z-10">Next Holiday</h3>
+            <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-brand-600/50 dark:bg-accent-700/50 translate-y-1/3 -translate-x-1/4" />
+            <h3 className="text-xs font-semibold text-accent-100 dark:text-accent-200 uppercase tracking-wide mb-3 relative z-10">Next Holiday</h3>
             {nextHoliday ? (
               <div className="relative z-10">
                 <p className="text-sm font-semibold text-white mb-1">{nextHoliday.name}</p>
-                <p className="text-xs text-brand-100 dark:text-sky-200">
+                <p className="text-xs text-accent-100 dark:text-accent-200">
                   {new Date(nextHoliday.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
                 </p>
                 {dashboardData.holidays.length > 1 && (
-                  <p className="text-xs text-brand-200 dark:text-sky-300 mt-2">+{dashboardData.holidays.length - 1} more upcoming</p>
+                  <p className="text-xs text-accent-200 dark:text-accent-300 mt-2">+{dashboardData.holidays.length - 1} more upcoming</p>
                 )}
               </div>
             ) : (
-              <p className="text-xs text-brand-200 dark:text-sky-300 relative z-10">No upcoming holidays</p>
+              <p className="text-xs text-accent-200 dark:text-accent-300 relative z-10">No upcoming holidays</p>
             )}
           </div>
 
@@ -298,7 +298,7 @@ export default function HomePage() {
               <div className="space-y-1.5">
                 {dashboardData.onLeaveToday.slice(0, 3).map((emp) => (
                   <div key={emp.employeeId} className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-sky-400 text-[9px] font-bold shrink-0">
+                    <div className="w-6 h-6 rounded-full tint-info flex items-center justify-center text-accent-600 dark:text-accent-400 text-[9px] font-bold shrink-0">
                       {getInitials(emp.employeeName)}
                     </div>
                     <div className="min-w-0">
@@ -337,7 +337,7 @@ export default function HomePage() {
                       onClick={() => setActiveWallTab(tab)}
                       className={`flex items-center gap-1.5 pb-1 border-b-2 text-xs font-medium transition-colors
                         ${activeWallTab === tab
-                          ? 'border-brand-500 dark:border-sky-400 text-brand-600 dark:text-sky-400'
+                          ? 'border-accent-500 dark:border-accent-400 text-brand-600 dark:text-accent-400'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                         }`}
                     >
@@ -348,7 +348,7 @@ export default function HomePage() {
                 })}
               </div>
               <div className="flex gap-2.5">
-                <div className="w-8 h-8 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-sky-400 text-xs font-bold shrink-0">
+                <div className="w-8 h-8 rounded-full tint-info flex items-center justify-center text-accent-600 dark:text-accent-400 text-xs font-bold shrink-0">
                   {getInitials(user?.fullName)}
                 </div>
                 <div className="flex-1">
@@ -358,7 +358,7 @@ export default function HomePage() {
                       : activeWallTab === 'Praise' ? 'Give a shout-out to a colleague...'
                       : 'Ask a question to your team...'
                     }
-                    className="w-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-brand-200 dark:focus:ring-sky-700 focus:border-brand-300 dark:focus:border-sky-700 resize-none"
+                    className="w-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-200 dark:focus:ring-accent-700 focus:border-accent-300 dark:focus:border-accent-700 resize-none"
                     rows={2}
                     value={postContent}
                     onChange={(e) => setPostContent(e.target.value)}
@@ -406,7 +406,7 @@ export default function HomePage() {
               dashboardData.wallPosts.map((post) => (
                 <div key={post.id} className="card-aura rounded-xl border border-[var(--border-main)] p-4">
                   <div className="flex items-start gap-2.5">
-                    <div className="w-8 h-8 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-sky-400 text-xs font-bold shrink-0">
+                    <div className="w-8 h-8 rounded-full tint-info flex items-center justify-center text-accent-600 dark:text-accent-400 text-xs font-bold shrink-0">
                       {getInitials(post.author?.fullName)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -457,7 +457,7 @@ export default function HomePage() {
                   </div>
                   {todayBirthdays.map((b) => (
                     <div key={b.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg tint-success mb-1">
-                      <div className="w-6 h-6 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-sky-400 text-[9px] font-bold">
+                      <div className="w-6 h-6 rounded-full tint-info flex items-center justify-center text-accent-600 dark:text-accent-400 text-[9px] font-bold">
                         {getInitials(b.employeeName)}
                       </div>
                       <div>
@@ -476,7 +476,7 @@ export default function HomePage() {
                   </div>
                   {todayAnniversaries.map((a) => (
                     <div key={a.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg tint-warning mb-1">
-                      <div className="w-6 h-6 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-sky-400 text-[9px] font-bold">
+                      <div className="w-6 h-6 rounded-full tint-info flex items-center justify-center text-accent-600 dark:text-accent-400 text-[9px] font-bold">
                         {getInitials(a.employeeName)}
                       </div>
                       <div>
@@ -499,7 +499,7 @@ export default function HomePage() {
                       <div
                         key={b.employeeId}
                         title={`${b.employeeName} — ${b.birthdayDate}`}
-                        className="w-7 h-7 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-sky-400 text-[8px] font-bold border-2 border-white dark:border-[var(--border-main)]800 hover:scale-110 transition-transform cursor-default"
+                        className="w-7 h-7 rounded-full tint-info flex items-center justify-center text-accent-600 dark:text-accent-400 text-[8px] font-bold border-2 border-white dark:border-[var(--border-main)]800 hover:scale-110 transition-transform cursor-default"
                       >
                         {getInitials(b.employeeName)}
                       </div>
@@ -538,7 +538,7 @@ export default function HomePage() {
                 <div className="space-y-1.5">
                   {newJoinees.slice(0, 4).map((j) => (
                     <div key={j.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                      <div className="w-6 h-6 rounded-full tint-success flex items-center justify-center text-brand-600 dark:text-sky-400 text-[9px] font-bold shrink-0">
+                      <div className="w-6 h-6 rounded-full tint-success flex items-center justify-center text-brand-600 dark:text-accent-400 text-[9px] font-bold shrink-0">
                         {getInitials(j.employeeName)}
                       </div>
                       <div className="min-w-0">
@@ -568,7 +568,7 @@ export default function HomePage() {
                     onClick={() => router.push(item.path)}
                     className="flex flex-col items-center gap-1.5 p-2.5 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors group"
                   >
-                    <div className="w-8 h-8 rounded-lg tint-info flex items-center justify-center text-brand-500 dark:text-sky-400 group-hover:tint-info dark:group-hover:tint-info transition-colors">
+                    <div className="w-8 h-8 rounded-lg tint-info flex items-center justify-center text-accent-500 dark:text-accent-400 group-hover:tint-info dark:group-hover:tint-info transition-colors">
                       <item.icon className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-medium text-[var(--text-secondary)]">{item.label}</span>

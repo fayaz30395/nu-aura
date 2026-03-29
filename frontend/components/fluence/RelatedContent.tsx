@@ -52,11 +52,11 @@ export function RelatedContent({
   const getTypeColor = (type: RelatedItem['type']): string => {
     switch (type) {
       case 'WIKI':
-        return 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300';
+        return 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300';
       case 'BLOG':
-        return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300';
+        return 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300';
       case 'TEMPLATE':
-        return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300';
+        return 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300';
       default:
         return 'bg-[var(--bg-surface)]';
     }
@@ -88,7 +88,7 @@ export function RelatedContent({
                     {item.type === 'WIKI' ? 'Wiki' : item.type === 'BLOG' ? 'Blog' : 'Template'}
                   </span>
                 </div>
-                <CardTitle className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--sky-700)] transition-colors`}>
+                <CardTitle className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--accent-700)] transition-colors`}>
                   {item.title}
                 </CardTitle>
               </CardHeader>

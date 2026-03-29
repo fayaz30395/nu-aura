@@ -113,7 +113,7 @@ export default function NewOnboardingPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="space-y-2">
                         <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] skeuo-emboss">
-                            Initiate <span className="text-sky-700">Onboarding</span>
+                            Initiate <span className="text-accent-700">Onboarding</span>
                         </h1>
                         <p className="text-[var(--text-muted)] font-medium">Step {currentStep} of 3: {steps[currentStep - 1].name}</p>
                     </div>
@@ -122,13 +122,13 @@ export default function NewOnboardingPage() {
                         {steps.map((step, idx) => (
                             <div key={step.id} className="flex items-center">
                                 <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${currentStep >= step.id
-                                        ? 'bg-sky-700 border-sky-700 text-white shadow-lg'
+                                        ? 'bg-accent-700 border-accent-700 text-white shadow-lg'
                                         : 'bg-white border-[var(--border-main)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)]'
                                     }`}>
                                     <step.icon className="h-5 w-5" />
                                 </div>
                                 {idx < steps.length - 1 && (
-                                    <div className={`w-12 h-1 mx-2 rounded-full ${currentStep > step.id ? 'bg-sky-700' : 'bg-[var(--bg-secondary)]'
+                                    <div className={`w-12 h-1 mx-2 rounded-full ${currentStep > step.id ? 'bg-accent-700' : 'bg-[var(--bg-secondary)]'
                                         }`} />
                                 )}
                             </div>
@@ -148,13 +148,13 @@ export default function NewOnboardingPage() {
                             <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-4">
-                                        <User className="h-6 w-6 text-sky-500" />
+                                        <User className="h-6 w-6 text-accent-500" />
                                         <span>Candidate Selection</span>
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="p-8 space-y-8">
-                                    <div className="bg-sky-500/5 p-6 rounded-3xl border border-sky-500/10">
-                                        <label className="block text-sm font-bold uppercase tracking-widest text-sky-700 dark:text-sky-400 mb-4">
+                                    <div className="bg-accent-500/5 p-6 rounded-3xl border border-accent-500/10">
+                                        <label className="block text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-400 mb-4">
                                             Find Employee
                                         </label>
                                         <EmployeeSearchAutocomplete
@@ -168,8 +168,8 @@ export default function NewOnboardingPage() {
                                     </div>
 
                                     {selectedEmployee && (
-                                        <div className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-sky-500/10 animate-in fade-in slide-in-from-bottom-2">
-                                            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-3xl shadow-xl">
+                                        <div className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-accent-500/10 animate-in fade-in slide-in-from-bottom-2">
+                                            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-3xl shadow-xl">
                                                 {selectedEmployee.name.charAt(0)}
                                             </div>
                                             <div>
@@ -194,7 +194,7 @@ export default function NewOnboardingPage() {
                             <Card className="lg:col-span-2 border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-4">
-                                        <ClipboardList className="h-6 w-6 text-indigo-500" />
+                                        <ClipboardList className="h-6 w-6 text-accent-500" />
                                         <span>Checklist Template</span>
                                     </CardTitle>
                                 </CardHeader>
@@ -205,12 +205,12 @@ export default function NewOnboardingPage() {
                                                 key={temp.id}
                                                 onClick={() => setSelectedTemplate(temp)}
                                                 className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${selectedTemplate?.id === temp.id
-                                                        ? 'bg-sky-500/10 border-sky-500 shadow-lg'
+                                                        ? 'bg-accent-500/10 border-accent-500 shadow-lg'
                                                         : 'bg-[var(--bg-card)] border-transparent hover:border-[var(--border-main)]'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className={`p-4 rounded-2xl ${selectedTemplate?.id === temp.id ? 'bg-sky-500 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
+                                                    <div className={`p-4 rounded-2xl ${selectedTemplate?.id === temp.id ? 'bg-accent-500 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                                                         }`}>
                                                         <Layout className="h-6 w-6" />
                                                     </div>
@@ -220,7 +220,7 @@ export default function NewOnboardingPage() {
                                                     </div>
                                                 </div>
                                                 {selectedTemplate?.id === temp.id && (
-                                                    <CheckCircle className="h-6 w-6 text-sky-500" />
+                                                    <CheckCircle className="h-6 w-6 text-accent-500" />
                                                 )}
                                             </div>
                                         ))}
@@ -231,7 +231,7 @@ export default function NewOnboardingPage() {
                             <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-4">
-                                        <Calendar className="h-6 w-6 text-emerald-500" />
+                                        <Calendar className="h-6 w-6 text-success-500" />
                                         <span>Timeline</span>
                                     </CardTitle>
                                 </CardHeader>
@@ -267,19 +267,19 @@ export default function NewOnboardingPage() {
                             className="space-y-8"
                         >
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="p-8 rounded-3xl bg-sky-500/10 border border-sky-500/20 text-center space-y-2">
-                                    <User className="h-10 w-10 mx-auto text-sky-700 mb-2" />
-                                    <p className="text-xs font-black uppercase tracking-widest text-sky-700">Employee</p>
+                                <div className="p-8 rounded-3xl bg-accent-500/10 border border-accent-500/20 text-center space-y-2">
+                                    <User className="h-10 w-10 mx-auto text-accent-700 mb-2" />
+                                    <p className="text-xs font-black uppercase tracking-widest text-accent-700">Employee</p>
                                     <p className="text-xl font-black text-[var(--text-primary)]">{selectedEmployee?.name}</p>
                                 </div>
-                                <div className="p-8 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 text-center space-y-2">
-                                    <Layout className="h-10 w-10 mx-auto text-indigo-600 mb-2" />
-                                    <p className="text-xs font-black uppercase tracking-widest text-indigo-600">Checklist</p>
+                                <div className="p-8 rounded-3xl bg-accent-500/10 border border-accent-500/20 text-center space-y-2">
+                                    <Layout className="h-10 w-10 mx-auto text-accent-600 mb-2" />
+                                    <p className="text-xs font-black uppercase tracking-widest text-accent-600">Checklist</p>
                                     <p className="text-xl font-black text-[var(--text-primary)]">{selectedTemplate?.name}</p>
                                 </div>
-                                <div className="p-8 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
-                                    <Calendar className="h-10 w-10 mx-auto text-emerald-600 mb-2" />
-                                    <p className="text-xs font-black uppercase tracking-widest text-emerald-600">Starts</p>
+                                <div className="p-8 rounded-3xl bg-success-500/10 border border-success-500/20 text-center space-y-2">
+                                    <Calendar className="h-10 w-10 mx-auto text-success-600 mb-2" />
+                                    <p className="text-xs font-black uppercase tracking-widest text-success-600">Starts</p>
                                     <p className="text-xl font-black text-[var(--text-primary)]">{formData.startDate}</p>
                                 </div>
                             </div>
@@ -290,7 +290,7 @@ export default function NewOnboardingPage() {
                                 </CardHeader>
                                 <CardContent className="p-8">
                                     <textarea
-                                        className="w-full px-6 py-4 rounded-3xl bg-[var(--bg-surface)] border-0 focus:ring-2 focus:ring-sky-500 outline-none text-[var(--text-primary)] font-medium"
+                                        className="w-full px-6 py-4 rounded-3xl bg-[var(--bg-surface)] border-0 focus:ring-2 focus:ring-accent-500 outline-none text-[var(--text-primary)] font-medium"
                                         rows={4}
                                         placeholder="Specific instructions for the onboarding buddy or HR team..."
                                         value={formData.notes}
@@ -314,14 +314,14 @@ export default function NewOnboardingPage() {
                     </Button>
 
                     <div className="flex items-center gap-4">
-                        {error && <span className="text-sm font-bold text-red-500 animate-pulse">{error}</span>}
+                        {error && <span className="text-sm font-bold text-danger-500 animate-pulse">{error}</span>}
                         <PermissionGate permission={Permissions.ONBOARDING_CREATE} fallback={<div />}>
                             {currentStep < 3 ? (
                                 <Button
                                     variant="primary"
                                     onClick={handleNext}
                                     size="lg"
-                                    className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs shadow-xl shadow-sky-500/20"
+                                    className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs shadow-xl shadow-accent-500/20"
                                     rightIcon={<ChevronRight className="h-4 w-4" />}
                                 >
                                     Continue
@@ -332,7 +332,7 @@ export default function NewOnboardingPage() {
                                     onClick={handleSubmit}
                                     isLoading={createProcessMutation.isPending}
                                     size="lg"
-                                    className="btn-primary px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-sky-700 to-indigo-600 border-0 shadow-xl shadow-sky-500/20"
+                                    className="btn-primary px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20"
                                     leftIcon={<Zap className="h-4 w-4" />}
                                 >
                                     Launch Process

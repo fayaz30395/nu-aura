@@ -291,7 +291,7 @@ export default function WorkloadDashboardPage() {
           <select
             value={selectedDateRange}
             onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-            className="input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+            className="input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
           >
             {dateRangeOptions.map((opt) => (
               <option key={opt.key} value={opt.key}>{opt.label}</option>
@@ -360,7 +360,7 @@ export default function WorkloadDashboardPage() {
               placeholder="Search employees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] py-1.5 pl-9 pr-3 text-sm placeholder:text-[var(--text-muted)] focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="w-56 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] py-1.5 pl-9 pr-3 text-sm placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
             />
           </div>
         </div>

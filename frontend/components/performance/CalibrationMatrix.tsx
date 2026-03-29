@@ -16,47 +16,47 @@ const matrixLabels: Record<string, { title: string; description: string; color: 
   '3-3': {
     title: 'Stars / Top Talent',
     description: 'High performers with high potential - future leaders',
-    color: 'bg-green-500',
+    color: 'bg-success-500',
   },
   '3-2': {
     title: 'Core Contributors',
     description: 'High performers - backbone of the organization',
-    color: 'bg-green-400',
+    color: 'bg-success-400',
   },
   '3-1': {
     title: 'Solid Performers',
     description: 'Consistent performers in current role',
-    color: 'bg-green-300',
+    color: 'bg-success-300',
   },
   '2-3': {
     title: 'High Potential',
     description: 'Strong potential - need development',
-    color: 'bg-yellow-400',
+    color: 'bg-warning-400',
   },
   '2-2': {
     title: 'Solid Contributors',
     description: 'Meeting expectations consistently',
-    color: 'bg-yellow-300',
+    color: 'bg-warning-300',
   },
   '2-1': {
     title: 'Underperformers',
     description: 'Need improvement in current role',
-    color: 'bg-yellow-200',
+    color: 'bg-warning-200',
   },
   '1-3': {
     title: 'Enigmas / Rough Diamonds',
     description: 'High potential but underperforming - need support',
-    color: 'bg-red-400',
+    color: 'bg-danger-400',
   },
   '1-2': {
     title: 'Inconsistent Performers',
     description: 'Variable performance - coaching needed',
-    color: 'bg-red-300',
+    color: 'bg-danger-300',
   },
   '1-1': {
     title: 'Low Performers',
     description: 'Significant performance concerns',
-    color: 'bg-red-500',
+    color: 'bg-danger-500',
   },
 };
 
@@ -80,7 +80,7 @@ function EmployeeCard({
       onClick={onClick}
       className={`p-2 bg-white rounded border border-[var(--border-main)] shadow-sm cursor-pointer hover:shadow-md transition-all text-xs ${
         isDragging ? 'opacity-50' : ''
-      } ${!readOnly ? 'hover:border-blue-400' : ''}`}
+      } ${!readOnly ? 'hover:border-accent-400' : ''}`}
     >
       <div className="flex items-start justify-between gap-1">
         <div className="flex-1 min-w-0">
@@ -92,15 +92,15 @@ function EmployeeCard({
       {employee.retentionRisk && (
         <div className="mt-1 flex items-center gap-1">
           {employee.retentionRisk === 'HIGH' && (
-            <AlertTriangle className="h-3 w-3 text-red-500" />
+            <AlertTriangle className="h-3 w-3 text-danger-500" />
           )}
           <span
             className={`text-xs ${
               employee.retentionRisk === 'HIGH'
-                ? 'text-red-600'
+                ? 'text-danger-600'
                 : employee.retentionRisk === 'MEDIUM'
-                ? 'text-yellow-600'
-                : 'text-green-600'
+                ? 'text-warning-600'
+                : 'text-success-600'
             }`}
           >
             {employee.retentionRisk === 'HIGH' ? 'Flight Risk' : ''}
@@ -157,7 +157,7 @@ function MatrixCell({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`border border-[var(--border-strong)] p-2 rounded-lg min-h-[180px] transition-all ${
-        isDragOver ? 'bg-blue-50 border-blue-400 border-2' : 'bg-[var(--bg-surface)]'
+        isDragOver ? 'bg-accent-50 border-accent-400 border-2' : 'bg-[var(--bg-surface)]'
       } ${cellInfo.color} bg-opacity-10`}
     >
       <div className="mb-2 pb-2 border-b border-[var(--border-main)]">
@@ -235,15 +235,15 @@ export default function CalibrationMatrix({
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">9-Box Grid Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-green-500"></div>
+            <div className="w-4 h-4 rounded bg-success-500"></div>
             <span>Top Talent / Stars</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-yellow-400"></div>
+            <div className="w-4 h-4 rounded bg-warning-400"></div>
             <span>Development Needed</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-red-500"></div>
+            <div className="w-4 h-4 rounded bg-danger-500"></div>
             <span>Performance Concerns</span>
           </div>
         </div>
@@ -410,19 +410,19 @@ export default function CalibrationMatrix({
             <div className="text-xs text-[var(--text-muted)]">Total Employees</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success-600">
               {(distribution['3-3'] || 0) + (distribution['2-3'] || 0) + (distribution['3-2'] || 0)}
             </div>
             <div className="text-xs text-[var(--text-muted)]">Top Performers</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-warning-600">
               {(distribution['2-2'] || 0) + (distribution['2-1'] || 0) + (distribution['3-1'] || 0)}
             </div>
             <div className="text-xs text-[var(--text-muted)]">Solid Contributors</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-danger-600">
               {(distribution['1-1'] || 0) + (distribution['1-2'] || 0) + (distribution['1-3'] || 0)}
             </div>
             <div className="text-xs text-[var(--text-muted)]">Need Development</div>

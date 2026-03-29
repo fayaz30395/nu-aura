@@ -37,10 +37,10 @@ type CompOffFormData = z.infer<typeof compOffSchema>;
 // ─── Status config ──────────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { color: string; icon: typeof Clock; label: string }> = {
-  PENDING:  { color: 'text-yellow-600 tint-warning',  icon: AlertCircle,   label: 'Pending' },
-  APPROVED: { color: 'text-blue-600 tint-info',       icon: CheckCircle,   label: 'Approved' },
-  REJECTED: { color: 'text-red-600 tint-danger',      icon: XCircle,       label: 'Rejected' },
-  CREDITED: { color: 'text-green-600 tint-success',   icon: CheckCircle,   label: 'Credited' },
+  PENDING:  { color: 'text-warning-600 tint-warning',  icon: AlertCircle,   label: 'Pending' },
+  APPROVED: { color: 'text-accent-600 tint-info',       icon: CheckCircle,   label: 'Approved' },
+  REJECTED: { color: 'text-danger-600 tint-danger',      icon: XCircle,       label: 'Rejected' },
+  CREDITED: { color: 'text-success-600 tint-success',   icon: CheckCircle,   label: 'Credited' },
 };
 
 export default function CompOffPage() {
@@ -115,11 +115,11 @@ export default function CompOffPage() {
         </div>
 
         {/* Info card */}
-        <Card className="border-blue-200 tint-info skeuo-card">
+        <Card className="border-accent-200 tint-info skeuo-card">
           <CardContent className="pt-4">
             <div className="flex gap-4">
-              <AlertCircle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-800">
+              <AlertCircle className="w-5 h-5 text-accent-600 shrink-0 mt-0.5" />
+              <div className="text-sm text-accent-800">
                 <strong>Eligibility:</strong> Minimum 60 minutes overtime required. Half-day credited for 4h+, full day for 8h+.
                 Requests are auto-approved after 7 days if no manager action.
               </div>
@@ -135,7 +135,7 @@ export default function CompOffPage() {
               onClick={() => setActiveTab(tab as 'my' | 'pending')}
               className={`pb-2 px-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
+                  ? 'border-accent-600 text-accent-600'
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -178,7 +178,7 @@ export default function CompOffPage() {
                         <td className="px-4 py-3">
                           {Math.floor(req.overtimeMinutes / 60)}h {req.overtimeMinutes % 60}m
                         </td>
-                        <td className="px-4 py-3 font-semibold text-blue-700">{req.compOffDays}</td>
+                        <td className="px-4 py-3 font-semibold text-accent-700">{req.compOffDays}</td>
                         <td className="px-4 py-3 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium badge-status ${cfg.color}`}>
@@ -192,7 +192,7 @@ export default function CompOffPage() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="text-green-700 border-green-200"
+                                className="text-success-700 border-success-200"
                                 onClick={() => approveMutation.mutate({ id: req.id, action: 'approve' })}
                               >
                                 Approve
@@ -200,7 +200,7 @@ export default function CompOffPage() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="text-red-700 border-red-200"
+                                className="text-danger-700 border-danger-200"
                                 onClick={() => approveMutation.mutate({ id: req.id, action: 'reject' })}
                               >
                                 Reject
@@ -232,10 +232,10 @@ export default function CompOffPage() {
                   <input
                     type="date"
                     {...register('attendanceDate')}
-                    className={`input-aura ${errors.attendanceDate ? 'border-red-500' : ''}`}
+                    className={`input-aura ${errors.attendanceDate ? 'border-danger-500' : ''}`}
                   />
                   {errors.attendanceDate && (
-                    <p className="mt-1 text-xs text-red-500">{errors.attendanceDate.message}</p>
+                    <p className="mt-1 text-xs text-danger-500">{errors.attendanceDate.message}</p>
                   )}
                   <p className="text-xs text-[var(--text-muted)] mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
                 </div>

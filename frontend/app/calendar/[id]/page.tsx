@@ -76,23 +76,23 @@ export default function EventDetailPage() {
   const getStatusConfig = (status: EventStatus) => {
     const configs: Record<EventStatus, { bg: string; text: string; icon: typeof Clock }> = {
       SCHEDULED: {
-        bg: 'bg-blue-100 dark:bg-blue-900/30',
-        text: 'text-blue-700 dark:text-blue-400',
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
         icon: Clock,
       },
       CONFIRMED: {
-        bg: 'bg-green-100 dark:bg-green-900/30',
-        text: 'text-green-700 dark:text-green-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: CheckCircle,
       },
       TENTATIVE: {
-        bg: 'bg-amber-100 dark:bg-amber-900/30',
-        text: 'text-amber-700 dark:text-amber-400',
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
         icon: AlertCircle,
       },
       CANCELLED: {
-        bg: 'bg-red-100 dark:bg-red-900/30',
-        text: 'text-red-700 dark:text-red-400',
+        bg: 'bg-danger-100 dark:bg-danger-900/30',
+        text: 'text-danger-700 dark:text-danger-400',
         icon: XCircle,
       },
       COMPLETED: {
@@ -109,7 +109,7 @@ export default function EventDetailPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
             <p className="text-[var(--text-secondary)]">Loading event...</p>
           </div>
         </div>
@@ -126,13 +126,13 @@ export default function EventDetailPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-red-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500" />
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Event not found'}
             </p>
             <button
               onClick={() => router.push('/calendar')}
-              className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-700 transition-colors"
+              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
             >
               Back to Calendar
             </button>
@@ -180,7 +180,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Time Card */}
-        <div className="bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl p-6 text-white">
+        <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-4 mb-4">
             <Calendar className="h-6 w-6" />
             <h2 className="text-lg font-semibold">Event Time</h2>
@@ -237,7 +237,7 @@ export default function EventDetailPage() {
                   href={event.meetingLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sky-700 dark:text-sky-400 font-medium hover:underline flex items-center gap-1"
+                  className="text-accent-700 dark:text-accent-400 font-medium hover:underline flex items-center gap-1"
                 >
                   Join Meeting
                   <ExternalLink className="h-4 w-4" />
@@ -360,10 +360,10 @@ export default function EventDetailPage() {
               <span
                 className={`px-3 py-1 rounded-lg text-sm font-medium ${
                   event.syncStatus === 'SYNCED'
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                    ? 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300'
                     : event.syncStatus === 'SYNC_ERROR'
-                    ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                    : 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
+                    ? 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300'
+                    : 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300'
                 }`}
               >
                 {event.syncStatus}
@@ -387,7 +387,7 @@ export default function EventDetailPage() {
                 <button
                   onClick={handleSyncToGoogle}
                   disabled={syncToGoogleMutation.isPending}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-xl font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-xl font-medium hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors disabled:opacity-50"
                 >
                   {syncToGoogleMutation.isPending ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -401,7 +401,7 @@ export default function EventDetailPage() {
               <PermissionGate permission={Permissions.CALENDAR_DELETE}>
                 <button
                   onClick={handleDelete}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors"
                 >
                   <Trash2 className="h-5 w-5" />
                   Delete

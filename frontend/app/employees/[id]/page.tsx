@@ -88,13 +88,13 @@ const DOCUMENT_CATEGORIES = [
 function getStatusBadgeColor(status: string) {
   switch (status) {
     case 'ACTIVE':
-      return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
     case 'ON_LEAVE':
-      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
     case 'ON_NOTICE':
-      return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
+      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
     case 'TERMINATED':
-      return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
     default:
       return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
   }
@@ -168,18 +168,18 @@ function AvatarInitials({
 
   return (
     <div
-      className={`${sizeMap[size]} bg-sky-100 dark:bg-sky-900/30 rounded-full flex items-center justify-center flex-shrink-0`}
+      className={`${sizeMap[size]} bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center flex-shrink-0`}
     >
-      <span className="font-medium text-sky-700 dark:text-sky-400">{initials}</span>
+      <span className="font-medium text-accent-700 dark:text-accent-400">{initials}</span>
     </div>
   );
 }
 
 // ─── Active tab underline style ──────────────────────────────────────
 function tabClass(active: boolean) {
-  return `py-3 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 rounded-t-sm ${
+  return `py-3 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-t-sm ${
     active
-      ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)]'
   }`;
 }
@@ -276,7 +276,7 @@ export default function EmployeeDetailPage() {
       <AppLayout activeMenuItem="employees">
         <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700" />
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700" />
             <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
           </div>
         </div>
@@ -299,7 +299,7 @@ export default function EmployeeDetailPage() {
                   <button
                     onClick={() => router.push('/employees')}
                     aria-label="Back to employees list"
-                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 rounded-md"
+                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -309,8 +309,8 @@ export default function EmployeeDetailPage() {
             </div>
           </nav>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
-              <p className="text-sm text-red-600 dark:text-red-400">
+            <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md p-4">
+              <p className="text-sm text-danger-600 dark:text-danger-400">
                 {error || 'Employee not found'}
               </p>
             </div>
@@ -327,14 +327,14 @@ export default function EmployeeDetailPage() {
     <AppLayout activeMenuItem="employees">
       <div className="min-h-screen bg-[var(--bg-secondary)]">
         {/* ── HERO BANNER ──────────────────────────────────────────── */}
-        <div className="relative bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 border-b border-[var(--border-main)]">
+        <div className="relative bg-gradient-to-r from-slate-900 via-accent-950 to-slate-900 border-b border-[var(--border-main)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             {/* Back + Actions row */}
             <div className="flex items-center justify-between mb-6">
               <button
                 onClick={() => router.push('/employees')}
                 aria-label="Back to employees list"
-                className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 rounded-md"
+                className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="text-sm">Employees</span>
@@ -343,7 +343,7 @@ export default function EmployeeDetailPage() {
                 <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
                   <button
                     onClick={() => router.push(`/employees/${employeeId}/edit`)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Edit
@@ -352,7 +352,7 @@ export default function EmployeeDetailPage() {
                 <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
                   <button
                     onClick={() => setShowDeleteModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-danger-600 hover:bg-danger-700 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:ring-offset-2"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     Delete
@@ -367,7 +367,7 @@ export default function EmployeeDetailPage() {
                 <img
                   src={employee.profilePhotoUrl}
                   alt={employee.fullName}
-                  className="h-20 w-20 rounded-full object-cover border-2 border-sky-500/30"
+                  className="h-20 w-20 rounded-full object-cover border-2 border-accent-500/30"
                 />
               ) : (
                 <AvatarInitials name={employee.fullName} size="xl" />
@@ -396,7 +396,7 @@ export default function EmployeeDetailPage() {
                 <Mail className="h-4 w-4 text-[var(--text-muted)]" />
                 <a
                   href={`mailto:${employee.workEmail}`}
-                  className="text-sky-700 dark:text-sky-400 hover:underline"
+                  className="text-accent-700 dark:text-accent-400 hover:underline"
                 >
                   {employee.workEmail}
                 </a>
@@ -464,7 +464,7 @@ export default function EmployeeDetailPage() {
                     className="flex items-center gap-2 group"
                   >
                     <AvatarInitials name={employee.managerName || 'M'} size="sm" />
-                    <span className="text-sm font-medium text-sky-700 dark:text-sky-400 group-hover:underline">
+                    <span className="text-sm font-medium text-accent-700 dark:text-accent-400 group-hover:underline">
                       {employee.managerName}
                     </span>
                   </button>
@@ -582,7 +582,7 @@ export default function EmployeeDetailPage() {
                             </button>
                           ))}
                           {subordinates.length > 8 && (
-                            <p className="text-xs text-sky-700 dark:text-sky-400 font-medium">
+                            <p className="text-xs text-accent-700 dark:text-accent-400 font-medium">
                               +{subordinates.length - 8} more
                             </p>
                           )}
@@ -677,8 +677,8 @@ export default function EmployeeDetailPage() {
                   <InfoField label="IFSC / Routing" value={employee.bankIfscCode} />
                   <InfoField label="Tax ID / SSN" value={employee.taxId} />
                 </div>
-                <div className="mt-4 bg-sky-50 dark:bg-sky-950/30 border border-sky-500/30 rounded-md p-3">
-                  <p className="text-xs text-sky-700 dark:text-sky-400">
+                <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-3">
+                  <p className="text-xs text-accent-700 dark:text-accent-400">
                     Banking and tax information is encrypted and stored securely.
                   </p>
                 </div>
@@ -728,7 +728,7 @@ export default function EmployeeDetailPage() {
                         className="flex items-center gap-3 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                       >
                         <AvatarInitials name={employee.managerName || 'M'} size="sm" />
-                        <span className="text-sm font-medium text-sky-700 dark:text-sky-400 hover:underline">
+                        <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
                           {employee.managerName}
                         </span>
                       </button>
@@ -754,7 +754,7 @@ export default function EmployeeDetailPage() {
                             name={employee.dottedLineManager1Name}
                             size="sm"
                           />
-                          <span className="text-sm font-medium text-sky-700 dark:text-sky-400 hover:underline">
+                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
                             {employee.dottedLineManager1Name}
                           </span>
                         </button>
@@ -781,7 +781,7 @@ export default function EmployeeDetailPage() {
                             name={employee.dottedLineManager2Name}
                             size="sm"
                           />
-                          <span className="text-sm font-medium text-sky-700 dark:text-sky-400 hover:underline">
+                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
                             {employee.dottedLineManager2Name}
                           </span>
                         </button>
@@ -890,7 +890,7 @@ export default function EmployeeDetailPage() {
                     placeholder="Search document categories..."
                     value={docSearch}
                     onChange={(e) => setDocSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                   />
                 </div>
               </div>
@@ -905,10 +905,10 @@ export default function EmployeeDetailPage() {
                       whileHover={{ y: -2 }}
                       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     >
-                      <Card className="cursor-pointer hover:border-sky-500/30 transition-colors">
+                      <Card className="cursor-pointer hover:border-accent-500/30 transition-colors">
                         <CardContent className="p-5 text-center">
-                          <div className="h-12 w-12 mx-auto mb-3 rounded-xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                            <Icon className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                          <div className="h-12 w-12 mx-auto mb-3 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                            <Icon className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                           </div>
                           <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
                             {cat.name}
@@ -1002,7 +1002,7 @@ export default function EmployeeDetailPage() {
                                 <span
                                   className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
                                     asset.status === 'ASSIGNED'
-                                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                      ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
                                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                                   }`}
                                 >
@@ -1068,8 +1068,8 @@ export default function EmployeeDetailPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                  <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                  <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400" />
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">
                   Delete Employee
@@ -1090,7 +1090,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={handleDelete}
                   disabled={deleteEmployeeMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50"
                 >
                   {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
                 </button>

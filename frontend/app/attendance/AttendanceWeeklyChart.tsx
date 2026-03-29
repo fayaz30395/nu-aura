@@ -34,7 +34,7 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
         {d.name} · {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
       </div>
       {d.isHoliday ? (
-        <div className="flex items-center gap-1.5 text-xs text-purple-600"><Sun className="h-3 w-3" /> Holiday</div>
+        <div className="flex items-center gap-1.5 text-xs text-accent-600"><Sun className="h-3 w-3" /> Holiday</div>
       ) : d.isWeeklyOff ? (
         <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]"><Moon className="h-3 w-3" /> Weekly Off</div>
       ) : d.hours > 0 ? (
@@ -57,15 +57,15 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
           )}
           {d.overtime > 0 && (
             <div className="flex justify-between text-xs">
-              <span className="text-amber-600">Overtime</span>
-              <span className="font-bold text-amber-600">+{d.overtime}h</span>
+              <span className="text-warning-600">Overtime</span>
+              <span className="font-bold text-warning-600">+{d.overtime}h</span>
             </div>
           )}
           <div className="pt-1 border-t border-[var(--border-subtle)]">
             <span className={`inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded ${
-              d.hours >= STANDARD_WORK_HOURS ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-              d.hours >= STANDARD_WORK_HOURS / 2 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-              'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+              d.hours >= STANDARD_WORK_HOURS ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400' :
+              d.hours >= STANDARD_WORK_HOURS / 2 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
+              'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
             }`}>
               {d.hours >= STANDARD_WORK_HOURS ? 'Full Day' : d.hours >= STANDARD_WORK_HOURS / 2 ? 'Half Day' : 'Short Day'}
             </span>
@@ -97,7 +97,7 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
       <CardHeader className="border-b border-[var(--border-main)] pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center shadow-sm">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-sm">
               <BarChart3 className="h-4 w-4 text-white" />
             </div>
             Weekly Overview
@@ -108,9 +108,9 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
             </span>
             {attendanceRate > 0 && (
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                attendanceRate >= 95 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                attendanceRate >= 80 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                attendanceRate >= 95 ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400' :
+                attendanceRate >= 80 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
+                'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
               }`}>
                 {attendanceRate}% this month
               </span>
@@ -148,10 +148,10 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
         {/* Legend */}
         <div className="flex items-center justify-center gap-6 mt-2 text-xs">
           {[
-            { color: 'bg-emerald-500', label: `Full Day (${STANDARD_WORK_HOURS}h+)` },
-            { color: 'bg-indigo-500', label: 'Today' },
-            { color: 'bg-amber-500', label: 'Partial' },
-            { color: 'bg-purple-500', label: 'Holiday' },
+            { color: 'bg-success-500', label: `Full Day (${STANDARD_WORK_HOURS}h+)` },
+            { color: 'bg-accent-500', label: 'Today' },
+            { color: 'bg-warning-500', label: 'Partial' },
+            { color: 'bg-accent-500', label: 'Holiday' },
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
               <div className={`h-3 w-3 rounded-sm ${l.color} shadow-sm`} />

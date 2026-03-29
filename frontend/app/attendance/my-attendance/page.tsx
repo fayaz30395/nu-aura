@@ -108,7 +108,7 @@ function AttendanceTimelineBar({ record }: { record: AttendanceRecord }) {
       {segments.map((seg, i) => (
         <div
           key={i}
-          className="absolute top-0 h-full rounded-full bg-sky-400"
+          className="absolute top-0 h-full rounded-full bg-accent-400"
           style={{ left: `${seg.left}%`, width: `${seg.width}%` }}
         />
       ))}
@@ -119,7 +119,7 @@ function AttendanceTimelineBar({ record }: { record: AttendanceRecord }) {
 
 // ─── Status dot component ──────────────────────────────────────────
 function StatusDot({ hours }: { hours: number }) {
-  const color = hours >= 8 ? 'bg-emerald-500' : hours >= 6 ? 'bg-amber-500' : hours >= 4 ? 'bg-orange-500' : 'bg-red-500';
+  const color = hours >= 8 ? 'bg-success-500' : hours >= 6 ? 'bg-warning-500' : hours >= 4 ? 'bg-warning-500' : 'bg-danger-500';
   return <div className={`w-2.5 h-2.5 rounded-full ${color} shrink-0`} />;
 }
 
@@ -340,7 +340,7 @@ export default function MyAttendancePage() {
     const hours = record.totalWorkHours || (record.workDurationMinutes ? record.workDurationMinutes / 60 : 0);
     if (hours >= 8) return 'bg-success-50 dark:bg-success-950/30';
     if (hours >= 6) return 'bg-warning-50 dark:bg-warning-950/30';
-    return 'bg-orange-50 dark:bg-orange-950/30';
+    return 'bg-warning-50 dark:bg-warning-950/30';
   };
 
   // ── Export CSV ──────────────────────────────────────────────────
@@ -396,8 +396,8 @@ export default function MyAttendancePage() {
                   {/* Me row */}
                   <div className="flex items-center py-4 border-b border-[var(--border-subtle)]">
                     <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-sky-500" />
+                      <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                        <Users className="h-4 w-4 text-accent-500" />
                       </div>
                       <span className="text-sm font-medium text-[var(--text-primary)]">Me</span>
                     </div>
@@ -454,7 +454,7 @@ export default function MyAttendancePage() {
                     className={`
                       w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all
                       ${day.isToday
-                        ? 'bg-sky-500 text-white ring-2 ring-sky-200 dark:ring-sky-800'
+                        ? 'bg-accent-500 text-white ring-2 ring-accent-200 dark:ring-accent-800'
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                       }
                     `}
@@ -513,11 +513,11 @@ export default function MyAttendancePage() {
               </div>
               {/* Action links */}
               <div className="space-y-2">
-                <button className="flex items-center gap-2 text-sm text-sky-500 hover:text-sky-700 transition-colors w-full">
+                <button className="flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full">
                   <LogIn className="h-4 w-4" />
                   <span>Remote Clock-In</span>
                 </button>
-                <button className="flex items-center gap-2 text-sm text-sky-500 hover:text-sky-700 transition-colors w-full">
+                <button className="flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full">
                   <FileText className="h-4 w-4" />
                   <span>Attendance Policy</span>
                 </button>
@@ -540,7 +540,7 @@ export default function MyAttendancePage() {
                   onClick={() => setUse24h(!use24h)}
                   className={`
                     relative w-10 h-5 rounded-full transition-colors
-                    ${use24h ? 'bg-sky-700' : 'bg-[var(--border-main)]'}
+                    ${use24h ? 'bg-accent-700' : 'bg-[var(--border-main)]'}
                   `}
                 >
                   <div
@@ -566,7 +566,7 @@ export default function MyAttendancePage() {
                   className={`
                     px-4 py-2 text-sm font-medium transition-colors relative
                     ${activeTab === tab.key
-                      ? 'text-sky-700 dark:text-sky-400'
+                      ? 'text-accent-700 dark:text-accent-400'
                       : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                     }
                   `}
@@ -575,7 +575,7 @@ export default function MyAttendancePage() {
                   {activeTab === tab.key && (
                     <motion.div
                       layoutId="tab-underline"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-500"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-500"
                     />
                   )}
                 </button>
@@ -605,7 +605,7 @@ export default function MyAttendancePage() {
                         className={`
                           px-4 py-1.5 rounded-lg text-xs font-semibold transition-all
                           ${periodFilter === '30days'
-                            ? 'bg-sky-500 text-white shadow-md'
+                            ? 'bg-accent-500 text-white shadow-md'
                             : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
                           }
                         `}
@@ -625,7 +625,7 @@ export default function MyAttendancePage() {
                             className={`
                               px-4 py-1.5 rounded-lg text-xs font-semibold transition-all
                               ${periodFilter === key
-                                ? 'bg-sky-500 text-white shadow-md'
+                                ? 'bg-accent-500 text-white shadow-md'
                                 : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
                               }
                             `}
@@ -750,7 +750,7 @@ export default function MyAttendancePage() {
                                       onClick={() => setExpandedRow(isExpanded ? null : record.attendanceDate)}
                                       className="inline-flex items-center justify-center w-7 h-7 rounded-full hover:bg-[var(--bg-secondary)] transition-colors"
                                     >
-                                      <Eye className="h-4 w-4 text-sky-500" />
+                                      <Eye className="h-4 w-4 text-accent-500" />
                                     </button>
                                   ) : (
                                     <MoreHorizontal className="h-4 w-4 text-[var(--text-muted)] mx-auto" />
@@ -823,11 +823,11 @@ export default function MyAttendancePage() {
                         className={`
                           h-12 rounded-lg text-xs font-medium flex flex-col items-center justify-center relative transition-all
                           ${!day.isCurrentMonth ? 'opacity-20' : ''}
-                          ${day.isToday ? 'ring-2 ring-sky-500 ring-offset-1' : ''}
+                          ${day.isToday ? 'ring-2 ring-accent-500 ring-offset-1' : ''}
                           ${day.isCurrentMonth ? getCalCellColor(day.record, day.isWeekend) : 'bg-[var(--bg-secondary)]'}
                         `}
                       >
-                        <span className={`text-xs ${day.isToday ? 'font-bold text-sky-700 dark:text-sky-400' : 'text-[var(--text-primary)]'}`}>
+                        <span className={`text-xs ${day.isToday ? 'font-bold text-accent-700 dark:text-accent-400' : 'text-[var(--text-primary)]'}`}>
                           {day.date}
                         </span>
                         {day.record && day.isCurrentMonth && day.record.totalWorkHours ? (

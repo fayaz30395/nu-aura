@@ -273,8 +273,8 @@ export default function DepartmentsPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Departments</p>
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{departments.length}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center">
-                  <Building2 className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Building2 className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
               </div>
             </CardContent>
@@ -287,8 +287,8 @@ export default function DepartmentsPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Active Departments</p>
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{activeDepartments}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
-                  <ToggleRight className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
+                  <ToggleRight className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
               </div>
             </CardContent>
@@ -301,8 +301,8 @@ export default function DepartmentsPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Employees</p>
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{totalEmployees}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
               </div>
             </CardContent>
@@ -311,9 +311,9 @@ export default function DepartmentsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl flex items-center justify-between">
+          <div className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-3 rounded-xl flex items-center justify-between">
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-red-500 hover:text-red-700">
+            <button onClick={() => setError(null)} className="text-danger-500 hover:text-danger-700">
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -329,7 +329,7 @@ export default function DepartmentsPage() {
                 placeholder="Search departments by name, code, or type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
               />
             </div>
           </CardContent>
@@ -370,7 +370,7 @@ export default function DepartmentsPage() {
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-4">
-                          <div className="w-8 h-8 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" aria-label="Loading departments" />
+                          <div className="w-8 h-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" aria-label="Loading departments" />
                           <span className="text-[var(--text-muted)]">Loading departments...</span>
                         </div>
                       </td>
@@ -396,8 +396,8 @@ export default function DepartmentsPage() {
                       <tr key={dept.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center">
-                              <Building2 className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                            <div className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                              <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                             </div>
                             <div>
                               <p className="font-medium text-[var(--text-primary)]">{dept.name}</p>
@@ -407,7 +407,7 @@ export default function DepartmentsPage() {
                         </td>
                         <td className="px-6 py-4">
                           {dept.type ? (
-                            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400">
+                            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400">
                               {dept.type}
                             </span>
                           ) : (
@@ -429,8 +429,8 @@ export default function DepartmentsPage() {
                         <td className="px-6 py-4">
                           <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                             dept.isActive
-                              ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400'
-                              : 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400'
+                              ? 'bg-success-100 dark:bg-success-950/30 text-success-700 dark:text-success-400'
+                              : 'bg-danger-100 dark:bg-danger-950/30 text-danger-700 dark:text-danger-400'
                           }`}>
                             {dept.isActive ? 'Active' : 'Inactive'}
                           </span>
@@ -439,21 +439,21 @@ export default function DepartmentsPage() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleEdit(dept)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleToggleClick(dept)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-950/30 transition-colors"
                               title={dept.isActive ? 'Deactivate' : 'Activate'}
                             >
                               {dept.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
                             </button>
                             <button
                               onClick={() => handleDeleteClick(dept.id)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -476,8 +476,8 @@ export default function DepartmentsPage() {
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                    <div className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                      <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                     </div>
                     <h2 className="text-xl font-bold text-[var(--text-primary)]">
                       {editingDepartment ? 'Edit Department' : 'Add New Department'}
@@ -505,10 +505,10 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('code')}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="ENG, HR, FIN"
                     />
-                    {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>}
+                    {errors.code && <p className="text-danger-500 text-sm mt-1">{errors.code.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -517,10 +517,10 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('name')}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Engineering"
                     />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                    {errors.name && <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>}
                   </div>
                 </div>
 
@@ -531,10 +531,10 @@ export default function DepartmentsPage() {
                   <textarea
                     {...register('description')}
                     rows={3}
-                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent resize-none"
                     placeholder="Department description..."
                   />
-                  {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+                  {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -548,7 +548,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         >
                           <option value="">Select Type</option>
                           {departmentTypes.map(type => (
@@ -557,7 +557,7 @@ export default function DepartmentsPage() {
                         </select>
                       )}
                     />
-                    {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
+                    {errors.type && <p className="text-danger-500 text-sm mt-1">{errors.type.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -569,7 +569,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         >
                           <option value="">None (Root Department)</option>
                           {departments
@@ -582,7 +582,7 @@ export default function DepartmentsPage() {
                         </select>
                       )}
                     />
-                    {errors.parentDepartmentId && <p className="text-red-500 text-sm mt-1">{errors.parentDepartmentId.message}</p>}
+                    {errors.parentDepartmentId && <p className="text-danger-500 text-sm mt-1">{errors.parentDepartmentId.message}</p>}
                   </div>
                 </div>
 
@@ -597,7 +597,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         >
                           <option value="">Select Manager</option>
                           {employees.map((emp) => (
@@ -608,7 +608,7 @@ export default function DepartmentsPage() {
                         </select>
                       )}
                     />
-                    {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
+                    {errors.managerId && <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -617,10 +617,10 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('location')}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Building A, Floor 2"
                     />
-                    {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
+                    {errors.location && <p className="text-danger-500 text-sm mt-1">{errors.location.message}</p>}
                   </div>
                 </div>
 
@@ -632,10 +632,10 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('costCenter')}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="CC-1001"
                     />
-                    {errors.costCenter && <p className="text-red-500 text-sm mt-1">{errors.costCenter.message}</p>}
+                    {errors.costCenter && <p className="text-danger-500 text-sm mt-1">{errors.costCenter.message}</p>}
                   </div>
                   <div className="flex items-end">
                     <Controller
@@ -647,7 +647,7 @@ export default function DepartmentsPage() {
                             type="checkbox"
                             checked={value}
                             onChange={(e) => onChange(e.target.checked)}
-                            className="h-5 w-5 text-sky-700 focus:ring-sky-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                            className="h-5 w-5 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                           />
                           <span className="ml-3 text-sm font-medium text-[var(--text-secondary)]">Active Department</span>
                         </label>

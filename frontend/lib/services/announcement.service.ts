@@ -125,17 +125,17 @@ export const announcementService = new AnnouncementService();
 // Helper functions
 export function getCategoryColor(category: AnnouncementCategory): string {
   const colors: Record<AnnouncementCategory, string> = {
-    GENERAL: 'bg-blue-100 text-blue-800',
-    POLICY_UPDATE: 'bg-purple-100 text-purple-800',
-    EVENT: 'bg-green-100 text-green-800',
-    HOLIDAY: 'bg-yellow-100 text-yellow-800',
-    ACHIEVEMENT: 'bg-pink-100 text-pink-800',
-    URGENT: 'bg-red-100 text-red-800',
-    BENEFIT: 'bg-indigo-100 text-indigo-800',
-    TRAINING: 'bg-cyan-100 text-cyan-800',
-    SOCIAL: 'bg-orange-100 text-orange-800',
+    GENERAL: 'bg-accent-100 text-accent-800',
+    POLICY_UPDATE: 'bg-accent-100 text-accent-800',
+    EVENT: 'bg-success-100 text-success-800',
+    HOLIDAY: 'bg-warning-100 text-warning-800',
+    ACHIEVEMENT: 'bg-accent-100 text-accent-800',
+    URGENT: 'bg-danger-100 text-danger-800',
+    BENEFIT: 'bg-accent-100 text-accent-800',
+    TRAINING: 'bg-accent-100 text-accent-800',
+    SOCIAL: 'bg-warning-100 text-warning-800',
     IT_MAINTENANCE: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
-    HEALTH_SAFETY: 'bg-emerald-100 text-emerald-800',
+    HEALTH_SAFETY: 'bg-success-100 text-success-800',
     OTHER: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   };
   return colors[category] || colors.OTHER;
@@ -144,9 +144,9 @@ export function getCategoryColor(category: AnnouncementCategory): string {
 export function getPriorityColor(priority: AnnouncementPriority): string {
   const colors: Record<AnnouncementPriority, string> = {
     LOW: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
-    MEDIUM: 'bg-blue-100 text-blue-800',
-    HIGH: 'bg-orange-100 text-orange-800',
-    CRITICAL: 'bg-red-100 text-red-800',
+    MEDIUM: 'bg-accent-100 text-accent-800',
+    HIGH: 'bg-warning-100 text-warning-800',
+    CRITICAL: 'bg-danger-100 text-danger-800',
   };
   return colors[priority] || colors.MEDIUM;
 }

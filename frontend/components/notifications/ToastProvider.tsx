@@ -45,17 +45,17 @@ const toastIcons = {
 };
 
 const toastColors = {
-  success: 'bg-green-50 border-green-500 text-green-800 dark:bg-green-900/30 dark:border-green-400 dark:text-green-200',
-  error: 'bg-red-50 border-red-500 text-red-800 dark:bg-red-900/30 dark:border-red-400 dark:text-red-200',
-  info: 'bg-blue-50 border-blue-500 text-blue-800 dark:bg-blue-900/30 dark:border-blue-400 dark:text-blue-200',
-  warning: 'bg-yellow-50 border-yellow-500 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-400 dark:text-yellow-200',
+  success: 'bg-success-50 border-success-500 text-success-800 dark:bg-success-900/30 dark:border-success-400 dark:text-success-200',
+  error: 'bg-danger-50 border-danger-500 text-danger-800 dark:bg-danger-900/30 dark:border-danger-400 dark:text-danger-200',
+  info: 'bg-accent-50 border-accent-500 text-accent-800 dark:bg-accent-900/30 dark:border-accent-400 dark:text-accent-200',
+  warning: 'bg-warning-50 border-warning-500 text-warning-800 dark:bg-warning-900/30 dark:border-warning-400 dark:text-warning-200',
 };
 
 const iconColors = {
-  success: 'text-green-500 dark:text-green-400',
-  error: 'text-red-500 dark:text-red-400',
-  info: 'text-blue-500 dark:text-blue-400',
-  warning: 'text-yellow-500 dark:text-yellow-400',
+  success: 'text-success-500 dark:text-success-400',
+  error: 'text-danger-500 dark:text-danger-400',
+  info: 'text-accent-500 dark:text-accent-400',
+  warning: 'text-warning-500 dark:text-warning-400',
 };
 
 const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({ toast, onRemove }) => {

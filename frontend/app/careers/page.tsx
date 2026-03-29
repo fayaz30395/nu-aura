@@ -73,13 +73,13 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
   const getEmploymentTypeBg = (type: string) => {
     switch (type) {
       case 'Full-time':
-        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300';
+        return 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300';
       case 'Part-time':
-        return 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300';
+        return 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500';
       case 'Contract':
-        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300';
+        return 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300';
       case 'Internship':
-        return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300';
+        return 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300';
       default:
         return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
@@ -90,7 +90,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           onClick={() => onViewDetails(job)}>
       <div className="flex flex-col gap-4">
         <div>
-          <h3 className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors">
+          <h3 className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
             {job.title}
           </h3>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -116,7 +116,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           <span className="text-xs text-[var(--text-muted)]">
             {formatDate(job.postedDate)}
           </span>
-          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-sky-700 transition-colors" />
+          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
         </div>
       </div>
     </Card>
@@ -196,7 +196,7 @@ const JobDetailModal: React.FC<{
             <ul className="space-y-2">
               {job.responsibilities.map((resp, idx) => (
                 <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
-                  <span className="text-sky-700 dark:text-sky-400 font-bold">•</span>
+                  <span className="text-accent-700 dark:text-accent-400 font-bold">•</span>
                   {resp}
                 </li>
               ))}
@@ -211,7 +211,7 @@ const JobDetailModal: React.FC<{
             <ul className="space-y-2">
               {job.requirements.map((req, idx) => (
                 <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
-                  <span className="text-sky-700 dark:text-sky-400 font-bold">•</span>
+                  <span className="text-accent-700 dark:text-accent-400 font-bold">•</span>
                   {req}
                 </li>
               ))}
@@ -226,7 +226,7 @@ const JobDetailModal: React.FC<{
         </Button>
         <Button
           onClick={() => onApply(job)}
-          className="btn-primary bg-sky-700 hover:bg-sky-700 text-white"
+          className="btn-primary bg-accent-700 hover:bg-accent-700 text-white"
         >
           Apply Now
           <Send className="h-4 w-4 ml-2" />
@@ -318,8 +318,8 @@ const ApplicationModal: React.FC<{
         {submitStatus !== 'idle' && (
           <div className={`p-4 rounded-lg mb-4 flex gap-4 ${
             submitStatus === 'success'
-              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-              : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+              ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300'
+              : 'bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-300'
           }`}>
             <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
             <p className="text-sm">{submitMessage}</p>
@@ -337,7 +337,7 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('fullName')}
             />
-            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>}
+            {errors.fullName && <p className="text-danger-500 text-sm mt-1">{errors.fullName.message}</p>}
           </div>
 
           <div>
@@ -350,7 +350,7 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('email')}
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+            {errors.email && <p className="text-danger-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -363,7 +363,7 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('phone')}
             />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
+            {errors.phone && <p className="text-danger-500 text-sm mt-1">{errors.phone.message}</p>}
           </div>
 
           <div>
@@ -408,7 +408,7 @@ const ApplicationModal: React.FC<{
               className="input-aura"
               {...register('coverLetter')}
             />
-            {errors.coverLetter && <p className="text-red-500 text-sm mt-1">{errors.coverLetter.message}</p>}
+            {errors.coverLetter && <p className="text-danger-500 text-sm mt-1">{errors.coverLetter.message}</p>}
           </div>
 
           <div>
@@ -421,7 +421,7 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('linkedInUrl')}
             />
-            {errors.linkedInUrl && <p className="text-red-500 text-sm mt-1">{errors.linkedInUrl.message}</p>}
+            {errors.linkedInUrl && <p className="text-danger-500 text-sm mt-1">{errors.linkedInUrl.message}</p>}
           </div>
         </form>
       </ModalBody>
@@ -433,7 +433,7 @@ const ApplicationModal: React.FC<{
         <Button
           onClick={handleSubmit(handleFormSubmit)}
           disabled={isSubmitting}
-          className="btn-primary bg-sky-700 hover:bg-sky-700 text-white"
+          className="btn-primary bg-accent-700 hover:bg-accent-700 text-white"
         >
           {isSubmitting ? (
             <>
@@ -527,7 +527,7 @@ export default function CareersPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-indigo-700 via-indigo-600 to-violet-700 py-20 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gradient-to-br from-accent-700 via-accent-600 to-accent-700 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-block mb-4 px-4 py-2 rounded-full bg-white/10 border border-white/20">
             <span className="text-sm font-medium text-white">
@@ -537,7 +537,7 @@ export default function CareersPage() {
           <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 skeuo-emboss">
             Join Our Talented Team
           </h1>
-          <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-accent-100 mb-8 max-w-2xl mx-auto">
             Explore exciting career opportunities and be part of something great. Help us build the future of HR management.
           </p>
 
@@ -698,7 +698,7 @@ export default function CareersPage() {
                     setSelectedType('');
                     setSelectedExperience('');
                   }}
-                  className="bg-sky-700 hover:bg-sky-700"
+                  className="bg-accent-700 hover:bg-accent-700"
                 >
                   Clear Filters
                 </Button>
@@ -737,7 +737,7 @@ export default function CareersPage() {
                           onClick={() => setCurrentPage(page)}
                           className={
                             page === currentPage
-                              ? 'bg-sky-700 hover:bg-sky-700'
+                              ? 'bg-accent-700 hover:bg-accent-700'
                               : ''
                           }
                         >

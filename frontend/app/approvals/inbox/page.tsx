@@ -71,24 +71,24 @@ interface ModuleTab {
 
 const MODULE_TABS: ModuleTab[] = [
   { key: 'ALL', label: 'All', color: 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]', textColor: 'text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200' },
-  { key: 'LEAVE', label: 'Leave', entityType: 'LEAVE_REQUEST', color: 'bg-blue-100 dark:bg-blue-900/40', textColor: 'text-blue-700 dark:text-blue-300' },
-  { key: 'EXPENSE', label: 'Expense', entityType: 'EXPENSE_CLAIM', color: 'bg-orange-100 dark:bg-orange-900/40', textColor: 'text-orange-700 dark:text-orange-300' },
+  { key: 'LEAVE', label: 'Leave', entityType: 'LEAVE_REQUEST', color: 'bg-accent-100 dark:bg-accent-900/40', textColor: 'text-accent-700 dark:text-accent-300' },
+  { key: 'EXPENSE', label: 'Expense', entityType: 'EXPENSE_CLAIM', color: 'bg-warning-100 dark:bg-warning-900/40', textColor: 'text-warning-700 dark:text-warning-300' },
   { key: 'ASSET', label: 'Asset', entityType: 'ASSET_REQUEST', color: 'bg-[var(--bg-surface)]', textColor: 'text-[var(--text-secondary)]' },
-  { key: 'TRAVEL', label: 'Travel', entityType: 'TRAVEL_REQUEST', color: 'bg-emerald-100 dark:bg-emerald-900/40', textColor: 'text-emerald-700 dark:text-emerald-300' },
-  { key: 'RECRUITMENT', label: 'Recruitment', entityType: 'RECRUITMENT_OFFER', color: 'bg-violet-100 dark:bg-violet-900/40', textColor: 'text-violet-700 dark:text-violet-300' },
-  { key: 'OTHERS', label: 'Others', color: 'bg-purple-100 dark:bg-purple-900/40', textColor: 'text-purple-700 dark:text-purple-300' },
+  { key: 'TRAVEL', label: 'Travel', entityType: 'TRAVEL_REQUEST', color: 'bg-success-100 dark:bg-success-900/40', textColor: 'text-success-700 dark:text-success-300' },
+  { key: 'RECRUITMENT', label: 'Recruitment', entityType: 'RECRUITMENT_OFFER', color: 'bg-accent-100 dark:bg-accent-900/40', textColor: 'text-accent-700 dark:text-accent-300' },
+  { key: 'OTHERS', label: 'Others', color: 'bg-accent-300 dark:bg-accent-900/40', textColor: 'text-accent-900 dark:text-accent-500' },
 ];
 
 // Color lookup for module badges in the list
 const MODULE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-  Leave: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300' },
-  Expense: { bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-300' },
+  Leave: { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
+  Expense: { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
   Asset: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
-  Travel: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300' },
-  Recruitment: { bg: 'bg-violet-100 dark:bg-violet-900/30', text: 'text-violet-700 dark:text-violet-300' },
+  Travel: { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
+  Recruitment: { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
 };
 
-const DEFAULT_BADGE = { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-300' };
+const DEFAULT_BADGE = { bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500' };
 
 function getModuleBadgeColors(module: string) {
   return MODULE_BADGE_COLORS[module] ?? DEFAULT_BADGE;
@@ -272,7 +272,7 @@ export default function ApprovalInboxPage() {
           <EmptyState
             title="Access denied"
             description="You do not have permission to view the approval inbox."
-            icon={<XCircle className="h-12 w-12 text-red-500" />}
+            icon={<XCircle className="h-12 w-12 text-danger-500" />}
           />
         </div>
       </AppLayout>
@@ -299,9 +299,9 @@ export default function ApprovalInboxPage() {
           </div>
           <div className="flex items-center gap-2">
             {activeDelegationsCount > 0 && (
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800">
-                <Zap className="h-4 w-4 text-violet-600 dark:text-violet-400" />
-                <span className="text-sm font-medium text-violet-700 dark:text-violet-300">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
+                <Zap className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
                   {activeDelegationsCount} active {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
                 </span>
               </div>
@@ -320,22 +320,22 @@ export default function ApprovalInboxPage() {
           <SummaryCard
             label="Pending"
             value={counts?.pending ?? 0}
-            color="bg-amber-50 dark:bg-amber-900/20"
-            textColor="text-amber-700 dark:text-amber-300"
+            color="bg-warning-50 dark:bg-warning-900/20"
+            textColor="text-warning-700 dark:text-warning-300"
             icon={<Clock className="h-5 w-5" />}
           />
           <SummaryCard
             label="Approved Today"
             value={counts?.approvedToday ?? 0}
-            color="bg-green-50 dark:bg-green-900/20"
-            textColor="text-green-700 dark:text-green-300"
+            color="bg-success-50 dark:bg-success-900/20"
+            textColor="text-success-700 dark:text-success-300"
             icon={<CheckCircle className="h-5 w-5" />}
           />
           <SummaryCard
             label="Rejected Today"
             value={counts?.rejectedToday ?? 0}
-            color="bg-red-50 dark:bg-red-900/20"
-            textColor="text-red-700 dark:text-red-300"
+            color="bg-danger-50 dark:bg-danger-900/20"
+            textColor="text-danger-700 dark:text-danger-300"
             icon={<XCircle className="h-5 w-5" />}
           />
         </div>
@@ -350,7 +350,7 @@ export default function ApprovalInboxPage() {
                 onClick={() => handleStatusChange('PENDING')}
                 className={`rounded-full px-3 py-1 font-medium transition-colors ${
                   statusFilter === 'PENDING'
-                    ? 'bg-sky-700 text-white'
+                    ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
@@ -361,7 +361,7 @@ export default function ApprovalInboxPage() {
                 onClick={() => handleStatusChange('ALL')}
                 className={`rounded-full px-3 py-1 font-medium transition-colors ${
                   statusFilter === 'ALL'
-                    ? 'bg-sky-700 text-white'
+                    ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
@@ -377,7 +377,7 @@ export default function ApprovalInboxPage() {
                   onClick={() => handleTabChange(tab.key)}
                   className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     activeTab === tab.key
-                      ? `${tab.color} ${tab.textColor} ring-2 ring-sky-400/50`
+                      ? `${tab.color} ${tab.textColor} ring-2 ring-accent-400/50`
                       : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                   }`}
                 >
@@ -398,7 +398,7 @@ export default function ApprovalInboxPage() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
             />
           </div>
         </div>
@@ -466,7 +466,7 @@ export default function ApprovalInboxPage() {
                       <div className="mt-4 flex gap-4">
                         <Button
                           variant="outline"
-                          className="flex-1 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400"
+                          className="flex-1 border-danger-300 text-danger-700 hover:bg-danger-50 dark:border-danger-700 dark:text-danger-400"
                           onClick={() => {
                             setComments('');
                             setShowRejectModal(true);
@@ -535,7 +535,7 @@ export default function ApprovalInboxPage() {
       {/* Approve modal */}
       <Modal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} size="md">
         <ModalHeader onClose={() => setShowApproveModal(false)}>
-          <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+          <div className="flex items-center gap-2 text-success-600 dark:text-success-400">
             <CheckCircle className="h-5 w-5" />
             Approve request
           </div>
@@ -553,7 +553,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               rows={3}
             />
           </div>
@@ -579,7 +579,7 @@ export default function ApprovalInboxPage() {
       {/* Reject modal */}
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
         <ModalHeader onClose={() => setShowRejectModal(false)}>
-          <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
             <XCircle className="h-5 w-5" />
             Reject request
           </div>
@@ -591,13 +591,13 @@ export default function ApprovalInboxPage() {
           </p>
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span className="text-red-500">*</span>
+              Reason <span className="text-danger-500">*</span>
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being rejected…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               rows={3}
             />
           </div>
@@ -612,7 +612,7 @@ export default function ApprovalInboxPage() {
           </Button>
           <Button
             variant="primary"
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-danger-600 hover:bg-danger-700"
             onClick={handleReject}
             disabled={rejectMutation.isPending || !comments.trim()}
           >
@@ -624,7 +624,7 @@ export default function ApprovalInboxPage() {
       {/* Delegation modal */}
       <Modal isOpen={showDelegationModal} onClose={() => setShowDelegationModal(false)} size="md">
         <ModalHeader onClose={() => setShowDelegationModal(false)}>
-          <div className="flex items-center gap-2 text-violet-600 dark:text-violet-400">
+          <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400">
             <Zap className="h-5 w-5" />
             Delegate approvals
           </div>
@@ -650,7 +650,7 @@ export default function ApprovalInboxPage() {
                 required
               />
               {delegationForm.formState.errors.delegateId && (
-                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400">
                   {delegationForm.formState.errors.delegateId.message}
                 </p>
               )}
@@ -659,15 +659,15 @@ export default function ApprovalInboxPage() {
             {/* Start date */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Start date <span className="text-red-500">*</span>
+                Start date <span className="text-danger-500">*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('startDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               />
               {delegationForm.formState.errors.startDate && (
-                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400">
                   {delegationForm.formState.errors.startDate.message}
                 </p>
               )}
@@ -676,15 +676,15 @@ export default function ApprovalInboxPage() {
             {/* End date */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                End date <span className="text-red-500">*</span>
+                End date <span className="text-danger-500">*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               />
               {delegationForm.formState.errors.endDate && (
-                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400">
                   {delegationForm.formState.errors.endDate.message}
                 </p>
               )}
@@ -698,7 +698,7 @@ export default function ApprovalInboxPage() {
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
                 rows={3}
               />
             </div>
@@ -769,12 +769,12 @@ function InboxListItem({
 
   return (
     <Card
-      className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-sky-500' : ''}`}
+      className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-accent-500' : ''}`}
       onClick={onClick}
     >
       <CardContent className="flex items-start gap-4 p-4">
         {/* Avatar */}
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900/40 dark:text-accent-300">
           {getInitials(item.requesterName)}
         </div>
 
@@ -797,7 +797,7 @@ function InboxListItem({
 
         <div className="flex flex-col items-end gap-1 text-xs flex-shrink-0">
           {item.deadline && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+            <span className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
               <Clock className="h-3 w-3" />
               {format(new Date(item.deadline), 'MMM d')}
             </span>

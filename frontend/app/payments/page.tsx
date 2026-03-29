@@ -118,12 +118,12 @@ export default function PaymentsPage() {
   const getStatusIcon = (status: PaymentStatus) => {
     switch (status) {
       case 'COMPLETED':
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+        return <CheckCircle className="w-5 h-5 text-success-600" />;
       case 'FAILED':
-        return <XCircle className="w-5 h-5 text-red-600" />;
+        return <XCircle className="w-5 h-5 text-danger-600" />;
       case 'PROCESSING':
       case 'INITIATED':
-        return <Clock className="w-5 h-5 text-yellow-600" />;
+        return <Clock className="w-5 h-5 text-warning-600" />;
       default:
         return <AlertCircle className="w-5 h-5 text-[var(--text-secondary)]" />;
     }
@@ -133,7 +133,7 @@ export default function PaymentsPage() {
     return (
       <AppLayout activeMenuItem="payments">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
         </div>
       </AppLayout>
     );
@@ -160,7 +160,7 @@ export default function PaymentsPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-4">
-                <div className="p-2 rounded-lg bg-sky-100 dark:bg-sky-900/30 text-sky-700">
+                <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30 text-accent-700">
                   <CreditCard className="w-5 h-5" />
                 </div>
                 <div>
@@ -236,7 +236,7 @@ export default function PaymentsPage() {
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
                 showFilters
-                  ? 'border-sky-500 text-sky-700 bg-sky-50 dark:bg-sky-900/20'
+                  ? 'border-accent-500 text-accent-700 bg-accent-50 dark:bg-accent-900/20'
                   : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
@@ -378,7 +378,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('all')}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'all'
-                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
+                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -388,7 +388,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('completed')}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'completed'
-                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
+                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -398,7 +398,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('pending')}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'pending'
-                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
+                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -408,7 +408,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('failed')}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'failed'
-                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
+                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -421,7 +421,7 @@ export default function PaymentsPage() {
         <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
           {paymentsLoading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500" />
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
             </div>
           ) : filteredPayments.length === 0 ? (
             <EmptyState

@@ -101,7 +101,7 @@ export default function BlogsPage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-4 mb-2">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-orange-600 flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-warning-500 via-warning-500 to-warning-600 flex items-center justify-center shadow-lg">
                 <Pen className="w-6 h-6 text-white" />
               </div>
               <h1 className={`${typography.pageTitle} text-[var(--text-primary)]`}>
@@ -115,7 +115,7 @@ export default function BlogsPage() {
           <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
             <Button
               onClick={handleNewPost}
-              className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"
+              className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-md hover:shadow-lg transition-all"
             >
               <Plus className="w-4 h-4" />
               New Post
@@ -138,7 +138,7 @@ export default function BlogsPage() {
               placeholder="Search posts by title or content..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="input-aura w-full pl-12 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-amber-500/50 transition-all"
+              className="input-aura w-full pl-12 pr-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-warning-500/50 transition-all"
             />
           </div>
 
@@ -161,7 +161,7 @@ export default function BlogsPage() {
                 onClick={() => setSelectedCategoryId(undefined)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden ${
                   selectedCategoryId === undefined
-                    ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-md'
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                 }`}
                 whileHover={{ scale: 1.05 }}
@@ -183,7 +183,7 @@ export default function BlogsPage() {
                   onClick={() => setSelectedCategoryId(category.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden ${
                     selectedCategoryId === category.id
-                      ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md'
+                      ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-md'
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                   }`}
                   whileHover={{ scale: 1.05 }}
@@ -235,8 +235,8 @@ export default function BlogsPage() {
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                 >
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 flex items-center justify-center mx-auto mb-4">
-                    <Pen className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-warning-100 to-warning-100 dark:from-warning-900/20 dark:to-warning-900/20 flex items-center justify-center mx-auto mb-4">
+                    <Pen className="w-8 h-8 text-warning-600 dark:text-warning-400" />
                   </div>
                 </motion.div>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
@@ -248,7 +248,7 @@ export default function BlogsPage() {
                 <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
                   <Button
                     onClick={handleNewPost}
-                    className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all"
+                    className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-md hover:shadow-lg transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     Create First Post
@@ -275,7 +275,7 @@ export default function BlogsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                       {/* Image Section */}
                       {featuredPost.coverImageUrl ? (
-                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400 overflow-hidden relative group">
+                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-rose-400 overflow-hidden relative group">
                           <Image
                             src={featuredPost.coverImageUrl!}
                             alt={featuredPost.title}
@@ -286,7 +286,7 @@ export default function BlogsPage() {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                         </div>
                       ) : (
-                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400 flex items-center justify-center relative">
+                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-rose-400 flex items-center justify-center relative">
                           <Pen className="w-16 h-16 text-white/30" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                         </div>
@@ -297,10 +297,10 @@ export default function BlogsPage() {
                         <div>
                           <div className="flex items-center gap-4 mb-4">
                             <motion.div
-                              className="px-4 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30"
+                              className="px-4 py-1 rounded-full bg-gradient-to-r from-warning-100 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30"
                               whileHover={{ scale: 1.05 }}
                             >
-                              <span className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wide">
+                              <span className="text-xs font-bold text-warning-700 dark:text-warning-300 uppercase tracking-wide">
                                 ⭐ Featured
                               </span>
                             </motion.div>
@@ -327,7 +327,7 @@ export default function BlogsPage() {
                                 <img
                                   src={featuredPost.authorAvatarUrl}
                                   alt={featuredPost.authorName || 'Author'}
-                                  className="w-10 h-10 rounded-full object-cover border-2 border-amber-500/20"
+                                  className="w-10 h-10 rounded-full object-cover border-2 border-warning-500/20"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;
                                     target.style.display = 'none';
@@ -335,7 +335,7 @@ export default function BlogsPage() {
                                   }}
                                 />
                               ) : null}
-                              <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm ${featuredPost.authorAvatarUrl ? 'hidden' : ''}`}>
+                              <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-white font-bold text-sm ${featuredPost.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(featuredPost)}
                               </div>
                               <div>
@@ -406,7 +406,7 @@ export default function BlogsPage() {
                 </p>
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="text-amber-600 dark:text-amber-400 hover:underline text-sm font-medium"
+                  className="text-warning-600 dark:text-warning-400 hover:underline text-sm font-medium"
                 >
                   Clear search
                 </button>
@@ -437,7 +437,7 @@ export default function BlogsPage() {
                       >
                         {/* Cover Image */}
                         {post.coverImageUrl ? (
-                          <div className="h-40 bg-gradient-to-br from-amber-300 via-orange-300 to-rose-300 overflow-hidden relative group">
+                          <div className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-rose-300 overflow-hidden relative group">
                             <Image
                               src={post.coverImageUrl!}
                               alt={post.title}
@@ -448,7 +448,7 @@ export default function BlogsPage() {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                           </div>
                         ) : (
-                          <div className="h-40 bg-gradient-to-br from-amber-300 via-orange-300 to-rose-300 flex items-center justify-center relative">
+                          <div className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-rose-300 flex items-center justify-center relative">
                             <Pen className="w-12 h-12 text-white/25" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                           </div>
@@ -503,7 +503,7 @@ export default function BlogsPage() {
                                 <img
                                   src={post.authorAvatarUrl}
                                   alt={post.authorName || 'Author'}
-                                  className="w-8 h-8 rounded-full object-cover border border-amber-500/20"
+                                  className="w-8 h-8 rounded-full object-cover border border-warning-500/20"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;
                                     target.style.display = 'none';
@@ -511,7 +511,7 @@ export default function BlogsPage() {
                                   }}
                                 />
                               ) : null}
-                              <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-xs ${post.authorAvatarUrl ? 'hidden' : ''}`}>
+                              <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-white font-bold text-xs ${post.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(post)}
                               </div>
                               <div className="flex-1 min-w-0">

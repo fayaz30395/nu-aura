@@ -59,30 +59,30 @@ export function ConfirmDialog({
   const typeStyles = {
     danger: {
       icon: (
-        <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6 text-danger-600 dark:text-danger-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       ),
-      buttonClass: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
-      bgClass: 'bg-red-100 dark:bg-red-900/30',
+      buttonClass: 'bg-danger-600 hover:bg-danger-700 focus:ring-danger-500',
+      bgClass: 'bg-danger-100 dark:bg-danger-900/30',
     },
     warning: {
       icon: (
-        <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6 text-warning-600 dark:text-warning-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       ),
-      buttonClass: 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500',
-      bgClass: 'bg-yellow-100 dark:bg-yellow-900/30',
+      buttonClass: 'bg-warning-600 hover:bg-warning-700 focus:ring-warning-500',
+      bgClass: 'bg-warning-100 dark:bg-warning-900/30',
     },
     info: {
       icon: (
-        <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6 text-accent-600 dark:text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
-      buttonClass: 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
-      bgClass: 'bg-blue-100 dark:bg-blue-900/30',
+      buttonClass: 'bg-accent-600 hover:bg-accent-700 focus:ring-accent-500',
+      bgClass: 'bg-accent-100 dark:bg-accent-900/30',
     },
   };
 

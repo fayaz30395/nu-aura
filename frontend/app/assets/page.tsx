@@ -106,21 +106,21 @@ const getCategoryIcon = (category: AssetCategory) => {
 const getCategoryColor = (category: AssetCategory) => {
   switch (category) {
     case AssetCategory.LAPTOP:
-      return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
     case AssetCategory.DESKTOP:
-      return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
+      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500';
     case AssetCategory.MONITOR:
-      return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300';
+      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
     case AssetCategory.PHONE:
-      return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      return 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300';
     case AssetCategory.TABLET:
-      return 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300';
+      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
     case AssetCategory.FURNITURE:
-      return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
+      return 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300';
     case AssetCategory.VEHICLE:
-      return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+      return 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300';
     case AssetCategory.SOFTWARE_LICENSE:
-      return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300';
+      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   }
@@ -357,7 +357,7 @@ export default function AssetManagementPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="assets">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading assets...</span>
         </div>
       </AppLayout>
@@ -387,9 +387,9 @@ export default function AssetManagementPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
                 <Button size="sm" variant="outline" onClick={() => assetsQuery.refetch()} className="ml-auto">
@@ -405,8 +405,8 @@ export default function AssetManagementPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-sky-100 p-4 dark:bg-sky-900">
-                  <Package className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <Package className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Assets</p>
@@ -418,8 +418,8 @@ export default function AssetManagementPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
-                  <Package className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
+                  <Package className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Available</p>
@@ -431,8 +431,8 @@ export default function AssetManagementPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
-                  <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <User className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Assigned</p>
@@ -444,8 +444,8 @@ export default function AssetManagementPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
-                  <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
+                  <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Maintenance</p>
@@ -618,7 +618,7 @@ export default function AssetManagementPage() {
                               <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleDeleteClick(asset)}
-                                  className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                  className="w-full px-3 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   Delete
@@ -692,7 +692,7 @@ export default function AssetManagementPage() {
                       placeholder="AST001"
                       {...register('assetCode')}
                     />
-                    {errors.assetCode && <span className="text-red-500 text-sm">{errors.assetCode.message}</span>}
+                    {errors.assetCode && <span className="text-danger-500 text-sm">{errors.assetCode.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -704,7 +704,7 @@ export default function AssetManagementPage() {
                       placeholder="MacBook Pro 16"
                       {...register('assetName')}
                     />
-                    {errors.assetName && <span className="text-red-500 text-sm">{errors.assetName.message}</span>}
+                    {errors.assetName && <span className="text-danger-500 text-sm">{errors.assetName.message}</span>}
                   </div>
                 </div>
 
@@ -727,7 +727,7 @@ export default function AssetManagementPage() {
                       <option value={AssetCategory.SOFTWARE_LICENSE}>Software License</option>
                       <option value={AssetCategory.OTHER}>Other</option>
                     </select>
-                    {errors.category && <span className="text-red-500 text-sm">{errors.category.message}</span>}
+                    {errors.category && <span className="text-danger-500 text-sm">{errors.category.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -743,7 +743,7 @@ export default function AssetManagementPage() {
                       <option value={AssetStatus.RETIRED}>Retired</option>
                       <option value={AssetStatus.LOST}>Lost</option>
                     </select>
-                    {errors.status && <span className="text-red-500 text-sm">{errors.status.message}</span>}
+                    {errors.status && <span className="text-danger-500 text-sm">{errors.status.message}</span>}
                   </div>
                 </div>
 
@@ -1089,7 +1089,7 @@ export default function AssetManagementPage() {
                   placeholder="Enter employee ID"
                   {...registerAssign('assignEmployeeId')}
                 />
-                {assignErrors.assignEmployeeId && <span className="text-red-500 text-sm">{assignErrors.assignEmployeeId.message}</span>}
+                {assignErrors.assignEmployeeId && <span className="text-danger-500 text-sm">{assignErrors.assignEmployeeId.message}</span>}
               </div>
             </ModalBody>
             <ModalFooter>

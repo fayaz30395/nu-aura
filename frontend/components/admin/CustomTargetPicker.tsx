@@ -203,11 +203,11 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
   const getTargetTypeBadgeColor = (type: TargetType) => {
     switch (type) {
       case 'EMPLOYEE':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+        return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300';
       case 'DEPARTMENT':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+        return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300';
       case 'LOCATION':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
+        return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-500';
     }
   };
 
@@ -288,7 +288,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             onFocus={() => setShowDropdown(true)}
             placeholder={`Search ${getTargetTypeLabel(targetType).toLowerCase()}s...`}
             disabled={disabled}
-            className="w-full px-3 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-3 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-accent-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[var(--text-muted)]">
             {isSearching ? (
@@ -343,7 +343,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
 
       {/* Error Message */}
       {error && (
-        <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
+        <p className="text-xs text-danger-600 dark:text-danger-400">{error}</p>
       )}
 
       {/* Selected Targets */}

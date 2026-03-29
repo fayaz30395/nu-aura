@@ -87,16 +87,16 @@ export function EmployeeStep({
   return (
     <>
       {/* Project Summary */}
-      <div className="bg-sky-50 dark:bg-sky-900/20 rounded-lg p-4 border border-sky-200 dark:border-sky-800">
+      <div className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-4 border border-accent-200 dark:border-accent-800">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h4 className="font-medium text-sky-800 dark:text-sky-200">{createdProject?.name}</h4>
-            <p className="text-sm text-sky-700 dark:text-sky-400">
+            <h4 className="font-medium text-accent-800 dark:text-accent-200">{createdProject?.name}</h4>
+            <p className="text-sm text-accent-700 dark:text-accent-400">
               {createdProject?.projectCode} | {createdProject?.clientName || 'No Client'}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-sky-700 dark:text-sky-400">
+            <div className="text-sm text-accent-700 dark:text-accent-400">
               {createdProject?.startDate} - {createdProject?.expectedEndDate || 'Ongoing'}
             </div>
           </div>
@@ -105,22 +105,22 @@ export function EmployeeStep({
         {/* Allocation Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-sky-700 dark:text-sky-300">
+            <span className="text-accent-700 dark:text-accent-300">
               {resourcesNeeded} Resource{resourcesNeeded !== 1 ? 's' : ''} Needed = {totalAllocationNeeded}% Total Allocation
             </span>
-            <span className={isComplete ? (isOverAllocated ? 'text-amber-600 font-medium' : 'text-green-600 font-medium') : 'text-sky-700'}>
+            <span className={isComplete ? (isOverAllocated ? 'text-warning-600 font-medium' : 'text-success-600 font-medium') : 'text-accent-700'}>
               {currentAllocation}% / {totalAllocationNeeded}%
             </span>
           </div>
-          <div className="w-full bg-sky-200 dark:bg-sky-800 rounded-full h-2.5">
+          <div className="w-full bg-accent-200 dark:bg-accent-800 rounded-full h-2.5">
             <div
               className={`h-2.5 rounded-full transition-all ${
-                isOverAllocated ? 'bg-amber-500' : isComplete ? 'bg-green-500' : 'bg-sky-700'
+                isOverAllocated ? 'bg-warning-500' : isComplete ? 'bg-success-500' : 'bg-accent-700'
               }`}
               style={{ width: `${Math.min(100, allocationProgress)}%` }}
             />
           </div>
-          <div className="text-xs text-sky-500 dark:text-sky-400">
+          <div className="text-xs text-accent-500 dark:text-accent-400">
             {allocations.length} employee{allocations.length !== 1 ? 's' : ''} added
           </div>
         </div>
@@ -128,39 +128,39 @@ export function EmployeeStep({
 
       {/* Allocation Status Messages */}
       {!isComplete && remainingAllocation > 0 && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800 text-sm text-blue-700 dark:text-blue-300">
+        <div className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-4 border border-accent-200 dark:border-accent-800 text-sm text-accent-700 dark:text-accent-300">
           <Percent className="inline-block h-4 w-4 mr-2" />
           <strong>{remainingAllocation}%</strong> allocation remaining to reach {totalAllocationNeeded}%.
           <div className="mt-2 text-xs opacity-90 space-y-1">
             <div className="font-medium">Possible combinations:</div>
             <div className="flex flex-wrap gap-2">
               {remainingAllocation >= 100 && (
-                <span className="bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 100)} × 100%</span>
+                <span className="bg-accent-100 dark:bg-accent-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 100)} × 100%</span>
               )}
               {remainingAllocation >= 50 && (
-                <span className="bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 50)} × 50%</span>
+                <span className="bg-accent-100 dark:bg-accent-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 50)} × 50%</span>
               )}
               {remainingAllocation >= 25 && (
-                <span className="bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 25)} × 25%</span>
+                <span className="bg-accent-100 dark:bg-accent-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 25)} × 25%</span>
               )}
               {remainingAllocation >= 20 && (
-                <span className="bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 20)} × 20%</span>
+                <span className="bg-accent-100 dark:bg-accent-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 20)} × 20%</span>
               )}
               {remainingAllocation >= 10 && remainingAllocation < 20 && (
-                <span className="bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 10)} × 10%</span>
+                <span className="bg-accent-100 dark:bg-accent-800 px-2 py-0.5 rounded">{Math.floor(remainingAllocation / 10)} × 10%</span>
               )}
             </div>
           </div>
         </div>
       )}
       {isOverAllocated && (
-        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800 text-sm text-amber-700 dark:text-amber-300">
+        <div className="bg-warning-50 dark:bg-warning-900/20 rounded-lg p-4 border border-warning-200 dark:border-warning-800 text-sm text-warning-700 dark:text-warning-300">
           <AlertTriangle className="inline-block h-4 w-4 mr-2" />
           Over-allocated by {currentAllocation - totalAllocationNeeded}%. You have allocated more than the {resourcesNeeded} resource{resourcesNeeded !== 1 ? 's' : ''} needed.
         </div>
       )}
       {isComplete && !isOverAllocated && (
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800 text-sm text-green-700 dark:text-green-300">
+        <div className="bg-success-50 dark:bg-success-900/20 rounded-lg p-4 border border-success-200 dark:border-success-800 text-sm text-success-700 dark:text-success-300">
           <Check className="inline-block h-4 w-4 mr-2" />
           Allocation complete! {currentAllocation}% allocated across {allocations.length} employee{allocations.length !== 1 ? 's' : ''}.
         </div>
@@ -213,14 +213,14 @@ export function EmployeeStep({
                     </div>
                     <div className="text-right">
                       {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin text-sky-500" />
+                        <Loader2 className="h-4 w-4 animate-spin text-accent-500" />
                       ) : availableCapacity !== null ? (
                         <div className={`text-xs font-medium ${
                           isFullyAllocated
-                            ? 'text-red-500'
+                            ? 'text-danger-500'
                             : availableCapacity <= 25
-                              ? 'text-amber-500'
-                              : 'text-green-500'
+                              ? 'text-warning-500'
+                              : 'text-success-500'
                         }`}>
                           {isFullyAllocated ? (
                             <span className="flex items-center gap-1">
@@ -272,12 +272,12 @@ export function EmployeeStep({
                           <div className="h-full flex">
                             <div className="h-full bg-surface-400 dark:bg-surface-500" style={{ width: `${allocation.existingAllocations}%` }} />
                             <div
-                              className={`h-full ${isAtCapacity ? 'bg-amber-500' : isNearCapacity ? 'bg-yellow-500' : 'bg-sky-500'}`}
+                              className={`h-full ${isAtCapacity ? 'bg-warning-500' : isNearCapacity ? 'bg-warning-500' : 'bg-accent-500'}`}
                               style={{ width: `${allocation.allocationPercentage}%` }}
                             />
                           </div>
                         </div>
-                        <span className={`text-xs font-medium whitespace-nowrap ${isAtCapacity ? 'text-amber-600' : 'text-surface-500'}`}>
+                        <span className={`text-xs font-medium whitespace-nowrap ${isAtCapacity ? 'text-warning-600' : 'text-surface-500'}`}>
                           {totalWithThis}%
                         </span>
                       </div>
@@ -303,11 +303,11 @@ export function EmployeeStep({
                             max={allocation.availableCapacity}
                             value={allocation.allocationPercentage}
                             onChange={(e) => onAllocationChange(allocation.employeeId, 'allocationPercentage', parseInt(e.target.value) || 0)}
-                            className={`w-20 text-center text-sm ${isAtCapacity ? 'border-amber-400 bg-amber-50 dark:bg-amber-900/20' : ''}`}
+                            className={`w-20 text-center text-sm ${isAtCapacity ? 'border-warning-400 bg-warning-50 dark:bg-warning-900/20' : ''}`}
                           />
                           <Percent className="h-4 w-4 text-surface-400" />
                         </div>
-                        <div className={`text-xs ${isAtCapacity ? 'text-amber-600 font-medium' : 'text-surface-400'}`}>
+                        <div className={`text-xs ${isAtCapacity ? 'text-warning-600 font-medium' : 'text-surface-400'}`}>
                           max: {allocation.availableCapacity}%
                         </div>
                       </div>
@@ -333,7 +333,7 @@ export function EmployeeStep({
                       <button
                         type="button"
                         onClick={() => onRemoveEmployee(allocation.employeeId)}
-                        className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                        className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

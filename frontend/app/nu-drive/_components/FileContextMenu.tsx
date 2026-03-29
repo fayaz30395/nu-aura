@@ -81,7 +81,7 @@ export function FileContextMenu({
         onClick={() => onToggleStar(file)}
         className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4"
       >
-        <Star className={`h-4 w-4 ${file.starred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
+        <Star className={`h-4 w-4 ${file.starred ? 'fill-warning-500 text-warning-500' : ''}`} />
         {file.starred ? 'Remove star' : 'Add star'}
       </button>
       <button
@@ -94,7 +94,7 @@ export function FileContextMenu({
       <div className="border-t border-[var(--border-main)] dark:border-[var(--border-main)] my-1" />
       <button
         onClick={() => onDelete(file.id)}
-        className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-4"
+        className="w-full px-4 py-2 text-left text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 flex items-center gap-4"
       >
         <Trash2 className="h-4 w-4" />
         Delete

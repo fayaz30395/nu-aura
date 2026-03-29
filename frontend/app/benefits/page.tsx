@@ -130,18 +130,18 @@ const getBenefitIcon = (type: string) => {
 const getBenefitColor = (type: string) => {
   switch (type) {
     case 'HEALTH':
-      return 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400';
+      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
     case 'DENTAL':
-      return 'bg-pink-100 text-pink-600 dark:bg-pink-900 dark:text-pink-400';
+      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
     case 'LIFE':
-      return 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400';
+      return 'bg-accent-300 text-accent-700 dark:bg-accent-900 dark:text-accent-600';
     case 'RETIREMENT':
-      return 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400';
+      return 'bg-success-100 text-success-600 dark:bg-success-900 dark:text-success-400';
     case 'FSA':
     case 'HSA':
-      return 'bg-amber-100 text-amber-600 dark:bg-amber-900 dark:text-amber-400';
+      return 'bg-warning-100 text-warning-600 dark:bg-warning-900 dark:text-warning-400';
     case 'VISION':
-      return 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900 dark:text-cyan-400';
+      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   }
@@ -155,12 +155,12 @@ const coverageLevelLabels: Record<CoverageLevel, string> = {
 };
 
 const _claimStatusColors: Record<string, string> = {
-  'SUBMITTED': 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-  'UNDER_REVIEW': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
-  'APPROVED': 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
-  'REJECTED': 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
-  'PAID': 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
-  'APPEALED': 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300',
+  'SUBMITTED': 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
+  'UNDER_REVIEW': 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
+  'APPROVED': 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300',
+  'REJECTED': 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300',
+  'PAID': 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
+  'APPEALED': 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
 };
 
 export default function BenefitsPage() {
@@ -370,7 +370,7 @@ export default function BenefitsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
           <span className="ml-2 text-[var(--text-secondary)]">Loading benefits...</span>
         </div>
       </AppLayout>
@@ -395,7 +395,7 @@ export default function BenefitsPage() {
       <div className="space-y-6">
         {/* Notifications */}
         {error && (
-          <div className="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg flex items-center gap-2 text-red-800 dark:text-red-300">
+          <div className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
             <AlertCircle className="w-5 h-5" />
             {error}
             <Button size="sm" variant="outline" onClick={() => plansQuery.refetch()} className="ml-auto">
@@ -404,7 +404,7 @@ export default function BenefitsPage() {
           </div>
         )}
         {success && (
-          <div className="p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg flex items-center gap-2 text-green-800 dark:text-green-300">
+          <div className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
             <CheckCircle className="w-5 h-5" />
             {success}
           </div>
@@ -433,8 +433,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
-                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
+                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Enrolled Plans</p>
@@ -446,8 +446,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
-                  <DollarSign className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <DollarSign className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Monthly Premium</p>
@@ -459,8 +459,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
-                  <Gift className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
+                  <Gift className="h-6 w-6 text-accent-700 dark:text-accent-600" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Available Plans</p>
@@ -472,8 +472,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
-                  <Shield className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
+                  <Shield className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Coverage</p>
@@ -487,8 +487,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-cyan-100 p-4 dark:bg-cyan-900">
-                  <CreditCard className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                  <CreditCard className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Flex Credits</p>
@@ -507,7 +507,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('plans')}
               className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
-                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
+                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
@@ -517,7 +517,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('enrollments')}
               className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
-                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
+                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
@@ -527,7 +527,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('claims')}
               className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
-                  ? 'text-sky-700 dark:text-sky-400 border-b-2 border-sky-500'
+                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
@@ -713,7 +713,7 @@ export default function BenefitsPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                             onClick={() => handleTerminateStart(enrollment.id)}
                           >
                             <XCircle className="h-4 w-4 mr-1" />
@@ -776,12 +776,12 @@ export default function BenefitsPage() {
                           {claim.approvedAmount !== undefined && (
                             <div>
                               <span className="text-[var(--text-secondary)]">Approved Amount:</span>
-                              <p className="font-medium text-green-600">${claim.approvedAmount.toLocaleString()}</p>
+                              <p className="font-medium text-success-600">${claim.approvedAmount.toLocaleString()}</p>
                             </div>
                           )}
                         </div>
                         {claim.rejectionReason && (
-                          <div className="mt-2 text-sm text-red-600">
+                          <div className="mt-2 text-sm text-danger-600">
                             <span className="font-medium">Rejection Reason:</span> {claim.rejectionReason}
                           </div>
                         )}
@@ -800,7 +800,7 @@ export default function BenefitsPage() {
         )}
 
         {/* Open Enrollment Banner */}
-        <Card className="bg-gradient-to-r from-sky-500 to-sky-700">
+        <Card className="bg-gradient-to-r from-accent-500 to-accent-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="text-white">
@@ -873,7 +873,7 @@ export default function BenefitsPage() {
                         <option value="EMPLOYEE_CHILDREN">Employee + Children</option>
                         <option value="FAMILY">Family</option>
                       </select>
-                      {enrollmentErrors.coverageLevel && <span className="text-red-500 text-sm">{enrollmentErrors.coverageLevel.message}</span>}
+                      {enrollmentErrors.coverageLevel && <span className="text-danger-500 text-sm">{enrollmentErrors.coverageLevel.message}</span>}
                     </div>
 
                     <div>
@@ -886,7 +886,7 @@ export default function BenefitsPage() {
                         className="w-full input-aura rounded-lg p-2"
                         {...registerEnrollment('effectiveDate')}
                       />
-                      {enrollmentErrors.effectiveDate && <span className="text-red-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
+                      {enrollmentErrors.effectiveDate && <span className="text-danger-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
                     </div>
 
                     {stats.flexCredits > 0 && (
@@ -948,7 +948,7 @@ export default function BenefitsPage() {
                     </option>
                   ))}
                 </select>
-                {claimErrors.enrollmentId && <span className="text-red-500 text-sm">{claimErrors.enrollmentId.message}</span>}
+                {claimErrors.enrollmentId && <span className="text-danger-500 text-sm">{claimErrors.enrollmentId.message}</span>}
               </div>
 
               <div>
@@ -965,7 +965,7 @@ export default function BenefitsPage() {
                   <option value="PRESCRIPTION">Prescription</option>
                   <option value="OTHER">Other</option>
                 </select>
-                {claimErrors.claimType && <span className="text-red-500 text-sm">{claimErrors.claimType.message}</span>}
+                {claimErrors.claimType && <span className="text-danger-500 text-sm">{claimErrors.claimType.message}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -978,7 +978,7 @@ export default function BenefitsPage() {
                     className="w-full input-aura rounded-lg p-2"
                     {...registerClaim('serviceDate')}
                   />
-                  {claimErrors.serviceDate && <span className="text-red-500 text-sm">{claimErrors.serviceDate.message}</span>}
+                  {claimErrors.serviceDate && <span className="text-danger-500 text-sm">{claimErrors.serviceDate.message}</span>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -992,7 +992,7 @@ export default function BenefitsPage() {
                     placeholder="0.00"
                     {...registerClaim('claimAmount')}
                   />
-                  {claimErrors.claimAmount && <span className="text-red-500 text-sm">{claimErrors.claimAmount.message}</span>}
+                  {claimErrors.claimAmount && <span className="text-danger-500 text-sm">{claimErrors.claimAmount.message}</span>}
                 </div>
               </div>
 
@@ -1006,7 +1006,7 @@ export default function BenefitsPage() {
                   placeholder="Doctor/Hospital name"
                   {...registerClaim('serviceProvider')}
                 />
-                {claimErrors.serviceProvider && <span className="text-red-500 text-sm">{claimErrors.serviceProvider.message}</span>}
+                {claimErrors.serviceProvider && <span className="text-danger-500 text-sm">{claimErrors.serviceProvider.message}</span>}
               </div>
 
               <div>

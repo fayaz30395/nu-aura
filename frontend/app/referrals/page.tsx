@@ -59,25 +59,25 @@ type ReferralFormValues = z.infer<typeof referralFormSchema>;
 const getStatusConfig = (status: ReferralStatus) => {
   switch (status) {
     case 'SUBMITTED':
-      return { bg: 'bg-sky-100 dark:bg-sky-900/30', text: 'text-sky-700 dark:text-sky-400', label: 'Submitted' };
+      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Submitted' };
     case 'SCREENING':
-      return { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-400', label: 'Screening' };
+      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'Screening' };
     case 'INTERVIEW_SCHEDULED':
-      return { bg: 'bg-indigo-100 dark:bg-indigo-900/30', text: 'text-indigo-700 dark:text-indigo-400', label: 'Interview Scheduled' };
+      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Interview Scheduled' };
     case 'INTERVIEW_COMPLETED':
-      return { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-400', label: 'Interview Done' };
+      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Interview Done' };
     case 'OFFER_MADE':
-      return { bg: 'bg-cyan-100 dark:bg-cyan-900/30', text: 'text-cyan-700 dark:text-cyan-400', label: 'Offer Made' };
+      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Offer Made' };
     case 'OFFER_ACCEPTED':
-      return { bg: 'bg-teal-100 dark:bg-teal-900/30', text: 'text-teal-700 dark:text-teal-400', label: 'Offer Accepted' };
+      return { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', label: 'Offer Accepted' };
     case 'JOINED':
-      return { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400', label: 'Joined' };
+      return { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', label: 'Joined' };
     case 'REJECTED':
-      return { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', label: 'Rejected' };
+      return { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Rejected' };
     case 'WITHDRAWN':
       return { bg: 'bg-gray-100 dark:bg-gray-900/30', text: 'text-gray-700 dark:text-gray-400', label: 'Withdrawn' };
     case 'ON_HOLD':
-      return { bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-400', label: 'On Hold' };
+      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'On Hold' };
     default:
       return { bg: 'bg-gray-100 dark:bg-gray-900/30', text: 'text-gray-700 dark:text-gray-400', label: status };
   }
@@ -200,7 +200,7 @@ export default function ReferralsPage() {
           </div>
           <button
             onClick={() => setActiveTab('submit')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-sky-500/30 skeuo-button"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
           >
             <Plus className="h-5 w-5" />
             Submit Referral
@@ -211,10 +211,10 @@ export default function ReferralsPage() {
         {dashboard && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Referrals', value: dashboard.totalReferrals, icon: Users, gradient: 'from-sky-500 to-sky-700' },
-              { label: 'Active', value: dashboard.activeReferrals, icon: TrendingUp, gradient: 'from-amber-500 to-amber-600' },
-              { label: 'Hired', value: dashboard.hiredReferrals, icon: UserPlus, gradient: 'from-emerald-500 to-emerald-600' },
-              { label: 'Bonuses Paid', value: formatCurrency(dashboard.totalBonusesPaid), icon: DollarSign, gradient: 'from-purple-500 to-purple-600' },
+              { label: 'Total Referrals', value: dashboard.totalReferrals, icon: Users, gradient: 'from-accent-500 to-accent-700' },
+              { label: 'Active', value: dashboard.activeReferrals, icon: TrendingUp, gradient: 'from-warning-500 to-warning-600' },
+              { label: 'Hired', value: dashboard.hiredReferrals, icon: UserPlus, gradient: 'from-success-500 to-success-600' },
+              { label: 'Bonuses Paid', value: formatCurrency(dashboard.totalBonusesPaid), icon: DollarSign, gradient: 'from-accent-700 to-accent-800' },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -247,7 +247,7 @@ export default function ReferralsPage() {
                       onClick={() => setActiveTab(tab.key)}
                       className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === tab.key
-                          ? 'border-sky-700 text-sky-700 dark:text-sky-400'
+                          ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                           : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -262,7 +262,7 @@ export default function ReferralsPage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.key
-                      ? 'border-sky-700 text-sky-700 dark:text-sky-400'
+                      ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
                   }`}
                 >
@@ -360,12 +360,12 @@ export default function ReferralsPage() {
         {activeTab === 'submit' && (
           <div className="max-w-2xl">
             {submitSuccess ? (
-              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-6 text-center">
-                <CheckCircle className="h-12 w-12 text-emerald-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-300">
+              <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
+                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
+                <h3 className="text-lg font-semibold text-success-800 dark:text-success-300">
                   Referral Submitted Successfully!
                 </h3>
-                <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
+                <p className="text-sm text-success-600 dark:text-success-400 mt-1">
                   You can track its progress in the My Referrals tab.
                 </p>
               </div>
@@ -386,11 +386,11 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('candidateName')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="Full name"
                     />
                     {errors.candidateName && (
-                      <p className="text-xs text-red-500 mt-1">{errors.candidateName.message}</p>
+                      <p className="text-xs text-danger-500 mt-1">{errors.candidateName.message}</p>
                     )}
                   </div>
 
@@ -402,11 +402,11 @@ export default function ReferralsPage() {
                     <input
                       {...register('candidateEmail')}
                       type="email"
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="candidate@email.com"
                     />
                     {errors.candidateEmail && (
-                      <p className="text-xs text-red-500 mt-1">{errors.candidateEmail.message}</p>
+                      <p className="text-xs text-danger-500 mt-1">{errors.candidateEmail.message}</p>
                     )}
                   </div>
 
@@ -417,7 +417,7 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('candidatePhone')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="+1 (555) 000-0000"
                     />
                   </div>
@@ -429,7 +429,7 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('candidateLinkedin')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="https://linkedin.com/in/..."
                     />
                   </div>
@@ -441,11 +441,11 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('jobTitle')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="e.g., Senior Software Engineer"
                     />
                     {errors.jobTitle && (
-                      <p className="text-xs text-red-500 mt-1">{errors.jobTitle.message}</p>
+                      <p className="text-xs text-danger-500 mt-1">{errors.jobTitle.message}</p>
                     )}
                   </div>
 
@@ -456,7 +456,7 @@ export default function ReferralsPage() {
                     </label>
                     <select
                       {...register('relationship')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >
                       {(Object.entries(RELATIONSHIP_LABELS) as [ReferralRelationship, string][]).map(
                         ([value, label]) => (
@@ -467,7 +467,7 @@ export default function ReferralsPage() {
                       )}
                     </select>
                     {errors.relationship && (
-                      <p className="text-xs text-red-500 mt-1">{errors.relationship.message}</p>
+                      <p className="text-xs text-danger-500 mt-1">{errors.relationship.message}</p>
                     )}
                   </div>
                 </div>
@@ -480,7 +480,7 @@ export default function ReferralsPage() {
                   <textarea
                     {...register('referrerNotes')}
                     rows={3}
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 resize-none"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                     placeholder="Why do you recommend this candidate?"
                   />
                 </div>
@@ -499,14 +499,14 @@ export default function ReferralsPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting || submitReferral.isPending}
-                    className="px-5 py-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-800 rounded-xl shadow-lg shadow-sky-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-5 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitReferral.isPending ? 'Submitting...' : 'Submit Referral'}
                   </button>
                 </div>
 
                 {submitReferral.isError && (
-                  <p className="text-sm text-red-500 mt-2">
+                  <p className="text-sm text-danger-500 mt-2">
                     Failed to submit referral. Please try again.
                   </p>
                 )}
@@ -547,7 +547,7 @@ export default function ReferralsPage() {
                       <span
                         className={`text-xs font-medium px-2 py-1 rounded-full ${
                           policy.isActive
-                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                            ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
                             : 'bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400'
                         }`}
                       >
@@ -678,7 +678,7 @@ export default function ReferralsPage() {
                                             status: 'SCREENING',
                                           })
                                         }
-                                        className="text-xs px-2.5 py-1 rounded-lg bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-400 transition-colors"
+                                        className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors"
                                       >
                                         Screen
                                       </button>

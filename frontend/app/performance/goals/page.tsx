@@ -149,23 +149,23 @@ export default function GoalsPage() {
   const getStatusColor = (status: GoalStatus) => {
     switch (status) {
       case 'DRAFT': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      case 'ACTIVE': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
-      case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800';
-      case 'COMPLETED': return 'bg-green-100 text-green-800';
-      case 'CANCELLED': return 'bg-red-100 text-red-800';
-      case 'ON_HOLD': return 'bg-orange-100 text-orange-800';
+      case 'ACTIVE': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800';
+      case 'COMPLETED': return 'bg-success-100 text-success-800';
+      case 'CANCELLED': return 'bg-danger-100 text-danger-800';
+      case 'ON_HOLD': return 'bg-warning-100 text-warning-800';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getTypeColor = (type: GoalType) => {
     switch (type) {
-      case 'OKR': return 'bg-purple-100 text-purple-800';
-      case 'KPI': return 'bg-indigo-100 text-indigo-800';
-      case 'PERSONAL': return 'bg-green-100 text-green-800';
-      case 'TEAM': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
-      case 'DEPARTMENT': return 'bg-pink-100 text-pink-800';
-      case 'ORGANIZATION': return 'bg-red-100 text-red-800';
+      case 'OKR': return 'bg-accent-300 text-accent-900';
+      case 'KPI': return 'bg-accent-100 text-accent-800';
+      case 'PERSONAL': return 'bg-success-100 text-success-800';
+      case 'TEAM': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'DEPARTMENT': return 'bg-accent-300 text-accent-900';
+      case 'ORGANIZATION': return 'bg-danger-100 text-danger-800';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
@@ -314,7 +314,7 @@ export default function GoalsPage() {
                     </div>
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
-                        className="bg-sky-500 h-2 rounded-full transition-all duration-300"
+                        className="bg-accent-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: progress + '%' }}
                       ></div>
                     </div>
@@ -333,7 +333,7 @@ export default function GoalsPage() {
                     <PermissionGate permission={Permissions.GOAL_UPDATE}>
                       <button
                         onClick={() => openEditModal(goal)}
-                        className="flex-1 px-3 py-2 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 rounded hover:bg-sky-100 text-sm font-medium"
+                        className="flex-1 px-3 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
                       >
                         Edit
                       </button>
@@ -341,7 +341,7 @@ export default function GoalsPage() {
                     <PermissionGate permission={Permissions.GOAL_DELETE}>
                       <button
                         onClick={() => openDeleteConfirm(goal)}
-                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                        className="flex-1 px-3 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
                       >
                         Delete
                       </button>
@@ -372,7 +372,7 @@ export default function GoalsPage() {
                         className="input-aura"
                       />
                       {errors.title && (
-                        <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.title.message}</p>
                       )}
                     </div>
 
@@ -386,7 +386,7 @@ export default function GoalsPage() {
                         className="input-aura"
                       />
                       {errors.description && (
-                        <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>
                       )}
                     </div>
 
@@ -407,7 +407,7 @@ export default function GoalsPage() {
                           <option value="ORGANIZATION">Organization</option>
                         </select>
                         {errors.goalType && (
-                          <p className="text-red-500 text-sm mt-1">{errors.goalType.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.goalType.message}</p>
                         )}
                       </div>
 
@@ -427,7 +427,7 @@ export default function GoalsPage() {
                           <option value="ON_HOLD">On Hold</option>
                         </select>
                         {errors.status && (
-                          <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
                         )}
                       </div>
                     </div>
@@ -443,7 +443,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.targetValue && (
-                          <p className="text-red-500 text-sm mt-1">{errors.targetValue.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.targetValue.message}</p>
                         )}
                       </div>
 
@@ -457,7 +457,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.currentValue && (
-                          <p className="text-red-500 text-sm mt-1">{errors.currentValue.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.currentValue.message}</p>
                         )}
                       </div>
 
@@ -472,7 +472,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.unit && (
-                          <p className="text-red-500 text-sm mt-1">{errors.unit.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.unit.message}</p>
                         )}
                       </div>
                     </div>
@@ -488,7 +488,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.startDate && (
-                          <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
                         )}
                       </div>
 
@@ -502,7 +502,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.endDate && (
-                          <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
                         )}
                       </div>
                     </div>
@@ -553,7 +553,7 @@ export default function GoalsPage() {
                 <button
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
                 </button>

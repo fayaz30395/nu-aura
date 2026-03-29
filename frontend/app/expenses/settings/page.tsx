@@ -173,7 +173,7 @@ export default function ExpenseSettingsPage() {
   const categories = categoriesData?.content || [];
   const policies = policiesData?.content || [];
 
-  const inputClass = 'w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2';
+  const inputClass = 'w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2';
 
   return (
     <AppLayout>
@@ -217,7 +217,7 @@ export default function ExpenseSettingsPage() {
                 </h2>
                 <button
                   onClick={openCategoryCreate}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-700 hover:bg-sky-800 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Add Category
@@ -236,7 +236,7 @@ export default function ExpenseSettingsPage() {
                             <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">Inactive</span>
                           )}
                           {cat.requiresReceipt && (
-                            <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs">Receipt Required</span>
+                            <span className="px-1.5 py-0.5 bg-warning-100 text-warning-700 rounded text-xs">Receipt Required</span>
                           )}
                         </div>
                         {cat.description && <p className="text-sm text-surface-500 mt-0.5">{cat.description}</p>}
@@ -251,7 +251,7 @@ export default function ExpenseSettingsPage() {
                           className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors"
                           title={cat.isActive ? 'Deactivate' : 'Activate'}
                         >
-                          {cat.isActive ? <ToggleRight className="w-5 h-5 text-green-500" /> : <ToggleLeft className="w-5 h-5" />}
+                          {cat.isActive ? <ToggleRight className="w-5 h-5 text-success-500" /> : <ToggleLeft className="w-5 h-5" />}
                         </button>
                         <button
                           onClick={() => openCategoryEdit(cat)}
@@ -262,7 +262,7 @@ export default function ExpenseSettingsPage() {
                         </button>
                         <button
                           onClick={() => setDeleteCategoryId(cat.id)}
-                          className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                          className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -285,7 +285,7 @@ export default function ExpenseSettingsPage() {
                 </h2>
                 <button
                   onClick={openPolicyCreate}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-700 hover:bg-sky-800 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Add Policy
@@ -304,7 +304,7 @@ export default function ExpenseSettingsPage() {
                             <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">Inactive</span>
                           )}
                           {pol.requiresPreApproval && (
-                            <span className="px-1.5 py-0.5 bg-sky-100 text-sky-700 rounded text-xs">Pre-Approval</span>
+                            <span className="px-1.5 py-0.5 bg-accent-100 text-accent-700 rounded text-xs">Pre-Approval</span>
                           )}
                         </div>
                         {pol.description && <p className="text-sm text-surface-500 mt-0.5">{pol.description}</p>}
@@ -320,7 +320,7 @@ export default function ExpenseSettingsPage() {
                           onClick={() => togglePolicyMutation.mutate({ policyId: pol.id, active: !pol.isActive })}
                           className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors"
                         >
-                          {pol.isActive ? <ToggleRight className="w-5 h-5 text-green-500" /> : <ToggleLeft className="w-5 h-5" />}
+                          {pol.isActive ? <ToggleRight className="w-5 h-5 text-success-500" /> : <ToggleLeft className="w-5 h-5" />}
                         </button>
                         <button
                           onClick={() => openPolicyEdit(pol)}
@@ -345,7 +345,7 @@ export default function ExpenseSettingsPage() {
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Name *</label>
                     <input {...categoryForm.register('name')} className={inputClass} />
-                    {categoryForm.formState.errors.name && <p className="text-red-500 text-sm mt-1">{categoryForm.formState.errors.name.message}</p>}
+                    {categoryForm.formState.errors.name && <p className="text-danger-500 text-sm mt-1">{categoryForm.formState.errors.name.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
@@ -379,7 +379,7 @@ export default function ExpenseSettingsPage() {
               </ModalBody>
               <ModalFooter>
                 <button type="button" onClick={() => setShowCategoryModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending} className="px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors disabled:opacity-50">
+                <button type="submit" disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50">
                   {editingCategory ? 'Update' : 'Create'}
                 </button>
               </ModalFooter>
@@ -395,7 +395,7 @@ export default function ExpenseSettingsPage() {
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Policy Name *</label>
                     <input {...policyForm.register('name')} className={inputClass} />
-                    {policyForm.formState.errors.name && <p className="text-red-500 text-sm mt-1">{policyForm.formState.errors.name.message}</p>}
+                    {policyForm.formState.errors.name && <p className="text-danger-500 text-sm mt-1">{policyForm.formState.errors.name.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
@@ -450,7 +450,7 @@ export default function ExpenseSettingsPage() {
               </ModalBody>
               <ModalFooter>
                 <button type="button" onClick={() => setShowPolicyModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={createPolicyMutation.isPending || updatePolicyMutation.isPending} className="px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors disabled:opacity-50">
+                <button type="submit" disabled={createPolicyMutation.isPending || updatePolicyMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50">
                   {editingPolicy ? 'Update' : 'Create'}
                 </button>
               </ModalFooter>

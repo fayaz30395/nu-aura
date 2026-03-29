@@ -33,13 +33,13 @@ interface ApiError {
 }
 
 const statusColors: Record<string, string> = {
-  PENDING:           'tint-warning text-yellow-700',
-  TARGET_ACCEPTED:   'tint-info text-blue-700',
-  TARGET_DECLINED:   'tint-danger text-red-700',
-  PENDING_APPROVAL:  'tint-orange text-orange-700',
-  APPROVED:          'tint-success text-green-700',
-  REJECTED:          'tint-danger text-red-700',
-  COMPLETED:         'tint-success text-green-800',
+  PENDING:           'tint-warning text-warning-700',
+  TARGET_ACCEPTED:   'tint-info text-accent-700',
+  TARGET_DECLINED:   'tint-danger text-danger-700',
+  PENDING_APPROVAL:  'tint-orange text-warning-700',
+  APPROVED:          'tint-success text-success-700',
+  REJECTED:          'tint-danger text-danger-700',
+  COMPLETED:         'tint-success text-success-800',
   CANCELLED:         'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
@@ -176,7 +176,7 @@ export default function ShiftSwapPage() {
               onClick={() => setActiveTab(tab.key as 'my' | 'incoming' | 'approval')}
               className={`pb-2 px-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.key
-                  ? 'border-blue-600 text-blue-600'
+                  ? 'border-accent-600 text-accent-600'
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -226,11 +226,11 @@ export default function ShiftSwapPage() {
                       <td className="px-4 py-3">
                         {activeTab === 'incoming' && req.status === 'PENDING' && (
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="text-green-700 border-green-200"
+                            <Button size="sm" variant="outline" className="text-success-700 border-success-200"
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'accept', payload: { employeeId } })}>
                               Accept
                             </Button>
-                            <Button size="sm" variant="outline" className="text-red-700 border-red-200"
+                            <Button size="sm" variant="outline" className="text-danger-700 border-danger-200"
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'decline', payload: { employeeId } })}>
                               Decline
                             </Button>
@@ -238,11 +238,11 @@ export default function ShiftSwapPage() {
                         )}
                         {activeTab === 'approval' && req.status === 'PENDING_APPROVAL' && (
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="text-green-700 border-green-200"
+                            <Button size="sm" variant="outline" className="text-success-700 border-success-200"
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'approve', payload: { managerId: employeeId } })}>
                               Approve
                             </Button>
-                            <Button size="sm" variant="outline" className="text-red-700 border-red-200"
+                            <Button size="sm" variant="outline" className="text-danger-700 border-danger-200"
                               onClick={() => actionMutation.mutate({ id: req.id, action: 'reject', payload: { managerId: employeeId, reason: '' } })}>
                               Reject
                             </Button>
@@ -284,7 +284,7 @@ export default function ShiftSwapPage() {
                     <option value="PICK_UP">Pick Up (take an available shift)</option>
                   </select>
                   {errors.swapType && (
-                    <p className="mt-1 text-xs text-red-500">{errors.swapType.message}</p>
+                    <p className="mt-1 text-xs text-danger-500">{errors.swapType.message}</p>
                   )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -293,10 +293,10 @@ export default function ShiftSwapPage() {
                     <input
                       type="date"
                       {...register('requesterShiftDate')}
-                      className={`input-aura ${errors.requesterShiftDate ? 'border-red-500' : ''}`}
+                      className={`input-aura ${errors.requesterShiftDate ? 'border-danger-500' : ''}`}
                     />
                     {errors.requesterShiftDate && (
-                      <p className="mt-1 text-xs text-red-500">{errors.requesterShiftDate.message}</p>
+                      <p className="mt-1 text-xs text-danger-500">{errors.requesterShiftDate.message}</p>
                     )}
                   </div>
                   {watchedSwapType === 'SWAP' && (
@@ -316,10 +316,10 @@ export default function ShiftSwapPage() {
                     type="text"
                     {...register('requesterAssignmentId')}
                     placeholder="UUID of your shift assignment"
-                    className={`input-aura ${errors.requesterAssignmentId ? 'border-red-500' : ''}`}
+                    className={`input-aura ${errors.requesterAssignmentId ? 'border-danger-500' : ''}`}
                   />
                   {errors.requesterAssignmentId && (
-                    <p className="mt-1 text-xs text-red-500">{errors.requesterAssignmentId.message}</p>
+                    <p className="mt-1 text-xs text-danger-500">{errors.requesterAssignmentId.message}</p>
                   )}
                 </div>
                 {watchedSwapType !== 'PICK_UP' && (

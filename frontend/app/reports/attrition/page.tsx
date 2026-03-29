@@ -25,10 +25,10 @@ interface AttritionPrediction {
 }
 
 const RISK_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
-  CRITICAL: { bg: 'bg-red-50 border-red-200', text: 'text-red-700', bar: 'bg-red-500' },
-  HIGH:     { bg: 'bg-orange-50 border-orange-200', text: 'text-orange-700', bar: 'bg-orange-500' },
-  MEDIUM:   { bg: 'bg-yellow-50 border-yellow-200', text: 'text-yellow-700', bar: 'bg-yellow-400' },
-  LOW:      { bg: 'bg-green-50 border-green-200', text: 'text-green-700', bar: 'bg-green-400' },
+  CRITICAL: { bg: 'bg-danger-50 border-danger-200', text: 'text-danger-700', bar: 'bg-danger-500' },
+  HIGH:     { bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-500' },
+  MEDIUM:   { bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-400' },
+  LOW:      { bg: 'bg-success-50 border-success-200', text: 'text-success-700', bar: 'bg-success-400' },
 };
 
 export default function AttritionReportPage() {
@@ -111,7 +111,7 @@ export default function AttritionReportPage() {
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
             </button>
             <PermissionGate permission={Permissions.ANALYTICS_EXPORT}>
-              <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
+              <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-3 py-2 text-sm bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50">
                 <Download className="h-4 w-4" /> Export CSV
               </button>
             </PermissionGate>
@@ -119,7 +119,7 @@ export default function AttritionReportPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-700 flex items-start gap-2">
+          <div className="mb-4 p-4 bg-warning-50 border border-warning-200 rounded-md text-sm text-warning-700 flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
             {error}
           </div>
@@ -138,7 +138,7 @@ export default function AttritionReportPage() {
               <button
                 key={level}
                 onClick={() => setSelectedRisk(prev => prev === level ? 'ALL' : level)}
-                className={`p-4 rounded-lg border text-left transition-all ${colors.bg} ${selectedRisk === level ? 'ring-2 ring-offset-1 ring-blue-500' : 'hover:opacity-80'}`}
+                className={`p-4 rounded-lg border text-left transition-all ${colors.bg} ${selectedRisk === level ? 'ring-2 ring-offset-1 ring-accent-500' : 'hover:opacity-80'}`}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <Icon className={`h-4 w-4 ${colors.text}`} />
@@ -166,18 +166,18 @@ export default function AttritionReportPage() {
           </div>
           <span className="text-xs text-[var(--text-muted)]">{filtered.length} employees shown</span>
           {selectedRisk !== 'ALL' && (
-            <button onClick={() => setSelectedRisk('ALL')} className="text-xs text-blue-600 hover:underline">Clear filter</button>
+            <button onClick={() => setSelectedRisk('ALL')} className="text-xs text-accent-600 hover:underline">Clear filter</button>
           )}
         </div>
 
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 skeuo-card">
-            <Shield className="h-12 w-12 text-green-400 mx-auto mb-3" />
+            <Shield className="h-12 w-12 text-success-400 mx-auto mb-3" />
             <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
             <p className="text-sm text-[var(--text-muted)] mt-1">Lower the minimum risk score to see more results</p>
           </div>
@@ -211,7 +211,7 @@ export default function AttritionReportPage() {
                             {pred.riskLevel}
                           </span>
                           {pred.actionTaken && (
-                            <span className="shrink-0 text-xs text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded">
+                            <span className="shrink-0 text-xs text-success-600 bg-success-50 border border-success-200 px-1.5 py-0.5 rounded">
                               Action Taken
                             </span>
                           )}
@@ -251,7 +251,7 @@ export default function AttritionReportPage() {
                                     <span className="text-xs text-[var(--text-secondary)] w-28 shrink-0">{f.name}</span>
                                     <div className="flex-1 h-1.5 bg-[var(--border-main)] rounded-full overflow-hidden">
                                       <div
-                                        className={`h-full rounded-full ${f.impact === 'HIGH' ? 'bg-red-500' : f.impact === 'MEDIUM' ? 'bg-yellow-400' : 'bg-green-400'}`}
+                                        className={`h-full rounded-full ${f.impact === 'HIGH' ? 'bg-danger-500' : f.impact === 'MEDIUM' ? 'bg-warning-400' : 'bg-success-400'}`}
                                         style={{ width: `${f.score}%` }}
                                       />
                                     </div>
@@ -269,7 +269,7 @@ export default function AttritionReportPage() {
                               <ul className="space-y-1">
                                 {pred.recommendations.map((r, i) => (
                                   <li key={i} className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
-                                    <span className="text-blue-500 mt-0.5">•</span>
+                                    <span className="text-accent-500 mt-0.5">•</span>
                                     {r}
                                   </li>
                                 ))}
@@ -283,7 +283,7 @@ export default function AttritionReportPage() {
                             <button
                               onClick={() => markActionTaken(pred.id)}
                               disabled={markingAction === pred.id}
-                              className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                              className="text-xs px-3 py-1.5 bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50"
                             >
                               {markingAction === pred.id ? 'Saving…' : 'Mark Action Taken'}
                             </button>

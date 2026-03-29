@@ -45,10 +45,10 @@ interface HeadcountData {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  EXCELLENT: 'text-green-600 bg-green-50',
-  GOOD: 'text-blue-600 bg-blue-50',
-  WARNING: 'text-yellow-600 bg-yellow-50',
-  CRITICAL: 'text-red-600 bg-red-50',
+  EXCELLENT: 'text-success-600 bg-success-50',
+  GOOD: 'text-accent-600 bg-accent-50',
+  WARNING: 'text-warning-600 bg-warning-50',
+  CRITICAL: 'text-danger-600 bg-danger-50',
 };
 
 export default function HeadcountReportPage() {
@@ -125,12 +125,12 @@ export default function HeadcountReportPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">{error}</div>
+          <div className="mb-4 p-4 bg-danger-50 border border-danger-200 rounded-md text-sm text-danger-600">{error}</div>
         )}
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full" />
           </div>
         ) : (
           <>
@@ -151,17 +151,17 @@ export default function HeadcountReportPage() {
               </div>
               <div className="skeuo-card p-4">
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingUp className="h-3.5 w-3.5 text-green-500" />
+                  <TrendingUp className="h-3.5 w-3.5 text-success-500" />
                   <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">New Hires (Month)</p>
                 </div>
-                <p className="text-3xl font-bold text-green-600 mt-1">{metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}</p>
+                <p className="text-3xl font-bold text-success-600 mt-1">{metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}</p>
               </div>
               <div className="skeuo-card p-4">
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingDown className="h-3.5 w-3.5 text-red-500" />
+                  <TrendingDown className="h-3.5 w-3.5 text-danger-500" />
                   <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Exits (Month)</p>
                 </div>
-                <p className="text-3xl font-bold text-red-600 mt-1">{metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}</p>
+                <p className="text-3xl font-bold text-danger-600 mt-1">{metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}</p>
                 {orgHealth?.turnover?.annualTurnoverRate != null && (
                   <p className="text-xs text-[var(--text-muted)] mt-1">Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</p>
                 )}
@@ -172,7 +172,7 @@ export default function HeadcountReportPage() {
               {/* By Department */}
               <div className="skeuo-card p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Building2 className="h-4 w-4 text-blue-600" />
+                  <Building2 className="h-4 w-4 text-accent-600" />
                   <h2 className="text-sm font-semibold text-[var(--text-primary)]">Headcount by Department</h2>
                 </div>
                 {metrics?.byDepartment && metrics.byDepartment.length > 0 ? (
@@ -187,7 +187,7 @@ export default function HeadcountReportPage() {
                           </div>
                           <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-blue-500 rounded-full"
+                              className="h-full bg-accent-500 rounded-full"
                               style={{ width: `${(dept.count / maxDeptCount) * 100}%` }}
                             />
                           </div>
@@ -206,7 +206,7 @@ export default function HeadcountReportPage() {
                           </div>
                           <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-blue-500 rounded-full"
+                              className="h-full bg-accent-500 rounded-full"
                               style={{ width: `${(count / maxDeptCount) * 100}%` }}
                             />
                           </div>
@@ -221,7 +221,7 @@ export default function HeadcountReportPage() {
               {/* Headcount Trend */}
               <div className="skeuo-card p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Users className="h-4 w-4 text-indigo-600" />
+                  <Users className="h-4 w-4 text-accent-600" />
                   <h2 className="text-sm font-semibold text-[var(--text-primary)]">12-Month Headcount Trend</h2>
                 </div>
                 {trend.length > 0 ? (
@@ -231,7 +231,7 @@ export default function HeadcountReportPage() {
                         <span className="text-xs text-[var(--text-muted)] w-16 shrink-0">{t.month}</span>
                         <div className="flex-1 h-5 bg-[var(--bg-surface)] rounded overflow-hidden relative">
                           <div
-                            className="h-full bg-indigo-500 rounded"
+                            className="h-full bg-accent-500 rounded"
                             style={{ width: `${(t.headcount / maxTrendCount) * 100}%` }}
                           />
                         </div>

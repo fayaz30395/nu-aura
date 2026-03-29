@@ -161,7 +161,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
               <Clock className="h-4 w-4 text-white" />
             </div>
             <h1 className="text-page-title text-[var(--text-primary)] skeuo-emboss">Attendance</h1>
@@ -175,21 +175,21 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
         <div className="flex items-center gap-4">
           {/* Streak Badge */}
           {streak > 0 && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-              <Flame className="h-5 w-5 text-orange-500" />
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-900/20 dark:to-warning-900/20 rounded-lg border border-warning-200 dark:border-warning-800">
+              <Flame className="h-5 w-5 text-warning-500" />
               <div>
-                <div className="text-lg font-bold text-orange-600 dark:text-orange-400 leading-none">{streak}</div>
-                <div className="text-xs text-orange-500 dark:text-orange-400">day streak</div>
+                <div className="text-lg font-bold text-warning-600 dark:text-warning-400 leading-none">{streak}</div>
+                <div className="text-xs text-warning-500 dark:text-warning-400">day streak</div>
               </div>
             </div>
           )}
           {/* Live Clock */}
           <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] rounded-lg shadow-sm border border-[var(--border-main)]">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-sky-500 to-sky-700 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
               <Clock className="h-5 w-5 text-white animate-pulse" />
             </div>
             <div>
-              <div className="text-xs font-semibold text-sky-500 dark:text-sky-400 uppercase tracking-wider">Live Time</div>
+              <div className="text-xs font-semibold text-accent-500 dark:text-accent-400 uppercase tracking-wider">Live Time</div>
               <div className="text-xl font-mono font-bold text-[var(--text-primary)] tabular-nums">
                 {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </div>
@@ -200,7 +200,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
 
       {/* Error */}
       {error && (
-        <div className="p-4 tint-danger border-l-4 border-red-500 rounded-lg flex items-start gap-2 text-red-700 dark:text-red-400">
+        <div className="p-4 tint-danger border-l-4 border-danger-500 rounded-lg flex items-start gap-2 text-danger-700 dark:text-danger-400">
           <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
           <div><p className="font-semibold text-sm">Error</p><p className="text-xs">{error}</p></div>
         </div>
@@ -210,7 +210,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Attendance Card */}
         <div className="lg:col-span-2">
-          <Card className="bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 text-white overflow-hidden relative border-0 shadow-lg">
+          <Card className="bg-gradient-to-br from-accent-600 via-accent-600 to-accent-700 text-white overflow-hidden relative border-0 shadow-lg">
             <div className="absolute inset-0 opacity-10">
               <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
             </div>
@@ -220,16 +220,16 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
               <div className="flex items-start justify-between mb-6">
                 <div className="space-y-1">
                   <div className={`inline-flex items-center gap-1.5 px-3 py-1 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider ${
-                    dayComplete ? 'bg-emerald-500/25 text-emerald-200' : isCheckedIn ? 'bg-green-400/25 text-green-200' : 'bg-white/15 text-white/80'
+                    dayComplete ? 'bg-success-500/25 text-success-200' : isCheckedIn ? 'bg-success-400/25 text-success-200' : 'bg-white/15 text-white/80'
                   }`}>
-                    <div className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? 'bg-green-400 animate-pulse' : dayComplete ? 'bg-emerald-400' : 'bg-white/50'}`} />
+                    <div className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? 'bg-success-400 animate-pulse' : dayComplete ? 'bg-success-400' : 'bg-white/50'}`} />
                     {dayComplete ? 'Day Complete' : isCheckedIn ? 'Currently Working' : 'Not Started'}
                   </div>
                   <div className="text-2xl lg:text-3xl font-extrabold text-white drop-shadow-sm">
                     {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
                   </div>
                   {isLateToday && (
-                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/30 rounded-full text-xs font-medium text-red-200">
+                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-danger-500/30 rounded-full text-xs font-medium text-danger-200">
                       <AlertTriangle className="h-3 w-3" />
                       Late by {lateByMinutes}m
                     </div>
@@ -239,7 +239,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   <div className="text-4xl lg:text-5xl font-extrabold font-mono tracking-tight tabular-nums drop-shadow-lg">
                     {currentTime.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' })}
                   </div>
-                  <div className="flex items-center gap-2 text-indigo-200/80 justify-end mt-1.5">
+                  <div className="flex items-center gap-2 text-accent-200/80 justify-end mt-1.5">
                     <MapPin className="h-3.5 w-3.5" />
                     <span className="text-xs font-medium">{todayRecord?.checkInLocation || 'Location unavailable'}</span>
                   </div>
@@ -250,27 +250,27 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
               <div className="flex items-end justify-between">
                 <div className="flex gap-6">
                   <div>
-                    <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Check In</div>
+                    <div className="text-xs font-semibold text-accent-200/70 uppercase tracking-wider mb-1">Check In</div>
                     <div className="text-xl font-bold tabular-nums text-white">
                       {todayRecord?.checkInTime ? formatTime(todayRecord.checkInTime) : '--:--'}
                     </div>
                   </div>
                   {isCheckedOut && todayRecord?.checkOutTime && (
                     <div>
-                      <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Check Out</div>
+                      <div className="text-xs font-semibold text-accent-200/70 uppercase tracking-wider mb-1">Check Out</div>
                       <div className="text-xl font-bold tabular-nums text-white">{formatTime(todayRecord.checkOutTime)}</div>
                     </div>
                   )}
                   {isCheckedIn && (
                     <div>
-                      <div className="text-xs font-semibold text-indigo-200/70 uppercase tracking-wider mb-1">Duration</div>
+                      <div className="text-xs font-semibold text-accent-200/70 uppercase tracking-wider mb-1">Duration</div>
                       <div className="text-xl font-bold tabular-nums text-white">{formatDuration(currentWorkHours)}</div>
                     </div>
                   )}
                   {isOvertime && (
                     <div>
-                      <div className="text-xs font-semibold text-amber-300/80 uppercase tracking-wider mb-1">Overtime</div>
-                      <div className="text-xl font-bold tabular-nums text-amber-300">+{formatDuration(overtimeHours)}</div>
+                      <div className="text-xs font-semibold text-warning-300/80 uppercase tracking-wider mb-1">Overtime</div>
+                      <div className="text-xl font-bold tabular-nums text-warning-300">+{formatDuration(overtimeHours)}</div>
                     </div>
                   )}
                 </div>
@@ -278,9 +278,9 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 <div>
                   {dayComplete ? (
                     <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/20">
-                      <CheckCircle className="h-8 w-8 text-emerald-300 mx-auto mb-1" />
+                      <CheckCircle className="h-8 w-8 text-success-300 mx-auto mb-1" />
                       <div className="text-sm font-bold">Day Complete!</div>
-                      <div className="text-xs text-indigo-100 mt-0.5">
+                      <div className="text-xs text-accent-100 mt-0.5">
                         {formatDuration(calculateHours(todayRecord?.checkInTime, todayRecord?.checkOutTime))} worked
                       </div>
                     </div>
@@ -289,7 +289,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckIn}
                         isLoading={checkInPending}
-                        className="h-14 px-8 text-base font-semibold bg-white text-sky-700 hover:bg-[var(--bg-surface)] border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-white text-accent-700 hover:bg-[var(--bg-surface)] border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2" />
                         Check In
@@ -300,7 +300,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckOutRequest}
                         isLoading={checkOutPending}
-                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-rose-500 to-accent-600 text-white hover:from-rose-600 hover:to-accent-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogOut className="h-5 w-5 mr-2" />
                         Check Out
@@ -318,12 +318,12 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
           {/* Work Progress */}
           <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-md overflow-hidden">
             <CardContent className="p-6 flex items-center gap-6 relative">
-              <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-amber-500 to-orange-500' : workProgress >= 100 ? 'bg-gradient-to-br from-emerald-500 to-green-500' : 'bg-gradient-to-br from-sky-500 to-violet-500'}`} />
+              <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-warning-500 to-warning-500' : workProgress >= 100 ? 'bg-gradient-to-br from-success-500 to-success-500' : 'bg-gradient-to-br from-accent-500 to-accent-500'}`} />
               <ProgressRing
                 progress={workProgress}
                 size={110}
                 strokeWidth={10}
-                color={isOvertime ? '#f59e0b' : workProgress >= 100 ? '#22c55e' : '#6366f1'}
+                color={isOvertime ? 'var(--color-warning, #f59e0b)' : workProgress >= 100 ? 'var(--color-success, #22c55e)' : 'var(--color-accent, #6366f1)'}
               >
                 <div className="text-center">
                   <div className="text-stat-medium text-[var(--text-primary)] tabular-nums leading-none skeuo-emboss">
@@ -335,10 +335,10 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
               <div className="flex-1 space-y-2 relative z-10">
                 <h3 className="text-card-title text-[var(--text-primary)]">Work Progress</h3>
                 <div className={`text-sm font-medium ${
-                  dayComplete ? 'text-emerald-600 dark:text-emerald-400' :
-                  isOvertime ? 'text-amber-600 dark:text-amber-400' :
+                  dayComplete ? 'text-success-600 dark:text-success-400' :
+                  isOvertime ? 'text-warning-600 dark:text-warning-400' :
                   isCheckedIn ? 'text-[var(--text-secondary)]' :
-                  'text-sky-700 dark:text-sky-400'
+                  'text-accent-700 dark:text-accent-400'
                 }`}>
                   {dayComplete
                     ? 'Great work today!'
@@ -350,8 +350,8 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 </div>
                 {isCheckedIn && (
                   <div className="flex items-center gap-1.5">
-                    <div className={`h-2 w-2 rounded-full ${isOvertime ? 'bg-amber-500' : workProgress >= 100 ? 'bg-emerald-500' : 'bg-sky-500'} animate-pulse`} />
-                    <span className={`text-xs font-bold ${isOvertime ? 'text-amber-600 dark:text-amber-400' : workProgress >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-sky-700 dark:text-sky-400'}`}>
+                    <div className={`h-2 w-2 rounded-full ${isOvertime ? 'bg-warning-500' : workProgress >= 100 ? 'bg-success-500' : 'bg-accent-500'} animate-pulse`} />
+                    <span className={`text-xs font-bold ${isOvertime ? 'text-warning-600 dark:text-warning-400' : workProgress >= 100 ? 'text-success-600 dark:text-success-400' : 'text-accent-700 dark:text-accent-400'}`}>
                       {Math.round(workProgress)}% complete
                     </span>
                   </div>
@@ -366,19 +366,19 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-sm">
                       <Sunrise className="h-4 w-4 text-white" />
                     </div>
-                    <p className="text-micro text-purple-600 dark:text-purple-400">Avg In</p>
+                    <p className="text-micro text-accent-600 dark:text-accent-400">Avg In</p>
                   </div>
                   <p className="text-stat-medium text-[var(--text-primary)] tabular-nums skeuo-emboss">{weekStats.avgCheckIn}</p>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center shadow-sm">
                       <Target className="h-4 w-4 text-white" />
                     </div>
-                    <p className="text-micro text-amber-600 dark:text-amber-400">Avg Hrs</p>
+                    <p className="text-micro text-warning-600 dark:text-warning-400">Avg Hrs</p>
                   </div>
                   <p className="text-stat-medium text-[var(--text-primary)] tabular-nums skeuo-emboss">{weekStats.avgHours}h</p>
                 </div>

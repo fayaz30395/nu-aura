@@ -41,13 +41,13 @@ type ItemFormData = z.infer<typeof itemSchema>;
 
 const STATUS_CONFIG: Record<ExpenseStatus, { color: string; icon: typeof Clock; label: string }> = {
   DRAFT: { color: 'bg-gray-100 text-gray-700', icon: FileText, label: 'Draft' },
-  SUBMITTED: { color: 'bg-blue-100 text-blue-700', icon: Clock, label: 'Submitted' },
-  PENDING_APPROVAL: { color: 'bg-yellow-100 text-yellow-700', icon: Clock, label: 'Pending Approval' },
-  APPROVED: { color: 'bg-green-100 text-green-700', icon: CheckCircle, label: 'Approved' },
-  REJECTED: { color: 'bg-red-100 text-red-700', icon: XCircle, label: 'Rejected' },
-  PROCESSING: { color: 'bg-indigo-100 text-indigo-700', icon: Clock, label: 'Processing' },
-  REIMBURSED: { color: 'bg-emerald-100 text-emerald-700', icon: DollarSign, label: 'Reimbursed' },
-  PAID: { color: 'bg-emerald-100 text-emerald-700', icon: DollarSign, label: 'Paid' },
+  SUBMITTED: { color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Submitted' },
+  PENDING_APPROVAL: { color: 'bg-warning-100 text-warning-700', icon: Clock, label: 'Pending Approval' },
+  APPROVED: { color: 'bg-success-100 text-success-700', icon: CheckCircle, label: 'Approved' },
+  REJECTED: { color: 'bg-danger-100 text-danger-700', icon: XCircle, label: 'Rejected' },
+  PROCESSING: { color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Processing' },
+  REIMBURSED: { color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Reimbursed' },
+  PAID: { color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Paid' },
   CANCELLED: { color: 'bg-gray-100 text-gray-500', icon: XCircle, label: 'Cancelled' },
 };
 
@@ -124,7 +124,7 @@ export default function ExpenseDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-sky-700" />
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-700" />
         </div>
       </AppLayout>
     );
@@ -216,7 +216,7 @@ export default function ExpenseDetailPage() {
             {isDraft && isOwner && (
               <button
                 onClick={() => setShowAddItem(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-700 hover:bg-sky-800 text-white rounded-lg text-sm transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Add Item
@@ -240,7 +240,7 @@ export default function ExpenseDetailPage() {
                       <span>{format(new Date(item.expenseDate), 'dd MMM yyyy')}</span>
                       {item.merchantName && <span>{item.merchantName}</span>}
                       {item.isBillable && (
-                        <span className="px-1.5 py-0.5 bg-sky-100 text-sky-700 rounded text-xs">Billable</span>
+                        <span className="px-1.5 py-0.5 bg-accent-100 text-accent-700 rounded text-xs">Billable</span>
                       )}
                     </div>
                   </div>
@@ -248,7 +248,7 @@ export default function ExpenseDetailPage() {
                     {formatCurrency(item.amount, item.currency)}
                   </p>
                   {item.receiptFileName && (
-                    <span className="text-xs text-sky-600 flex items-center gap-1">
+                    <span className="text-xs text-accent-600 flex items-center gap-1">
                       <FileText className="w-3 h-3" />
                       {item.receiptFileName}
                     </span>
@@ -256,7 +256,7 @@ export default function ExpenseDetailPage() {
                   {isDraft && isOwner && (
                     <button
                       onClick={() => setDeleteItemId(item.id)}
-                      className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                      className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors"
                       aria-label="Delete item"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -275,7 +275,7 @@ export default function ExpenseDetailPage() {
             <div className="space-y-3">
               {claim.submittedAt && (
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <div className="w-2 h-2 rounded-full bg-accent-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Submitted on {format(new Date(claim.submittedAt), 'dd MMM yyyy HH:mm')}
                   </span>
@@ -283,7 +283,7 @@ export default function ExpenseDetailPage() {
               )}
               {claim.approvedAt && (
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <div className="w-2 h-2 rounded-full bg-success-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Approved by {claim.approvedByName} on {format(new Date(claim.approvedAt), 'dd MMM yyyy HH:mm')}
                   </span>
@@ -291,7 +291,7 @@ export default function ExpenseDetailPage() {
               )}
               {claim.rejectedAt && (
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                  <div className="w-2 h-2 rounded-full bg-danger-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Rejected by {claim.rejectedByName} on {format(new Date(claim.rejectedAt), 'dd MMM yyyy HH:mm')}
                     {claim.rejectionReason && ` — "${claim.rejectionReason}"`}
@@ -300,7 +300,7 @@ export default function ExpenseDetailPage() {
               )}
               {claim.reimbursedAt && (
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <div className="w-2 h-2 rounded-full bg-success-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Reimbursed on {format(new Date(claim.reimbursedAt), 'dd MMM yyyy HH:mm')}
                     {claim.reimbursementRef && ` (Ref: ${claim.reimbursementRef})`}
@@ -325,7 +325,7 @@ export default function ExpenseDetailPage() {
             <button
               onClick={onSubmit}
               disabled={submitMutation.isPending}
-              className="px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50"
             >
               {submitMutation.isPending ? 'Submitting...' : 'Submit for Approval'}
             </button>
@@ -335,13 +335,13 @@ export default function ExpenseDetailPage() {
               <button
                 onClick={onApprove}
                 disabled={approveMutation.isPending}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50"
               >
                 {approveMutation.isPending ? 'Approving...' : 'Approve'}
               </button>
               <button
                 onClick={() => setShowRejectDialog(true)}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors"
               >
                 Reject
               </button>
@@ -357,25 +357,25 @@ export default function ExpenseDetailPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description *</label>
-                  <input {...register('description')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2" />
-                  {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+                  <input {...register('description')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                  {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Amount *</label>
-                    <input type="number" step="0.01" {...register('amount')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2" />
-                    {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>}
+                    <input type="number" step="0.01" {...register('amount')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    {errors.amount && <p className="text-danger-500 text-sm mt-1">{errors.amount.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date *</label>
-                    <input type="date" {...register('expenseDate')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2" />
-                    {errors.expenseDate && <p className="text-red-500 text-sm mt-1">{errors.expenseDate.message}</p>}
+                    <input type="date" {...register('expenseDate')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    {errors.expenseDate && <p className="text-danger-500 text-sm mt-1">{errors.expenseDate.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category</label>
-                    <select {...register('categoryId')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2">
+                    <select {...register('categoryId')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2">
                       <option value="">Select category</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -384,12 +384,12 @@ export default function ExpenseDetailPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Merchant</label>
-                    <input {...register('merchantName')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2" />
+                    <input {...register('merchantName')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
-                  <textarea {...register('notes')} rows={2} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2" />
+                  <textarea {...register('notes')} rows={2} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
                 </div>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" {...register('isBillable')} className="rounded border-surface-300" />
@@ -401,7 +401,7 @@ export default function ExpenseDetailPage() {
               <button type="button" onClick={() => setShowAddItem(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">
                 Cancel
               </button>
-              <button type="submit" disabled={addItemMutation.isPending} className="px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors disabled:opacity-50">
+              <button type="submit" disabled={addItemMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50">
                 {addItemMutation.isPending ? 'Adding...' : 'Add Item'}
               </button>
             </ModalFooter>
@@ -418,7 +418,7 @@ export default function ExpenseDetailPage() {
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="Provide reason..."
               />
             </div>
@@ -430,7 +430,7 @@ export default function ExpenseDetailPage() {
             <button
               onClick={onReject}
               disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50"
             >
               {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
             </button>

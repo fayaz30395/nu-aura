@@ -75,7 +75,7 @@ export default function FluenceDashboardPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--sky-700)] via-[var(--sky-500)] to-[var(--sky-400)] dark:from-[var(--sky-950)] dark:via-[var(--sky-900)] dark:to-[var(--sky-800)] p-8 md:p-12"
+          className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--accent-700)] via-[var(--accent-500)] to-[var(--accent-400)] dark:from-[var(--accent-950)] dark:via-[var(--accent-900)] dark:to-[var(--accent-800)] p-8 md:p-12"
         >
           <div className="relative z-10">
             <div className="flex items-start justify-between gap-6 mb-6">
@@ -99,7 +99,7 @@ export default function FluenceDashboardPage() {
             <div className="flex flex-wrap gap-4">
               <Button
                 onClick={() => router.push('/fluence/wiki/new')}
-                className="gap-2 bg-[var(--bg-card)] text-[var(--sky-700)] hover:bg-[var(--bg-card-hover)] font-medium shadow-lg hover:shadow-xl transition-all"
+                className="gap-2 bg-[var(--bg-card)] text-[var(--accent-700)] hover:bg-[var(--bg-card-hover)] font-medium shadow-lg hover:shadow-xl transition-all"
               >
                 <Plus className={iconSize.button} />
                 New Wiki Page
@@ -197,7 +197,7 @@ export default function FluenceDashboardPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <BookOpen className={`${iconSize.cardInline} text-violet-600`} />
+                  <BookOpen className={`${iconSize.cardInline} text-accent-600`} />
                   <CardTitle className={typography.cardTitle}>
                     Top Wiki Pages
                   </CardTitle>
@@ -216,7 +216,7 @@ export default function FluenceDashboardPage() {
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
                       whileHover={{ x: 4 }}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--sky-700)]`}>
+                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
                         {page.title}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -227,7 +227,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/wiki')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--sky-700)] font-medium text-sm hover:text-[var(--sky-800)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   View All Pages →
@@ -241,7 +241,7 @@ export default function FluenceDashboardPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <Pen className={`${iconSize.cardInline} text-amber-600`} />
+                  <Pen className={`${iconSize.cardInline} text-warning-600`} />
                   <CardTitle className={typography.cardTitle}>
                     Latest Blog Posts
                   </CardTitle>
@@ -260,7 +260,7 @@ export default function FluenceDashboardPage() {
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
                       whileHover={{ x: 4 }}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--sky-700)]`}>
+                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
                         {post.title}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -271,7 +271,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/blogs')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--sky-700)] font-medium text-sm hover:text-[var(--sky-800)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   Read All Posts →
@@ -285,7 +285,7 @@ export default function FluenceDashboardPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <FileText className={`${iconSize.cardInline} text-emerald-600`} />
+                  <FileText className={`${iconSize.cardInline} text-success-600`} />
                   <CardTitle className={typography.cardTitle}>
                     Templates
                   </CardTitle>
@@ -304,7 +304,7 @@ export default function FluenceDashboardPage() {
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
                       whileHover={{ x: 4 }}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--sky-700)]`}>
+                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
                         {template.name || 'Untitled'}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -315,7 +315,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/templates')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--sky-700)] font-medium text-sm hover:text-[var(--sky-800)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   All Templates →
@@ -338,17 +338,17 @@ interface StatCardProps {
 
 function StatCard({ icon: IconComponent, label, value, color }: StatCardProps) {
   const colorMap = {
-    violet: 'from-violet-500 to-violet-600 bg-violet-100 dark:bg-violet-900/30',
-    amber: 'from-amber-500 to-orange-600 bg-amber-100 dark:bg-amber-900/30',
-    emerald: 'from-emerald-500 to-emerald-600 bg-emerald-100 dark:bg-emerald-900/30',
-    blue: 'from-blue-500 to-blue-600 bg-blue-100 dark:bg-blue-900/30',
+    violet: 'from-accent-700 to-accent-800 bg-accent-100 dark:bg-accent-900/30',
+    amber: 'from-warning-500 to-warning-600 bg-warning-100 dark:bg-warning-900/30',
+    emerald: 'from-success-500 to-success-600 bg-success-100 dark:bg-success-900/30',
+    blue: 'from-accent-500 to-accent-600 bg-accent-100 dark:bg-accent-900/30',
   };
 
   const textColorMap = {
-    violet: 'text-violet-700 dark:text-violet-300',
-    amber: 'text-amber-700 dark:text-amber-300',
-    emerald: 'text-emerald-700 dark:text-emerald-300',
-    blue: 'text-blue-700 dark:text-blue-300',
+    violet: 'text-accent-700 dark:text-accent-300',
+    amber: 'text-warning-700 dark:text-warning-300',
+    emerald: 'text-success-700 dark:text-success-300',
+    blue: 'text-accent-700 dark:text-accent-300',
   };
 
   return (

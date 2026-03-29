@@ -66,38 +66,38 @@ export default function LoansPage() {
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
       PENDING: {
-        bg: 'bg-amber-100 dark:bg-amber-900/30',
-        text: 'text-amber-700 dark:text-amber-400',
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
         icon: Clock,
       },
       APPROVED: {
-        bg: 'bg-blue-100 dark:bg-blue-900/30',
-        text: 'text-blue-700 dark:text-blue-400',
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
         icon: CheckCircle,
       },
       REJECTED: {
-        bg: 'bg-red-100 dark:bg-red-900/30',
-        text: 'text-red-700 dark:text-red-400',
+        bg: 'bg-danger-100 dark:bg-danger-900/30',
+        text: 'text-danger-700 dark:text-danger-400',
         icon: XCircle,
       },
       DISBURSED: {
-        bg: 'bg-purple-100 dark:bg-purple-900/30',
-        text: 'text-purple-700 dark:text-purple-400',
+        bg: 'bg-accent-300 dark:bg-accent-900/30',
+        text: 'text-accent-900 dark:text-accent-600',
         icon: Banknote,
       },
       ACTIVE: {
-        bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-        text: 'text-emerald-700 dark:text-emerald-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: TrendingUp,
       },
       CLOSED: {
-        bg: 'bg-green-100 dark:bg-green-900/30',
-        text: 'text-green-700 dark:text-green-400',
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
         icon: CheckCircle,
       },
       DEFAULTED: {
-        bg: 'bg-red-200 dark:bg-red-900/50',
-        text: 'text-red-800 dark:text-red-300',
+        bg: 'bg-danger-200 dark:bg-danger-900/50',
+        text: 'text-danger-800 dark:text-danger-300',
         icon: AlertCircle,
       },
       CANCELLED: {
@@ -114,7 +114,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
             <p className="text-[var(--text-secondary)]">Loading loans data...</p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-red-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500" />
             <p className="text-[var(--text-secondary)]">{error}</p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function LoansPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-3">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
                 <CreditCard className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function LoansPage() {
 
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-3">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-red-500 to-red-600">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-danger-500 to-danger-600">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function LoansPage() {
 
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-3">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-green-500 to-green-600">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -211,7 +211,7 @@ export default function LoansPage() {
 
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-3">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600">
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600">
                 <Clock className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -319,7 +319,7 @@ export default function LoansPage() {
                               e.stopPropagation();
                               router.push(`/loans/${loan.id}`);
                             }}
-                            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 text-sm font-medium"
+                            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
                           >
                             View Details
                           </button>
@@ -341,10 +341,10 @@ export default function LoansPage() {
               className="group card-interactive p-4 text-left"
             >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-sky-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Apply for Loan
@@ -360,10 +360,10 @@ export default function LoansPage() {
             className="group card-interactive p-4 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
                 <FileText className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               View Active Loans

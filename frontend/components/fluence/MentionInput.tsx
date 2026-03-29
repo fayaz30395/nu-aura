@@ -182,14 +182,14 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
     // Generate a consistent color from user id
     const getUserColor = (id: string) => {
       const colors = [
-        'from-indigo-500 to-indigo-600',
-        'from-emerald-500 to-emerald-600',
-        'from-amber-500 to-amber-600',
+        'from-accent-500 to-accent-600',
+        'from-success-500 to-success-600',
+        'from-warning-500 to-warning-600',
         'from-rose-500 to-rose-600',
-        'from-violet-500 to-violet-600',
-        'from-cyan-500 to-cyan-600',
-        'from-orange-500 to-orange-600',
-        'from-teal-500 to-teal-600',
+        'from-accent-700 to-accent-800',
+        'from-accent-500 to-accent-600',
+        'from-warning-500 to-warning-600',
+        'from-success-500 to-success-600',
       ];
       const hash = id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
       return colors[hash % colors.length];
@@ -205,7 +205,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
           placeholder={placeholder || 'Write a comment... Use @ to mention someone'}
           disabled={disabled}
           rows={1}
-          className="w-full px-4 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--sky-700)]/40 focus:border-[var(--sky-700)] text-sm transition-all duration-200 resize-none leading-relaxed"
+          className="w-full px-4 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-700)]/40 focus:border-[var(--accent-700)] text-sm transition-all duration-200 resize-none leading-relaxed"
           style={{ minHeight: '42px' }}
         />
 
@@ -249,7 +249,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
                     onMouseEnter={() => setSelectedIdx(idx)}
                     className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors duration-100 ${
                       idx === selectedIdx
-                        ? 'bg-[var(--sky-700)]/10'
+                        ? 'bg-[var(--accent-700)]/10'
                         : 'hover:bg-[var(--bg-secondary)]'
                     }`}
                   >

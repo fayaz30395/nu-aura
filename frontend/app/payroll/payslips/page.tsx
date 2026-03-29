@@ -132,7 +132,7 @@ export default function PayslipsPage() {
 
           {/* Error Message */}
           {(fetchError || downloadError) && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+            <div className="mb-6 p-4 bg-danger-50 border border-danger-200 text-danger-800 rounded-lg">
               {downloadError ?? fetchError?.message ?? 'An error occurred'}
               <button
                 onClick={() => setDownloadError(null)}
@@ -158,7 +158,7 @@ export default function PayslipsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Employee name..."
-                    className="input-aura w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="input-aura w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function PayslipsPage() {
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="">All Months</option>
                   {getMonthOptions().map(option => (
@@ -190,7 +190,7 @@ export default function PayslipsPage() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="">All Years</option>
                   {[2024, 2023, 2022, 2021, 2020].map(year => (
@@ -209,7 +209,7 @@ export default function PayslipsPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as PayslipStatus)}
-                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="input-aura w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="ALL">All Status</option>
                   <option value="DRAFT">Draft</option>
@@ -231,7 +231,7 @@ export default function PayslipsPage() {
           {/* Payslips Grid */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
             </div>
           ) : filteredPayslips.length === 0 ? (
             <div className="card-aura rounded-lg p-12 text-center">

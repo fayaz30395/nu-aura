@@ -69,7 +69,7 @@ export function EmployeeWorkloadCard({
         className={cn(
           'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-medium',
           isOverAllocated
-            ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+            ? 'bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300'
             : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300'
         )}
       >
@@ -83,7 +83,7 @@ export function EmployeeWorkloadCard({
             {workload.employeeName}
           </span>
           {workload.hasPendingApprovals && (
-            <span className="flex h-2 w-2 rounded-full bg-amber-400" title="Pending approval" />
+            <span className="flex h-2 w-2 rounded-full bg-warning-400" title="Pending approval" />
           )}
         </div>
         <div className="flex items-center gap-2 text-xs text-surface-500 dark:text-surface-400">
@@ -109,7 +109,7 @@ export function EmployeeWorkloadCard({
             <div
               className={cn(
                 'absolute left-0 top-0 h-full rounded-full transition-all',
-                isOverAllocated ? 'bg-red-500' : activeAllocation >= 70 ? 'bg-green-500' : 'bg-amber-400'
+                isOverAllocated ? 'bg-danger-500' : activeAllocation >= 70 ? 'bg-success-500' : 'bg-warning-400'
               )}
               style={{ width: `${Math.min(activeAllocation, 100)}%` }}
             />

@@ -45,7 +45,7 @@ export default function IntegrationsPage() {
         'Drive document storage',
         'Chat notifications',
       ],
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-accent-500 to-accent-600',
       popular: true,
     },
     {
@@ -59,7 +59,7 @@ export default function IntegrationsPage() {
         'Employee directory',
         'Bot commands',
       ],
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-accent-700 to-accent-800',
       popular: true,
     },
     {
@@ -73,7 +73,7 @@ export default function IntegrationsPage() {
         'Approval requests',
         'Status updates',
       ],
-      color: 'from-pink-500 to-rose-600',
+      color: 'from-accent-700 to-rose-600',
       popular: true,
     },
     {
@@ -87,7 +87,7 @@ export default function IntegrationsPage() {
         'Auto-join links',
         'Recording storage',
       ],
-      color: 'from-blue-400 to-blue-500',
+      color: 'from-accent-400 to-accent-500',
       popular: false,
     },
     {
@@ -101,7 +101,7 @@ export default function IntegrationsPage() {
         'Offline mode',
         'Facial recognition',
       ],
-      color: 'from-emerald-500 to-emerald-600',
+      color: 'from-success-500 to-success-600',
       popular: true,
     },
     {
@@ -115,7 +115,7 @@ export default function IntegrationsPage() {
         'Multi-location support',
         'Bulk employee upload',
       ],
-      color: 'from-teal-500 to-teal-600',
+      color: 'from-success-500 to-success-600',
       popular: false,
     },
     {
@@ -129,7 +129,7 @@ export default function IntegrationsPage() {
         'Auto-reconciliation',
         'Expense sync',
       ],
-      color: 'from-green-500 to-green-600',
+      color: 'from-success-500 to-success-600',
       popular: false,
     },
     {
@@ -143,7 +143,7 @@ export default function IntegrationsPage() {
         'Invoice sync',
         'Tax compliance',
       ],
-      color: 'from-cyan-500 to-cyan-600',
+      color: 'from-accent-500 to-accent-600',
       popular: false,
     },
     {
@@ -171,7 +171,7 @@ export default function IntegrationsPage() {
         'Retry mechanism',
         'Secure endpoints',
       ],
-      color: 'from-orange-500 to-orange-600',
+      color: 'from-warning-500 to-warning-600',
       popular: false,
     },
   ];
@@ -229,7 +229,7 @@ export default function IntegrationsPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   selectedCategory === category.id
-                    ? 'bg-sky-500 text-white shadow-lg'
+                    ? 'bg-accent-500 text-white shadow-lg'
                     : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-main)]'
                 }`}
               >
@@ -316,7 +316,7 @@ export default function IntegrationsPage() {
               },
             ].map((feature, index) => (
               <Card key={index} padding="lg">
-                <feature.icon className="h-8 w-8 text-sky-700 dark:text-sky-400 mb-3" />
+                <feature.icon className="h-8 w-8 text-accent-700 dark:text-accent-400 mb-3" />
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                   {feature.title}
                 </h3>

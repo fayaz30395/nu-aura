@@ -272,7 +272,7 @@ export default function EditEmployeePage() {
       <AppLayout activeMenuItem="employees">
         <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700"></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
           </div>
         </div>
@@ -302,8 +302,8 @@ export default function EditEmployeePage() {
             </div>
           </nav>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md p-4">
+              <p className="text-sm text-danger-600 dark:text-danger-400">{error}</p>
             </div>
           </div>
         </div>
@@ -337,21 +337,21 @@ export default function EditEmployeePage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Error Message */}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="mb-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md">
+            <p className="text-sm text-danger-600 dark:text-danger-400">{error}</p>
           </div>
         )}
 
         {/* Change Request Success Message */}
         {changeRequestCreated && (
-          <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+          <div className="mb-4 p-4 bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-md">
             <div className="flex items-start gap-4">
-              <Clock className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
+              <Clock className="h-5 w-5 text-success-600 dark:text-success-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                <p className="text-sm font-medium text-success-800 dark:text-success-200">
                   Employment Change Request Submitted
                 </p>
-                <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                <p className="text-sm text-success-700 dark:text-success-300 mt-1">
                   Your changes to employment details have been submitted for HR Manager approval.
                   Other profile updates have been saved immediately.
                 </p>
@@ -359,14 +359,14 @@ export default function EditEmployeePage() {
                   <button
                     type="button"
                     onClick={() => router.push(`/employees/${employeeId}`)}
-                    className="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                    className="px-3 py-1.5 bg-success-600 text-white text-sm rounded hover:bg-success-700 transition-colors"
                   >
                     View Employee
                   </button>
                   <button
                     type="button"
                     onClick={() => router.push('/employees/change-requests')}
-                    className="px-3 py-1.5 bg-success-100 dark:bg-success-900/30 text-green-700 dark:text-green-200 text-sm rounded border border-green-300 dark:border-green-600 hover:bg-green-50 dark:hover:bg-green-700 transition-colors"
+                    className="px-3 py-1.5 bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-200 text-sm rounded border border-success-300 dark:border-success-600 hover:bg-success-50 dark:hover:bg-success-700 transition-colors"
                   >
                     View All Requests
                   </button>
@@ -379,8 +379,8 @@ export default function EditEmployeePage() {
         {/* Employee Header */}
         <div className="skeuo-card p-6 mb-6">
           <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0 h-16 w-16 bg-sky-100 dark:bg-sky-900/30 rounded-full flex items-center justify-center">
-              <span className="text-xl font-medium text-sky-700 dark:text-sky-400">
+            <div className="flex-shrink-0 h-16 w-16 bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
+              <span className="text-xl font-medium text-accent-700 dark:text-accent-400">
                 {employee?.firstName.charAt(0)}{employee?.lastName?.charAt(0) || ''}
               </span>
             </div>
@@ -400,7 +400,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('basic')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'basic'
-                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                    ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -410,7 +410,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('personal')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'personal'
-                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                    ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -420,7 +420,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('employment')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'employment'
-                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                    ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -430,7 +430,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('bank')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'bank'
-                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                    ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -440,7 +440,7 @@ export default function EditEmployeePage() {
                 onClick={() => setCurrentTab('custom')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'custom'
-                    ? 'border-sky-500 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                    ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
@@ -453,8 +453,8 @@ export default function EditEmployeePage() {
             {/* Basic Info Tab */}
             {currentTab === 'basic' && (
               <div className="space-y-4">
-                <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-500 dark:border-sky-500 rounded-md p-4">
-                  <p className="text-sm text-sky-700 dark:text-sky-400">
+                <div className="bg-accent-50 dark:bg-accent-950/30 border border-accent-500 dark:border-accent-500 rounded-md p-4">
+                  <p className="text-sm text-accent-700 dark:text-accent-400">
                     <strong>Note:</strong> Work Email cannot be changed after creation.
                   </p>
                 </div>
@@ -470,7 +470,7 @@ export default function EditEmployeePage() {
                     className="input-aura"
                     placeholder="EMP001"
                   />
-                  {errors.employeeCode && <p className="text-red-500 text-sm mt-1">{errors.employeeCode.message}</p>}
+                  {errors.employeeCode && <p className="text-danger-500 text-sm mt-1">{errors.employeeCode.message}</p>}
                   <p className="mt-1 text-xs text-[var(--text-muted)]">
                     Unique identifier for this employee. Changing this may affect integrations.
                   </p>
@@ -487,7 +487,7 @@ export default function EditEmployeePage() {
                       {...register('firstName')}
                       className="input-aura"
                     />
-                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
+                    {errors.firstName && <p className="text-danger-500 text-sm mt-1">{errors.firstName.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -498,7 +498,7 @@ export default function EditEmployeePage() {
                       {...register('middleName')}
                       className="input-aura"
                     />
-                    {errors.middleName && <p className="text-red-500 text-sm mt-1">{errors.middleName.message}</p>}
+                    {errors.middleName && <p className="text-danger-500 text-sm mt-1">{errors.middleName.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -509,7 +509,7 @@ export default function EditEmployeePage() {
                       {...register('lastName')}
                       className="input-aura"
                     />
-                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
+                    {errors.lastName && <p className="text-danger-500 text-sm mt-1">{errors.lastName.message}</p>}
                   </div>
                 </div>
 
@@ -537,7 +537,7 @@ export default function EditEmployeePage() {
                       </select>
                     )}
                   />
-                  {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>}
+                  {errors.status && <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>}
                 </div>
               </div>
             )}
@@ -556,7 +556,7 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="personal@email.com"
                     />
-                    {errors.personalEmail && <p className="text-red-500 text-sm mt-1">{errors.personalEmail.message}</p>}
+                    {errors.personalEmail && <p className="text-danger-500 text-sm mt-1">{errors.personalEmail.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -568,7 +568,7 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="+1 234 567 8900"
                     />
-                    {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
+                    {errors.phoneNumber && <p className="text-danger-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
                   </div>
                 </div>
 
@@ -583,7 +583,7 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="+1 234 567 8900"
                     />
-                    {errors.emergencyContactNumber && <p className="text-red-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
+                    {errors.emergencyContactNumber && <p className="text-danger-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -594,7 +594,7 @@ export default function EditEmployeePage() {
                       {...register('dateOfBirth')}
                       className="input-aura"
                     />
-                    {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
+                    {errors.dateOfBirth && <p className="text-danger-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
                   </div>
                 </div>
 
@@ -620,7 +620,7 @@ export default function EditEmployeePage() {
                       </select>
                     )}
                   />
-                  {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
+                  {errors.gender && <p className="text-danger-500 text-sm mt-1">{errors.gender.message}</p>}
                 </div>
 
                 <div>
@@ -633,7 +633,7 @@ export default function EditEmployeePage() {
                     className="input-aura"
                     placeholder="Street address"
                   />
-                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
+                  {errors.address && <p className="text-danger-500 text-sm mt-1">{errors.address.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -646,7 +646,7 @@ export default function EditEmployeePage() {
                       {...register('city')}
                       className="input-aura"
                     />
-                    {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
+                    {errors.city && <p className="text-danger-500 text-sm mt-1">{errors.city.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -657,7 +657,7 @@ export default function EditEmployeePage() {
                       {...register('state')}
                       className="input-aura"
                     />
-                    {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
+                    {errors.state && <p className="text-danger-500 text-sm mt-1">{errors.state.message}</p>}
                   </div>
                 </div>
 
@@ -671,7 +671,7 @@ export default function EditEmployeePage() {
                       {...register('postalCode')}
                       className="input-aura"
                     />
-                    {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
+                    {errors.postalCode && <p className="text-danger-500 text-sm mt-1">{errors.postalCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -682,7 +682,7 @@ export default function EditEmployeePage() {
                       {...register('country')}
                       className="input-aura"
                     />
-                    {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
+                    {errors.country && <p className="text-danger-500 text-sm mt-1">{errors.country.message}</p>}
                   </div>
                 </div>
               </div>
@@ -692,14 +692,14 @@ export default function EditEmployeePage() {
             {currentTab === 'employment' && (
               <div className="space-y-4">
                 {/* Approval Notice */}
-                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-md p-4">
+                <div className="bg-warning-50 dark:bg-warning-950/30 border border-warning-300 dark:border-warning-700 rounded-md p-4">
                   <div className="flex items-start gap-4">
-                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                      <p className="text-sm font-medium text-warning-800 dark:text-warning-200">
                         HR Manager Approval Required
                       </p>
-                      <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                      <p className="text-sm text-warning-700 dark:text-warning-300 mt-1">
                         Changes to employment details (designation, level, department, manager, etc.)
                         will be submitted for HR Manager approval before they take effect.
                       </p>
@@ -718,7 +718,7 @@ export default function EditEmployeePage() {
                     className="input-aura"
                     placeholder="Please provide a reason for the employment changes (e.g., Promotion, Role change, Transfer)"
                   />
-                  {errors.changeRequestReason && <p className="text-red-500 text-sm mt-1">{errors.changeRequestReason.message}</p>}
+                  {errors.changeRequestReason && <p className="text-danger-500 text-sm mt-1">{errors.changeRequestReason.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -733,7 +733,7 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="Senior Software Engineer"
                     />
-                    {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>}
+                    {errors.designation && <p className="text-danger-500 text-sm mt-1">{errors.designation.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -759,7 +759,7 @@ export default function EditEmployeePage() {
                         </select>
                       )}
                     />
-                    {errors.employmentType && <p className="text-red-500 text-sm mt-1">{errors.employmentType.message}</p>}
+                    {errors.employmentType && <p className="text-danger-500 text-sm mt-1">{errors.employmentType.message}</p>}
                   </div>
                 </div>
 
@@ -785,7 +785,7 @@ export default function EditEmployeePage() {
                       </select>
                     )}
                   />
-                  {errors.departmentId && <p className="text-red-500 text-sm mt-1">{errors.departmentId.message}</p>}
+                  {errors.departmentId && <p className="text-danger-500 text-sm mt-1">{errors.departmentId.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -817,7 +817,7 @@ export default function EditEmployeePage() {
                         </select>
                       )}
                     />
-                    {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level.message}</p>}
+                    {errors.level && <p className="text-danger-500 text-sm mt-1">{errors.level.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -911,7 +911,7 @@ export default function EditEmployeePage() {
                         </select>
                       )}
                     />
-                    {errors.jobRole && <p className="text-red-500 text-sm mt-1">{errors.jobRole.message}</p>}
+                    {errors.jobRole && <p className="text-danger-500 text-sm mt-1">{errors.jobRole.message}</p>}
                   </div>
                 </div>
 
@@ -925,7 +925,7 @@ export default function EditEmployeePage() {
                       {...register('confirmationDate')}
                       className="input-aura"
                     />
-                    {errors.confirmationDate && <p className="text-red-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
+                    {errors.confirmationDate && <p className="text-danger-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -950,7 +950,7 @@ export default function EditEmployeePage() {
                         </select>
                       )}
                     />
-                    {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
+                    {errors.managerId && <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
                     <p className="mt-1 text-xs text-[var(--text-muted)]">
                       Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
                     </p>
@@ -1024,7 +1024,7 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="1234567890"
                     />
-                    {errors.bankAccountNumber && <p className="text-red-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
+                    {errors.bankAccountNumber && <p className="text-danger-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -1036,7 +1036,7 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="Bank of America"
                     />
-                    {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName.message}</p>}
+                    {errors.bankName && <p className="text-danger-500 text-sm mt-1">{errors.bankName.message}</p>}
                   </div>
                 </div>
 
@@ -1051,7 +1051,7 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="HDFC0001234"
                     />
-                    {errors.bankIfscCode && <p className="text-red-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
+                    {errors.bankIfscCode && <p className="text-danger-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -1063,12 +1063,12 @@ export default function EditEmployeePage() {
                       className="input-aura"
                       placeholder="XXX-XX-XXXX"
                     />
-                    {errors.taxId && <p className="text-red-500 text-sm mt-1">{errors.taxId.message}</p>}
+                    {errors.taxId && <p className="text-danger-500 text-sm mt-1">{errors.taxId.message}</p>}
                   </div>
                 </div>
 
-                <div className="bg-sky-50 dark:bg-sky-950/30 border border-sky-500 dark:border-sky-500 rounded-md p-4">
-                  <p className="text-sm text-sky-700 dark:text-sky-400">
+                <div className="bg-accent-50 dark:bg-accent-950/30 border border-accent-500 dark:border-accent-500 rounded-md p-4">
+                  <p className="text-sm text-accent-700 dark:text-accent-400">
                     <strong>Note:</strong> Banking and tax information is encrypted and stored securely. This information will be used for payroll processing.
                   </p>
                 </div>

@@ -92,15 +92,15 @@ export function WorkloadHeatmap({
             <span>0%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-amber-300" />
+            <div className="h-4 w-4 rounded bg-warning-300" />
             <span>50%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-green-500" />
+            <div className="h-4 w-4 rounded bg-success-500" />
             <span>75-100%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-red-500" />
+            <div className="h-4 w-4 rounded bg-danger-500" />
             <span>&gt;100%</span>
           </div>
         </div>
@@ -137,7 +137,7 @@ function HeatmapRow({
         onClick={() => onEmployeeClick?.(row.employeeId)}
       >
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
             <User className="h-4 w-4" />
           </div>
           <div className="min-w-0">
@@ -146,7 +146,7 @@ function HeatmapRow({
                 {row.employeeName}
               </p>
               {hasOverAllocation && (
-                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-danger-500" />
               )}
             </div>
             <p className="truncate text-xs text-surface-500 dark:text-surface-400">
@@ -192,7 +192,7 @@ function HeatmapCell({
       <div
         className={cn(
           'flex h-10 items-center justify-center rounded transition-all',
-          'hover:ring-2 hover:ring-sky-500 hover:ring-offset-1',
+          'hover:ring-2 hover:ring-accent-500 hover:ring-offset-1',
           textColor
         )}
         style={{ backgroundColor }}
@@ -216,20 +216,20 @@ function getCellColor(allocation: number): string {
   if (allocation <= 50) {
     // Blend from surface to amber
     const intensity = allocation / 50;
-    return `rgba(251, 191, 36, ${0.3 + intensity * 0.4})`; // amber-400
+    return `rgba(251, 191, 36, ${0.3 + intensity * 0.4})`; // warning-400
   }
   if (allocation <= 75) {
     // Blend from amber to green
     const intensity = (allocation - 50) / 25;
-    return `rgba(34, 197, 94, ${0.5 + intensity * 0.3})`; // green-500
+    return `rgba(34, 197, 94, ${0.5 + intensity * 0.3})`; // success-500
   }
   if (allocation <= 100) {
     // Full green
-    return `rgba(34, 197, 94, ${0.8 + ((allocation - 75) / 25) * 0.2})`; // green-500
+    return `rgba(34, 197, 94, ${0.8 + ((allocation - 75) / 25) * 0.2})`; // success-500
   }
   // Over allocated - red
   const overIntensity = Math.min((allocation - 100) / 50, 1);
-  return `rgba(239, 68, 68, ${0.7 + overIntensity * 0.3})`; // red-500
+  return `rgba(239, 68, 68, ${0.7 + overIntensity * 0.3})`; // danger-500
 }
 
 export default WorkloadHeatmap;

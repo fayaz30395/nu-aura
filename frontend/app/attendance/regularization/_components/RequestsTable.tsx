@@ -31,7 +31,7 @@ export function RequestsTable({ requests, loading, statusFilter, onNewRequest }:
         ) : requests.length === 0 ? (
           <EmptyState
             icon={<ClipboardCheck className="h-6 w-6" />}
-            iconColor="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400"
+            iconColor="bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400"
             title={statusFilter === 'ALL' ? 'No requests yet' : `No ${statusFilter.toLowerCase()} requests`}
             description={
               statusFilter === 'ALL'

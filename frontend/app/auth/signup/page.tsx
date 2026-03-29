@@ -105,7 +105,7 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-[var(--bg-surface)] to-sky-50 dark:from-surface-950 dark:via-surface-900 dark:to-sky-950/30 py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
@@ -120,8 +120,8 @@ export default function SignupPage() {
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
             <CardContent className="pt-8 pb-8 text-center space-y-4">
               <div className="flex justify-center">
-                <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
+                <div className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-success-600 dark:text-success-400" />
                 </div>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -145,7 +145,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-[var(--bg-surface)] to-sky-50 dark:from-surface-950 dark:via-surface-900 dark:to-sky-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
       <div className="max-w-lg w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -174,9 +174,9 @@ export default function SignupPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* Error */}
               {error && (
-                <div className="flex items-start gap-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                <div className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-danger-700 dark:text-danger-400">{error}</p>
                 </div>
               )}
 
@@ -198,14 +198,14 @@ export default function SignupPage() {
                     })}
                     type="text"
                     placeholder="Acme Corporation"
-                    className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.companyName
-                        ? 'border-red-500 dark:border-red-500'
+                        ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'
                     }`}
                   />
                   {errors.companyName && (
-                    <p className="text-xs text-red-600 dark:text-red-400">{errors.companyName.message}</p>
+                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.companyName.message}</p>
                   )}
                 </div>
 
@@ -223,15 +223,15 @@ export default function SignupPage() {
                       {...register('companyCode')}
                       type="text"
                       placeholder="acme-corp"
-                      className={`input-aura block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all font-mono text-sm ${
+                      className={`input-aura block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all font-mono text-sm ${
                         errors.companyCode
-                          ? 'border-red-500 dark:border-red-500'
+                          ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
                       }`}
                     />
                   </div>
                   {errors.companyCode && (
-                    <p className="text-xs text-red-600 dark:text-red-400">{errors.companyCode.message}</p>
+                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.companyCode.message}</p>
                   )}
                 </div>
               </div>
@@ -253,14 +253,14 @@ export default function SignupPage() {
                       {...register('adminFirstName')}
                       type="text"
                       placeholder="John"
-                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
-                          ? 'border-red-500 dark:border-red-500'
+                          ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
                       }`}
                     />
                     {errors.adminFirstName && (
-                      <p className="text-xs text-red-600 dark:text-red-400">{errors.adminFirstName.message}</p>
+                      <p className="text-xs text-danger-600 dark:text-danger-400">{errors.adminFirstName.message}</p>
                     )}
                   </div>
                   <div className="space-y-1">
@@ -271,14 +271,14 @@ export default function SignupPage() {
                       {...register('adminLastName')}
                       type="text"
                       placeholder="Doe"
-                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminLastName
-                          ? 'border-red-500 dark:border-red-500'
+                          ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
                       }`}
                     />
                     {errors.adminLastName && (
-                      <p className="text-xs text-red-600 dark:text-red-400">{errors.adminLastName.message}</p>
+                      <p className="text-xs text-danger-600 dark:text-danger-400">{errors.adminLastName.message}</p>
                     )}
                   </div>
                 </div>
@@ -297,15 +297,15 @@ export default function SignupPage() {
                       type="email"
                       autoComplete="email"
                       placeholder="john@acmecorp.com"
-                      className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminEmail
-                          ? 'border-red-500 dark:border-red-500'
+                          ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
                       }`}
                     />
                   </div>
                   {errors.adminEmail && (
-                    <p className="text-xs text-red-600 dark:text-red-400">{errors.adminEmail.message}</p>
+                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.adminEmail.message}</p>
                   )}
                 </div>
 
@@ -324,9 +324,9 @@ export default function SignupPage() {
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       placeholder="Create a strong password"
-                      className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.password
-                          ? 'border-red-500 dark:border-red-500'
+                          ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
                       }`}
                     />
@@ -340,7 +340,7 @@ export default function SignupPage() {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-xs text-red-600 dark:text-red-400">{errors.password.message}</p>
+                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.password.message}</p>
                   )}
                 </div>
               </div>
@@ -358,11 +358,11 @@ export default function SignupPage() {
 
               <p className="text-xs text-center text-[var(--text-muted)]">
                 By creating an account, you agree to our{' '}
-                <Link href="/terms" className="text-sky-700 dark:text-sky-400 hover:underline">
+                <Link href="/terms" className="text-accent-700 dark:text-accent-400 hover:underline">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-sky-700 dark:text-sky-400 hover:underline">
+                <Link href="/privacy" className="text-accent-700 dark:text-accent-400 hover:underline">
                   Privacy Policy
                 </Link>
               </p>
@@ -374,7 +374,7 @@ export default function SignupPage() {
           Already have an account?{' '}
           <Link
             href="/auth/login"
-            className="font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 transition-colors"
+            className="font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors"
           >
             Sign in
           </Link>

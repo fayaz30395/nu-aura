@@ -44,7 +44,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     shortName: 'HRMS',
     description: 'Core HR management',
     entryRoute: '/me/dashboard',
-    gradient: 'from-blue-600 to-blue-700',
+    gradient: 'from-accent-600 to-accent-700',
     iconName: 'Users',
     permissionPrefixes: [
       'employee', 'department', 'leave', 'attendance', 'payroll',
@@ -81,7 +81,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     shortName: 'Hire',
     description: 'Recruitment & onboarding',
     entryRoute: '/recruitment',
-    gradient: 'from-emerald-500 to-emerald-600',
+    gradient: 'from-accent-700 to-accent-800',
     iconName: 'UserPlus',
     permissionPrefixes: [
       'recruitment', 'candidate', 'onboarding', 'exit',
@@ -100,7 +100,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     shortName: 'Grow',
     description: 'Performance, learning & engagement',
     entryRoute: '/performance',
-    gradient: 'from-amber-500 to-orange-500',
+    gradient: 'from-accent-500 to-accent-600',
     iconName: 'TrendingUp',
     permissionPrefixes: [
       'review', 'okr', 'feedback_360', 'training', 'lms',
@@ -121,7 +121,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     shortName: 'Fluence',
     description: 'Knowledge management & collaboration',
     entryRoute: '/fluence/wiki',
-    gradient: 'from-violet-500 to-purple-600',
+    gradient: 'from-accent-800 to-accent-900',
     iconName: 'BookOpen',
     permissionPrefixes: [
       'knowledge',

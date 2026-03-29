@@ -192,7 +192,7 @@ export default function ProjectDetailPage() {
     return (
       <AppLayout breadcrumbs={[{ label: 'Projects', href: '/projects' }, { label: 'Project' }]}>
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
           <span className="ml-2 text-sm text-[var(--text-muted)]">Loading project...</span>
         </div>
       </AppLayout>
@@ -278,7 +278,7 @@ export default function ProjectDetailPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -392,7 +392,7 @@ export default function ProjectDetailPage() {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-[var(--border-main)] text-sky-700 focus:ring-sky-500"
+                  className="h-4 w-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   {...editRegister('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>

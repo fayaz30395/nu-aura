@@ -272,7 +272,7 @@ export default function SsoSettingsPage() {
         type="button"
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          checked ? 'bg-sky-700' : 'bg-[var(--bg-secondary)]'
+          checked ? 'bg-accent-700' : 'bg-[var(--bg-secondary)]'
         }`}
       >
         <span
@@ -309,16 +309,16 @@ export default function SsoSettingsPage() {
 
         {/* Status Messages */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
-            <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-            <p className="text-green-800 dark:text-green-200 font-medium">{success}</p>
+          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
+            <Check className="h-5 w-5 text-success-600 flex-shrink-0" />
+            <p className="text-success-800 dark:text-success-200 font-medium">{success}</p>
           </div>
         )}
 
         {(error || fetchError) && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-            <p className="text-red-800 dark:text-red-200 font-medium">
+          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+            <AlertCircle className="h-5 w-5 text-danger-600 flex-shrink-0" />
+            <p className="text-danger-800 dark:text-danger-200 font-medium">
               {error || 'No SAML configuration found. Fill in the form below to set one up.'}
             </p>
           </div>
@@ -326,7 +326,7 @@ export default function SsoSettingsPage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-sky-700" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-700" />
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -345,45 +345,45 @@ export default function SsoSettingsPage() {
                 {/* Name */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    IdP Name <span className="text-red-500">*</span>
+                    IdP Name <span className="text-danger-500">*</span>
                   </label>
                   <input
                     {...register('name')}
                     placeholder="e.g., Okta Production"
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.name && (
-                    <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{errors.name.message}</p>
                   )}
                 </div>
 
                 {/* Entity ID */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Entity ID <span className="text-red-500">*</span>
+                    Entity ID <span className="text-danger-500">*</span>
                   </label>
                   <input
                     {...register('entityId')}
                     placeholder="e.g., http://www.okta.com/exk123abc"
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.entityId && (
-                    <p className="text-sm text-red-500 mt-1">{errors.entityId.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{errors.entityId.message}</p>
                   )}
                 </div>
 
                 {/* SSO URL */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    SSO URL <span className="text-red-500">*</span>
+                    SSO URL <span className="text-danger-500">*</span>
                   </label>
                   <input
                     {...register('ssoUrl')}
                     placeholder="https://your-idp.example.com/sso/saml"
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.ssoUrl && (
-                    <p className="text-sm text-red-500 mt-1">{errors.ssoUrl.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{errors.ssoUrl.message}</p>
                   )}
                 </div>
 
@@ -395,10 +395,10 @@ export default function SsoSettingsPage() {
                   <input
                     {...register('sloUrl')}
                     placeholder="https://your-idp.example.com/slo/saml"
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.sloUrl && (
-                    <p className="text-sm text-red-500 mt-1">{errors.sloUrl.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{errors.sloUrl.message}</p>
                   )}
                 </div>
 
@@ -410,13 +410,13 @@ export default function SsoSettingsPage() {
                   <input
                     {...register('metadataUrl')}
                     placeholder="https://your-idp.example.com/metadata.xml"
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   <p className="text-xs text-[var(--text-muted)] mt-1">
                     If provided, the IdP metadata will be auto-fetched to configure the SSO connection.
                   </p>
                   {errors.metadataUrl && (
-                    <p className="text-sm text-red-500 mt-1">{errors.metadataUrl.message}</p>
+                    <p className="text-sm text-danger-500 mt-1">{errors.metadataUrl.message}</p>
                   )}
                 </div>
 
@@ -428,7 +428,7 @@ export default function SsoSettingsPage() {
                   <input
                     {...register('spEntityId')}
                     placeholder="Leave blank for auto-generated"
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                 </div>
               </CardContent>
@@ -447,14 +447,14 @@ export default function SsoSettingsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {samlConfig?.hasCertificate && (
-                  <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
-                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                  <div className="flex items-center gap-2 p-3 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
+                    <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-green-800 dark:text-green-200 font-medium">
+                      <p className="text-sm text-success-800 dark:text-success-200 font-medium">
                         Certificate uploaded
                       </p>
                       {samlConfig.certificateFingerprint && (
-                        <p className="text-xs text-green-600 dark:text-green-400 font-mono mt-0.5 break-all">
+                        <p className="text-xs text-success-600 dark:text-success-400 font-mono mt-0.5 break-all">
                           SHA-256: {samlConfig.certificateFingerprint}
                         </p>
                       )}
@@ -470,7 +470,7 @@ export default function SsoSettingsPage() {
                     {...register('certificate')}
                     rows={6}
                     placeholder={`-----BEGIN CERTIFICATE-----\nMIID...\n-----END CERTIFICATE-----`}
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 font-mono text-sm"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 font-mono text-sm"
                   />
                   <p className="text-xs text-[var(--text-muted)] mt-1">
                     {isExistingConfig
@@ -524,14 +524,14 @@ export default function SsoSettingsPage() {
                       <input
                         {...register(field)}
                         placeholder={placeholder}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 text-sm"
+                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 text-sm"
                       />
                     </div>
                   ))}
                 </div>
-                <div className="flex items-start gap-2 mt-4 p-3 bg-sky-50 dark:bg-sky-950/20 border border-sky-200 dark:border-sky-800 rounded-lg">
-                  <Info className="h-4 w-4 text-sky-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-sky-800 dark:text-sky-200">
+                <div className="flex items-start gap-2 mt-4 p-3 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
+                  <Info className="h-4 w-4 text-accent-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-accent-800 dark:text-accent-200">
                     Enter the SAML attribute name your IdP sends for each field. Common formats include
                     OID URIs (e.g., urn:oid:2.5.4.42) or friendly names (e.g., firstName). Check your IdP
                     documentation for the exact attribute names.
@@ -573,7 +573,7 @@ export default function SsoSettingsPage() {
                   <input
                     {...register('defaultRoleId')}
                     placeholder="Role UUID (leave blank for no default role)"
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2 text-sm"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 text-sm"
                   />
                   {samlConfig?.defaultRoleName && (
                     <p className="text-xs text-[var(--text-secondary)] mt-1">
@@ -598,9 +598,9 @@ export default function SsoSettingsPage() {
                 </div>
 
                 {isActive && (
-                  <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-                    <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-amber-800 dark:text-amber-200">
+                  <div className="flex items-start gap-2 p-3 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                    <AlertCircle className="h-4 w-4 text-warning-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-warning-800 dark:text-warning-200">
                       Enabling SSO will add a &quot;Sign in with SSO&quot; button to your login page. Ensure you
                       have tested the configuration before enabling in production.
                     </p>
@@ -622,18 +622,18 @@ export default function SsoSettingsPage() {
                   <div className="space-y-3">
                     <div className={`flex items-center gap-2 p-3 rounded-lg ${
                       testMutation.data.success
-                        ? 'bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800'
-                        : 'bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800'
+                        ? 'bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800'
+                        : 'bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800'
                     }`}>
                       {testMutation.data.success ? (
-                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <CheckCircle className="h-5 w-5 text-success-600" />
                       ) : (
-                        <XCircle className="h-5 w-5 text-red-600" />
+                        <XCircle className="h-5 w-5 text-danger-600" />
                       )}
                       <p className={`font-medium ${
                         testMutation.data.success
-                          ? 'text-green-800 dark:text-green-200'
-                          : 'text-red-800 dark:text-red-200'
+                          ? 'text-success-800 dark:text-success-200'
+                          : 'text-danger-800 dark:text-danger-200'
                       }`}>
                         {testMutation.data.message}
                       </p>
@@ -642,17 +642,17 @@ export default function SsoSettingsPage() {
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div className="flex items-center gap-2">
                         {testMutation.data.certificateValid ? (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <CheckCircle className="h-4 w-4 text-success-600" />
                         ) : (
-                          <XCircle className="h-4 w-4 text-red-600" />
+                          <XCircle className="h-4 w-4 text-danger-600" />
                         )}
                         <span className="text-[var(--text-secondary)]">Certificate</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {testMutation.data.metadataReachable ? (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <CheckCircle className="h-4 w-4 text-success-600" />
                         ) : (
-                          <XCircle className="h-4 w-4 text-amber-500" />
+                          <XCircle className="h-4 w-4 text-warning-500" />
                         )}
                         <span className="text-[var(--text-secondary)]">Metadata URL</span>
                       </div>
@@ -674,7 +674,7 @@ export default function SsoSettingsPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-sky-700 text-white rounded-lg hover:bg-sky-800 transition-colors disabled:opacity-50 font-medium"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 font-medium"
               >
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -718,7 +718,7 @@ export default function SsoSettingsPage() {
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-red-200 dark:border-red-800 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors ml-auto"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-danger-200 dark:border-danger-800 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/20 transition-colors ml-auto"
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete
@@ -727,12 +727,12 @@ export default function SsoSettingsPage() {
 
               {showDeleteConfirm && (
                 <div className="flex items-center gap-2 ml-auto">
-                  <span className="text-sm text-red-600 font-medium">Are you sure?</span>
+                  <span className="text-sm text-danger-600 font-medium">Are you sure?</span>
                   <button
                     type="button"
                     onClick={handleDelete}
                     disabled={deleteMutation.isPending}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-danger-600 text-white rounded-lg text-sm hover:bg-danger-700 disabled:opacity-50"
                   >
                     {deleteMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                     Confirm

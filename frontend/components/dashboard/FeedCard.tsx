@@ -72,9 +72,9 @@ export const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; ico
   },
   WALL_POST: {
     bg: 'bg-[var(--bg-surface)]',
-    border: 'border-l-sky-400',
-    icon: 'text-sky-500',
-    badge: 'bg-sky-50 text-sky-700 dark:bg-sky-900 dark:text-sky-300',
+    border: 'border-l-accent-400',
+    icon: 'text-accent-500',
+    badge: 'bg-accent-50 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
   },
 };
 
@@ -151,7 +151,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
             <button
               onClick={onDelete}
               disabled={isDeleting}
-              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
+              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors disabled:opacity-50"
             >
               <Trash2 className="h-3 w-3" />
               {isDeleting ? 'Deleting...' : 'Delete post'}
@@ -450,7 +450,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 <button
                   onClick={handleSaveEdit}
                   disabled={!editContent.trim() || isSavingEdit}
-                  className="px-3 py-1.5 text-xs font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSavingEdit ? 'Saving...' : 'Save'}
                 </button>
@@ -487,7 +487,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                     'relative w-full text-left rounded-lg border px-4 py-2.5 text-sm transition-all overflow-hidden',
                     localHasVoted
                       ? 'cursor-default border-[var(--border-main)]'
-                      : 'cursor-pointer border-[var(--border-main)] hover:border-sky-300 hover:bg-sky-50/50 dark:hover:border-sky-700 dark:hover:bg-sky-950/30'
+                      : 'cursor-pointer border-[var(--border-main)] hover:border-accent-300 hover:bg-accent-50/50 dark:hover:border-accent-700 dark:hover:bg-accent-950/30'
                   )}
                 >
                   {localHasVoted && (
@@ -495,7 +495,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                       className={cn(
                         'absolute inset-y-0 left-0 transition-all duration-500 rounded-lg',
                         isSelected
-                          ? 'bg-sky-100 dark:bg-sky-900/40'
+                          ? 'bg-accent-100 dark:bg-accent-900/40'
                           : 'bg-[var(--bg-secondary)]'
                       )}
                       style={{ width: `${pct}%` }}
@@ -504,11 +504,11 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   <div className="relative flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                       {isSelected && (
-                        <Check size={14} className="text-sky-700 dark:text-sky-400 shrink-0" />
+                        <Check size={14} className="text-accent-700 dark:text-accent-400 shrink-0" />
                       )}
                       <span className={cn(
                         'truncate',
-                        isSelected ? 'font-semibold text-sky-700 dark:text-sky-300' : 'text-[var(--text-primary)]'
+                        isSelected ? 'font-semibold text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'
                       )}>
                         {option.text}
                       </span>
@@ -530,8 +530,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
         {/* Praise badge + recipient */}
         {item.wallPostType === 'PRAISE' && item.praiseRecipientName && (
           <div className="px-4 pb-2">
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200/50 dark:border-amber-800/30">
-              <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-lg font-bold text-amber-700 dark:text-amber-300 overflow-hidden shrink-0">
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/30 dark:to-warning-950/30 border border-warning-200/50 dark:border-warning-800/30">
+              <div className="w-12 h-12 rounded-full bg-warning-100 dark:bg-warning-900/50 flex items-center justify-center text-lg font-bold text-warning-700 dark:text-warning-300 overflow-hidden shrink-0">
                 {item.praiseRecipientAvatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={item.praiseRecipientAvatar} alt="" className="w-full h-full object-cover" />
@@ -553,7 +553,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                       <span>{cat.emoji}</span> {cat.label}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800">
+                    <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border border-warning-200 bg-warning-50 text-warning-700 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800">
                       🏆 {item.praiseCategory}
                     </span>
                   );
@@ -569,16 +569,16 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
             <button
               onClick={handleLike}
               className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
-                liked ? 'text-sky-700 dark:text-sky-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                liked ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
-              <ThumbsUp className={`h-4 w-4 ${liked ? 'fill-sky-700 dark:fill-sky-400' : ''}`} />
+              <ThumbsUp className={`h-4 w-4 ${liked ? 'fill-accent-700 dark:fill-accent-400' : ''}`} />
               Like
             </button>
             <button
               onClick={handleToggleComments}
               className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
-                showComments ? 'text-sky-700 dark:text-sky-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                showComments ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
               <MessageCircle className="h-4 w-4" />
@@ -632,7 +632,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                         <div className="max-h-48 overflow-y-auto">
                           {isLoadingAllReactors ? (
                             <div className="flex items-center justify-center py-4">
-                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-sky-500" />
+                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
                             </div>
                           ) : (
                             (allReactors.length > 0 ? allReactors : localReactors).map((reactor) => (
@@ -685,20 +685,20 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); }
                 }}
                 placeholder="Write a comment..."
-                className="flex-1 px-3 py-2 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-sky-500"
+                className="flex-1 px-3 py-2 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
                 disabled={isSubmittingComment}
               />
               <button
                 onClick={handleSubmitComment}
                 disabled={!commentText.trim() || isSubmittingComment}
-                className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Send className="h-3 w-3" />
               </button>
             </div>
             {isLoadingComments && (
               <div className="flex items-center gap-2 py-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-sky-500" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
                 <span className="text-xs text-[var(--text-muted)]">Loading comments...</span>
               </div>
             )}
@@ -739,10 +739,10 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               </span>
             )}
             {item.isToday && (
-              <span className="text-xs font-medium text-green-600 dark:text-green-400">Today</span>
+              <span className="text-xs font-medium text-success-600 dark:text-success-400">Today</span>
             )}
             {item.priority === 'CRITICAL' && (
-              <span className="text-xs font-medium text-red-600 dark:text-red-400">Urgent</span>
+              <span className="text-xs font-medium text-danger-600 dark:text-danger-400">Urgent</span>
             )}
           </div>
 
@@ -857,10 +857,10 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               <button
                 onClick={handleLike}
                 className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
-                  liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
+                  liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >
-                <Heart className={`h-3 w-3 ${liked ? 'fill-red-500' : ''}`} />
+                <Heart className={`h-3 w-3 ${liked ? 'fill-danger-500' : ''}`} />
                 {localLikeCount > 0 ? localLikeCount : 'Like'}
               </button>
               <button
@@ -890,13 +890,13 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                     }
                   }}
                   placeholder="Write a comment..."
-                  className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
                   disabled={isSubmittingComment}
                 />
                 <button
                   onClick={handleSubmitComment}
                   disabled={!commentText.trim() || isSubmittingComment}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send className="h-3 w-3" />
                   {isSubmittingComment ? 'Posting...' : 'Post'}
@@ -905,7 +905,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
 
               {isLoadingComments && (
                 <div className="flex items-center gap-2 py-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-sky-500" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
                   <span className="text-xs text-[var(--text-muted)]">Loading comments...</span>
                 </div>
               )}

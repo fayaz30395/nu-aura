@@ -127,7 +127,7 @@ export default function TemplateDetailPage() {
           <div className="flex-1">
             <button
               onClick={() => router.back()}
-              className="mb-3 flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300"
+              className="mb-3 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Templates
@@ -157,7 +157,7 @@ export default function TemplateDetailPage() {
           <div className="flex gap-2">
             <Button
               onClick={() => setShowInstantiateModal(true)}
-              className="gap-2 bg-violet-600 hover:bg-violet-700"
+              className="gap-2 bg-accent-600 hover:bg-accent-700"
             >
               <Copy className="w-4 h-4" />
               Use Template
@@ -284,7 +284,7 @@ export default function TemplateDetailPage() {
             <Button
               type="submit"
               disabled={instantiate.isPending}
-              className="gap-2 bg-violet-600 hover:bg-violet-700"
+              className="gap-2 bg-accent-600 hover:bg-accent-700"
             >
               <Copy className="w-4 h-4" />
               {instantiate.isPending ? 'Creating...' : 'Create Page'}

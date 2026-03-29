@@ -282,7 +282,7 @@ export const shadowPresets = {
   /** Modal / dialog */
   xl: 'shadow-xl',
   /** Colored shadows */
-  primary: 'shadow-lg shadow-sky-500/20',
+  primary: 'shadow-lg shadow-accent-500/20',
   success: 'shadow-lg shadow-success-500/20',
   danger: 'shadow-lg shadow-danger-500/20',
   warning: 'shadow-lg shadow-warning-500/20',
@@ -292,7 +292,7 @@ export const shadowPresets = {
 
 export const gradientPresets = {
   /** Primary blue gradient */
-  primary: 'bg-gradient-to-br from-sky-500 to-sky-700',
+  primary: 'bg-gradient-to-br from-accent-500 to-accent-700',
   /** Success green gradient */
   success: 'bg-gradient-to-br from-success-500 to-success-700',
   /** Danger red gradient */
@@ -302,9 +302,9 @@ export const gradientPresets = {
   /** Info cyan gradient */
   info: 'bg-gradient-to-br from-info-400 to-info-600',
   /** Premium purple gradient */
-  premium: 'bg-gradient-to-br from-purple-500 to-indigo-700',
+  premium: 'bg-gradient-to-br from-accent-700 to-accent-700',
   /** Hero section gradient */
-  hero: 'bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900',
+  hero: 'bg-gradient-to-r from-accent-900 via-accent-800 to-accent-900',
   /** Subtle surface gradient */
   surface: 'bg-gradient-to-br from-surface-50 to-surface-100 dark:from-surface-900 dark:to-surface-800',
 } as const;

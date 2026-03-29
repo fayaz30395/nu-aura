@@ -112,7 +112,7 @@ export default function ShiftDashboardPage() {
                 onClick={() => setViewMode('week')}
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === 'week'
-                    ? 'bg-sky-700 text-white'
+                    ? 'bg-accent-700 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
                 }`}
               >
@@ -122,7 +122,7 @@ export default function ShiftDashboardPage() {
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === 'list'
-                    ? 'bg-sky-700 text-white'
+                    ? 'bg-accent-700 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
                 }`}
               >
@@ -139,10 +139,10 @@ export default function ShiftDashboardPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => router.push(link.href)}
-                className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600 transition-colors text-left"
+                className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left"
               >
-                <div className="p-2 rounded-lg bg-sky-50 dark:bg-sky-900/30">
-                  <link.icon className="w-5 h-5 text-sky-700 dark:text-sky-400" />
+                <div className="p-2 rounded-lg bg-accent-50 dark:bg-accent-900/30">
+                  <link.icon className="w-5 h-5 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white text-sm">{link.label}</p>
@@ -185,7 +185,7 @@ export default function ShiftDashboardPage() {
               </p>
               <button
                 onClick={() => setCurrentWeekOffset(0)}
-                className="text-xs text-sky-700 dark:text-sky-400 hover:underline"
+                className="text-xs text-accent-700 dark:text-accent-400 hover:underline"
               >
                 Today
               </button>
@@ -222,7 +222,7 @@ export default function ShiftDashboardPage() {
                           key={d.toISOString()}
                           className={`text-center p-3 text-sm font-medium ${
                             isToday
-                              ? 'text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/20'
+                              ? 'text-accent-700 dark:text-accent-400 bg-accent-50 dark:bg-accent-900/20'
                               : 'text-gray-500 dark:text-gray-400'
                           }`}
                         >
@@ -251,7 +251,7 @@ export default function ShiftDashboardPage() {
                         return (
                           <td
                             key={dateStr}
-                            className={`p-2 text-center ${isToday ? 'bg-sky-50/50 dark:bg-sky-900/10' : ''}`}
+                            className={`p-2 text-center ${isToday ? 'bg-accent-50/50 dark:bg-accent-900/10' : ''}`}
                           >
                             {entry ? (
                               <div

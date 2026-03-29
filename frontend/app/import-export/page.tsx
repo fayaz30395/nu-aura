@@ -85,11 +85,11 @@ type ActiveTab = 'import' | 'export' | 'keka' | 'history';
 
 function StatusBadge({ status }: { status: string }) {
   const config: Record<string, { bg: string; text: string; icon: typeof CheckCircle2 }> = {
-    SUCCESS: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400', icon: CheckCircle2 },
-    COMPLETED: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400', icon: CheckCircle2 },
-    PARTIAL_SUCCESS: { bg: 'bg-yellow-100 dark:bg-yellow-900/30', text: 'text-yellow-700 dark:text-yellow-400', icon: AlertTriangle },
-    FAILED: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', icon: XCircle },
-    IN_PROGRESS: { bg: 'bg-sky-100 dark:bg-sky-900/30', text: 'text-sky-700 dark:text-sky-400', icon: RefreshCw },
+    SUCCESS: { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', icon: CheckCircle2 },
+    COMPLETED: { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', icon: CheckCircle2 },
+    PARTIAL_SUCCESS: { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', icon: AlertTriangle },
+    FAILED: { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', icon: XCircle },
+    IN_PROGRESS: { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', icon: RefreshCw },
     CANCELLED: { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-400', icon: XCircle },
   };
 
@@ -169,9 +169,9 @@ function FileDropZone({
 
   if (currentFile) {
     return (
-      <div className="flex items-center justify-between p-4 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-900/20">
+      <div className="flex items-center justify-between p-4 rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20">
         <div className="flex items-center gap-3">
-          <FileSpreadsheet className="h-8 w-8 text-sky-700 dark:text-sky-400" />
+          <FileSpreadsheet className="h-8 w-8 text-accent-700 dark:text-accent-400" />
           <div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{currentFile.name}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -182,7 +182,7 @@ function FileDropZone({
         <button
           type="button"
           onClick={onClear}
-          className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
+          className="p-2 rounded-lg hover:bg-danger-100 dark:hover:bg-danger-900/30 text-danger-600 dark:text-danger-400 transition-colors"
           aria-label="Remove file"
         >
           <Trash2 className="h-4 w-4" />
@@ -203,8 +203,8 @@ function FileDropZone({
       className={`
         flex flex-col items-center justify-center p-8 rounded-lg border-2 border-dashed cursor-pointer transition-all
         ${isDragActive
-          ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20'
-          : 'border-gray-300 dark:border-gray-600 hover:border-sky-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+          ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+          : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
@@ -335,7 +335,7 @@ function ImportSection() {
               {i > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
               <span className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
-                  ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400'
+                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
                   : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500'
               }`}>
                 {label}
@@ -355,14 +355,14 @@ function ImportSection() {
             className={`
               flex items-center gap-3 p-4 rounded-lg border text-left transition-all
               ${selectedType === value
-                ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20 ring-1 ring-sky-500'
-                : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
+                : 'border-gray-200 dark:border-gray-700 hover:border-accent-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
               }
             `}
           >
-            <Icon className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-sky-700 dark:text-sky-400' : 'text-gray-400'}`} />
+            <Icon className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-accent-700 dark:text-accent-400' : 'text-gray-400'}`} />
             <div>
-              <p className={`text-sm font-medium ${selectedType === value ? 'text-sky-700 dark:text-sky-300' : 'text-gray-900 dark:text-gray-100'}`}>{label}</p>
+              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-gray-900 dark:text-gray-100'}`}>{label}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
             </div>
           </button>
@@ -375,12 +375,12 @@ function ImportSection() {
           <div className="flex items-start justify-between">
             <div>
               <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Info className="h-4 w-4 text-sky-600" />
+                <Info className="h-4 w-4 text-accent-600" />
                 Required Columns
               </h4>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {currentTemplate.requiredColumns.map((col: string) => (
-                  <span key={col} className="px-2 py-0.5 rounded bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs font-mono">
+                  <span key={col} className="px-2 py-0.5 rounded bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 text-xs font-mono">
                     {col} *
                   </span>
                 ))}
@@ -410,7 +410,7 @@ function ImportSection() {
                   type="button"
                   onClick={() => downloadTemplateMutation.mutate('xlsx')}
                   disabled={downloadTemplateMutation.isPending}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-sky-700 hover:bg-sky-800 text-white transition-colors"
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent-700 hover:bg-accent-800 text-white transition-colors"
                 >
                   <Download className="h-3.5 w-3.5 inline mr-1" />XLSX
                 </button>
@@ -455,7 +455,7 @@ function ImportSection() {
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {preview.rows.slice(0, 10).map((row) => (
-                    <tr key={row.rowNumber} className={row.isValid ? '' : 'bg-red-50 dark:bg-red-900/10'}>
+                    <tr key={row.rowNumber} className={row.isValid ? '' : 'bg-danger-50 dark:bg-danger-900/10'}>
                       <td className="px-3 py-2 text-gray-600 dark:text-gray-400">{row.rowNumber}</td>
                       <td className="px-3 py-2 font-mono text-gray-900 dark:text-gray-100">{row.employeeCode}</td>
                       <td className="px-3 py-2 text-gray-900 dark:text-gray-100">{row.fullName}</td>
@@ -463,9 +463,9 @@ function ImportSection() {
                       <td className="px-3 py-2 text-gray-600 dark:text-gray-400">{row.departmentName}</td>
                       <td className="px-3 py-2">
                         {row.isValid ? (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                          <CheckCircle2 className="h-4 w-4 text-success-500" />
                         ) : (
-                          <span className="text-red-600 dark:text-red-400">{row.rowErrors?.join(', ')}</span>
+                          <span className="text-danger-600 dark:text-danger-400">{row.rowErrors?.join(', ')}</span>
                         )}
                       </td>
                     </tr>
@@ -475,16 +475,16 @@ function ImportSection() {
             </div>
           )}
           {preview.errors.length > 0 && (
-            <div className="p-4 bg-red-50 dark:bg-red-900/10 border-t border-red-200 dark:border-red-800">
-              <h5 className="text-xs font-medium text-red-700 dark:text-red-400 mb-2">
+            <div className="p-4 bg-danger-50 dark:bg-danger-900/10 border-t border-danger-200 dark:border-danger-800">
+              <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">
                 Validation Errors ({preview.errors.length})
               </h5>
-              <ul className="space-y-1 text-xs text-red-600 dark:text-red-400">
+              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400">
                 {preview.errors.slice(0, 10).map((err, i) => (
                   <li key={i}>Row {err.rowNumber}: {err.field} - {err.message}</li>
                 ))}
                 {preview.errors.length > 10 && (
-                  <li className="text-red-500">...and {preview.errors.length - 10} more errors</li>
+                  <li className="text-danger-500">...and {preview.errors.length - 10} more errors</li>
                 )}
               </ul>
             </div>
@@ -501,9 +501,9 @@ function ImportSection() {
         >
           <div className="flex items-center gap-3 mb-4">
             {importResult.errorCount === 0 ? (
-              <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+              <CheckCircle2 className="h-8 w-8 text-success-500" />
             ) : (
-              <AlertTriangle className="h-8 w-8 text-yellow-500" />
+              <AlertTriangle className="h-8 w-8 text-warning-500" />
             )}
             <div>
               <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Import Complete</h4>
@@ -517,23 +517,23 @@ function ImportSection() {
               <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{importResult.totalRows}</p>
             </div>
-            <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">Success</p>
-              <p className="text-xl font-bold text-emerald-700 dark:text-emerald-300">{importResult.successCount}</p>
+            <div className="p-3 rounded-lg bg-success-50 dark:bg-success-900/20">
+              <p className="text-xs text-success-600 dark:text-success-400">Success</p>
+              <p className="text-xl font-bold text-success-700 dark:text-success-300">{importResult.successCount}</p>
             </div>
-            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20">
-              <p className="text-xs text-red-600 dark:text-red-400">Errors</p>
-              <p className="text-xl font-bold text-red-700 dark:text-red-300">{importResult.errorCount}</p>
+            <div className="p-3 rounded-lg bg-danger-50 dark:bg-danger-900/20">
+              <p className="text-xs text-danger-600 dark:text-danger-400">Errors</p>
+              <p className="text-xl font-bold text-danger-700 dark:text-danger-300">{importResult.errorCount}</p>
             </div>
-            <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
-              <p className="text-xs text-yellow-600 dark:text-yellow-400">Skipped</p>
-              <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">{importResult.skippedCount}</p>
+            <div className="p-3 rounded-lg bg-warning-50 dark:bg-warning-900/20">
+              <p className="text-xs text-warning-600 dark:text-warning-400">Skipped</p>
+              <p className="text-xl font-bold text-warning-700 dark:text-warning-300">{importResult.skippedCount}</p>
             </div>
           </div>
           {importResult.errors.length > 0 && (
-            <div className="mt-4 rounded-lg bg-red-50 dark:bg-red-900/10 p-4">
-              <h5 className="text-xs font-medium text-red-700 dark:text-red-400 mb-2">Errors</h5>
-              <ul className="space-y-1 text-xs text-red-600 dark:text-red-400 max-h-40 overflow-y-auto">
+            <div className="mt-4 rounded-lg bg-danger-50 dark:bg-danger-900/10 p-4">
+              <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">Errors</h5>
+              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-40 overflow-y-auto">
                 {importResult.errors.map((err, i) => (
                   <li key={i}>Row {err.rowNumber}: {err.field} = &quot;{err.value}&quot; - {err.errorMessage}</li>
                 ))}
@@ -550,7 +550,7 @@ function ImportSection() {
             type="button"
             onClick={handleValidateAndPreview}
             disabled={isProcessing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
           >
             {(previewEmployeeMutation.isPending || validateMutation.isPending) && <RefreshCw className="h-4 w-4 animate-spin" />}
             Validate & Preview
@@ -562,7 +562,7 @@ function ImportSection() {
             type="button"
             onClick={handleImport}
             disabled={isProcessing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
           >
             {(importMutation.isPending || executeEmployeeMutation.isPending) && <RefreshCw className="h-4 w-4 animate-spin" />}
             Start Import
@@ -621,12 +621,12 @@ function ExportSection() {
               className={`
                 p-3 rounded-lg border text-left transition-all
                 ${selectedType === value
-                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20 ring-1 ring-sky-500'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                  ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-accent-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                 }
               `}
             >
-              <p className={`text-sm font-medium ${selectedType === value ? 'text-sky-700 dark:text-sky-300' : 'text-gray-900 dark:text-gray-100'}`}>{label}</p>
+              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-gray-900 dark:text-gray-100'}`}>{label}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
             </button>
           ))}
@@ -647,8 +647,8 @@ function ExportSection() {
               className={`
                 px-4 py-2 rounded-lg border text-sm font-medium transition-all
                 ${selectedFormat === value
-                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300 ring-1 ring-sky-500'
-                  : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-sky-300'
+                  ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300 ring-1 ring-accent-500'
+                  : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-accent-300'
                 }
               `}
             >
@@ -663,7 +663,7 @@ function ExportSection() {
         type="button"
         onClick={handleExport}
         disabled={exportMutation.isPending}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
       >
         {exportMutation.isPending ? (
           <RefreshCw className="h-4 w-4 animate-spin" />
@@ -793,7 +793,7 @@ function KekaMigrationSection() {
               {i > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
               <span className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
-                  ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400'
+                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
                   : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500'
               }`}>
                 {label}
@@ -806,12 +806,12 @@ function KekaMigrationSection() {
       {/* Upload step */}
       {wizardStep === 'upload' && (
         <div className="space-y-4">
-          <div className="rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-900/10 p-4">
-            <h4 className="text-sm font-medium text-sky-800 dark:text-sky-300 flex items-center gap-2">
+          <div className="rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/10 p-4">
+            <h4 className="text-sm font-medium text-accent-800 dark:text-accent-300 flex items-center gap-2">
               <Info className="h-4 w-4" />
               KEKA Migration
             </h4>
-            <p className="text-xs text-sky-700 dark:text-sky-400 mt-1">
+            <p className="text-xs text-accent-700 dark:text-accent-400 mt-1">
               Upload your KEKA export file (.csv or .xlsx). The system will detect columns and let you map them to NU-AURA fields.
             </p>
           </div>
@@ -826,7 +826,7 @@ function KekaMigrationSection() {
               type="button"
               onClick={handleUpload}
               disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
               {uploadMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
               Upload & Detect Columns
@@ -861,7 +861,7 @@ function KekaMigrationSection() {
                     <select
                       value={mapping.targetField}
                       onChange={(e) => updateMapping(index, 'targetField', e.target.value)}
-                      className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:ring-offset-2"
+                      className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >
                       <option value="">-- Skip --</option>
                       {targetFields.map((tf) => (
@@ -870,7 +870,7 @@ function KekaMigrationSection() {
                     </select>
                   </div>
                   {mapping.isRequired && (
-                    <span className="text-xs text-red-500 font-medium flex-shrink-0">Required</span>
+                    <span className="text-xs text-danger-500 font-medium flex-shrink-0">Required</span>
                   )}
                 </div>
               ))}
@@ -881,7 +881,7 @@ function KekaMigrationSection() {
               type="button"
               onClick={handlePreview}
               disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
               {previewMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
               Preview Import
@@ -906,13 +906,13 @@ function KekaMigrationSection() {
               <p className="text-xs text-gray-500 dark:text-gray-400">Total Rows</p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{previewData.totalRows}</p>
             </div>
-            <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">Valid</p>
-              <p className="text-xl font-bold text-emerald-700 dark:text-emerald-300">{previewData.validRows}</p>
+            <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
+              <p className="text-xs text-success-600 dark:text-success-400">Valid</p>
+              <p className="text-xl font-bold text-success-700 dark:text-success-300">{previewData.validRows}</p>
             </div>
-            <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20">
-              <p className="text-xs text-red-600 dark:text-red-400">Errors</p>
-              <p className="text-xl font-bold text-red-700 dark:text-red-300">{previewData.errorRows}</p>
+            <div className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20">
+              <p className="text-xs text-danger-600 dark:text-danger-400">Errors</p>
+              <p className="text-xl font-bold text-danger-700 dark:text-danger-300">{previewData.errorRows}</p>
             </div>
           </div>
 
@@ -946,11 +946,11 @@ function KekaMigrationSection() {
           )}
 
           {previewData.errors.length > 0 && (
-            <div className="rounded-lg bg-red-50 dark:bg-red-900/10 p-4">
-              <h5 className="text-xs font-medium text-red-700 dark:text-red-400 mb-2">
+            <div className="rounded-lg bg-danger-50 dark:bg-danger-900/10 p-4">
+              <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">
                 Validation Errors ({previewData.errors.length})
               </h5>
-              <ul className="space-y-1 text-xs text-red-600 dark:text-red-400 max-h-32 overflow-y-auto">
+              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-32 overflow-y-auto">
                 {previewData.errors.slice(0, 10).map((err, i) => (
                   <li key={i}>Row {err.row}: {err.field} - {err.message}</li>
                 ))}
@@ -963,7 +963,7 @@ function KekaMigrationSection() {
               type="button"
               onClick={handleExecute}
               disabled={isProcessing || previewData.validRows === 0}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
               {executeMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
               Execute Import ({previewData.validRows} rows)
@@ -988,7 +988,7 @@ function KekaMigrationSection() {
           className="rounded-lg border border-gray-200 dark:border-gray-700 p-6"
         >
           <div className="flex items-center gap-3 mb-4">
-            <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+            <CheckCircle2 className="h-8 w-8 text-success-500" />
             <div>
               <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">KEKA Migration Complete</h4>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -1001,17 +1001,17 @@ function KekaMigrationSection() {
               <p className="text-xs text-gray-500 dark:text-gray-400">Processed</p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{executeMutation.data.totalProcessed}</p>
             </div>
-            <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">Created</p>
-              <p className="text-xl font-bold text-emerald-700 dark:text-emerald-300">{executeMutation.data.created}</p>
+            <div className="p-3 rounded-lg bg-success-50 dark:bg-success-900/20">
+              <p className="text-xs text-success-600 dark:text-success-400">Created</p>
+              <p className="text-xl font-bold text-success-700 dark:text-success-300">{executeMutation.data.created}</p>
             </div>
-            <div className="p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20">
-              <p className="text-xs text-sky-600 dark:text-sky-400">Updated</p>
-              <p className="text-xl font-bold text-sky-700 dark:text-sky-300">{executeMutation.data.updated}</p>
+            <div className="p-3 rounded-lg bg-accent-50 dark:bg-accent-900/20">
+              <p className="text-xs text-accent-600 dark:text-accent-400">Updated</p>
+              <p className="text-xl font-bold text-accent-700 dark:text-accent-300">{executeMutation.data.updated}</p>
             </div>
-            <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
-              <p className="text-xs text-yellow-600 dark:text-yellow-400">Skipped</p>
-              <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">{executeMutation.data.skipped}</p>
+            <div className="p-3 rounded-lg bg-warning-50 dark:bg-warning-900/20">
+              <p className="text-xs text-warning-600 dark:text-warning-400">Skipped</p>
+              <p className="text-xl font-bold text-warning-700 dark:text-warning-300">{executeMutation.data.skipped}</p>
             </div>
           </div>
           <button
@@ -1068,8 +1068,8 @@ function HistorySection() {
                 <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{entry.fileName}</td>
                 <td className="px-4 py-3"><StatusBadge status={entry.status} /></td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{entry.totalRows ?? '-'}</td>
-                <td className="px-4 py-3 text-emerald-600 dark:text-emerald-400">{entry.created ?? '-'}</td>
-                <td className="px-4 py-3 text-red-600 dark:text-red-400">{entry.errors ?? '-'}</td>
+                <td className="px-4 py-3 text-success-600 dark:text-success-400">{entry.created ?? '-'}</td>
+                <td className="px-4 py-3 text-danger-600 dark:text-danger-400">{entry.errors ?? '-'}</td>
                 <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
                   {entry.duration ? `${(entry.duration / 1000).toFixed(1)}s` : '-'}
                 </td>
@@ -1131,7 +1131,7 @@ export default function ImportExportPage() {
         fallback={
           <div className="flex items-center justify-center h-96">
             <EmptyState
-              icon={<AlertTriangle className="h-12 w-12 text-yellow-500" />}
+              icon={<AlertTriangle className="h-12 w-12 text-warning-500" />}
               title="Access Denied"
               description="You do not have permission to access the Import/Export Hub."
             />
@@ -1157,7 +1157,7 @@ export default function ImportExportPage() {
                 className={`
                   inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${activeTab === key
-                    ? 'bg-white dark:bg-gray-700 text-sky-700 dark:text-sky-400 shadow-sm'
+                    ? 'bg-white dark:bg-gray-700 text-accent-700 dark:text-accent-400 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                   }
                 `}
@@ -1184,7 +1184,7 @@ export default function ImportExportPage() {
                 <AdminGate
                   fallback={
                     <EmptyState
-                      icon={<AlertTriangle className="h-12 w-12 text-yellow-500" />}
+                      icon={<AlertTriangle className="h-12 w-12 text-warning-500" />}
                       title="Admin Only"
                       description="KEKA migration is restricted to system administrators."
                     />

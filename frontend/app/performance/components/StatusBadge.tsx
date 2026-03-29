@@ -9,15 +9,15 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
     if (type === 'goal') {
       switch (status) {
         case 'ACTIVE':
-          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
+          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
         case 'COMPLETED':
-          return 'bg-green-100 text-green-800 border-green-200';
+          return 'bg-success-100 text-success-800 border-success-200';
         case 'DRAFT':
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
         case 'CANCELLED':
-          return 'bg-red-100 text-red-800 border-red-200';
+          return 'bg-danger-100 text-danger-800 border-danger-200';
         case 'ON_HOLD':
-          return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+          return 'bg-warning-100 text-warning-800 border-warning-200';
         default:
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
       }
@@ -29,13 +29,13 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
         case 'DRAFT':
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
         case 'SUBMITTED':
-          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
+          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
         case 'IN_REVIEW':
-          return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+          return 'bg-warning-100 text-warning-800 border-warning-200';
         case 'COMPLETED':
-          return 'bg-green-100 text-green-800 border-green-200';
+          return 'bg-success-100 text-success-800 border-success-200';
         case 'ACKNOWLEDGED':
-          return 'bg-purple-100 text-purple-800 border-purple-200';
+          return 'bg-accent-100 text-accent-800 border-accent-200';
         default:
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
       }
@@ -47,11 +47,11 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
         case 'PLANNING':
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
         case 'ACTIVE':
-          return 'bg-green-100 text-green-800 border-green-200';
+          return 'bg-success-100 text-success-800 border-success-200';
         case 'COMPLETED':
-          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
+          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
         case 'CANCELLED':
-          return 'bg-red-100 text-red-800 border-red-200';
+          return 'bg-danger-100 text-danger-800 border-danger-200';
         default:
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
       }
@@ -61,13 +61,13 @@ export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps)
     if (type === 'feedback') {
       switch (status) {
         case 'PRAISE':
-          return 'bg-green-100 text-green-800 border-green-200';
+          return 'bg-success-100 text-success-800 border-success-200';
         case 'CONSTRUCTIVE':
-          return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+          return 'bg-warning-100 text-warning-800 border-warning-200';
         case 'GENERAL':
-          return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400 border-sky-200 dark:border-sky-500';
+          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
         case 'REQUEST':
-          return 'bg-purple-100 text-purple-800 border-purple-200';
+          return 'bg-accent-100 text-accent-800 border-accent-200';
         default:
           return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
       }

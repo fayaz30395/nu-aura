@@ -138,12 +138,12 @@ export default function UtilizationReportsPage() {
             {trend && (
               <div className="flex items-center gap-1">
                 {trendDirection === 'up' ? (
-                  <ArrowUpRight className="h-4 w-4 text-green-500" />
+                  <ArrowUpRight className="h-4 w-4 text-success-500" />
                 ) : (
-                  <ArrowDownRight className="h-4 w-4 text-red-500" />
+                  <ArrowDownRight className="h-4 w-4 text-danger-500" />
                 )}
                 <span
-                  className={`text-sm font-medium ${trendDirection === 'up' ? 'text-green-500' : 'text-red-500'
+                  className={`text-sm font-medium ${trendDirection === 'up' ? 'text-success-500' : 'text-danger-500'
                     }`}
                 >
                   {trend}
@@ -165,10 +165,10 @@ export default function UtilizationReportsPage() {
     <div className="flex items-center gap-4">
       <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${rate >= 90 ? 'bg-green-500' :
-            rate >= 75 ? 'bg-blue-500' :
-              rate >= 50 ? 'bg-yellow-500' :
-                'bg-red-500'
+          className={`h-full rounded-full transition-all ${rate >= 90 ? 'bg-success-500' :
+            rate >= 75 ? 'bg-accent-500' :
+              rate >= 50 ? 'bg-warning-500' :
+                'bg-danger-500'
             }`}
           style={{ width: `${Math.min(rate, 100)}%` }}
         />
@@ -230,7 +230,7 @@ export default function UtilizationReportsPage() {
     return (
       <AppLayout activeMenuItem="reports">
         <div className="p-6 flex flex-col items-center justify-center h-[60vh]">
-          <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
+          <AlertCircle className="w-16 h-16 text-danger-500 mb-4" />
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Failed to load data</h2>
           <p className="text-[var(--text-muted)] mt-2">{typeof error === 'object' && error ? (error as Error).message : 'Unknown error occurred'}</p>
           <Button
@@ -272,7 +272,7 @@ export default function UtilizationReportsPage() {
               <select
                 value={selectedDateRange}
                 onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="thisWeek">This Week</option>
                 <option value="lastWeek">Last Week</option>
@@ -291,14 +291,14 @@ export default function UtilizationReportsPage() {
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
                 <span className="text-[var(--text-muted)]">to</span>
                 <input
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </>
             )}
@@ -322,10 +322,10 @@ export default function UtilizationReportsPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-4"
+            className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-center gap-4"
           >
-            <AlertCircle className="h-5 w-5 text-red-500" />
-            <span className="text-red-700 dark:text-red-400">{typeof error === 'object' && error ? (error as Error).message : String(error)}</span>
+            <AlertCircle className="h-5 w-5 text-danger-500" />
+            <span className="text-danger-700 dark:text-danger-400">{typeof error === 'object' && error ? (error as Error).message : String(error)}</span>
           </motion.div>
         )}
 
@@ -342,21 +342,21 @@ export default function UtilizationReportsPage() {
             icon={TrendingUp}
             trend="+5.2% vs last period"
             trendDirection="up"
-            color="bg-gradient-to-br from-blue-500 to-blue-600"
+            color="bg-gradient-to-br from-accent-500 to-accent-600"
           />
           <StatCard
             title="Billable Hours"
             value={formatHours(dashboardData.summary.totalBillableHours)}
             subValue={`of ${formatHours(dashboardData.summary.totalBillableHours + dashboardData.summary.totalNonBillableHours)} total`}
             icon={Clock}
-            color="bg-gradient-to-br from-green-500 to-green-600"
+            color="bg-gradient-to-br from-success-500 to-success-600"
           />
           <StatCard
             title="Active Resources"
             value={dashboardData.summary.totalEmployees}
             subValue="employees tracked"
             icon={Users}
-            color="bg-gradient-to-br from-purple-500 to-purple-600"
+            color="bg-gradient-to-br from-accent-700 to-accent-800"
           />
           <StatCard
             title="Revenue Generated"
@@ -364,7 +364,7 @@ export default function UtilizationReportsPage() {
             icon={DollarSign}
             trend="+12.3% vs last period"
             trendDirection="up"
-            color="bg-gradient-to-br from-amber-500 to-amber-600"
+            color="bg-gradient-to-br from-warning-500 to-warning-600"
           />
         </motion.div>
 
@@ -381,7 +381,7 @@ export default function UtilizationReportsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-1 py-3 border-b-2 transition-colors ${activeTab === tab.id
-                  ? 'border-sky-500 text-sky-700 dark:text-sky-400'
+                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                   }`}
               >
@@ -405,7 +405,7 @@ export default function UtilizationReportsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ArrowUpRight className="h-5 w-5 text-green-500" />
+                    <ArrowUpRight className="h-5 w-5 text-success-500" />
                     Top Performers
                   </CardTitle>
                 </CardHeader>
@@ -416,7 +416,7 @@ export default function UtilizationReportsPage() {
                         key={emp.employeeId}
                         className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm font-bold">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400 text-sm font-bold">
                           {index + 1}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -445,7 +445,7 @@ export default function UtilizationReportsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ArrowDownRight className="h-5 w-5 text-red-500" />
+                    <ArrowDownRight className="h-5 w-5 text-danger-500" />
                     Under-Utilized Resources
                   </CardTitle>
                 </CardHeader>
@@ -456,8 +456,8 @@ export default function UtilizationReportsPage() {
                         key={emp.employeeId}
                         className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
-                        <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                          <User className="h-5 w-5 text-red-600 dark:text-red-400" />
+                        <div className="w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                          <User className="h-5 w-5 text-danger-600 dark:text-danger-400" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-[var(--text-primary)] truncate">
@@ -485,7 +485,7 @@ export default function UtilizationReportsPage() {
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-sky-500" />
+                    <Building2 className="h-5 w-5 text-accent-500" />
                     Department Utilization
                   </CardTitle>
                 </CardHeader>
@@ -494,7 +494,7 @@ export default function UtilizationReportsPage() {
                     {dashboardData.byDepartment.map((dept) => (
                       <div
                         key={dept.departmentId}
-                        className="p-4 rounded-lg border border-[var(--border-main)] hover:border-sky-300 dark:hover:border-sky-700 transition-colors"
+                        className="p-4 rounded-lg border border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700 transition-colors"
                       >
                         <div className="flex items-center justify-between mb-3">
                           <h4 className="font-medium text-[var(--text-primary)]">
@@ -527,7 +527,7 @@ export default function UtilizationReportsPage() {
                       placeholder="Search employees..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="pl-10 pr-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                   </div>
                 </div>
@@ -553,7 +553,7 @@ export default function UtilizationReportsPage() {
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-sky-700 dark:text-sky-300 text-sm font-medium">
+                              <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium">
                                 {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                               </div>
                               <div>
@@ -607,7 +607,7 @@ export default function UtilizationReportsPage() {
                         </div>
                         <div className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-green-500 rounded-full"
+                            className="h-full bg-success-500 rounded-full"
                             style={{ width: `${(dept.billableHours / dept.totalHours) * 100}%` }}
                           />
                         </div>
@@ -622,7 +622,7 @@ export default function UtilizationReportsPage() {
                         </div>
                         <div className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-yellow-500 rounded-full"
+                            className="h-full bg-warning-500 rounded-full"
                             style={{ width: `${((dept.totalHours - dept.billableHours) / dept.totalHours) * 100}%` }}
                           />
                         </div>
@@ -669,8 +669,8 @@ export default function UtilizationReportsPage() {
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                                <FolderOpen className="h-5 w-5 text-sky-700 dark:text-sky-400" />
+                              <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                                <FolderOpen className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                               </div>
                               <span className="font-medium text-[var(--text-primary)]">
                                 {project.projectName}
@@ -689,7 +689,7 @@ export default function UtilizationReportsPage() {
                           <td className="py-3 px-4">
                             <UtilizationBar rate={project.utilizationRate} />
                           </td>
-                          <td className="py-3 px-4 text-right font-semibold text-green-600 dark:text-green-400">
+                          <td className="py-3 px-4 text-right font-semibold text-success-600 dark:text-success-400">
                             {formatCurrency(project.billedAmount)}
                           </td>
                         </tr>

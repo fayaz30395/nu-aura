@@ -48,22 +48,22 @@ export default function TaxOverviewPage() {
       label: 'Total Declarations',
       value: safeDeclarations.length,
       icon: FileSpreadsheet,
-      color: 'text-blue-600 dark:text-blue-400',
-      bg: 'bg-blue-50 dark:bg-blue-900/20',
+      color: 'text-accent-600 dark:text-accent-400',
+      bg: 'bg-accent-50 dark:bg-accent-900/20',
     },
     {
       label: 'Approved',
       value: approvedCount,
       icon: FileCheck,
-      color: 'text-green-600 dark:text-green-400',
-      bg: 'bg-green-50 dark:bg-green-900/20',
+      color: 'text-success-600 dark:text-success-400',
+      bg: 'bg-success-50 dark:bg-success-900/20',
     },
     {
       label: 'Pending Review',
       value: pendingCount,
       icon: Clock,
-      color: 'text-amber-600 dark:text-amber-400',
-      bg: 'bg-amber-50 dark:bg-amber-900/20',
+      color: 'text-warning-600 dark:text-warning-400',
+      bg: 'bg-warning-50 dark:bg-warning-900/20',
     },
   ];
 
@@ -149,8 +149,8 @@ export default function TaxOverviewPage() {
           >
             <Group justify="space-between">
               <Group gap="md">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                  <FileSpreadsheet className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
+                  <FileSpreadsheet className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
                   <Text fw={600}>Tax Declarations</Text>

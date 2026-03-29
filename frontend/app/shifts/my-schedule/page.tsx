@@ -107,7 +107,7 @@ export default function MySchedulePage() {
           </div>
           <button
             onClick={() => router.push('/shifts/swaps')}
-            className="flex items-center gap-2 px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg transition-colors text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium"
           >
             <ArrowLeftRight className="w-4 h-4" />
             Swap Request
@@ -129,7 +129,7 @@ export default function MySchedulePage() {
                 <h2 className="font-semibold text-gray-900 dark:text-white">{monthName}</h2>
                 <button
                   onClick={() => setMonthOffset(0)}
-                  className="text-xs text-sky-700 dark:text-sky-400 hover:underline"
+                  className="text-xs text-accent-700 dark:text-accent-400 hover:underline"
                 >
                   Today
                 </button>
@@ -175,7 +175,7 @@ export default function MySchedulePage() {
                         key={dateStr}
                         className={`h-20 rounded-lg border p-1.5 ${
                           isToday
-                            ? 'border-sky-700 bg-sky-50 dark:bg-sky-900/20'
+                            ? 'border-accent-700 bg-accent-50 dark:bg-accent-900/20'
                             : isPast
                               ? 'border-gray-100 dark:border-gray-700/50 opacity-60'
                               : 'border-gray-100 dark:border-gray-700/50'
@@ -183,7 +183,7 @@ export default function MySchedulePage() {
                       >
                         <p
                           className={`text-xs font-medium mb-1 ${
-                            isToday ? 'text-sky-700 dark:text-sky-400' : 'text-gray-500 dark:text-gray-400'
+                            isToday ? 'text-accent-700 dark:text-accent-400' : 'text-gray-500 dark:text-gray-400'
                           }`}
                         >
                           {date.getDate()}
@@ -213,7 +213,7 @@ export default function MySchedulePage() {
           <div className="space-y-4">
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-sky-700 dark:text-sky-400" />
+                <Clock className="w-4 h-4 text-accent-700 dark:text-accent-400" />
                 Upcoming Shifts
               </h3>
               {upcomingShifts.length === 0 ? (
@@ -231,7 +231,7 @@ export default function MySchedulePage() {
                         animate={{ opacity: 1, x: 0 }}
                         className={`flex items-center gap-3 p-3 rounded-lg ${
                           isToday
-                            ? 'bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800'
+                            ? 'bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800'
                             : 'bg-gray-50 dark:bg-gray-700/30'
                         }`}
                       >
@@ -243,7 +243,7 @@ export default function MySchedulePage() {
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
                             {entry.shiftName}
                             {isToday && (
-                              <span className="ml-2 text-xs text-sky-700 dark:text-sky-400 font-normal">
+                              <span className="ml-2 text-xs text-accent-700 dark:text-accent-400 font-normal">
                                 Today
                               </span>
                             )}
@@ -255,9 +255,9 @@ export default function MySchedulePage() {
                           </p>
                         </div>
                         {entry.isNightShift ? (
-                          <Moon className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                          <Moon className="w-4 h-4 text-accent-500 flex-shrink-0" />
                         ) : (
-                          <Sun className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                          <Sun className="w-4 h-4 text-warning-500 flex-shrink-0" />
                         )}
                       </motion.div>
                     );
@@ -271,11 +271,11 @@ export default function MySchedulePage() {
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Legend</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center gap-2">
-                  <Moon className="w-3.5 h-3.5 text-indigo-500" />
+                  <Moon className="w-3.5 h-3.5 text-accent-500" />
                   <span className="text-gray-600 dark:text-gray-300">Night shift</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  <Sun className="w-3.5 h-3.5 text-warning-500" />
                   <span className="text-gray-600 dark:text-gray-300">Day shift</span>
                 </div>
                 <div className="flex items-center gap-2">

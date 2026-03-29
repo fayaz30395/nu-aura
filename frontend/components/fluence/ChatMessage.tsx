@@ -35,7 +35,7 @@ function renderMessageContent(content: string): React.ReactNode[] {
       <Link
         key={`link-${match.index}`}
         href={linkUrl}
-        className="text-sky-500 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 underline underline-offset-2 transition-colors"
+        className="text-accent-500 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 underline underline-offset-2 transition-colors"
       >
         {linkText}
       </Link>
@@ -67,7 +67,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         className={cn(
           'flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full mt-0.5',
           isUser
-            ? 'bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-400'
+            ? 'bg-accent-100 dark:bg-accent-900/50 text-accent-700 dark:text-accent-400'
             : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400'
         )}
       >
@@ -80,7 +80,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           className={cn(
             'rounded-2xl px-3 py-2 text-sm leading-relaxed',
             isUser
-              ? 'bg-sky-700 text-white rounded-br-md'
+              ? 'bg-accent-700 text-white rounded-br-md'
               : 'bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-primary)] rounded-bl-md'
           )}
         >
@@ -91,14 +91,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             </div>
           ) : message.isStreaming ? (
             <div className="flex items-center gap-1.5 py-0.5">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-500" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500" />
               <span className="text-xs text-[var(--text-muted)]">Thinking...</span>
             </div>
           ) : null}
 
           {/* Streaming cursor */}
           {message.isStreaming && message.content && (
-            <span className="inline-block w-1.5 h-4 bg-sky-500 animate-pulse ml-0.5 align-middle rounded-sm" />
+            <span className="inline-block w-1.5 h-4 bg-accent-500 animate-pulse ml-0.5 align-middle rounded-sm" />
           )}
         </div>
 

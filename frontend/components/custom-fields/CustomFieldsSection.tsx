@@ -134,7 +134,7 @@ export default function CustomFieldsSection({
 
   if (error) {
     return (
-      <div className={`text-red-500 dark:text-red-400 ${className}`}>
+      <div className={`text-danger-500 dark:text-danger-400 ${className}`}>
         {error}
       </div>
     );

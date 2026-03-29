@@ -136,9 +136,9 @@ export default function NewTimeEntryPage() {
         </div>
 
         {(createMutation.isError || submitMutation.isError) && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-4">
-            <AlertCircle className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-red-700 dark:text-red-400">Failed to create time entry. Please try again.</p>
+          <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
+            <AlertCircle className="h-5 w-5 text-danger-500" />
+            <p className="text-sm text-danger-700 dark:text-danger-400">Failed to create time entry. Please try again.</p>
           </div>
         )}
 
@@ -158,12 +158,12 @@ export default function NewTimeEntryPage() {
                 type="date"
                 {...register('entryDate')}
                 className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
-                  errors.entryDate ? 'border-red-500' : 'border-[var(--border-main)]'
-                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500`}
+                  errors.entryDate ? 'border-danger-500' : 'border-[var(--border-main)]'
+                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
             </div>
             {errors.entryDate && (
-              <p className="mt-1 text-sm text-red-500">{errors.entryDate.message}</p>
+              <p className="mt-1 text-sm text-danger-500">{errors.entryDate.message}</p>
             )}
           </div>
 
@@ -178,7 +178,7 @@ export default function NewTimeEntryPage() {
                 <input
                   type="time"
                   {...register('startTime')}
-                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </div>
             </div>
@@ -191,7 +191,7 @@ export default function NewTimeEntryPage() {
                 <input
                   type="time"
                   {...register('endTime')}
-                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </div>
             </div>
@@ -208,11 +208,11 @@ export default function NewTimeEntryPage() {
               {...register('hoursWorked', { valueAsNumber: true })}
               placeholder="8"
               className={`w-full px-4 py-3 bg-[var(--bg-secondary)] border ${
-                errors.hoursWorked ? 'border-red-500' : 'border-[var(--border-main)]'
-              } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500`}
+                errors.hoursWorked ? 'border-danger-500' : 'border-[var(--border-main)]'
+              } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
             {errors.hoursWorked && (
-              <p className="mt-1 text-sm text-red-500">{errors.hoursWorked.message}</p>
+              <p className="mt-1 text-sm text-danger-500">{errors.hoursWorked.message}</p>
             )}
           </div>
 
@@ -223,7 +223,7 @@ export default function NewTimeEntryPage() {
             </label>
             <select
               {...register('entryType')}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
               {ENTRY_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -239,7 +239,7 @@ export default function NewTimeEntryPage() {
               <input
                 type="checkbox"
                 {...register('isBillable')}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-sky-500 focus:ring-sky-500"
+                className="w-5 h-5 rounded border-[var(--border-main)] text-accent-500 focus:ring-accent-500"
               />
               <span className="text-sm font-medium text-[var(--text-secondary)]">
                 Billable Hours
@@ -254,7 +254,7 @@ export default function NewTimeEntryPage() {
                   step="0.5"
                   {...register('billableHours', { valueAsNumber: true })}
                   placeholder="Billable hours"
-                  className="flex-1 px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="flex-1 px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </div>
             )}
@@ -273,7 +273,7 @@ export default function NewTimeEntryPage() {
                   step="0.01"
                   {...register('hourlyRate', { valueAsNumber: true })}
                   placeholder="0.00"
-                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </div>
             </div>
@@ -288,7 +288,7 @@ export default function NewTimeEntryPage() {
               type="text"
               {...register('clientName')}
               placeholder="Enter client or project name"
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             />
           </div>
 
@@ -303,7 +303,7 @@ export default function NewTimeEntryPage() {
                 {...register('description')}
                 placeholder="What did you work on?"
                 rows={4}
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
               />
             </div>
           </div>
@@ -317,7 +317,7 @@ export default function NewTimeEntryPage() {
               {...register('notes')}
               placeholder="Any additional notes..."
               rows={2}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
             />
           </div>
 
@@ -342,7 +342,7 @@ export default function NewTimeEntryPage() {
               type="submit"
               disabled={isLoading}
               onClick={() => { submitModeRef.current = 'submit'; }}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-700 hover:to-sky-700 text-white rounded-xl font-medium shadow-lg shadow-sky-500/25 transition-all duration-200 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
             >
               {isLoading ? (
                 <>

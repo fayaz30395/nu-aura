@@ -30,13 +30,13 @@ import {
 import { useRouter } from 'next/navigation';
 
 const STATUS_CONFIG: Record<SwapStatus, { label: string; color: string; bgColor: string }> = {
-  PENDING: { label: 'Pending', color: 'text-amber-700', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
-  TARGET_ACCEPTED: { label: 'Accepted by Target', color: 'text-blue-700', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
-  TARGET_DECLINED: { label: 'Declined', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  PENDING_APPROVAL: { label: 'Pending Approval', color: 'text-amber-700', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
-  APPROVED: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100 dark:bg-green-900/30' },
-  REJECTED: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  COMPLETED: { label: 'Completed', color: 'text-green-700', bgColor: 'bg-green-100 dark:bg-green-900/30' },
+  PENDING: { label: 'Pending', color: 'text-warning-700', bgColor: 'bg-warning-100 dark:bg-warning-900/30' },
+  TARGET_ACCEPTED: { label: 'Accepted by Target', color: 'text-accent-700', bgColor: 'bg-accent-100 dark:bg-accent-900/30' },
+  TARGET_DECLINED: { label: 'Declined', color: 'text-danger-700', bgColor: 'bg-danger-100 dark:bg-danger-900/30' },
+  PENDING_APPROVAL: { label: 'Pending Approval', color: 'text-warning-700', bgColor: 'bg-warning-100 dark:bg-warning-900/30' },
+  APPROVED: { label: 'Approved', color: 'text-success-700', bgColor: 'bg-success-100 dark:bg-success-900/30' },
+  REJECTED: { label: 'Rejected', color: 'text-danger-700', bgColor: 'bg-danger-100 dark:bg-danger-900/30' },
+  COMPLETED: { label: 'Completed', color: 'text-success-700', bgColor: 'bg-success-100 dark:bg-success-900/30' },
   CANCELLED: { label: 'Cancelled', color: 'text-gray-600', bgColor: 'bg-gray-100 dark:bg-gray-700' },
 };
 
@@ -63,7 +63,7 @@ function SwapCard({
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
-          <ArrowLeftRight className="w-4 h-4 text-sky-700 dark:text-sky-400" />
+          <ArrowLeftRight className="w-4 h-4 text-accent-700 dark:text-accent-400" />
           <span className="text-sm font-medium text-gray-900 dark:text-white">
             {swap.swapType}
           </span>
@@ -105,7 +105,7 @@ function SwapCard({
           <button
             onClick={onAccept}
             disabled={actionPending}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-900/20 hover:bg-success-100 dark:hover:bg-success-900/30 rounded-lg transition-colors disabled:opacity-50"
           >
             <Check className="w-3.5 h-3.5" />
             {showActions === 'target' ? 'Accept' : 'Approve'}
@@ -113,7 +113,7 @@ function SwapCard({
           <button
             onClick={onReject}
             disabled={actionPending}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-900/20 hover:bg-danger-100 dark:hover:bg-danger-900/30 rounded-lg transition-colors disabled:opacity-50"
           >
             <X className="w-3.5 h-3.5" />
             {showActions === 'target' ? 'Decline' : 'Reject'}
@@ -122,7 +122,7 @@ function SwapCard({
       )}
 
       {swap.rejectionReason && (
-        <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/10 rounded text-xs text-red-600 dark:text-red-400">
+        <div className="mt-2 p-2 bg-danger-50 dark:bg-danger-900/10 rounded text-xs text-danger-600 dark:text-danger-400">
           Rejection reason: {swap.rejectionReason}
         </div>
       )}
@@ -188,7 +188,7 @@ export default function ShiftSwapsPage() {
               <tab.icon className="w-4 h-4" />
               {tab.label}
               {tab.count > 0 && (
-                <span className="px-1.5 py-0.5 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 rounded-full text-xs">
+                <span className="px-1.5 py-0.5 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-full text-xs">
                   {tab.count}
                 </span>
               )}

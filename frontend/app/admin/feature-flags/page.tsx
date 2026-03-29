@@ -125,7 +125,7 @@ export default function FeatureFlagsPage() {
               <Group gap="md" wrap="nowrap" style={{ flex: 1 }}>
                 <ToggleLeft
                   size={24}
-                  className={flag.enabled ? 'text-green-500' : 'text-[var(--text-muted)]'}
+                  className={flag.enabled ? 'text-success-500' : 'text-[var(--text-muted)]'}
                 />
                 <div style={{ flex: 1 }}>
                   <Group gap="xs">

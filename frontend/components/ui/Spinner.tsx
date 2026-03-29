@@ -19,8 +19,8 @@ const sizeConfig = {
 
 const variantConfig = {
   primary: {
-    outer: 'stroke-sky-200 dark:stroke-sky-900',
-    inner: 'stroke-sky-700 dark:stroke-sky-400',
+    outer: 'stroke-accent-200 dark:stroke-accent-900',
+    inner: 'stroke-accent-700 dark:stroke-accent-400',
   },
   secondary: {
     outer: 'stroke-[var(--border-main)]',
@@ -84,7 +84,7 @@ export function Spinner({ size = 'md', variant = 'primary', className }: Spinner
  */
 export function DotsSpinner({ variant = 'primary', className }: Omit<SpinnerProps, 'size'>) {
   const dotColors = {
-    primary: 'bg-sky-700 dark:bg-sky-400',
+    primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
     white: 'bg-white',
   };
@@ -119,7 +119,7 @@ export function DotsSpinner({ variant = 'primary', className }: Omit<SpinnerProp
  */
 export function WaveSpinner({ variant = 'primary', className }: Omit<SpinnerProps, 'size'>) {
   const barColors = {
-    primary: 'bg-sky-700 dark:bg-sky-400',
+    primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
     white: 'bg-white',
   };
@@ -160,7 +160,7 @@ export function PulseRing({ size = 'md', variant = 'primary', className }: Spinn
   };
 
   const ringColors = {
-    primary: 'border-sky-700/20 dark:border-sky-400/20',
+    primary: 'border-accent-700/20 dark:border-accent-400/20',
     secondary: 'border-[var(--border-main)]',
     white: 'border-white/20',
   };

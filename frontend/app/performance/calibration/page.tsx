@@ -35,11 +35,11 @@ type SortField = 'name' | 'rating' | 'department';
 type SortOrder = 'asc' | 'desc';
 
 const RATING_LABELS: Record<number, { label: string; color: string; bg: string }> = {
-  1: { label: 'Needs Improvement', color: 'text-red-700', bg: 'bg-red-100' },
-  2: { label: 'Below Expectations', color: 'text-orange-700', bg: 'bg-orange-100' },
-  3: { label: 'Meets Expectations', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-  4: { label: 'Exceeds Expectations', color: 'text-blue-700', bg: 'bg-blue-100' },
-  5: { label: 'Outstanding', color: 'text-green-700', bg: 'bg-green-100' },
+  1: { label: 'Needs Improvement', color: 'text-danger-700', bg: 'bg-danger-100' },
+  2: { label: 'Below Expectations', color: 'text-warning-700', bg: 'bg-warning-100' },
+  3: { label: 'Meets Expectations', color: 'text-warning-700', bg: 'bg-warning-100' },
+  4: { label: 'Exceeds Expectations', color: 'text-accent-700', bg: 'bg-accent-100' },
+  5: { label: 'Outstanding', color: 'text-success-700', bg: 'bg-success-100' },
 };
 
 // ─── Components ────────────────────────────────────────────────────────────────
@@ -66,7 +66,7 @@ function DistributionChart({
   label?: string;
 }) {
   const ratings = [1, 2, 3, 4, 5];
-  const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-blue-400', 'bg-green-400'];
+  const colors = ['bg-danger-400', 'bg-warning-400', 'bg-warning-400', 'bg-accent-400', 'bg-success-400'];
 
   return (
     <div className="space-y-2">
@@ -353,7 +353,7 @@ export default function CalibrationPage() {
             <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
               <button
                 onClick={publishRatings}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-700 text-white text-sm font-medium hover:bg-sky-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-700 transition-colors"
               >
                 <TrendingUp size={16} />
                 Publish
@@ -375,7 +375,7 @@ export default function CalibrationPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -391,9 +391,9 @@ export default function CalibrationPage() {
                 <span
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
                     selectedCycle.status === 'ACTIVE'
-                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                      ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400'
                       : selectedCycle.status === 'CALIBRATION'
-                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
+                        ? 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600'
                         : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                   }`}
                 >
@@ -428,8 +428,8 @@ export default function CalibrationPage() {
               <div className="space-y-4">
                 <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                      <Users className="text-blue-600 dark:text-blue-400" size={20} />
+                    <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                      <Users className="text-accent-600 dark:text-accent-400" size={20} />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-[var(--text-muted)]">Total Employees</p>
@@ -442,8 +442,8 @@ export default function CalibrationPage() {
 
                 <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                      <Target className="text-green-600 dark:text-green-400" size={20} />
+                    <div className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                      <Target className="text-success-600 dark:text-success-400" size={20} />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-[var(--text-muted)]">Rated</p>
@@ -456,8 +456,8 @@ export default function CalibrationPage() {
 
                 <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                      <BarChart3 className="text-purple-600 dark:text-purple-400" size={20} />
+                    <div className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
+                      <BarChart3 className="text-accent-800 dark:text-accent-600" size={20} />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-[var(--text-muted)]">Avg Rating</p>
@@ -479,16 +479,16 @@ export default function CalibrationPage() {
 
             {/* Bell Curve Warning */}
             {curveWarning && (
-              <div className="flex items-start gap-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3">
+              <div className="flex items-start gap-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg px-4 py-3">
                 <AlertTriangle
                   size={16}
-                  className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5"
+                  className="text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"
                 />
                 <div>
-                  <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
+                  <p className="text-sm font-medium text-warning-900 dark:text-warning-200">
                     Bell Curve Alert
                   </p>
-                  <p className="text-sm text-amber-800 dark:text-amber-300 mt-0.5">
+                  <p className="text-sm text-warning-800 dark:text-warning-300 mt-0.5">
                     {curveWarning}
                   </p>
                 </div>
@@ -508,7 +508,7 @@ export default function CalibrationPage() {
                     placeholder="Search employee..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                   />
                 </div>
 
@@ -516,7 +516,7 @@ export default function CalibrationPage() {
                   <select
                     value={departmentFilter}
                     onChange={e => setDepartmentFilter(e.target.value)}
-                    className="px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                    className="px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                   >
                     <option value="">All Departments</option>
                     {uniqueDepartments.map(dept => (
@@ -534,7 +534,7 @@ export default function CalibrationPage() {
               <div className="flex items-center justify-center py-16">
                 <RefreshCw
                   size={24}
-                  className="animate-spin text-sky-500 mr-3"
+                  className="animate-spin text-accent-500 mr-3"
                 />
                 <span className="text-[var(--text-muted)]">Loading reviews...</span>
               </div>
@@ -620,8 +620,8 @@ export default function CalibrationPage() {
                           <tr
                             key={row.employeeId}
                             className={`hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors ${
-                              isDirty ? 'bg-yellow-50 dark:bg-yellow-900/10' : ''
-                            } ${differsFromManager ? 'border-l-2 border-orange-400' : ''}`}
+                              isDirty ? 'bg-warning-50 dark:bg-warning-900/10' : ''
+                            } ${differsFromManager ? 'border-l-2 border-warning-400' : ''}`}
                           >
                             <td className="px-4 py-3 font-medium text-[var(--text-primary)]">
                               {row.employeeName}
@@ -646,7 +646,7 @@ export default function CalibrationPage() {
                                   handleFinalRatingChange(row.employeeId, e.target.value)
                                 }
                                 placeholder="1–5"
-                                className="w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                                className="w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                               />
                             </td>
                             <td className="px-4 py-3 text-center">
@@ -655,7 +655,7 @@ export default function CalibrationPage() {
                                   <button
                                     onClick={() => handleSaveFinal(row)}
                                     disabled={saving === row.employeeId}
-                                    className="px-3 py-1 text-xs font-medium text-white bg-sky-700 hover:bg-sky-700 rounded-lg disabled:opacity-50 transition-colors"
+                                    className="px-3 py-1 text-xs font-medium text-white bg-accent-700 hover:bg-accent-700 rounded-lg disabled:opacity-50 transition-colors"
                                   >
                                     {saving === row.employeeId ? 'Saving...' : 'Save'}
                                   </button>

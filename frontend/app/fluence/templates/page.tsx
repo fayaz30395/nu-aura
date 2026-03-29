@@ -79,7 +79,7 @@ export default function TemplatesPage() {
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <h1 className={`${typography.pageTitle} flex items-center gap-4`}>
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--sky-500)] to-[var(--sky-800)] flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
                 <FileText className={`${iconSize.pageHeader} text-white`} />
               </div>
               Templates
@@ -91,7 +91,7 @@ export default function TemplatesPage() {
           <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
             <Button
               onClick={handleCreateTemplate}
-              className="gap-2 bg-[var(--sky-700)] hover:bg-[var(--sky-800)] text-white shadow-sm hover:shadow-md transition-shadow duration-150 flex-shrink-0"
+              className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-sm hover:shadow-md transition-shadow duration-150 flex-shrink-0"
             >
               <Plus className={iconSize.button} />
               Create Template
@@ -146,7 +146,7 @@ export default function TemplatesPage() {
                   <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
                     <Button
                       onClick={handleCreateTemplate}
-                      className="gap-2 bg-[var(--sky-700)] hover:bg-[var(--sky-800)] text-white shadow-sm hover:shadow-md transition-shadow duration-150"
+                      className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-sm hover:shadow-md transition-shadow duration-150"
                     >
                       <Plus className={iconSize.button} />
                       Create Template
@@ -193,14 +193,14 @@ export default function TemplatesPage() {
                 <Card className={`${dsCard.interactive} h-full flex flex-col group`}>
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2 mb-3">
-                      <div className="w-10 h-10 rounded-lg bg-[var(--sky-100)] dark:bg-[var(--sky-950)]/30 flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--sky-200)] dark:group-hover:bg-[var(--sky-900)]/40 transition-colors duration-150">
+                      <div className="w-10 h-10 rounded-lg bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--accent-200)] dark:group-hover:bg-[var(--accent-900)]/40 transition-colors duration-150">
                         {template.icon ? (
                           <span className="text-xl">{template.icon}</span>
                         ) : (
-                          <FileText className={`${iconSize.cardInline} text-[var(--sky-800)] dark:text-[var(--sky-300)]`} />
+                          <FileText className={`${iconSize.cardInline} text-[var(--accent-800)] dark:text-[var(--accent-300)]`} />
                         )}
                       </div>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--sky-100)] dark:bg-[var(--sky-950)]/30 text-[var(--sky-800)] dark:text-[var(--sky-300)] text-xs font-semibold whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] text-xs font-semibold whitespace-nowrap">
                         <Zap className={iconSize.meta} />
                         {template.usageCount} uses
                       </span>

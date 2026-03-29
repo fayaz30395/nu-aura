@@ -113,17 +113,17 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 // ==================== Sub-components ====================
 
 function TrendIcon({ trend }: { trend: 'UP' | 'DOWN' | 'STABLE' }) {
-  if (trend === 'UP') return <ArrowUpRight className="h-4 w-4 text-emerald-500" />;
-  if (trend === 'DOWN') return <ArrowDownRight className="h-4 w-4 text-red-500" />;
+  if (trend === 'UP') return <ArrowUpRight className="h-4 w-4 text-success-500" />;
+  if (trend === 'DOWN') return <ArrowDownRight className="h-4 w-4 text-danger-500" />;
   return <Minus className="h-4 w-4 text-gray-400" />;
 }
 
 function RiskBadge({ level }: { level: string }) {
   const colors: Record<string, string> = {
-    CRITICAL: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    HIGH: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-    MEDIUM: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    LOW: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    CRITICAL: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
+    HIGH: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
+    MEDIUM: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
+    LOW: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colors[level] || colors.LOW}`}>
@@ -134,9 +134,9 @@ function RiskBadge({ level }: { level: string }) {
 
 function SeverityBadge({ severity }: { severity: string }) {
   const colors: Record<string, string> = {
-    CRITICAL: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    WARNING: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    INFO: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
+    CRITICAL: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
+    WARNING: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
+    INFO: 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400',
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colors[severity] || colors.INFO}`}>
@@ -149,10 +149,10 @@ function SeverityBadge({ severity }: { severity: string }) {
 
 function AttritionRiskCards({ summary }: { summary: PredictiveAnalyticsDashboard['attritionSummary'] }) {
   const riskCards = [
-    { label: 'Critical Risk', count: summary.criticalRiskCount, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-950/30', icon: <ShieldAlert className="h-5 w-5 text-red-500" /> },
-    { label: 'High Risk', count: summary.highRiskCount, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950/30', icon: <AlertTriangle className="h-5 w-5 text-orange-500" /> },
-    { label: 'Medium Risk', count: summary.mediumRiskCount, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/30', icon: <AlertCircle className="h-5 w-5 text-amber-500" /> },
-    { label: 'Low Risk', count: summary.lowRiskCount, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/30', icon: <UserCheck className="h-5 w-5 text-emerald-500" /> },
+    { label: 'Critical Risk', count: summary.criticalRiskCount, color: 'text-danger-600', bg: 'bg-danger-50 dark:bg-danger-950/30', icon: <ShieldAlert className="h-5 w-5 text-danger-500" /> },
+    { label: 'High Risk', count: summary.highRiskCount, color: 'text-warning-600', bg: 'bg-warning-50 dark:bg-warning-950/30', icon: <AlertTriangle className="h-5 w-5 text-warning-500" /> },
+    { label: 'Medium Risk', count: summary.mediumRiskCount, color: 'text-warning-600', bg: 'bg-warning-50 dark:bg-warning-950/30', icon: <AlertCircle className="h-5 w-5 text-warning-500" /> },
+    { label: 'Low Risk', count: summary.lowRiskCount, color: 'text-success-600', bg: 'bg-success-50 dark:bg-success-950/30', icon: <UserCheck className="h-5 w-5 text-success-500" /> },
   ];
 
   return (
@@ -516,16 +516,16 @@ function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-3 rounded-lg bg-red-50 dark:bg-red-950/20">
-                <p className="text-2xl font-bold text-red-600">{summary.criticalGaps}</p>
+              <div className="text-center p-3 rounded-lg bg-danger-50 dark:bg-danger-950/20">
+                <p className="text-2xl font-bold text-danger-600">{summary.criticalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Critical Gaps</p>
               </div>
-              <div className="text-center p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20">
-                <p className="text-2xl font-bold text-orange-600">{summary.highPriorityGaps}</p>
+              <div className="text-center p-3 rounded-lg bg-warning-50 dark:bg-warning-950/20">
+                <p className="text-2xl font-bold text-warning-600">{summary.highPriorityGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">High Priority</p>
               </div>
-              <div className="text-center p-3 rounded-lg bg-sky-50 dark:bg-sky-950/20">
-                <p className="text-2xl font-bold text-sky-600">{summary.totalGaps}</p>
+              <div className="text-center p-3 rounded-lg bg-accent-50 dark:bg-accent-950/20">
+                <p className="text-2xl font-bold text-accent-600">{summary.totalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Total Gaps</p>
               </div>
             </div>
@@ -603,10 +603,10 @@ function KeyMetricsRow({ metrics }: { metrics: KeyMetric[] }) {
               <span
                 className={`text-xs font-medium ${
                   metric.status === 'GOOD'
-                    ? 'text-emerald-600'
+                    ? 'text-success-600'
                     : metric.status === 'WARNING'
-                      ? 'text-amber-600'
-                      : 'text-red-600'
+                      ? 'text-warning-600'
+                      : 'text-danger-600'
                 }`}
               >
                 {metric.changePercent > 0 ? '+' : ''}{metric.changePercent.toFixed(1)}%
@@ -632,7 +632,7 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400">
               {pending} pending
             </span>
           </div>
@@ -647,11 +647,11 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
             <div key={insight.id} className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
               <div className="mt-0.5">
                 {insight.severity === 'CRITICAL' ? (
-                  <AlertCircle className="h-5 w-5 text-red-500" />
+                  <AlertCircle className="h-5 w-5 text-danger-500" />
                 ) : insight.severity === 'WARNING' ? (
-                  <AlertTriangle className="h-5 w-5 text-amber-500" />
+                  <AlertTriangle className="h-5 w-5 text-warning-500" />
                 ) : (
-                  <Activity className="h-5 w-5 text-sky-500" />
+                  <Activity className="h-5 w-5 text-accent-500" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
@@ -661,7 +661,7 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
                 </div>
                 <p className="text-xs text-[var(--text-secondary)] line-clamp-2">{insight.description}</p>
                 {insight.recommendation && (
-                  <p className="text-xs text-sky-600 dark:text-sky-400 mt-1 flex items-center gap-1">
+                  <p className="text-xs text-accent-600 dark:text-accent-400 mt-1 flex items-center gap-1">
                     <Target className="h-3 w-3" />
                     {insight.recommendation}
                   </p>
@@ -787,17 +787,17 @@ function FlightRiskRadar({ employees }: { employees: AttritionPrediction[] }) {
 function WorkforceSummaryPanel({ summary }: { summary: PredictiveAnalyticsDashboard['workforceSummary'] }) {
   const trendDirection = summary.headcountTrend?.direction;
   const items = [
-    { label: 'Current Headcount', value: summary.currentHeadcount?.toLocaleString() ?? '-', icon: <Users className="h-5 w-5 text-sky-500" /> },
-    { label: 'YTD Hires', value: summary.yearToDateHires?.toString() ?? '-', icon: <UserCheck className="h-5 w-5 text-emerald-500" /> },
-    { label: 'YTD Attrition Rate', value: `${summary.yearToDateAttritionRate?.toFixed(1) ?? '-'}%`, icon: <TrendingDown className="h-5 w-5 text-red-500" /> },
-    { label: 'Avg Tenure', value: `${((summary.avgTenureMonths ?? 0) / 12).toFixed(1)} yrs`, icon: <Briefcase className="h-5 w-5 text-amber-500" /> },
-    { label: 'Avg Engagement', value: `${summary.avgEngagementScore?.toFixed(1) ?? '-'}/5`, icon: <Activity className="h-5 w-5 text-sky-500" /> },
-    { label: 'Open Positions', value: summary.openPositions?.toString() ?? '-', icon: <Target className="h-5 w-5 text-violet-500" /> },
-    { label: 'Avg Time to Fill', value: `${summary.avgTimeToFill?.toFixed(0) ?? '-'} days`, icon: <GraduationCap className="h-5 w-5 text-orange-500" /> },
+    { label: 'Current Headcount', value: summary.currentHeadcount?.toLocaleString() ?? '-', icon: <Users className="h-5 w-5 text-accent-500" /> },
+    { label: 'YTD Hires', value: summary.yearToDateHires?.toString() ?? '-', icon: <UserCheck className="h-5 w-5 text-success-500" /> },
+    { label: 'YTD Attrition Rate', value: `${summary.yearToDateAttritionRate?.toFixed(1) ?? '-'}%`, icon: <TrendingDown className="h-5 w-5 text-danger-500" /> },
+    { label: 'Avg Tenure', value: `${((summary.avgTenureMonths ?? 0) / 12).toFixed(1)} yrs`, icon: <Briefcase className="h-5 w-5 text-warning-500" /> },
+    { label: 'Avg Engagement', value: `${summary.avgEngagementScore?.toFixed(1) ?? '-'}/5`, icon: <Activity className="h-5 w-5 text-accent-500" /> },
+    { label: 'Open Positions', value: summary.openPositions?.toString() ?? '-', icon: <Target className="h-5 w-5 text-accent-500" /> },
+    { label: 'Avg Time to Fill', value: `${summary.avgTimeToFill?.toFixed(0) ?? '-'} days`, icon: <GraduationCap className="h-5 w-5 text-warning-500" /> },
     {
       label: 'Headcount Trend',
       value: `${trendDirection === 'UP' ? '+' : trendDirection === 'DOWN' ? '-' : ''}${summary.headcountTrend?.changeCount ?? 0}`,
-      icon: trendDirection === 'UP' ? <TrendingUp className="h-5 w-5 text-emerald-500" /> : trendDirection === 'DOWN' ? <TrendingDown className="h-5 w-5 text-red-500" /> : <Minus className="h-5 w-5 text-gray-400" />,
+      icon: trendDirection === 'UP' ? <TrendingUp className="h-5 w-5 text-success-500" /> : trendDirection === 'DOWN' ? <TrendingDown className="h-5 w-5 text-danger-500" /> : <Minus className="h-5 w-5 text-gray-400" />,
     },
   ];
 
@@ -851,7 +851,7 @@ export default function PredictiveAnalyticsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
           <p className="text-[var(--text-muted)] font-medium">Loading predictive analytics...</p>
         </div>
       </div>
@@ -865,7 +865,7 @@ export default function PredictiveAnalyticsPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-4 text-red-600">
+              <div className="flex items-center gap-4 text-danger-600">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Analytics</CardTitle>
               </div>
@@ -925,7 +925,7 @@ export default function PredictiveAnalyticsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-sky-700 text-white'
+                  ? 'bg-accent-700 text-white'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
               }`}
             >
@@ -978,13 +978,13 @@ export default function PredictiveAnalyticsPage() {
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-red-600">{attritionSummary.predictedAttritionRate?.toFixed(1) ?? '-'}%</p>
+                  <p className="text-3xl font-bold text-danger-600">{attritionSummary.predictedAttritionRate?.toFixed(1) ?? '-'}%</p>
                   <p className="text-sm text-[var(--text-muted)]">Predicted Attrition Rate</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-sky-600">{attritionSummary.totalEmployees?.toLocaleString() ?? '-'}</p>
+                  <p className="text-3xl font-bold text-accent-600">{attritionSummary.totalEmployees?.toLocaleString() ?? '-'}</p>
                   <p className="text-sm text-[var(--text-muted)]">Total Employees Analyzed</p>
                 </CardContent>
               </Card>
@@ -1051,19 +1051,19 @@ export default function PredictiveAnalyticsPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-sky-600">{workforceSummary.avgEngagementScore?.toFixed(1) ?? '-'}</p>
+                  <p className="text-3xl font-bold text-accent-600">{workforceSummary.avgEngagementScore?.toFixed(1) ?? '-'}</p>
                   <p className="text-sm text-[var(--text-muted)]">Avg Engagement (out of 5)</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-emerald-600">{workforceSummary.avgPerformanceRating?.toFixed(1) ?? '-'}</p>
+                  <p className="text-3xl font-bold text-success-600">{workforceSummary.avgPerformanceRating?.toFixed(1) ?? '-'}</p>
                   <p className="text-sm text-[var(--text-muted)]">Avg Performance Rating</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-violet-600">
+                  <p className="text-3xl font-bold text-accent-600">
                     {trends.length > 0 ? (trends[trends.length - 1].highPerformersCount ?? 0) : '-'}
                   </p>
                   <p className="text-sm text-[var(--text-muted)]">High Performers</p>
@@ -1071,7 +1071,7 @@ export default function PredictiveAnalyticsPage() {
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-amber-600">
+                  <p className="text-3xl font-bold text-warning-600">
                     {trends.length > 0 ? (trends[trends.length - 1].lowPerformersCount ?? 0) : '-'}
                   </p>
                   <p className="text-sm text-[var(--text-muted)]">Needs Improvement</p>

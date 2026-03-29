@@ -44,6 +44,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     private final InterviewRepository interviewRepository;
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
+    @org.springframework.context.annotation.Lazy
     private final WorkflowService workflowService;
     private final AuditLogService auditLogService;
     private final DomainEventPublisher eventPublisher;

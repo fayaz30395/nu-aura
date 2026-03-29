@@ -112,13 +112,13 @@ class LoanService {
   // Helpers
   getStatusColor(status: LoanStatus): string {
     const colors: Record<LoanStatus, string> = {
-      PENDING: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-      APPROVED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-      REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      DISBURSED: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-      ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      CLOSED: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
-      DEFAULTED: 'bg-red-200 text-red-800 dark:bg-red-900 dark:text-red-200',
+      PENDING: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
+      APPROVED: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
+      REJECTED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
+      DISBURSED: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
+      ACTIVE: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
+      CLOSED: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
+      DEFAULTED: 'bg-danger-200 text-danger-800 dark:bg-danger-900 dark:text-danger-200',
       CANCELLED: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
     };
     return colors[status] || colors.PENDING;

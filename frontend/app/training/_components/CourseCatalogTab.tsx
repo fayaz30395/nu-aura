@@ -34,15 +34,15 @@ const categoryOptions = [
 const getCategoryColor = (category: TrainingCategory): string => {
   switch (category) {
     case TrainingCategory.TECHNICAL:
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
     case TrainingCategory.SOFT_SKILLS:
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
     case TrainingCategory.LEADERSHIP:
-      return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
+      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
     case TrainingCategory.COMPLIANCE:
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      return 'bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200';
     case TrainingCategory.SAFETY:
-      return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }
@@ -114,7 +114,7 @@ export function CourseCatalogTab({
       {/* Programs Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
         </div>
       ) : availablePrograms.length === 0 ? (
         <Card>
@@ -135,7 +135,7 @@ export function CourseCatalogTab({
             return (
               <Card key={program.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="bg-gradient-to-r from-sky-500 to-sky-700 p-4 text-white">
+                  <div className="bg-gradient-to-r from-accent-500 to-accent-700 p-4 text-white">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm opacity-80">{program.programCode}</p>
@@ -160,7 +160,7 @@ export function CourseCatalogTab({
                         {program.deliveryMode.replace('_', ' ')}
                       </span>
                       {program.isMandatory && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200">
                           Mandatory
                         </span>
                       )}

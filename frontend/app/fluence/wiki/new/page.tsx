@@ -221,7 +221,7 @@ export default function CreateWikiPage() {
             <button
               type="button"
               onClick={() => setPublishDrawerOpen(true)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-700 px-4 py-2 rounded-lg transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 px-4 py-2 rounded-lg transition-colors shadow-sm"
             >
               <Send className="w-4 h-4" />
               Publish
@@ -245,7 +245,7 @@ export default function CreateWikiPage() {
             />
 
             {errors.title && (
-              <p className="text-xs text-red-500 mt-1">{errors.title.message}</p>
+              <p className="text-xs text-danger-500 mt-1">{errors.title.message}</p>
             )}
           </div>
 
@@ -327,19 +327,19 @@ export default function CreateWikiPage() {
                             onClick={() => field.onChange(opt.value)}
                             className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-lg text-left transition-all ${
                               isSelected
-                                ? 'bg-sky-500/10 ring-1 ring-sky-500/30'
+                                ? 'bg-accent-500/10 ring-1 ring-accent-500/30'
                                 : 'hover:bg-[var(--bg-secondary)]'
                             }`}
                           >
-                            <Icon className={`w-4 h-4 ${isSelected ? 'text-sky-500' : 'text-[var(--text-muted)]'}`} />
+                            <Icon className={`w-4 h-4 ${isSelected ? 'text-accent-500' : 'text-[var(--text-muted)]'}`} />
                             <div className="flex-1">
-                              <div className={`text-sm font-medium ${isSelected ? 'text-sky-500' : 'text-[var(--text-primary)]'}`}>
+                              <div className={`text-sm font-medium ${isSelected ? 'text-accent-500' : 'text-[var(--text-primary)]'}`}>
                                 {opt.label}
                               </div>
                               <div className="text-xs text-[var(--text-muted)]">{opt.desc}</div>
                             </div>
                             {isSelected && (
-                              <motion.div layoutId="visibility-check" className="w-2 h-2 rounded-full bg-sky-500" />
+                              <motion.div layoutId="visibility-check" className="w-2 h-2 rounded-full bg-accent-500" />
                             )}
                           </button>
                         );
@@ -389,7 +389,7 @@ export default function CreateWikiPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-sky-700 hover:bg-sky-700 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors"
               >
                 <Send className="w-4 h-4" />
                 {isSubmitting ? 'Publishing...' : 'Publish Page'}

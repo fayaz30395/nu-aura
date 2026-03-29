@@ -229,7 +229,7 @@ export default function LWFPage() {
               Manage state-wise LWF configurations and track deductions for statutory compliance.
             </Text>
           </div>
-          <ThemeIcon size="xl" radius="md" className="bg-sky-700">
+          <ThemeIcon size="xl" radius="md" className="bg-accent-700">
             <IconBuildingBank size={28} />
           </ThemeIcon>
         </Group>
@@ -254,7 +254,7 @@ export default function LWFPage() {
               <PermissionGate permission="STATUTORY:MANAGE">
                 <Button
                   leftSection={<IconPlus size={16} />}
-                  className="bg-sky-700 hover:bg-sky-800"
+                  className="bg-accent-700 hover:bg-accent-800"
                   onClick={openCreateModal}
                 >
                   Add State Configuration
@@ -353,7 +353,7 @@ export default function LWFPage() {
                 />
                 <Button
                   mt={24}
-                  className="bg-sky-700 hover:bg-sky-800"
+                  className="bg-accent-700 hover:bg-accent-800"
                   onClick={() => { setDedFetched(true); refetchDed(); }}
                 >
                   Fetch Deductions
@@ -439,7 +439,7 @@ export default function LWFPage() {
                 />
                 <Button
                   mt={24}
-                  className="bg-sky-700 hover:bg-sky-800"
+                  className="bg-accent-700 hover:bg-accent-800"
                   onClick={() => { setRptFetched(true); refetchRpt(); }}
                 >
                   Generate Report
@@ -466,13 +466,13 @@ export default function LWFPage() {
                   <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
                     <Card shadow="sm" radius="md" withBorder p="md">
                       <Text c="dimmed" size="xs" tt="uppercase" fw={600}>Employee Total</Text>
-                      <Text fw={700} size="xl" mt={4} className="text-sky-700">{fmt(report.totalEmployeeContribution)}</Text>
+                      <Text fw={700} size="xl" mt={4} className="text-accent-700">{fmt(report.totalEmployeeContribution)}</Text>
                     </Card>
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
                     <Card shadow="sm" radius="md" withBorder p="md">
                       <Text c="dimmed" size="xs" tt="uppercase" fw={600}>Employer Total</Text>
-                      <Text fw={700} size="xl" mt={4} className="text-sky-700">{fmt(report.totalEmployerContribution)}</Text>
+                      <Text fw={700} size="xl" mt={4} className="text-accent-700">{fmt(report.totalEmployerContribution)}</Text>
                     </Card>
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
@@ -613,7 +613,7 @@ export default function LWFPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-sky-700 hover:bg-sky-800"
+                  className="bg-accent-700 hover:bg-accent-800"
                   loading={createOrUpdate.isPending}
                 >
                   {editingConfig ? 'Update Configuration' : 'Create Configuration'}

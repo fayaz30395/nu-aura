@@ -194,22 +194,22 @@ export default function ReviewCyclesPage() {
   const getStatusColor = (status: CycleStatus) => {
     switch (status) {
       case 'PLANNING': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      case 'ACTIVE': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
-      case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800';
-      case 'COMPLETED': return 'bg-green-100 text-green-800';
-      case 'CANCELLED': return 'bg-red-100 text-red-800';
+      case 'ACTIVE': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800';
+      case 'COMPLETED': return 'bg-success-100 text-success-800';
+      case 'CANCELLED': return 'bg-danger-100 text-danger-800';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getTypeColor = (type: CycleType) => {
     switch (type) {
-      case 'ANNUAL': return 'bg-purple-100 text-purple-800';
-      case 'SEMI_ANNUAL': return 'bg-indigo-100 text-indigo-800';
-      case 'QUARTERLY': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-400';
-      case 'MONTHLY': return 'bg-green-100 text-green-800';
-      case 'PROBATION': return 'bg-orange-100 text-orange-800';
-      case 'PROJECT_END': return 'bg-pink-100 text-pink-800';
+      case 'ANNUAL': return 'bg-accent-300 text-accent-900';
+      case 'SEMI_ANNUAL': return 'bg-accent-100 text-accent-800';
+      case 'QUARTERLY': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'MONTHLY': return 'bg-success-100 text-success-800';
+      case 'PROBATION': return 'bg-warning-100 text-warning-800';
+      case 'PROJECT_END': return 'bg-accent-300 text-accent-900';
       default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
@@ -244,7 +244,7 @@ export default function ReviewCyclesPage() {
                 resetFormHandler();
                 setShowModal(true);
               }}
-              className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
+              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
             >
               Create Cycle
             </button>
@@ -260,7 +260,7 @@ export default function ReviewCyclesPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as CycleType | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="ANNUAL">Annual</option>
@@ -278,7 +278,7 @@ export default function ReviewCyclesPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as CycleStatus | 'ALL')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="PLANNING">Planning</option>
@@ -304,7 +304,7 @@ export default function ReviewCyclesPage() {
                   resetFormHandler();
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
+                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
               >
                 Create Your First Cycle
               </button>
@@ -342,7 +342,7 @@ export default function ReviewCyclesPage() {
 
                   <div className="text-sm">
                     <span className="text-[var(--text-secondary)]">Review Deadline:</span>
-                    <div className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-red-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-orange-600' : '')}>
+                    <div className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
                       {cycle.reviewDeadline ? new Date(cycle.reviewDeadline).toLocaleDateString() : 'N/A'}
                       {isDeadlinePassed(cycle.reviewDeadline) && ' (Passed)'}
                       {isDeadlineNear(cycle.reviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline) && ' (Soon)'}
@@ -352,7 +352,7 @@ export default function ReviewCyclesPage() {
                   {cycle.selfReviewDeadline && (
                     <div className="text-sm">
                       <span className="text-[var(--text-secondary)]">Self Review Deadline:</span>
-                      <div className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-red-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-orange-600' : '')}>
+                      <div className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-warning-600' : '')}>
                         {new Date(cycle.selfReviewDeadline).toLocaleDateString()}
                         {isDeadlinePassed(cycle.selfReviewDeadline) && ' (Passed)'}
                         {isDeadlineNear(cycle.selfReviewDeadline) && !isDeadlinePassed(cycle.selfReviewDeadline) && ' (Soon)'}
@@ -366,7 +366,7 @@ export default function ReviewCyclesPage() {
                     <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                       <button
                         onClick={() => openActivateModal(cycle)}
-                        className="flex-1 px-3 py-2 tint-success text-green-600 dark:text-green-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
+                        className="flex-1 px-3 py-2 tint-success text-success-600 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
                       >
                         <Play className="h-4 w-4" />
                         Activate
@@ -376,7 +376,7 @@ export default function ReviewCyclesPage() {
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(cycle)}
-                      className="flex-1 px-3 py-2 tint-info text-sky-700 dark:text-sky-400 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-3 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
                     >
                       Edit
                     </button>
@@ -384,7 +384,7 @@ export default function ReviewCyclesPage() {
                   <PermissionGate permission={Permissions.REVIEW_DELETE}>
                     <button
                       onClick={() => openDeleteConfirm(cycle)}
-                      className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
+                      className="flex-1 px-3 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
                     >
                       Delete
                     </button>
@@ -412,10 +412,10 @@ export default function ReviewCyclesPage() {
                         type="text"
                         placeholder="e.g., Annual Review 2024"
                         {...register('name')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.name && (
-                        <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>
                       )}
                     </div>
 
@@ -426,10 +426,10 @@ export default function ReviewCyclesPage() {
                       <textarea
                         rows={3}
                         {...register('description')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.description && (
-                        <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                        <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>
                       )}
                     </div>
 
@@ -440,7 +440,7 @@ export default function ReviewCyclesPage() {
                         </label>
                         <select
                           {...register('cycleType')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         >
                           <option value="ANNUAL">Annual</option>
                           <option value="SEMI_ANNUAL">Semi-Annual</option>
@@ -450,7 +450,7 @@ export default function ReviewCyclesPage() {
                           <option value="PROJECT_END">Project End</option>
                         </select>
                         {errors.cycleType && (
-                          <p className="text-red-500 text-sm mt-1">{errors.cycleType.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.cycleType.message}</p>
                         )}
                       </div>
 
@@ -460,7 +460,7 @@ export default function ReviewCyclesPage() {
                         </label>
                         <select
                           {...register('status')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         >
                           <option value="PLANNING">Planning</option>
                           <option value="ACTIVE">Active</option>
@@ -469,7 +469,7 @@ export default function ReviewCyclesPage() {
                           <option value="CANCELLED">Cancelled</option>
                         </select>
                         {errors.status && (
-                          <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
                         )}
                       </div>
                     </div>
@@ -482,10 +482,10 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('startDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.startDate && (
-                          <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
                         )}
                       </div>
 
@@ -496,10 +496,10 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('endDate')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.endDate && (
-                          <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
                         )}
                       </div>
                     </div>
@@ -512,10 +512,10 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('reviewDeadline')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.reviewDeadline && (
-                          <p className="text-red-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
                         )}
                       </div>
 
@@ -526,10 +526,10 @@ export default function ReviewCyclesPage() {
                         <input
                           type="date"
                           {...register('selfReviewDeadline')}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.selfReviewDeadline && (
-                          <p className="text-red-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>
+                          <p className="text-danger-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>
                         )}
                       </div>
                     </div>
@@ -550,7 +550,7 @@ export default function ReviewCyclesPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-700 disabled:opacity-50"
+                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
                       >
                         {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
                       </button>
@@ -583,7 +583,7 @@ export default function ReviewCyclesPage() {
                   <button
                     onClick={handleDelete}
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
                   >
                     {loading ? 'Deleting...' : 'Delete'}
                   </button>
@@ -599,8 +599,8 @@ export default function ReviewCyclesPage() {
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                    <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
+                    <Play className="h-6 w-6 text-success-600 dark:text-success-400" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Activate Review Cycle</h2>
@@ -620,12 +620,12 @@ export default function ReviewCyclesPage() {
                         onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'ALL', departmentIds: [], locationIds: [] })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'ALL'
-                            ? 'border-green-500 tint-success'
+                            ? 'border-success-500 tint-success'
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <Users className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-green-600' : 'text-[var(--text-muted)]'}`} />
-                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-green-700 dark:text-green-400' : ''}`}>
+                        <Users className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`} />
+                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-success-700 dark:text-success-400' : ''}`}>
                           All Employees
                         </span>
                       </button>
@@ -634,12 +634,12 @@ export default function ReviewCyclesPage() {
                         onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'DEPARTMENT', locationIds: [] })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'DEPARTMENT'
-                            ? 'border-green-500 tint-success'
+                            ? 'border-success-500 tint-success'
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <Building2 className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-green-600' : 'text-[var(--text-muted)]'}`} />
-                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-green-700 dark:text-green-400' : ''}`}>
+                        <Building2 className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-600' : 'text-[var(--text-muted)]'}`} />
+                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-700 dark:text-success-400' : ''}`}>
                           By Department
                         </span>
                       </button>
@@ -648,12 +648,12 @@ export default function ReviewCyclesPage() {
                         onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'LOCATION', departmentIds: [] })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'LOCATION'
-                            ? 'border-green-500 tint-success'
+                            ? 'border-success-500 tint-success'
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <MapPin className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-green-600' : 'text-[var(--text-muted)]'}`} />
-                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-green-700 dark:text-green-400' : ''}`}>
+                        <MapPin className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-success-600' : 'text-[var(--text-muted)]'}`} />
+                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-success-700 dark:text-success-400' : ''}`}>
                           By Location
                         </span>
                       </button>
@@ -679,7 +679,7 @@ export default function ReviewCyclesPage() {
                                 type="checkbox"
                                 checked={activateFormData.departmentIds?.includes(dept.id) || false}
                                 onChange={() => handleDepartmentToggle(dept.id)}
-                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
+                                className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
                               />
                               <span className="text-sm">{dept.name}</span>
                             </label>
@@ -713,7 +713,7 @@ export default function ReviewCyclesPage() {
                                 type="checkbox"
                                 checked={activateFormData.locationIds?.includes(loc.id) || false}
                                 onChange={() => handleLocationToggle(loc.id)}
-                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
+                                className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
                               />
                               <div>
                                 <span className="text-sm font-medium">{loc.name}</span>
@@ -742,7 +742,7 @@ export default function ReviewCyclesPage() {
                           type="checkbox"
                           checked={activateFormData.createSelfReviews}
                           onChange={(e) => setActivateFormData({ ...activateFormData, createSelfReviews: e.target.checked })}
-                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
                         />
                         <div>
                           <span className="text-sm font-medium">Self Reviews</span>
@@ -754,7 +754,7 @@ export default function ReviewCyclesPage() {
                           type="checkbox"
                           checked={activateFormData.createManagerReviews}
                           onChange={(e) => setActivateFormData({ ...activateFormData, createManagerReviews: e.target.checked })}
-                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
+                          className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
                         />
                         <div>
                           <span className="text-sm font-medium">Manager Reviews</span>
@@ -780,7 +780,7 @@ export default function ReviewCyclesPage() {
                     type="button"
                     onClick={handleActivate}
                     disabled={loading || (activateFormData.scopeType === 'DEPARTMENT' && (!activateFormData.departmentIds || activateFormData.departmentIds.length === 0)) || (activateFormData.scopeType === 'LOCATION' && (!activateFormData.locationIds || activateFormData.locationIds.length === 0))}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <>
@@ -805,8 +805,8 @@ export default function ReviewCyclesPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex flex-col items-center text-center">
-                <div className="p-4 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
-                  <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
+                <div className="p-4 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
+                  <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400" />
                 </div>
                 <h2 className="text-xl font-bold mb-2">Cycle Activated!</h2>
                 <p className="text-[var(--text-secondary)] mb-6">
@@ -816,11 +816,11 @@ export default function ReviewCyclesPage() {
                 <div className="w-full bg-[var(--bg-secondary)] rounded-lg p-4 mb-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-sky-700">{activationResult.employeesInScope}</div>
+                      <div className="text-3xl font-bold text-accent-700">{activationResult.employeesInScope}</div>
                       <div className="text-sm text-[var(--text-secondary)]">Employees in Scope</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-green-600">{activationResult.reviewsCreated}</div>
+                      <div className="text-3xl font-bold text-success-600">{activationResult.reviewsCreated}</div>
                       <div className="text-sm text-[var(--text-secondary)]">Reviews Created</div>
                     </div>
                   </div>
@@ -832,7 +832,7 @@ export default function ReviewCyclesPage() {
                     setActivationResult(null);
                     setSelectedCycle(null);
                   }}
-                  className="w-full px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-700"
+                  className="w-full px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
                 >
                   Done
                 </button>

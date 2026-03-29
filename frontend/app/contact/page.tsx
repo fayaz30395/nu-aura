@@ -58,21 +58,21 @@ export default function ContactPage() {
       title: 'Email Us',
       description: 'Our team typically responds within 24 hours',
       value: 'sales@nulogic.io',
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-accent-500 to-accent-600',
     },
     {
       icon: Phone,
       title: 'Call Us',
       description: 'Monday to Friday, 9AM - 6PM IST',
       value: '+91 (800) 123-4567',
-      color: 'from-emerald-500 to-emerald-600',
+      color: 'from-success-500 to-success-600',
     },
     {
       icon: MessageSquare,
       title: 'Live Chat',
       description: 'Chat with our support team',
       value: 'Available 24/7',
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-accent-700 to-accent-800',
     },
   ];
 
@@ -156,7 +156,7 @@ export default function ContactPage() {
                     {method.title}
                   </h3>
                   <p className="text-sm text-[var(--text-muted)] mb-3">{method.description}</p>
-                  <p className="text-sm font-medium text-sky-700 dark:text-sky-400">
+                  <p className="text-sm font-medium text-accent-700 dark:text-accent-400">
                     {method.value}
                   </p>
                 </Card>
@@ -294,7 +294,7 @@ export default function ContactPage() {
                     placeholder="Tell us more about your inquiry..."
                     className={`input-aura w-full px-4 py-3 rounded-lg bg-[var(--bg-input)] border ${
                       errors.message ? 'border-danger-500' : 'border-[var(--border-main)]'
-                    } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-sky-500`}
+                    } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
                     {...register('message')}
                   />
                   {errors.message && (
@@ -347,7 +347,7 @@ export default function ContactPage() {
                 ].map((faq, index) => (
                   <Card key={index} padding="md">
                     <div className="flex items-start gap-4">
-                      <HelpCircle className="h-5 w-5 text-sky-700 dark:text-sky-400 flex-shrink-0 mt-0.5" />
+                      <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0 mt-0.5" />
                       <div>
                         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                           {faq.question}
@@ -378,8 +378,8 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {offices.map((office, index) => (
               <Card key={index} padding="lg">
-                <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-950 flex items-center justify-center mb-4">
-                  <MapPin className="h-6 w-6 text-sky-700 dark:text-sky-400" />
+                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center mb-4">
+                  <MapPin className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}

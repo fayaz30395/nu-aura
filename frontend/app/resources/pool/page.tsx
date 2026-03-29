@@ -16,7 +16,7 @@ import { useWorkloadDashboard } from '@/lib/hooks/queries/useResources';
 
 function allocationColor(pct: number): { bar: string; badge: string; text: string } {
   if (pct >= 100) return { bar: 'bg-danger-500',   badge: 'bg-danger-50 text-danger-700',   text: 'text-danger-700' };
-  if (pct >= 81)  return { bar: 'bg-orange-400', badge: 'bg-orange-100 text-orange-700', text: 'text-orange-700' };
+  if (pct >= 81)  return { bar: 'bg-warning-400', badge: 'bg-warning-100 text-warning-700', text: 'text-warning-700' };
   if (pct >= 51)  return { bar: 'bg-success-500',  badge: 'bg-success-50 text-success-700',  text: 'text-success-700' };
   if (pct > 0)    return { bar: 'bg-info-400',   badge: 'bg-info-50 text-info-700',    text: 'text-info-700' };
   return { bar: 'bg-[var(--bg-secondary)]', badge: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]', text: 'text-[var(--text-muted)]' };
@@ -182,7 +182,7 @@ export default function ResourcePoolPage() {
                 onClick={() => setStatusFilter(statusFilter === stat.filter ? 'ALL' : stat.filter)}
                 className={`rounded-xl border p-4 text-left transition-all hover:shadow-sm ${
                   statusFilter === stat.filter
-                    ? 'border-sky-400 ring-2 ring-sky-200 bg-sky-50'
+                    ? 'border-accent-400 ring-2 ring-accent-200 bg-accent-50'
                     : 'border-[var(--border-main)] bg-[var(--bg-card)]'
                 }`}
               >
@@ -205,14 +205,14 @@ export default function ResourcePoolPage() {
               placeholder="Search by name, code, role..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 w-64"
+              className="pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 w-64"
             />
           </div>
 
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => (
@@ -267,8 +267,8 @@ export default function ResourcePoolPage() {
                       <tr key={emp.employeeId} className="hover:bg-[var(--bg-secondary)] transition-colors">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-4">
-                            <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-sky-700">
+                            <div className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs font-bold text-accent-700">
                                 {(emp.employeeName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                               </span>
                             </div>
@@ -328,7 +328,7 @@ export default function ResourcePoolPage() {
               <div className="flex items-center gap-4">
                 {[
                   { label: '≤80%', color: 'bg-success-500' },
-                  { label: '81–99%', color: 'bg-orange-400' },
+                  { label: '81–99%', color: 'bg-warning-400' },
                   { label: '≥100%', color: 'bg-danger-500' },
                   { label: 'Unassigned', color: 'bg-[var(--bg-secondary)]' },
                 ].map(l => (

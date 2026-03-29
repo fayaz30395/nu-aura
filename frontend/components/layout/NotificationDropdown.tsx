@@ -103,17 +103,17 @@ function formatRelativeTime(date: Date): string {
 
 function getNotificationIcon(type: 'email' | 'drive' | 'calendar'): React.ReactNode {
   switch (type) {
-    case 'email': return <Mail className="h-4 w-4 text-red-500" />;
-    case 'drive': return <HardDrive className="h-4 w-4 text-yellow-500" />;
-    case 'calendar': return <Calendar className="h-4 w-4 text-blue-500" />;
+    case 'email': return <Mail className="h-4 w-4 text-danger-500" />;
+    case 'drive': return <HardDrive className="h-4 w-4 text-warning-500" />;
+    case 'calendar': return <Calendar className="h-4 w-4 text-accent-500" />;
   }
 }
 
 function getNotificationBg(type: 'email' | 'drive' | 'calendar'): string {
   switch (type) {
-    case 'email': return 'bg-red-50 dark:bg-red-950/30';
-    case 'drive': return 'bg-yellow-50 dark:bg-yellow-950/30';
-    case 'calendar': return 'bg-blue-50 dark:bg-blue-950/30';
+    case 'email': return 'bg-danger-50 dark:bg-danger-950/30';
+    case 'drive': return 'bg-warning-50 dark:bg-warning-950/30';
+    case 'calendar': return 'bg-accent-50 dark:bg-accent-950/30';
   }
 }
 
@@ -122,28 +122,28 @@ function getSystemNotificationIcon(type: string): React.ReactNode {
     case 'LEAVE_APPROVED':
     case 'LEAVE_REJECTED':
     case 'LEAVE_PENDING':
-      return <FileText className="h-4 w-4 text-blue-500" />;
+      return <FileText className="h-4 w-4 text-accent-500" />;
     case 'EXPENSE_APPROVED':
     case 'EXPENSE_REJECTED':
-      return <DollarSign className="h-4 w-4 text-green-500" />;
+      return <DollarSign className="h-4 w-4 text-success-500" />;
     case 'ATTENDANCE_MARKED':
     case 'ATTENDANCE_ALERT':
-      return <Clock className="h-4 w-4 text-orange-500" />;
+      return <Clock className="h-4 w-4 text-warning-500" />;
     case 'PAYROLL_GENERATED':
-      return <DollarSign className="h-4 w-4 text-emerald-600" />;
+      return <DollarSign className="h-4 w-4 text-success-600" />;
     case 'ANNOUNCEMENT':
-      return <Megaphone className="h-4 w-4 text-purple-500" />;
+      return <Megaphone className="h-4 w-4 text-accent-700" />;
     case 'BIRTHDAY':
     case 'ANNIVERSARY':
-      return <Gift className="h-4 w-4 text-pink-500" />;
+      return <Gift className="h-4 w-4 text-accent-700" />;
     case 'PERFORMANCE_REVIEW_DUE':
-      return <Award className="h-4 w-4 text-amber-500" />;
+      return <Award className="h-4 w-4 text-warning-500" />;
     case 'ROLE_UPDATED':
-      return <Shield className="h-4 w-4 text-indigo-500" />;
+      return <Shield className="h-4 w-4 text-accent-500" />;
     case 'SYSTEM_ALERT':
-      return <Info className="h-4 w-4 text-red-500" />;
+      return <Info className="h-4 w-4 text-danger-500" />;
     default:
-      return <ClipboardCheck className="h-4 w-4 text-sky-500" />;
+      return <ClipboardCheck className="h-4 w-4 text-accent-500" />;
   }
 }
 
@@ -374,13 +374,13 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             className={cn(
               "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
               notificationTab === 'google'
-                ? "text-sky-500 dark:text-sky-400 border-b-2 border-sky-500"
+                ? "text-accent-500 dark:text-accent-400 border-b-2 border-accent-500"
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
             )}
           >
             Google
             {googleNotifications.length > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-sky-500/15 text-sky-700 dark:text-sky-300 rounded-full">
+              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/15 text-accent-700 dark:text-accent-300 rounded-full">
                 {googleNotifications.length}
               </span>
             )}
@@ -390,13 +390,13 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             className={cn(
               "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
               notificationTab === 'system'
-                ? "text-sky-500 dark:text-sky-400 border-b-2 border-sky-500"
+                ? "text-accent-500 dark:text-accent-400 border-b-2 border-accent-500"
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
             )}
           >
             System
             {systemUnreadCount > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-sky-500/20 text-sky-300 rounded-full">
+              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/20 text-accent-300 rounded-full">
                 {systemUnreadCount}
               </span>
             )}
@@ -418,11 +418,11 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 </div>
               ) : googleNotificationsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
                 </div>
               ) : googleNotifications.length === 0 ? (
                 <div className="p-8 text-center text-surface-500 dark:text-surface-300">
-                  <CheckCircle className="h-10 w-10 mx-auto mb-3 text-green-500" />
+                  <CheckCircle className="h-10 w-10 mx-auto mb-3 text-success-500" />
                   <p>All caught up!</p>
                 </div>
               ) : (
@@ -448,7 +448,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                             {notification.subtitle}
                           </p>
                           {notification.hasVideo && (
-                            <Video className="h-3 w-3 text-blue-500 flex-shrink-0" />
+                            <Video className="h-3 w-3 text-accent-500 flex-shrink-0" />
                           )}
                         </div>
                       </div>
@@ -489,7 +489,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 {systemUnreadCount > 0 && (
                   <button
                     onClick={() => { markAllReadMutation.mutate(); wsMarkAllAsRead(); }}
-                    className="text-xs font-medium text-sky-700 hover:text-sky-700 dark:text-sky-400"
+                    className="text-xs font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400"
                   >
                     Mark all read
                   </button>
@@ -497,7 +497,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
               </div>
               {notificationsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-sky-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
                 </div>
               ) : persistedNotifications.length === 0 && wsNotifications.length === 0 ? (
                 <div className="p-8 text-center text-surface-500 dark:text-surface-300">
@@ -514,9 +514,9 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                         onClose();
                         router.push(getNotificationRoute(notification));
                       }}
-                      className="flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-sky-50/50 dark:bg-sky-900/10"
+                      className="flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-accent-50/50 dark:bg-accent-900/10"
                     >
-                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                         {getSystemNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -538,12 +538,12 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                       }}
                       className={cn(
                         "flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
-                        !notification.isRead && "bg-sky-50/50 dark:bg-sky-900/10"
+                        !notification.isRead && "bg-accent-50/50 dark:bg-accent-900/10"
                       )}
                     >
                       <div className={cn(
                         "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center",
-                        !notification.isRead ? "bg-sky-100 dark:bg-sky-900/30" : "bg-surface-100 dark:bg-surface-800"
+                        !notification.isRead ? "bg-accent-100 dark:bg-accent-900/30" : "bg-surface-100 dark:bg-surface-800"
                       )}>
                         {getSystemNotificationIcon(notification.type)}
                       </div>
@@ -573,7 +573,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => setSelectedEvent(null)} />
           <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+            <div className="bg-gradient-to-r from-accent-500 to-accent-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-6 w-6 text-white" />
@@ -608,8 +608,8 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
               )}
               {selectedEvent.calendarEvent.hangoutLink && (
                 <div className="flex items-start gap-2">
-                  <Video className="h-5 w-5 text-blue-500 mt-0.5" />
-                  <a href={selectedEvent.calendarEvent.hangoutLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:underline">
+                  <Video className="h-5 w-5 text-accent-500 mt-0.5" />
+                  <a href={selectedEvent.calendarEvent.hangoutLink} target="_blank" rel="noopener noreferrer" className="text-sm text-accent-600 hover:text-accent-700 dark:text-accent-400 hover:underline">
                     Join Google Meet
                   </a>
                 </div>
@@ -633,9 +633,9 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                         <span className="text-surface-600 dark:text-surface-300">{attendee.displayName || attendee.email}</span>
                         <span className={cn(
                           "px-2 py-0.5 rounded-full text-xs",
-                          attendee.responseStatus === 'accepted' && "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-                          attendee.responseStatus === 'declined' && "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-                          attendee.responseStatus === 'tentative' && "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+                          attendee.responseStatus === 'accepted' && "bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400",
+                          attendee.responseStatus === 'declined' && "bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400",
+                          attendee.responseStatus === 'tentative' && "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400",
                           attendee.responseStatus === 'needsAction' && "bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-300"
                         )}>
                           {attendee.responseStatus === 'needsAction' ? 'Pending' : attendee.responseStatus}
@@ -651,7 +651,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             </div>
             <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
               {selectedEvent.calendarEvent.hangoutLink && (
-                <Button onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')} className="flex-1 bg-accent-600 hover:bg-accent-700 text-white">
                   <Video className="h-4 w-4 mr-2" /> Join Meeting
                 </Button>
               )}
@@ -668,7 +668,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => { setSelectedEmail(null); setEmailContent(''); }} />
           <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
-            <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
+            <div className="bg-gradient-to-r from-danger-500 to-danger-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
                   <Mail className="h-6 w-6 text-white" />
@@ -685,7 +685,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             <div className="p-6 overflow-y-auto max-h-[50vh]">
               {emailLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+                  <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
                 </div>
               ) : emailContent.includes('<') ? (
                 <div className="prose dark:prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailContent) }} />
@@ -710,7 +710,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => setSelectedFile(null)} />
           <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden animate-fade-in-down">
-            <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4">
+            <div className="bg-gradient-to-r from-warning-500 to-warning-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
                   <HardDrive className="h-6 w-6 text-white" />

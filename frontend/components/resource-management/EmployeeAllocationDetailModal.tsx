@@ -125,8 +125,8 @@ export function EmployeeAllocationDetailModal({
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-full ${
               isOverAllocated
-                ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-                : 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-400'
+                ? 'bg-danger-100 text-danger-600 dark:bg-danger-900/30 dark:text-danger-400'
+                : 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400'
             }`}
           >
             <User className="h-6 w-6" />
@@ -169,7 +169,7 @@ export function EmployeeAllocationDetailModal({
               <TrendingUp className="h-4 w-4 text-surface-400" />
               <span className="text-xs text-surface-500">Available</span>
             </div>
-            <p className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? 'text-success-600' : 'text-danger-600'}`}>
               {formatAllocationPercentage(availableCapacity)}
             </p>
           </div>
@@ -186,10 +186,10 @@ export function EmployeeAllocationDetailModal({
 
           <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-blue-500" />
+              <Clock className="h-4 w-4 text-accent-500" />
               <span className="text-xs text-surface-500">Planned</span>
             </div>
-            <p className="mt-1 text-xl font-bold text-blue-600 dark:text-blue-400">
+            <p className="mt-1 text-xl font-bold text-accent-600 dark:text-accent-400">
               {formatAllocationPercentage(plannedAllocation)}
             </p>
           </div>
@@ -207,14 +207,14 @@ export function EmployeeAllocationDetailModal({
             {/* Active allocation */}
             <div
               className={`absolute left-0 top-0 h-full transition-all ${
-                isOverAllocated ? 'bg-red-500' : 'bg-green-500'
+                isOverAllocated ? 'bg-danger-500' : 'bg-success-500'
               }`}
               style={{ width: `${Math.min((activeAllocation / 150) * 100, 100)}%` }}
             />
             {/* Planned allocation (shown in blue after active) */}
             {plannedAllocation > 0 && (
               <div
-                className="absolute top-0 h-full bg-blue-400"
+                className="absolute top-0 h-full bg-accent-400"
                 style={{
                   left: `${(activeAllocation / 150) * 100}%`,
                   width: `${(plannedAllocation / 150) * 100}%`,
@@ -231,10 +231,10 @@ export function EmployeeAllocationDetailModal({
             <span>0%</span>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-green-500"></span> Active
+                <span className="h-2 w-2 rounded-full bg-success-500"></span> Active
               </span>
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-blue-400"></span> Planned
+                <span className="h-2 w-2 rounded-full bg-accent-400"></span> Planned
               </span>
             </div>
             <span>150%</span>
@@ -248,7 +248,7 @@ export function EmployeeAllocationDetailModal({
               onClick={() => setActiveTab('current')}
               className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === 'current'
-                  ? 'border-sky-700 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                  ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                   : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
               }`}
             >
@@ -261,7 +261,7 @@ export function EmployeeAllocationDetailModal({
               onClick={() => setActiveTab('history')}
               className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === 'history'
-                  ? 'border-sky-700 text-sky-700 dark:border-sky-400 dark:text-sky-400'
+                  ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
                   : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
               }`}
             >
@@ -390,13 +390,13 @@ function AllocationCard({
     switch (allocationStatus) {
       case 'ACTIVE':
         return {
-          badge: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-          icon: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+          badge: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
+          icon: 'bg-accent-100 text-accent-600 dark:bg-accent-900/30 dark:text-accent-400',
         };
       case 'PLANNED':
         return {
-          badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-          icon: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+          badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400',
+          icon: 'bg-accent-100 text-accent-600 dark:bg-accent-900/30 dark:text-accent-400',
         };
       case 'INACTIVE':
         return {
@@ -459,7 +459,7 @@ function AllocationCard({
 
   if (isEditing) {
     return (
-      <div className="rounded-lg border border-sky-300 bg-sky-50 p-4 dark:border-sky-700 dark:bg-sky-900/20">
+      <div className="rounded-lg border border-accent-300 bg-accent-50 p-4 dark:border-accent-700 dark:bg-accent-900/20">
         <div className="flex items-start gap-2">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${statusStyle.icon}`}
@@ -511,14 +511,14 @@ function AllocationCard({
                   max={maxAllowedPercentage}
                   value={editPercentage}
                   onChange={(e) => handlePercentageChange(Number(e.target.value))}
-                  className={`text-sm ${validationError ? 'border-red-500' : ''}`}
+                  className={`text-sm ${validationError ? 'border-danger-500' : ''}`}
                 />
               </div>
             </div>
 
             {/* Validation Error */}
             {validationError && (
-              <div className="mt-2 flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+              <div className="mt-2 flex items-center gap-1 text-xs text-danger-600 dark:text-danger-400">
                 <AlertTriangle className="h-3 w-3" />
                 {validationError}
               </div>
@@ -544,10 +544,10 @@ function AllocationCard({
   return (
     <div
       className={`rounded-lg border p-4 transition-all ${
-        onClick ? 'cursor-pointer hover:border-sky-300 hover:shadow-sm dark:hover:border-sky-700' : ''
+        onClick ? 'cursor-pointer hover:border-accent-300 hover:shadow-sm dark:hover:border-accent-700' : ''
       } ${
         allocation.isPendingApproval
-          ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20'
+          ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
           : 'border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-800'
       }`}
       onClick={onClick}
@@ -565,7 +565,7 @@ function AllocationCard({
                 {allocation.projectName}
               </h4>
               {allocation.isPendingApproval && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                <span className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
                   <Clock className="h-3 w-3" />
                   Pending
                 </span>
@@ -617,11 +617,11 @@ function HistoryCard({ request }: { request: AllocationApprovalRequest }) {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+        return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400';
       case 'REJECTED':
-        return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+        return 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400';
       case 'PENDING':
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400';
       default:
         return 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400';
     }
@@ -658,7 +658,7 @@ function HistoryCard({ request }: { request: AllocationApprovalRequest }) {
             </p>
           )}
           {request.rejectionReason && (
-            <p className="mt-2 text-sm italic text-red-600 dark:text-red-400">
+            <p className="mt-2 text-sm italic text-danger-600 dark:text-danger-400">
               Reason: {request.rejectionReason}
             </p>
           )}

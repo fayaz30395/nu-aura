@@ -66,11 +66,11 @@ export default function MyLeavesPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'APPROVED': return 'bg-green-100 text-green-800';
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-      case 'REJECTED': return 'bg-red-100 text-red-800';
+      case 'APPROVED': return 'bg-success-100 text-success-800';
+      case 'PENDING': return 'bg-warning-100 text-warning-800';
+      case 'REJECTED': return 'bg-danger-100 text-danger-800';
       case 'CANCELLED': return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
-      default: return 'bg-blue-100 text-blue-800';
+      default: return 'bg-accent-100 text-accent-800';
     }
   };
 
@@ -89,7 +89,7 @@ export default function MyLeavesPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
           >
             ← Back
           </button>
@@ -125,14 +125,14 @@ export default function MyLeavesPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-4">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+          <div className="mb-6 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-4">
+            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+              <p className="text-sm text-danger-800 dark:text-danger-300">{error}</p>
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -144,7 +144,7 @@ export default function MyLeavesPage() {
           {!requestsData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-8 h-8 border-4 border-sky-200 dark:border-sky-900/30 border-t-sky-500 rounded-full animate-spin" aria-label="Loading leave requests" />
+                <div className="w-8 h-8 border-4 border-accent-200 dark:border-accent-900/30 border-t-accent-500 rounded-full animate-spin" aria-label="Loading leave requests" />
                 <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>
             </div>
@@ -210,7 +210,7 @@ export default function MyLeavesPage() {
                           {request.status === 'PENDING' && (
                             <button
                               onClick={() => handleCancelClick(request.id)}
-                              className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 font-medium"
+                              className="text-danger-600 dark:text-danger-500 hover:text-danger-700 dark:hover:text-danger-400 font-medium"
                             >
                               Cancel
                             </button>
@@ -218,7 +218,7 @@ export default function MyLeavesPage() {
                           {request.status === 'REJECTED' && request.rejectionReason && (
                             <button
                               onClick={() => toast.error(`Rejection Reason: ${request.rejectionReason}`)}
-                              className="text-sky-700 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-medium"
+                              className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium"
                             >
                               View Reason
                             </button>
