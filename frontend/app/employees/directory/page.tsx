@@ -277,13 +277,13 @@ export default function TeamDirectory() {
                 </div>
                 <button
                   onClick={handleSearch}
-                  className="btn-primary px-6 py-3"
+                  className="btn-primary px-6 py-4"
                 >
                   Search
                 </button>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`px-4 py-3 border rounded-xl transition-colors flex items-center gap-2 ${showFilters
+                  className={`px-4 py-4 border rounded-xl transition-colors flex items-center gap-2 ${showFilters
                       ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
                       : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                     }`}
@@ -484,7 +484,7 @@ export default function TeamDirectory() {
 
                         <div className="mt-3 flex justify-center">
                           <span
-                            className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                            className={`inline-block px-4 py-1 text-xs font-medium rounded-full ${getStatusColor(
                               employee.status
                             )}`}
                           >
@@ -597,7 +597,7 @@ export default function TeamDirectory() {
                           </td>
                           <td className="px-6 py-4">
                             <span
-                              className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                              className={`inline-block px-4 py-1 text-xs font-medium rounded-full ${getStatusColor(
                                 employee.status
                               )}`}
                             >
@@ -746,7 +746,7 @@ export default function TeamDirectory() {
                     </p>
                     <div className="mt-2 flex justify-center">
                       <span
-                        className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                        className={`px-4 py-1 text-xs font-medium rounded-full ${getStatusColor(
                           selectedEmployee.status
                         )}`}
                       >
@@ -779,7 +779,7 @@ export default function TeamDirectory() {
                         </div>
                         <a
                           href={`mailto:${selectedEmployee.personalEmail}`}
-                          className="btn-primary px-3 py-1.5 text-sm !h-auto"
+                          className="btn-primary px-4 py-1.5 text-sm !h-auto"
                         >
                           Send Email
                         </a>
@@ -797,7 +797,7 @@ export default function TeamDirectory() {
                         </div>
                         <a
                           href={`tel:${selectedEmployee.phoneNumber}`}
-                          className="px-3 py-1.5 bg-success-600 text-white text-sm rounded-lg hover:bg-success-700 transition-colors"
+                          className="px-4 py-1.5 bg-success-600 text-white text-sm rounded-lg hover:bg-success-700 transition-colors"
                         >
                           Call
                         </a>

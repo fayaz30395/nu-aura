@@ -262,7 +262,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             type="button"
             onClick={() => handleTypeChange(type)}
             disabled={disabled}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-colors ${
               targetType === type
                 ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-white'
@@ -288,7 +288,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             onFocus={() => setShowDropdown(true)}
             placeholder={`Search ${getTargetTypeLabel(targetType).toLowerCase()}s...`}
             disabled={disabled}
-            className="w-full px-3 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-accent-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-accent-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[var(--text-muted)]">
             {isSearching ? (
@@ -313,7 +313,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                   key={`${result.type}-${result.id}`}
                   type="button"
                   onClick={() => addTarget(result)}
-                  className="w-full px-3 py-2 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] transition-colors"
+                  className="w-full px-4 py-2 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <span className={`p-1 rounded ${getTargetTypeBadgeColor(result.type)}`}>
@@ -333,7 +333,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                 </button>
               ))
             ) : (
-              <div className="px-3 py-4 text-center text-sm text-[var(--text-muted)]">
+              <div className="px-4 py-4 text-center text-sm text-[var(--text-muted)]">
                 No {getTargetTypeLabel(targetType).toLowerCase()}s found
               </div>
             )}

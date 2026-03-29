@@ -107,7 +107,7 @@ export default function TemplatesPage() {
             placeholder="Search templates by name or tags..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={`${dsInput.base} w-full pl-12 pr-4 py-3`}
+            className={`${dsInput.base} w-full pl-12 pr-4 py-4`}
           />
         </div>
 

@@ -262,13 +262,13 @@ export default function HolidaysPage() {
 
       {/* Error Message */}
       {(uiError || queryError) && (
-        <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-3 rounded-lg relative">
+        <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-4 rounded-lg relative">
           <span className="block sm:inline text-sm">
             {uiError || (queryError instanceof Error ? queryError.message : 'An error occurred')}
           </span>
           <button
             onClick={() => setUiError(null)}
-            className="absolute top-0 bottom-0 right-0 px-4 py-3 text-danger-500 dark:text-danger-400"
+            className="absolute top-0 bottom-0 right-0 px-4 py-4 text-danger-500 dark:text-danger-400"
           >
             <span className="text-xl">&times;</span>
           </button>
@@ -326,7 +326,7 @@ export default function HolidaysPage() {
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setFilterType('ALL')}
-          className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+          className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors ${
             filterType === 'ALL'
               ? 'bg-accent-500 text-white'
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
@@ -341,7 +341,7 @@ export default function HolidaysPage() {
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+              className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors ${
                 filterType === type
                   ? 'bg-accent-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'

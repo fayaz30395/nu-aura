@@ -243,7 +243,7 @@ export default function ReportBuilderPage() {
                   <button
                     key={m.value}
                     onClick={() => changeModule(m.value)}
-                    className={`px-3 py-2 rounded-md text-sm font-medium border transition-colors ${
+                    className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
                       module === m.value
                         ? 'bg-accent-600 text-white border-accent-600'
                         : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:bg-[var(--bg-surface)]'
@@ -366,7 +366,7 @@ export default function ReportBuilderPage() {
                 placeholder="Template name"
                 value={templateName}
                 onChange={e => setTemplateName(e.target.value)}
-                className="w-full text-sm border border-[var(--border-strong)] rounded px-3 py-1.5 mb-2"
+                className="w-full text-sm border border-[var(--border-strong)] rounded px-4 py-1.5 mb-2"
               />
               <PermissionGate permission={Permissions.REPORT_CREATE}>
                 <button
@@ -411,7 +411,7 @@ export default function ReportBuilderPage() {
         {/* ── Preview Table ───────────────────────────────────────────────── */}
         {previewRows.length > 0 && (
           <div className="bg-white border border-[var(--border-main)] rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b border-[var(--border-main)] flex items-center justify-between">
+            <div className="px-4 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 Preview — {previewRows.length} row{previewRows.length !== 1 ? 's' : ''}
               </h2>

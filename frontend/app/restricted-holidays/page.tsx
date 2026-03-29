@@ -213,7 +213,7 @@ export default function RestrictedHolidaysPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-4 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.id
                       ? 'border-accent-700 text-accent-700'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -360,7 +360,7 @@ function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, su
               key={holiday.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`rounded-xl border p-5 transition-shadow hover:shadow-md ${
+              className={`rounded-xl border p-6 transition-shadow hover:shadow-md ${
                 isSelected
                   ? 'border-accent-300 bg-accent-50 dark:bg-accent-900/20'
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
@@ -445,7 +445,7 @@ function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySe
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {selections.map((selection) => {
         const config = statusConfig[selection.status];
         const StatusIcon = config.icon;
@@ -483,7 +483,7 @@ function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySe
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${config.color}`}>
                 <StatusIcon className="w-4 h-4" />
                 {config.label}
@@ -534,7 +534,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {selections.map((selection) => (
         <div
           key={selection.id}
@@ -564,7 +564,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   placeholder="Reason for rejection..."
-                  className="text-sm border rounded-lg px-3 py-1.5 w-48 focus:outline-none
+                  className="text-sm border rounded-lg px-4 py-1.5 w-48 focus:outline-none
                     focus:ring-2 focus:ring-accent-700 border-gray-300 dark:border-gray-600
                     dark:bg-gray-800 dark:text-white"
                 />
@@ -575,13 +575,13 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                     setRejectReason('');
                   }}
                   disabled={isActing}
-                  className="px-3 py-1.5 text-sm bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
+                  className="px-4 py-1.5 text-sm bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
                 >
                   Confirm
                 </button>
                 <button
                   onClick={() => { setRejectingId(null); setRejectReason(''); }}
-                  className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800"
+                  className="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800"
                 >
                   Cancel
                 </button>
@@ -591,7 +591,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                 <button
                   onClick={() => onApprove(selection.id)}
                   disabled={isActing}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium
+                  className="inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium
                     bg-success-600 text-white rounded-lg hover:bg-success-700
                     disabled:opacity-50 transition-colors
                     focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -602,7 +602,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                 <button
                   onClick={() => setRejectingId(selection.id)}
                   disabled={isActing}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium
+                  className="inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium
                     bg-white text-danger-600 border border-danger-300 rounded-lg hover:bg-danger-50
                     disabled:opacity-50 transition-colors
                     focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -659,17 +659,17 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
           <table className="w-full text-sm">
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Holiday</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Date</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Category</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Status</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Actions</th>
+                <th className="text-left px-4 py-2 font-medium text-gray-600 dark:text-gray-300">Holiday</th>
+                <th className="text-left px-4 py-2 font-medium text-gray-600 dark:text-gray-300">Date</th>
+                <th className="text-left px-4 py-2 font-medium text-gray-600 dark:text-gray-300">Category</th>
+                <th className="text-left px-4 py-2 font-medium text-gray-600 dark:text-gray-300">Status</th>
+                <th className="text-right px-4 py-2 font-medium text-gray-600 dark:text-gray-300">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {holidays.map((holiday) => (
                 <tr key={holiday.id} className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-4">
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">{holiday.holidayName}</p>
                       {holiday.description && (
@@ -677,19 +677,19 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">
                     {new Date(holiday.holidayDate).toLocaleDateString('en-IN', {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
                     })}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-4">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${categoryColors[holiday.category]}`}>
                       {categoryLabels[holiday.category]}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-4">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                       holiday.isActive
                         ? 'bg-success-100 text-success-700'
@@ -698,7 +698,7 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
                       {holiday.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => onEdit(holiday)}
@@ -765,11 +765,11 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
   return (
     <div className="max-w-lg">
       <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
           Restricted Holiday Policy ({year})
         </h3>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Max Selections Per Year
@@ -778,7 +778,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
               type="number"
               {...form.register('maxSelectionsPerYear', { valueAsNumber: true })}
               min={1}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
                 dark:bg-gray-700 dark:text-white"
             />
@@ -797,13 +797,13 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
               type="number"
               {...form.register('minDaysBeforeSelection', { valueAsNumber: true })}
               min={0}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
                 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Controller
               name="requiresApproval"
               control={form.control}
@@ -893,7 +893,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
         className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-gray-800
           shadow-xl border border-gray-200 dark:border-gray-700 p-6 mx-4"
       >
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-5">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-5">
           {holiday ? 'Edit Restricted Holiday' : 'Add Restricted Holiday'}
         </h3>
 
@@ -904,7 +904,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             </label>
             <input
               {...form.register('holidayName')}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
                 dark:bg-gray-700 dark:text-white"
               placeholder="e.g., Pongal"
@@ -921,7 +921,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             <input
               type="date"
               {...form.register('holidayDate')}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
                 dark:bg-gray-700 dark:text-white"
             />
@@ -937,7 +937,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             <textarea
               {...form.register('description')}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
                 dark:bg-gray-700 dark:text-white resize-none"
               placeholder="Brief description of this holiday"
@@ -950,7 +950,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             </label>
             <select
               {...form.register('category')}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
                 dark:bg-gray-700 dark:text-white"
             >
@@ -966,14 +966,14 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             </label>
             <input
               {...form.register('applicableRegions')}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
                 dark:bg-gray-700 dark:text-white"
               placeholder='["IN-TN","IN-KA"] or leave blank for all'
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Controller
               name="isActive"
               control={form.control}
@@ -998,7 +998,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             <span className="text-sm text-gray-700 dark:text-gray-300">Active</span>
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-end gap-4 pt-3 border-t border-gray-200 dark:border-gray-700">
             <button
               type="button"
               onClick={onClose}

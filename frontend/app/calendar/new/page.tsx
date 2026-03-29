@@ -204,7 +204,7 @@ export default function NewEventPage() {
               type="text"
               {...register('title')}
               placeholder="Enter event title"
-              className={`w-full px-4 py-3 bg-[var(--bg-secondary)] border ${
+              className={`w-full px-4 py-4 bg-[var(--bg-secondary)] border ${
                 errors.title ? 'border-danger-500' : 'border-[var(--border-main)]'
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
@@ -236,7 +236,7 @@ export default function NewEventPage() {
                 <input
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('startTime')}
-                  className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
+                  className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                     errors.startTime ? 'border-danger-500' : 'border-[var(--border-main)]'
                   } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
                 />
@@ -254,7 +254,7 @@ export default function NewEventPage() {
                 <input
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('endTime')}
-                  className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
+                  className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                     errors.endTime ? 'border-danger-500' : 'border-[var(--border-main)]'
                   } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
                 />
@@ -272,7 +272,7 @@ export default function NewEventPage() {
             </label>
             <select
               {...register('eventType')}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
               {EVENT_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -293,7 +293,7 @@ export default function NewEventPage() {
                 type="text"
                 {...register('location')}
                 placeholder="Add location"
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
               />
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function NewEventPage() {
                 type="url"
                 {...register('meetingLink')}
                 placeholder="https://meet.google.com/..."
-                className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
+                className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                   errors.meetingLink ? 'border-danger-500' : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
@@ -328,7 +328,7 @@ export default function NewEventPage() {
               <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <select
                 {...register('reminderMinutes', { valueAsNumber: true })}
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="">No reminder</option>
                 {REMINDER_OPTIONS.map((opt) => (
@@ -349,7 +349,7 @@ export default function NewEventPage() {
               <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <select
                 {...register('visibility')}
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 {VISIBILITIES.map((vis) => (
                   <option key={vis.value} value={vis.value}>
@@ -371,7 +371,7 @@ export default function NewEventPage() {
                 {...register('description')}
                 placeholder="Add event description..."
                 rows={4}
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
+                className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
               />
             </div>
           </div>
@@ -385,7 +385,7 @@ export default function NewEventPage() {
               {...register('notes')}
               placeholder="Private notes..."
               rows={2}
-              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
+              className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
             />
           </div>
 
@@ -394,7 +394,7 @@ export default function NewEventPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              className="px-6 py-4 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Cancel
             </button>
@@ -402,7 +402,7 @@ export default function NewEventPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
               >
               {isLoading ? (
                 <>

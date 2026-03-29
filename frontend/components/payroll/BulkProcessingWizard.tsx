@@ -543,22 +543,22 @@ export const BulkProcessingWizard: React.FC = () => {
                   <table className="w-full">
                     <thead className="bg-surface-50 dark:bg-surface-800/50 sticky top-0">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2 text-left text-sm font-semibold text-surface-700 dark:text-surface-300">
                           Employee
                         </th>
-                        <th className="px-4 py-3 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
                           Base Salary
                         </th>
-                        <th className="px-4 py-3 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
                           Allowances
                         </th>
-                        <th className="px-4 py-3 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
                           Deductions
                         </th>
-                        <th className="px-4 py-3 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
                           Gross Amount
                         </th>
-                        <th className="px-4 py-3 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
                           Net Amount
                         </th>
                       </tr>
@@ -566,22 +566,22 @@ export const BulkProcessingWizard: React.FC = () => {
                     <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                       {previewData.map((emp) => (
                         <tr key={emp.employeeId} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
-                          <td className="px-4 py-3 text-sm font-medium text-surface-900 dark:text-surface-50">
+                          <td className="px-4 py-4 text-sm font-medium text-surface-900 dark:text-surface-50">
                             {emp.employeeName}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right text-surface-900 dark:text-surface-50">
+                          <td className="px-4 py-4 text-sm text-right text-surface-900 dark:text-surface-50">
                             {formatCurrency(emp.baseSalary)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right text-success-600 dark:text-success-400">
+                          <td className="px-4 py-4 text-sm text-right text-success-600 dark:text-success-400">
                             {formatCurrency(emp.totalAllowances)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right text-danger-600 dark:text-danger-400">
+                          <td className="px-4 py-4 text-sm text-right text-danger-600 dark:text-danger-400">
                             {formatCurrency(emp.totalDeductions)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
+                          <td className="px-4 py-4 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
                             {formatCurrency(emp.grossAmount)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right font-bold text-accent-700 dark:text-accent-400">
+                          <td className="px-4 py-4 text-sm text-right font-bold text-accent-700 dark:text-accent-400">
                             {formatCurrency(emp.netAmount)}
                           </td>
                         </tr>

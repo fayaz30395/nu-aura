@@ -145,7 +145,7 @@ export default function PaymentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
               <CreditCard className="w-7 h-7 sm:w-8 sm:h-8" />
               Payment Gateway
             </h1>
@@ -270,7 +270,7 @@ export default function PaymentsPage() {
                 <select
                   value={filters.status}
                   onChange={(e) => setFilters({ ...filters, status: e.target.value as PaymentStatus | 'ALL' })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="INITIATED">Initiated</option>
@@ -290,7 +290,7 @@ export default function PaymentsPage() {
                 <select
                   value={filters.type}
                   onChange={(e) => setFilters({ ...filters, type: e.target.value as PaymentType | 'ALL' })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Types</option>
                   <option value="PAYROLL">Payroll</option>
@@ -307,7 +307,7 @@ export default function PaymentsPage() {
                 <select
                   value={filters.provider}
                   onChange={(e) => setFilters({ ...filters, provider: e.target.value as PaymentProvider | 'ALL' })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Providers</option>
                   <option value="RAZORPAY">Razorpay</option>
@@ -325,7 +325,7 @@ export default function PaymentsPage() {
                   type="date"
                   value={filters.dateFrom}
                   onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 />
               </div>
 
@@ -337,7 +337,7 @@ export default function PaymentsPage() {
                   type="date"
                   value={filters.dateTo}
                   onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 />
               </div>
 
@@ -351,7 +351,7 @@ export default function PaymentsPage() {
                     placeholder="0"
                     value={filters.amountMin}
                     onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   />
                 </div>
                 <div className="flex-1">
@@ -363,7 +363,7 @@ export default function PaymentsPage() {
                     placeholder="0"
                     value={filters.amountMax}
                     onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   />
                 </div>
               </div>
@@ -376,7 +376,7 @@ export default function PaymentsPage() {
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'all'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -386,7 +386,7 @@ export default function PaymentsPage() {
             </button>
             <button
               onClick={() => setActiveTab('completed')}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'completed'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -396,7 +396,7 @@ export default function PaymentsPage() {
             </button>
             <button
               onClick={() => setActiveTab('pending')}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'pending'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -406,7 +406,7 @@ export default function PaymentsPage() {
             </button>
             <button
               onClick={() => setActiveTab('failed')}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'failed'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
@@ -443,7 +443,7 @@ export default function PaymentsPage() {
                         <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{payment.transactionReference}</h3>
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${paymentService.getStatusColor(payment.status)}`}
+                            className={`px-4 py-1 rounded-full text-xs font-medium ${paymentService.getStatusColor(payment.status)}`}
                           >
                             {paymentService.getStatusLabel(payment.status)}
                           </span>

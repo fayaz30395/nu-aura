@@ -455,25 +455,25 @@ export default function EmployeeImportPage() {
                 <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
                   <thead className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Row
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Employee Code
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Name
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Email
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Department
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Errors
                       </th>
                     </tr>
@@ -488,29 +488,29 @@ export default function EmployeeImportPage() {
                             : 'bg-danger-50 dark:bg-danger-900/10'
                         }
                       >
-                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                           {row.rowNumber}
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4">
                           {row.isValid ? (
                             <CheckCircle className="w-5 h-5 text-success-500" />
                           ) : (
                             <XCircle className="w-5 h-5 text-danger-500" />
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                           {row.employeeCode}
                         </td>
-                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                           {row.fullName}
                         </td>
-                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                           {row.workEmail}
                         </td>
-                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                           {row.departmentName || '-'}
                         </td>
-                        <td className="px-4 py-3 text-sm">
+                        <td className="px-4 py-4 text-sm">
                           {row.rowErrors.length > 0 ? (
                             <div className="text-danger-600 dark:text-danger-400">
                               {row.rowErrors.map((err, idx) => (
@@ -603,7 +603,7 @@ export default function EmployeeImportPage() {
                 Import {result.status === 'COMPLETED' ? 'Completed' : result.status === 'PARTIAL_SUCCESS' ? 'Partially Completed' : 'Failed'}
               </h2>
               <span
-                className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(
+                className={`inline-flex px-4 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(
                   result.status
                 )}`}
               >
@@ -647,13 +647,13 @@ export default function EmployeeImportPage() {
                   <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
                     <thead className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                           Employee Code
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                           Name
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                           Email
                         </th>
                       </tr>
@@ -661,13 +661,13 @@ export default function EmployeeImportPage() {
                     <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                       {result.importedEmployees.slice(0, 10).map((emp) => (
                         <tr key={emp.employeeId}>
-                          <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                          <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                             {emp.employeeCode}
                           </td>
-                          <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                          <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                             {emp.fullName}
                           </td>
-                          <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
+                          <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                             {emp.workEmail}
                           </td>
                         </tr>

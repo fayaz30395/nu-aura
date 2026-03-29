@@ -571,7 +571,7 @@ function CalendarContent() {
                       <button
                         key={mode}
                         onClick={() => setViewMode(mode)}
-                        className={`px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                        className={`px-4 py-1.5 text-sm font-medium capitalize transition-colors ${
                           viewMode === mode
                             ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-400'
                             : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
@@ -981,7 +981,7 @@ function CalendarContent() {
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                   placeholder="Add description"
                   rows={3}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 />
               </div>
 

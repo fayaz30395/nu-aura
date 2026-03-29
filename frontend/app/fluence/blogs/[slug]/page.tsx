@@ -248,7 +248,7 @@ export default function BlogPostDetailPage() {
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4 leading-tight">
+              <h1 className="text-2xl md:text-5xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4 leading-tight">
                 {post.title}
               </h1>
 
@@ -280,7 +280,7 @@ export default function BlogPostDetailPage() {
                 {post.categoryName && (
                   <motion.span
                     whileHover={{ scale: 1.05 }}
-                    className="inline-flex items-center gap-1 bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] px-3 py-1 rounded-full text-xs font-medium"
+                    className="inline-flex items-center gap-1 bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] px-4 py-1 rounded-full text-xs font-medium"
                   >
                     {post.categoryName}
                   </motion.span>
@@ -397,7 +397,7 @@ export default function BlogPostDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleToggleLike}
                   disabled={likeMutation.isPending || unlikeMutation.isPending}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg transition-all ${
+                  className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all ${
                     isLiked
                       ? 'bg-danger-100 dark:bg-danger-900/30 text-danger-600 dark:text-danger-300'
                       : 'bg-[var(--bg-secondary)] hover:bg-danger-100 dark:hover:bg-danger-900/30 text-[var(--text-secondary)] hover:text-danger-600 dark:hover:text-danger-300'
@@ -413,7 +413,7 @@ export default function BlogPostDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleToggleFavorite}
                   disabled={addFavorite.isPending || removeFavorite.isPending}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg transition-all ${
+                  className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all ${
                     isFavorited
                       ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-600 dark:text-warning-300'
                       : 'bg-[var(--bg-secondary)] hover:bg-warning-100 dark:hover:bg-warning-900/30 text-[var(--text-secondary)] hover:text-warning-600 dark:hover:text-warning-300'
@@ -430,7 +430,7 @@ export default function BlogPostDetailPage() {
                     const el = document.getElementById('comment-input');
                     el?.focus();
                   }}
-                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all"
                   title="Comment"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -441,7 +441,7 @@ export default function BlogPostDetailPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleCopyLink}
-                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all"
                   title="Share"
                 >
                   <Share className="w-4 h-4" />

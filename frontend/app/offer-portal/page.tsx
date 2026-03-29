@@ -175,7 +175,7 @@ function OfferPortalPage() {
           <div className="w-20 h-20 bg-accent-100 dark:bg-accent-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <FileText className="h-10 w-10 text-accent-700 dark:text-accent-400" />
           </div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
+          <h1 className="text-2xl font-bold skeuo-emboss mb-2">
             Your Offer Letter
           </h1>
           <p className="text-[var(--text-secondary)]">
@@ -296,7 +296,7 @@ function OfferPortalPage() {
         {offer?.offerLetterId && (
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5 text-accent-500" />
                 Offer Letter Document
               </h3>
@@ -331,7 +331,7 @@ function OfferPortalPage() {
         {isOfferPending && (
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
                 Your Response
               </h3>
               <p className="text-[var(--text-secondary)] mb-6">
@@ -399,7 +399,7 @@ function OfferPortalPage() {
                   type="date"
                   value={confirmedJoiningDate}
                   onChange={(e) => setConfirmedJoiningDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                  className="w-full px-4 py-4 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
                 <p className="text-xs text-[var(--text-muted)] mt-1">
                   Please confirm your expected joining date
@@ -461,7 +461,7 @@ function OfferPortalPage() {
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder="Please share your reason..."
-                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                  className="w-full px-4 py-4 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
               </div>
 

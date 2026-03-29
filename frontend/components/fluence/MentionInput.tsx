@@ -229,7 +229,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
               className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-xl overflow-hidden"
             >
               {/* Search header */}
-              <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--border-subtle)]">
+              <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--border-subtle)]">
                 <Search className="h-3.5 w-3.5 text-[var(--text-muted)]" />
                 <span className="text-xs text-[var(--text-muted)]">
                   {mentionQuery ? `Searching "${mentionQuery}"` : 'Tag a team member'}
@@ -247,7 +247,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
                       insertMention(user);
                     }}
                     onMouseEnter={() => setSelectedIdx(idx)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors duration-100 ${
+                    className={`w-full flex items-center gap-4 px-4 py-2 text-left transition-colors duration-100 ${
                       idx === selectedIdx
                         ? 'bg-[var(--accent-700)]/10'
                         : 'hover:bg-[var(--bg-secondary)]'

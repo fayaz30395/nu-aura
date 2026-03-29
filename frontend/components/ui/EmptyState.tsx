@@ -60,7 +60,7 @@ export function EmptyState({
         )}
 
         {/* Title */}
-        <h3 className="text-lg font-semibold text-center mb-2 max-w-xs text-[var(--text-primary)]">
+        <h3 className="text-xl font-semibold text-center mb-2 max-w-xs text-[var(--text-primary)]">
           {title}
         </h3>
 

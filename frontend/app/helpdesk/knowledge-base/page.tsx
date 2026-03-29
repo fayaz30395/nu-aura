@@ -98,7 +98,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
 
   return (
     <Card
-      className="p-5 hover:shadow-md transition-all cursor-pointer group"
+      className="p-6 hover:shadow-md transition-all cursor-pointer group"
       onClick={() => onView(article)}
     >
       <div className="flex items-start justify-between gap-4">
@@ -266,7 +266,7 @@ const ArticleDetailModal: React.FC<{
 };
 
 const ArticleSkeletonCard: React.FC = () => (
-  <Card className="p-5">
+  <Card className="p-6">
     <div className="space-y-4">
       <div className="flex gap-4">
         <Skeleton className="h-5 w-5 flex-shrink-0" />
@@ -399,7 +399,7 @@ export default function KnowledgeBasePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+            <h1 className="text-2xl  font-bold text-[var(--text-primary)]">
               Knowledge Base
             </h1>
             <p className="text-[var(--text-secondary)] mt-2">
@@ -423,7 +423,7 @@ export default function KnowledgeBasePage() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-[var(--bg-input)] rounded-lg p-6 sticky top-6">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-6">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-6">
                 Categories
               </h3>
 
@@ -487,7 +487,7 @@ export default function KnowledgeBasePage() {
                   placeholder="Search articles..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className="w-full pl-12 pr-4 py-4 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
             </div>
@@ -561,7 +561,7 @@ export default function KnowledgeBasePage() {
                 <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                   Article Created
                 </h3>
                 <p className="text-[var(--text-secondary)] mt-2">
@@ -611,7 +611,7 @@ export default function KnowledgeBasePage() {
                     <textarea
                       placeholder="Write the article content here..."
                       rows={8}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                       {...registerArticle('content')}
                     />
                     {articleErrors.content && (
@@ -659,7 +659,7 @@ export default function KnowledgeBasePage() {
               <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400" />
               </div>
-              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Ticket Submitted
               </h3>
               <p className="text-[var(--text-secondary)] mt-2">
@@ -693,7 +693,7 @@ export default function KnowledgeBasePage() {
                   <textarea
                     placeholder="Provide more details about your issue..."
                     rows={6}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                    className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                     {...registerTicket('description')}
                   />
                   {ticketErrors.description && (
@@ -706,7 +706,7 @@ export default function KnowledgeBasePage() {
                     Priority
                   </label>
                   <select
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg"
+                    className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg"
                     {...registerTicket('priority')}
                   >
                     <option value="LOW">Low</option>

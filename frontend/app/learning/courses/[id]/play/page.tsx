@@ -442,7 +442,7 @@ export default function CoursePlayerPage() {
                       <button
                         key={content.id}
                         onClick={() => navigateTo(content.id)}
-                        className={`w-full flex items-start gap-4 px-4 py-3 text-left transition-colors border-b border-[var(--border-main)] ${
+                        className={`w-full flex items-start gap-4 px-4 py-4 text-left transition-colors border-b border-[var(--border-main)] ${
                           isActive
                             ? 'bg-accent-50 border-l-2 border-l-accent-600'
                             : 'hover:bg-[var(--bg-surface)]'
@@ -508,7 +508,7 @@ export default function CoursePlayerPage() {
                 <button
                   onClick={goPrev}
                   disabled={activeContentIdx <= 0}
-                  className="flex items-center gap-1 px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="h-4 w-4" /> Previous
                 </button>

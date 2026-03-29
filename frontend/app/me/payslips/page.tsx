@@ -175,7 +175,7 @@ export default function MyPayslipsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               {isAdminView ? 'All Employee Payslips' : 'My Payslips'}
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -323,7 +323,7 @@ export default function MyPayslipsPage() {
           <Card className="card-aura">
             <CardContent className="py-16 text-center">
               <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 No Payslips Found
               </h3>
               <p className="text-[var(--text-secondary)]">
@@ -350,7 +350,7 @@ export default function MyPayslipsPage() {
                               {payslip.employeeName}
                             </p>
                           )}
-                          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                          <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                             {formatMonthYear(payslip.paymentDate)}
                           </h3>
                           <p className="text-sm text-[var(--text-secondary)] mt-1">

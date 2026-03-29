@@ -189,7 +189,7 @@ export function TaskDetailsModal({
               </label>
               {readonly || !onUpdateStatus ? (
                 <span
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium"
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
                   style={{
                     backgroundColor: `${getStatusColor(normalizedTask.status)}20`,
                     color: getStatusColor(normalizedTask.status),
@@ -206,7 +206,7 @@ export function TaskDetailsModal({
                   value={normalizedTask.status}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   disabled={isSaving}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -224,7 +224,7 @@ export function TaskDetailsModal({
                   Priority
                 </label>
                 <span
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium"
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
                   style={{
                     backgroundColor: `${getPriorityColor(normalizedTask.priority)}20`,
                     color: getPriorityColor(normalizedTask.priority),
@@ -241,13 +241,13 @@ export function TaskDetailsModal({
           {(isDelayed || isAtRisk) && (
             <div className="flex flex-wrap gap-2">
               {isDelayed && (
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300">
                   <AlertCircle className="w-4 h-4" />
                   Delayed
                 </span>
               )}
               {isAtRisk && !isDelayed && (
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
                   <AlertCircle className="w-4 h-4" />
                   At Risk
                 </span>

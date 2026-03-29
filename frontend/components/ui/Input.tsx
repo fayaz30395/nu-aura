@@ -48,8 +48,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === 'password' && showPassword ? 'text' : type;
 
     const sizeStyles = {
-      sm: 'h-9 text-sm px-3',
-      md: 'h-10 text-sm px-3',
+      sm: 'h-9 text-sm px-4',
+      md: 'h-10 text-sm px-4',
       lg: 'h-12 text-base px-4',
     };
 

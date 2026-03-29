@@ -147,7 +147,7 @@ export default function CompanySpotlightPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
+                <h1 className="text-2xl font-bold skeuo-emboss">
                   <Lightbulb className="w-8 h-8 text-warning-500" />
                   Company Spotlight
                 </h1>
@@ -203,7 +203,7 @@ export default function CompanySpotlightPage() {
                       transition={{ delay: index * 0.05 }}
                       className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-[var(--border-main)] overflow-hidden group"
                     >
-                      <div className="flex gap-6 p-5">
+                      <div className="flex gap-6 p-6">
                         {/* Preview */}
                         <div className="w-40 h-32 flex-shrink-0 rounded-lg overflow-hidden">
                           <div

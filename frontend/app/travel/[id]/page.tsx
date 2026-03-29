@@ -267,7 +267,7 @@ export default function TravelRequestDetailsPage() {
                   {travelRequest.requestNumber}
                 </h1>
                 <span
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+                  className={`inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
                 >
                   <StatusIcon className="h-4 w-4" />
                   {travelRequest.status.replace(/_/g, ' ')}
@@ -324,7 +324,7 @@ export default function TravelRequestDetailsPage() {
                   <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                     <Plane className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                   </div>
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                     Travel Information
                   </h2>
                 </div>
@@ -512,7 +512,7 @@ export default function TravelRequestDetailsPage() {
                     <Receipt className="h-5 w-5 text-success-600 dark:text-success-400" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       Travel Expenses
                     </h2>
                     <p className="text-sm text-[var(--text-muted)]">
@@ -591,7 +591,7 @@ export default function TravelRequestDetailsPage() {
                 <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
                   <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                 </div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Budget Summary
                 </h2>
               </div>
@@ -657,7 +657,7 @@ export default function TravelRequestDetailsPage() {
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                   <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 </div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Status Information
                 </h2>
               </div>
@@ -705,7 +705,7 @@ export default function TravelRequestDetailsPage() {
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                   <User className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                 </div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Employee Details
                 </h2>
               </div>

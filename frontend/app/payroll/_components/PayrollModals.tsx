@@ -47,7 +47,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                 <input
                   type="text"
                   {...formHook.register('runName')}
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                   placeholder="e.g., November 2024 Payroll"
                 />
                 {formHook.formState.errors.runName && (
@@ -61,7 +61,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
@@ -72,7 +72,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
@@ -85,7 +85,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                 <input
                   type="date"
                   {...formHook.register('paymentDate')}
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.paymentDate && (
                   <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
@@ -97,7 +97,7 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                 <textarea
                   {...formHook.register('notes')}
                   rows={3}
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                   placeholder="Additional notes..."
                 />
               </div>
@@ -161,7 +161,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="text"
                     {...formHook.register('employeeId')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.employeeId && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
@@ -172,7 +172,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="text"
                     {...formHook.register('payrollRunId')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollRunId && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollRunId.message}</p>
@@ -186,7 +186,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodStart')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
@@ -197,7 +197,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="date"
                     {...formHook.register('payrollPeriodEnd')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodEnd && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodEnd.message}</p>
@@ -210,7 +210,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                 <input
                   type="date"
                   {...formHook.register('paymentDate')}
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.paymentDate && (
                   <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.paymentDate.message}</p>
@@ -224,7 +224,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="number"
                     step="0.01"
                     {...formHook.register('baseSalary', { valueAsNumber: true })}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.baseSalary && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
@@ -236,7 +236,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="number"
                     step="0.01"
                     {...formHook.register('allowances', { valueAsNumber: true })}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                 </div>
                 <div>
@@ -245,7 +245,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                     type="number"
                     step="0.01"
                     {...formHook.register('deductions', { valueAsNumber: true })}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                 </div>
               </div>
@@ -321,7 +321,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <input
                     type="text"
                     {...formHook.register('employeeId')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.employeeId && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.employeeId.message}</p>
@@ -332,7 +332,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <input
                     type="date"
                     {...formHook.register('effectiveDate')}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.effectiveDate && (
                     <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.effectiveDate.message}</p>
@@ -346,7 +346,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   type="number"
                   step="0.01"
                   {...formHook.register('baseSalary', { valueAsNumber: true })}
-                  className="input-aura w-full px-3 py-2 rounded-lg"
+                  className="input-aura w-full px-4 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.baseSalary && (
                   <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.baseSalary.message}</p>
@@ -360,7 +360,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <button
                     type="button"
                     onClick={() => appendAllowance({ name: '', amount: 0, type: 'FIXED', description: '' })}
-                    className="px-3 py-1 text-sm bg-success-100 text-success-700 rounded hover:bg-success-200"
+                    className="px-4 py-1 text-sm bg-success-100 text-success-700 rounded hover:bg-success-200"
                   >
                     Add Allowance
                   </button>
@@ -373,7 +373,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           type="text"
                           placeholder="Name"
                           {...formHook.register(`allowances.${idx}.name`)}
-                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
+                          className="input-aura w-full px-4 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <div className="w-24">
@@ -382,7 +382,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           step="0.01"
                           placeholder="Amount"
                           {...formHook.register(`allowances.${idx}.amount`, { valueAsNumber: true })}
-                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
+                          className="input-aura w-full px-4 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <button
@@ -404,7 +404,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <button
                     type="button"
                     onClick={() => appendDeduction({ name: '', amount: 0, type: 'FIXED', description: '' })}
-                    className="px-3 py-1 text-sm bg-danger-100 text-danger-700 rounded hover:bg-danger-200"
+                    className="px-4 py-1 text-sm bg-danger-100 text-danger-700 rounded hover:bg-danger-200"
                   >
                     Add Deduction
                   </button>
@@ -417,7 +417,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           type="text"
                           placeholder="Name"
                           {...formHook.register(`deductions.${idx}.name`)}
-                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
+                          className="input-aura w-full px-4 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <div className="w-24">
@@ -426,7 +426,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           step="0.01"
                           placeholder="Amount"
                           {...formHook.register(`deductions.${idx}.amount`, { valueAsNumber: true })}
-                          className="input-aura w-full px-3 py-2 rounded-lg text-sm"
+                          className="input-aura w-full px-4 py-2 rounded-lg text-sm"
                         />
                       </div>
                       <button

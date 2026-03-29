@@ -196,7 +196,7 @@ export default function OfficeLocationsPage() {
         />
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold skeuo-emboss">Office Locations & Geofencing</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Office Locations & Geofencing</h1>
           <button
             onClick={() => {
               reset();
@@ -340,12 +340,12 @@ export default function OfficeLocationsPage() {
             <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
               <thead className="bg-[var(--bg-secondary)]/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Coordinates</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Radius</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Name</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Address</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Coordinates</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Radius</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">

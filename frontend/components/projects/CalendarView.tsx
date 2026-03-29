@@ -444,12 +444,12 @@ export function CalendarView({
           >
             <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400" />
           </button>
-          <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
             {getTitle()}
           </h2>
           <button
             onClick={handleToday}
-            className="px-3 py-1.5 text-sm border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            className="px-4 py-1.5 text-sm border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
           >
             Today
           </button>
@@ -461,7 +461,7 @@ export function CalendarView({
             <button
               key={type}
               onClick={() => setViewType(type)}
-              className={`px-3 py-1.5 text-sm rounded-md capitalize transition-colors ${
+              className={`px-4 py-1.5 text-sm rounded-md capitalize transition-colors ${
                 viewType === type
                   ? 'bg-[var(--bg-surface)] text-accent-700 dark:text-accent-400 shadow-sm'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'

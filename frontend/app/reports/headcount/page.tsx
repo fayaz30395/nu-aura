@@ -106,7 +106,7 @@ export default function HeadcountReportPage() {
             <button
               onClick={() => refetch()}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50"
+              className="flex items-center gap-1.5 px-4 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh
@@ -170,7 +170,7 @@ export default function HeadcountReportPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               {/* By Department */}
-              <div className="skeuo-card p-5">
+              <div className="skeuo-card p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Building2 className="h-4 w-4 text-accent-600" />
                   <h2 className="text-sm font-semibold text-[var(--text-primary)]">Headcount by Department</h2>
@@ -219,7 +219,7 @@ export default function HeadcountReportPage() {
               </div>
 
               {/* Headcount Trend */}
-              <div className="skeuo-card p-5">
+              <div className="skeuo-card p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Users className="h-4 w-4 text-accent-600" />
                   <h2 className="text-sm font-semibold text-[var(--text-primary)]">12-Month Headcount Trend</h2>
@@ -247,11 +247,11 @@ export default function HeadcountReportPage() {
 
             {/* By Employment Type */}
             {metrics?.byEmploymentType && Object.keys(metrics.byEmploymentType).length > 0 && (
-              <div className="skeuo-card p-5">
+              <div className="skeuo-card p-6">
                 <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">By Employment Type</h2>
                 <div className="flex flex-wrap gap-4">
                   {Object.entries(metrics.byEmploymentType).map(([type, count]) => (
-                    <div key={type} className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-surface)] rounded-lg">
+                    <div key={type} className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] rounded-lg">
                       <span className="text-xs text-[var(--text-secondary)]">{type}</span>
                       <span className="text-sm font-bold text-[var(--text-primary)]">{count}</span>
                     </div>

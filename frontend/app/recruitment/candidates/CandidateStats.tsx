@@ -32,7 +32,7 @@ export const CandidateStats = memo(function CandidateStats({
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {cards.map(card => (
         <Card key={card.label} className="skeuo-card">
-          <CardContent className="p-5">
+          <CardContent className="p-6">
             <div className="flex items-center gap-4 relative z-10">
               <div className={`w-12 h-12 rounded-xl ${card.bg} flex items-center justify-center`}>
                 <Users className={`h-6 w-6 ${card.text}`} />

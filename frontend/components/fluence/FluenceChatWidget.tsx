@@ -127,7 +127,7 @@ export const FluenceChatWidget: React.FC = () => {
             )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
               <div className="flex items-center gap-2">
                 <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/50">
                   <Sparkles className="h-4 w-4 text-accent-700 dark:text-accent-400" />
@@ -185,7 +185,7 @@ export const FluenceChatWidget: React.FC = () => {
                         key={q}
                         onClick={() => handleSuggestionClick(q)}
                         className={cn(
-                          'w-full text-left text-xs px-3 py-2 rounded-lg',
+                          'w-full text-left text-xs px-4 py-2 rounded-lg',
                           'border border-[var(--border-subtle)]',
                           'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                           'hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-main)]',
@@ -216,7 +216,7 @@ export const FluenceChatWidget: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 4 }}
                   onClick={scrollToBottom}
-                  className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-md text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                  className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-4 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-md text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   <ChevronDown className="h-3 w-3" />
                   New messages
@@ -225,7 +225,7 @@ export const FluenceChatWidget: React.FC = () => {
             </AnimatePresence>
 
             {/* Input Area */}
-            <div className="flex-shrink-0 border-t border-[var(--border-subtle)] px-4 py-3 bg-[var(--bg-surface)]">
+            <div className="flex-shrink-0 border-t border-[var(--border-subtle)] px-4 py-4 bg-[var(--bg-surface)]">
               <div className="flex items-center gap-2">
                 <input
                   ref={inputRef}
@@ -237,7 +237,7 @@ export const FluenceChatWidget: React.FC = () => {
                   disabled={isStreaming}
                   className={cn(
                     'flex-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl',
-                    'px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]',
+                    'px-4 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]',
                     'outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/20',
                     'transition-colors disabled:opacity-60'
                   )}

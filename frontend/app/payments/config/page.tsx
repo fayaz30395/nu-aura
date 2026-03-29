@@ -182,7 +182,7 @@ export default function PaymentConfigPage() {
         <div className="flex items-center gap-4 mb-6">
           <Settings className="w-8 h-8 text-accent-700" />
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Payment Configuration
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -207,7 +207,7 @@ export default function PaymentConfigPage() {
 
         {/* Provider Selection */}
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3 text-[var(--text-primary)]">Payment Providers</h2>
+          <h2 className="text-xl font-semibold mb-3 text-[var(--text-primary)]">Payment Providers</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(['RAZORPAY', 'STRIPE', 'BANK_TRANSFER', 'PAYPAL'] as const).map((provider) => {
               const config = configs.find((c) => c.provider === provider);
@@ -232,7 +232,7 @@ export default function PaymentConfigPage() {
                       </p>
                     </div>
                     {config?.isActive && (
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300">
+                      <span className="px-4 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300">
                         Active
                       </span>
                     )}
@@ -245,7 +245,7 @@ export default function PaymentConfigPage() {
 
         {/* Configuration Form */}
         <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-6">
-          <h2 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">
+          <h2 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">
             Configure {paymentService.getProviderLabel(selectedProvider)}
           </h2>
 
@@ -272,7 +272,7 @@ export default function PaymentConfigPage() {
               <textarea
                 {...register('credentialsJson')}
                 rows={6}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] font-mono text-sm"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] font-mono text-sm"
                 placeholder='{&#10;  "api_key": "your_api_key",&#10;  "api_secret": "your_api_secret"&#10;}'
               />
               {errors.credentialsJson && (
@@ -291,7 +291,7 @@ export default function PaymentConfigPage() {
               <input
                 type="password"
                 {...register('webhookSecret')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="Your webhook secret"
               />
               <p className="mt-1 text-xs text-[var(--text-secondary)]">
@@ -307,7 +307,7 @@ export default function PaymentConfigPage() {
               <input
                 type="url"
                 {...register('webhookUrl')}
-                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="https://your-domain.com/webhooks/payments"
               />
               <p className="mt-1 text-xs text-[var(--text-secondary)]">
@@ -382,7 +382,7 @@ export default function PaymentConfigPage() {
         {/* Active Configurations */}
         {configs.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">
+            <h2 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">
               Active Configurations
             </h2>
             <div className="space-y-4">

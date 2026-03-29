@@ -160,19 +160,19 @@ export default function OnboardingDetailPage() {
                                 {process.employeeName?.charAt(0)}
                             </div>
                             <div>
-                                <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+                                <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                                     {process.employeeName}
                                 </h1>
                                 <div className="flex flex-wrap items-center gap-4 mt-2 font-bold text-[var(--text-muted)]">
-                                    <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1 rounded-full text-xs">
+                                    <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-4 py-1 rounded-full text-xs">
                                         <User className="h-3.5 w-3.5" />
                                         ID: {process.employeeId}
                                     </span>
-                                    <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1 rounded-full text-xs">
+                                    <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-4 py-1 rounded-full text-xs">
                                         <Calendar className="h-3.5 w-3.5" />
                                         Started {new Date(process.startDate).toLocaleDateString()}
                                     </span>
-                                    <Badge variant={process.status === 'COMPLETED' ? 'success' : 'warning'} className="rounded-full px-3">
+                                    <Badge variant={process.status === 'COMPLETED' ? 'success' : 'warning'} className="rounded-full px-4">
                                         {process.status.replace('_', ' ')}
                                     </Badge>
                                 </div>

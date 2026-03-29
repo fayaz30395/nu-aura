@@ -180,7 +180,7 @@ export function ManageProgramsTab({
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="text-sm opacity-80">{program.programCode}</p>
-                      <h3 className="text-lg font-semibold">{program.programName}</h3>
+                      <h3 className="text-xl font-semibold">{program.programName}</h3>
                     </div>
                     <Badge variant={toBadgeVariant(program.status)} className="flex items-center gap-1">
                       {getStatusIcon(program.status)}

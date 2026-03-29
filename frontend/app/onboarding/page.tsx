@@ -95,7 +95,7 @@ export default function OnboardingPage() {
                         <PermissionGate permission={Permissions.ONBOARDING_CREATE}>
                             <Button
                                 variant="primary"
-                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-accent-500/20 rounded-xl py-3 px-5"
+                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-accent-500/20 rounded-xl py-4 px-6"
                                 leftIcon={<UserPlus className="h-4 w-4" />}
                                 onClick={() => router.push('/onboarding/new')}
                             >
@@ -134,7 +134,7 @@ export default function OnboardingPage() {
                 {isError && (
                     <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
                         <CardContent className="p-6 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                                 <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
                                 <p className="text-sm text-danger-600 dark:text-danger-400">
                                     {error instanceof Error ? error.message : 'Failed to load onboarding data'}

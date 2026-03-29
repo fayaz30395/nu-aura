@@ -202,7 +202,7 @@ export default function HelpdeskSLAPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">SLA Management</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">SLA Management</h1>
           {activeTab === 'slas' && (
             <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
               <button
@@ -246,19 +246,19 @@ export default function HelpdeskSLAPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('dashboard')}
           >
             Dashboard
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'slas' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'slas' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('slas')}
           >
             SLA Policies
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('escalations')}
           >
             Pending Escalations
@@ -476,13 +476,13 @@ export default function HelpdeskSLAPage() {
                 <table className="table-aura">
                   <thead className="skeuo-table-header">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Policy</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">First Response</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Resolution</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Escalation</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Hours</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Policy</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">First Response</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Resolution</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Escalation</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Hours</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">

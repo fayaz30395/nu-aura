@@ -142,7 +142,7 @@ export default function JobBoardsPage() {
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
+              className={`px-4 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                 filterStatus === s
                   ? 'bg-accent-600 text-white border-accent-600'
                   : 'bg-white text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-accent-400'
@@ -262,7 +262,7 @@ export default function JobBoardsPage() {
                       <button
                         key={board}
                         onClick={() => toggleBoard(board)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm font-medium transition-all ${
+                        className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-all ${
                           isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
                         }`}
                       >

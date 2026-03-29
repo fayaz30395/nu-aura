@@ -55,7 +55,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
             <section>
                 <div className="flex items-center gap-2 mb-4">
                     <Zap className="h-5 w-5 text-warning-500" />
-                    <h3 className="text-lg font-bold">Verified Skills</h3>
+                    <h3 className="text-xl font-bold">Verified Skills</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {profile.skills.map((skill, idx) => (
@@ -87,7 +87,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                 <div className="lg:col-span-7">
                     <div className="flex items-center gap-2 mb-6">
                         <Target className="h-5 w-5 text-accent-500" />
-                        <h3 className="text-lg font-bold">Career Timeline</h3>
+                        <h3 className="text-xl font-bold">Career Timeline</h3>
                     </div>
                     <div className="relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-200 dark:before:bg-surface-700">
                         {profile.timeline.map((milestone, idx) => (
@@ -125,7 +125,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
                                 <Award className="h-5 w-5 text-accent-500" />
-                                <h3 className="text-lg font-bold">Achievements</h3>
+                                <h3 className="text-xl font-bold">Achievements</h3>
                             </div>
                             <Button variant="ghost" size="sm" className="text-xs text-accent-700">View All</Button>
                         </div>
@@ -153,7 +153,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <MessageSquare className="h-5 w-5 text-accent-700" />
-                            <h3 className="text-lg font-bold">Recognition Wall</h3>
+                            <h3 className="text-xl font-bold">Recognition Wall</h3>
                         </div>
                         <div className="space-y-4">
                             {profile.recentFeedback.map((feedback, idx) => (

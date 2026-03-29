@@ -328,7 +328,7 @@ export default function RolesPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Role Management</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Role Management</h1>
           <p className="text-[var(--text-secondary)] mt-1">Manage user roles and permissions</p>
         </div>
 
@@ -352,22 +352,22 @@ export default function RolesPage() {
         <table className="table-aura">
           <thead className="skeuo-table-header">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Code
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Description
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Permissions
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -451,7 +451,7 @@ export default function RolesPage() {
                   <input
                     type="text"
                     {...createForm.register('code')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                     placeholder="e.g., MANAGER"
                   />
                   {createForm.formState.errors.code && (
@@ -470,7 +470,7 @@ export default function RolesPage() {
                   <input
                     type="text"
                     {...createForm.register('name')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                     placeholder="e.g., Manager"
                   />
                   {createForm.formState.errors.name && (
@@ -488,7 +488,7 @@ export default function RolesPage() {
                 </label>
                 <textarea
                   {...createForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                   rows={3}
                   placeholder="Optional description of this role..."
                 />
@@ -508,7 +508,7 @@ export default function RolesPage() {
                     value={permissionSearch}
                     onChange={(e) => setPermissionSearch(e.target.value)}
                     onFocus={() => setShowPermissionDropdown(true)}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                     placeholder="Search and select permissions..."
                   />
                   {showPermissionDropdown && permissions.length > 0 && (
@@ -560,7 +560,7 @@ export default function RolesPage() {
                           permission.code.toLowerCase().includes(permissionSearch.toLowerCase()) ||
                           permission.description?.toLowerCase().includes(permissionSearch.toLowerCase())
                         ).length === 0 && (
-                          <div className="px-4 py-3 text-sm text-[var(--text-muted)] text-center">
+                          <div className="px-4 py-4 text-sm text-[var(--text-muted)] text-center">
                             No permissions found
                           </div>
                         )}
@@ -615,7 +615,7 @@ export default function RolesPage() {
                 <input
                   type="text"
                   value={selectedRole.code}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)]"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)]"
                   disabled
                 />
               </div>
@@ -626,7 +626,7 @@ export default function RolesPage() {
                 <input
                   type="text"
                   {...editForm.register('name')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                 />
                 {editForm.formState.errors.name && (
                   <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.name.message}</p>
@@ -638,7 +638,7 @@ export default function RolesPage() {
                 </label>
                 <textarea
                   {...editForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                   rows={3}
                 />
                 {editForm.formState.errors.description && (
@@ -657,7 +657,7 @@ export default function RolesPage() {
                     setSelectedParentRoleId(value);
                     editForm.setValue('parentRoleId', value);
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                 >
                   <option value="">None</option>
                   {getAvailableParentRoles().map((option) => (
@@ -680,7 +680,7 @@ export default function RolesPage() {
                     {inheritedPermissionsQuery.data.map((permission) => (
                       <span
                         key={permission.code}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-surface)] text-[var(--text-muted)] opacity-75"
+                        className="inline-flex items-center px-4 py-1 rounded-full text-xs font-medium bg-[var(--bg-surface)] text-[var(--text-muted)] opacity-75"
                       >
                         {permission.code}
                       </span>

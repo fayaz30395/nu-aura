@@ -191,10 +191,10 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
       {open && query.trim().length >= 2 && (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
-            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching employees...</div>
+            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching employees...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">No employees found</div>
+            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">No employees found</div>
           )}
           {!loading && results.length > 0 && (
             <ul className="max-h-64 overflow-y-auto">
@@ -202,7 +202,7 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
                 <li key={employee.id}>
                   <button
                     type="button"
-                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(employee)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
@@ -408,7 +408,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
         <CardContent className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Project Roster</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Project Roster</h2>
               <p className="text-sm text-[var(--text-muted)]">Allocated employees and their allocation percent.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -430,7 +430,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
           </div>
 
           {allocationsErrorMessage && (
-            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
               {allocationsErrorMessage}
             </div>
           )}
@@ -467,13 +467,13 @@ export function TeamTab({ projectId }: TeamTabProps) {
         <form onSubmit={handleSubmitAddMember(handleAddMemberSubmit)}>
           <ModalBody className="space-y-4">
             {addMemberError && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 {addMemberError}
               </div>
             )}
 
             {!selectedEmployee && (
-              <div className="rounded-lg border border-warning-200 bg-warning-50 px-4 py-3 text-sm text-warning-700">
+              <div className="rounded-lg border border-warning-200 bg-warning-50 px-4 py-4 text-sm text-warning-700">
                 Please select an employee
               </div>
             )}

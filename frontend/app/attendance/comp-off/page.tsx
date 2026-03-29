@@ -158,13 +158,13 @@ export default function CompOffPage() {
               <table className="w-full text-sm table-aura">
                 <thead>
                   <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                    <th className="px-4 py-3 text-left font-medium">Date</th>
-                    <th className="px-4 py-3 text-left font-medium">Overtime</th>
-                    <th className="px-4 py-3 text-left font-medium">Days</th>
-                    <th className="px-4 py-3 text-left font-medium">Reason</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
+                    <th className="px-4 py-2 text-left font-medium">Date</th>
+                    <th className="px-4 py-2 text-left font-medium">Overtime</th>
+                    <th className="px-4 py-2 text-left font-medium">Days</th>
+                    <th className="px-4 py-2 text-left font-medium">Reason</th>
+                    <th className="px-4 py-2 text-left font-medium">Status</th>
                     {activeTab === 'pending' && (
-                      <th className="px-4 py-3 text-left font-medium">Action</th>
+                      <th className="px-4 py-2 text-left font-medium">Action</th>
                     )}
                   </tr>
                 </thead>
@@ -174,20 +174,20 @@ export default function CompOffPage() {
                     const Icon = cfg.icon;
                     return (
                       <tr key={req.id} className="border-b hover:bg-[var(--bg-surface)]">
-                        <td className="px-4 py-3 font-medium">{req.attendanceDate}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4 font-medium">{req.attendanceDate}</td>
+                        <td className="px-4 py-4">
                           {Math.floor(req.overtimeMinutes / 60)}h {req.overtimeMinutes % 60}m
                         </td>
-                        <td className="px-4 py-3 font-semibold text-accent-700">{req.compOffDays}</td>
-                        <td className="px-4 py-3 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4 font-semibold text-accent-700">{req.compOffDays}</td>
+                        <td className="px-4 py-4 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
+                        <td className="px-4 py-4">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium badge-status ${cfg.color}`}>
                             <Icon className="w-3.5 h-3.5" />
                             {cfg.label}
                           </span>
                         </td>
                         {activeTab === 'pending' && (
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-4">
                             <div className="flex gap-2">
                               <Button
                                 size="sm"

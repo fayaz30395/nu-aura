@@ -45,7 +45,7 @@ export const UserMenu = React.memo(function UserMenu({
       <button
         onClick={onToggle}
         className={cn(
-          'flex items-center gap-2 rounded-xl px-2 py-1.5 sm:px-3 sm:py-2 transition-all',
+          'flex items-center gap-2 rounded-xl px-2 py-1.5 sm:px-4 sm:py-2 transition-all',
           'hover:bg-[var(--header-hover-bg)]',
           isOpen && 'bg-[var(--header-hover-bg)]'
         )}
@@ -92,7 +92,7 @@ export const UserMenu = React.memo(function UserMenu({
           <div className="p-2">
             <button
               onClick={() => { onClose(); onProfile?.(); }}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
+              className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
                 <User className="h-4 w-4 text-[var(--text-muted)]" />
@@ -102,7 +102,7 @@ export const UserMenu = React.memo(function UserMenu({
 
             <button
               onClick={() => { onClose(); onSettings?.(); }}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
+              className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
                 <Settings className="h-4 w-4 text-[var(--text-muted)]" />
@@ -114,7 +114,7 @@ export const UserMenu = React.memo(function UserMenu({
           <div className="border-t border-[var(--dropdown-divider)] p-2">
             <button
               onClick={() => { onClose(); onLogout?.(); }}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-all duration-150"
+              className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-all duration-150"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-danger-50 dark:bg-danger-950/30">
                 <LogOut className="h-4 w-4" />

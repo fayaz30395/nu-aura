@@ -359,14 +359,14 @@ export default function EditEmployeePage() {
                   <button
                     type="button"
                     onClick={() => router.push(`/employees/${employeeId}`)}
-                    className="px-3 py-1.5 bg-success-600 text-white text-sm rounded hover:bg-success-700 transition-colors"
+                    className="px-4 py-1.5 bg-success-600 text-white text-sm rounded hover:bg-success-700 transition-colors"
                   >
                     View Employee
                   </button>
                   <button
                     type="button"
                     onClick={() => router.push('/employees/change-requests')}
-                    className="px-3 py-1.5 bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-200 text-sm rounded border border-success-300 dark:border-success-600 hover:bg-success-50 dark:hover:bg-success-700 transition-colors"
+                    className="px-4 py-1.5 bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-200 text-sm rounded border border-success-300 dark:border-success-600 hover:bg-success-50 dark:hover:bg-success-700 transition-colors"
                   >
                     View All Requests
                   </button>

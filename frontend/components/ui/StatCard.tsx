@@ -124,7 +124,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             ref={ref}
             onClick={onAction}
             className={cn(
-              'group relative overflow-hidden rounded-xl border px-4 py-3 transition-all duration-300',
+              'group relative overflow-hidden rounded-xl border px-4 py-4 transition-all duration-300',
               config.bg,
               config.border,
               isClickable && 'cursor-pointer hover:shadow-md',

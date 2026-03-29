@@ -107,7 +107,7 @@ export default function AppSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Switch application"
         aria-expanded={isOpen}
-        className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] transition-colors duration-150 shadow-card"
+        className="flex items-center gap-4 px-4 py-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] transition-colors duration-150 shadow-card"
       >
         <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
           <CurrentIcon className="w-5 h-5 text-white" />
@@ -135,8 +135,8 @@ export default function AppSwitcher() {
             className="absolute top-full left-0 mt-2 w-[320px] bg-dropdown border border-dropdown-border rounded-lg overflow-hidden shadow-dropdown z-50"
           >
             {/* Header */}
-            <div className="px-5 py-4 bg-[var(--bg-surface)] border-b border-[var(--dropdown-divider)]">
-              <div className="flex items-center gap-3">
+            <div className="px-6 py-4 bg-[var(--bg-surface)] border-b border-[var(--dropdown-divider)]">
+              <div className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
                   <LayoutGrid className="w-4 h-4 text-white" />
                 </div>
@@ -153,7 +153,7 @@ export default function AppSwitcher() {
 
             {/* 2×2 Waffle Grid */}
             <div className="p-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 {APP_LIST.map((targetApp, index) => {
                   const Icon = getAppIcon(targetApp.iconName);
                   const isActive = targetApp.code === appCode;
@@ -174,7 +174,7 @@ export default function AppSwitcher() {
                         onClick={() => handleAppClick(targetApp)}
                         disabled={isLocked}
                         className={`
-                          relative flex flex-col items-center gap-3 p-4 rounded-lg
+                          relative flex flex-col items-center gap-4 p-4 rounded-lg
                           transition-all duration-150 group w-full h-full
                           ${isActive
                             ? 'bg-accent-subtle border border-accent ring-1 ring-accent/20'
@@ -241,7 +241,7 @@ export default function AppSwitcher() {
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 bg-[var(--bg-surface)] border-t border-[var(--dropdown-divider)]">
+            <div className="px-6 py-4 bg-[var(--bg-surface)] border-t border-[var(--dropdown-divider)]">
               {isNavigating ? (
                 <div className="flex items-center justify-center gap-2">
                   <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" />

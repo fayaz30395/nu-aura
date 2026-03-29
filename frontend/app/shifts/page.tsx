@@ -139,7 +139,7 @@ export default function ShiftDashboardPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => router.push(link.href)}
-                className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left"
+                className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left"
               >
                 <div className="p-2 rounded-lg bg-accent-50 dark:bg-accent-900/30">
                   <link.icon className="w-5 h-5 text-accent-700 dark:text-accent-400" />
@@ -154,7 +154,7 @@ export default function ShiftDashboardPage() {
 
           {/* Active Shifts Legend */}
           {activeShifts.length > 0 && (
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-4 flex-wrap">
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Shifts:</span>
               {activeShifts.map((shift) => (
                 <div key={shift.id} className="flex items-center gap-1.5">
@@ -212,7 +212,7 @@ export default function ShiftDashboardPage() {
               <table className="w-full min-w-[800px]">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left p-3 text-sm font-medium text-gray-500 dark:text-gray-400 w-48">
+                    <th className="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400 w-48">
                       Employee
                     </th>
                     {dates.map((d) => {
@@ -220,7 +220,7 @@ export default function ShiftDashboardPage() {
                       return (
                         <th
                           key={d.toISOString()}
-                          className={`text-center p-3 text-sm font-medium ${
+                          className={`text-center p-4 text-sm font-medium ${
                             isToday
                               ? 'text-accent-700 dark:text-accent-400 bg-accent-50 dark:bg-accent-900/20'
                               : 'text-gray-500 dark:text-gray-400'
@@ -237,9 +237,9 @@ export default function ShiftDashboardPage() {
                   {scheduleByEmployee.map(([empId, { name, code, entries }]) => (
                     <tr
                       key={empId}
-                      className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                      className="h-11 border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30"
                     >
-                      <td className="p-3">
+                      <td className="p-4">
                         <p className="font-medium text-sm text-gray-900 dark:text-white">{name}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">{code}</p>
                       </td>

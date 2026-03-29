@@ -267,11 +267,11 @@ export default function DepartmentsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Departments</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{departments.length}</p>
+                  <p className="text-2xl font-bold skeuo-emboss">{departments.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
                   <Building2 className="h-6 w-6 text-accent-700 dark:text-accent-400" />
@@ -281,11 +281,11 @@ export default function DepartmentsPage() {
           </Card>
 
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Active Departments</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{activeDepartments}</p>
+                  <p className="text-2xl font-bold skeuo-emboss">{activeDepartments}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
                   <ToggleRight className="h-6 w-6 text-success-600 dark:text-success-400" />
@@ -295,11 +295,11 @@ export default function DepartmentsPage() {
           </Card>
 
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Employees</p>
-                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1 skeuo-emboss">{totalEmployees}</p>
+                  <p className="text-2xl font-bold skeuo-emboss">{totalEmployees}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
                   <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
@@ -311,7 +311,7 @@ export default function DepartmentsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-3 rounded-xl flex items-center justify-between">
+          <div className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-xl flex items-center justify-between">
             <span>{error}</span>
             <button onClick={() => setError(null)} className="text-danger-500 hover:text-danger-700">
               <X className="h-5 w-5" />
@@ -354,10 +354,10 @@ export default function DepartmentsPage() {
                     <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Manager
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Employees
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
@@ -393,7 +393,7 @@ export default function DepartmentsPage() {
                     </tr>
                   ) : (
                     filteredDepartments.map((dept) => (
-                      <tr key={dept.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+                      <tr key={dept.id} className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
@@ -420,13 +420,13 @@ export default function DepartmentsPage() {
                         <td className="px-6 py-4 text-[var(--text-primary)]">
                           {dept.managerName || '-'}
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
                             <Users className="h-4 w-4 text-[var(--text-muted)]" />
                             <span className="text-[var(--text-primary)]">{dept.employeeCount || 0}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 text-center">
                           <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                             dept.isActive
                               ? 'bg-success-100 dark:bg-success-950/30 text-success-700 dark:text-success-400'
@@ -496,7 +496,7 @@ export default function DepartmentsPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
+              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">

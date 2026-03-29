@@ -107,11 +107,11 @@ export default function AttritionReportPage() {
             <p className="text-sm text-[var(--text-muted)] mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => refetch()} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50">
+            <button onClick={() => refetch()} disabled={loading} className="flex items-center gap-1.5 px-4 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50">
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
             </button>
             <PermissionGate permission={Permissions.ANALYTICS_EXPORT}>
-              <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-3 py-2 text-sm bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50">
+              <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-4 py-2 text-sm bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50">
                 <Download className="h-4 w-4" /> Export CSV
               </button>
             </PermissionGate>
@@ -192,7 +192,7 @@ export default function AttritionReportPage() {
                   <div key={pred.id} className={`skeuo-card overflow-hidden transition-all ${expanded ? 'shadow-md' : ''}`}>
                     <button
                       onClick={() => setExpandedId(expanded ? null : pred.id)}
-                      className="w-full flex items-center gap-4 px-5 py-3 text-left hover:bg-[var(--bg-surface)]"
+                      className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-[var(--bg-surface)]"
                     >
                       {/* Risk score bar */}
                       <div className="shrink-0 w-16 text-center">
@@ -239,7 +239,7 @@ export default function AttritionReportPage() {
                     </button>
 
                     {expanded && (
-                      <div className="px-5 pb-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+                      <div className="px-6 pb-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                           {/* Risk factors */}
                           {pred.riskFactors && pred.riskFactors.length > 0 && (
@@ -283,7 +283,7 @@ export default function AttritionReportPage() {
                             <button
                               onClick={() => markActionTaken(pred.id)}
                               disabled={markingAction === pred.id}
-                              className="text-xs px-3 py-1.5 bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50"
+                              className="text-xs px-4 py-1.5 bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50"
                             >
                               {markingAction === pred.id ? 'Saving…' : 'Mark Action Taken'}
                             </button>

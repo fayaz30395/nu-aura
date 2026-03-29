@@ -47,7 +47,7 @@ export default function TemplatesPage() {
                             <div className="p-2 bg-accent-500/10 rounded-xl">
                                 <Layout className="h-6 w-6 text-accent-700" />
                             </div>
-                            <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
+                            <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
                                 Checklist <span className="text-accent-700">Templates</span>
                             </h1>
                         </div>
@@ -115,7 +115,7 @@ export default function TemplatesPage() {
                                                         <div className="p-4 bg-accent-500/10 rounded-2xl">
                                                             <ClipboardList className="h-6 w-6 text-accent-600" />
                                                         </div>
-                                                        <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
+                                                        <Badge variant="outline" className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
                                                             Blueprint
                                                         </Badge>
                                                     </div>

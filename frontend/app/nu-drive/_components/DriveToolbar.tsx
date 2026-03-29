@@ -179,7 +179,7 @@ export function DriveToolbar({
           </Button>
           <label className="cursor-pointer">
             <input type="file" className="hidden" onChange={onFileSelect} />
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
               <UploadCloud className="h-4 w-4" />
               Upload File
             </span>
@@ -240,7 +240,7 @@ export function DriveEmptyState({
               </Button>
               <label className="cursor-pointer">
                 <input type="file" className="hidden" onChange={onFileSelect} />
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
                   <UploadCloud className="h-4 w-4" />
                   Upload File
                 </span>

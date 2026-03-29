@@ -187,27 +187,27 @@ export default function OvertimePage() {
           <thead>
             <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
               {showEmployee && (
-                <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                   Employee
                 </th>
               )}
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Date
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Hours
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-center text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Type
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Multiplier
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-center text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Status
               </th>
               {showActions && (
-                <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                   Actions
                 </th>
               )}
@@ -219,7 +219,7 @@ export default function OvertimePage() {
               return (
                 <tr
                   key={record.id}
-                  className="hover:bg-[var(--bg-card-hover)] transition-colors"
+                  className="h-11 hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   {showEmployee && (
                     <td className="px-6 py-4">
@@ -236,7 +236,7 @@ export default function OvertimePage() {
                   <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                     {formatDate(record.overtimeDate)}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-right">
                     <div>
                       <p className="text-sm font-medium text-[var(--text-primary)]">
                         {record.overtimeHours}h overtime
@@ -246,13 +246,13 @@ export default function OvertimePage() {
                       </p>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                  <td className="px-6 py-4 text-center text-sm text-[var(--text-secondary)]">
                     {OVERTIME_TYPE_LABELS[record.overtimeType] || record.overtimeType}
                   </td>
-                  <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                  <td className="px-6 py-4 text-right text-sm text-[var(--text-secondary)]">
                     {record.multiplier ? `${record.multiplier}x` : '-'}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-center">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
                     >
@@ -306,14 +306,14 @@ export default function OvertimePage() {
           <button
             disabled={page === 0}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
-            className="px-3 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
+            className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
           >
             Previous
           </button>
           <button
             disabled={page >= data.totalPages - 1}
             onClick={() => setPage((p) => p + 1)}
-            className="px-3 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
+            className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
           >
             Next
           </button>
@@ -342,7 +342,7 @@ export default function OvertimePage() {
           </div>
           <button
             onClick={() => setActiveTab('request')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
           >
             <Plus className="h-5 w-5" />
             Request Overtime
@@ -366,8 +366,8 @@ export default function OvertimePage() {
                   key={stat.label}
                   className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200 skeuo-card"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
+                  <div className="flex items-center gap-4">
+                    <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
                       <stat.icon className="h-5 w-5 text-white" />
                     </div>
                     <div>
@@ -438,7 +438,7 @@ export default function OvertimePage() {
             {submitSuccess ? (
               <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
                 <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-success-800 dark:text-success-300">
+                <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                   Overtime Request Submitted!
                 </h3>
                 <p className="text-sm text-success-600 dark:text-success-400 mt-1">
@@ -448,9 +448,9 @@ export default function OvertimePage() {
             ) : (
               <form
                 onSubmit={handleSubmit(onSubmitOvertime)}
-                className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-5 skeuo-card"
+                className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-6 skeuo-card"
               >
-                <h2 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
                   Request Overtime
                 </h2>
 
@@ -463,7 +463,7 @@ export default function OvertimePage() {
                     <input
                       {...register('overtimeDate')}
                       type="date"
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.overtimeDate && (
                       <p className="text-xs text-danger-500 mt-1">{errors.overtimeDate.message}</p>
@@ -477,7 +477,7 @@ export default function OvertimePage() {
                     </label>
                     <select
                       {...register('overtimeType')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >
                       {Object.entries(OVERTIME_TYPE_LABELS).map(([value, label]) => (
                         <option key={value} value={value}>
@@ -496,7 +496,7 @@ export default function OvertimePage() {
                       {...register('regularHours')}
                       type="number"
                       step="0.5"
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.regularHours && (
                       <p className="text-xs text-danger-500 mt-1">{errors.regularHours.message}</p>
@@ -512,7 +512,7 @@ export default function OvertimePage() {
                       {...register('actualHours')}
                       type="number"
                       step="0.5"
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.actualHours && (
                       <p className="text-xs text-danger-500 mt-1">{errors.actualHours.message}</p>
@@ -528,7 +528,7 @@ export default function OvertimePage() {
                       {...register('overtimeHours')}
                       type="number"
                       step="0.5"
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.overtimeHours && (
                       <p className="text-xs text-danger-500 mt-1">{errors.overtimeHours.message}</p>
@@ -544,12 +544,12 @@ export default function OvertimePage() {
                   <textarea
                     {...register('notes')}
                     rows={3}
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
+                    className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                     placeholder="Describe the reason for overtime..."
                   />
                 </div>
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-4">
                   <button
                     type="button"
                     onClick={() => {
@@ -563,7 +563,7 @@ export default function OvertimePage() {
                   <button
                     type="submit"
                     disabled={isSubmitting || createOvertime.isPending}
-                    className="px-5 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {createOvertime.isPending ? 'Submitting...' : 'Submit Request'}
                   </button>

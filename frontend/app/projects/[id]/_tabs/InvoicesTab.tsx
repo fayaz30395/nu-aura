@@ -174,7 +174,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
         <CardContent className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Invoices</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Invoices</h2>
               <p className="text-sm text-[var(--text-muted)]">Billing invoices for this project.</p>
             </div>
             <Button
@@ -185,7 +185,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
           </div>
 
           {invoicesErrorMessage && (
-            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
               {invoicesErrorMessage}
             </div>
           )}

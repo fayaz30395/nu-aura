@@ -283,7 +283,7 @@ export default function AdminEmployeesPage() {
           <div className="h-16 w-16 mx-auto rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
             <Shield className="h-8 w-8 text-danger-500" />
           </div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Access Denied</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Access Denied</h2>
           <p className="text-sm text-[var(--text-muted)]">You need HR Admin or Employee Management permission to access this page.</p>
         </div>
       </AdminPageContent>

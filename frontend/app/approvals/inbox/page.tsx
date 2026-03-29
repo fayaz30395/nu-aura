@@ -299,7 +299,7 @@ export default function ApprovalInboxPage() {
           </div>
           <div className="flex items-center gap-2">
             {activeDelegationsCount > 0 && (
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
                 <Zap className="h-4 w-4 text-accent-600 dark:text-accent-400" />
                 <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
                   {activeDelegationsCount} active {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
@@ -348,7 +348,7 @@ export default function ApprovalInboxPage() {
               <button
                 type="button"
                 onClick={() => handleStatusChange('PENDING')}
-                className={`rounded-full px-3 py-1 font-medium transition-colors ${
+                className={`rounded-full px-4 py-1 font-medium transition-colors ${
                   statusFilter === 'PENDING'
                     ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
@@ -359,7 +359,7 @@ export default function ApprovalInboxPage() {
               <button
                 type="button"
                 onClick={() => handleStatusChange('ALL')}
-                className={`rounded-full px-3 py-1 font-medium transition-colors ${
+                className={`rounded-full px-4 py-1 font-medium transition-colors ${
                   statusFilter === 'ALL'
                     ? 'bg-accent-700 text-white'
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
@@ -375,7 +375,7 @@ export default function ApprovalInboxPage() {
                 <button
                   key={tab.key}
                   onClick={() => handleTabChange(tab.key)}
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  className={`rounded-full px-4 py-1 text-xs font-medium transition-colors ${
                     activeTab === tab.key
                       ? `${tab.color} ${tab.textColor} ring-2 ring-accent-400/50`
                       : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
@@ -664,7 +664,7 @@ export default function ApprovalInboxPage() {
               <input
                 type="date"
                 {...delegationForm.register('startDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               />
               {delegationForm.formState.errors.startDate && (
                 <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400">
@@ -681,7 +681,7 @@ export default function ApprovalInboxPage() {
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               />
               {delegationForm.formState.errors.endDate && (
                 <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400">

@@ -185,7 +185,7 @@ export function EmployeeStep({
         {showEmployeeDropdown && employeeSearch && (
           <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg">
             {filteredEmployees.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-surface-500">No employees found</div>
+              <div className="px-4 py-4 text-sm text-surface-500">No employees found</div>
             ) : (
               filteredEmployees.slice(0, 10).map((emp) => {
                 const capacityInfo = employeeCapacities.get(emp.id);
@@ -247,12 +247,12 @@ export function EmployeeStep({
           <table className="w-full text-sm">
             <thead className="bg-surface-50 dark:bg-surface-800">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300">Employee</th>
-                <th className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300">Role</th>
-                <th className="px-4 py-3 text-center font-medium text-surface-700 dark:text-surface-300">Allocation %</th>
-                <th className="px-4 py-3 text-center font-medium text-surface-700 dark:text-surface-300">Start Date</th>
-                <th className="px-4 py-3 text-center font-medium text-surface-700 dark:text-surface-300">End Date</th>
-                <th className="px-4 py-3 text-center font-medium text-surface-700 dark:text-surface-300 w-12"></th>
+                <th className="px-4 py-2 text-left font-medium text-surface-700 dark:text-surface-300">Employee</th>
+                <th className="px-4 py-2 text-left font-medium text-surface-700 dark:text-surface-300">Role</th>
+                <th className="px-4 py-2 text-center font-medium text-surface-700 dark:text-surface-300">Allocation %</th>
+                <th className="px-4 py-2 text-center font-medium text-surface-700 dark:text-surface-300">Start Date</th>
+                <th className="px-4 py-2 text-center font-medium text-surface-700 dark:text-surface-300">End Date</th>
+                <th className="px-4 py-2 text-center font-medium text-surface-700 dark:text-surface-300 w-12"></th>
               </tr>
             </thead>
             <tbody>
@@ -263,7 +263,7 @@ export function EmployeeStep({
 
                 return (
                   <tr key={allocation.employeeId} className="border-t border-surface-200 dark:border-surface-700">
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4">
                       <div className="font-medium text-surface-800 dark:text-surface-200">{allocation.employeeName}</div>
                       <div className="text-xs text-surface-500">{allocation.employeeCode}</div>
                       {/* Capacity indicator */}
@@ -285,7 +285,7 @@ export function EmployeeStep({
                         <div className="text-xs text-surface-400 mt-0.5">{allocation.existingAllocations}% in other projects</div>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4">
                       <Input
                         type="text"
                         placeholder="e.g., Developer"
@@ -294,7 +294,7 @@ export function EmployeeStep({
                         className="text-sm"
                       />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4">
                       <div className="flex flex-col items-center gap-1">
                         <div className="flex items-center gap-1">
                           <Input
@@ -312,7 +312,7 @@ export function EmployeeStep({
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4">
                       <Input
                         type="date"
                         value={allocation.startDate}
@@ -320,7 +320,7 @@ export function EmployeeStep({
                         className="text-sm"
                       />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4">
                       <Input
                         type="date"
                         value={allocation.endDate}
@@ -329,7 +329,7 @@ export function EmployeeStep({
                         className="text-sm"
                       />
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-4 text-center">
                       <button
                         type="button"
                         onClick={() => onRemoveEmployee(allocation.employeeId)}

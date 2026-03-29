@@ -58,7 +58,7 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       onClick={e => e.stopPropagation()}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 mb-3">
+      <div className="flex items-center gap-4 mb-3">
         {employee.profilePhotoUrl ? (
           <img
             src={employee.profilePhotoUrl}
@@ -145,7 +145,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
       <div
         className={cn(
           'relative rounded-xl border-2 shadow-sm transition-all duration-200 cursor-pointer select-none',
-          'min-w-[220px] max-w-[220px] p-3',
+          'min-w-[220px] max-w-[220px] p-4',
           style.bg,
           style.border,
           isHighlighted && 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-slate-900 shadow-lg scale-105',
@@ -275,7 +275,7 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
     <div className="select-none">
       <div
         className={cn(
-          'flex items-center gap-3 py-2 px-3 rounded-lg transition-colors cursor-pointer',
+          'flex items-center gap-4 py-2 px-4 rounded-lg transition-colors cursor-pointer',
           isHighlighted
             ? 'bg-accent-100 dark:bg-accent-900/40 ring-1 ring-accent-400'
             : 'hover:bg-slate-50 dark:hover:bg-slate-800/50',

@@ -80,7 +80,7 @@ export function TimeClockWidget({
   const timePeriod = timeParts[1] || '';
 
   return (
-    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -123,7 +123,7 @@ export function TimeClockWidget({
       <button
         onClick={isCheckedIn ? onCheckOut : onCheckIn}
         disabled={isLoading}
-        className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-3 px-4 text-sm font-semibold transition-all duration-200 ${
+        className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-4 px-4 text-sm font-semibold transition-all duration-200 ${
           isCheckedIn
             ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
             : 'text-white border-0'

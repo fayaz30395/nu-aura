@@ -114,40 +114,40 @@ export default function ResourceConflictsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                    <th className="px-4 py-3 text-left font-medium">Employee</th>
-                    <th className="px-4 py-3 text-left font-medium">Project A</th>
-                    <th className="px-4 py-3 text-left font-medium">Project B</th>
-                    <th className="px-4 py-3 text-left font-medium">Overlap</th>
-                    <th className="px-4 py-3 text-left font-medium">Total %</th>
-                    <th className="px-4 py-3 text-left font-medium">Detected</th>
-                    <th className="px-4 py-3 text-left font-medium">Action</th>
+                    <th className="px-4 py-2 text-left font-medium">Employee</th>
+                    <th className="px-4 py-2 text-left font-medium">Project A</th>
+                    <th className="px-4 py-2 text-left font-medium">Project B</th>
+                    <th className="px-4 py-2 text-left font-medium">Overlap</th>
+                    <th className="px-4 py-2 text-left font-medium">Total %</th>
+                    <th className="px-4 py-2 text-left font-medium">Detected</th>
+                    <th className="px-4 py-2 text-left font-medium">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {openConflicts?.map((c: ConflictLog) => (
                     <tr key={c.id} className="border-b hover:bg-[var(--bg-surface)]">
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4">
                         <span className="flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                           <span className="font-mono text-xs">{c.employee_id.slice(0, 8)}…</span>
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs">{c.project_id_a.slice(0, 8)}…</td>
-                      <td className="px-4 py-3 font-mono text-xs">{c.project_id_b?.slice(0, 8)}…</td>
-                      <td className="px-4 py-3 text-xs">
+                      <td className="px-4 py-4 font-mono text-xs">{c.project_id_a.slice(0, 8)}…</td>
+                      <td className="px-4 py-4 font-mono text-xs">{c.project_id_b?.slice(0, 8)}…</td>
+                      <td className="px-4 py-4 text-xs">
                         {c.overlap_start_date}
                         {c.overlap_end_date && ` → ${c.overlap_end_date}`}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4">
                         <span className="flex items-center gap-1 text-danger-600 dark:text-danger-400 font-bold">
                           <Percent className="w-3.5 h-3.5" />
                           {c.total_allocation_pct}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-[var(--text-muted)]">
+                      <td className="px-4 py-4 text-xs text-[var(--text-muted)]">
                         {new Date(c.detected_at).toLocaleDateString()}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4">
                         <Button size="sm" variant="outline" className="text-success-700 border-success-200 dark:text-success-400 dark:border-success-700 text-xs"
                           onClick={() => resolveMutation.mutate(c.id)}>
                           Resolve

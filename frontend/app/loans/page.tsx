@@ -228,7 +228,7 @@ export default function LoansPage() {
 
         {/* Loans List */}
         <div className="skeuo-card overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-main)]">
+          <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--border-main)]">
             <h2 className="text-base font-semibold text-[var(--text-primary)]">
               My Loans
             </h2>
@@ -246,25 +246,25 @@ export default function LoansPage() {
               <table className="table-aura">
                 <thead>
                   <tr className="skeuo-table-header">
-                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)]">
                       Loan #
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)]">
                       Type
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
+                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
                       Amount
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
+                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
                       Term
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
+                    <th className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)]">
                       Status
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
+                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
                       Balance
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
+                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
                       Actions
                     </th>
                   </tr>
@@ -277,43 +277,43 @@ export default function LoansPage() {
                     return (
                       <tr
                         key={loan.id}
-                        className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+                        className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
                         onClick={() => router.push(`/loans/${loan.id}`)}
                       >
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {loanService.getLoanTypeLabel(loan.loanType)}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4 text-right">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {loanService.formatCurrency(loan.totalAmount || loan.principalAmount)}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4 text-right">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {loan.tenureMonths} months
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4 text-center">
                           <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg justify-center ${statusConfig.bg} ${statusConfig.text}`}
                           >
                             <StatusIcon className="h-3.5 w-3.5" />
                             {loan.status.replace('_', ' ')}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4 text-right">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {loanService.formatCurrency(loan.outstandingAmount || 0)}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4 text-right">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -346,7 +346,7 @@ export default function LoansPage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Apply for Loan
             </h3>
             <p className="text-sm text-[var(--text-muted)]">
@@ -365,7 +365,7 @@ export default function LoansPage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               View Active Loans
             </h3>
             <p className="text-sm text-[var(--text-muted)]">

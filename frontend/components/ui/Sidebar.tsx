@@ -119,7 +119,7 @@ const ChildrenFlyover: React.FC<{
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-main bg-surface/50">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-main bg-surface/50">
           <div className="flex items-center gap-2">
             {item.icon && (
               <span className="text-secondary">
@@ -288,7 +288,7 @@ const SidebarMenuItem: React.FC<{
   };
 
   const commonClasses = cn(
-    'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium',
+    'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium',
     'transition-all duration-150 ease-out',
     isActive || isFlyoverOpen
       ? 'font-semibold shadow-sm border-l-[3px]'
@@ -409,7 +409,7 @@ const SectionDivider: React.FC<{
 }> = ({ label, sectionId, isCollapsed, isSectionExpanded, onToggleSection }) => {
   if (isCollapsed) {
     return (
-      <div className="px-3 py-3 text-center">
+      <div className="px-4 py-4 text-center">
         <div className="w-full h-px mx-auto" style={{ borderTop: '1px solid var(--sidebar-border)' }} />
       </div>
     );
@@ -418,7 +418,7 @@ const SectionDivider: React.FC<{
   return (
     <button
       onClick={() => onToggleSection(sectionId)}
-      className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
+      className="w-full flex items-center justify-between px-4 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
     >
       <span
         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
@@ -620,7 +620,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           {collapsible && (
             <div
               className={cn(
-                'px-3 py-2.5 transition-all duration-300',
+                'px-4 py-2.5 transition-all duration-300',
                 isCollapsed ? 'flex justify-center' : ''
               )}
               style={{ borderBottom: '1px solid var(--sidebar-border)' }}
@@ -653,7 +653,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 scrollbar-hide">
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1 scrollbar-hide">
             {groupedItems.map((section, sectionIndex) => {
               const isSectionExpanded = !collapsedSections.has(section.id);
 
@@ -671,7 +671,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {sectionIndex === 0 && !isCollapsed && (
                     <button
                       onClick={() => handleToggleSection(section.id)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200"
+                      className="w-full flex items-center justify-between px-4 py-2.5 group rounded-md transition-all duration-200"
                     >
                       <span
                         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
@@ -722,7 +722,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             style={{ borderTop: '1px solid var(--sidebar-border)' }}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200" style={{ background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.12) 0%, rgba(96, 165, 250, 0.08) 100%)', border: '1px solid rgba(58, 95, 217, 0.20)', boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)' }}>
+              <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl transition-all duration-200" style={{ background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.12) 0%, rgba(96, 165, 250, 0.08) 100%)', border: '1px solid rgba(58, 95, 217, 0.20)', boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)' }}>
                 <div className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-200" style={{ background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))' }}>
                   <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200" />
                 </div>

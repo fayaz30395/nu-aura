@@ -205,7 +205,7 @@ export default function TicketListPage() {
         </div>
 
         {/* Search & Filters Bar */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
             <input
@@ -287,7 +287,7 @@ export default function TicketListPage() {
         ) : filteredTickets.length === 0 ? (
           <Card className="p-12 text-center">
             <Ticket className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {hasActiveFilters ? 'No tickets match your filters' : 'No tickets yet'}
             </h3>
             <p className="text-sm text-[var(--text-muted)] mb-4">
@@ -307,15 +307,15 @@ export default function TicketListPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Ticket</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Subject</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Requester</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Category</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Priority</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Assignee</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Created</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Actions</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Ticket</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Subject</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Requester</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Category</th>
+                    <th className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Priority</th>
+                    <th className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Assignee</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Created</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-main)]">
@@ -334,7 +334,7 @@ export default function TicketListPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border-main)]">
+              <div className="flex items-center justify-between px-4 py-4 border-t border-[var(--border-main)]">
                 <p className="text-sm text-[var(--text-muted)]">
                   Page {page + 1} of {totalPages} ({ticketsPage?.totalElements ?? 0} tickets)
                 </p>
@@ -391,7 +391,7 @@ export default function TicketListPage() {
                 <textarea
                   placeholder="Provide details about your issue..."
                   rows={5}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 text-sm"
+                  className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 text-sm"
                   {...register('description')}
                 />
                 {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
@@ -464,22 +464,22 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
 
   return (
     <tr
-      className="hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
+      className="h-11 hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
       onClick={onNavigate}
     >
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <span className="text-sm font-mono text-accent-700 dark:text-accent-400">{ticket.ticketNumber || ticket.id.slice(0, 8)}</span>
       </td>
-      <td className="px-4 py-3">
+      <td className="px-4 py-4">
         <span className="text-sm font-medium text-[var(--text-primary)] line-clamp-1">{ticket.subject}</span>
       </td>
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <div className="flex items-center gap-2">
           <User className="h-3.5 w-3.5 text-[var(--text-muted)]" />
           <span className="text-sm text-[var(--text-secondary)]">{ticket.employeeName || '-'}</span>
         </div>
       </td>
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         {ticket.categoryName ? (
           <div className="flex items-center gap-1.5">
             <Tag className="h-3 w-3 text-[var(--text-muted)]" />
@@ -489,22 +489,22 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
           <span className="text-sm text-[var(--text-muted)]">-</span>
         )}
       </td>
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap text-center">
         <Badge variant={priorityCfg.variant} size="sm">{priorityCfg.label}</Badge>
       </td>
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap text-center">
         <Badge variant={statusCfg.variant} size="sm">
           <StatusIcon className="h-3 w-3" />
           {statusCfg.label}
         </Badge>
       </td>
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <span className="text-sm text-[var(--text-secondary)]">{ticket.assignedToName || 'Unassigned'}</span>
       </td>
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <span className="text-sm text-[var(--text-muted)]">{formatDate(ticket.createdAt)}</span>
       </td>
-      <td className="px-4 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+      <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
         <PermissionGate permission={Permissions.HELPDESK_TICKET_RESOLVE}>
           <select
             className="text-xs bg-transparent border border-[var(--border-main)] rounded px-1.5 py-1 text-[var(--text-secondary)] focus:outline-none focus:ring-1 focus:ring-accent-700"

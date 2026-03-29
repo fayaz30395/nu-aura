@@ -516,15 +516,15 @@ function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-3 rounded-lg bg-danger-50 dark:bg-danger-950/20">
+              <div className="text-center p-4 rounded-lg bg-danger-50 dark:bg-danger-950/20">
                 <p className="text-2xl font-bold text-danger-600">{summary.criticalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Critical Gaps</p>
               </div>
-              <div className="text-center p-3 rounded-lg bg-warning-50 dark:bg-warning-950/20">
+              <div className="text-center p-4 rounded-lg bg-warning-50 dark:bg-warning-950/20">
                 <p className="text-2xl font-bold text-warning-600">{summary.highPriorityGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">High Priority</p>
               </div>
-              <div className="text-center p-3 rounded-lg bg-accent-50 dark:bg-accent-950/20">
+              <div className="text-center p-4 rounded-lg bg-accent-50 dark:bg-accent-950/20">
                 <p className="text-2xl font-bold text-accent-600">{summary.totalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Total Gaps</p>
               </div>
@@ -639,12 +639,12 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {insights.length === 0 && (
             <p className="text-sm text-[var(--text-muted)] text-center py-6">No critical insights at this time.</p>
           )}
           {insights.slice(0, 5).map((insight) => (
-            <div key={insight.id} className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
+            <div key={insight.id} className="flex items-start gap-4 p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
               <div className="mt-0.5">
                 {insight.severity === 'CRITICAL' ? (
                   <AlertCircle className="h-5 w-5 text-danger-500" />
@@ -666,7 +666,7 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
                     {insight.recommendation}
                   </p>
                 )}
-                <div className="flex items-center gap-3 mt-2 text-xs text-[var(--text-muted)]">
+                <div className="flex items-center gap-4 mt-2 text-xs text-[var(--text-muted)]">
                   {insight.affectedEmployees > 0 && <span>{insight.affectedEmployees} employees affected</span>}
                   {insight.departmentName && <span>{insight.departmentName}</span>}
                 </div>
@@ -691,12 +691,12 @@ function TopAtRiskEmployeesTable({ employees }: { employees: AttritionPrediction
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--border-subtle)]">
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--text-muted)] uppercase">Department</th>
-                <th className="text-center py-2 px-3 text-xs font-medium text-[var(--text-muted)] uppercase">Risk Score</th>
-                <th className="text-center py-2 px-3 text-xs font-medium text-[var(--text-muted)] uppercase">Risk Level</th>
-                <th className="text-center py-2 px-3 text-xs font-medium text-[var(--text-muted)] uppercase">Confidence</th>
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--text-muted)] uppercase">Top Factor</th>
+                <th className="text-left py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
+                <th className="text-left py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Department</th>
+                <th className="text-center py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Risk Score</th>
+                <th className="text-center py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Risk Level</th>
+                <th className="text-center py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Confidence</th>
+                <th className="text-left py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Top Factor</th>
               </tr>
             </thead>
             <tbody>
@@ -709,25 +709,25 @@ function TopAtRiskEmployeesTable({ employees }: { employees: AttritionPrediction
                 const topFactor = (emp.riskFactors || []).sort((a, b) => b.score - a.score)[0];
                 return (
                   <tr key={emp.id} className="border-b border-[var(--border-subtle)] hover:bg-[var(--bg-surface)]">
-                    <td className="py-2.5 px-3">
+                    <td className="py-2.5 px-4">
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">{emp.employeeName || 'Unknown'}</p>
                         <p className="text-xs text-[var(--text-muted)]">{emp.jobTitle || '-'}</p>
                       </div>
                     </td>
-                    <td className="py-2.5 px-3 text-[var(--text-secondary)]">{emp.department || '-'}</td>
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-2.5 px-4 text-[var(--text-secondary)]">{emp.department || '-'}</td>
+                    <td className="py-2.5 px-4 text-center">
                       <span className="font-bold" style={{ color: RISK_COLORS[emp.riskLevel as keyof typeof RISK_COLORS] || '#64748b' }}>
                         {emp.riskScore?.toFixed(0)}%
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-2.5 px-4 text-center">
                       <RiskBadge level={emp.riskLevel} />
                     </td>
-                    <td className="py-2.5 px-3 text-center text-[var(--text-secondary)]">
+                    <td className="py-2.5 px-4 text-center text-[var(--text-secondary)]">
                       {emp.confidenceScore?.toFixed(0)}%
                     </td>
-                    <td className="py-2.5 px-3 text-[var(--text-secondary)]">
+                    <td className="py-2.5 px-4 text-[var(--text-secondary)]">
                       {topFactor ? topFactor.name : '-'}
                     </td>
                   </tr>
@@ -805,7 +805,7 @@ function WorkforceSummaryPanel({ summary }: { summary: PredictiveAnalyticsDashbo
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
       {items.map((item) => (
         <Card key={item.label}>
-          <CardContent className="p-4 flex items-center gap-3">
+          <CardContent className="p-4 flex items-center gap-4">
             <div className="p-2 rounded-lg bg-[var(--bg-surface)]">{item.icon}</div>
             <div>
               <p className="text-lg font-bold text-[var(--text-primary)]">{item.value}</p>
@@ -893,14 +893,14 @@ export default function PredictiveAnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Predictive Analytics
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               AI-powered workforce insights and predictions
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {/* TODO: Wire up export when backend PDF/Excel export endpoints are available */}
             <Button variant="outline" size="sm" onClick={() => { /* TODO: exportToPdf */ }}>
               <Download className="h-4 w-4 mr-1" />

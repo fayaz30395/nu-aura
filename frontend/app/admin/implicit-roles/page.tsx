@@ -265,7 +265,7 @@ export default function ImplicitRolesPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Implicit Roles</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Implicit Roles</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage rules that automatically assign roles to users based on their organizational context
           </p>
@@ -314,20 +314,20 @@ export default function ImplicitRolesPage() {
               <button
                 onClick={handleBulkActivate}
                 disabled={bulkActivateMutation.isPending}
-                className="px-3 py-1 text-sm bg-success-500 text-white rounded hover:bg-success-600 disabled:opacity-50"
+                className="px-4 py-1 text-sm bg-success-500 text-white rounded hover:bg-success-600 disabled:opacity-50"
               >
                 Activate
               </button>
               <button
                 onClick={handleBulkDeactivate}
                 disabled={bulkDeactivateMutation.isPending}
-                className="px-3 py-1 text-sm bg-warning-500 text-white rounded hover:bg-warning-600 disabled:opacity-50"
+                className="px-4 py-1 text-sm bg-warning-500 text-white rounded hover:bg-warning-600 disabled:opacity-50"
               >
                 Deactivate
               </button>
               <button
                 onClick={() => setSelectedRules([])}
-                className="px-3 py-1 text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] rounded hover:bg-[var(--bg-surface)]"
+                className="px-4 py-1 text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] rounded hover:bg-[var(--bg-surface)]"
               >
                 Clear
               </button>
@@ -339,7 +339,7 @@ export default function ImplicitRolesPage() {
           <table className="table-aura">
             <thead className="skeuo-table-header">
               <tr>
-                <th className="px-4 py-3 text-left">
+                <th className="px-4 py-2 text-left">
                   <input
                     type="checkbox"
                     checked={selectedRules.length === filteredRules.length && filteredRules.length > 0}
@@ -353,28 +353,28 @@ export default function ImplicitRolesPage() {
                     className="rounded"
                   />
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Rule Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Condition
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Target Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Scope
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Priority
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Affected Users
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -744,19 +744,19 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
             <table className="table-aura">
               <thead className="skeuo-table-header">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
                     User Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
                     Assigned Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
                     Scope
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
                     Computed At
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
                     Status
                   </th>
                 </tr>

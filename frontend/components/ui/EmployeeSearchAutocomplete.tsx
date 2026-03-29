@@ -158,7 +158,7 @@ export function EmployeeSearchAutocomplete({
       )}
       <div className="relative">
         {value ? (
-          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
+          <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
             <div className="w-7 h-7 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-xs font-medium">
               {getInitials(value.name)}
             </div>
@@ -219,7 +219,7 @@ export function EmployeeSearchAutocomplete({
                 type="button"
                 onClick={() => handleSelect(employee)}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                className={`w-full px-3 py-2 flex items-center gap-3 text-left hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors ${highlightedIndex === index
+                className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors ${highlightedIndex === index
                     ? 'bg-surface-50 dark:bg-surface-700'
                     : ''
                   }`}

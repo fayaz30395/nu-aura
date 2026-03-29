@@ -607,7 +607,7 @@ export default function WikiPageDetailPage() {
           <div className={card.paddingLarge}>
             <div className="flex items-start justify-between gap-6 mb-4">
               <div className="flex-1 min-w-0">
-                <h1 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4 leading-tight">
+                <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4 leading-tight">
                   {page.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-6 mb-6">
@@ -1070,7 +1070,7 @@ export default function WikiPageDetailPage() {
                     hidden: { opacity: 0, x: -8 },
                     visible: { opacity: 1, x: 0, transition: { duration: 0.2 } },
                   }}
-                  className="flex items-center justify-between py-3 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors duration-200"
+                  className="flex items-center justify-between py-4 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors duration-200"
                 >
                   <div className="flex items-center gap-4">
                     <div
@@ -1155,7 +1155,7 @@ export default function WikiPageDetailPage() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRestoreRevision(rev.id)}
                       disabled={restoreRevision.isPending}
-                      className="ml-4 px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0"
+                      className="ml-4 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0"
                     >
                       <RefreshCw className="h-3 w-3" />
                       Restore

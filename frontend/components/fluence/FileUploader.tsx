@@ -113,7 +113,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
   }, [handleFile]);
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn('space-y-4', className)}>
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -142,7 +142,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
           aria-label="Upload file"
         />
 
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
             <Upload className="h-6 w-6 text-accent-600 dark:text-accent-400" />
           </div>
@@ -173,7 +173,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+        <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
           <AlertCircle className="h-4 w-4 text-danger-600 dark:text-danger-400 flex-shrink-0" />
           <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
           <Button

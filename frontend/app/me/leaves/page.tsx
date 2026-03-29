@@ -318,7 +318,7 @@ export default function MyLeavesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Leaves</h1>
+            <h1 className="text-2xl font-bold skeuo-emboss">My Leaves</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Manage your leave requests and balances
             </p>
@@ -384,7 +384,7 @@ export default function MyLeavesPage() {
                       </button>
                     )}
                   </div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {leaveType?.leaveName || 'Unknown'}
                   </h3>
                   <div className="space-y-2">
@@ -457,7 +457,7 @@ export default function MyLeavesPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
-                    className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                    className="input-aura px-4 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="PENDING">Pending</option>
@@ -469,7 +469,7 @@ export default function MyLeavesPage() {
                 <select
                   value={leaveTypeFilter}
                   onChange={(e) => setLeaveTypeFilter(e.target.value)}
-                  className="input-aura px-3 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                  className="input-aura px-4 py-1.5 text-sm rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                 >
                   <option value="ALL">All Leave Types</option>
                   {leaveTypes.map((type) => (
@@ -481,7 +481,7 @@ export default function MyLeavesPage() {
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-3 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
+                    className="px-4 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
                   >
                     Clear
                   </button>
@@ -493,7 +493,7 @@ export default function MyLeavesPage() {
             {leaveRequests.length === 0 ? (
               <div className="text-center py-12">
                 <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No Leave Requests
                 </h3>
                 <p className="text-[var(--text-secondary)]">
@@ -503,7 +503,7 @@ export default function MyLeavesPage() {
             ) : filteredLeaveRequests.length === 0 ? (
               <div className="text-center py-12">
                 <Filter className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No Matching Requests
                 </h3>
                 <p className="text-[var(--text-secondary)]">
@@ -526,7 +526,7 @@ export default function MyLeavesPage() {
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-4 mb-2">
-                          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                          <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                             {getLeaveTypeName(request.leaveTypeId)}
                           </h3>
                           <span
@@ -593,14 +593,14 @@ export default function MyLeavesPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEdit(request)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 dark:bg-accent-950/30 dark:hover:bg-accent-950/50 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 dark:bg-accent-950/30 dark:hover:bg-accent-950/50 rounded-lg transition-colors"
                           >
                             <Edit3 className="h-3 w-3" />
                             Edit
                           </button>
                           <button
                             onClick={() => handleCancelClick(request)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-danger-600 hover:text-danger-700 bg-danger-50 hover:bg-danger-100 dark:bg-danger-950/30 dark:hover:bg-danger-950/50 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-danger-600 hover:text-danger-700 bg-danger-50 hover:bg-danger-100 dark:bg-danger-950/30 dark:hover:bg-danger-950/50 rounded-lg transition-colors"
                           >
                             <Ban className="h-3 w-3" />
                             Cancel
@@ -842,12 +842,12 @@ export default function MyLeavesPage() {
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-md w-full shadow-xl">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
                       <Banknote className="h-5 w-5 text-success-600 dark:text-success-400" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                      <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                         Leave Encashment
                       </h2>
                       <p className="text-sm text-[var(--text-secondary)]">
@@ -892,7 +892,7 @@ export default function MyLeavesPage() {
                     max={encashBalance.available}
                     value={encashDays}
                     onChange={(e) => setEncashDays(Math.min(Number(e.target.value), encashBalance.available))}
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   <p className="text-xs text-[var(--text-muted)] mt-1">
                     Maximum encashable: {encashBalance.available} days
@@ -908,11 +908,11 @@ export default function MyLeavesPage() {
                     onChange={(e) => setEncashReason(e.target.value)}
                     rows={2}
                     placeholder="Reason for encashment request"
-                    className="input-aura w-full px-3 py-2 rounded-lg"
+                    className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                 </div>
 
-                <div className="flex items-start gap-2 p-3 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                <div className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
                   <AlertCircle className="h-4 w-4 text-warning-600 dark:text-warning-400 mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-warning-800 dark:text-warning-300">
                     Encashment will be processed as part of your next payroll cycle. The amount will be calculated based on your current basic salary and applicable tax deductions.
@@ -920,7 +920,7 @@ export default function MyLeavesPage() {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-[var(--border-main)] flex justify-end gap-3">
+              <div className="p-6 border-t border-[var(--border-main)] flex justify-end gap-4">
                 <button
                   onClick={() => setShowEncashModal(false)}
                   className="btn-secondary px-4 py-2 rounded-lg"

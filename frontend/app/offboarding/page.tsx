@@ -497,25 +497,25 @@ export default function OffboardingPage() {
                 <table className="table-aura">
                   <thead>
                     <tr>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Employee
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Exit Type
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Last Working Day
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Notice Period
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Rehire Eligible
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -573,7 +573,7 @@ export default function OffboardingPage() {
                             <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(process)}
-                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
                                 <Eye className="h-4 w-4" />
                                 View Details
@@ -581,7 +581,7 @@ export default function OffboardingPage() {
                               <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleOpenEditModal(process)}
-                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <Edit className="h-4 w-4" />
                                   Edit
@@ -591,7 +591,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
-                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <Clock className="h-4 w-4" />
                                     Start Process
@@ -602,7 +602,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
-                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <FileText className="h-4 w-4" />
                                     Request Clearance
@@ -613,7 +613,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_APPROVE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
-                                    className="w-full px-3 py-2 text-left text-sm text-success-600 hover:bg-success-50 flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 flex items-center gap-2"
                                   >
                                     <CheckCircle className="h-4 w-4" />
                                     Complete
@@ -623,7 +623,7 @@ export default function OffboardingPage() {
                               <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleDeleteClick(process)}
-                                  className="w-full px-3 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 flex items-center gap-2"
+                                  className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 flex items-center gap-2"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   Delete
@@ -644,7 +644,7 @@ export default function OffboardingPage() {
             <Card>
               <CardContent className="p-12 text-center">
                 <UserMinus className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No Exit Processes Found
                 </h3>
                 <p className="text-[var(--text-secondary)] mb-4">

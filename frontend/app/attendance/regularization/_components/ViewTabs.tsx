@@ -15,7 +15,7 @@ export function ViewTabs({ activeTab, onTabChange, canApprove }: ViewTabsProps) 
     <div className="flex items-center gap-1 border-b border-[var(--border-main)]">
       <motion.button
         onClick={() => onTabChange('my-requests')}
-        className="relative px-4 py-3 text-sm font-medium transition-colors"
+        className="relative px-4 py-4 text-sm font-medium transition-colors"
         whileHover={{ y: -1 }}
         whileTap={{ y: 0 }}
       >
@@ -39,7 +39,7 @@ export function ViewTabs({ activeTab, onTabChange, canApprove }: ViewTabsProps) 
       {canApprove && (
         <motion.button
           onClick={() => onTabChange('team-requests')}
-          className="relative px-4 py-3 text-sm font-medium transition-colors"
+          className="relative px-4 py-4 text-sm font-medium transition-colors"
           whileHover={{ y: -1 }}
           whileTap={{ y: 0 }}
         >

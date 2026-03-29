@@ -334,7 +334,7 @@ export default function CalibrationPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               Calibration & Distribution
             </h1>
             <p className="text-[var(--text-muted)] mt-1">
@@ -375,7 +375,7 @@ export default function CalibrationPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -389,7 +389,7 @@ export default function CalibrationPage() {
             {selectedCycle && (
               <div className="flex items-center gap-4 md:mt-6">
                 <span
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
                     selectedCycle.status === 'ACTIVE'
                       ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400'
                       : selectedCycle.status === 'CALIBRATION'
@@ -409,7 +409,7 @@ export default function CalibrationPage() {
             {/* Distribution Overview */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Current vs Target */}
-              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
                 <div>
                   <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
                     Current Distribution
@@ -479,7 +479,7 @@ export default function CalibrationPage() {
 
             {/* Bell Curve Warning */}
             {curveWarning && (
-              <div className="flex items-start gap-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg px-4 py-3">
+              <div className="flex items-start gap-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg px-4 py-4">
                 <AlertTriangle
                   size={16}
                   className="text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"
@@ -516,7 +516,7 @@ export default function CalibrationPage() {
                   <select
                     value={departmentFilter}
                     onChange={e => setDepartmentFilter(e.target.value)}
-                    className="px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                    className="px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                   >
                     <option value="">All Departments</option>
                     {uniqueDepartments.map(dept => (
@@ -554,7 +554,7 @@ export default function CalibrationPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
-                        <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)]">
+                        <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => {
                               setSortField('name');
@@ -566,7 +566,7 @@ export default function CalibrationPage() {
                             {sortField === 'name' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)]">
+                        <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => {
                               setSortField('department');
@@ -580,13 +580,13 @@ export default function CalibrationPage() {
                             {sortField === 'department' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
+                        <th className="px-4 py-2 text-center font-semibold text-[var(--text-secondary)]">
                           Self Rating
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
+                        <th className="px-4 py-2 text-center font-semibold text-[var(--text-secondary)]">
                           Manager Rating
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
+                        <th className="px-4 py-2 text-center font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => {
                               setSortField('rating');
@@ -600,7 +600,7 @@ export default function CalibrationPage() {
                             {sortField === 'rating' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
+                        <th className="px-4 py-2 text-center font-semibold text-[var(--text-secondary)]">
                           Action
                         </th>
                       </tr>
@@ -623,19 +623,19 @@ export default function CalibrationPage() {
                               isDirty ? 'bg-warning-50 dark:bg-warning-900/10' : ''
                             } ${differsFromManager ? 'border-l-2 border-warning-400' : ''}`}
                           >
-                            <td className="px-4 py-3 font-medium text-[var(--text-primary)]">
+                            <td className="px-4 py-4 font-medium text-[var(--text-primary)]">
                               {row.employeeName}
                             </td>
-                            <td className="px-4 py-3 text-[var(--text-secondary)] text-sm">
+                            <td className="px-4 py-4 text-[var(--text-secondary)] text-sm">
                               {row.department}
                             </td>
-                            <td className="px-4 py-3 text-center">
+                            <td className="px-4 py-4 text-center">
                               <RatingBadge rating={row.selfRating} />
                             </td>
-                            <td className="px-4 py-3 text-center">
+                            <td className="px-4 py-4 text-center">
                               <RatingBadge rating={row.managerRating} />
                             </td>
-                            <td className="px-4 py-3 text-center">
+                            <td className="px-4 py-4 text-center">
                               <input
                                 type="number"
                                 min={1}
@@ -649,13 +649,13 @@ export default function CalibrationPage() {
                                 className="w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                               />
                             </td>
-                            <td className="px-4 py-3 text-center">
+                            <td className="px-4 py-4 text-center">
                               {isDirty && (
                                 <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
                                   <button
                                     onClick={() => handleSaveFinal(row)}
                                     disabled={saving === row.employeeId}
-                                    className="px-3 py-1 text-xs font-medium text-white bg-accent-700 hover:bg-accent-700 rounded-lg disabled:opacity-50 transition-colors"
+                                    className="px-4 py-1 text-xs font-medium text-white bg-accent-700 hover:bg-accent-700 rounded-lg disabled:opacity-50 transition-colors"
                                   >
                                     {saving === row.employeeId ? 'Saving...' : 'Save'}
                                   </button>

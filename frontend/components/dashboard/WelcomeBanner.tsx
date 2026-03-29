@@ -76,7 +76,7 @@ export function QuickAccessWidget({
   const hasNoPending = totalPending === 0;
 
   return (
-    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-5">
+    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
           Quick Access
@@ -101,7 +101,7 @@ export function QuickAccessWidget({
             {pendingApprovals > 0 && (
               <a
                 href="/approvals"
-                className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-3 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
+                className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-4 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-warning-100 dark:bg-warning-900/30">
@@ -123,7 +123,7 @@ export function QuickAccessWidget({
             {pendingTimesheets > 0 && (
               <a
                 href="/timesheets"
-                className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-3 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
+                className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-4 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">
@@ -145,7 +145,7 @@ export function QuickAccessWidget({
             {pendingProfileUpdates > 0 && (
               <a
                 href="/profile"
-                className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-3 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
+                className="flex items-center justify-between rounded-xl bg-[var(--bg-surface)] px-4 py-4 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:translate-x-0.5 group"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">

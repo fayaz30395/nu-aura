@@ -115,7 +115,7 @@ export default function LeaveApprovalsPage() {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)] skeuo-emboss">Leave Approvals</h1>
+        <h1 className="text-2xl font-bold skeuo-emboss">Leave Approvals</h1>
 
         {/* Error State */}
         {error && (
@@ -167,7 +167,7 @@ export default function LeaveApprovalsPage() {
                   <CheckCircle className="w-8 h-8 text-success-500 dark:text-success-400" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">All caught up!</h3>
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">All caught up!</h3>
               <p className="text-sm text-[var(--text-secondary)]">No pending leave requests to review</p>
             </div>
           ) : (
@@ -175,14 +175,14 @@ export default function LeaveApprovalsPage() {
               <table className="table-aura">
                 <thead className="skeuo-table-header">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied On</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied On</th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
@@ -217,7 +217,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleApproveClick(request.id)}
                               disabled={isProcessing}
-                              className="btn-primary px-3 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-primary px-4 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium"
                             >
                               {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
                             </button>
@@ -226,7 +226,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleRejectClick(request.id)}
                               disabled={isProcessing}
-                              className="btn-secondary px-3 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-secondary px-4 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium"
                             >
                               Reject
                             </button>

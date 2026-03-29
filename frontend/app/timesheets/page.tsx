@@ -406,9 +406,9 @@ export default function TimesheetsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[var(--border-main)]">
-                    <th className="px-4 py-3 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project</th>
+                    <th className="px-4 py-2 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project</th>
                     {weekDates.map((date, i) => (
-                      <th key={i} className={`px-2 py-3 text-center font-medium min-w-[80px] ${
+                      <th key={i} className={`px-2 py-2 text-center font-medium min-w-[80px] ${
                         date.getDay() === 0 || date.getDay() === 6
                           ? 'text-[var(--text-muted)] bg-[var(--bg-secondary)]'
                           : 'text-[var(--text-secondary)]'
@@ -417,7 +417,7 @@ export default function TimesheetsPage() {
                         <div className="text-sm">{date.getDate()}</div>
                       </th>
                     ))}
-                    <th className="px-3 py-3 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
+                    <th className="px-4 py-2 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -453,7 +453,7 @@ export default function TimesheetsPage() {
                       }, 0);
 
                       return (
-                        <tr key={projectId} className="border-b border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] transition-colors">
+                        <tr key={projectId} className="h-11 border-b border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] transition-colors">
                           <td className="px-4 py-2">
                             <span className="font-medium text-[var(--text-primary)]">{name}</span>
                           </td>
@@ -469,7 +469,7 @@ export default function TimesheetsPage() {
                               </td>
                             );
                           })}
-                          <td className="px-3 py-2 text-center font-bold text-accent-700 dark:text-accent-400">
+                          <td className="px-4 py-2 text-center font-bold text-accent-700 dark:text-accent-400">
                             {rowTotal > 0 ? `${rowTotal}h` : '—'}
                           </td>
                         </tr>
@@ -479,21 +479,21 @@ export default function TimesheetsPage() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                    <td className="px-4 py-3 font-semibold text-[var(--text-primary)]">Daily Total</td>
+                    <td className="px-4 py-4 font-semibold text-[var(--text-primary)]">Daily Total</td>
                     {weekDates.map((date, i) => {
                       const key = date.toISOString().split('T')[0];
                       const dayTotal = entriesForCurrentWeek
                         .filter(e => e.entryDate === key)
                         .reduce((sum, e) => sum + (e.hours || 0), 0);
                       return (
-                        <td key={i} className={`px-2 py-3 text-center font-semibold ${
+                        <td key={i} className={`px-2 py-4 text-center font-semibold ${
                           date.getDay() === 0 || date.getDay() === 6 ? 'bg-[var(--bg-secondary)]' : ''
                         } ${dayTotal > 0 ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
                           {dayTotal > 0 ? `${dayTotal}h` : '—'}
                         </td>
                       );
                     })}
-                    <td className="px-3 py-3 text-center font-bold text-accent-700 dark:text-accent-400">
+                    <td className="px-4 py-4 text-center font-bold text-accent-700 dark:text-accent-400">
                       {currentWeekTimesheet?.totalHours || 0}h
                     </td>
                   </tr>
@@ -531,7 +531,7 @@ export default function TimesheetsPage() {
 
         {/* Timesheet History */}
         <div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Timesheet History
           </h2>
           <div className="space-y-4">

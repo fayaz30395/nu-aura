@@ -162,7 +162,7 @@ export default function ExpenseDetailPage() {
             </h1>
             <p className="text-surface-500">{claim.title || claim.description}</p>
           </div>
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${statusConfig.color}`}>
+          <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium ${statusConfig.color}`}>
             <StatusIcon className="w-4 h-4" />
             {statusConfig.label}
           </span>
@@ -209,14 +209,14 @@ export default function ExpenseDetailPage() {
         {/* Items Section */}
         <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg">
           <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-700">
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
               <Receipt className="w-5 h-5" />
               Expense Items ({items.length})
             </h2>
             {isDraft && isOwner && (
               <button
                 onClick={() => setShowAddItem(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Add Item
@@ -235,7 +235,7 @@ export default function ExpenseDetailPage() {
                 <div key={item.id} className="px-6 py-4 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-surface-900 dark:text-surface-50 truncate">{item.description}</p>
-                    <div className="flex items-center gap-3 mt-1 text-sm text-surface-500">
+                    <div className="flex items-center gap-4 mt-1 text-sm text-surface-500">
                       {item.categoryName && <span>{item.categoryName}</span>}
                       <span>{format(new Date(item.expenseDate), 'dd MMM yyyy')}</span>
                       {item.merchantName && <span>{item.merchantName}</span>}
@@ -271,10 +271,10 @@ export default function ExpenseDetailPage() {
         {/* Approval Timeline */}
         {(claim.submittedAt || claim.approvedAt || claim.rejectedAt || claim.reimbursedAt) && (
           <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">Approval Timeline</h2>
-            <div className="space-y-3">
+            <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-4">Approval Timeline</h2>
+            <div className="space-y-4">
               {claim.submittedAt && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="w-2 h-2 rounded-full bg-accent-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Submitted on {format(new Date(claim.submittedAt), 'dd MMM yyyy HH:mm')}
@@ -282,7 +282,7 @@ export default function ExpenseDetailPage() {
                 </div>
               )}
               {claim.approvedAt && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="w-2 h-2 rounded-full bg-success-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Approved by {claim.approvedByName} on {format(new Date(claim.approvedAt), 'dd MMM yyyy HH:mm')}
@@ -290,7 +290,7 @@ export default function ExpenseDetailPage() {
                 </div>
               )}
               {claim.rejectedAt && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="w-2 h-2 rounded-full bg-danger-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Rejected by {claim.rejectedByName} on {format(new Date(claim.rejectedAt), 'dd MMM yyyy HH:mm')}
@@ -299,7 +299,7 @@ export default function ExpenseDetailPage() {
                 </div>
               )}
               {claim.reimbursedAt && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="w-2 h-2 rounded-full bg-success-500" />
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Reimbursed on {format(new Date(claim.reimbursedAt), 'dd MMM yyyy HH:mm')}
@@ -314,13 +314,13 @@ export default function ExpenseDetailPage() {
         {/* Notes */}
         {claim.notes && (
           <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-2">Notes</h2>
+            <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">Notes</h2>
             <p className="text-surface-600 dark:text-surface-400">{claim.notes}</p>
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex gap-3 justify-end">
+        <div className="flex gap-4 justify-end">
           {isDraft && isOwner && (
             <button
               onClick={onSubmit}
@@ -357,25 +357,25 @@ export default function ExpenseDetailPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description *</label>
-                  <input {...register('description')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                  <input {...register('description')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
                   {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Amount *</label>
-                    <input type="number" step="0.01" {...register('amount')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    <input type="number" step="0.01" {...register('amount')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
                     {errors.amount && <p className="text-danger-500 text-sm mt-1">{errors.amount.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date *</label>
-                    <input type="date" {...register('expenseDate')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    <input type="date" {...register('expenseDate')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
                     {errors.expenseDate && <p className="text-danger-500 text-sm mt-1">{errors.expenseDate.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category</label>
-                    <select {...register('categoryId')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2">
+                    <select {...register('categoryId')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2">
                       <option value="">Select category</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -384,12 +384,12 @@ export default function ExpenseDetailPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Merchant</label>
-                    <input {...register('merchantName')} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    <input {...register('merchantName')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
-                  <textarea {...register('notes')} rows={2} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                  <textarea {...register('notes')} rows={2} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
                 </div>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" {...register('isBillable')} className="rounded border-surface-300" />
@@ -418,7 +418,7 @@ export default function ExpenseDetailPage() {
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="Provide reason..."
               />
             </div>

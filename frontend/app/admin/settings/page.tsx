@@ -136,7 +136,7 @@ export default function AdminSettingsPage() {
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+          <h1 className="text-2xl font-bold skeuo-emboss">
             Admin Settings
           </h1>
           <p className="text-[var(--text-secondary)] mt-1">
@@ -155,7 +155,7 @@ export default function AdminSettingsPage() {
               className="group cursor-pointer hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200"
               onClick={() => handleCardClick(card.href)}
             >
-              <CardContent className="p-5">
+              <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className={`p-4 rounded-xl ${card.bgColor}`}>
                     <Icon className={`h-6 w-6 ${card.color}`} />

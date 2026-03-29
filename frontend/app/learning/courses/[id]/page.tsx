@@ -163,7 +163,7 @@ export default function CourseDetailPage() {
               Mandatory
             </span>
           )}
-          <h1 className="text-3xl font-bold skeuo-emboss mb-2">{course.title}</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss mb-2">{course.title}</h1>
           {course.shortDescription && (
             <p className="text-accent-100 text-base mb-4">{course.shortDescription}</p>
           )}
@@ -202,7 +202,7 @@ export default function CourseDetailPage() {
           {/* Description */}
           {course.description && (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6">
-              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-3">About this course</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-3">About this course</h2>
               <p className="text-[var(--text-secondary)] text-sm leading-relaxed">{course.description}</p>
             </div>
           )}
@@ -210,7 +210,7 @@ export default function CourseDetailPage() {
           {/* Progress (if enrolled) */}
           {isEnrolled && (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6">
-              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Your Progress</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Your Progress</h2>
               
               {/* Completion percentage */}
               <div className="mb-6">
@@ -249,7 +249,7 @@ export default function CourseDetailPage() {
           {isEnrolled && quizzes.length > 0 && (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)]">
-                <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
                   <HelpCircle className="h-5 w-5" />
                   Quizzes & Assessments
                 </h2>
@@ -315,7 +315,7 @@ export default function CourseDetailPage() {
           {course.modules && course.modules.length > 0 && (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)]">
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Course Curriculum</h2>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">Course Curriculum</h2>
                 <p className="text-sm text-[var(--text-muted)] mt-0.5">
                   {course.modules.length} modules · {totalContents} lessons
                 </p>

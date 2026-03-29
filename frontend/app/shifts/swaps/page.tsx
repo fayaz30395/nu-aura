@@ -105,7 +105,7 @@ function SwapCard({
           <button
             onClick={onAccept}
             disabled={actionPending}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-900/20 hover:bg-success-100 dark:hover:bg-success-900/30 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-900/20 hover:bg-success-100 dark:hover:bg-success-900/30 rounded-lg transition-colors disabled:opacity-50"
           >
             <Check className="w-3.5 h-3.5" />
             {showActions === 'target' ? 'Accept' : 'Approve'}
@@ -113,7 +113,7 @@ function SwapCard({
           <button
             onClick={onReject}
             disabled={actionPending}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-900/20 hover:bg-danger-100 dark:hover:bg-danger-900/30 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-900/20 hover:bg-danger-100 dark:hover:bg-danger-900/30 rounded-lg transition-colors disabled:opacity-50"
           >
             <X className="w-3.5 h-3.5" />
             {showActions === 'target' ? 'Decline' : 'Reject'}
@@ -158,7 +158,7 @@ export default function ShiftSwapsPage() {
     <AppLayout>
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/shifts')}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"

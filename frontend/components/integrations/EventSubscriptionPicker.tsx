@@ -54,7 +54,7 @@ export function EventSubscriptionPicker({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <label className="block text-sm font-medium text-[var(--text-primary)]">
         Subscribe to Events
       </label>

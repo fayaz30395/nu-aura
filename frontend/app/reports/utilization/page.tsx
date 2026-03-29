@@ -131,7 +131,7 @@ export default function UtilizationReportsPage() {
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
-            <p className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">{value}</p>
+            <p className="text-2xl font-bold skeuo-emboss">{value}</p>
             {subValue && (
               <p className="text-sm text-[var(--text-muted)]">{subValue}</p>
             )}
@@ -258,7 +258,7 @@ export default function UtilizationReportsPage() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               Utilization Dashboard
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -291,14 +291,14 @@ export default function UtilizationReportsPage() {
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
                 <span className="text-[var(--text-muted)]">to</span>
                 <input
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </>
             )}
@@ -380,7 +380,7 @@ export default function UtilizationReportsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={`flex items-center gap-2 px-1 py-3 border-b-2 transition-colors ${activeTab === tab.id
+                className={`flex items-center gap-2 px-1 py-4 border-b-2 transition-colors ${activeTab === tab.id
                   ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                   }`}
@@ -537,12 +537,12 @@ export default function UtilizationReportsPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-[var(--border-main)]">
-                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Employee</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Department</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Rate</th>
+                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Employee</th>
+                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Department</th>
+                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
+                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
+                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
+                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Rate</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -551,7 +551,7 @@ export default function UtilizationReportsPage() {
                           key={emp.employeeId}
                           className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         >
-                          <td className="py-3 px-4">
+                          <td className="py-4 px-4">
                             <div className="flex items-center gap-4">
                               <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium">
                                 {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
@@ -562,13 +562,13 @@ export default function UtilizationReportsPage() {
                               </div>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-[var(--text-secondary)]">{emp.departmentName}</td>
-                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.totalHours)}</td>
-                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.billableHours)}</td>
-                          <td className="py-3 px-4">
+                          <td className="py-4 px-4 text-[var(--text-secondary)]">{emp.departmentName}</td>
+                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.totalHours)}</td>
+                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.billableHours)}</td>
+                          <td className="py-4 px-4">
                             <UtilizationBar rate={emp.utilizationRate} />
                           </td>
-                          <td className={`py-3 px-4 text-right font-medium ${getUtilizationColor(emp.billableRate)}`}>
+                          <td className={`py-4 px-4 text-right font-medium ${getUtilizationColor(emp.billableRate)}`}>
                             {formatPercentage(emp.billableRate)}
                           </td>
                         </tr>
@@ -587,12 +587,12 @@ export default function UtilizationReportsPage() {
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                        <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                           {dept.departmentName}
                         </h3>
                         <p className="text-sm text-[var(--text-muted)]">{dept.employeeCount} employees</p>
                       </div>
-                      <div className={`px-3 py-1 rounded-full text-sm font-medium ${getUtilizationBgColor(dept.averageUtilization)} ${getUtilizationColor(dept.averageUtilization)}`}>
+                      <div className={`px-4 py-1 rounded-full text-sm font-medium ${getUtilizationBgColor(dept.averageUtilization)} ${getUtilizationColor(dept.averageUtilization)}`}>
                         {formatPercentage(dept.averageUtilization)}
                       </div>
                     </div>
@@ -653,12 +653,12 @@ export default function UtilizationReportsPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-[var(--border-main)]">
-                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Project</th>
-                        <th className="text-center py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Team Size</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Revenue</th>
+                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Project</th>
+                        <th className="text-center py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Team Size</th>
+                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
+                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
+                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
+                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Revenue</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -667,7 +667,7 @@ export default function UtilizationReportsPage() {
                           key={project.projectId}
                           className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         >
-                          <td className="py-3 px-4">
+                          <td className="py-4 px-4">
                             <div className="flex items-center gap-4">
                               <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                                 <FolderOpen className="h-5 w-5 text-accent-700 dark:text-accent-400" />
@@ -677,19 +677,19 @@ export default function UtilizationReportsPage() {
                               </span>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-center">
+                          <td className="py-4 px-4 text-center">
                             <Badge variant="secondary">{project.teamSize}</Badge>
                           </td>
-                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">
+                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">
                             {formatHours(project.totalHours)}
                           </td>
-                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">
+                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">
                             {formatHours(project.billableHours)}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-4 px-4">
                             <UtilizationBar rate={project.utilizationRate} />
                           </td>
-                          <td className="py-3 px-4 text-right font-semibold text-success-600 dark:text-success-400">
+                          <td className="py-4 px-4 text-right font-semibold text-success-600 dark:text-success-400">
                             {formatCurrency(project.billedAmount)}
                           </td>
                         </tr>

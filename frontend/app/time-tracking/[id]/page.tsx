@@ -138,7 +138,7 @@ export default function TimeEntryDetailPage() {
                 Time Entry
               </h1>
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+                className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
               >
                 <StatusIcon className="h-4 w-4" />
                 {entry.status}
@@ -157,7 +157,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <Timer className="h-5 w-5 text-accent-700 dark:text-accent-400" />
@@ -169,7 +169,7 @@ export default function TimeEntryDetailPage() {
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -184,7 +184,7 @@ export default function TimeEntryDetailPage() {
           </div>
 
           {entry.billingAmount && (
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
               <div className="flex items-center gap-4 mb-3">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                   <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -202,7 +202,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Details */}
         <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
-          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+          <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Entry Details
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -245,7 +245,7 @@ export default function TimeEntryDetailPage() {
         {/* Description */}
         {entry.description && (
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Description
             </h3>
             <p className="text-[var(--text-secondary)]">{entry.description}</p>
@@ -255,7 +255,7 @@ export default function TimeEntryDetailPage() {
         {/* Notes */}
         {entry.notes && (
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Notes
             </h3>
             <p className="text-[var(--text-secondary)]">{entry.notes}</p>
@@ -265,7 +265,7 @@ export default function TimeEntryDetailPage() {
         {/* Approval Info */}
         {entry.approvedDate && (
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Approval Information
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -298,7 +298,7 @@ export default function TimeEntryDetailPage() {
           <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-2xl p-6">
             <div className="flex items-center gap-4 mb-3">
               <XCircle className="h-5 w-5 text-danger-500" />
-              <h3 className="text-lg font-semibold text-danger-700 dark:text-danger-400">
+              <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">
                 Rejection Reason
               </h3>
             </div>
@@ -310,7 +310,7 @@ export default function TimeEntryDetailPage() {
         <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => router.push('/time-tracking')}
-            className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+            className="px-6 py-4 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
           >
             Back to Time Tracking
           </button>
@@ -320,14 +320,14 @@ export default function TimeEntryDetailPage() {
               <button
                 onClick={() => setDeleteConfirm(true)}
                 disabled={deleteMutation.isPending}
-                className="px-6 py-3 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors disabled:opacity-50"
+                className="px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors disabled:opacity-50"
               >
                 Delete
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitMutation.isPending}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
               >
                 {submitMutation.isPending ? (
                   <>

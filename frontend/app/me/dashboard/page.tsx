@@ -220,10 +220,10 @@ export default function MyDashboardPage() {
       breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}
     >
       {/* Two independent columns — bento grid with staggered animations */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         {/* ─── Left Column (5/12) ─── */}
-        <div className="lg:col-span-5 space-y-5">
+        <div className="lg:col-span-5 space-y-6">
           {/* Welcome Banner — hero card, enters first */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -269,7 +269,7 @@ export default function MyDashboardPage() {
           )}
 
           {/* Holiday + Team Presence — side-by-side bento pair on large screens */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -311,7 +311,7 @@ export default function MyDashboardPage() {
         </div>
 
         {/* ─── Right Column (7/12) ─── */}
-        <div className="lg:col-span-7 space-y-5">
+        <div className="lg:col-span-7 space-y-6">
           {/* Post Composer — Post / Poll / Praise */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}

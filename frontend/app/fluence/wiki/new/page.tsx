@@ -325,7 +325,7 @@ export default function CreateWikiPage() {
                             key={opt.value}
                             type="button"
                             onClick={() => field.onChange(opt.value)}
-                            className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-lg text-left transition-all ${
+                            className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg text-left transition-all ${
                               isSelected
                                 ? 'bg-accent-500/10 ring-1 ring-accent-500/30'
                                 : 'hover:bg-[var(--bg-secondary)]'

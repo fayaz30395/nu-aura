@@ -98,7 +98,7 @@ export default function LinkedInPostsPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
+                <h1 className="text-2xl font-bold skeuo-emboss">
                   <Linkedin className="w-8 h-8 text-accent-600" />
                   LinkedIn Posts
                 </h1>
@@ -171,7 +171,7 @@ export default function LinkedInPostsPage() {
                     className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-[var(--border-main)] overflow-hidden group"
                   >
                     {/* Card Header */}
-                    <div className="p-5 border-b border-[var(--border-main)]">
+                    <div className="p-6 border-b border-[var(--border-main)]">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
@@ -195,7 +195,7 @@ export default function LinkedInPostsPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-5 space-y-4">
+                    <div className="p-6 space-y-4">
                       <p className="text-sm text-[var(--text-secondary)] line-clamp-3">
                         {post.contentSnippet}
                       </p>
@@ -244,7 +244,7 @@ export default function LinkedInPostsPage() {
                     </div>
 
                     {/* Footer */}
-                    <div className="px-5 py-4 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]">
+                    <div className="px-6 py-4 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
@@ -272,17 +272,17 @@ export default function LinkedInPostsPage() {
 
                     {/* Actions */}
                     {isAdmin(user?.roles) && (
-                      <div className="px-5 py-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-[var(--border-main)]">
+                      <div className="px-6 py-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-[var(--border-main)]">
                         <button
                           onClick={() => handleEditPost(post)}
-                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors"
                         >
                           <Edit2 className="w-4 h-4" />
                           Edit
                         </button>
                         <button
                           onClick={() => setShowDeleteConfirm(post.id)}
-                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                           Delete
@@ -615,7 +615,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                           errors.likes ? 'border-danger-500' : 'border-[var(--border-main)]'
                         }`}
                       />
@@ -640,7 +640,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                           errors.comments ? 'border-danger-500' : 'border-[var(--border-main)]'
                         }`}
                       />
@@ -665,7 +665,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
                           errors.shares ? 'border-danger-500' : 'border-[var(--border-main)]'
                         }`}
                       />

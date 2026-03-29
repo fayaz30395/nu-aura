@@ -16,7 +16,7 @@ export function StatusFilterTabs({ statusFilter, onFilterChange }: StatusFilterT
         <motion.button
           key={tab}
           onClick={() => onFilterChange(tab)}
-          className="relative px-4 py-3 text-sm font-medium transition-colors"
+          className="relative px-4 py-4 text-sm font-medium transition-colors"
           whileHover={{ y: -1 }}
           whileTap={{ y: 0 }}
         >

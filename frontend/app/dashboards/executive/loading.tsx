@@ -17,7 +17,7 @@ export default function ExecutiveDashboardLoading() {
       {/* Top KPI tiles */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-5 space-y-4">
+          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="h-3 w-28 bg-[var(--bg-surface)] rounded" />
               <div className="h-8 w-8 bg-[var(--bg-surface)] rounded-lg" />
@@ -33,7 +33,7 @@ export default function ExecutiveDashboardLoading() {
 
       {/* Second row: large chart + side metrics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-5 space-y-4">
+        <div className="lg:col-span-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="h-5 w-44 bg-[var(--bg-surface)] rounded" />
             <div className="flex gap-2">
@@ -60,7 +60,7 @@ export default function ExecutiveDashboardLoading() {
       {/* Third row: two equal charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-5 space-y-4">
+          <div key={i} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-6 space-y-4">
             <div className="h-5 w-36 bg-[var(--bg-surface)] rounded" />
             <div className="h-52 bg-[var(--bg-surface)] rounded-lg" />
           </div>
@@ -73,7 +73,7 @@ export default function ExecutiveDashboardLoading() {
           <div className="h-5 w-36 bg-[var(--bg-surface)] rounded" />
         </div>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center gap-6 px-4 py-3 border-b border-[var(--border-main)]">
+          <div key={i} className="flex items-center gap-6 px-4 py-4 border-b border-[var(--border-main)]">
             <div className="h-4 w-36 bg-[var(--bg-surface)] rounded" />
             <div className="h-4 w-16 bg-[var(--bg-surface)] rounded" />
             <div className="h-4 w-20 bg-[var(--bg-surface)] rounded" />

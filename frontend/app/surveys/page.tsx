@@ -416,7 +416,7 @@ export default function SurveysPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm opacity-80">{survey.surveyCode}</p>
-                        <h3 className="text-lg font-semibold">{survey.title}</h3>
+                        <h3 className="text-xl font-semibold">{survey.title}</h3>
                       </div>
                       <Badge variant={toBadgeVariant(survey.status)}>
                         {survey.status}

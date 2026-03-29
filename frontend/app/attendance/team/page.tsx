@@ -505,10 +505,10 @@ export default function TeamAttendancePage() {
                           <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('checkOutTime')}>
                             Check Out {sortConfig.key === 'checkOutTime' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                           </th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('totalWorkHours')}>
+                          <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('totalWorkHours')}>
                             Work Hours {sortConfig.key === 'totalWorkHours' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                           </th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('status')}>
+                          <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('status')}>
                             Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                           </th>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
@@ -526,7 +526,7 @@ export default function TeamAttendancePage() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: index * 0.02 }}
-                            className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
+                            className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                           >
                             <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                               {record.employeeId.substring(0, 12)}
@@ -537,8 +537,8 @@ export default function TeamAttendancePage() {
                             <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                               {formatTime(record.checkOutTime)}
                             </td>
-                            <td className="px-6 py-4 text-sm">
-                              <div className="flex items-center gap-2">
+                            <td className="px-6 py-4 text-sm text-right">
+                              <div className="flex items-center justify-end gap-2">
                                 <span className="text-[var(--text-secondary)] min-w-max">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
                                 <div className="w-16 h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                                   <div
@@ -550,7 +550,7 @@ export default function TeamAttendancePage() {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-6 py-4 text-center">
                               <span className={`badge-status ${
                                 record.status === 'PRESENT' ? 'status-success' :
                                 record.status === 'ABSENT' ? 'status-danger' :
@@ -692,7 +692,7 @@ export default function TeamAttendancePage() {
                         </div>
 
                         {record.lateByMinutes && record.lateByMinutes > 0 && (
-                          <div className="px-3 py-2 rounded-lg bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800">
+                          <div className="px-4 py-2 rounded-lg bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800">
                             <p className="text-xs font-medium text-warning-700 dark:text-warning-400">
                               Late by {record.lateByMinutes} minutes
                             </p>

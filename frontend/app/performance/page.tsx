@@ -312,7 +312,7 @@ export default function PerformancePage() {
             className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
           >
             <div className="p-4">
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-4">
                 <div className={`p-2.5 rounded-lg ${module.lightColor}`}>
                   <module.icon className={`h-5 w-5 ${module.textColor}`} />
                 </div>

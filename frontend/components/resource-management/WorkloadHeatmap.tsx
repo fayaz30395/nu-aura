@@ -54,13 +54,13 @@ export function WorkloadHeatmap({
           {/* Header */}
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 min-w-[200px] bg-white px-4 py-3 text-left text-sm font-medium text-surface-700 dark:bg-surface-900 dark:text-surface-300">
+              <th className="sticky left-0 z-10 min-w-[200px] bg-white px-4 py-2 text-left text-sm font-medium text-surface-700 dark:bg-surface-900 dark:text-surface-300">
                 Employee
               </th>
               {weeks.map((week) => (
                 <th
                   key={week.weekStart}
-                  className="px-2 py-3 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
+                  className="px-2 py-4 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
                   style={{ minWidth: '60px' }}
                 >
                   {week.label}

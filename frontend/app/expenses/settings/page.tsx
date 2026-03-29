@@ -173,7 +173,7 @@ export default function ExpenseSettingsPage() {
   const categories = categoriesData?.content || [];
   const policies = policiesData?.content || [];
 
-  const inputClass = 'w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2';
+  const inputClass = 'w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2';
 
   return (
     <AppLayout>
@@ -211,13 +211,13 @@ export default function ExpenseSettingsPage() {
           {activeTab === 'categories' && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
                   <Tag className="w-5 h-5" />
                   Expense Categories
                 </h2>
                 <button
                   onClick={openCategoryCreate}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Add Category
@@ -240,7 +240,7 @@ export default function ExpenseSettingsPage() {
                           )}
                         </div>
                         {cat.description && <p className="text-sm text-surface-500 mt-0.5">{cat.description}</p>}
-                        <div className="flex gap-3 mt-1 text-xs text-surface-400">
+                        <div className="flex gap-4 mt-1 text-xs text-surface-400">
                           {cat.glCode && <span>GL: {cat.glCode}</span>}
                           {cat.maxAmount && <span>Max: {cat.maxAmount.toLocaleString()}</span>}
                         </div>
@@ -279,13 +279,13 @@ export default function ExpenseSettingsPage() {
           {activeTab === 'policies' && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
                   <Shield className="w-5 h-5" />
                   Expense Policies
                 </h2>
                 <button
                   onClick={openPolicyCreate}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Add Policy
@@ -308,7 +308,7 @@ export default function ExpenseSettingsPage() {
                           )}
                         </div>
                         {pol.description && <p className="text-sm text-surface-500 mt-0.5">{pol.description}</p>}
-                        <div className="flex flex-wrap gap-3 mt-1 text-xs text-surface-400">
+                        <div className="flex flex-wrap gap-4 mt-1 text-xs text-surface-400">
                           {pol.dailyLimit && <span>Daily: {pol.dailyLimit.toLocaleString()}</span>}
                           {pol.monthlyLimit && <span>Monthly: {pol.monthlyLimit.toLocaleString()}</span>}
                           {pol.yearlyLimit && <span>Yearly: {pol.yearlyLimit.toLocaleString()}</span>}

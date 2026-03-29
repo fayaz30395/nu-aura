@@ -413,7 +413,7 @@ export default function ProjectCalendarPage() {
             <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
               <button
                 onClick={() => setViewMode('timeline')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
                   ? 'bg-[var(--bg-surface)] text-accent-700 shadow-sm'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
@@ -423,7 +423,7 @@ export default function ProjectCalendarPage() {
               </button>
               <button
                 onClick={() => setViewMode('calendar')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
                   ? 'bg-[var(--bg-surface)] text-accent-700 shadow-sm'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
@@ -464,7 +464,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="">All Status</option>
                   <option value="PLANNED">Planned</option>
@@ -476,7 +476,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="">All Priority</option>
                   <option value="LOW">Low</option>
@@ -514,7 +514,7 @@ export default function ProjectCalendarPage() {
                       <button
                         key={level}
                         onClick={() => setZoomLevel(level)}
-                        className={`px-3 py-1.5 text-sm rounded capitalize ${zoomLevel === level
+                        className={`px-4 py-1.5 text-sm rounded capitalize ${zoomLevel === level
                           ? 'bg-[var(--bg-surface)] shadow text-accent-700 dark:text-accent-400'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                           }`}
@@ -535,7 +535,7 @@ export default function ProjectCalendarPage() {
                   </button>
                   <button
                     onClick={() => setCurrentDate(new Date())}
-                    className="px-3 py-2 text-sm rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] font-medium"
+                    className="px-4 py-2 text-sm rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] font-medium"
                   >
                     {viewMode === 'timeline' ? 'Today' : currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   </button>
@@ -697,7 +697,7 @@ export default function ProjectCalendarPage() {
                   {ganttItems.length === 0 && !loading && (
                     <div className="p-12 text-center">
                       <CalendarIcon className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                         No Projects Found
                       </h3>
                       <p className="text-[var(--text-secondary)] mb-4">

@@ -506,32 +506,32 @@ export default function AssetManagementPage() {
                 <table className="table-aura">
                   <thead>
                     <tr>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Asset
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Category
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Assigned To
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Value
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Location
                       </th>
-                      <th className="skeuo-table-header px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      <th className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredAssets.map((asset) => (
-                      <tr key={asset.id}>
+                      <tr key={asset.id} className="h-11">
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-4">
                             <div className={`rounded-lg p-2 ${getCategoryColor(asset.category)}`}>
@@ -548,7 +548,7 @@ export default function AssetManagementPage() {
                             {asset.category.replace('_', ' ')}
                           </span>
                         </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                        <td className="px-4 py-4 whitespace-nowrap text-center">
                           <span className={getStatusColor(asset.status)}>
                             {asset.status.replace('_', ' ')}
                           </span>
@@ -558,7 +558,7 @@ export default function AssetManagementPage() {
                             {asset.assignedToName || '-'}
                           </span>
                         </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                        <td className="px-4 py-4 whitespace-nowrap text-right">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {formatCurrency(asset.currentValue)}
                           </span>
@@ -579,7 +579,7 @@ export default function AssetManagementPage() {
                             <div className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(asset)}
-                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--border-focus)]"
+                                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--border-focus)]"
                               >
                                 <Eye className="h-4 w-4" />
                                 View Details
@@ -587,7 +587,7 @@ export default function AssetManagementPage() {
                               <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleOpenEditModal(asset)}
-                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <Edit className="h-4 w-4" />
                                   Edit
@@ -597,7 +597,7 @@ export default function AssetManagementPage() {
                                 <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
                                   <button
                                     onClick={() => handleAssignClick(asset)}
-                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <UserPlus className="h-4 w-4" />
                                     Assign
@@ -608,7 +608,7 @@ export default function AssetManagementPage() {
                                 <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
                                   <button
                                     onClick={() => handleReturn(asset)}
-                                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <RotateCcw className="h-4 w-4" />
                                     Return
@@ -618,7 +618,7 @@ export default function AssetManagementPage() {
                               <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleDeleteClick(asset)}
-                                  className="w-full px-3 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
+                                  className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   Delete
@@ -905,7 +905,7 @@ export default function AssetManagementPage() {
                   <span className={getStatusColor(selectedAsset.status)}>
                     {selectedAsset.status.replace('_', ' ')}
                   </span>
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${getCategoryColor(selectedAsset.category)}`}>
+                  <span className={`px-4 py-1 text-sm font-medium rounded-full ${getCategoryColor(selectedAsset.category)}`}>
                     {selectedAsset.category.replace('_', ' ')}
                   </span>
                 </div>

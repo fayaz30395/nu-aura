@@ -41,7 +41,7 @@ export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
         )}
       </div>
 
-      <div className="mt-4 flex items-end justify-between gap-3">
+      <div className="mt-4 flex items-end justify-between gap-4">
         <div className="text-stat-large">{value}</div>
         <span className={`badge-status ${trendTone}`}>
           {trendLabel} {change}

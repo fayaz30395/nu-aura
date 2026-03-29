@@ -219,7 +219,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
             <CardContent className="flex flex-col justify-between p-6 relative z-10">
               <div className="flex items-start justify-between mb-6">
                 <div className="space-y-1">
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider ${
+                  <div className={`inline-flex items-center gap-1.5 px-4 py-1 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider ${
                     dayComplete ? 'bg-success-500/25 text-success-200' : isCheckedIn ? 'bg-success-400/25 text-success-200' : 'bg-white/15 text-white/80'
                   }`}>
                     <div className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? 'bg-success-400 animate-pulse' : dayComplete ? 'bg-success-400' : 'bg-white/50'}`} />

@@ -281,7 +281,7 @@ export default function MyAttendancePage() {
     <AppLayout activeMenuItem="my-attendance">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">My Attendance</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">My Attendance</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track your attendance and working hours</p>
         </div>
 
@@ -302,7 +302,7 @@ export default function MyAttendancePage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">Today&apos;s Status</h3>
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">Today&apos;s Status</h3>
                 {todayAttendance && (
                   <div className="mt-2 space-y-1">
                     <p className="text-sm text-[var(--text-secondary)]">
@@ -332,7 +332,7 @@ export default function MyAttendancePage() {
                   <button
                     onClick={handleCheckIn}
                     disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-3 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogIn className="h-5 w-5" />
                     {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In'}
@@ -342,7 +342,7 @@ export default function MyAttendancePage() {
                   <button
                     onClick={handleCheckOut}
                     disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-3 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-6 py-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogOut className="h-5 w-5" />
                     {checkIn.isPending || checkOut.isPending ? 'Checking Out...' : 'Check Out'}
@@ -352,7 +352,7 @@ export default function MyAttendancePage() {
                   <button
                     onClick={handleCheckIn}
                     disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-3 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogIn className="h-5 w-5" />
                     {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In Again'}
@@ -370,7 +370,7 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Present Days</p>
-                  <p className="text-3xl font-bold text-success-600 mt-2 skeuo-emboss">{monthStats.present}</p>
+                  <p className="text-2xl font-bold skeuo-emboss">{monthStats.present}</p>
                 </div>
                 <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-success-600" />
@@ -384,7 +384,7 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Absent Days</p>
-                  <p className="text-3xl font-bold text-danger-600 mt-2 skeuo-emboss">{monthStats.absent}</p>
+                  <p className="text-2xl font-bold skeuo-emboss">{monthStats.absent}</p>
                 </div>
                 <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
                   <XCircle className="h-6 w-6 text-danger-600" />
@@ -398,7 +398,7 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">On Leave</p>
-                  <p className="text-3xl font-bold text-accent-600 mt-2 skeuo-emboss">{monthStats.leave}</p>
+                  <p className="text-2xl font-bold skeuo-emboss">{monthStats.leave}</p>
                 </div>
                 <div className="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center">
                   <Coffee className="h-6 w-6 text-accent-600" />
@@ -412,7 +412,7 @@ export default function MyAttendancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Avg. Hours/Day</p>
-                  <p className="text-3xl font-bold text-accent-800 mt-2 skeuo-emboss">
+                  <p className="text-2xl font-bold skeuo-emboss">
                     {monthStats.avgHours.toFixed(1)}
                   </p>
                 </div>
@@ -528,7 +528,7 @@ export default function MyAttendancePage() {
                     <>
                       <div>
                         <p className="text-sm text-[var(--text-secondary)]">Status</p>
-                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
                           {getStatusIcon(selectedAttendance.status)}
                           {selectedAttendance.status.replace(/_/g, ' ')}
                         </span>
@@ -652,7 +652,7 @@ export default function MyAttendancePage() {
       {showRegularizationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-md card-aura">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
               Request Regularization
             </h3>
             <div className="mb-4">
@@ -662,7 +662,7 @@ export default function MyAttendancePage() {
               <textarea
                 value={regularizationReason}
                 onChange={(e) => setRegularizationReason(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                 rows={4}
                 placeholder="Please explain why you need regularization..."
               />

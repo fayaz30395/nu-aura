@@ -200,7 +200,7 @@ export default function ReferralsPage() {
           </div>
           <button
             onClick={() => setActiveTab('submit')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
           >
             <Plus className="h-5 w-5" />
             Submit Referral
@@ -220,8 +220,8 @@ export default function ReferralsPage() {
                 key={stat.label}
                 className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200 skeuo-card"
               >
-                <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
+                <div className="flex items-center gap-4">
+                  <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
                     <stat.icon className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -292,19 +292,19 @@ export default function ReferralsPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                           Candidate
                         </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                           Position
                         </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                           Status
                         </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                           Submitted
                         </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                           Bonus
                         </th>
                       </tr>
@@ -362,7 +362,7 @@ export default function ReferralsPage() {
             {submitSuccess ? (
               <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
                 <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-success-800 dark:text-success-300">
+                <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                   Referral Submitted Successfully!
                 </h3>
                 <p className="text-sm text-success-600 dark:text-success-400 mt-1">
@@ -372,9 +372,9 @@ export default function ReferralsPage() {
             ) : (
               <form
                 onSubmit={handleSubmit(onSubmitReferral)}
-                className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-5 skeuo-card"
+                className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-6 skeuo-card"
               >
-                <h2 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
                   Submit a Referral
                 </h2>
 
@@ -386,7 +386,7 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('candidateName')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="Full name"
                     />
                     {errors.candidateName && (
@@ -402,7 +402,7 @@ export default function ReferralsPage() {
                     <input
                       {...register('candidateEmail')}
                       type="email"
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="candidate@email.com"
                     />
                     {errors.candidateEmail && (
@@ -417,7 +417,7 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('candidatePhone')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="+1 (555) 000-0000"
                     />
                   </div>
@@ -429,7 +429,7 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('candidateLinkedin')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="https://linkedin.com/in/..."
                     />
                   </div>
@@ -441,7 +441,7 @@ export default function ReferralsPage() {
                     </label>
                     <input
                       {...register('jobTitle')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="e.g., Senior Software Engineer"
                     />
                     {errors.jobTitle && (
@@ -456,7 +456,7 @@ export default function ReferralsPage() {
                     </label>
                     <select
                       {...register('relationship')}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >
                       {(Object.entries(RELATIONSHIP_LABELS) as [ReferralRelationship, string][]).map(
                         ([value, label]) => (
@@ -480,12 +480,12 @@ export default function ReferralsPage() {
                   <textarea
                     {...register('referrerNotes')}
                     rows={3}
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
+                    className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                     placeholder="Why do you recommend this candidate?"
                   />
                 </div>
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-4">
                   <button
                     type="button"
                     onClick={() => {
@@ -499,7 +499,7 @@ export default function ReferralsPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting || submitReferral.isPending}
-                    className="px-5 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitReferral.isPending ? 'Submitting...' : 'Submit Referral'}
                   </button>
@@ -531,7 +531,7 @@ export default function ReferralsPage() {
                 {policies.map((policy) => (
                   <div
                     key={policy.id}
-                    className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-5 skeuo-card"
+                    className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 skeuo-card"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div>
@@ -554,7 +554,7 @@ export default function ReferralsPage() {
                         {policy.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="text-[var(--text-muted)]">Base Bonus</span>
                         <p className="font-medium text-[var(--text-primary)]">
@@ -614,22 +614,22 @@ export default function ReferralsPage() {
                       <table className="w-full">
                         <thead>
                           <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                               Referrer
                             </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                               Candidate
                             </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                               Position
                             </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                               Status
                             </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                               Submitted
                             </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                               Actions
                             </th>
                           </tr>
@@ -704,14 +704,14 @@ export default function ReferralsPage() {
                         <button
                           disabled={managePage === 0}
                           onClick={() => setManagePage((p) => Math.max(0, p - 1))}
-                          className="px-3 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
+                          className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
                         >
                           Previous
                         </button>
                         <button
                           disabled={managePage >= allReferralsData.totalPages - 1}
                           onClick={() => setManagePage((p) => p + 1)}
-                          className="px-3 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
+                          className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
                         >
                           Next
                         </button>

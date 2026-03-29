@@ -167,7 +167,7 @@ export default function EventDetailPage() {
                 {event.title}
               </h1>
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+                className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
               >
                 <StatusIcon className="h-4 w-4" />
                 {event.status}
@@ -183,7 +183,7 @@ export default function EventDetailPage() {
         <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-4 mb-4">
             <Calendar className="h-6 w-6" />
-            <h2 className="text-lg font-semibold">Event Time</h2>
+            <h2 className="text-xl font-semibold">Event Time</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -323,7 +323,7 @@ export default function EventDetailPage() {
         {/* Description */}
         {event.description && (
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Description
             </h3>
             <p className="text-[var(--text-secondary)] whitespace-pre-wrap">
@@ -335,7 +335,7 @@ export default function EventDetailPage() {
         {/* Notes */}
         {event.notes && (
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Notes
             </h3>
             <p className="text-[var(--text-secondary)]">{event.notes}</p>
@@ -347,7 +347,7 @@ export default function EventDetailPage() {
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                   Calendar Sync
                 </h3>
                 <p className="text-sm text-[var(--text-muted)] mt-1">
@@ -358,7 +358,7 @@ export default function EventDetailPage() {
                 </p>
               </div>
               <span
-                className={`px-3 py-1 rounded-lg text-sm font-medium ${
+                className={`px-4 py-1 rounded-lg text-sm font-medium ${
                   event.syncStatus === 'SYNCED'
                     ? 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300'
                     : event.syncStatus === 'SYNC_ERROR'
@@ -376,7 +376,7 @@ export default function EventDetailPage() {
         <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => router.push('/calendar')}
-            className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+            className="px-6 py-4 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
           >
             Back to Calendar
           </button>
@@ -387,7 +387,7 @@ export default function EventDetailPage() {
                 <button
                   onClick={handleSyncToGoogle}
                   disabled={syncToGoogleMutation.isPending}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-xl font-medium hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-xl font-medium hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors disabled:opacity-50"
                 >
                   {syncToGoogleMutation.isPending ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -401,7 +401,7 @@ export default function EventDetailPage() {
               <PermissionGate permission={Permissions.CALENDAR_DELETE}>
                 <button
                   onClick={handleDelete}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors"
+                  className="flex items-center justify-center gap-2 px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors"
                 >
                   <Trash2 className="h-5 w-5" />
                   Delete

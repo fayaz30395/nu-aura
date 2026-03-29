@@ -489,7 +489,7 @@ export default function OneOnOnePage() {
               <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-sm skeuo-card mb-6">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                   <div>
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-4 mb-2">
                       <h1 className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
                         {meeting.title}
                       </h1>
@@ -549,7 +549,7 @@ export default function OneOnOnePage() {
                           <button
                             onClick={handleStartMeeting}
                             disabled={startMutation.isPending}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors"
+                            className="flex items-center gap-1 px-4 py-1.5 text-sm bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors"
                           >
                             <Play className="h-3.5 w-3.5" /> Start
                           </button>
@@ -558,20 +558,20 @@ export default function OneOnOnePage() {
                       <PermissionGate permission={Permissions.MEETING_CREATE}>
                         <button
                           onClick={() => setShowCompleteModal(true)}
-                          className="flex items-center gap-1 px-3 py-1.5 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
+                          className="flex items-center gap-1 px-4 py-1.5 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
                         >
                           <CheckCircle2 className="h-3.5 w-3.5" /> Complete
                         </button>
                       </PermissionGate>
                       <button
                         onClick={() => setShowRescheduleModal(true)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                        className="flex items-center gap-1 px-4 py-1.5 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                       >
                         <CalendarClock className="h-3.5 w-3.5" /> Reschedule
                       </button>
                       <button
                         onClick={() => setShowCancelModal(true)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm border border-danger-300 text-danger-600 dark:text-danger-400 rounded-lg hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors"
+                        className="flex items-center gap-1 px-4 py-1.5 text-sm border border-danger-300 text-danger-600 dark:text-danger-400 rounded-lg hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors"
                       >
                         <Ban className="h-3.5 w-3.5" /> Cancel
                       </button>
@@ -587,7 +587,7 @@ export default function OneOnOnePage() {
                     <button
                       key={tab}
                       onClick={() => setDetailTab(tab)}
-                      className={`flex-1 px-4 py-3 text-sm font-medium transition-colors capitalize ${
+                      className={`flex-1 px-4 py-4 text-sm font-medium transition-colors capitalize ${
                         detailTab === tab
                           ? 'border-b-2 border-accent-700 text-accent-700 dark:text-accent-400'
                           : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -598,7 +598,7 @@ export default function OneOnOnePage() {
                   ))}
                 </div>
 
-                <div className="p-5">
+                <div className="p-6">
                   {/* ── Agenda / Talking Points Tab ── */}
                   {detailTab === 'agenda' && (
                     <div>
@@ -616,12 +616,12 @@ export default function OneOnOnePage() {
 
                       {showAgendaForm && (
                         <form onSubmit={agendaForm.handleSubmit(handleAddAgenda)} className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
-                          <div className="space-y-3">
+                          <div className="space-y-4">
                             <div>
                               <input
                                 {...agendaForm.register('title')}
                                 placeholder="What would you like to discuss?"
-                                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {agendaForm.formState.errors.title && (
                                 <p className="text-xs text-danger-500 mt-1">{agendaForm.formState.errors.title.message}</p>
@@ -631,12 +631,12 @@ export default function OneOnOnePage() {
                               {...agendaForm.register('description')}
                               placeholder="Additional details (optional)"
                               rows={2}
-                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
-                            <div className="flex gap-3">
+                            <div className="flex gap-4">
                               <select
                                 {...agendaForm.register('priority')}
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
+                                className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >
                                 <option value="LOW">Low</option>
                                 <option value="MEDIUM">Medium</option>
@@ -645,7 +645,7 @@ export default function OneOnOnePage() {
                               </select>
                               <select
                                 {...agendaForm.register('category')}
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
+                                className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >
                                 <option value="">Category</option>
                                 <option value="WORK_UPDATES">Work Updates</option>
@@ -688,7 +688,7 @@ export default function OneOnOnePage() {
                           {(meeting.agendaItems || []).map((item: MeetingAgendaItemResponse) => (
                             <div
                               key={item.id}
-                              className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${
+                              className={`flex items-start gap-4 p-4 rounded-lg border transition-colors ${
                                 item.isDiscussed
                                   ? 'bg-success-50/50 dark:bg-success-900/10 border-success-200 dark:border-success-800'
                                   : 'bg-[var(--bg-card)] border-[var(--border-main)]'
@@ -770,11 +770,11 @@ export default function OneOnOnePage() {
 
                       {showActionForm && (
                         <form onSubmit={actionForm.handleSubmit(handleAddAction)} className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
-                          <div className="space-y-3">
+                          <div className="space-y-4">
                             <input
                               {...actionForm.register('title')}
                               placeholder="Action item title"
-                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
                             {actionForm.formState.errors.title && (
                               <p className="text-xs text-danger-500">{actionForm.formState.errors.title.message}</p>
@@ -783,34 +783,34 @@ export default function OneOnOnePage() {
                               {...actionForm.register('description')}
                               placeholder="Description (optional)"
                               rows={2}
-                              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-4">
                               <input
                                 {...actionForm.register('assigneeId')}
                                 placeholder="Assignee Employee ID"
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                                className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {actionForm.formState.errors.assigneeId && (
                                 <p className="text-xs text-danger-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
                               )}
                               <select
                                 {...actionForm.register('assigneeRole')}
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
+                                className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >
                                 <option value="EMPLOYEE">Employee</option>
                                 <option value="MANAGER">Manager</option>
                               </select>
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-4">
                               <input
                                 type="date"
                                 {...actionForm.register('dueDate')}
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                                className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               <select
                                 {...actionForm.register('priority')}
-                                className="px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
+                                className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >
                                 <option value="LOW">Low</option>
                                 <option value="MEDIUM">Medium</option>
@@ -848,7 +848,7 @@ export default function OneOnOnePage() {
                           {(meeting.actionItems || []).map((item: MeetingActionItemResponse) => (
                             <div
                               key={item.id}
-                              className="flex items-start gap-3 p-3 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)]"
+                              className="flex items-start gap-4 p-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)]"
                             >
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
@@ -866,7 +866,7 @@ export default function OneOnOnePage() {
                                 {item.description && (
                                   <p className="text-xs text-[var(--text-muted)] mt-0.5">{item.description}</p>
                                 )}
-                                <div className="flex gap-3 mt-1 text-xs text-[var(--text-muted)]">
+                                <div className="flex gap-4 mt-1 text-xs text-[var(--text-muted)]">
                                   <span>Assigned to: {item.assigneeName || item.assigneeRole.toLowerCase()}</span>
                                   {item.dueDate && <span>Due: {formatDate(item.dueDate)}</span>}
                                 </div>
@@ -910,7 +910,7 @@ export default function OneOnOnePage() {
 
                   {/* ── Notes Tab ── */}
                   {detailTab === 'notes' && (
-                    <div className="space-y-5">
+                    <div className="space-y-6">
                       <div>
                         <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                           Shared Notes
@@ -921,7 +921,7 @@ export default function OneOnOnePage() {
                           onChange={(e) => setSharedNotes(e.target.value)}
                           rows={5}
                           placeholder="Write shared meeting notes..."
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -934,7 +934,7 @@ export default function OneOnOnePage() {
                           onChange={(e) => setPrivateNotes(e.target.value)}
                           rows={4}
                           placeholder="Write your private notes..."
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <button
@@ -1007,7 +1007,7 @@ export default function OneOnOnePage() {
                                   {...feedbackForm.register('feedback')}
                                   rows={3}
                                   placeholder="How was this meeting?"
-                                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                                 />
                               </div>
                               <div className="flex gap-2">
@@ -1056,13 +1056,13 @@ export default function OneOnOnePage() {
               {showCancelModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                   <div className="bg-[var(--bg-card)] rounded-lg shadow-xl max-w-md w-full p-6">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Cancel Meeting</h3>
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Cancel Meeting</h3>
                     <textarea
                       value={cancelReason}
                       onChange={(e) => setCancelReason(e.target.value)}
                       placeholder="Reason for cancellation..."
                       rows={3}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
                     />
                     <div className="flex justify-end gap-2">
                       <button
@@ -1087,15 +1087,15 @@ export default function OneOnOnePage() {
               {showRescheduleModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                   <div className="bg-[var(--bg-card)] rounded-lg shadow-xl max-w-md w-full p-6">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Reschedule Meeting</h3>
-                    <div className="space-y-3 mb-4">
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Reschedule Meeting</h3>
+                    <div className="space-y-4 mb-4">
                       <div>
                         <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">New Date</label>
                         <input
                           type="date"
                           value={rescheduleDate}
                           onChange={(e) => setRescheduleDate(e.target.value)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -1104,7 +1104,7 @@ export default function OneOnOnePage() {
                           type="time"
                           value={rescheduleTime}
                           onChange={(e) => setRescheduleTime(e.target.value)}
-                          className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -1131,13 +1131,13 @@ export default function OneOnOnePage() {
               {showCompleteModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                   <div className="bg-[var(--bg-card)] rounded-lg shadow-xl max-w-md w-full p-6">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Complete Meeting</h3>
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Complete Meeting</h3>
                     <textarea
                       value={completeSummary}
                       onChange={(e) => setCompleteSummary(e.target.value)}
                       placeholder="Meeting summary (optional)..."
                       rows={4}
-                      className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700 mb-4"
                     />
                     <div className="flex justify-end gap-2">
                       <button
@@ -1183,14 +1183,14 @@ export default function OneOnOnePage() {
               Schedule 1-on-1 Meeting
             </h1>
 
-            <form onSubmit={scheduleForm.handleSubmit(handleSchedule)} className="space-y-5">
+            <form onSubmit={scheduleForm.handleSubmit(handleSchedule)} className="space-y-6">
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Title *</label>
                 <input
                   {...scheduleForm.register('title')}
                   placeholder="Weekly 1-on-1 check-in"
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.title && (
                   <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.title.message}</p>
@@ -1203,7 +1203,7 @@ export default function OneOnOnePage() {
                 <input
                   {...scheduleForm.register('employeeId')}
                   placeholder="Enter employee ID"
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.employeeId && (
                   <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
@@ -1217,7 +1217,7 @@ export default function OneOnOnePage() {
                   {...scheduleForm.register('description')}
                   placeholder="Meeting agenda or description..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
 
@@ -1228,7 +1228,7 @@ export default function OneOnOnePage() {
                   <input
                     type="date"
                     {...scheduleForm.register('meetingDate')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.meetingDate && (
                     <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.meetingDate.message}</p>
@@ -1239,7 +1239,7 @@ export default function OneOnOnePage() {
                   <input
                     type="time"
                     {...scheduleForm.register('startTime')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.startTime && (
                     <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.startTime.message}</p>
@@ -1252,7 +1252,7 @@ export default function OneOnOnePage() {
                     {...scheduleForm.register('durationMinutes')}
                     min={15}
                     max={480}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                 </div>
               </div>
@@ -1263,7 +1263,7 @@ export default function OneOnOnePage() {
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Type</label>
                   <select
                     {...scheduleForm.register('meetingType')}
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   >
                     <option value="REGULAR">Regular Check-in</option>
                     <option value="PERFORMANCE">Performance Review</option>
@@ -1280,7 +1280,7 @@ export default function OneOnOnePage() {
                   <input
                     {...scheduleForm.register('location')}
                     placeholder="Office / Virtual"
-                    className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                 </div>
               </div>
@@ -1291,7 +1291,7 @@ export default function OneOnOnePage() {
                 <input
                   {...scheduleForm.register('meetingLink')}
                   placeholder="https://meet.google.com/..."
-                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
               </div>
 
@@ -1311,7 +1311,7 @@ export default function OneOnOnePage() {
                       <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Frequency</label>
                       <select
                         {...scheduleForm.register('recurrencePattern')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                       >
                         <option value="WEEKLY">Weekly</option>
                         <option value="BI_WEEKLY">Bi-Weekly</option>
@@ -1324,7 +1324,7 @@ export default function OneOnOnePage() {
                       <input
                         type="date"
                         {...scheduleForm.register('recurrenceEndDate')}
-                        className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                       />
                     </div>
                   </div>
@@ -1332,7 +1332,7 @@ export default function OneOnOnePage() {
               </div>
 
               {/* Submit */}
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-4 pt-2">
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
@@ -1453,7 +1453,7 @@ export default function OneOnOnePage() {
               <button
                 key={tab.key}
                 onClick={() => { setActiveTab(tab.key); setPage(0); }}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-4 text-sm font-medium transition-colors ${
                   activeTab === tab.key
                     ? 'border-b-2 border-accent-700 text-accent-700 dark:text-accent-400'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -1472,7 +1472,7 @@ export default function OneOnOnePage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as MeetingStatus | 'ALL')}
-                  className="px-3 py-1.5 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                  className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="SCHEDULED">Scheduled</option>
@@ -1526,7 +1526,7 @@ export default function OneOnOnePage() {
                           <Repeat className="h-3.5 w-3.5 text-[var(--text-muted)] flex-shrink-0" />
                         )}
                       </div>
-                      <div className="flex gap-3 text-xs text-[var(--text-muted)]">
+                      <div className="flex gap-4 text-xs text-[var(--text-muted)]">
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" /> {formatTime(m.startTime)}
                         </span>
@@ -1553,14 +1553,14 @@ export default function OneOnOnePage() {
                 <button
                   onClick={() => setPage(Math.max(0, page - 1))}
                   disabled={page === 0}
-                  className="px-3 py-1.5 text-xs border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] disabled:opacity-50 hover:bg-[var(--bg-secondary)]"
+                  className="px-4 py-1.5 text-xs border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] disabled:opacity-50 hover:bg-[var(--bg-secondary)]"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setPage(page + 1)}
                   disabled={page >= allMeetingsQuery.data.totalPages - 1}
-                  className="px-3 py-1.5 text-xs border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] disabled:opacity-50 hover:bg-[var(--bg-secondary)]"
+                  className="px-4 py-1.5 text-xs border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] disabled:opacity-50 hover:bg-[var(--bg-secondary)]"
                 >
                   Next
                 </button>

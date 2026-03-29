@@ -202,7 +202,7 @@ export default function SecurityPage() {
                   >
                     <cert.icon className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {cert.name}
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)]">{cert.description}</p>
@@ -217,7 +217,7 @@ export default function SecurityPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
               Comprehensive security architecture
             </h2>
             <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
@@ -238,7 +238,7 @@ export default function SecurityPage() {
                   <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950 flex items-center justify-center mb-4">
                     <feature.icon className="h-6 w-6 text-success-600 dark:text-success-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {feature.title}
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)] mb-4 leading-relaxed">
@@ -266,7 +266,7 @@ export default function SecurityPage() {
             <Badge size="md" variant="info" className="mb-4">
               Compliance
             </Badge>
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
               GDPR & data privacy compliance
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
@@ -280,7 +280,7 @@ export default function SecurityPage() {
                 <div className="flex items-start gap-4">
                   <Check className="h-6 w-6 text-success-500 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                       {feature.title}
                     </h3>
                     <p className="text-sm text-[var(--text-secondary)]">{feature.description}</p>
@@ -299,7 +299,7 @@ export default function SecurityPage() {
             <Badge size="md" variant="primary" className="mb-4">
               Infrastructure
             </Badge>
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
               Enterprise cloud infrastructure
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
@@ -340,7 +340,7 @@ export default function SecurityPage() {
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+          <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Have security questions?
           </h2>
           <p className="text-lg text-[var(--text-secondary)] mb-8">

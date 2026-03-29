@@ -63,7 +63,7 @@ export function ResourceAvailabilityCalendar({
           {/* Header with dates */}
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 min-w-[200px] bg-white px-4 py-3 text-left text-sm font-medium text-surface-700 dark:bg-surface-900 dark:text-surface-300">
+              <th className="sticky left-0 z-10 min-w-[200px] bg-white px-4 py-2 text-left text-sm font-medium text-surface-700 dark:bg-surface-900 dark:text-surface-300">
                 Employee
               </th>
               {dates.map((date) => {

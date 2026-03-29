@@ -24,7 +24,7 @@ const Card = React.forwardRef<
   const paddingStyles = {
     none: '',
     sm: 'p-4',
-    md: 'p-5',
+    md: 'p-6',
     lg: 'p-6',
   };
 

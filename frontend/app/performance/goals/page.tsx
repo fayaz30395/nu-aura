@@ -209,7 +209,7 @@ export default function GoalsPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold skeuo-emboss">Goals</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Goals</h1>
           <PermissionGate permission={Permissions.GOAL_CREATE}>
             <button
               onClick={() => {
@@ -291,7 +291,7 @@ export default function GoalsPage() {
                 <div key={goal.id} className="skeuo-card p-6 hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold mb-2">{goal.title}</h3>
+                      <h3 className="text-xl font-semibold mb-2">{goal.title}</h3>
                       <div className="flex gap-2 mb-3">
                         <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(goal.goalType)}>
                           {goal.goalType}
@@ -333,7 +333,7 @@ export default function GoalsPage() {
                     <PermissionGate permission={Permissions.GOAL_UPDATE}>
                       <button
                         onClick={() => openEditModal(goal)}
-                        className="flex-1 px-3 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
+                        className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
                       >
                         Edit
                       </button>
@@ -341,7 +341,7 @@ export default function GoalsPage() {
                     <PermissionGate permission={Permissions.GOAL_DELETE}>
                       <button
                         onClick={() => openDeleteConfirm(goal)}
-                        className="flex-1 px-3 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
+                        className="flex-1 px-4 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
                       >
                         Delete
                       </button>

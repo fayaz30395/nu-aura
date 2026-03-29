@@ -223,26 +223,26 @@ export default function ProbationPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Employee
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Period
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Status
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Days Left
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Manager
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                 Rating
               </th>
               {showActions && (
-                <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-3">
+                <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
                   Actions
                 </th>
               )}
@@ -379,14 +379,14 @@ export default function ProbationPage() {
           <button
             disabled={page === 0}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
-            className="px-3 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
+            className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
           >
             Previous
           </button>
           <button
             disabled={page >= data.totalPages - 1}
             onClick={() => setPage((p) => p + 1)}
-            className="px-3 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
+            className="px-4 py-1.5 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 transition-colors"
           >
             Next
           </button>
@@ -427,8 +427,8 @@ export default function ProbationPage() {
                 key={stat.label}
                 className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200 skeuo-card"
               >
-                <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
+                <div className="flex items-center gap-4">
+                  <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
                     <stat.icon className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -543,17 +543,17 @@ export default function ProbationPage() {
               {submitSuccess ? (
                 <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
                   <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-success-800 dark:text-success-300">
+                  <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                     Evaluation Submitted Successfully!
                   </h3>
                 </div>
               ) : (
                 <form
                   onSubmit={handleSubmit(onSubmitEvaluation)}
-                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-5 skeuo-card"
+                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-6 skeuo-card"
                 >
                   <div>
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
                       Evaluation for {evaluateTarget.employeeName}
                     </h2>
                     <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -572,7 +572,7 @@ export default function ProbationPage() {
                       </label>
                       <select
                         {...register('evaluationType')}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                        className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       >
                         {(Object.entries(EVALUATION_TYPE_LABELS) as [EvaluationType, string][]).map(
                           ([value, label]) => (
@@ -591,7 +591,7 @@ export default function ProbationPage() {
                       </label>
                       <select
                         {...register('recommendation')}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                        className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       >
                         {(
                           Object.entries(RECOMMENDATION_LABELS) as [ProbationRecommendation, string][]
@@ -623,7 +623,7 @@ export default function ProbationPage() {
                           </label>
                           <select
                             {...register(field.name)}
-                            className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                            className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                           >
                             {[1, 2, 3, 4, 5].map((v) => (
                               <option key={v} value={v}>
@@ -645,7 +645,7 @@ export default function ProbationPage() {
                       <textarea
                         {...register('strengths')}
                         rows={3}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
+                        className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                         placeholder="Key strengths observed..."
                       />
                     </div>
@@ -656,7 +656,7 @@ export default function ProbationPage() {
                       <textarea
                         {...register('areasForImprovement')}
                         rows={3}
-                        className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
+                        className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                         placeholder="Areas needing improvement..."
                       />
                     </div>
@@ -669,7 +669,7 @@ export default function ProbationPage() {
                     <textarea
                       {...register('managerComments')}
                       rows={3}
-                      className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
+                      className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
                       placeholder="Additional comments..."
                     />
                   </div>
@@ -690,7 +690,7 @@ export default function ProbationPage() {
                     </label>
                   </div>
 
-                  <div className="flex justify-end gap-3">
+                  <div className="flex justify-end gap-4">
                     <button
                       type="button"
                       onClick={() => {
@@ -705,7 +705,7 @@ export default function ProbationPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting || addEvaluation.isPending}
-                      className="px-5 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-6 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-lg shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {addEvaluation.isPending ? 'Submitting...' : 'Submit Evaluation'}
                     </button>

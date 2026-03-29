@@ -339,7 +339,7 @@ export default function OKRPage() {
         <select
           value={filterLevel}
           onChange={(e) => setFilterLevel(e.target.value)}
-          className="px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm"
+          className="px-4 py-2 border border-[var(--border-strong)] rounded-md text-sm"
         >
           <option value="ALL">All Levels</option>
           {OBJECTIVE_LEVELS.map((level) => (
@@ -351,7 +351,7 @@ export default function OKRPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm"
+          className="px-4 py-2 border border-[var(--border-strong)] rounded-md text-sm"
         >
           <option value="ALL">All Statuses</option>
           {OBJECTIVE_STATUSES.map((status) => (
@@ -459,7 +459,7 @@ export default function OKRPage() {
 
               {/* Key Results */}
               {expandedObjectives.has(objective.id) && (
-                <div className="border-t border-[var(--border-main)] bg-[var(--bg-surface)] px-4 py-3">
+                <div className="border-t border-[var(--border-main)] bg-[var(--bg-surface)] px-4 py-4">
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="text-sm font-medium text-[var(--text-primary)]">
                       Key Results ({objective.keyResults?.length || 0})
@@ -560,7 +560,7 @@ export default function OKRPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 {editingObjective ? 'Edit Objective' : 'Create Objective'}
               </h2>
             </div>
@@ -572,7 +572,7 @@ export default function OKRPage() {
                 <input
                   type="text"
                   {...objectiveForm.register('title')}
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="What do you want to achieve?"
                 />
                 {objectiveForm.formState.errors.title && (
@@ -585,7 +585,7 @@ export default function OKRPage() {
                 </label>
                 <textarea
                   {...objectiveForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="Why is this important?"
                 />
@@ -598,7 +598,7 @@ export default function OKRPage() {
                   <input
                     type="date"
                     {...objectiveForm.register('startDate')}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
@@ -608,7 +608,7 @@ export default function OKRPage() {
                   <input
                     type="date"
                     {...objectiveForm.register('endDate')}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -619,7 +619,7 @@ export default function OKRPage() {
                   </label>
                   <select
                     {...objectiveForm.register('objectiveLevel')}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   >
                     {OBJECTIVE_LEVELS.map((level) => (
                       <option key={level} value={level}>
@@ -638,7 +638,7 @@ export default function OKRPage() {
                     max={10}
                     step={0.1}
                     {...objectiveForm.register('weight', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -682,7 +682,7 @@ export default function OKRPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Add Key Result</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Add Key Result</h2>
             </div>
             <div className="px-6 py-4 space-y-4">
               <div>
@@ -692,7 +692,7 @@ export default function OKRPage() {
                 <input
                   type="text"
                   {...keyResultForm.register('title')}
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="What measurable outcome will you achieve?"
                 />
                 {keyResultForm.formState.errors.title && (
@@ -705,7 +705,7 @@ export default function OKRPage() {
                 </label>
                 <textarea
                   {...keyResultForm.register('description')}
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={2}
                 />
               </div>
@@ -716,7 +716,7 @@ export default function OKRPage() {
                   </label>
                   <select
                     {...keyResultForm.register('measurementType')}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   >
                     {MEASUREMENT_TYPES.map((type) => (
                       <option key={type} value={type}>
@@ -732,7 +732,7 @@ export default function OKRPage() {
                   <input
                     type="text"
                     {...keyResultForm.register('measurementUnit')}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                     placeholder="%"
                   />
                 </div>
@@ -745,7 +745,7 @@ export default function OKRPage() {
                   <input
                     type="number"
                     {...keyResultForm.register('startValue', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
@@ -755,7 +755,7 @@ export default function OKRPage() {
                   <input
                     type="number"
                     {...keyResultForm.register('targetValue', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                   {keyResultForm.formState.errors.targetValue && (
                     <p className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.targetValue.message}</p>
@@ -771,7 +771,7 @@ export default function OKRPage() {
                     max={10}
                     step={0.1}
                     {...keyResultForm.register('weight', { valueAsNumber: true })}
-                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -782,7 +782,7 @@ export default function OKRPage() {
                 <input
                   type="date"
                   {...keyResultForm.register('dueDate')}
-                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
+                  className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
                 />
               </div>
             </div>

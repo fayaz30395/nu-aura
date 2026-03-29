@@ -58,7 +58,7 @@ export function ScreeningSummaryModal({
             </div>
 
             <div className="flex gap-4 items-center">
-              <span className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
+              <span className={`px-4 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
                 screeningSummary.fitLevel === 'HIGH' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
                 screeningSummary.fitLevel === 'MEDIUM' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
                 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
@@ -66,7 +66,7 @@ export function ScreeningSummaryModal({
                 Fit Level: {screeningSummary.fitLevel}
               </span>
 
-              <span className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
+              <span className={`px-4 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
                 screeningSummary.recommendation === 'ADVANCE' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
                 screeningSummary.recommendation === 'HOLD' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
                 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'

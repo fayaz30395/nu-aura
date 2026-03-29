@@ -119,7 +119,7 @@ export default function MyContentPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                relative px-4 py-3 text-sm font-medium whitespace-nowrap
+                relative px-4 py-4 text-sm font-medium whitespace-nowrap
                 transition-colors duration-200 flex items-center gap-2
                 ${activeTab === tab.id
                   ? 'text-[var(--accent-700)] dark:text-[var(--accent-400)]'

@@ -95,22 +95,22 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
-              <th className="px-4 py-3 text-left font-semibold text-[var(--text-primary)]">Event</th>
-              <th className="px-4 py-3 text-left font-semibold text-[var(--text-primary)]">Entity</th>
-              <th className="px-4 py-3 text-left font-semibold text-[var(--text-primary)]">Status</th>
-              <th className="px-4 py-3 text-left font-semibold text-[var(--text-primary)]">Duration</th>
-              <th className="px-4 py-3 text-left font-semibold text-[var(--text-primary)]">Timestamp</th>
+              <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Event</th>
+              <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Entity</th>
+              <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Status</th>
+              <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Duration</th>
+              <th className="px-4 py-2 text-left font-semibold text-[var(--text-primary)]">Timestamp</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-main)]">
             {data.content.map((event: IntegrationEventLog) => (
               <tr key={event.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
-                <td className="px-4 py-3">
+                <td className="px-4 py-4">
                   <code className="text-xs bg-[var(--bg-secondary)] px-2 py-1 rounded text-[var(--text-primary)]">
                     {event.eventType}
                   </code>
                 </td>
-                <td className="px-4 py-3 text-[var(--text-secondary)]">
+                <td className="px-4 py-4 text-[var(--text-secondary)]">
                   {event.entityType && event.entityId ? (
                     <span className="text-xs">
                       {event.entityType} ({event.entityId.substring(0, 8)}...)
@@ -119,7 +119,7 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
                     <span className="text-xs text-[var(--text-secondary)]">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-4">
                   <div className="flex items-center gap-2">
                     {getStatusIcon(event.status)}
                     <span className={`text-xs font-medium px-2 py-1 rounded ${getStatusBadgeColor(event.status)}`}>
@@ -127,10 +127,10 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-[var(--text-secondary)]">
+                <td className="px-4 py-4 text-[var(--text-secondary)]">
                   {event.durationMs ? `${event.durationMs}ms` : '—'}
                 </td>
-                <td className="px-4 py-3 text-[var(--text-secondary)] text-xs">
+                <td className="px-4 py-4 text-[var(--text-secondary)] text-xs">
                   {formatDate(event.createdAt)}
                 </td>
               </tr>

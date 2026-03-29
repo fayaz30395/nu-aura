@@ -450,7 +450,7 @@ export default function FeaturesPage() {
                     >
                       <feature.icon className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                       {feature.title}
                     </h3>
                     <p className="text-sm text-[var(--text-secondary)] mb-4 leading-relaxed">
@@ -478,7 +478,7 @@ export default function FeaturesPage() {
           <Badge size="md" variant="info" className="mb-4">
             Integrations
           </Badge>
-          <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+          <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Works with the tools you already use
           </h2>
           <p className="text-lg text-[var(--text-secondary)] mb-12">
@@ -515,7 +515,7 @@ export default function FeaturesPage() {
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+          <h2 className="text-2xl  font-bold text-[var(--text-primary)] mb-4">
             Ready to streamline your HR operations?
           </h2>
           <p className="text-lg text-[var(--text-secondary)] mb-8">

@@ -147,7 +147,7 @@ export default function AdminLeaveRequestsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Leave Request Management</h1>
+          <h1 className="text-2xl font-bold skeuo-emboss">Leave Request Management</h1>
           <p className="mt-2 text-[var(--text-secondary)]">Review and process employee leave requests</p>
         </div>
 
@@ -163,7 +163,7 @@ export default function AdminLeaveRequestsPage() {
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors ${
                 selectedStatus === status
                   ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
@@ -179,28 +179,28 @@ export default function AdminLeaveRequestsPage() {
           <table className="table-aura">
             <thead className="skeuo-table-header">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
                   Request #
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Employee ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Leave Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Dates
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Days
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Applied On
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -277,7 +277,7 @@ export default function AdminLeaveRequestsPage() {
       {showApproveModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">Approve Leave Request</h3>
+            <h3 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Approve Leave Request</h3>
             <p className="text-sm text-[var(--text-secondary)] mb-4">
               Are you sure you want to approve this leave request for {selectedRequest.totalDays} days?
             </p>
@@ -289,7 +289,7 @@ export default function AdminLeaveRequestsPage() {
                 value={approvalComments}
                 onChange={(e) => setApprovalComments(e.target.value)}
                 rows={3}
-                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="input-aura w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Add any comments..."
               />
             </div>
@@ -321,7 +321,7 @@ export default function AdminLeaveRequestsPage() {
       {showRejectModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">Reject Leave Request</h3>
+            <h3 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Reject Leave Request</h3>
             <p className="text-sm text-[var(--text-secondary)] mb-4">
               Please provide a reason for rejecting this leave request.
             </p>
@@ -333,7 +333,7 @@ export default function AdminLeaveRequestsPage() {
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="input-aura w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="input-aura w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Explain why this request is being rejected..."
                 required
               />

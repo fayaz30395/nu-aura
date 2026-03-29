@@ -48,7 +48,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
         <div className="bg-gradient-to-r from-accent-500 to-accent-700 p-4 text-white">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h3 className="text-lg font-semibold truncate">{payslip.employeeName}</h3>
+              <h3 className="text-xl font-semibold truncate">{payslip.employeeName}</h3>
               <p className="text-sm text-accent-100 truncate mt-1">
                 {payslip.payrollRunName}
               </p>
@@ -63,7 +63,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-5">
+        <div className="p-6">
           {/* Period */}
           <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400 mb-4">
             <Calendar className="h-4 w-4" />

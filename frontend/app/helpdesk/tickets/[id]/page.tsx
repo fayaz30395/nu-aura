@@ -206,7 +206,7 @@ export default function TicketDetailPage() {
       <AppLayout activeMenuItem="helpdesk">
         <div className="flex flex-col items-center justify-center py-20">
           <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mb-4" />
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Ticket not found</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Ticket not found</h2>
           <p className="text-sm text-[var(--text-muted)] mt-1 mb-4">The ticket you are looking for does not exist</p>
           <Button variant="outline" onClick={() => router.push('/helpdesk/tickets')} leftIcon={<ArrowLeft className="h-4 w-4" />}>
             Back to Tickets
@@ -246,7 +246,7 @@ export default function TicketDetailPage() {
 
       <div className="space-y-6">
         {/* Back Navigation */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push('/helpdesk/tickets')} leftIcon={<ArrowLeft className="h-4 w-4" />}>
             Back to Tickets
           </Button>
@@ -255,7 +255,7 @@ export default function TicketDetailPage() {
         {/* Ticket Header */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-4 mb-2">
               <span className="text-sm font-mono text-accent-700 dark:text-accent-400">
                 {ticket.ticketNumber || ticket.id.slice(0, 8)}
               </span>
@@ -277,7 +277,7 @@ export default function TicketDetailPage() {
             </PermissionGate>
             <PermissionGate permission={Permissions.HELPDESK_TICKET_RESOLVE}>
               <select
-                className="text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg px-3 py-2 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                className="text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg px-4 py-2 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 value={ticket.status}
                 onChange={(e) => handleStatusChange(e.target.value as TicketStatus)}
               >
@@ -327,7 +327,7 @@ export default function TicketDetailPage() {
                 </div>
                 <div className="space-y-2">
                   {escalations.map((esc) => (
-                    <div key={esc.id} className="flex items-center justify-between bg-white/60 dark:bg-white/5 rounded-lg px-3 py-2">
+                    <div key={esc.id} className="flex items-center justify-between bg-white/60 dark:bg-white/5 rounded-lg px-4 py-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="warning" size="sm">{esc.escalationLevel}</Badge>
                         <span className="text-xs text-[var(--text-secondary)]">
@@ -355,7 +355,7 @@ export default function TicketDetailPage() {
               {commentsLoading ? (
                 <div className="space-y-4">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="flex gap-3">
+                    <div key={i} className="flex gap-4">
                       <Skeleton className="h-8 w-8 rounded-full" />
                       <div className="flex-1 space-y-2">
                         <Skeleton className="h-4 w-32" />
@@ -386,11 +386,11 @@ export default function TicketDetailPage() {
               {/* Add Comment Form */}
               <div className="mt-6 pt-4 border-t border-[var(--border-main)]">
                 <form onSubmit={handleSubmit(onCommentSubmit)}>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <textarea
                       placeholder="Add a comment..."
                       rows={3}
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                      className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                       {...register('comment')}
                     />
                     {errors.comment && <p className="text-sm text-danger-500">{errors.comment.message}</p>}
@@ -421,7 +421,7 @@ export default function TicketDetailPage() {
           {/* Right Column - Metadata */}
           <div className="space-y-6">
             {/* Ticket Details */}
-            <Card className="p-5">
+            <Card className="p-6">
               <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Details</h3>
               <div className="space-y-4">
                 <DetailRow label="Requester" icon={User}>
@@ -459,14 +459,14 @@ export default function TicketDetailPage() {
 
             {/* SLA Metrics */}
             {metrics && (
-              <Card className="p-5">
+              <Card className="p-6">
                 <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">
                   <div className="flex items-center gap-2">
                     <Activity className="h-4 w-4" />
                     SLA Metrics
                   </div>
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-[var(--text-muted)]">First Response</span>
                     <div className="flex items-center gap-2">
@@ -517,7 +517,7 @@ export default function TicketDetailPage() {
 
             {/* Resolution Notes */}
             {ticket.resolutionNotes && (
-              <Card className="p-5">
+              <Card className="p-6">
                 <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Resolution Notes</h3>
                 <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap">{ticket.resolutionNotes}</p>
               </Card>
@@ -539,7 +539,7 @@ interface DetailRowProps {
 
 function DetailRow({ label, icon: Icon, children }: DetailRowProps) {
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex items-start gap-4">
       <Icon className="h-4 w-4 text-[var(--text-muted)] mt-0.5 flex-shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-xs text-[var(--text-muted)] mb-0.5">{label}</p>
@@ -560,7 +560,7 @@ function CommentItem({ comment, currentUserId, onDelete, formatDate }: CommentIt
   const isOwn = currentUserId === comment.commenterId;
 
   return (
-    <div className={`flex gap-3 ${comment.isInternal ? 'bg-warning-50/50 dark:bg-warning-950/10 -mx-2 px-2 py-2 rounded-lg border border-warning-200/50 dark:border-warning-800/30' : ''}`}>
+    <div className={`flex gap-4 ${comment.isInternal ? 'bg-warning-50/50 dark:bg-warning-950/10 -mx-2 px-2 py-2 rounded-lg border border-warning-200/50 dark:border-warning-800/30' : ''}`}>
       <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
         <User className="h-4 w-4 text-accent-700 dark:text-accent-400" />
       </div>

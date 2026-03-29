@@ -218,7 +218,7 @@ function DeviceListPanel({
           {[1, 2, 3].map((i) => (
             <Card key={i}>
               <CardContent className="p-6">
-                <div className="animate-pulse space-y-3">
+                <div className="animate-pulse space-y-4">
                   <div className="h-5 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
                   <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
                   <div className="h-4 w-full rounded bg-gray-200 dark:bg-gray-700" />
@@ -308,7 +308,7 @@ function DeviceCard({
 
   return (
     <Card className="group hover:shadow-md transition-shadow">
-      <CardContent className="p-5">
+      <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -425,7 +425,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800"
       >
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Register Biometric Device
         </h2>
 
@@ -437,7 +437,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             </label>
             <input
               {...register('deviceName')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="e.g., Main Entrance Scanner"
             />
             {errors.deviceName && (
@@ -452,7 +452,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             </label>
             <select
               {...register('deviceType')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               {Object.entries(DEVICE_TYPES).map(([key, { label }]) => (
                 <option key={key} value={key}>
@@ -472,7 +472,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             </label>
             <input
               {...register('serialNumber')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="e.g., ZK-2024-001"
             />
             {errors.serialNumber && (
@@ -481,14 +481,14 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Two Column: Manufacturer + Model */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Manufacturer
               </label>
               <input
                 {...register('manufacturer')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., ZKTeco"
               />
             </div>
@@ -498,21 +498,21 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
               </label>
               <input
                 {...register('model')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., SpeedFace V5L"
               />
             </div>
           </div>
 
           {/* Two Column: IP Address + Location */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 IP Address
               </label>
               <input
                 {...register('ipAddress')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., 192.168.1.100"
               />
             </div>
@@ -522,7 +522,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
               </label>
               <input
                 {...register('locationName')}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="e.g., Building A, Floor 1"
               />
             </div>
@@ -536,13 +536,13 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
             <textarea
               {...register('notes')}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="Additional notes..."
             />
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex justify-end gap-4 pt-2">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>
@@ -582,7 +582,7 @@ function DeviceLogsDrawer({
         className="w-full max-w-xl bg-white shadow-xl dark:bg-gray-800 overflow-y-auto"
       >
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Activity className="h-5 w-5 text-accent-700" />
             Punch Logs
           </h3>
@@ -591,9 +591,9 @@ function DeviceLogsDrawer({
           </Button>
         </div>
 
-        <div className="p-6 space-y-3">
+        <div className="p-6 space-y-4">
           {isLoading ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="animate-pulse h-16 rounded-lg bg-gray-100 dark:bg-gray-700" />
               ))}
@@ -650,7 +650,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
     : Clock;
 
   return (
-    <div className={`rounded-lg border p-3 ${status.bg} dark:bg-opacity-20`}>
+    <div className={`rounded-lg border p-4 ${status.bg} dark:bg-opacity-20`}>
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <StatusIcon className={`h-4 w-4 ${status.text}`} />
@@ -711,7 +711,7 @@ function PendingPunchesPanel({
       </div>
 
       {isLoading ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="animate-pulse h-16 rounded-lg bg-gray-100 dark:bg-gray-700" />
           ))}
@@ -725,7 +725,7 @@ function PendingPunchesPanel({
         </Card>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {data?.content.map((log) => (
               <PunchLogRow key={log.id} log={log} />
             ))}
@@ -800,7 +800,7 @@ function ApiKeysPanel({
               <p className="mt-1 text-xs text-success-700 dark:text-success-400">
                 This key will not be shown again.
               </p>
-              <code className="mt-2 block break-all rounded bg-white px-3 py-2 text-xs font-mono text-gray-900 dark:bg-gray-800 dark:text-white">
+              <code className="mt-2 block break-all rounded bg-white px-4 py-2 text-xs font-mono text-gray-900 dark:bg-gray-800 dark:text-white">
                 {newKey}
               </code>
               <Button
@@ -821,7 +821,7 @@ function ApiKeysPanel({
 
       {/* Keys List */}
       {isLoading ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {[1, 2].map((i) => (
             <div key={i} className="animate-pulse h-16 rounded-lg bg-gray-100 dark:bg-gray-700" />
           ))}
@@ -836,7 +836,7 @@ function ApiKeysPanel({
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {keys?.map((key) => (
             <div
               key={key.id}
@@ -846,7 +846,7 @@ function ApiKeysPanel({
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
                   {key.keyName}
                 </p>
-                <div className="mt-1 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                <div className="mt-1 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                   <span>...{key.keySuffix}</span>
                   <span>Created: {new Date(key.createdAt).toLocaleDateString()}</span>
                   {key.lastUsedAt && (
@@ -921,7 +921,7 @@ function GenerateApiKeyModal({
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800"
       >
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Generate API Key
         </h2>
 
@@ -932,7 +932,7 @@ function GenerateApiKeyModal({
             </label>
             <input
               {...register('keyName')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               placeholder="e.g., Main Entrance Device Key"
             />
             {errors.keyName && (
@@ -940,11 +940,11 @@ function GenerateApiKeyModal({
             )}
           </div>
 
-          <p className="text-xs text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-900/20 rounded-lg p-3">
+          <p className="text-xs text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-900/20 rounded-lg p-4">
             The API key will only be shown once after generation. Make sure to copy and store it securely.
           </p>
 
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex justify-end gap-4 pt-2">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>

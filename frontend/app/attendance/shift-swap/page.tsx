@@ -198,32 +198,32 @@ export default function ShiftSwapPage() {
               <table className="w-full text-sm table-aura">
                 <thead>
                   <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                    <th className="px-4 py-3 text-left font-medium">Type</th>
-                    <th className="px-4 py-3 text-left font-medium">Shift Date</th>
-                    <th className="px-4 py-3 text-left font-medium">Target Date</th>
-                    <th className="px-4 py-3 text-left font-medium">Reason</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
-                    <th className="px-4 py-3 text-left font-medium">Actions</th>
+                    <th className="px-4 py-2 text-left font-medium">Type</th>
+                    <th className="px-4 py-2 text-left font-medium">Shift Date</th>
+                    <th className="px-4 py-2 text-left font-medium">Target Date</th>
+                    <th className="px-4 py-2 text-left font-medium">Reason</th>
+                    <th className="px-4 py-2 text-left font-medium">Status</th>
+                    <th className="px-4 py-2 text-left font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {getDisplayData().map((req: ShiftSwapRequest) => (
                     <tr key={req.id} className="border-b hover:bg-[var(--bg-surface)]">
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4">
                         <span className="flex items-center gap-1.5 text-[var(--text-primary)]">
                           <ArrowLeftRight className="w-3.5 h-3.5" />
                           {swapTypeLabels[req.swapType]}
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-medium">{req.requesterShiftDate}</td>
-                      <td className="px-4 py-3">{req.targetShiftDate ?? '—'}</td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4 font-medium">{req.requesterShiftDate}</td>
+                      <td className="px-4 py-4">{req.targetShiftDate ?? '—'}</td>
+                      <td className="px-4 py-4 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
+                      <td className="px-4 py-4">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium badge-status ${statusColors[req.status]}`}>
                           {req.status.replace(/_/g, ' ')}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4">
                         {activeTab === 'incoming' && req.status === 'PENDING' && (
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline" className="text-success-700 border-success-200"

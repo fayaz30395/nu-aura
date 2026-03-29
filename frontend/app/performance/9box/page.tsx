@@ -319,7 +319,7 @@ export default function NineBoxPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl font-bold skeuo-emboss">
               9-Box Talent Grid
             </h1>
             <p className="text-[var(--text-muted)] mt-1">
@@ -349,7 +349,7 @@ export default function NineBoxPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -367,7 +367,7 @@ export default function NineBoxPage() {
         </div>
 
         {/* Info Banner */}
-        <div className="flex items-start gap-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg px-4 py-3">
+        <div className="flex items-start gap-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg px-4 py-4">
           <Info size={16} className="text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-accent-800 dark:text-accent-300">
             <strong>X-axis:</strong> Performance = manager review rating.
@@ -454,10 +454,10 @@ export default function NineBoxPage() {
 
             {/* Selected Box Details */}
             {selectedBox && selectedBoxPoints && (
-              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`px-3 py-1.5 rounded-lg border ${BOX_CONFIG[selectedBox].bg} ${BOX_CONFIG[selectedBox].border}`}
+                    className={`px-4 py-1.5 rounded-lg border ${BOX_CONFIG[selectedBox].bg} ${BOX_CONFIG[selectedBox].border}`}
                   >
                     <span
                       className={`text-sm font-bold ${BOX_CONFIG[selectedBox].text}`}
@@ -529,7 +529,7 @@ export default function NineBoxPage() {
             )}
 
             {/* All Employees Table */}
-            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
+            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
               <div className="flex items-center gap-4">
                 <h3 className="text-sm font-bold text-[var(--text-primary)]">
                   All Employees

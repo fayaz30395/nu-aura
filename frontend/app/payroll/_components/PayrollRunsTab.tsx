@@ -45,7 +45,7 @@ export function PayrollRunsTab({
             <select
               value={payrollRunFilter}
               onChange={(e) => onFilterChange(e.target.value as PayrollRunStatus | 'ALL')}
-              className="input-aura px-3 py-2 rounded-lg"
+              className="input-aura px-4 py-2 rounded-lg"
             >
               <option value="ALL">All Status</option>
               <option value="DRAFT">Draft</option>
@@ -81,12 +81,12 @@ export function PayrollRunsTab({
           <table className="table-aura w-full">
             <thead>
               <tr>
-                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Run Name</th>
-                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Period</th>
-                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Status</th>
-                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Employees</th>
-                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Gross Amount</th>
-                <th className="skeuo-table-header px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">Actions</th>
+                <th className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Run Name</th>
+                <th className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Period</th>
+                <th className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Status</th>
+                <th className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Employees</th>
+                <th className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Gross Amount</th>
+                <th className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Actions</th>
               </tr>
             </thead>
             <tbody>

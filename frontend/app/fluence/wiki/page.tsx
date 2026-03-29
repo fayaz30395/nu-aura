@@ -315,7 +315,7 @@ export default function WikiPage() {
                     {/* All Spaces button */}
                     <motion.button
                       onClick={() => setSelectedSpaceId(undefined)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-all ${
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
                         selectedSpaceId === undefined
                           ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium'
                           : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
@@ -339,7 +339,7 @@ export default function WikiPage() {
                       >
                         <button
                           onClick={() => setSelectedSpaceId(space.id)}
-                          className={`w-full text-left px-3 py-2.5 rounded-lg transition-all ${
+                          className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${
                             selectedSpaceId === space.id
                               ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'
                               : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'

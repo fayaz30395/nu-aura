@@ -269,7 +269,7 @@ export default function JobOpeningsPage() {
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
                   <Briefcase className="h-6 w-6 text-accent-700" />
@@ -288,7 +288,7 @@ export default function JobOpeningsPage() {
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
                   <Briefcase className="h-6 w-6 text-success-600" />
@@ -307,7 +307,7 @@ export default function JobOpeningsPage() {
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
                   <Briefcase className="h-6 w-6 text-[var(--text-secondary)]" />
@@ -326,7 +326,7 @@ export default function JobOpeningsPage() {
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
                   <Briefcase className="h-6 w-6 text-accent-600" />
@@ -410,7 +410,7 @@ export default function JobOpeningsPage() {
                 transition={{ duration: 0.2, ease: 'easeOut' }}
               >
               <Card className="bg-[var(--bg-card)] hover:shadow-lg transition-shadow">
-                <CardContent className="p-5">
+                <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
@@ -690,7 +690,7 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={4}
                       {...register('jobDescription')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="Describe the job role and responsibilities..."
                     />
                     {errors.jobDescription && <p className="text-xs text-danger-600 mt-1">{errors.jobDescription.message}</p>}
@@ -701,7 +701,7 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={3}
                       {...register('requirements')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="List the requirements..."
                     />
                     {errors.requirements && <p className="text-xs text-danger-600 mt-1">{errors.requirements.message}</p>}
@@ -712,7 +712,7 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={2}
                       {...register('skillsRequired')}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="React, TypeScript, Node.js..."
                     />
                     {errors.skillsRequired && <p className="text-xs text-danger-600 mt-1">{errors.skillsRequired.message}</p>}

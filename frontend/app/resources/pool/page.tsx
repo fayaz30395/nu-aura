@@ -112,7 +112,7 @@ export default function ResourcePoolPage() {
           <div className="w-14 h-14 rounded-full bg-warning-50 flex items-center justify-center mb-4">
             <Info size={24} className="text-warning-600" />
           </div>
-          <h2 className="text-lg font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not Available</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not Available</h2>
           <p className="text-[var(--text-muted)] text-sm max-w-md">
             {error instanceof Error ? error.message : 'The backend Resource Management module is not yet deployed in this environment.'}
           </p>
@@ -145,7 +145,7 @@ export default function ResourcePoolPage() {
             <button
               onClick={() => refetch()}
               disabled={isLoading}
-              className="flex items-center gap-2 px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
             >
               <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
               Refresh
@@ -153,7 +153,7 @@ export default function ResourcePoolPage() {
             <button
               onClick={exportCsv}
               disabled={filtered.length === 0}
-              className="flex items-center gap-2 px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
             >
               <Download size={14} />
               Export
@@ -162,7 +162,7 @@ export default function ResourcePoolPage() {
         </div>
 
         {error && (
-          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
             <AlertTriangle size={15} />
             {error instanceof Error ? error.message : String(error)}
           </div>
@@ -212,7 +212,7 @@ export default function ResourcePoolPage() {
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => (
@@ -223,7 +223,7 @@ export default function ResourcePoolPage() {
           {(search || statusFilter !== 'ALL' || deptFilter !== 'ALL') && (
             <button
               onClick={() => { setSearch(''); setStatusFilter('ALL'); setDeptFilter('ALL'); }}
-              className="px-3 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+              className="px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
             >
               Clear filters
             </button>
@@ -251,12 +251,12 @@ export default function ResourcePoolPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
-                    <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)]">Employee</th>
-                    <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)] hidden sm:table-cell">Department</th>
-                    <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)] hidden md:table-cell">Designation</th>
-                    <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)] w-48">Allocation</th>
-                    <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)] hidden lg:table-cell">Projects</th>
-                    <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">Status</th>
+                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)]">Employee</th>
+                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden sm:table-cell">Department</th>
+                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden md:table-cell">Designation</th>
+                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] w-48">Allocation</th>
+                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden lg:table-cell">Projects</th>
+                    <th className="px-4 py-2 text-center font-semibold text-[var(--text-secondary)]">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-subtle)]">
@@ -265,7 +265,7 @@ export default function ResourcePoolPage() {
                     const { badge } = allocationColor(alloc);
                     return (
                       <tr key={emp.employeeId} className="hover:bg-[var(--bg-secondary)] transition-colors">
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4">
                           <div className="flex items-center gap-4">
                             <div className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0">
                               <span className="text-xs font-bold text-accent-700">
@@ -280,16 +280,16 @@ export default function ResourcePoolPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-[var(--text-secondary)] hidden sm:table-cell">
+                        <td className="px-4 py-4 text-[var(--text-secondary)] hidden sm:table-cell">
                           {emp.departmentName || '—'}
                         </td>
-                        <td className="px-4 py-3 text-[var(--text-secondary)] hidden md:table-cell">
+                        <td className="px-4 py-4 text-[var(--text-secondary)] hidden md:table-cell">
                           {emp.designation || '—'}
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4">
                           <AllocationBar value={alloc} />
                         </td>
-                        <td className="px-4 py-3 hidden lg:table-cell">
+                        <td className="px-4 py-4 hidden lg:table-cell">
                           {(emp.allocations || []).length > 0 ? (
                             <div className="flex flex-wrap gap-1">
                               {(emp.allocations || []).slice(0, 3).map((p: { projectId: string; projectName: string; allocationPercentage?: number }) => (
@@ -310,7 +310,7 @@ export default function ResourcePoolPage() {
                             <span className="text-[var(--text-muted)] text-xs">No active projects</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-4 text-center">
                           <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${badge}`}>
                             {emp.allocationStatus === 'OVER_ALLOCATED' ? 'Over' :
                              emp.allocationStatus === 'OPTIMAL' ? 'Optimal' :
@@ -323,7 +323,7 @@ export default function ResourcePoolPage() {
                 </tbody>
               </table>
             </div>
-            <div className="px-4 py-3 border-t border-[var(--border-main)] text-xs text-[var(--text-muted)] flex items-center justify-between">
+            <div className="px-4 py-4 border-t border-[var(--border-main)] text-xs text-[var(--text-muted)] flex items-center justify-between">
               <span>Showing {filtered.length} of {employees.length} employees</span>
               <div className="flex items-center gap-4">
                 {[

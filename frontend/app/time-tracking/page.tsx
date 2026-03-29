@@ -155,7 +155,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
             >
               <Plus className="h-5 w-5" />
               Log Time
@@ -165,7 +165,7 @@ export default function TimeTrackingPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                 <Timer className="h-5 w-5 text-white" />
@@ -181,7 +181,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600">
                 <DollarSign className="h-5 w-5 text-white" />
@@ -197,7 +197,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-warning-500 to-warning-600">
                 <Clock className="h-5 w-5 text-white" />
@@ -213,7 +213,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-surface-500 to-surface-600">
                 <FileText className="h-5 w-5 text-white" />
@@ -258,8 +258,8 @@ export default function TimeTrackingPage() {
 
         {/* Entries List */}
         <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+          <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Recent Time Entries
             </h2>
           </div>
@@ -280,7 +280,7 @@ export default function TimeTrackingPage() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-[var(--bg-secondary)]/50">
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       <input
                         type="checkbox"
                         checked={
@@ -296,22 +296,22 @@ export default function TimeTrackingPage() {
                         className="rounded border-[var(--border-main)]"
                       />
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Project
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Hours
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Type
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -327,7 +327,7 @@ export default function TimeTrackingPage() {
                         key={entry.id}
                         className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                       >
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           {isDraft && (
                             <input
                               type="checkbox"
@@ -337,7 +337,7 @@ export default function TimeTrackingPage() {
                             />
                           )}
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {new Date(entry.entryDate).toLocaleDateString('en-IN', {
                               day: '2-digit',
@@ -346,12 +346,12 @@ export default function TimeTrackingPage() {
                             })}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {entry.projectName || entry.clientName || 'General'}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {timeTrackingService.formatHours(entry.hoursWorked)}
                           </span>
@@ -361,12 +361,12 @@ export default function TimeTrackingPage() {
                             </span>
                           )}
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span className="text-sm text-[var(--text-secondary)]">
                             {timeTrackingService.getEntryTypeLabel(entry.entryType)}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <span
                             className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
                           >
@@ -374,7 +374,7 @@ export default function TimeTrackingPage() {
                             {entry.status}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-4">
                           <button
                             onClick={() => router.push(`/time-tracking/${entry.id}`)}
                             className="text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
@@ -404,7 +404,7 @@ export default function TimeTrackingPage() {
                 </div>
                 <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
               </div>
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                 Log Time
               </h3>
               <p className="text-sm text-[var(--text-muted)]">
@@ -423,7 +423,7 @@ export default function TimeTrackingPage() {
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Weekly View
             </h3>
             <p className="text-sm text-[var(--text-muted)]">

@@ -91,7 +91,7 @@ export default function MySchedulePage() {
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/shifts')}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
@@ -229,7 +229,7 @@ export default function MySchedulePage() {
                         key={entry.assignmentId}
                         initial={{ opacity: 0, x: 10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`flex items-center gap-3 p-3 rounded-lg ${
+                        className={`flex items-center gap-4 p-4 rounded-lg ${
                           isToday
                             ? 'bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800'
                             : 'bg-gray-50 dark:bg-gray-700/30'

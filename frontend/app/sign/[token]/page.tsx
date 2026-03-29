@@ -475,7 +475,7 @@ export default function SignPage() {
                   }}
                   onKeyDown={(e) => e.key === 'Enter' && handleEmailVerify()}
                   placeholder="Enter your email address"
-                  className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors ${
+                  className={`w-full px-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors ${
                     emailError
                       ? 'border-danger-400 bg-danger-50'
                       : 'border-[var(--border-main)] bg-[var(--bg-card)]'
@@ -501,7 +501,7 @@ export default function SignPage() {
 
         {/* Step: Signing */}
         {step === 'sign' && (
-          <div className="skeuo-card p-6 space-y-5">
+          <div className="skeuo-card p-6 space-y-6">
             <div>
               <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
                 Sign Document
@@ -518,7 +518,7 @@ export default function SignPage() {
                   setSignatureMethod('DRAWN');
                   setSubmitError(null);
                 }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'DRAWN'
                     ? 'bg-[var(--bg-card)] text-accent-600 shadow-sm'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
@@ -532,7 +532,7 @@ export default function SignPage() {
                   setSignatureMethod('TYPED');
                   setSubmitError(null);
                 }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'TYPED'
                     ? 'bg-[var(--bg-card)] text-accent-600 shadow-sm'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
@@ -617,7 +617,7 @@ export default function SignPage() {
 
             {/* Submit Error */}
             {submitError && (
-              <div className="flex items-start gap-2 text-sm text-danger-600 bg-danger-50 border border-danger-200 rounded-lg px-3 py-2.5">
+              <div className="flex items-start gap-2 text-sm text-danger-600 bg-danger-50 border border-danger-200 rounded-lg px-4 py-2.5">
                 <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                 {submitError}
               </div>

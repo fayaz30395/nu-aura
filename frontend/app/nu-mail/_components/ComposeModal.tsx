@@ -211,7 +211,7 @@ export const ComposeModal = React.memo(function ComposeModal({
               onChange={(e) => onComposeChange({ ...composeEmail, body: e.target.value })}
               placeholder="Write your message..."
               rows={8}
-              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-t-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-t-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent resize-none"
             />
             {/* Signature Preview */}
             {emailSignatureHtml && (
