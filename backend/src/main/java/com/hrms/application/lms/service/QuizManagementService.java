@@ -5,7 +5,6 @@ import com.hrms.domain.lms.QuizQuestion;
 import com.hrms.infrastructure.lms.repository.QuizRepository;
 import com.hrms.infrastructure.lms.repository.QuizQuestionRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,7 +17,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class QuizManagementService {
 
     private final QuizRepository quizRepository;

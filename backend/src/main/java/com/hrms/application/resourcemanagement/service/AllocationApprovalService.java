@@ -13,7 +13,6 @@ import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
 import com.hrms.infrastructure.project.repository.ProjectEmployeeRepository;
 import com.hrms.infrastructure.resourcemanagement.repository.AllocationApprovalRequestRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,6 @@ import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AllocationApprovalService {
 
     private final AllocationApprovalRequestRepository approvalRepository;

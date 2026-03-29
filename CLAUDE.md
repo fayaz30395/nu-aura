@@ -225,15 +225,15 @@ Infrastructure:
 - Start via: `docker-compose up -d` then `cd backend && ./start-backend.sh` then `cd frontend && npm run dev`
 
 Code locations:
-- Frontend pages: `frontend/app/<module>/page.tsx` (200 page routes)
-- API hooks: `frontend/lib/hooks/` (190 hook files) + services: `frontend/lib/services/` (92 service files)
-- Components: `frontend/components/` (123 component files)
-- Backend controllers: `backend/src/main/java/**/controller/` (143 controllers)
-- Backend services: `backend/src/main/java/**/service/` (209 services)
-- Backend entities: 265 entities, 260 repositories, 454 DTOs
+- Frontend pages: `frontend/app/<module>/page.tsx` (232 page routes)
+- API hooks: `frontend/lib/hooks/` (104 hook files) + services: `frontend/lib/services/` (106 service files)
+- Components: `frontend/components/` (128 component files)
+- Backend controllers: `backend/src/main/java/**/controller/` (142 controllers)
+- Backend services: `backend/src/main/java/**/service/` (224 services)
+- Backend entities: 297 entities, 271 repositories, 479 DTOs
 - Security config: `backend/src/main/java/com/hrms/common/config/SecurityConfig.java`
 - Backend package root: `com.hrms` → `api/`, `application/`, `domain/`, `common/`, `infrastructure/`
-- Tests: 120 test classes, JaCoCo 80% minimum (excludes DTOs, entities, config)
+- Tests: 126 test classes, JaCoCo 80% minimum (excludes DTOs, entities, config)
 
 Provide deployment diagrams when designing services.
 
@@ -298,9 +298,9 @@ These decisions have been made. Do not re-evaluate unless explicitly asked.
 - **Approval Flows:** Generic `approval_service` engine. Workflows are data-driven, not hardcoded. `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`.
 - **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
 - **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
-- **Flyway Status:** V0–V82 active (with gaps at V1, V27–V29, V67). Next migration = **V83**. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for recent migration details.
+- **Flyway Status:** V0–V89 active (with gaps at V1, V27–V29). Next migration = **V90**. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for recent migration details.
 - **Kafka Topics:** `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.employee-lifecycle`, `nu-aura.fluence-content` — 5 topics + 5 DLT topics + DLT handler. Failed events stored in `FailedKafkaEvent` table.
-- **Scheduled Jobs:** 25 `@Scheduled` jobs across attendance, contracts, email, notifications, recruitment, workflows, reports, webhooks, rate limiting, tenant operations, and leave accrual.
+- **Scheduled Jobs:** 22 `@Scheduled` jobs across attendance, contracts, email, notifications, recruitment, workflows, reports, webhooks, rate limiting, tenant operations, and leave accrual.
 - **Security:** Rate limiting (Bucket4j + Redis): 5/min auth, 100/min API, 5/5min exports. OWASP headers at both edge (Next.js middleware) and backend (Spring Security). CSRF double-submit cookie. Password policy: 12+ chars, uppercase/lowercase/digit/special required, history of 5, 90-day max age.
 - **Dev Database:** Neon cloud PostgreSQL (docker-compose.yml has NO local postgres service). Prod uses PostgreSQL 16.
 - **Integrations:** Google OAuth, Twilio (SMS, mock in dev), MinIO (file storage), Elasticsearch (search), SMTP (email), job boards (recruitment), WebSocket/STOMP (real-time notifications).

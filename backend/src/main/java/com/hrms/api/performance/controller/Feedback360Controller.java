@@ -10,7 +10,6 @@ import com.hrms.domain.performance.*;
 import com.hrms.domain.performance.Feedback360Request.ReviewerType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/feedback360")
 @RequiredArgsConstructor
-@Slf4j
 public class Feedback360Controller {
 
     private final Feedback360Service feedback360Service;

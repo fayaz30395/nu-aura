@@ -7,7 +7,6 @@ import com.hrms.infrastructure.common.repository.ContentViewRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
  * Provides a unified way to track and query views for any content type.
  */
 @Service
-@Slf4j
 @Transactional
 public class ContentViewService {
 

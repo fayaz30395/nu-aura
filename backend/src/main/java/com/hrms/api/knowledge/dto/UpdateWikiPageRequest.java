@@ -2,8 +2,6 @@ package com.hrms.api.knowledge.dto;
 
 import lombok.*;
 
-import java.util.UUID;
-
 @Data
 @Builder
 @NoArgsConstructor

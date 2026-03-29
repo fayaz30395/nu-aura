@@ -10,7 +10,6 @@ import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/fluence/comments")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "Fluence Comments", description = "Unified comment management for wiki pages and blog posts")
 public class FluenceCommentController {
 

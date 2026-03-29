@@ -9,7 +9,6 @@ import com.hrms.domain.lms.CourseEnrollment.EnrollmentStatus;
 import com.hrms.domain.lms.ContentProgress.ProgressStatus;
 import com.hrms.infrastructure.lms.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class LmsService {
 

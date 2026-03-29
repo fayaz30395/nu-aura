@@ -17,7 +17,6 @@ import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.resourcemanagement.repository.AllocationApprovalRequestRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +43,6 @@ import static com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.*;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ResourceManagementService {
 
         private final EmployeeRepository employeeRepository;

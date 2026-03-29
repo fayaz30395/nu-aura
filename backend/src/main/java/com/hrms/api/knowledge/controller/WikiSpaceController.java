@@ -10,7 +10,6 @@ import com.hrms.domain.knowledge.WikiSpace;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,6 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/knowledge/wiki/spaces")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "Wiki Spaces", description = "Wiki space management")
 public class WikiSpaceController {
 

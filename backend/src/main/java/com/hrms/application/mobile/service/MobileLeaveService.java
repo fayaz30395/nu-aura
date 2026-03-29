@@ -7,19 +7,16 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class MobileLeaveService {
 

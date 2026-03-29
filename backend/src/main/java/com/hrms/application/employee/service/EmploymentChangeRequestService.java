@@ -12,7 +12,6 @@ import com.hrms.domain.employee.EmploymentChangeRequest;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.employee.repository.EmploymentChangeRequestRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Slf4j
 public class EmploymentChangeRequestService {
 
     private final EmploymentChangeRequestRepository changeRequestRepository;

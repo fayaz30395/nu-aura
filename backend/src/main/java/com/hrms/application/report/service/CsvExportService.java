@@ -1,7 +1,6 @@
 package com.hrms.application.report.service;
 
 import com.hrms.api.report.dto.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -12,7 +11,6 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Slf4j
 public class CsvExportService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
