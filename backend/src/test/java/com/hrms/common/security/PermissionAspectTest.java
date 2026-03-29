@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -27,6 +30,7 @@ import static org.mockito.Mockito.*;
  * Target: 90%+ line coverage
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @Slf4j
 class PermissionAspectTest {
 
@@ -316,13 +320,10 @@ class PermissionAspectTest {
         }
 
         private void setupAuthentication() {
-            Set<String> authorities = new HashSet<>();
-            authorities.add("ROLE_USER");
+            List<SimpleGrantedAuthority> grantedAuthorities =
+                    List.of(new SimpleGrantedAuthority("ROLE_USER"));
             when(authentication.isAuthenticated()).thenReturn(true);
-            when(authentication.getAuthorities())
-                    .thenReturn(() -> authorities.stream()
-                            .map(SimpleGrantedAuthority::new)
-                            .iterator());
+            doReturn(grantedAuthorities).when(authentication).getAuthorities();
 
             org.springframework.security.core.context.SecurityContext secCtx =
                     SecurityContextHolder.createEmptyContext();

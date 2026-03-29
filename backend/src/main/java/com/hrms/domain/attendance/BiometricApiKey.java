@@ -4,6 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
  * Devices use API key auth (not JWT) since they cannot perform OAuth flows.
  */
 @Entity
+@SQLRestriction("is_deleted = false")
 @Table(name = "biometric_api_keys", indexes = {
     @Index(name = "idx_biometric_api_key_tenant", columnList = "tenantId"),
     @Index(name = "idx_biometric_api_key_hash", columnList = "keyHash"),

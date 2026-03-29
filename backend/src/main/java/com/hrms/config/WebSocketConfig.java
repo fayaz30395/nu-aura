@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -26,7 +27,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // Note: The SimpleMessageBroker remains for local session dispatch.
         // Cross-pod fan-out is handled by RedisWebSocketRelay (Redis Pub/Sub)
         // which publishes to all pods before each pod delivers locally.
-        config.enableSimpleBroker("/topic", "/queue");
+        config.enableSimpleBroker("/topic", "/queue")
+                .setHeartbeatValue(new long[]{10000, 10000}); // server→client and client→server heartbeat: 10s
 
         // Designate the prefix for messages that are bound for methods annotated with
         // @MessageMapping
@@ -34,6 +36,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         // User destination prefix for convertAndSendToUser (e.g. /user/{userId}/queue/notifications)
         config.setUserDestinationPrefix("/user");
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        // Limit inbound message size to 64KB to prevent abuse / memory exhaustion
+        registration.setMessageSizeLimit(65536);
+        // Limit send buffer size to 512KB
+        registration.setSendBufferSizeLimit(512 * 1024);
+        // Timeout for send operations: 20 seconds
+        registration.setSendTimeLimit(20000);
     }
 
     @Override

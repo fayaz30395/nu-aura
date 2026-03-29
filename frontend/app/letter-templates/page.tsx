@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo } from 'react';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -209,7 +210,7 @@ function TemplatePreviewModal({ templateId, templateName, isOpen, onClose }: Pre
         ) : previewHtml ? (
           <div
             className="prose prose-sm max-w-none dark:prose-invert p-6 border border-[var(--border-main)] rounded-lg bg-white dark:bg-surface-900"
-            dangerouslySetInnerHTML={{ __html: previewHtml }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(previewHtml) }}
           />
         ) : (
           <div className="text-center text-[var(--text-muted)] py-8">

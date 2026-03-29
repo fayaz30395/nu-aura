@@ -18,8 +18,10 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.ExponentialBackOff;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
@@ -354,6 +356,20 @@ public class KafkaConfig {
                 .build();
     }
 
+    // ============ DEAD LETTER PUBLISHING ============
+
+    /**
+     * Routes failed messages to the corresponding dead letter topic after all retries are exhausted.
+     *
+     * <p>Naming convention: original topic + ".dlt" suffix, same partition.
+     * Example: {@code nu-aura.approvals} partition 2 → {@code nu-aura.approvals.dlt} partition 2.</p>
+     */
+    @Bean
+    public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(KafkaTemplate<String, Object> kafkaTemplate) {
+        return new DeadLetterPublishingRecoverer(kafkaTemplate,
+                (record, exception) -> new TopicPartition(record.topic() + ".dlt", record.partition()));
+    }
+
     // ============ HELPER METHODS ============
 
     /**
@@ -380,6 +396,10 @@ public class KafkaConfig {
 
     /**
      * Generic listener container factory creator.
+     *
+     * <p>Uses {@link DeadLetterPublishingRecoverer} so that messages exhausting
+     * all retry attempts are automatically routed to the corresponding {@code .dlt} topic
+     * instead of being silently discarded.</p>
      */
     private <K, V> KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<K, V>> createListenerContainerFactory(ConsumerFactory<K, V> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<K, V> factory = new ConcurrentKafkaListenerContainerFactory<>();
@@ -394,7 +414,9 @@ public class KafkaConfig {
         backOff.setMaxInterval(30000L);      // Cap at 30 seconds
         backOff.setMaxElapsedTime(36000L);   // Stop retrying after ~36s total
 
-        DefaultErrorHandler errorHandler = new DefaultErrorHandler(backOff);
+        // Wire DeadLetterPublishingRecoverer so exhausted messages land in .dlt topics
+        DeadLetterPublishingRecoverer recoverer = deadLetterPublishingRecoverer(kafkaTemplate());
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, backOff);
         factory.setCommonErrorHandler(errorHandler);
 
         return factory;

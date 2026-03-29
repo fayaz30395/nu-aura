@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -23,6 +24,7 @@ import java.util.*;
  * handles tenant isolation via Spring Data JPA queries and PostgreSQL RLS.</p>
  */
 @Entity
+@SQLRestriction("is_deleted = false")
 @Table(name = "integration_connector_configs", indexes = {
     @Index(name = "idx_icc_tenant_id", columnList = "tenant_id"),
     @Index(name = "idx_icc_connector_id", columnList = "connector_id"),

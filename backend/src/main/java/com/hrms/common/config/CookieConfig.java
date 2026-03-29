@@ -2,9 +2,10 @@ package com.hrms.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseCookie;
 
 /**
- * Configuration for secure cookie handling.
+ * Configuration for secure cookie handling using ResponseCookie (supports SameSite natively).
  *
  * Security properties:
  * - HttpOnly: Prevents JavaScript access (XSS protection)
@@ -32,75 +33,69 @@ public class CookieConfig {
     private long refreshTokenExpiration;
 
     /**
-     * Create a secure httpOnly cookie for the access token.
+     * Create a secure httpOnly ResponseCookie for the access token.
+     * Uses ResponseCookie which natively supports SameSite attribute.
      */
-    public jakarta.servlet.http.Cookie createAccessTokenCookie(String token) {
-        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie(ACCESS_TOKEN_COOKIE, token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secureCookie);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) (accessTokenExpiration / 1000)); // Convert ms to seconds
+    public ResponseCookie createAccessTokenCookie(String token) {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(ACCESS_TOKEN_COOKIE, token)
+                .httpOnly(true)
+                .secure(secureCookie)
+                .path("/")
+                .maxAge(accessTokenExpiration / 1000) // Convert ms to seconds
+                .sameSite("Strict");
         if (cookieDomain != null && !cookieDomain.isBlank()) {
-            cookie.setDomain(cookieDomain);
+            builder.domain(cookieDomain);
         }
-        // Note: SameSite is set via response header as Cookie API doesn't support it directly
-        return cookie;
+        return builder.build();
     }
 
     /**
-     * Create a secure httpOnly cookie for the refresh token.
+     * Create a secure httpOnly ResponseCookie for the refresh token.
+     * Uses ResponseCookie which natively supports SameSite attribute.
      */
-    public jakarta.servlet.http.Cookie createRefreshTokenCookie(String token) {
-        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie(REFRESH_TOKEN_COOKIE, token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secureCookie);
-        cookie.setPath("/api/v1/auth"); // Only sent to auth endpoints
-        cookie.setMaxAge((int) (refreshTokenExpiration / 1000));
+    public ResponseCookie createRefreshTokenCookie(String token) {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(REFRESH_TOKEN_COOKIE, token)
+                .httpOnly(true)
+                .secure(secureCookie)
+                .path("/api/v1/auth") // Only sent to auth endpoints
+                .maxAge(refreshTokenExpiration / 1000)
+                .sameSite("Strict");
         if (cookieDomain != null && !cookieDomain.isBlank()) {
-            cookie.setDomain(cookieDomain);
+            builder.domain(cookieDomain);
         }
-        return cookie;
+        return builder.build();
     }
 
     /**
      * Create a cookie to clear the access token (for logout).
      */
-    public jakarta.servlet.http.Cookie createClearAccessTokenCookie() {
-        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie(ACCESS_TOKEN_COOKIE, "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secureCookie);
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Immediately expire
+    public ResponseCookie createClearAccessTokenCookie() {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(ACCESS_TOKEN_COOKIE, "")
+                .httpOnly(true)
+                .secure(secureCookie)
+                .path("/")
+                .maxAge(0) // Immediately expire
+                .sameSite("Strict");
         if (cookieDomain != null && !cookieDomain.isBlank()) {
-            cookie.setDomain(cookieDomain);
+            builder.domain(cookieDomain);
         }
-        return cookie;
+        return builder.build();
     }
 
     /**
      * Create a cookie to clear the refresh token (for logout).
      */
-    public jakarta.servlet.http.Cookie createClearRefreshTokenCookie() {
-        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie(REFRESH_TOKEN_COOKIE, "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secureCookie);
-        cookie.setPath("/api/v1/auth");
-        cookie.setMaxAge(0);
+    public ResponseCookie createClearRefreshTokenCookie() {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(REFRESH_TOKEN_COOKIE, "")
+                .httpOnly(true)
+                .secure(secureCookie)
+                .path("/api/v1/auth")
+                .maxAge(0)
+                .sameSite("Strict");
         if (cookieDomain != null && !cookieDomain.isBlank()) {
-            cookie.setDomain(cookieDomain);
+            builder.domain(cookieDomain);
         }
-        return cookie;
-    }
-
-    /**
-     * Add SameSite attribute to response.
-     * This must be done via header because the Cookie API doesn't support SameSite.
-     */
-    public void addSameSiteAttribute(jakarta.servlet.http.HttpServletResponse response, String cookieName, String sameSite) {
-        String header = response.getHeader("Set-Cookie");
-        if (header != null && header.contains(cookieName)) {
-            response.setHeader("Set-Cookie", header + "; SameSite=" + sameSite);
-        }
+        return builder.build();
     }
 
     public boolean isSecureCookie() {

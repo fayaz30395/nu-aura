@@ -6,6 +6,7 @@ import { apiClient } from '../api/client';
 import { authApi } from '../api/auth';
 import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/auth';
 import { clearGoogleToken } from '../utils/googleToken';
+import { getQueryClient } from '../queryClient';
 
 /**
  * Decode JWT token to extract roles and permissions.
@@ -170,6 +171,8 @@ export const useAuth = create<AuthState>()(
           apiClient.clearTokens();
           // Clear Google SSO tokens (Drive, Mail)
           clearGoogleToken();
+          // SEC: Clear React Query cache to prevent data leakage between sessions
+          getQueryClient().clear();
           if (typeof window !== 'undefined') {
             sessionStorage.removeItem('user');
             sessionStorage.removeItem('auth-storage'); // Clear Zustand persisted auth state

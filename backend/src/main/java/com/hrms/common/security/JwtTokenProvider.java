@@ -3,6 +3,7 @@ package com.hrms.common.security;
 import com.hrms.domain.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -94,6 +96,8 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .id(generateJti()) // JTI for token revocation
+                .issuer("nu-aura")
+                .audience().add("nu-aura-api").and()
                 .subject(userPrincipal.getUsername())
                 .claim("userId", userId.toString())
                 .claim("tenantId", tenantId.toString())
@@ -124,6 +128,8 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .id(generateJti())
+                .issuer("nu-aura")
+                .audience().add("nu-aura-api").and()
                 .subject(user.getEmail())
                 .claim("userId", user.getId().toString())
                 .claim("tenantId", tenantId.toString())
@@ -148,6 +154,8 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .id(generateJti()) // JTI for token revocation
+                .issuer("nu-aura")
+                .audience().add("nu-aura-api").and()
                 .subject(email)
                 .claim("tenantId", tenantId.toString())
                 .claim("type", "refresh")
@@ -158,33 +166,15 @@ public class JwtTokenProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        return claims.getSubject();
+        return getClaims(token).getSubject();
     }
 
     public UUID getTenantIdFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        return UUID.fromString(claims.get("tenantId", String.class));
+        return UUID.fromString(getClaims(token).get("tenantId", String.class));
     }
 
     public UUID getUserIdFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        String userIdStr = claims.get("userId", String.class);
+        String userIdStr = getClaims(token).get("userId", String.class);
         return userIdStr != null ? UUID.fromString(userIdStr) : null;
     }
 
@@ -197,11 +187,35 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(String token) {
         try {
-            Claims claims = Jwts.parser()
-                    .verifyWith(getSigningKey())
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            Claims claims;
+            try {
+                // Primary path: validate with issuer + audience claims
+                claims = Jwts.parser()
+                        .verifyWith(getSigningKey())
+                        .requireIssuer("nu-aura")
+                        .requireAudience("nu-aura-api")
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload();
+            } catch (JwtException ex) {
+                // SEC: Transition fallback — accept tokens without issuer/audience during migration.
+                // This allows pre-existing tokens to remain valid until they naturally expire.
+                // TODO: Remove this fallback after one full token expiration cycle in production.
+                Claims fallbackClaims = Jwts.parser()
+                        .verifyWith(getSigningKey())
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload();
+                String issuer = fallbackClaims.getIssuer();
+                if (issuer == null) {
+                    log.warn("SEC: Accepting JWT without issuer/audience claims (transition period). " +
+                            "Subject: {}", fallbackClaims.getSubject());
+                    claims = fallbackClaims;
+                } else {
+                    // Has an issuer but it's wrong — reject
+                    throw ex;
+                }
+            }
 
             // Check if token is blacklisted
             String jti = claims.getId();
@@ -279,13 +293,7 @@ public class JwtTokenProvider {
      * Get the current application code from token
      */
     public String getAppCodeFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        return claims.get("appCode", String.class);
+        return getClaims(token).get("appCode", String.class);
     }
 
     /**
@@ -313,6 +321,8 @@ public class JwtTokenProvider {
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
+                .requireIssuer("nu-aura")
+                .requireAudience("nu-aura-api")
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -323,12 +333,7 @@ public class JwtTokenProvider {
      */
     @SuppressWarnings("unchecked")
     public Set<String> getRolesFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
+        Claims claims = getClaims(token);
         List<String> roles = claims.get("roles", List.class);
         return roles != null ? new HashSet<>(roles) : Collections.emptySet();
     }
@@ -338,12 +343,7 @@ public class JwtTokenProvider {
      */
     @SuppressWarnings("unchecked")
     public Set<String> getAccessibleAppsFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
+        Claims claims = getClaims(token);
         List<String> apps = claims.get("accessibleApps", List.class);
         return apps != null ? new HashSet<>(apps) : Collections.emptySet();
     }
@@ -384,6 +384,8 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .id(generateJti())
+                .issuer("nu-aura")
+                .audience().add("nu-aura-api").and()
                 .subject(email)
                 .claim("userId", impersonatorUserId.toString())
                 .claim("impersonatorUserId", impersonatorUserId.toString()) // CRIT-005: audit trail

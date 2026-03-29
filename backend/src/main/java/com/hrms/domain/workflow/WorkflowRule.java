@@ -147,30 +147,50 @@ public class WorkflowRule extends TenantAware {
      * @param context evaluation context — either a {@code Map<String,Object>} or a POJO
      * @return {@code true} if the expression evaluates to {@code true}; {@code false} otherwise
      */
+    /**
+     * SEC: Validate a SpEL expression to reject dangerous patterns that could lead to RCE.
+     */
+    private static void validateSpelExpression(String expr) {
+        if (expr == null || expr.isBlank()) return;
+        String[] dangerousPatterns = {"T(", "new ", ".class", "getClass", "forName", "Runtime", "Process", "exec(", "invoke("};
+        String normalized = expr.toLowerCase();
+        for (String pattern : dangerousPatterns) {
+            if (normalized.contains(pattern.toLowerCase())) {
+                log.error("SEC: Workflow rule expression contains forbidden pattern '{}': {}", pattern, expr);
+                throw new IllegalArgumentException(
+                        "SEC: Rule expression contains forbidden pattern '" + pattern + "'");
+            }
+        }
+    }
+
     public boolean evaluate(Object context) {
         if (ruleExpression == null || ruleExpression.isBlank()) {
             // Empty expression — no condition to check, rule always matches
             return true;
         }
+
+        // SEC: Validate expression before evaluation to block injection attacks
+        validateSpelExpression(ruleExpression);
+
         try {
             ExpressionParser parser = new SpelExpressionParser();
 
             SimpleEvaluationContext evalContext;
             if (context instanceof Map<?, ?>) {
                 // Build a read-only context and expose each map entry as a named variable
+                // SEC: Removed withInstanceMethods() to restrict attack surface
                 evalContext = SimpleEvaluationContext
                         .forReadOnlyDataBinding()
-                        .withInstanceMethods()
                         .build();
                 @SuppressWarnings("unchecked")
                 Map<String, Object> variables = (Map<String, Object>) context;
                 variables.forEach(evalContext::setVariable);
             } else {
                 // POJO root object: properties are accessed by name directly
+                // SEC: Removed withInstanceMethods() to restrict attack surface
                 evalContext = SimpleEvaluationContext
                         .forReadOnlyDataBinding()
                         .withRootObject(context)
-                        .withInstanceMethods()
                         .build();
             }
 
