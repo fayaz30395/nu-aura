@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
+// AccessDeniedException handling is in GlobalExceptionHandler
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -345,14 +345,5 @@ class RequiresPermissionAnnotationTest {
         }
     }
 
-    // ==================== Exception Handler ====================
-
-    @RestControllerAdvice
-    public static class PermissionExceptionHandler {
-
-        @ExceptionHandler(AccessDeniedException.class)
-        public String handleAccessDenied(AccessDeniedException e) {
-            return "Error: " + e.getMessage();
-        }
-    }
+    // Exception handling is provided by GlobalExceptionHandler which returns 403 for AccessDeniedException
 }

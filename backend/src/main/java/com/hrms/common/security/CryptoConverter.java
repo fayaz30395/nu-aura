@@ -57,9 +57,14 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     public void setKey(String encryptionKey) {
         Assert.hasText(encryptionKey, "app.security.encryption.key must not be blank");
         byte[] keyBytes = encryptionKey.getBytes();
-        Assert.isTrue(keyBytes.length == 32 || keyBytes.length == 24 || keyBytes.length == 16,
-                "app.security.encryption.key must be 16, 24, or 32 bytes (AES-128/192/256). " +
-                "For production, use a 32-byte key (AES-256).");
+        // Derive a 32-byte key via SHA-256 if the raw key is not a valid AES length
+        if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
+            try {
+                keyBytes = java.security.MessageDigest.getInstance("SHA-256").digest(keyBytes);
+            } catch (java.security.NoSuchAlgorithmException e) {
+                throw new RuntimeException("SHA-256 not available", e);
+            }
+        }
         CryptoConverter.key = keyBytes;
     }
 

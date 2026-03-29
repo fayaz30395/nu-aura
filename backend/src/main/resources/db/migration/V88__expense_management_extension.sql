@@ -174,18 +174,9 @@ WHERE NOT EXISTS (
 );
 
 -- ─── Seed Expense Permissions ────────────────────────────────────────────────
--- Add EXPENSE:SETTINGS permission for settings management
-INSERT INTO permissions (id, name, module, action, description, created_at, updated_at)
-SELECT gen_random_uuid(), 'expense.settings', 'expense', 'settings',
-       'Manage expense settings (categories, policies)', NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE name = 'expense.settings');
-
-INSERT INTO permissions (id, name, module, action, description, created_at, updated_at)
-SELECT gen_random_uuid(), 'expense.advance_manage', 'expense', 'advance_manage',
-       'Manage expense advances (approve, disburse)', NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE name = 'expense.advance_manage');
-
-INSERT INTO permissions (id, name, module, action, description, created_at, updated_at)
-SELECT gen_random_uuid(), 'expense.report', 'expense', 'report',
-       'View expense reports and analytics', NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE name = 'expense.report');
+INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES
+    (gen_random_uuid(), 'EXPENSE:SETTINGS', 'Expense Settings', 'Manage expense settings (categories, policies)', 'EXPENSE', 'SETTINGS', NOW(), NOW(), 0, false),
+    (gen_random_uuid(), 'EXPENSE:ADVANCE_MANAGE', 'Expense Advance Manage', 'Manage expense advances (approve, disburse)', 'EXPENSE', 'ADVANCE_MANAGE', NOW(), NOW(), 0, false),
+    (gen_random_uuid(), 'EXPENSE:REPORT', 'Expense Report', 'View expense reports and analytics', 'EXPENSE', 'REPORT', NOW(), NOW(), 0, false)
+ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
