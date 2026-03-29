@@ -36,8 +36,8 @@ export function WelcomeBanner({
     <div
       className="relative w-full overflow-hidden rounded-2xl px-7 py-6 flex flex-col justify-center"
       style={{
-        background: 'linear-gradient(135deg, #0057FF 0%, #003ECB 40%, #001F6D 100%)',
-        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 87, 255, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15)',
+        background: 'linear-gradient(135deg, #3a5fd9 0%, #2a48b3 40%, #101e66 100%)',
+        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(58, 95, 217, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15)',
       }}
     >
       {/* Mesh gradient orbs for visual depth */}

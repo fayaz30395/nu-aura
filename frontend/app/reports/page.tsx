@@ -65,7 +65,7 @@ const reports: ReportConfig[] = [
     description: 'Department-wise employee distribution, active/inactive counts, and headcount analysis',
     icon: BarChart3,
     color: 'text-accent-800',
-    bgColor: 'bg-accent-250 dark:bg-pink-950/20',
+    bgColor: 'bg-accent-250 dark:bg-accent-950/20',
     category: 'Analytics',
     endpoint: 'department-headcount',
     requiresDateRange: false,

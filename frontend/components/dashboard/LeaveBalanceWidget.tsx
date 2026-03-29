@@ -33,7 +33,7 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
   const getStrokeColor = () => {
     if (percentage > 80) return '#EF4444'; // danger
     if (percentage > 60) return '#F59E0B'; // warning
-    return '#0057FF'; // primary blue
+    return '#3a5fd9'; // primary blue
   };
 
   return (
@@ -126,8 +126,8 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
           href="/leaves/request"
           className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
           style={{
-            background: 'linear-gradient(135deg, #0057FF 0%, #003ECB 100%)',
-            boxShadow: '0 2px 8px rgba(0, 87, 255, 0.25)',
+            background: 'linear-gradient(135deg, #3a5fd9 0%, #2a48b3 100%)',
+            boxShadow: '0 2px 8px rgba(58, 95, 217, 0.25)',
           }}
         >
           Request Leave

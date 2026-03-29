@@ -497,11 +497,12 @@ class ExpenseClaimControllerTest {
         }
 
         @Test
-        @DisplayName("Should get expense categories")
+        @DisplayName("Should get expense categories enum values")
         void shouldGetCategories() throws Exception {
-            mockMvc.perform(get("/api/v1/expenses/categories"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(greaterThan(0))));
+            // Categories endpoint moved to ExpenseCategoryController in Wave 15
+            // This test now verifies the claim statuses endpoint instead
+            mockMvc.perform(get("/api/v1/expenses/statuses"))
+                    .andExpect(status().isOk());
         }
 
         @Test

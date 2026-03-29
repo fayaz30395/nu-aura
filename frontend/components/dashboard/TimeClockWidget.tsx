@@ -129,8 +129,8 @@ export function TimeClockWidget({
             : 'text-white border-0'
         } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
         style={!isCheckedIn ? {
-          background: 'linear-gradient(135deg, #0057FF 0%, #003ECB 100%)',
-          boxShadow: '0 4px 14px rgba(0, 87, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+          background: 'linear-gradient(135deg, #3a5fd9 0%, #2a48b3 100%)',
+          boxShadow: '0 4px 14px rgba(58, 95, 217, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
         } : undefined}
       >
         {isCheckedIn ? (

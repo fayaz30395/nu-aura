@@ -161,7 +161,7 @@ class CalendarService {
       OUT_OF_OFFICE: 'bg-[var(--text-muted)]',
       HOLIDAY: 'bg-success-500',
       TRAINING: 'bg-accent-500',
-      INTERVIEW: 'bg-pink-500',
+      INTERVIEW: 'bg-accent-500',
       REVIEW: 'bg-accent-500',
       OTHER: 'bg-[var(--text-muted)]',
     };

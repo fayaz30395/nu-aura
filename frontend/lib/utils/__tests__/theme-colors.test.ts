@@ -10,12 +10,12 @@ describe('theme-colors', () => {
   describe('chartColors individual color getters', () => {
     it('primary returns fallback when window is undefined', () => {
       const color = chartColors.primary();
-      expect(color).toBe('#0057FF');
+      expect(color).toBe('#3a5fd9');
     });
 
     it('secondary returns fallback when window is undefined', () => {
       const color = chartColors.secondary();
-      expect(color).toBe('#4D8AFF');
+      expect(color).toBe('#7092ff');
     });
 
     it('success returns fallback', () => {
@@ -80,8 +80,8 @@ describe('theme-colors', () => {
 
     it('palette contains all primary colors', () => {
       const palette = chartColors.palette();
-      expect(palette[0]).toBe('#0057FF'); // primary
-      expect(palette[1]).toBe('#4D8AFF'); // secondary
+      expect(palette[0]).toBe('#3a5fd9'); // primary
+      expect(palette[1]).toBe('#7092ff'); // secondary
       expect(palette[2]).toBe('#16a34a'); // success
       expect(palette[3]).toBe('#f59e0b'); // warning
       expect(palette[4]).toBe('#dc2626'); // danger
