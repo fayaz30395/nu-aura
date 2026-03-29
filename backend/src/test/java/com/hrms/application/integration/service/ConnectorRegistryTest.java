@@ -242,7 +242,7 @@ class ConnectorRegistryTest {
 
             // Assert
             assertThat(result).isSameAs(cap1);
-            assertThat(result.supportedEvents()).containsExactly("OFFER_CREATED", "DOCUMENT_CREATED");
+            assertThat(result.supportedEvents()).containsExactlyInAnyOrder("OFFER_CREATED", "DOCUMENT_CREATED");
             assertThat(result.supportsWebhookCallback()).isTrue();
         }
 

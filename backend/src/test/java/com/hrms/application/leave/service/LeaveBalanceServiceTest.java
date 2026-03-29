@@ -101,7 +101,7 @@ class LeaveBalanceServiceTest {
 
             verify(leaveBalanceRepository, times(1))
                     .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, year, tenantId);
-            verify(leaveTypeRepository, never()).findById(any());
+            verify(leaveTypeRepository, never()).findByIdAndTenantId(any(), any());
             verify(leaveBalanceRepository, never()).save(any());
         }
 
@@ -120,7 +120,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);
@@ -146,7 +146,7 @@ class LeaveBalanceServiceTest {
 
             verify(leaveBalanceRepository, times(1))
                     .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, year, tenantId);
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
             verify(leaveBalanceRepository, times(1)).save(any(LeaveBalance.class));
         }
 
@@ -165,7 +165,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);
@@ -198,7 +198,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);
@@ -231,7 +231,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);
@@ -256,7 +256,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.empty());
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.empty());
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);
@@ -273,7 +273,7 @@ class LeaveBalanceServiceTest {
                     .extracting(LeaveBalance::getOpeningBalance)
                     .isEqualTo(BigDecimal.ZERO);
 
-            verify(leaveTypeRepository, times(1)).findById(leaveTypeId);
+            verify(leaveTypeRepository, times(1)).findByIdAndTenantId(leaveTypeId, tenantId);
             verify(leaveBalanceRepository, times(1)).save(any(LeaveBalance.class));
         }
 
@@ -292,7 +292,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);
@@ -318,7 +318,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.empty());
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.empty());
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);
@@ -348,7 +348,7 @@ class LeaveBalanceServiceTest {
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                     employeeId, leaveTypeId, year, tenantId))
                     .thenReturn(Optional.empty());
-            when(leaveTypeRepository.findById(leaveTypeId)).thenReturn(Optional.of(leaveType));
+            when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
             when(leaveBalanceRepository.save(any(LeaveBalance.class)))
                     .thenAnswer(invocation -> {
                         LeaveBalance balance = invocation.getArgument(0);

@@ -227,8 +227,6 @@ class PayrollComponentServiceTest {
 
         when(payrollComponentRepository.findAllByTenantIdAndIsActiveTrueOrderByEvaluationOrderAsc(tenantId))
                 .thenReturn(components);
-        when(payrollComponentRepository.findAllByTenantIdOrderByEvaluationOrderAsc(tenantId))
-                .thenReturn(components);
 
         Map<String, BigDecimal> inputs = new HashMap<>();
         inputs.put("basic", new BigDecimal("50000"));

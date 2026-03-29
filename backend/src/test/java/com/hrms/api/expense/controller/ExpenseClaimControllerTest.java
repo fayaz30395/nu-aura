@@ -100,7 +100,6 @@ class ExpenseClaimControllerTest {
                 .id(claimId)
                 .employeeId(employeeId)
                 .description("Business Trip Expenses")
-                .description("Expenses for client meeting in NY")
                 .status(ExpenseClaim.ExpenseStatus.DRAFT)
                 .category(ExpenseClaim.ExpenseCategory.TRAVEL)
                 .amount(new BigDecimal("1500.0"))
@@ -119,7 +118,6 @@ class ExpenseClaimControllerTest {
         void shouldCreateExpenseClaimSuccessfully() throws Exception {
             ExpenseClaimRequest request = ExpenseClaimRequest.builder()
                     .description("Business Trip Expenses")
-                    .description("Expenses for client meeting in NY")
                     .category(ExpenseClaim.ExpenseCategory.TRAVEL)
                     .amount(new BigDecimal("1500.0"))
                     .currency("USD")
@@ -188,7 +186,6 @@ class ExpenseClaimControllerTest {
         void shouldUpdateExpenseClaimSuccessfully() throws Exception {
             ExpenseClaimRequest request = ExpenseClaimRequest.builder()
                     .description("Updated Business Trip Expenses")
-                    .description("Updated description")
                     .category(ExpenseClaim.ExpenseCategory.TRAVEL)
                     .amount(new BigDecimal("2000.0"))
                     .currency("USD")
