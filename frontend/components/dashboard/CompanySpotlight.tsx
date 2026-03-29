@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { spotlightService } from '@/lib/services/spotlight.service';
 import type { Spotlight } from '@/lib/types/spotlight';
 
@@ -42,25 +43,18 @@ function getDemoSpotlights(): Spotlight[] {
 }
 
 export function CompanySpotlight() {
-  const [spotlights, setSpotlights] = useState<Spotlight[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  useEffect(() => {
-    const loadSpotlights = async () => {
-      try {
-        setIsLoading(true);
-        const data = await spotlightService.getActiveSpotlights();
-        setSpotlights(data && data.length > 0 ? data : getDemoSpotlights());
-      } catch {
-        setSpotlights(getDemoSpotlights());
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadSpotlights();
-  }, []);
+  const { data: spotlights = [], isLoading } = useQuery<Spotlight[]>({
+    queryKey: ['spotlights', 'active'],
+    queryFn: async () => {
+      const data = await spotlightService.getActiveSpotlights();
+      return data && data.length > 0 ? data : getDemoSpotlights();
+    },
+    placeholderData: getDemoSpotlights,
+    retry: false,
+  });
 
   useEffect(() => {
     if (!isAutoPlaying || spotlights.length <= 1 || isLoading) return;

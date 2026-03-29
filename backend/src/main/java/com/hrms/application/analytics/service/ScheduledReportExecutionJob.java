@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -53,6 +54,7 @@ public class ScheduledReportExecutionJob {
      * Execute due scheduled reports every minute.
      */
     @Scheduled(cron = "0 * * * * *")
+    @SchedulerLock(name = "executeScheduledReports", lockAtLeastFor = "PT2M", lockAtMostFor = "PT30M")
     @Transactional
     public void executeScheduledReports() {
         log.debug("Checking for scheduled reports due for execution...");

@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -204,6 +205,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
      * Periodically check if Redis is back online.
      */
     @Scheduled(fixedRate = 30000) // Every 30 seconds
+    @SchedulerLock(name = "checkRedisHealth", lockAtLeastFor = "PT15S", lockAtMostFor = "PT2M")
     public void checkRedisHealth() {
         if (!useRedis || distributedRateLimiter == null) {
             return;
@@ -273,6 +275,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
      * regardless of map size. This prevents gradual accumulation during long-running deployments.
      */
     @Scheduled(fixedRate = CLEANUP_INTERVAL_MS)
+    @SchedulerLock(name = "rateLimitBucketCleanup", lockAtLeastFor = "PT2M", lockAtMostFor = "PT10M")
     public void scheduledCleanup() {
         evictStaleBuckets();
     }

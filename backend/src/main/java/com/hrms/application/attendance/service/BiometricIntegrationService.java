@@ -10,6 +10,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -215,6 +216,7 @@ public class BiometricIntegrationService {
      * Runs every 2 minutes via scheduled job.
      */
     @Scheduled(fixedDelayString = "${biometric.process-interval-ms:120000}")
+    @SchedulerLock(name = "processPendingPunches", lockAtLeastFor = "PT2M", lockAtMostFor = "PT10M")
     @Transactional
     public void processPendingPunches() {
         processPendingPunchesInternal();

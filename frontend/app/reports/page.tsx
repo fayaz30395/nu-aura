@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -312,6 +312,13 @@ export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState<ReportConfig | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Auto-clear success message with proper cleanup
+  useEffect(() => {
+    if (!successMessage) return;
+    const t = setTimeout(() => setSuccessMessage(''), 3000);
+    return () => clearTimeout(t);
+  }, [successMessage]);
+
   const downloadMutation = useReportDownload();
 
   const handleDownload = (type: ReportType, request: ReportRequest) => {
@@ -322,7 +329,6 @@ export default function ReportsPage() {
       {
         onSuccess: () => {
           setSuccessMessage(`${selectedReport.title} downloaded successfully!`);
-          setTimeout(() => setSuccessMessage(''), 3000);
           setSelectedReport(null);
         },
       }

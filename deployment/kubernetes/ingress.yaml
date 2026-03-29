@@ -56,14 +56,31 @@ spec:
             port:
               number: 8080
 
-      # Actuator endpoints (restricted)
-      - path: /actuator/*
+      # Actuator: only health endpoint exposed externally (for load balancer probes).
+      # All other actuator paths are blocked by routing to a non-existent service,
+      # which returns a 404/503 from the GCE load balancer.
+      - path: /actuator/health
         pathType: ImplementationSpecific
         backend:
           service:
             name: hrms-backend
             port:
               number: 8080
+      - path: /actuator/health/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: hrms-backend
+            port:
+              number: 8080
+      # Block all other actuator endpoints from external access
+      - path: /actuator/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: hrms-actuator-deny
+            port:
+              number: 9999
 
       # WebSocket connections
       - path: /ws/*

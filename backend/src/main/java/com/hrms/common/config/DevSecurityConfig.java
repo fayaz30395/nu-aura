@@ -38,7 +38,8 @@ public class DevSecurityConfig {
 
     /**
      * Higher priority filter chain for Actuator endpoints in dev mode.
-     * Allows full access to actuator endpoints for debugging.
+     * Only safe, non-sensitive endpoints are permitted. Sensitive endpoints
+     * (env, configprops, heapdump, beans, mappings) are denied even in dev.
      */
     @Bean
     @Order(2)
@@ -47,10 +48,28 @@ public class DevSecurityConfig {
                 .securityMatcher("/actuator/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Health is always public
-                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
-                        // In dev, allow all actuator endpoints
-                        .anyRequest().permitAll()
+                        // Safe endpoints — always permitted
+                        .requestMatchers(
+                                "/actuator/health", "/actuator/health/**",
+                                "/actuator/info",
+                                "/actuator/metrics", "/actuator/metrics/**",
+                                "/actuator/prometheus"
+                        ).permitAll()
+                        // Sensitive endpoints — explicitly denied
+                        .requestMatchers(
+                                "/actuator/env", "/actuator/env/**",
+                                "/actuator/configprops", "/actuator/configprops/**",
+                                "/actuator/heapdump",
+                                "/actuator/beans",
+                                "/actuator/mappings",
+                                "/actuator/threaddump",
+                                "/actuator/scheduledtasks",
+                                "/actuator/conditions",
+                                "/actuator/logfile",
+                                "/actuator/shutdown"
+                        ).denyAll()
+                        // All other actuator endpoints require authentication
+                        .anyRequest().authenticated()
                 );
 
         return http.build();

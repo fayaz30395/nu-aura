@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Download, RefreshCw, AlertTriangle, TrendingDown, Shield, Zap } from 'lucide-react';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
@@ -31,41 +32,33 @@ const RISK_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
 };
 
 export default function AttritionReportPage() {
-  const [predictions, setPredictions] = useState<AttritionPrediction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const [minScore, setMinScore] = useState(50);
   const [selectedRisk, setSelectedRisk] = useState<string>('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [markingAction, setMarkingAction] = useState<string | null>(null);
 
-  // R2-013 FIX: Add minScore to the dependency array. Without it, load() captures
-  // the initial minScore=50 in a stale closure — changing the slider would update
-  // the input visually but re-fetching with the stale value (always 50).
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { load(); }, [minScore]);
-
-  async function load() {
-    setLoading(true);
-    setError(null);
-    try {
+  const { data: predictions = [], isLoading: loading, error: queryError, refetch } = useQuery<AttritionPrediction[]>({
+    queryKey: ['attrition-predictions', minScore],
+    queryFn: async () => {
       const res = await apiClient.get<AttritionPrediction[]>(
         `/predictive-analytics/attrition/high-risk?minScore=${minScore}`
       );
-      setPredictions(res.data ?? []);
-    } catch {
-      setError('Failed to load attrition predictions. Predictive analytics may not be available.');
-      setPredictions([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+      return res.data ?? [];
+    },
+  });
+
+  const error = queryError ? 'Failed to load attrition predictions. Predictive analytics may not be available.' : null;
 
   async function markActionTaken(predictionId: string) {
     setMarkingAction(predictionId);
     try {
       await apiClient.post(`/predictive-analytics/attrition/${predictionId}/action-taken`);
-      setPredictions(prev => prev.map(p => p.id === predictionId ? { ...p, actionTaken: true } : p));
+      // Optimistically update the cache
+      queryClient.setQueryData<AttritionPrediction[]>(
+        ['attrition-predictions', minScore],
+        (old) => old?.map(p => p.id === predictionId ? { ...p, actionTaken: true } : p) ?? []
+      );
     } catch {
       // ignore
     } finally {
@@ -114,7 +107,7 @@ export default function AttritionReportPage() {
             <p className="text-sm text-[var(--text-muted)] mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={load} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50">
+            <button onClick={() => refetch()} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50">
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
             </button>
             <PermissionGate permission={Permissions.ANALYTICS_EXPORT}>
@@ -169,7 +162,7 @@ export default function AttritionReportPage() {
               onChange={e => setMinScore(Number(e.target.value))}
               className="w-16 text-sm border border-[var(--border-main)] rounded px-2 py-1"
             />
-            <button onClick={load} className="text-xs px-2 py-1 bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] rounded">Apply</button>
+            <button onClick={() => refetch()} className="text-xs px-2 py-1 bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] rounded">Apply</button>
           </div>
           <span className="text-xs text-[var(--text-muted)]">{filtered.length} employees shown</span>
           {selectedRisk !== 'ALL' && (

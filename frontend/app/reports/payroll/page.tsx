@@ -34,6 +34,13 @@ export default function PayrollReportsPage() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Auto-clear success message with proper cleanup
+  useEffect(() => {
+    if (!successMessage) return;
+    const t = setTimeout(() => setSuccessMessage(''), 3000);
+    return () => clearTimeout(t);
+  }, [successMessage]);
+
   const downloadMutation = useDownloadPayrollReport();
 
   // RBAC guard — all hooks declared above; safe to return null after them
@@ -59,7 +66,6 @@ export default function PayrollReportsPage() {
 
       await downloadMutation.mutateAsync(request);
       setSuccessMessage(`Payroll report downloaded successfully in ${format} format!`);
-      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
     }

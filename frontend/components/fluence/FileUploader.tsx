@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, X, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,16 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup interval and timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+    };
+  }, []);
 
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
@@ -40,10 +50,11 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
     setUploadProgress(0);
 
     // Simulate progress since we don't have onUploadProgress from the API
-    const progressInterval = setInterval(() => {
+    progressIntervalRef.current = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 90) {
-          clearInterval(progressInterval);
+          if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+          progressIntervalRef.current = null;
           return 90;
         }
         return prev + 10;
@@ -53,7 +64,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
     try {
       await onUpload(file);
       setUploadProgress(100);
-      setTimeout(() => {
+      resetTimeoutRef.current = setTimeout(() => {
         setSelectedFile(null);
         setUploadProgress(0);
       }, 1000);
@@ -63,7 +74,10 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
       setSelectedFile(null);
       setUploadProgress(0);
     } finally {
-      clearInterval(progressInterval);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
     }
   }, [onUpload]);
 

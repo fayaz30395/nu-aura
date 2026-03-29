@@ -12,6 +12,7 @@ import com.hrms.infrastructure.workflow.repository.ApprovalStepRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -57,6 +58,7 @@ public class WorkflowEscalationScheduler {
      * Cron: Every hour at minute 15 (e.g., 00:15, 01:15, ...)
      */
     @Scheduled(cron = "0 15 * * * *")
+    @SchedulerLock(name = "workflowProcessEscalations", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void processEscalations() {
         log.info("WorkflowEscalationScheduler: starting escalation run");
 

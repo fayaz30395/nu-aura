@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
+import { useQuery } from '@tanstack/react-query';
 import {
   Users,
   TrendingUp,
@@ -37,6 +38,12 @@ interface OrgHealth {
   diversity: { departmentDistribution: Record<string, number> };
 }
 
+interface HeadcountData {
+  metrics: EmployeeMetrics | null;
+  trend: HeadcountTrend[];
+  orgHealth: OrgHealth | null;
+}
+
 const STATUS_COLOR: Record<string, string> = {
   EXCELLENT: 'text-green-600 bg-green-50',
   GOOD: 'text-blue-600 bg-blue-50',
@@ -45,34 +52,26 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default function HeadcountReportPage() {
-  const [metrics, setMetrics] = useState<EmployeeMetrics | null>(null);
-  const [trend, setTrend] = useState<HeadcountTrend[]>([]);
-  const [orgHealth, setOrgHealth] = useState<OrgHealth | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  async function load() {
-    setLoading(true);
-    setError(null);
-    try {
+  const { data, isLoading: loading, error: queryError, refetch } = useQuery<HeadcountData>({
+    queryKey: ['headcount-report'],
+    queryFn: async () => {
       const [metricsRes, trendRes, healthRes] = await Promise.all([
         apiClient.get<EmployeeMetrics>('/analytics/employees').catch((): null => null),
         apiClient.get<HeadcountTrend[]>('/analytics/headcount-trend?months=12').catch((): null => null),
         apiClient.get<OrgHealth>('/analytics/org-health').catch((): null => null),
       ]);
-      setMetrics(metricsRes?.data ?? null);
-      setTrend(trendRes?.data ?? []);
-      setOrgHealth(healthRes?.data ?? null);
-    } catch {
-      setError('Failed to load headcount data.');
-    } finally {
-      setLoading(false);
-    }
-  }
+      return {
+        metrics: metricsRes?.data ?? null,
+        trend: trendRes?.data ?? [],
+        orgHealth: healthRes?.data ?? null,
+      };
+    },
+  });
+
+  const metrics = data?.metrics ?? null;
+  const trend = data?.trend ?? [];
+  const orgHealth = data?.orgHealth ?? null;
+  const error = queryError ? 'Failed to load headcount data.' : null;
 
   function exportCSV() {
     if (!metrics) return;
@@ -105,7 +104,7 @@ export default function HeadcountReportPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={load}
+              onClick={() => refetch()}
               disabled={loading}
               className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50"
             >

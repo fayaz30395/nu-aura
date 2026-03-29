@@ -69,8 +69,15 @@ export function AuthGuard({
   });
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const restoreAttemptedRef = useRef(false);
+  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    // Clear any pending redirect timeout from a previous run of this effect
+    if (redirectTimeoutRef.current) {
+      clearTimeout(redirectTimeoutRef.current);
+      redirectTimeoutRef.current = null;
+    }
+
     // Wait for auth to hydrate
     if (!hasHydrated || !isReady) {
       return;
@@ -102,7 +109,7 @@ export function AuthGuard({
             const loginUrl = `/auth/login?returnUrl=${returnUrl}`;
             try {
               router.replace(loginUrl);
-              setTimeout(() => {
+              redirectTimeoutRef.current = setTimeout(() => {
                 if (window.location.pathname !== '/auth/login') {
                   window.location.href = loginUrl;
                 }
@@ -120,7 +127,7 @@ export function AuthGuard({
         const loginUrl = `/auth/login?returnUrl=${returnUrl}`;
         try {
           router.replace(loginUrl);
-          setTimeout(() => {
+          redirectTimeoutRef.current = setTimeout(() => {
             if (window.location.pathname !== '/auth/login') {
               window.location.href = loginUrl;
             }
@@ -158,6 +165,13 @@ export function AuthGuard({
     if (!authorized) {
       logger.warn(`[AuthGuard] Access denied to ${pathname}`);
     }
+
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+        redirectTimeoutRef.current = null;
+      }
+    };
     // Intentional omissions: checkAuthorization is a stable hoisted function; router is stable
     // from useRouter; restoreSession is a stable Zustand action; isRestoringSession is omitted
     // to avoid an infinite loop (this effect sets it indirectly via restoreSession().then()).

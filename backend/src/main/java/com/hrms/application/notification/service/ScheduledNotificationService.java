@@ -13,6 +13,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,7 @@ public class ScheduledNotificationService {
      * Runs daily at 8:00 AM to send birthday wishes
      */
     @Scheduled(cron = "0 0 8 * * *")
+    @SchedulerLock(name = "sendBirthdayNotifications", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendBirthdayNotifications() {
         log.info("Starting birthday notification job...");
@@ -168,6 +170,7 @@ public class ScheduledNotificationService {
      * Runs daily at 8:30 AM to send work anniversary wishes
      */
     @Scheduled(cron = "0 30 8 * * *")
+    @SchedulerLock(name = "sendAnniversaryNotifications", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendAnniversaryNotifications() {
         log.info("Starting work anniversary notification job...");
@@ -296,6 +299,7 @@ public class ScheduledNotificationService {
      * Runs at 10:00 AM on weekdays to remind employees who haven't checked in
      */
     @Scheduled(cron = "0 0 10 * * MON-FRI")
+    @SchedulerLock(name = "sendAttendanceReminders", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendAttendanceReminders() {
         log.info("Starting attendance reminder notification job...");
@@ -325,6 +329,7 @@ public class ScheduledNotificationService {
      * Runs at 5:00 PM on weekdays to remind employees who haven't checked out
      */
     @Scheduled(cron = "0 0 17 * * MON-FRI")
+    @SchedulerLock(name = "sendCheckoutReminders", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void sendCheckoutReminders() {
         log.info("Starting checkout reminder notification job...");

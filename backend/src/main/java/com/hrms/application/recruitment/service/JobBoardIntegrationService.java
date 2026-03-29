@@ -8,6 +8,7 @@ import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -144,6 +145,7 @@ public class JobBoardIntegrationService {
      * Sync application counts from all boards (runs every 6 hours).
      */
     @Scheduled(cron = "0 0 */6 * * *")
+    @SchedulerLock(name = "syncApplicationCounts", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void syncApplicationCounts() {
         log.info("Syncing job board application counts");
@@ -171,6 +173,7 @@ public class JobBoardIntegrationService {
      * Expire postings past their expiry date (runs daily at 2 AM).
      */
     @Scheduled(cron = "0 0 2 * * *")
+    @SchedulerLock(name = "expireOldPostings", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void expireOldPostings() {
         List<UUID> tenantIds = fetchActiveTenantIds();
