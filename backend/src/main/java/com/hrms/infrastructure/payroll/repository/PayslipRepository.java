@@ -70,6 +70,12 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
         Pageable pageable
     );
 
+    /**
+     * Find all payslips for a tenant in a specific pay period (used by statutory filing generators).
+     */
+    List<Payslip> findByTenantIdAndPayPeriodMonthAndPayPeriodYear(
+        UUID tenantId, Integer payPeriodMonth, Integer payPeriodYear);
+
     // Analytics methods
     @Query("SELECT COUNT(p) FROM Payslip p WHERE p.tenantId = :tenantId AND p.payPeriodYear = :year AND p.payPeriodMonth = :month")
     Long countByTenantIdAndYearAndMonth(

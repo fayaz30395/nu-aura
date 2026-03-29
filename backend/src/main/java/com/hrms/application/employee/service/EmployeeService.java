@@ -20,7 +20,6 @@ import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -38,26 +37,29 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EmployeeService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final DomainEventPublisher eventPublisher;
+    private final AuditLogService auditLogService;
+    private final DataScopeService dataScopeService;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private DomainEventPublisher eventPublisher;
-
-    @Autowired
-    private AuditLogService auditLogService;
-
-    @Autowired
-    private DataScopeService dataScopeService;
+    public EmployeeService(EmployeeRepository employeeRepository,
+                           DepartmentRepository departmentRepository,
+                           UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           DomainEventPublisher eventPublisher,
+                           AuditLogService auditLogService,
+                           DataScopeService dataScopeService) {
+        this.employeeRepository = employeeRepository;
+        this.departmentRepository = departmentRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.eventPublisher = eventPublisher;
+        this.auditLogService = auditLogService;
+        this.dataScopeService = dataScopeService;
+    }
 
     @Transactional
     @Caching(evict = {

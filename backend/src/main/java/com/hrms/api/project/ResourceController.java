@@ -5,7 +5,6 @@ import com.hrms.application.project.service.ResourceAllocationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +17,11 @@ import jakarta.validation.Valid;
 @Slf4j
 public class ResourceController {
 
-    @Autowired
-    private ResourceAllocationService allocationService;
+    private final ResourceAllocationService allocationService;
+
+    public ResourceController(ResourceAllocationService allocationService) {
+        this.allocationService = allocationService;
+    }
 
     /**
      * Get allocation summary for all employees (with over-allocation flags).

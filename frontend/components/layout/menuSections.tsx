@@ -234,7 +234,17 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
             { id: 'attendance-team', label: 'Team Attendance', href: '/attendance/team', icon: sm.users, requiredPermission: Permissions.ATTENDANCE_VIEW_ALL },
             { id: 'attendance-regularization', label: 'Regularization', href: '/attendance/regularization', icon: sm.fileCheck, requiredPermission: Permissions.ATTENDANCE_VIEW_ALL },
             { id: 'attendance-comp-off', label: 'Comp-Off', href: '/attendance/comp-off', icon: sm.alarmClock, requiredPermission: Permissions.ATTENDANCE_VIEW_ALL },
-            { id: 'attendance-shift-swap', label: 'Shift Swap', href: '/attendance/shift-swap', icon: sm.repeat, requiredPermission: Permissions.ATTENDANCE_VIEW_ALL },
+            { id: 'attendance-shift-swap', label: 'Shift Swap', href: '/shifts/swaps', icon: sm.repeat, requiredPermission: Permissions.ATTENDANCE_VIEW_ALL },
+          ],
+        },
+        {
+          id: 'shift-management', label: 'Shift Management', icon: icon.timer, href: '/shifts',
+          children: [
+            { id: 'shift-dashboard', label: 'Dashboard', href: '/shifts', icon: sm.dashboard, requiredPermission: Permissions.SHIFT_VIEW },
+            { id: 'shift-definitions', label: 'Definitions', href: '/shifts/definitions', icon: sm.settings, requiredPermission: Permissions.SHIFT_VIEW },
+            { id: 'shift-patterns', label: 'Patterns', href: '/shifts/patterns', icon: sm.calendar, requiredPermission: Permissions.SHIFT_VIEW },
+            { id: 'shift-my-schedule', label: 'My Schedule', href: '/shifts/my-schedule', icon: sm.calendarCheck },
+            { id: 'shift-swaps', label: 'Swaps', href: '/shifts/swaps', icon: sm.repeat, requiredPermission: Permissions.SHIFT_VIEW },
           ],
         },
         {
@@ -252,6 +262,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         { id: 'probation', label: 'Probation', icon: icon.userCheck, href: '/probation', requiredPermission: Permissions.PROBATION_VIEW },
         { id: 'assets', label: 'Assets', icon: icon.package, href: '/assets', requiredPermission: Permissions.ASSET_VIEW },
         { id: 'letters', label: 'Letters', icon: icon.mail, href: '/letters', requiredPermission: Permissions.LETTER_TEMPLATE_VIEW },
+        { id: 'letter-templates', label: 'Letter Templates', icon: icon.fileText, href: '/letter-templates', requiredPermission: Permissions.LETTER_TEMPLATE_MANAGE },
         { id: 'contracts', label: 'Contracts', icon: icon.fileText, href: '/contracts', requiredPermission: Permissions.CONTRACT_VIEW },
       ],
     },
@@ -308,10 +319,12 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         { id: 'performance-revolution-grow', label: 'Revolution', icon: icon.zap, href: '/performance/revolution', requiredPermission: Permissions.REVIEW_VIEW },
         { id: 'okr-grow', label: 'OKR', icon: icon.target, href: '/performance/okr', requiredPermission: Permissions.OKR_VIEW },
         { id: 'feedback360-grow', label: '360 Feedback', icon: icon.messageCircle, href: '/performance/360-feedback', requiredPermission: Permissions.FEEDBACK_360_VIEW },
+        { id: 'one-on-one-grow', label: '1-on-1 Meetings', icon: icon.users, href: '/one-on-one', requiredPermission: Permissions.MEETING_VIEW },
         { id: 'training-grow', label: 'Training', icon: icon.graduationCap, href: '/training', requiredPermission: Permissions.TRAINING_VIEW },
         { id: 'learning-grow', label: 'Learning (LMS)', icon: icon.bookOpen, href: '/learning', requiredPermission: Permissions.LMS_COURSE_VIEW },
         { id: 'recognition-grow', label: 'Recognition', icon: icon.award, href: '/recognition', requiredPermission: Permissions.RECOGNITION_VIEW },
         { id: 'surveys-grow', label: 'Surveys', icon: icon.clipboardList, href: '/surveys', requiredPermission: Permissions.SURVEY_VIEW },
+        { id: 'competency-matrix-grow', label: 'Competency Matrix', icon: icon.activity, href: '/performance/competency-matrix', requiredPermission: Permissions.REVIEW_VIEW },
         { id: 'wellness-grow', label: 'Wellness', icon: icon.heart, href: '/wellness', requiredPermission: Permissions.WELLNESS_VIEW },
       ],
     },
@@ -343,7 +356,15 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         },
         { id: 'compensation', label: 'Compensation', icon: icon.trendingUp, href: '/compensation', requiredPermission: Permissions.COMPENSATION_VIEW },
         { id: 'benefits', label: 'Benefits', icon: icon.gift, href: '/benefits', requiredPermission: Permissions.BENEFIT_VIEW_SELF },
-        { id: 'expenses', label: 'Expenses', icon: icon.receipt, href: '/expenses', requiredPermission: Permissions.EXPENSE_VIEW },
+        {
+          id: 'expenses', label: 'Expenses', icon: icon.receipt, href: '/expenses',
+          children: [
+            { id: 'expenses-my', label: 'My Expenses', href: '/expenses', icon: sm.fileText, requiredPermission: Permissions.EXPENSE_VIEW },
+            { id: 'expenses-approvals', label: 'Approvals', href: '/expenses/approvals', icon: sm.clipboardCheck, requiredPermission: Permissions.EXPENSE_APPROVE },
+            { id: 'expenses-reports', label: 'Reports', href: '/expenses/reports', icon: sm.barChart2, requiredPermission: Permissions.EXPENSE_VIEW_ALL },
+            { id: 'expenses-settings', label: 'Settings', href: '/expenses/settings', icon: sm.settings, requiredPermission: Permissions.EXPENSE_MANAGE },
+          ],
+        },
         // Payments module is gated behind NEXT_PUBLIC_PAYMENTS_ENABLED env var (Phase 2 stabilization)
         ...(process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true'
           ? [{ id: 'payments', label: 'Payments', icon: icon.creditCard, href: '/payments', requiredPermission: Permissions.PAYMENT_VIEW }]
@@ -414,6 +435,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         },
         { id: 'analytics', label: 'Analytics', icon: icon.barChart3, href: '/analytics', requiredPermission: Permissions.ANALYTICS_VIEW },
         { id: 'org-health', label: 'Org Health', icon: icon.activity, href: '/analytics/org-health', requiredPermission: Permissions.ANALYTICS_VIEW },
+        { id: 'predictive-analytics', label: 'Predictive Analytics', icon: icon.trendingUp, href: '/predictive-analytics', requiredPermission: Permissions.PREDICTIVE_ANALYTICS_VIEW },
       ],
     },
     // ─── 9. ADMIN & SETTINGS ────────────────────────────────────────
@@ -434,7 +456,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           id: 'org-setup', label: 'Organization Setup', icon: icon.building, requiredPermission: Permissions.SETTINGS_VIEW,
           children: [
             { id: 'holidays', label: 'Holidays', href: '/admin/holidays', icon: sm.calendar, requiredPermission: Permissions.SETTINGS_VIEW },
-            { id: 'shifts', label: 'Shifts', href: '/admin/shifts', icon: sm.timer, requiredPermission: Permissions.SETTINGS_VIEW },
+            { id: 'shifts', label: 'Shifts', href: '/shifts/definitions', icon: sm.timer, requiredPermission: Permissions.SHIFT_VIEW },
             { id: 'office-locations', label: 'Office Locations', href: '/admin/office-locations', icon: sm.mapPin, requiredPermission: Permissions.OFFICE_LOCATION_VIEW },
             { id: 'org-hierarchy', label: 'Org Hierarchy', href: '/admin/org-hierarchy', icon: sm.network, requiredPermission: Permissions.ORG_STRUCTURE_MANAGE },
             { id: 'custom-fields', label: 'Custom Fields', href: '/admin/custom-fields', icon: sm.sliders, requiredPermission: Permissions.CUSTOM_FIELD_VIEW },

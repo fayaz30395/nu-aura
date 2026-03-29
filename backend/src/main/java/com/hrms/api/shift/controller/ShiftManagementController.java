@@ -1,10 +1,9 @@
 package com.hrms.api.shift.controller;
 
-import com.hrms.api.shift.dto.ShiftAssignmentRequest;
-import com.hrms.api.shift.dto.ShiftAssignmentResponse;
-import com.hrms.api.shift.dto.ShiftRequest;
-import com.hrms.api.shift.dto.ShiftResponse;
+import com.hrms.api.shift.dto.*;
 import com.hrms.application.shift.service.ShiftManagementService;
+import com.hrms.application.shift.service.ShiftPatternService;
+import com.hrms.application.shift.service.ShiftScheduleService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import jakarta.validation.Valid;
@@ -30,6 +29,8 @@ import java.util.UUID;
 public class ShiftManagementController {
 
     private final ShiftManagementService shiftManagementService;
+    private final ShiftPatternService shiftPatternService;
+    private final ShiftScheduleService shiftScheduleService;
 
     // ========== Shift CRUD ==========
 
@@ -145,5 +146,109 @@ public class ShiftManagementController {
         log.info("Cancelling assignment: {}", assignmentId);
         shiftManagementService.cancelAssignment(assignmentId);
         return ResponseEntity.noContent().build();
+    }
+
+    // ========== Shift Patterns ==========
+
+    @PostMapping("/patterns")
+    @RequiresPermission(Permission.SHIFT_MANAGE)
+    public ResponseEntity<ShiftPatternResponse> createPattern(
+            @Valid @RequestBody ShiftPatternRequest request) {
+        log.info("Creating shift pattern: {}", request.getName());
+        ShiftPatternResponse response = shiftPatternService.createPattern(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/patterns/{patternId}")
+    @RequiresPermission(Permission.SHIFT_MANAGE)
+    public ResponseEntity<ShiftPatternResponse> updatePattern(
+            @PathVariable UUID patternId,
+            @Valid @RequestBody ShiftPatternRequest request) {
+        log.info("Updating shift pattern: {}", patternId);
+        ShiftPatternResponse response = shiftPatternService.updatePattern(patternId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/patterns/{patternId}")
+    @RequiresPermission(Permission.SHIFT_VIEW)
+    public ResponseEntity<ShiftPatternResponse> getPatternById(@PathVariable UUID patternId) {
+        log.info("Fetching shift pattern: {}", patternId);
+        ShiftPatternResponse response = shiftPatternService.getPatternById(patternId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/patterns")
+    @RequiresPermission(Permission.SHIFT_VIEW)
+    public ResponseEntity<Page<ShiftPatternResponse>> getAllPatterns(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDirection) {
+        Sort.Direction direction = "DESC".equalsIgnoreCase(sortDirection) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<ShiftPatternResponse> response = shiftPatternService.getAllPatterns(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/patterns/active")
+    @RequiresPermission(Permission.SHIFT_VIEW)
+    public ResponseEntity<List<ShiftPatternResponse>> getActivePatterns() {
+        log.info("Fetching active shift patterns");
+        List<ShiftPatternResponse> response = shiftPatternService.getActivePatterns();
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/patterns/{patternId}")
+    @RequiresPermission(Permission.SHIFT_MANAGE)
+    public ResponseEntity<Void> deletePattern(@PathVariable UUID patternId) {
+        log.info("Deleting shift pattern: {}", patternId);
+        shiftPatternService.deletePattern(patternId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ========== Schedule Generation & Retrieval ==========
+
+    @PostMapping("/generate-schedule")
+    @RequiresPermission(Permission.SHIFT_MANAGE)
+    public ResponseEntity<List<ScheduleEntryResponse>> generateSchedule(
+            @Valid @RequestBody GenerateScheduleRequest request) {
+        log.info("Generating schedule from {} to {}", request.getStartDate(), request.getEndDate());
+        List<ScheduleEntryResponse> response = shiftScheduleService.generateSchedule(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/schedule")
+    @RequiresPermission({Permission.SHIFT_VIEW, Permission.ATTENDANCE_VIEW_SELF})
+    public ResponseEntity<List<ScheduleEntryResponse>> getEmployeeSchedule(
+            @RequestParam UUID employeeId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("Fetching schedule for employee {} from {} to {}", employeeId, startDate, endDate);
+        List<ScheduleEntryResponse> response = shiftScheduleService.getEmployeeSchedule(employeeId, startDate, endDate);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/team-schedule")
+    @RequiresPermission({Permission.SHIFT_VIEW, Permission.ATTENDANCE_VIEW_TEAM})
+    public ResponseEntity<List<ScheduleEntryResponse>> getTeamSchedule(
+            @RequestParam UUID managerId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("Fetching team schedule for manager {} from {} to {}", managerId, startDate, endDate);
+        List<ScheduleEntryResponse> response = shiftScheduleService.getTeamSchedule(managerId, startDate, endDate);
+        return ResponseEntity.ok(response);
+    }
+
+    // ========== Shift Rule Validation ==========
+
+    @GetMapping("/validate-rules")
+    @RequiresPermission(Permission.SHIFT_ASSIGN)
+    public ResponseEntity<List<ShiftRuleViolation>> validateShiftRules(
+            @RequestParam UUID employeeId,
+            @RequestParam UUID shiftId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        log.info("Validating shift rules for employee {} on {}", employeeId, date);
+        List<ShiftRuleViolation> violations = shiftScheduleService.validateShiftRules(employeeId, shiftId, date);
+        return ResponseEntity.ok(violations);
     }
 }

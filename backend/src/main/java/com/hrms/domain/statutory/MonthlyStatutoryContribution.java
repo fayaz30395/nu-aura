@@ -66,6 +66,13 @@ public class MonthlyStatutoryContribution {
     @Column(name = "tds_deducted", precision = 10, scale = 2)
     private BigDecimal tdsDeducted;
 
+    // LWF Details
+    @Column(name = "lwf_employee_contribution", precision = 10, scale = 2)
+    private BigDecimal lwfEmployeeContribution;
+
+    @Column(name = "lwf_employer_contribution", precision = 10, scale = 2)
+    private BigDecimal lwfEmployerContribution;
+
     @Column(name = "gross_salary", precision = 12, scale = 2)
     private BigDecimal grossSalary;
 

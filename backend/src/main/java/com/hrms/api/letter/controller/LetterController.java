@@ -201,11 +201,46 @@ public class LetterController {
         return ResponseEntity.ok().build();
     }
 
+    // ==================== Template Clone & Preview ====================
+
+    @PostMapping("/templates/{templateId}/clone")
+    @RequiresPermission(LETTER_TEMPLATE_CREATE)
+    public ResponseEntity<LetterTemplateResponse> cloneTemplate(@PathVariable UUID templateId) {
+        log.info("Cloning letter template: {}", templateId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(letterService.cloneTemplate(templateId));
+    }
+
+    @GetMapping("/templates/{templateId}/preview")
+    @RequiresPermission(LETTER_TEMPLATE_VIEW)
+    public ResponseEntity<String> previewTemplate(@PathVariable UUID templateId) {
+        return ResponseEntity.ok(letterService.previewTemplate(templateId));
+    }
+
+    // ==================== Bulk Generation ====================
+
+    @PostMapping("/bulk-generate")
+    @RequiresPermission(LETTER_GENERATE)
+    public ResponseEntity<java.util.List<GeneratedLetterResponse>> bulkGenerate(
+            @RequestParam UUID templateId,
+            @RequestBody java.util.List<UUID> employeeIds) {
+        UUID generatedBy = SecurityContext.getCurrentEmployeeId();
+        log.info("Bulk generating letters for {} employees using template: {}", employeeIds.size(), templateId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(letterService.bulkGenerate(templateId, employeeIds, generatedBy));
+    }
+
     // ==================== Reference Data Endpoints ====================
 
     @GetMapping("/categories")
     @RequiresPermission(LETTER_TEMPLATE_VIEW)
     public ResponseEntity<LetterCategory[]> getLetterCategories() {
         return ResponseEntity.ok(letterService.getLetterCategories());
+    }
+
+    @GetMapping("/placeholders")
+    @RequiresPermission(LETTER_TEMPLATE_VIEW)
+    public ResponseEntity<java.util.Map<String, java.util.List<java.util.Map<String, String>>>> getAvailablePlaceholders() {
+        return ResponseEntity.ok(letterService.getAvailablePlaceholders());
     }
 }

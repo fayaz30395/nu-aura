@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,20 +30,23 @@ import java.util.stream.Collectors;
 @lombok.extern.slf4j.Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider tokenProvider;
+    private final UserDetailsService userDetailsService;
+    private final EmployeeRepository employeeRepository;
+    private final ScopeContextService scopeContextService;
+    private final SecurityService securityService;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private ScopeContextService scopeContextService;
-
-    @Autowired
-    private SecurityService securityService;
+    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider,
+                                   UserDetailsService userDetailsService,
+                                   EmployeeRepository employeeRepository,
+                                   ScopeContextService scopeContextService,
+                                   SecurityService securityService) {
+        this.tokenProvider = tokenProvider;
+        this.userDetailsService = userDetailsService;
+        this.employeeRepository = employeeRepository;
+        this.scopeContextService = scopeContextService;
+        this.securityService = securityService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

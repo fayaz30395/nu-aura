@@ -9,7 +9,6 @@ import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +24,11 @@ import java.util.UUID;
 @Tag(name = "Employment Change Requests", description = "APIs for managing employment detail change requests requiring HR approval")
 public class EmploymentChangeRequestController {
 
-    @Autowired
-    private EmploymentChangeRequestService changeRequestService;
+    private final EmploymentChangeRequestService changeRequestService;
+
+    public EmploymentChangeRequestController(EmploymentChangeRequestService changeRequestService) {
+        this.changeRequestService = changeRequestService;
+    }
 
     @PostMapping
     @RequiresPermission(Permission.EMPLOYMENT_CHANGE_CREATE)

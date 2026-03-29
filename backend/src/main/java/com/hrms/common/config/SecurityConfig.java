@@ -2,8 +2,8 @@ package com.hrms.common.config;
 
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.RateLimitingFilter;
+import com.hrms.common.security.SamlAuthenticationSuccessHandler;
 import com.hrms.common.security.TenantFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -46,20 +47,29 @@ public class SecurityConfig {
     @Value("${app.security.csrf.enabled:true}")
     private boolean csrfEnabled;
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final TenantFilter tenantFilter;
+    private final RateLimitingFilter rateLimitingFilter;
+    private final UserDetailsService userDetailsService;
+    private final RelyingPartyRegistrationRepository relyingPartyRegistrationRepository;
+    private final SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler;
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Autowired
-    private TenantFilter tenantFilter;
-
-    @Autowired
-    private RateLimitingFilter rateLimitingFilter;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
+    public SecurityConfig(Environment environment,
+                          JwtAuthenticationFilter jwtAuthenticationFilter,
+                          TenantFilter tenantFilter,
+                          RateLimitingFilter rateLimitingFilter,
+                          UserDetailsService userDetailsService,
+                          RelyingPartyRegistrationRepository relyingPartyRegistrationRepository,
+                          SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler) {
+        this.environment = environment;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.tenantFilter = tenantFilter;
+        this.rateLimitingFilter = rateLimitingFilter;
+        this.userDetailsService = userDetailsService;
+        this.relyingPartyRegistrationRepository = relyingPartyRegistrationRepository;
+        this.samlAuthenticationSuccessHandler = samlAuthenticationSuccessHandler;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -141,8 +151,21 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/payments/webhooks/**").permitAll()
                         // Preboarding portal endpoints (token-based access for new hires)
                         .requestMatchers("/api/v1/preboarding/portal/**").permitAll()
+                        // Biometric device webhook endpoints (API key auth, not JWT)
+                        .requestMatchers("/api/v1/biometric/punch").permitAll()
+                        .requestMatchers("/api/v1/biometric/punch/batch").permitAll()
+                        // SAML 2.0 SSO endpoints (Spring Security handles auth internally)
+                        .requestMatchers("/saml2/**").permitAll()
+                        .requestMatchers("/login/saml2/**").permitAll()
+                        .requestMatchers("/logout/saml2/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
+                // SAML 2.0 Login — additive to existing JWT/password/Google OAuth flows.
+                // Uses the DynamicSamlRelyingPartyRegistrationRepository to load per-tenant IdP configs.
+                // After successful SAML auth, SamlAuthenticationSuccessHandler issues a JWT and redirects to frontend.
+                .saml2Login(saml2 -> saml2
+                        .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository)
+                        .successHandler(samlAuthenticationSuccessHandler))
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(rateLimitingFilter, TenantFilter.class)
                 .addFilterAfter(jwtAuthenticationFilter, TenantFilter.class);
@@ -186,7 +209,14 @@ public class SecurityConfig {
                     // Ignore CSRF for payment provider webhooks (signature-verified per provider)
                     .ignoringRequestMatchers("/api/v1/payments/webhooks/**")
                     // Ignore CSRF for preboarding portal (token-based, unauthenticated new hires)
-                    .ignoringRequestMatchers("/api/v1/preboarding/portal/**"));
+                    .ignoringRequestMatchers("/api/v1/preboarding/portal/**")
+                    // Ignore CSRF for biometric device webhooks (API key auth, no browser session)
+                    .ignoringRequestMatchers("/api/v1/biometric/punch")
+                    .ignoringRequestMatchers("/api/v1/biometric/punch/batch")
+                    // Ignore CSRF for SAML SSO endpoints (IdP POST assertions cannot carry CSRF tokens)
+                    .ignoringRequestMatchers("/saml2/**")
+                    .ignoringRequestMatchers("/login/saml2/**")
+                    .ignoringRequestMatchers("/logout/saml2/**"));
         } else {
             // Only reachable in non-production profiles (dev, test, local)
             http.csrf(AbstractHttpConfigurer::disable);

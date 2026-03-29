@@ -142,6 +142,12 @@ export interface GenerateOfferLetterRequest {
   sendForESign?: boolean;
 }
 
+export interface PlaceholderItem {
+  key: string;
+  label: string;
+  example: string;
+}
+
 export interface LetterTemplatesResponse {
   content: LetterTemplate[];
   totalElements: number;

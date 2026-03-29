@@ -5,6 +5,14 @@
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <repositories>
+        <repository>
+            <id>shibboleth</id>
+            <name>Shibboleth Repository</name>
+            <url>https://build.shibboleth.net/maven/releases/</url>
+        </repository>
+    </repositories>
+
     <parent>
         <groupId>com.nulogic</groupId>
         <artifactId>nulogic-platform</artifactId>
@@ -66,6 +74,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+
+        <!-- SAML 2.0 Service Provider support for enterprise SSO -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-saml2-service-provider</artifactId>
         </dependency>
 
         <dependency>
@@ -371,14 +385,14 @@
                 <version>3.5.2</version>
                 <configuration>
                     <!-- Parallel Execution Configuration -->
-                    <parallel>all</parallel>
-                    <threadCount>4</threadCount>
-                    <forkCount>1C</forkCount>
+                    <parallel>classes</parallel>
+                    <threadCount>2</threadCount>
+                    <forkCount>0.5C</forkCount>
                     <reuseForks>true</reuseForks>
-                    <perCoreThreadCount>true</perCoreThreadCount>
+                    <perCoreThreadCount>false</perCoreThreadCount>
 
                     <!-- Memory Configuration (JaCoCo argLine is automatically prepended) -->
-                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m</argLine>
+                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError</argLine>
 
                     <!-- Test Stability -->
                     <trimStackTrace>false</trimStackTrace>

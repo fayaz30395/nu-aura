@@ -65,17 +65,30 @@ public class StatutoryDeductions {
      */
     private BigDecimal tdsMonthly;
 
+    // ─── LWF (Labour Welfare Fund) ──────────────────────────────────────────
+
+    /**
+     * Employee LWF contribution: fixed amount per state rules.
+     * Deducted only in applicable months based on state frequency.
+     */
+    private BigDecimal employeeLwf;
+
+    /**
+     * Employer LWF contribution: fixed amount per state rules.
+     */
+    private BigDecimal employerLwf;
+
     // ─── Totals ───────────────────────────────────────────────────────────────
 
     /**
      * Sum of all deductions borne by the employee:
-     * employeePf + employeeEsi + professionalTax + tdsMonthly.
+     * employeePf + employeeEsi + professionalTax + tdsMonthly + employeeLwf.
      */
     private BigDecimal totalEmployeeDeductions;
 
     /**
      * Sum of all contributions borne by the employer:
-     * employerPf + employerEsi.
+     * employerPf + employerEsi + employerLwf.
      */
     private BigDecimal totalEmployerContributions;
 }

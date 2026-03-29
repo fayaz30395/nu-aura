@@ -13,7 +13,6 @@ import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.employee.repository.EmploymentChangeRequestRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,14 +26,17 @@ import java.util.UUID;
 @Slf4j
 public class EmploymentChangeRequestService {
 
-    @Autowired
-    private EmploymentChangeRequestRepository changeRequestRepository;
+    private final EmploymentChangeRequestRepository changeRequestRepository;
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private DepartmentRepository departmentRepository;
+    public EmploymentChangeRequestService(EmploymentChangeRequestRepository changeRequestRepository,
+                                          EmployeeRepository employeeRepository,
+                                          DepartmentRepository departmentRepository) {
+        this.changeRequestRepository = changeRequestRepository;
+        this.employeeRepository = employeeRepository;
+        this.departmentRepository = departmentRepository;
+    }
 
     /**
      * Create a new employment change request

@@ -64,6 +64,9 @@ public class ShiftManagementService {
                 .isActive(request.getIsActive() != null ? request.getIsActive() : true)
                 .shiftType(request.getShiftType() != null ?
                         Shift.ShiftType.valueOf(request.getShiftType()) : Shift.ShiftType.FIXED)
+                .isFlexible(request.getIsFlexible() != null ? request.getIsFlexible() : false)
+                .flexibleWindowMinutes(request.getFlexibleWindowMinutes() != null ? request.getFlexibleWindowMinutes() : 0)
+                .minGapBetweenShiftsHours(request.getMinGapBetweenShiftsHours() != null ? request.getMinGapBetweenShiftsHours() : 11)
                 .colorCode(request.getColorCode())
                 .allowsOvertime(request.getAllowsOvertime())
                 .overtimeMultiplier(request.getOvertimeMultiplier())
@@ -94,6 +97,9 @@ public class ShiftManagementService {
         if (request.getShiftType() != null) {
             shift.setShiftType(Shift.ShiftType.valueOf(request.getShiftType()));
         }
+        shift.setIsFlexible(request.getIsFlexible());
+        shift.setFlexibleWindowMinutes(request.getFlexibleWindowMinutes());
+        shift.setMinGapBetweenShiftsHours(request.getMinGapBetweenShiftsHours());
         shift.setColorCode(request.getColorCode());
         shift.setAllowsOvertime(request.getAllowsOvertime());
         shift.setOvertimeMultiplier(request.getOvertimeMultiplier());
@@ -277,6 +283,9 @@ public class ShiftManagementService {
                 .workingDays(shift.getWorkingDays())
                 .isActive(shift.getIsActive())
                 .shiftType(shift.getShiftType() != null ? shift.getShiftType().name() : null)
+                .isFlexible(shift.getIsFlexible())
+                .flexibleWindowMinutes(shift.getFlexibleWindowMinutes())
+                .minGapBetweenShiftsHours(shift.getMinGapBetweenShiftsHours())
                 .colorCode(shift.getColorCode())
                 .allowsOvertime(shift.getAllowsOvertime())
                 .overtimeMultiplier(shift.getOvertimeMultiplier())

@@ -3,7 +3,6 @@ package com.hrms.application.user.service;
 import com.hrms.common.security.UserPrincipal;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,8 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @lombok.extern.slf4j.Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional(readOnly = true)

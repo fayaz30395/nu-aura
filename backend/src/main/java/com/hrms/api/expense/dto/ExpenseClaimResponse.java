@@ -40,6 +40,11 @@ public class ExpenseClaimResponse {
     private LocalDate paymentDate;
     private String paymentReference;
     private String notes;
+    private String title;
+    private UUID policyId;
+    private LocalDateTime reimbursedAt;
+    private String reimbursementRef;
+    private int totalItems;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -66,6 +71,11 @@ public class ExpenseClaimResponse {
                 .paymentDate(entity.getPaymentDate())
                 .paymentReference(entity.getPaymentReference())
                 .notes(entity.getNotes())
+                .title(entity.getTitle())
+                .policyId(entity.getPolicyId())
+                .reimbursedAt(entity.getReimbursedAt())
+                .reimbursementRef(entity.getReimbursementRef())
+                .totalItems(entity.getTotalItems())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();

@@ -7,7 +7,6 @@ import com.hrms.domain.performance.Feedback;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.performance.repository.FeedbackRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +18,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FeedbackService {
 
-    @Autowired
-    private FeedbackRepository feedbackRepository;
+    private final FeedbackRepository feedbackRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    public FeedbackService(FeedbackRepository feedbackRepository,
+                           EmployeeRepository employeeRepository) {
+        this.feedbackRepository = feedbackRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     @Transactional
     public FeedbackResponse giveFeedback(FeedbackRequest request) {

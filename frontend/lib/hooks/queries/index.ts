@@ -117,3 +117,9 @@ export * from './usePreboarding';
 export * from './usePublicOffer';
 export * from './useRoles';
 export * from './useShifts';
+
+// Predictive Analytics hooks
+export * from './usePredictiveAnalytics';
+
+// LWF (Labour Welfare Fund) hooks
+export * from './useLWF';

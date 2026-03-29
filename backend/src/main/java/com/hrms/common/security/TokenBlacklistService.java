@@ -1,7 +1,6 @@
 package com.hrms.common.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,6 @@ public class TokenBlacklistService {
 
     private boolean redisAvailable = true;
 
-    @Autowired
     public TokenBlacklistService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
         testRedisConnection();

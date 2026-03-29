@@ -40,6 +40,9 @@ public class ShiftRequest {
     private Boolean isActive;
     private String shiftType;
     private String colorCode;
+    private Boolean isFlexible;
+    private Integer flexibleWindowMinutes;
+    private Integer minGapBetweenShiftsHours;
     private Boolean allowsOvertime;
     private BigDecimal overtimeMultiplier;
 }

@@ -8,7 +8,6 @@ import com.hrms.domain.performance.Goal;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.performance.repository.GoalRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,11 +23,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GoalService {
 
-    @Autowired
-    private GoalRepository goalRepository;
+    private final GoalRepository goalRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    public GoalService(GoalRepository goalRepository,
+                       EmployeeRepository employeeRepository) {
+        this.goalRepository = goalRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     @Transactional
     public GoalResponse createGoal(GoalRequest request) {

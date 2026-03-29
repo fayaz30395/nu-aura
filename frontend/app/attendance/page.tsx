@@ -36,8 +36,14 @@ import {
   computeMonthStats,
   computeWeekStats,
 } from './utils';
-import { ChartEntry } from './AttendanceWeeklyChart';
-import { AttendanceWeeklyChart } from './AttendanceWeeklyChart';
+import dynamic from 'next/dynamic';
+import type { ChartEntry } from './AttendanceWeeklyChart';
+import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+
+const AttendanceWeeklyChart = dynamic(
+  () => import('./AttendanceWeeklyChart').then((mod) => ({ default: mod.AttendanceWeeklyChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
 import { AttendanceMonthlyStats } from './AttendanceMonthlyStats';
 import { AttendanceQuickActions, AttendanceUpcomingHolidays, AttendanceWeekProgress } from './AttendanceSidebar';
 

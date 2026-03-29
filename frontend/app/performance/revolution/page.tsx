@@ -13,15 +13,13 @@ import {
     ChevronRight,
     Star
 } from 'lucide-react';
-import {
-    Radar,
-    RadarChart,
-    PolarGrid,
-    PolarAngleAxis,
-    PolarRadiusAxis,
-    ResponsiveContainer,
-    Tooltip
-} from 'recharts';
+import dynamic from 'next/dynamic';
+import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+
+const PerformanceSpiderChart = dynamic(
+  () => import('./PerformanceSpiderChart'),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -127,35 +125,9 @@ export default function PerformanceRevolutionPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="h-80">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <RadarChart data={spiderData?.metrics}>
-                                        <PolarGrid stroke="#e2e8f0" />
-                                        <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fontWeight: 600 }} />
-                                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                                        <Tooltip />
-                                        <Radar
-                                            name="Self"
-                                            dataKey="self"
-                                            stroke="#10b981"
-                                            fill="#10b981"
-                                            fillOpacity={0.2}
-                                        />
-                                        <Radar
-                                            name="Peers"
-                                            dataKey="peer"
-                                            stroke="#8b5cf6"
-                                            fill="#8b5cf6"
-                                            fillOpacity={0.2}
-                                        />
-                                        <Radar
-                                            name="Manager"
-                                            dataKey="manager"
-                                            stroke="#3b82f6"
-                                            fill="#3b82f6"
-                                            fillOpacity={0.4}
-                                        />
-                                    </RadarChart>
-                                </ResponsiveContainer>
+                                {spiderData?.metrics && (
+                                    <PerformanceSpiderChart metrics={spiderData.metrics} />
+                                )}
                             </div>
                             <div className="flex justify-center gap-4 mt-6">
                                 <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-green-500" /> <span className="text-xs">Self</span></div>

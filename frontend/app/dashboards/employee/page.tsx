@@ -22,16 +22,14 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
+import dynamic from 'next/dynamic';
 import { useEmployeeDashboard } from '@/lib/hooks/queries';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
+import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+
+const EmployeeAttendanceChart = dynamic(
+  () => import('./EmployeeAttendanceChart'),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
@@ -308,40 +306,7 @@ export default function EmployeeDashboardPage() {
               </CardHeader>
               <CardContent>
                 {data.attendanceSummary.weeklyTrend.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={data.attendanceSummary.weeklyTrend}>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        className="stroke-surface-200 dark:stroke-surface-700"
-                      />
-                      <XAxis
-                        dataKey="date"
-                        className="text-xs text-[var(--text-secondary)]"
-                        tick={{ fill: 'currentColor' }}
-                      />
-                      <YAxis
-                        className="text-xs text-[var(--text-secondary)]"
-                        tick={{ fill: 'currentColor' }}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '8px',
-                          padding: '8px 12px',
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="totalHours"
-                        name="Work Hours"
-                        stroke="#3b82f6"
-                        strokeWidth={2}
-                        dot={{ fill: 'var(--chart-info)', r: 4 }}
-                        activeDot={{ r: 6 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <EmployeeAttendanceChart weeklyTrend={data.attendanceSummary.weeklyTrend} />
                 ) : (
                   <div className="h-[300px] flex items-center justify-center">
                     <div className="text-center text-[var(--text-muted)]">

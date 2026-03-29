@@ -147,6 +147,9 @@ public final class Permission {
     public static final String EXPENSE_MANAGE = "EXPENSE:MANAGE";
     public static final String EXPENSE_VIEW_ALL = "EXPENSE:VIEW_ALL";
     public static final String EXPENSE_VIEW_TEAM = "EXPENSE:VIEW_TEAM";
+    public static final String EXPENSE_SETTINGS = "EXPENSE:SETTINGS";
+    public static final String EXPENSE_ADVANCE_MANAGE = "EXPENSE:ADVANCE_MANAGE";
+    public static final String EXPENSE_REPORT = "EXPENSE:REPORT";
 
     // Projects & Timesheets
     public static final String PROJECT_VIEW = "PROJECT:VIEW";
@@ -166,6 +169,10 @@ public final class Permission {
     public static final String STATUTORY_MANAGE = "STATUTORY:MANAGE";
     public static final String TDS_DECLARE = "TDS:DECLARE";
     public static final String TDS_APPROVE = "TDS:APPROVE";
+
+    // LWF (Labour Welfare Fund)
+    public static final String LWF_VIEW = "LWF:VIEW";
+    public static final String LWF_MANAGE = "LWF:MANAGE";
 
     // System Administration
     public static final String SYSTEM_ADMIN = "SYSTEM:ADMIN";

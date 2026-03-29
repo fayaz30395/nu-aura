@@ -22,7 +22,7 @@ const DefaultLoadingFallback = () => (
 /**
  * Chart loading skeleton
  */
-const ChartLoadingFallback = () => (
+export const ChartLoadingFallback = () => (
   <div className="h-[300px] w-full animate-pulse bg-surface-100 rounded-lg flex items-center justify-center">
     <span className="text-surface-400">Loading chart...</span>
   </div>
@@ -77,5 +77,76 @@ export const LazyLineChart = dynamic(
 export const LazyPieChart = dynamic(
   () => import('recharts').then((mod) => mod.PieChart),
   { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+
+// ============ Additional Loading Skeletons ============
+
+/**
+ * Editor loading skeleton for Tiptap-based editors
+ */
+export const EditorLoadingFallback = () => (
+  <div className="w-full rounded-lg border border-[var(--border-strong)] bg-white dark:border-surface-700 dark:bg-surface-800 flex items-center justify-center" style={{ minHeight: '300px' }}>
+    <div className="space-y-3 w-full p-6">
+      <Skeleton className="h-10 w-full rounded" />
+      <Skeleton className="h-4 w-3/4 rounded" />
+      <Skeleton className="h-4 w-1/2 rounded" />
+      <Skeleton className="h-4 w-5/6 rounded" />
+    </div>
+  </div>
+);
+
+/**
+ * Kanban board loading skeleton for drag-and-drop pages
+ */
+export const KanbanLoadingFallback = () => (
+  <div className="flex gap-4 overflow-hidden p-4">
+    {Array.from({ length: 4 }).map((_, i) => (
+      <div key={i} className="flex-shrink-0 w-[240px] space-y-3">
+        <Skeleton className="h-8 w-full rounded" />
+        <Skeleton className="h-24 w-full rounded" />
+        <Skeleton className="h-24 w-full rounded" />
+      </div>
+    ))}
+  </div>
+);
+
+// ============ Lazy-loaded Chart Components ============
+
+/**
+ * Lazy-loaded standalone chart components from components/charts/
+ */
+export const LazyAttendanceTrendChart = dynamic(
+  () => import('@/components/charts/AttendanceTrendChart').then((mod) => ({ default: mod.AttendanceTrendChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+
+export const LazyLeaveDistributionChart = dynamic(
+  () => import('@/components/charts/LeaveDistributionChart').then((mod) => ({ default: mod.LeaveDistributionChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+
+export const LazyPayrollCostTrendChart = dynamic(
+  () => import('@/components/charts/PayrollCostTrendChart').then((mod) => ({ default: mod.PayrollCostTrendChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+
+export const LazyHeadcountTrendChart = dynamic(
+  () => import('@/components/charts/HeadcountTrendChart').then((mod) => ({ default: mod.HeadcountTrendChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+
+export const LazyDepartmentDistributionChart = dynamic(
+  () => import('@/components/charts/DepartmentDistributionChart').then((mod) => ({ default: mod.DepartmentDistributionChart })),
+  { loading: () => <ChartLoadingFallback />, ssr: false }
+);
+
+// ============ Lazy-loaded Rich Text Editor ============
+
+/**
+ * Lazy-loaded RichTextEditor (Tiptap + 17 extensions, ~200KB+ gzipped)
+ */
+export const LazyRichTextEditor = dynamic(
+  () => import('@/components/fluence/RichTextEditor'),
+  { loading: () => <EditorLoadingFallback />, ssr: false }
 );
 

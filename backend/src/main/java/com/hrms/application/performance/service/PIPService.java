@@ -13,7 +13,6 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.performance.repository.PIPCheckInRepository;
 import com.hrms.infrastructure.performance.repository.PIPRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +24,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PIPService {
 
-    @Autowired
-    private PIPRepository pipRepository;
+    private final PIPRepository pipRepository;
+    private final PIPCheckInRepository checkInRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private PIPCheckInRepository checkInRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    public PIPService(PIPRepository pipRepository,
+                      PIPCheckInRepository checkInRepository,
+                      EmployeeRepository employeeRepository) {
+        this.pipRepository = pipRepository;
+        this.checkInRepository = checkInRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     @Transactional
     public PIPResponse create(CreatePIPRequest req) {

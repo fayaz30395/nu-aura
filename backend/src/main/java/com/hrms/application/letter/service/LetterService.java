@@ -13,6 +13,8 @@ import com.hrms.domain.letter.LetterTemplate;
 import com.hrms.domain.letter.LetterTemplate.LetterCategory;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.domain.employee.Department;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.letter.repository.GeneratedLetterRepository;
 import com.hrms.infrastructure.letter.repository.LetterTemplateRepository;
@@ -48,6 +50,7 @@ public class LetterService {
     private final LetterTemplateRepository templateRepository;
     private final GeneratedLetterRepository letterRepository;
     private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
     private final CandidateRepository candidateRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final ESignatureService eSignatureService;
@@ -539,6 +542,15 @@ public class LetterService {
                 employee.getEmployeeCode() != null ? employee.getEmployeeCode() : "");
         result = result.replace("{{employee.designation}}",
                 employee.getDesignation() != null ? employee.getDesignation() : "");
+        // Resolve department name from departmentId
+        String departmentName = "";
+        if (employee.getDepartmentId() != null) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            departmentName = departmentRepository.findByIdAndTenantId(employee.getDepartmentId(), tenantId)
+                    .map(Department::getName)
+                    .orElse("");
+        }
+        result = result.replace("{{employee.department}}", departmentName);
         result = result.replace("{{employee.dateOfJoining}}",
                 employee.getJoiningDate() != null ? employee.getJoiningDate().format(DATE_FORMATTER) : "");
         result = result.replace("{{currentDate}}", LocalDate.now().format(DATE_FORMATTER));
@@ -697,5 +709,197 @@ public class LetterService {
     @Transactional(readOnly = true)
     public LetterCategory[] getLetterCategories() {
         return LetterCategory.values();
+    }
+
+    // ==================== Placeholder Operations ====================
+
+    /**
+     * Returns all available placeholders grouped by category for use in letter templates.
+     */
+    @Transactional(readOnly = true)
+    public Map<String, List<Map<String, String>>> getAvailablePlaceholders() {
+        Map<String, List<Map<String, String>>> placeholders = new LinkedHashMap<>();
+
+        // Employee placeholders
+        List<Map<String, String>> employeePlaceholders = List.of(
+                Map.of("key", "employee.name", "label", "Full Name", "example", "John Doe"),
+                Map.of("key", "employee.firstName", "label", "First Name", "example", "John"),
+                Map.of("key", "employee.lastName", "label", "Last Name", "example", "Doe"),
+                Map.of("key", "employee.id", "label", "Employee Code", "example", "EMP-0042"),
+                Map.of("key", "employee.designation", "label", "Designation", "example", "Software Engineer"),
+                Map.of("key", "employee.department", "label", "Department", "example", "Engineering"),
+                Map.of("key", "employee.dateOfJoining", "label", "Date of Joining", "example", "15 March 2024"),
+                Map.of("key", "employee.salary", "label", "Salary", "example", "₹12,00,000"),
+                Map.of("key", "employee.lastWorkingDay", "label", "Last Working Day", "example", "31 December 2025")
+        );
+        placeholders.put("Employee", employeePlaceholders);
+
+        // Company placeholders
+        List<Map<String, String>> companyPlaceholders = List.of(
+                Map.of("key", "company.name", "label", "Company Name", "example", "Acme Corp"),
+                Map.of("key", "company.address", "label", "Company Address", "example", "123 Business Park, Bangalore"),
+                Map.of("key", "company.phone", "label", "Company Phone", "example", "+91 80 1234 5678"),
+                Map.of("key", "company.email", "label", "Company Email", "example", "hr@acmecorp.com"),
+                Map.of("key", "company.website", "label", "Company Website", "example", "www.acmecorp.com")
+        );
+        placeholders.put("Company", companyPlaceholders);
+
+        // Letter placeholders
+        List<Map<String, String>> letterPlaceholders = List.of(
+                Map.of("key", "currentDate", "label", "Current Date", "example", "29 March 2026"),
+                Map.of("key", "letter.referenceNumber", "label", "Reference Number", "example", "OFF/2026/0001"),
+                Map.of("key", "letter.effectiveDate", "label", "Effective Date", "example", "01 April 2026"),
+                Map.of("key", "letter.expiryDate", "label", "Expiry Date", "example", "30 April 2026")
+        );
+        placeholders.put("Letter", letterPlaceholders);
+
+        // Candidate placeholders (for offer letters)
+        List<Map<String, String>> candidatePlaceholders = List.of(
+                Map.of("key", "candidate.name", "label", "Candidate Name", "example", "Jane Smith"),
+                Map.of("key", "candidate.firstName", "label", "First Name", "example", "Jane"),
+                Map.of("key", "candidate.lastName", "label", "Last Name", "example", "Smith"),
+                Map.of("key", "candidate.email", "label", "Candidate Email", "example", "jane@example.com"),
+                Map.of("key", "candidate.phone", "label", "Candidate Phone", "example", "+91 98765 43210"),
+                Map.of("key", "offer.ctc", "label", "Offered CTC", "example", "₹15,00,000"),
+                Map.of("key", "offer.designation", "label", "Offered Designation", "example", "Senior Engineer"),
+                Map.of("key", "offer.joiningDate", "label", "Proposed Joining Date", "example", "15 April 2026"),
+                Map.of("key", "job.title", "label", "Job Title", "example", "Senior Software Engineer"),
+                Map.of("key", "job.location", "label", "Job Location", "example", "Bangalore")
+        );
+        placeholders.put("Candidate / Offer", candidatePlaceholders);
+
+        return placeholders;
+    }
+
+    // ==================== Clone Template ====================
+
+    @Transactional
+    public LetterTemplateResponse cloneTemplate(UUID templateId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        LetterTemplate source = templateRepository.findByIdAndTenantId(templateId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+
+        String newCode = source.getCode() + "_COPY_" + System.currentTimeMillis();
+        String newName = source.getName() + " (Copy)";
+
+        LetterTemplate clone = LetterTemplate.builder()
+                .name(newName)
+                .code(newCode)
+                .description(source.getDescription())
+                .category(source.getCategory())
+                .templateContent(source.getTemplateContent())
+                .headerHtml(source.getHeaderHtml())
+                .footerHtml(source.getFooterHtml())
+                .cssStyles(source.getCssStyles())
+                .includeCompanyLogo(source.getIncludeCompanyLogo())
+                .includeSignature(source.getIncludeSignature())
+                .signatureTitle(source.getSignatureTitle())
+                .signatoryName(source.getSignatoryName())
+                .signatoryDesignation(source.getSignatoryDesignation())
+                .requiresApproval(source.getRequiresApproval())
+                .isActive(true)
+                .isSystemTemplate(false)
+                .templateVersion(1)
+                .availablePlaceholders(source.getAvailablePlaceholders())
+                .build();
+        clone.setTenantId(tenantId);
+
+        LetterTemplate saved = templateRepository.save(clone);
+        log.info("Letter template cloned: {} -> {}", templateId, saved.getId());
+
+        return LetterTemplateResponse.fromEntity(saved);
+    }
+
+    // ==================== Bulk Generation ====================
+
+    @Transactional
+    public List<GeneratedLetterResponse> bulkGenerate(UUID templateId, List<UUID> employeeIds, UUID generatedBy) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        LetterTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+
+        if (!template.getIsActive()) {
+            throw new BusinessException("Template is not active");
+        }
+
+        List<GeneratedLetterResponse> results = new ArrayList<>();
+
+        for (UUID employeeId : employeeIds) {
+            try {
+                Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
+
+                String referenceNumber = generateReferenceNumber(template.getCategory(), tenantId);
+                String content = processTemplate(template.getTemplateContent(), employee, null);
+
+                GeneratedLetter entity = GeneratedLetter.builder()
+                        .referenceNumber(referenceNumber)
+                        .templateId(template.getId())
+                        .employeeId(employee.getId())
+                        .category(template.getCategory())
+                        .letterTitle(template.getName())
+                        .generatedContent(content)
+                        .letterDate(LocalDate.now())
+                        .status(LetterStatus.DRAFT)
+                        .generatedBy(generatedBy)
+                        .build();
+                entity.setTenantId(tenantId);
+
+                GeneratedLetter saved = letterRepository.save(entity);
+                results.add(enrichLetterResponse(GeneratedLetterResponse.fromEntity(saved), tenantId));
+
+                log.info("Bulk generated letter: {} for employee: {}", saved.getReferenceNumber(), employeeId);
+            } catch (Exception e) {
+                log.error("Failed to generate letter for employee {}: {}", employeeId, e.getMessage());
+                // Continue with remaining employees
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Preview a template by resolving placeholders with sample data.
+     */
+    @Transactional(readOnly = true)
+    public String previewTemplate(UUID templateId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        LetterTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+
+        // Replace with sample data
+        String result = template.getTemplateContent();
+        result = result.replace("{{employee.name}}", "John Doe");
+        result = result.replace("{{employee.firstName}}", "John");
+        result = result.replace("{{employee.lastName}}", "Doe");
+        result = result.replace("{{employee.id}}", "EMP-0042");
+        result = result.replace("{{employee.designation}}", "Software Engineer");
+        result = result.replace("{{employee.department}}", "Engineering");
+        result = result.replace("{{employee.dateOfJoining}}", "15 March 2024");
+        result = result.replace("{{employee.salary}}", "₹12,00,000");
+        result = result.replace("{{employee.lastWorkingDay}}", "31 December 2025");
+        result = result.replace("{{company.name}}", "Acme Corp");
+        result = result.replace("{{company.address}}", "123 Business Park, Bangalore");
+        result = result.replace("{{company.phone}}", "+91 80 1234 5678");
+        result = result.replace("{{company.email}}", "hr@acmecorp.com");
+        result = result.replace("{{company.website}}", "www.acmecorp.com");
+        result = result.replace("{{currentDate}}", LocalDate.now().format(DATE_FORMATTER));
+        result = result.replace("{{letter.referenceNumber}}", "REF/2026/SAMPLE");
+        result = result.replace("{{letter.effectiveDate}}", LocalDate.now().format(DATE_FORMATTER));
+        result = result.replace("{{letter.expiryDate}}", LocalDate.now().plusMonths(1).format(DATE_FORMATTER));
+        result = result.replace("{{candidate.name}}", "Jane Smith");
+        result = result.replace("{{candidate.firstName}}", "Jane");
+        result = result.replace("{{candidate.lastName}}", "Smith");
+        result = result.replace("{{candidate.email}}", "jane@example.com");
+        result = result.replace("{{offer.ctc}}", "₹15,00,000");
+        result = result.replace("{{offer.designation}}", "Senior Engineer");
+        result = result.replace("{{offer.joiningDate}}", "15 April 2026");
+        result = result.replace("{{job.title}}", "Senior Software Engineer");
+        result = result.replace("{{job.location}}", "Bangalore");
+
+        return result;
     }
 }

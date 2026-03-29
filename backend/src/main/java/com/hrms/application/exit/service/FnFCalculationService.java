@@ -13,7 +13,6 @@ import com.hrms.infrastructure.exit.repository.ExitProcessRepository;
 import com.hrms.infrastructure.exit.repository.FullAndFinalSettlementRepository;
 import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,17 +28,20 @@ import java.util.UUID;
 @Slf4j
 public class FnFCalculationService {
 
-    @Autowired
-    private FullAndFinalSettlementRepository fnfRepository;
+    private final FullAndFinalSettlementRepository fnfRepository;
+    private final ExitProcessRepository exitProcessRepository;
+    private final EmployeeRepository employeeRepository;
+    private final SalaryStructureRepository salaryStructureRepository;
 
-    @Autowired
-    private ExitProcessRepository exitProcessRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private SalaryStructureRepository salaryStructureRepository;
+    public FnFCalculationService(FullAndFinalSettlementRepository fnfRepository,
+                                 ExitProcessRepository exitProcessRepository,
+                                 EmployeeRepository employeeRepository,
+                                 SalaryStructureRepository salaryStructureRepository) {
+        this.fnfRepository = fnfRepository;
+        this.exitProcessRepository = exitProcessRepository;
+        this.employeeRepository = employeeRepository;
+        this.salaryStructureRepository = salaryStructureRepository;
+    }
 
     /**
      * Get or auto-calculate FnF for an exit process.

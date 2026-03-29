@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { letterService } from '@/lib/services/letter.service';
 import {
+  CreateLetterTemplateRequest,
   GenerateLetterRequest,
   GenerateOfferLetterRequest,
   LetterCategory,
@@ -177,6 +178,85 @@ export function useRevokeLetter() {
 export function useGeneratePdf() {
   return useMutation({
     mutationFn: (letterId: string) => letterService.generatePdf(letterId),
+  });
+}
+
+// ─── Template Mutations ──────────────────────────────────────────────────────
+
+export function useCreateLetterTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateLetterTemplateRequest) =>
+      letterService.createTemplate(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+    },
+  });
+}
+
+export function useUpdateLetterTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: CreateLetterTemplateRequest }) =>
+      letterService.updateTemplate(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+    },
+  });
+}
+
+export function useDeleteLetterTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => letterService.deleteTemplate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+    },
+  });
+}
+
+export function useCloneLetterTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => letterService.cloneTemplate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+    },
+  });
+}
+
+export function usePreviewLetterTemplate(templateId: string, enabled: boolean = false) {
+  return useQuery({
+    queryKey: [...letterKeys.templateDetail(templateId), 'preview'],
+    queryFn: () => letterService.previewTemplate(templateId),
+    enabled: enabled && !!templateId,
+    staleTime: 0, // Always fetch fresh preview
+  });
+}
+
+export function useLetterPlaceholders(enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...letterKeys.all, 'placeholders'],
+    queryFn: () => letterService.getPlaceholders(),
+    enabled,
+    staleTime: 24 * 60 * 60 * 1000, // Placeholders rarely change
+    gcTime: 24 * 60 * 60 * 1000,
+  });
+}
+
+export function useBulkGenerateLetters() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ templateId, employeeIds }: { templateId: string; employeeIds: string[] }) =>
+      letterService.bulkGenerate(templateId, employeeIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: letterKeys.letters() });
+    },
   });
 }
 

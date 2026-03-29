@@ -885,7 +885,7 @@ export default function ExpenseClaims() {
                     {claim.approvedAt && (
                       <div>
                         <span className="text-[var(--text-secondary)]">Approved By:</span>
-                        <p className="font-medium">{claim.approverName}</p>
+                        <p className="font-medium">{claim.approvedByName}</p>
                       </div>
                     )}
                     {claim.rejectionReason && (

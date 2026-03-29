@@ -7,7 +7,6 @@ import com.hrms.domain.exit.ExitInterview;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.exit.repository.ExitInterviewRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +20,14 @@ import java.util.UUID;
 @Slf4j
 public class ExitInterviewPublicService {
 
-    @Autowired
-    private ExitInterviewRepository exitInterviewRepository;
+    private final ExitInterviewRepository exitInterviewRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    public ExitInterviewPublicService(ExitInterviewRepository exitInterviewRepository,
+                                      EmployeeRepository employeeRepository) {
+        this.exitInterviewRepository = exitInterviewRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     /**
      * Generate a random public token for an exit interview and persist it.

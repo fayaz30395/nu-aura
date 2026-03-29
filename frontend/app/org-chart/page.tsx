@@ -1,49 +1,207 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
-import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { SkeletonTable } from '@/components/ui/Loading';
+import { useOrgChartTree, useOrgChartDepartments } from '@/lib/hooks/useOrgChart';
+import { OrgTree } from '@/components/org-chart/OrgTree';
+import { OrgListNode } from '@/components/org-chart/OrgNode';
+import { OrgChartFilters, ViewMode } from '@/components/org-chart/OrgChartFilters';
+import { OrgChartNode } from '@/lib/services/orgChart.service';
 import { Employee } from '@/lib/types/employee';
+import { SkeletonTable } from '@/components/ui/Loading';
+import {
+  Users,
+  Building2,
+  GitBranch,
+  Layers,
+  ExternalLink,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-interface TreeNode extends Employee {
-  children?: TreeNode[];
+// ── Stats Bar ───────────────────────────────────────────────────────────────
+
+interface StatItemProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
 }
+
+function StatItem({ icon, label, value }: StatItemProps) {
+  return (
+    <div className="flex items-center gap-3 px-4 py-3">
+      <div className="h-9 w-9 rounded-lg bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center flex-shrink-0">
+        {icon}
+      </div>
+      <div>
+        <p className="text-lg font-bold text-[var(--text-primary)] leading-tight">{value}</p>
+        <p className="text-xs text-[var(--text-secondary)]">{label}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Department Card (for department view) ───────────────────────────────────
+
+interface DepartmentGroupCardProps {
+  departmentName: string;
+  employees: Employee[];
+  highlightedId: string | null;
+}
+
+function DepartmentGroupCard({ departmentName, employees, highlightedId }: DepartmentGroupCardProps) {
+  const [expanded, setExpanded] = useState(true);
+
+  // Find manager of this department (the one with no manager in the same dept)
+  const manager = employees.find(e =>
+    !e.managerId ||
+    !employees.some(other => other.id === e.managerId),
+  );
+
+  return (
+    <div className="skeuo-card overflow-hidden">
+      <button
+        onClick={() => setExpanded(p => !p)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Building2 className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+          <h3 className="font-semibold text-sm text-[var(--text-primary)]">{departmentName}</h3>
+        </div>
+        <span className="text-xs text-[var(--text-secondary)] bg-[var(--bg-card)] px-2 py-0.5 rounded-full">
+          {employees.length} employee{employees.length !== 1 ? 's' : ''}
+        </span>
+      </button>
+
+      {expanded && (
+        <div className="p-3 space-y-1 max-h-80 overflow-y-auto">
+          {employees
+            .sort((a, b) => {
+              const levelOrder: Record<string, number> = {
+                CXO: 0, SVP: 1, VP: 2, DIRECTOR: 3, SENIOR_MANAGER: 4,
+                MANAGER: 5, LEAD: 6, SENIOR: 7, MID: 8, ENTRY: 9,
+              };
+              const aL = levelOrder[a.level ?? 'ENTRY'] ?? 9;
+              const bL = levelOrder[b.level ?? 'ENTRY'] ?? 9;
+              if (aL !== bL) return aL - bL;
+              return a.fullName.localeCompare(b.fullName);
+            })
+            .map(emp => (
+              <div
+                key={emp.id}
+                className={cn(
+                  'flex items-center gap-3 p-2 rounded-lg transition-colors',
+                  emp.id === highlightedId
+                    ? 'bg-sky-100 dark:bg-sky-900/40 ring-1 ring-sky-400'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/50',
+                )}
+              >
+                {/* Avatar */}
+                {emp.profilePhotoUrl ? (
+                  <img
+                    src={emp.profilePhotoUrl}
+                    alt={emp.fullName}
+                    className="h-8 w-8 rounded-full object-cover border border-slate-200 dark:border-slate-600 flex-shrink-0"
+                  />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-sky-700 dark:text-sky-300">
+                      {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) ?? ''}
+                    </span>
+                  </div>
+                )}
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">
+                      {emp.fullName}
+                    </p>
+                    {manager?.id === emp.id && (
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300">
+                        Head
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[var(--text-secondary)] truncate">
+                    {emp.designation ?? 'No designation'}
+                  </p>
+                </div>
+
+                {emp.level && (
+                  <span className="text-[10px] font-medium text-[var(--text-tertiary)] flex-shrink-0">
+                    {emp.level.replace('_', ' ')}
+                  </span>
+                )}
+
+                <Link
+                  href={`/employees/${emp.id}`}
+                  className="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 flex-shrink-0"
+                  aria-label={`View ${emp.fullName}'s profile`}
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main Page ───────────────────────────────────────────────────────────────
 
 export default function OrgChartPage() {
   const router = useRouter();
   const { hasPermission, isReady: permReady } = usePermissions();
-  const [viewMode, setViewMode] = useState<'hierarchy' | 'department'>('hierarchy');
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
-  const [orgTree, setOrgTree] = useState<TreeNode[]>([]);
 
-  // React Query hooks — must be called unconditionally before any returns
-  const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(0, 1000);
-  const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
+  // Local UI state
+  const [viewMode, setViewMode] = useState<ViewMode>('tree');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [maxDepth, setMaxDepth] = useState(0); // 0 = unlimited
 
-  const employees = employeeResponse?.content ?? [];
-  const isLoading = employeesLoading || departmentsLoading;
-  const error = employeesError
-    ? employeesError instanceof Error
-      ? employeesError.message
-      : 'Failed to load organization data'
-    : null;
+  // Data from composite hook
+  const {
+    tree,
+    stats,
+    flatNodes,
+    highlightedNodeId,
+    isLoading,
+    error,
+  } = useOrgChartTree({
+    departmentFilter: selectedDepartment || undefined,
+    searchQuery,
+    maxDepth: maxDepth > 0 ? maxDepth : undefined,
+  });
 
-  // Rebuild org tree when employees, viewMode, or selectedDepartment changes
-  useEffect(() => {
-    if (employees.length > 0) {
-      buildOrgTree();
+  const { data: departments = [] } = useOrgChartDepartments();
+
+  // For department view: group all employees by department
+  const departmentGroups = useMemo(() => {
+    const groups: Record<string, Employee[]> = {};
+    for (const node of flatNodes) {
+      const key = node.employee.departmentName ?? 'Unassigned';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(node.employee);
     }
-    // buildOrgTree is defined after this hook and only depends on the variables
-    // already listed as deps. Including it without useCallback would cause an
-    // infinite re-render loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employees, viewMode, selectedDepartment]);
+    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+  }, [flatNodes]);
 
-  // Redirect users without permission
+  // Search result count
+  const searchMatchCount = useMemo(() => {
+    if (!searchQuery || searchQuery.trim().length < 2) return 0;
+    const q = searchQuery.toLowerCase().trim();
+    return flatNodes.filter(
+      n =>
+        n.employee.fullName.toLowerCase().includes(q) ||
+        (n.employee.designation ?? '').toLowerCase().includes(q) ||
+        (n.employee.employeeCode ?? '').toLowerCase().includes(q),
+    ).length;
+  }, [flatNodes, searchQuery]);
+
+  // Redirect if no permission
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.ORG_STRUCTURE_VIEW)) {
@@ -51,15 +209,20 @@ export default function OrgChartPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  // Show skeleton while permissions loading
+  // Loading skeleton
   if (!permReady || isLoading) {
     return (
       <AppLayout activeMenuItem="org-chart">
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <div className="mb-8">
-              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
-              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4 animate-pulse" />
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3 animate-pulse" />
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-20 bg-[var(--skeleton-base)] rounded-xl animate-pulse" />
+              ))}
             </div>
             <SkeletonTable rows={5} columns={4} />
           </div>
@@ -68,267 +231,150 @@ export default function OrgChartPage() {
     );
   }
 
-  const buildOrgTree = () => {
-    let filteredEmployees = employees;
-
-    if (selectedDepartment) {
-      filteredEmployees = employees.filter(emp => emp.departmentId === selectedDepartment);
-    }
-
-    // Find root employees (no manager or manager not in filtered list)
-    const roots = filteredEmployees.filter(emp =>
-      !emp.managerId || !filteredEmployees.find(e => e.id === emp.managerId)
-    );
-
-    const buildTree = (employee: Employee): TreeNode => {
-      const children = filteredEmployees
-        .filter(emp => emp.managerId === employee.id)
-        .map(buildTree)
-        .sort((a, b) => a.fullName.localeCompare(b.fullName));
-
-      return { ...employee, children };
-    };
-
-    const tree = roots.map(buildTree);
-    setOrgTree(tree);
-  };
-
-  const renderEmployeeCard = (employee: TreeNode, depth: number = 0) => {
-    const hasChildren = employee.children && employee.children.length > 0;
-    const levelColors: Record<string, string> = {
-      'CXO': 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:border-purple-700',
-      'SVP': 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/50 dark:text-purple-300 dark:border-purple-700/50',
-      'VP': 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700',
-      'DIRECTOR': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700/50',
-      'SENIOR_MANAGER': 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700',
-      'MANAGER': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700/50',
-      'LEAD': 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700',
-      'SENIOR': 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-strong)] dark:bg-[var(--bg-surface)] dark:text-[var(--text-secondary)] dark:border-[var(--border-strong)]',
-      'MID': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
-      'ENTRY': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
-    };
-
-    const cardColor = employee.level ? levelColors[employee.level] : 'bg-[var(--bg-card)] border-[var(--border-main)]';
-
-    return (
-      <div key={employee.id} className="flex flex-col items-center">
-        {/* Employee Card */}
-        <div
-          className={`
-            relative p-4 rounded-lg border-2 shadow-md
-            ${cardColor}
-            min-w-[280px] max-w-[280px]
-            hover:shadow-lg transition-shadow cursor-pointer
-          `}
-        >
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center border-2 border-current">
-                <span className="text-lg font-bold">
-                  {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
-                </span>
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-bold truncate">{employee.fullName}</h3>
-              <p className="text-xs font-medium mt-1 truncate">{employee.designation}</p>
-              {employee.level && (
-                <span className="inline-block mt-2 px-2 py-0.5 text-xs font-semibold rounded bg-white bg-opacity-50">
-                  {employee.level.replace('_', ' ')}
-                </span>
-              )}
-              {employee.departmentName && (
-                <p className="text-xs mt-1 truncate opacity-90">
-                  {employee.departmentName}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {hasChildren && (
-            <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
-              <div className="bg-[var(--border-main)] rounded-full px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
-                {employee.children!.length}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Children */}
-        {hasChildren && (
-          <div className="relative mt-12">
-            {/* Vertical line from parent */}
-            <div className="absolute left-1/2 -top-8 w-0.5 h-8 bg-[var(--border-main)] transform -translate-x-1/2" />
-
-            {/* Horizontal line connecting children */}
-            {employee.children!.length > 1 && (
-              <div
-                className="absolute top-0 h-0.5 bg-[var(--border-main)]"
-                style={{
-                  left: '50%',
-                  right: '50%',
-                  width: `${(employee.children!.length - 1) * 320}px`,
-                  marginLeft: `-${((employee.children!.length - 1) * 320) / 2}px`
-                }}
-              />
-            )}
-
-            <div className="flex space-x-10 justify-center">
-              {employee.children!.map((child, _index) => (
-                <div key={child.id} className="relative">
-                  {/* Vertical line to child */}
-                  <div className="absolute left-1/2 -top-0 w-0.5 h-8 bg-[var(--border-main)] transform -translate-x-1/2" />
-                  {renderEmployeeCard(child, depth + 1)}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderDepartmentView = () => {
-    const deptGroups: Record<string, Employee[]> = {};
-
-    employees.forEach(emp => {
-      const deptKey = emp.departmentName || 'Unassigned';
-      if (!deptGroups[deptKey]) {
-        deptGroups[deptKey] = [];
-      }
-      deptGroups[deptKey].push(emp);
-    });
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Object.entries(deptGroups).map(([deptName, emps]) => (
-          <div key={deptName} className="skeuo-card">
-            <div className="bg-[var(--bg-secondary)]/50 px-4 py-3 border-b border-[var(--border-main)]">
-              <h3 className="font-semibold text-[var(--text-primary)]">{deptName}</h3>
-              <p className="text-sm text-[var(--text-secondary)]">{emps.length} employees</p>
-            </div>
-            <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
-              {emps.map(emp => (
-                <div key={emp.id} className="flex items-center space-x-4 p-2 hover:bg-[var(--bg-secondary)]/50 rounded">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-sky-100 flex items-center justify-center">
-                    <span className="text-xs font-medium text-sky-700">
-                      {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) || ''}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">{emp.fullName}</p>
-                    <p className="text-xs text-[var(--text-secondary)] truncate">{emp.designation}</p>
-                  </div>
-                  {emp.level && (
-                    <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
-                      {emp.level}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <AppLayout activeMenuItem="org-chart">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] skeuo-emboss">Organization Chart</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
+      <div className="max-w-[1400px] mx-auto">
+        {/* ── Header ─────────────────────────────────────────────── */}
+        <div className="mb-5">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            Organization Chart
+          </h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Visualize your company structure and reporting relationships
           </p>
         </div>
 
-        {/* Controls */}
-        <div className="skeuo-card p-4 mb-6 flex flex-wrap gap-4 items-center">
-          <div className="flex items-center space-x-2">
-            <label className="text-sm font-medium text-[var(--text-secondary)]">View:</label>
-            <select
-              value={viewMode}
-              onChange={(e) => setViewMode(e.target.value as 'hierarchy' | 'department')}
-              className="input-aura"
-            >
-              <option value="hierarchy">Hierarchy View</option>
-              <option value="department">Department View</option>
-            </select>
-          </div>
-
-          {viewMode === 'hierarchy' && (
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium text-[var(--text-secondary)]">Department:</label>
-              <select
-                value={selectedDepartment}
-                onChange={(e) => setSelectedDepartment(e.target.value)}
-                className="input-aura"
-              >
-                <option value="">All Departments</option>
-                {departments.map((dept) => (
-                  <option key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="ml-auto flex items-center space-x-2 text-xs text-[var(--text-secondary)]">
-            <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded">Executive</span>
-            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">Director/VP</span>
-            <span className="px-2 py-1 bg-green-100 text-green-800 rounded">Manager</span>
-            <span className="px-2 py-1 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded">Individual Contributor</span>
-          </div>
+        {/* ── Stats Bar ──────────────────────────────────────────── */}
+        <div className="skeuo-card mb-5 grid grid-cols-2 lg:grid-cols-4 divide-x divide-[var(--border-subtle)]">
+          <StatItem
+            icon={<Users className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            label="Total Employees"
+            value={stats.totalEmployees}
+          />
+          <StatItem
+            icon={<Building2 className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            label="Departments"
+            value={stats.totalDepartments}
+          />
+          <StatItem
+            icon={<GitBranch className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            label="Avg Span of Control"
+            value={stats.averageSpanOfControl}
+          />
+          <StatItem
+            icon={<Layers className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />}
+            label="Hierarchy Depth"
+            value={stats.maxDepth}
+          />
         </div>
 
-        {/* Content */}
-        <div className="skeuo-card p-6">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-700 mx-auto"></div>
-                <p className="mt-4 text-[var(--text-secondary)]">Loading organization chart...</p>
-              </div>
+        {/* ── Filters ────────────────────────────────────────────── */}
+        <div className="skeuo-card p-4 mb-5">
+          <OrgChartFilters
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            departments={departments}
+            selectedDepartment={selectedDepartment}
+            onDepartmentChange={setSelectedDepartment}
+            maxDepth={maxDepth}
+            onMaxDepthChange={setMaxDepth}
+          />
+
+          {/* Search result indicator */}
+          {searchQuery && searchQuery.trim().length >= 2 && (
+            <div className="mt-2 text-xs text-[var(--text-secondary)]">
+              {searchMatchCount > 0 ? (
+                <span>
+                  Found <span className="font-semibold text-sky-700 dark:text-sky-400">{searchMatchCount}</span> match{searchMatchCount !== 1 ? 'es' : ''} for &quot;{searchQuery}&quot;
+                </span>
+              ) : (
+                <span>No matches found for &quot;{searchQuery}&quot;</span>
+              )}
             </div>
-          ) : error ? (
+          )}
+        </div>
+
+        {/* ── Content Area ───────────────────────────────────────── */}
+        {error ? (
+          <div className="skeuo-card p-6">
             <div className="flex items-center justify-center h-64">
-              <div className="text-center text-red-600">
+              <div className="text-center text-red-600 dark:text-red-400">
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="mt-2">{error}</p>
+                <p className="mt-2 font-medium">{error.message}</p>
+                <p className="text-sm mt-1 text-[var(--text-secondary)]">Please try refreshing the page</p>
               </div>
             </div>
-          ) : employees.length === 0 ? (
+          </div>
+        ) : flatNodes.length === 0 ? (
+          <div className="skeuo-card p-6">
             <div className="flex items-center justify-center h-64">
               <div className="text-center text-[var(--text-secondary)]">
-                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <p className="mt-2">No employees found</p>
+                <Users className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
+                <p className="mt-3 text-lg font-medium">No employees found</p>
+                <p className="text-sm mt-1">
+                  {selectedDepartment ? 'Try clearing the department filter' : 'Add employees to see the org chart'}
+                </p>
               </div>
             </div>
-          ) : viewMode === 'department' ? (
-            renderDepartmentView()
-          ) : (
-            <div className="overflow-x-auto">
-              <div className="inline-block min-w-full">
-                {orgTree.length > 0 ? (
-                  <div className="flex flex-col space-y-12">
-                    {orgTree.map(root => renderEmployeeCard(root))}
-                  </div>
-                ) : (
-                  <div className="text-center text-[var(--text-secondary)] py-12">
-                    <p>No organizational hierarchy found</p>
-                    <p className="text-sm mt-2">Set up manager relationships in employee profiles</p>
-                  </div>
-                )}
-              </div>
+          </div>
+        ) : viewMode === 'tree' ? (
+          <div className="skeuo-card p-4">
+            <OrgTree tree={tree} highlightedId={highlightedNodeId} />
+          </div>
+        ) : viewMode === 'list' ? (
+          <div className="skeuo-card p-4">
+            <div className="max-h-[600px] overflow-y-auto">
+              {tree.map(root => (
+                <OrgListNode
+                  key={root.employee.id}
+                  node={root}
+                  isHighlighted={root.employee.id === highlightedNodeId}
+                  highlightedId={highlightedNodeId}
+                />
+              ))}
             </div>
-          )}
+          </div>
+        ) : (
+          /* Department view */
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {departmentGroups.map(([deptName, emps]) => (
+              <DepartmentGroupCard
+                key={deptName}
+                departmentName={deptName}
+                employees={emps}
+                highlightedId={highlightedNodeId}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* ── Legend ──────────────────────────────────────────────── */}
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[var(--text-secondary)]">
+          <span className="font-medium mr-1">Legend:</span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded bg-sky-100 border border-sky-400" />
+            Executive
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded bg-blue-100 border border-blue-400" />
+            Director/VP
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded bg-emerald-100 border border-emerald-400" />
+            Manager
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded bg-amber-100 border border-amber-400" />
+            Lead
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded bg-slate-100 border border-slate-300" />
+            Individual Contributor
+          </span>
         </div>
       </div>
     </AppLayout>

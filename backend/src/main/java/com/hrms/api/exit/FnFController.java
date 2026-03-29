@@ -10,7 +10,6 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +23,14 @@ import java.util.UUID;
 @Slf4j
 public class FnFController {
 
-    @Autowired
-    private FnFCalculationService fnfService;
+    private final FnFCalculationService fnfService;
+    private final ExitInterviewPublicService publicInterviewService;
 
-    @Autowired
-    private ExitInterviewPublicService publicInterviewService;
+    public FnFController(FnFCalculationService fnfService,
+                         ExitInterviewPublicService publicInterviewService) {
+        this.fnfService = fnfService;
+        this.publicInterviewService = publicInterviewService;
+    }
 
     // ---- FnF Settlement endpoints (authenticated) ----
 

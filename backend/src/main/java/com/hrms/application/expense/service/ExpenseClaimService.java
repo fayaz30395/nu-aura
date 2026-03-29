@@ -40,17 +40,20 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
     private final WorkflowService workflowService;
+    private final ExpensePolicyService expensePolicyService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ExpenseClaimService(
             ExpenseClaimRepository expenseClaimRepository,
             EmployeeRepository employeeRepository,
             DataScopeService dataScopeService,
-            @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+            @org.springframework.context.annotation.Lazy WorkflowService workflowService,
+            @org.springframework.context.annotation.Lazy ExpensePolicyService expensePolicyService) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.dataScopeService = dataScopeService;
         this.workflowService = workflowService;
+        this.expensePolicyService = expensePolicyService;
     }
 
     @Transactional
@@ -419,6 +422,28 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         summary.put("totalClaims", claims.size());
 
         return summary;
+    }
+
+    @Transactional
+    public ExpenseClaimResponse markAsReimbursed(UUID claimId, String reimbursementRef) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
+
+        claim.markAsReimbursed(reimbursementRef);
+        ExpenseClaim saved = expenseClaimRepository.save(claim);
+        log.info("Marked expense claim as reimbursed: {} ref: {}", saved.getClaimNumber(), reimbursementRef);
+
+        return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> validatePolicy(UUID employeeId, java.math.BigDecimal amount) {
+        if (expensePolicyService != null) {
+            return expensePolicyService.validateClaimAgainstPolicies(employeeId, amount);
+        }
+        return Collections.emptyList();
     }
 
     // ======================== ApprovalCallbackHandler ========================
