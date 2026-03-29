@@ -87,16 +87,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const { data: inboxCounts } = useApprovalInboxCount();
   const pendingApprovalCount = inboxCounts?.pending ?? 0;
 
-  // Initialize from localStorage to persist across page refreshes
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
-      if (saved !== null) {
-        return saved === 'true';
-      }
-    }
-    return initialCollapsed ?? false;
-  });
+  // Initialize with server-safe default to avoid hydration mismatch.
+  // localStorage is read in useEffect (client-only) to sync the persisted state.
+  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed ?? false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   useEffect(() => {
     // Sync sidebar collapsed state from localStorage on client hydration
