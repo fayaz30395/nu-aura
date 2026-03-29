@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Skeleton } from '@mantine/core';
 import dynamic from 'next/dynamic';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import {
   useSalaryStructures,
   useCreateSalaryStructure,
@@ -133,6 +134,7 @@ export default function SalaryStructuresPage() {
 
   return (
     <AppLayout activeMenuItem="payroll">
+      <PermissionGate permission={Permissions.PAYROLL_VIEW} fallback={<div className="p-6"><p className="text-red-600">You do not have permission to view salary structures.</p></div>}>
       <motion.div
         className="p-6"
         initial={{ opacity: 0, y: 12 }}
@@ -194,6 +196,7 @@ export default function SalaryStructuresPage() {
           onConfirm={handleDeleteStructure}
         />
       </motion.div>
+      </PermissionGate>
     </AppLayout>
   );
 }

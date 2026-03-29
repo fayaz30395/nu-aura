@@ -68,7 +68,8 @@ class LWFControllerTest {
 
         when(lwfService.getStateConfigurations()).thenReturn(List.of(config));
 
-        mockMvc.perform(get("/api/v1/payroll/lwf/configurations"))
+        mockMvc.perform(get("/api/v1/payroll/lwf/configurations")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].stateCode").value("MH"))
                 .andExpect(jsonPath("$[0].stateName").value("Maharashtra"))
@@ -109,6 +110,7 @@ class LWFControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.stateCode").value("MH"));
     }
 
@@ -119,7 +121,8 @@ class LWFControllerTest {
 
         mockMvc.perform(get("/api/v1/payroll/lwf/deductions")
                         .param("month", "6")
-                        .param("year", "2025"))
+                        .param("year", "2025")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -130,7 +133,8 @@ class LWFControllerTest {
         UUID empId = UUID.randomUUID();
         when(lwfService.getDeductionsByEmployee(empId)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/v1/payroll/lwf/deductions/employee/" + empId))
+        mockMvc.perform(get("/api/v1/payroll/lwf/deductions/employee/" + empId)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -152,7 +156,8 @@ class LWFControllerTest {
 
         mockMvc.perform(get("/api/v1/payroll/lwf/report")
                         .param("month", "6")
-                        .param("year", "2025"))
+                        .param("year", "2025")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.month").value(6))
                 .andExpect(jsonPath("$.year").value(2025))

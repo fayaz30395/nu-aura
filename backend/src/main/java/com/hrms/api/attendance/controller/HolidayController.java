@@ -52,6 +52,7 @@ public class HolidayController {
             @ApiResponse(responseCode = "401", description = "Unauthorized - valid authentication required")
     })
     @GetMapping("/year/{year}")
+    @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
     public ResponseEntity<List<Holiday>> getHolidaysByYear(
             @Parameter(description = "Calendar year (e.g., 2024)", example = "2024")
             @PathVariable Integer year) {
@@ -66,6 +67,7 @@ public class HolidayController {
             @ApiResponse(responseCode = "404", description = "Holiday not found")
     })
     @GetMapping("/{id}")
+    @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
     public ResponseEntity<Holiday> getHolidayById(
             @Parameter(description = "Holiday UUID") @PathVariable UUID id) {
         Holiday holiday = holidayService.getHolidayById(id);

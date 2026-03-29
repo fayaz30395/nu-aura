@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Skeleton } from '@mantine/core';
 import dynamic from 'next/dynamic';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import {
   usePayrollRuns,
   useCreatePayrollRun,
@@ -146,6 +147,7 @@ export default function PayrollRunsPage() {
 
   return (
     <AppLayout activeMenuItem="payroll">
+      <PermissionGate permission={Permissions.PAYROLL_VIEW} fallback={<div className="p-6"><p className="text-red-600">You do not have permission to view payroll runs.</p></div>}>
       <motion.div
         className="p-6"
         initial={{ opacity: 0, y: 12 }}
@@ -203,6 +205,7 @@ export default function PayrollRunsPage() {
           onConfirm={handleDeletePayrollRun}
         />
       </motion.div>
+      </PermissionGate>
     </AppLayout>
   );
 }

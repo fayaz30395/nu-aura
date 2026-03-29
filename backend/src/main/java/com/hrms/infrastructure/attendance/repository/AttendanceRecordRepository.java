@@ -43,8 +43,25 @@ public interface AttendanceRecordRepository
 
         boolean existsByEmployeeIdAndAttendanceDate(UUID employeeId, LocalDate attendanceDate);
 
+        // Tenant-aware version — use this in tenant-scoped contexts
+        @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AttendanceRecord a " +
+                        "WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.attendanceDate = :attendanceDate")
+        boolean existsByTenantIdAndEmployeeIdAndAttendanceDate(
+                        @Param("tenantId") UUID tenantId,
+                        @Param("employeeId") UUID employeeId,
+                        @Param("attendanceDate") LocalDate attendanceDate);
+
         @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.employeeId = :employeeId AND a.status = :status AND a.attendanceDate BETWEEN :startDate AND :endDate")
         Long countByEmployeeIdAndStatusAndDateRange(
+                        @Param("employeeId") UUID employeeId,
+                        @Param("status") AttendanceRecord.AttendanceStatus status,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        // Tenant-aware version — use this in tenant-scoped contexts
+        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.status = :status AND a.attendanceDate BETWEEN :startDate AND :endDate")
+        Long countByTenantIdAndEmployeeIdAndStatusAndDateRange(
+                        @Param("tenantId") UUID tenantId,
                         @Param("employeeId") UUID employeeId,
                         @Param("status") AttendanceRecord.AttendanceStatus status,
                         @Param("startDate") LocalDate startDate,

@@ -4,6 +4,8 @@ import com.hrms.api.auth.dto.SamlConfigRequest;
 import com.hrms.api.auth.dto.SamlConfigResponse;
 import com.hrms.api.auth.dto.SamlTestConnectionResponse;
 import com.hrms.application.auth.service.SamlConfigurationService;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +44,7 @@ public class SamlConfigController {
     @GetMapping("/config")
     @Operation(summary = "Get SAML configuration",
             description = "Get the SAML IdP configuration for the current tenant")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlConfigResponse> getSamlConfig() {
         java.util.UUID tenantId = TenantContext.getCurrentTenant();
         return ResponseEntity.ok(samlConfigService.getSamlConfig(tenantId));
@@ -50,6 +53,7 @@ public class SamlConfigController {
     @PostMapping("/config")
     @Operation(summary = "Create SAML configuration",
             description = "Create a new SAML IdP configuration for the current tenant")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlConfigResponse> createSamlConfig(
             @Valid @RequestBody SamlConfigRequest request) {
         java.util.UUID tenantId = TenantContext.getCurrentTenant();
@@ -62,6 +66,7 @@ public class SamlConfigController {
     @PutMapping("/config")
     @Operation(summary = "Update SAML configuration",
             description = "Update the SAML IdP configuration for the current tenant")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlConfigResponse> updateSamlConfig(
             @Valid @RequestBody SamlConfigRequest request) {
         java.util.UUID tenantId = TenantContext.getCurrentTenant();
@@ -74,6 +79,7 @@ public class SamlConfigController {
     @DeleteMapping("/config")
     @Operation(summary = "Delete SAML configuration",
             description = "Soft-delete the SAML IdP configuration for the current tenant")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<Void> deleteSamlConfig() {
         java.util.UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Deleting SAML config for tenant {} by user {}", tenantId, SecurityContext.getCurrentUserId());
@@ -85,6 +91,7 @@ public class SamlConfigController {
     @GetMapping("/metadata")
     @Operation(summary = "Download SP metadata",
             description = "Generate and download Service Provider metadata XML for the IdP")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<String> getServiceProviderMetadata() {
         java.util.UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -98,6 +105,7 @@ public class SamlConfigController {
     @PostMapping("/test")
     @Operation(summary = "Test IdP connection",
             description = "Validate the SAML IdP configuration by testing metadata URL and certificate")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlTestConnectionResponse> testConnection() {
         java.util.UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Testing SAML connection for tenant {}", tenantId);
@@ -109,6 +117,7 @@ public class SamlConfigController {
     @GetMapping("/providers")
     @Operation(summary = "List all SAML providers (SuperAdmin)",
             description = "List all configured SAML IdP providers across all tenants. SuperAdmin only.")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<List<SamlConfigResponse>> getAllProviders() {
         // SuperAdmin bypass is handled by @RequiresPermission or SecurityConfig
         List<SamlConfigResponse> providers = samlConfigService.getAllProviders();

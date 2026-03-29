@@ -209,37 +209,37 @@ class RecruitmentManagementServiceTest {
     @DisplayName("Job Opening Tests")
     class JobOpeningTests {
 
+        private JobOpeningResponse buildJobOpeningResponse(String jobCode, String jobTitle) {
+            return JobOpeningResponse.builder()
+                    .id(UUID.randomUUID())
+                    .tenantId(tenantId)
+                    .jobCode(jobCode)
+                    .jobTitle(jobTitle)
+                    .departmentId(departmentId)
+                    .location("Mumbai")
+                    .employmentType(JobOpening.EmploymentType.FULL_TIME)
+                    .status(JobOpening.JobStatus.OPEN)
+                    .isActive(true)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+        }
+
         @Test
         @DisplayName("Should create job opening successfully")
         void shouldCreateJobOpeningSuccessfully() {
             JobOpeningRequest request = new JobOpeningRequest();
             request.setJobCode("JOB-002");
             request.setJobTitle("Junior Developer");
-            request.setDepartmentId(departmentId);
-            request.setLocation("Mumbai");
-            request.setEmploymentType(JobOpening.EmploymentType.FULL_TIME);
-            request.setExperienceRequired("0-2 years");
-            request.setMinSalary(new BigDecimal("500000"));
-            request.setMaxSalary(new BigDecimal("800000"));
-            request.setNumberOfOpenings(5);
-            request.setJobDescription("Entry level developer position");
-            request.setStatus(JobOpening.JobStatus.OPEN);
-            request.setIsActive(true);
 
-            when(jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, "JOB-002")).thenReturn(false);
-            when(jobOpeningRepository.save(any(JobOpening.class))).thenAnswer(invocation -> {
-                JobOpening saved = invocation.getArgument(0);
-                saved.setCreatedAt(LocalDateTime.now());
-                return saved;
-            });
-            when(candidateRepository.findByTenantIdAndJobOpeningId(any(), any())).thenReturn(List.of());
+            JobOpeningResponse expectedResponse = buildJobOpeningResponse("JOB-002", "Junior Developer");
+            when(jobOpeningService.createJobOpening(request)).thenReturn(expectedResponse);
 
             JobOpeningResponse result = recruitmentManagementService.createJobOpening(request);
 
             assertThat(result).isNotNull();
             assertThat(result.getJobCode()).isEqualTo("JOB-002");
             assertThat(result.getJobTitle()).isEqualTo("Junior Developer");
-            verify(jobOpeningRepository).save(any(JobOpening.class));
+            verify(jobOpeningService).createJobOpening(request);
         }
 
         @Test
@@ -249,7 +249,8 @@ class RecruitmentManagementServiceTest {
             request.setJobCode("JOB-001");
             request.setJobTitle("Duplicate Job");
 
-            when(jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, "JOB-001")).thenReturn(true);
+            when(jobOpeningService.createJobOpening(request))
+                    .thenThrow(new IllegalArgumentException("Job opening with code JOB-001 already exists"));
 
             assertThatThrownBy(() -> recruitmentManagementService.createJobOpening(request))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -264,10 +265,14 @@ class RecruitmentManagementServiceTest {
             request.setLocation("Hyderabad");
             request.setStatus(JobOpening.JobStatus.ON_HOLD);
 
-            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
-                    .thenReturn(Optional.of(jobOpening));
-            when(jobOpeningRepository.save(any(JobOpening.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(candidateRepository.findByTenantIdAndJobOpeningId(any(), any())).thenReturn(List.of());
+            JobOpeningResponse expectedResponse = JobOpeningResponse.builder()
+                    .id(jobOpeningId)
+                    .tenantId(tenantId)
+                    .jobTitle("Updated Senior Developer")
+                    .location("Hyderabad")
+                    .status(JobOpening.JobStatus.ON_HOLD)
+                    .build();
+            when(jobOpeningService.updateJobOpening(jobOpeningId, request)).thenReturn(expectedResponse);
 
             JobOpeningResponse result = recruitmentManagementService.updateJobOpening(jobOpeningId, request);
 
@@ -282,8 +287,8 @@ class RecruitmentManagementServiceTest {
             UUID invalidId = UUID.randomUUID();
             JobOpeningRequest request = new JobOpeningRequest();
 
-            when(jobOpeningRepository.findByIdAndTenantId(invalidId, tenantId))
-                    .thenReturn(Optional.empty());
+            when(jobOpeningService.updateJobOpening(invalidId, request))
+                    .thenThrow(new IllegalArgumentException("Job opening not found"));
 
             assertThatThrownBy(() -> recruitmentManagementService.updateJobOpening(invalidId, request))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -293,10 +298,15 @@ class RecruitmentManagementServiceTest {
         @Test
         @DisplayName("Should get job opening by ID")
         void shouldGetJobOpeningById() {
-            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
-                    .thenReturn(Optional.of(jobOpening));
-            when(employeeRepository.findById(hiringManagerId)).thenReturn(Optional.of(hiringManager));
-            when(candidateRepository.findByTenantIdAndJobOpeningId(tenantId, jobOpeningId)).thenReturn(List.of(candidate));
+            JobOpeningResponse expectedResponse = JobOpeningResponse.builder()
+                    .id(jobOpeningId)
+                    .tenantId(tenantId)
+                    .jobCode("JOB-001")
+                    .jobTitle("Senior Software Engineer")
+                    .hiringManagerName("Jane Manager")
+                    .candidateCount(1)
+                    .build();
+            when(jobOpeningService.getJobOpeningById(jobOpeningId)).thenReturn(expectedResponse);
 
             JobOpeningResponse result = recruitmentManagementService.getJobOpeningById(jobOpeningId);
 
@@ -312,8 +322,8 @@ class RecruitmentManagementServiceTest {
         void shouldThrowExceptionWhenJobOpeningNotFoundById() {
             UUID invalidId = UUID.randomUUID();
 
-            when(jobOpeningRepository.findByIdAndTenantId(invalidId, tenantId))
-                    .thenReturn(Optional.empty());
+            when(jobOpeningService.getJobOpeningById(invalidId))
+                    .thenThrow(new IllegalArgumentException("Job opening not found"));
 
             assertThatThrownBy(() -> recruitmentManagementService.getJobOpeningById(invalidId))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -322,14 +332,12 @@ class RecruitmentManagementServiceTest {
 
         @Test
         @DisplayName("Should get all job openings with pagination")
-        @SuppressWarnings("unchecked")
         void shouldGetAllJobOpeningsWithPagination() {
             Pageable pageable = PageRequest.of(0, 10);
-            Page<JobOpening> page = new PageImpl<>(List.of(jobOpening));
+            JobOpeningResponse response = buildJobOpeningResponse("JOB-001", "Senior Software Engineer");
+            Page<JobOpeningResponse> page = new PageImpl<>(List.of(response));
 
-            when(dataScopeService.getScopeSpecification(any())).thenReturn(null);
-            when(jobOpeningRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
-            when(candidateRepository.findByTenantIdAndJobOpeningId(any(), any())).thenReturn(List.of());
+            when(jobOpeningService.getAllJobOpenings(pageable)).thenReturn(page);
 
             Page<JobOpeningResponse> result = recruitmentManagementService.getAllJobOpenings(pageable);
 
@@ -341,11 +349,13 @@ class RecruitmentManagementServiceTest {
         @DisplayName("Should get job openings by status")
         void shouldGetJobOpeningsByStatus() {
             Pageable pageable = PageRequest.of(0, 10);
-            Page<JobOpening> page = new PageImpl<>(List.of(jobOpening));
+            JobOpeningResponse response = JobOpeningResponse.builder()
+                    .id(jobOpeningId).tenantId(tenantId)
+                    .jobCode("JOB-001").jobTitle("Senior Software Engineer")
+                    .status(JobOpening.JobStatus.OPEN).build();
+            Page<JobOpeningResponse> page = new PageImpl<>(List.of(response));
 
-            when(dataScopeService.getScopeSpecification(any())).thenReturn((root, query, cb) -> cb.conjunction());
-            when(jobOpeningRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
-            when(candidateRepository.findByTenantIdAndJobOpeningId(any(), any())).thenReturn(List.of());
+            when(jobOpeningService.getJobOpeningsByStatus(JobOpening.JobStatus.OPEN, pageable)).thenReturn(page);
 
             Page<JobOpeningResponse> result = recruitmentManagementService
                     .getJobOpeningsByStatus(JobOpening.JobStatus.OPEN, pageable);
@@ -357,13 +367,11 @@ class RecruitmentManagementServiceTest {
         @Test
         @DisplayName("Should delete job opening successfully")
         void shouldDeleteJobOpeningSuccessfully() {
-            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
-                    .thenReturn(Optional.of(jobOpening));
-            doNothing().when(jobOpeningRepository).delete(any(JobOpening.class));
+            doNothing().when(jobOpeningService).deleteJobOpening(jobOpeningId);
 
             recruitmentManagementService.deleteJobOpening(jobOpeningId);
 
-            verify(jobOpeningRepository).delete(jobOpening);
+            verify(jobOpeningService).deleteJobOpening(jobOpeningId);
         }
 
         @Test
@@ -371,8 +379,8 @@ class RecruitmentManagementServiceTest {
         void shouldThrowExceptionWhenDeletingNonExistent() {
             UUID invalidId = UUID.randomUUID();
 
-            when(jobOpeningRepository.findByIdAndTenantId(invalidId, tenantId))
-                    .thenReturn(Optional.empty());
+            doThrow(new IllegalArgumentException("Job opening not found"))
+                    .when(jobOpeningService).deleteJobOpening(invalidId);
 
             assertThatThrownBy(() -> recruitmentManagementService.deleteJobOpening(invalidId))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -567,13 +575,18 @@ class RecruitmentManagementServiceTest {
             request.setInterviewerId(interviewerId);
             request.setMeetingLink("https://zoom.us/j/123456789");
 
-            when(interviewRepository.save(any(Interview.class))).thenAnswer(invocation -> {
-                Interview saved = invocation.getArgument(0);
-                saved.setCreatedAt(LocalDateTime.now());
-                return saved;
-            });
-            when(candidateRepository.findById(candidateId)).thenReturn(Optional.of(candidate));
-            when(jobOpeningRepository.findById(jobOpeningId)).thenReturn(Optional.of(jobOpening));
+            InterviewResponse expectedResponse = InterviewResponse.builder()
+                    .id(interviewId)
+                    .tenantId(tenantId)
+                    .candidateId(candidateId)
+                    .jobOpeningId(jobOpeningId)
+                    .interviewRound(Interview.InterviewRound.TECHNICAL_1)
+                    .interviewType(Interview.InterviewType.VIDEO)
+                    .status(Interview.InterviewStatus.SCHEDULED)
+                    .interviewerId(interviewerId)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            when(interviewManagementService.scheduleInterview(request)).thenReturn(expectedResponse);
 
             InterviewResponse result = recruitmentManagementService.scheduleInterview(request);
 
@@ -581,7 +594,7 @@ class RecruitmentManagementServiceTest {
             assertThat(result.getCandidateId()).isEqualTo(candidateId);
             assertThat(result.getInterviewRound()).isEqualTo(Interview.InterviewRound.TECHNICAL_1);
             assertThat(result.getStatus()).isEqualTo(Interview.InterviewStatus.SCHEDULED);
-            verify(interviewRepository).save(any(Interview.class));
+            verify(interviewManagementService).scheduleInterview(request);
         }
 
         @Test
@@ -594,11 +607,15 @@ class RecruitmentManagementServiceTest {
             request.setRating(4);
             request.setResult(Interview.InterviewResult.SELECTED);
 
-            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
-                    .thenReturn(Optional.of(interview));
-            when(interviewRepository.save(any(Interview.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(candidateRepository.findById(any())).thenReturn(Optional.of(candidate));
-            when(jobOpeningRepository.findById(any())).thenReturn(Optional.of(jobOpening));
+            InterviewResponse expectedResponse = InterviewResponse.builder()
+                    .id(interviewId)
+                    .tenantId(tenantId)
+                    .status(Interview.InterviewStatus.COMPLETED)
+                    .result(Interview.InterviewResult.SELECTED)
+                    .feedback("Great technical skills")
+                    .rating(4)
+                    .build();
+            when(interviewManagementService.updateInterview(interviewId, request)).thenReturn(expectedResponse);
 
             InterviewResponse result = recruitmentManagementService.updateInterview(interviewId, request);
 
@@ -613,8 +630,8 @@ class RecruitmentManagementServiceTest {
             UUID invalidId = UUID.randomUUID();
             InterviewRequest request = new InterviewRequest();
 
-            when(interviewRepository.findByIdAndTenantId(invalidId, tenantId))
-                    .thenReturn(Optional.empty());
+            when(interviewManagementService.updateInterview(invalidId, request))
+                    .thenThrow(new IllegalArgumentException("Interview not found"));
 
             assertThatThrownBy(() -> recruitmentManagementService.updateInterview(invalidId, request))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -624,16 +641,17 @@ class RecruitmentManagementServiceTest {
         @Test
         @DisplayName("Should get interview by ID")
         void shouldGetInterviewById() {
-            Employee interviewer = new Employee();
-            interviewer.setId(interviewerId);
-            interviewer.setFirstName("Mike");
-            interviewer.setLastName("Interviewer");
-
-            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
-                    .thenReturn(Optional.of(interview));
-            when(candidateRepository.findById(candidateId)).thenReturn(Optional.of(candidate));
-            when(jobOpeningRepository.findById(jobOpeningId)).thenReturn(Optional.of(jobOpening));
-            when(employeeRepository.findById(interviewerId)).thenReturn(Optional.of(interviewer));
+            InterviewResponse expectedResponse = InterviewResponse.builder()
+                    .id(interviewId)
+                    .tenantId(tenantId)
+                    .candidateId(candidateId)
+                    .candidateName("John Doe")
+                    .jobOpeningId(jobOpeningId)
+                    .jobTitle("Senior Software Engineer")
+                    .interviewerId(interviewerId)
+                    .interviewerName("Mike Interviewer")
+                    .build();
+            when(interviewManagementService.getInterviewById(interviewId)).thenReturn(expectedResponse);
 
             InterviewResponse result = recruitmentManagementService.getInterviewById(interviewId);
 
@@ -649,8 +667,8 @@ class RecruitmentManagementServiceTest {
         void shouldThrowExceptionWhenInterviewNotFoundById() {
             UUID invalidId = UUID.randomUUID();
 
-            when(interviewRepository.findByIdAndTenantId(invalidId, tenantId))
-                    .thenReturn(Optional.empty());
+            when(interviewManagementService.getInterviewById(invalidId))
+                    .thenThrow(new IllegalArgumentException("Interview not found"));
 
             assertThatThrownBy(() -> recruitmentManagementService.getInterviewById(invalidId))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -661,12 +679,14 @@ class RecruitmentManagementServiceTest {
         @DisplayName("Should get interviews by candidate")
         void shouldGetInterviewsByCandidate() {
             Pageable pageable = PageRequest.of(0, 10);
-            Page<Interview> page = new PageImpl<>(List.of(interview));
+            InterviewResponse response = InterviewResponse.builder()
+                    .id(interviewId)
+                    .candidateId(candidateId)
+                    .jobOpeningId(jobOpeningId)
+                    .build();
+            Page<InterviewResponse> page = new PageImpl<>(List.of(response));
 
-            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
-            when(dataScopeService.getScopeSpecification(any())).thenReturn((root, query, cb) -> cb.conjunction());
-            when(interviewRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
-            when(jobOpeningRepository.findById(any())).thenReturn(Optional.of(jobOpening));
+            when(interviewManagementService.getInterviewsByCandidate(candidateId, pageable)).thenReturn(page);
 
             Page<InterviewResponse> result = recruitmentManagementService.getInterviewsByCandidate(candidateId, pageable);
 
@@ -677,13 +697,11 @@ class RecruitmentManagementServiceTest {
         @Test
         @DisplayName("Should delete interview successfully")
         void shouldDeleteInterviewSuccessfully() {
-            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
-                    .thenReturn(Optional.of(interview));
-            doNothing().when(interviewRepository).delete(any(Interview.class));
+            doNothing().when(interviewManagementService).deleteInterview(interviewId);
 
             recruitmentManagementService.deleteInterview(interviewId);
 
-            verify(interviewRepository).delete(interview);
+            verify(interviewManagementService).deleteInterview(interviewId);
         }
 
         @Test
@@ -691,8 +709,8 @@ class RecruitmentManagementServiceTest {
         void shouldThrowExceptionWhenDeletingNonExistentInterview() {
             UUID invalidId = UUID.randomUUID();
 
-            when(interviewRepository.findByIdAndTenantId(invalidId, tenantId))
-                    .thenReturn(Optional.empty());
+            doThrow(new IllegalArgumentException("Interview not found"))
+                    .when(interviewManagementService).deleteInterview(invalidId);
 
             assertThatThrownBy(() -> recruitmentManagementService.deleteInterview(invalidId))
                     .isInstanceOf(IllegalArgumentException.class);

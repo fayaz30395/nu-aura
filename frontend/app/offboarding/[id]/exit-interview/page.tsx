@@ -36,6 +36,8 @@ import {
   IconStarFilled,
 } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   useExitProcess,
   useCreateExitInterview,
@@ -213,6 +215,7 @@ export default function ExitInterviewPage() {
 
   return (
     <AppLayout>
+      <PermissionGate anyOf={[Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE]} fallback={<Stack p="md"><Text c="red">You do not have permission to view exit interviews.</Text></Stack>}>
       <Stack gap="lg" p="md">
         {/* Header */}
         <Group justify="space-between" align="flex-start">
@@ -686,6 +689,7 @@ export default function ExitInterviewPage() {
           </form>
         )}
       </Stack>
+      </PermissionGate>
     </AppLayout>
   );
 }

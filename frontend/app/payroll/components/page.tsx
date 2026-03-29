@@ -1,6 +1,8 @@
 'use client';
 
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Box,
   Stack,
@@ -15,6 +17,7 @@ import { DollarSign, Plus } from 'lucide-react';
 export default function PayrollComponentsPage() {
   return (
     <AppLayout activeMenuItem="payroll">
+      <PermissionGate permission={Permissions.PAYROLL_VIEW} fallback={<Box p="lg"><Text c="red">You do not have permission to view payroll components.</Text></Box>}>
       <Box p="lg">
         <Stack gap="lg">
           {/* Page header */}
@@ -54,6 +57,7 @@ export default function PayrollComponentsPage() {
           </Card>
         </Stack>
       </Box>
+      </PermissionGate>
     </AppLayout>
   );
 }
