@@ -147,7 +147,7 @@ export default function LoanDetailPage() {
 
         {/* Amount Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <DollarSign className="h-5 w-5 text-accent-600 dark:text-accent-400" />
@@ -161,7 +161,7 @@ export default function LoanDetailPage() {
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <TrendingUp className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -173,7 +173,7 @@ export default function LoanDetailPage() {
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
                 <Wallet className="h-5 w-5 text-danger-600 dark:text-danger-400" />
@@ -190,7 +190,7 @@ export default function LoanDetailPage() {
 
         {/* Progress Bar */}
         {(loan.status === 'ACTIVE' || loan.status === 'DISBURSED') && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Repayment Progress
@@ -213,7 +213,7 @@ export default function LoanDetailPage() {
         )}
 
         {/* Loan Details */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Loan Details
           </h3>
@@ -272,7 +272,7 @@ export default function LoanDetailPage() {
         </div>
 
         {/* Purpose */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
             Purpose
           </h3>
@@ -289,7 +289,7 @@ export default function LoanDetailPage() {
 
         {/* Approval Info */}
         {loan.approvedDate && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Approval Information
             </h3>
@@ -328,7 +328,7 @@ export default function LoanDetailPage() {
 
         {/* Rejection Reason */}
         {loan.status === 'REJECTED' && loan.rejectedReason && (
-          <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-2xl p-6">
+          <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
             <div className="flex items-center gap-4 mb-3">
               <XCircle className="h-5 w-5 text-danger-500" />
               <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">

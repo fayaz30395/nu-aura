@@ -181,7 +181,7 @@ public class OrganizationService {
     public SuccessionCandidate addCandidate(UUID planId, SuccessionCandidate candidate) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        if (candidateRepository.existsBySuccessionPlanIdAndCandidateId(planId, candidate.getCandidateId())) {
+        if (candidateRepository.existsByTenantIdAndSuccessionPlanIdAndCandidateId(tenantId, planId, candidate.getCandidateId())) {
             throw new BusinessException("Candidate already exists in this plan");
         }
 
@@ -194,17 +194,20 @@ public class OrganizationService {
 
     @Transactional(readOnly = true)
     public List<SuccessionCandidate> getCandidatesForPlan(UUID planId) {
-        return candidateRepository.findByPlan(planId);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return candidateRepository.findByPlan(tenantId, planId);
     }
 
     @Transactional(readOnly = true)
     public List<SuccessionCandidate> getReadyNowCandidates(UUID planId) {
-        return candidateRepository.findReadyNowCandidates(planId);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return candidateRepository.findReadyNowCandidates(tenantId, planId);
     }
 
     @Transactional
     public void removeCandidate(UUID planId, UUID candidateId) {
-        candidateRepository.deleteBySuccessionPlanIdAndCandidateId(planId, candidateId);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        candidateRepository.deleteByTenantIdAndSuccessionPlanIdAndCandidateId(tenantId, planId, candidateId);
         log.info("Succession candidate removed: {} from plan: {}", candidateId, planId);
     }
 
@@ -332,7 +335,7 @@ public class OrganizationService {
         Map<String, Integer> nineBoxDistribution = new HashMap<>();
 
         for (SuccessionPlan plan : activePlans) {
-            List<SuccessionCandidate> candidates = candidateRepository.findByPlan(plan.getId());
+            List<SuccessionCandidate> candidates = candidateRepository.findByPlan(tenantId, plan.getId());
             for (SuccessionCandidate candidate : candidates) {
                 String position = candidate.getNineBoxPosition();
                 nineBoxDistribution.merge(position, 1, Integer::sum);

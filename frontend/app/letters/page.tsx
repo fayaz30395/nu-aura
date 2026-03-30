@@ -738,17 +738,31 @@ export default function LettersPage() {
                                       )}
                                     </>
                                   )}
-                                  {letter.status === LetterStatus.ISSUED && letter.pdfUrl && (
+                                  {letter.status === LetterStatus.ISSUED && letter.pdfUrl ? (
                                     <a
                                       href={letter.pdfUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                      onClick={(e) => {
+                                        if (!letter.pdfUrl) {
+                                          e.preventDefault();
+                                        }
+                                      }}
                                     >
                                       <Download className="h-4 w-4" />
                                       Download PDF
                                     </a>
-                                  )}
+                                  ) : letter.status === LetterStatus.ISSUED ? (
+                                    <button
+                                      disabled
+                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-muted)] cursor-not-allowed opacity-50 flex items-center gap-2"
+                                      title="PDF not yet available"
+                                    >
+                                      <Download className="h-4 w-4" />
+                                      PDF Generating...
+                                    </button>
+                                  ) : null}
                                   {letter.status === LetterStatus.ISSUED && (
                                     <button
                                       onClick={() => handleRevokeLetter(letter)}
@@ -1114,14 +1128,28 @@ export default function LettersPage() {
             <Button variant="outline" onClick={() => setShowDetailModal(false)}>
               Close
             </Button>
-            {selectedLetter?.status === LetterStatus.ISSUED && selectedLetter?.pdfUrl && (
+            {selectedLetter?.status === LetterStatus.ISSUED && selectedLetter?.pdfUrl ? (
               <Button asChild>
-                <a href={selectedLetter.pdfUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={selectedLetter.pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (!selectedLetter.pdfUrl) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download PDF
                 </a>
               </Button>
-            )}
+            ) : selectedLetter?.status === LetterStatus.ISSUED ? (
+              <Button disabled>
+                <Download className="h-4 w-4 mr-2" />
+                PDF Generating...
+              </Button>
+            ) : null}
           </ModalFooter>
         </Modal>
 

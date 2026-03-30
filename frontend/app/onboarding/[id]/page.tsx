@@ -213,7 +213,7 @@ export default function OnboardingDetailPage() {
                                         className="p-6 flex items-center justify-between cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="h-10 w-10 rounded-2xl bg-accent-500/10 text-accent-600 flex items-center justify-center font-bold">
+                                            <div className="h-10 w-10 rounded-lg bg-accent-500/10 text-accent-600 flex items-center justify-center font-bold">
                                                 {idx + 1}
                                             </div>
                                             <div>
@@ -238,7 +238,7 @@ export default function OnboardingDetailPage() {
                                                     {catTasks.map((task) => (
                                                         <div
                                                             key={task.id}
-                                                            className={`flex items-center justify-between p-4 rounded-2xl group transition-all ${task.status === 'COMPLETED' ? 'bg-success-500/5' : 'hover:bg-[var(--bg-secondary)]/5'
+                                                            className={`flex items-center justify-between p-4 rounded-lg group transition-all ${task.status === 'COMPLETED' ? 'bg-success-500/5' : 'hover:bg-[var(--bg-secondary)]/5'
                                                                 }`}
                                                         >
                                                             <div className="flex items-center gap-4 flex-1">
@@ -300,14 +300,14 @@ export default function OnboardingDetailPage() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6 pt-2">
-                                <div className="bg-white/10 rounded-2xl p-4">
+                                <div className="bg-white/10 rounded-lg p-4">
                                     <p className="text-xs font-black uppercase tracking-widest opacity-60">Onboarding Buddy</p>
                                     <p className="font-bold text-lg mt-1">{process.assignedBuddyName || 'Not Assigned'}</p>
                                     <Button variant="ghost" size="sm" className="w-full mt-3 bg-white/10 hover:bg-white/20 border-0 text-white text-xs">
                                         Send Message
                                     </Button>
                                 </div>
-                                <div className="bg-white/10 rounded-2xl p-4">
+                                <div className="bg-white/10 rounded-lg p-4">
                                     <p className="text-xs font-black uppercase tracking-widest opacity-60">Primary Goal</p>
                                     <p className="font-bold text-sm mt-1">Successfully integrate into the Engineering team by end of Month 1.</p>
                                 </div>
@@ -325,20 +325,20 @@ export default function OnboardingDetailPage() {
                                 {!driveToken ? (
                                     <Button
                                         variant="primary"
-                                        className="w-full rounded-2xl bg-accent-600 hover:bg-accent-700 border-0 shadow-lg shadow-accent-500/20 font-black uppercase text-xs tracking-widest py-6"
+                                        className="w-full rounded-lg bg-accent-600 hover:bg-accent-700 border-0 shadow-lg shadow-accent-500/20 font-black uppercase text-xs tracking-widest py-6"
                                         onClick={() => googleLogin()}
                                     >
                                         Connect Google Drive
                                     </Button>
                                 ) : (
                                     <div className="space-y-4">
-                                        <div className="p-4 rounded-2xl bg-success-500/10 border border-success-500/20 flex items-center gap-4">
+                                        <div className="p-4 rounded-lg bg-success-500/10 border border-success-500/20 flex items-center gap-4">
                                             <ShieldCheck className="h-5 w-5 text-success-500" />
                                             <span className="text-xs font-bold text-success-600">Drive Connected</span>
                                         </div>
                                         <label className="block">
                                             <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && uploadFileToDrive(e.target.files[0])} disabled={uploading} />
-                                            <div className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl border-2 border-dashed border-[var(--border-main)] hover:border-accent-500 cursor-pointer transition-all">
+                                            <div className="flex items-center justify-center gap-2 w-full py-4 rounded-lg border-2 border-dashed border-[var(--border-main)] hover:border-accent-500 cursor-pointer transition-all">
                                                 {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <UploadCloud className="h-5 w-5 text-[var(--text-muted)]" />}
                                                 <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Upload Doc</span>
                                             </div>
@@ -367,7 +367,7 @@ export default function OnboardingDetailPage() {
                                         </div>
                                     </div>
                                     {process.notes && (
-                                        <div className="p-4 rounded-2xl bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50">
+                                        <div className="p-4 rounded-lg bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50">
                                             <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1 flex items-center gap-1">
                                                 <MessageSquare className="h-3 w-3" /> Note
                                             </p>

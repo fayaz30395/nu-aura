@@ -50,7 +50,7 @@ export function CelebrationTabs() {
 
   if (totalCount === 0 && !isLoading && !hasError) {
     return (
-      <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-4">
+      <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
         <p className="text-center text-xs text-[var(--text-muted)]">No celebrations this week</p>
       </div>
     );
@@ -63,7 +63,7 @@ export function CelebrationTabs() {
   ];
 
   return (
-    <div className="skeuo-card rounded-2xl border border-[var(--border-main)]">
+    <div className="skeuo-card rounded-lg border border-[var(--border-main)]">
       {/* Tab Navigation */}
       <div className="flex items-center justify-between border-b border-[var(--border-main)]">
         <div className="flex">

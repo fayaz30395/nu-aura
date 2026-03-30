@@ -22,7 +22,7 @@ export default function Loading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4"
+            className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4"
           >
             <div className="flex items-start gap-4">
               <Skeleton height={48} width={48} radius="md" />

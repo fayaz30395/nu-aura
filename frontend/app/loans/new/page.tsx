@@ -155,7 +155,7 @@ export default function NewLoanPage() {
         {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-6"
+          className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-6"
         >
           {/* Loan Type */}
           <div>
@@ -297,7 +297,7 @@ export default function NewLoanPage() {
 
           {/* EMI Calculator */}
           {monthlyPayment > 0 && (
-            <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl p-6 text-white">
+            <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
               <div className="flex items-center gap-4 mb-4">
                 <Wallet className="h-6 w-6" />
                 <h3 className="text-xl font-semibold">Estimated Monthly Payment</h3>

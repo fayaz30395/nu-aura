@@ -94,13 +94,13 @@ export default function MySchedulePage() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/shifts')}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Schedule</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h1 className="text-2xl font-bold text-surface-900 dark:text-white">My Schedule</h1>
+              <p className="text-sm text-surface-500 dark:text-surface-400">
                 Your personal shift calendar
               </p>
             </div>
@@ -116,17 +116,17 @@ export default function MySchedulePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Calendar */}
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="lg:col-span-2 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
             {/* Month navigation */}
             <div className="flex items-center justify-between mb-4">
               <button
                 onClick={() => setMonthOffset((p) => p - 1)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
               </button>
               <div className="text-center">
-                <h2 className="font-semibold text-gray-900 dark:text-white">{monthName}</h2>
+                <h2 className="font-semibold text-surface-900 dark:text-white">{monthName}</h2>
                 <button
                   onClick={() => setMonthOffset(0)}
                   className="text-xs text-accent-700 dark:text-accent-400 hover:underline"
@@ -136,9 +136,9 @@ export default function MySchedulePage() {
               </div>
               <button
                 onClick={() => setMonthOffset((p) => p + 1)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
               >
-                <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-300" />
               </button>
             </div>
 
@@ -151,7 +151,7 @@ export default function MySchedulePage() {
                   {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
                     <div
                       key={d}
-                      className="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-2"
+                      className="text-center text-xs font-medium text-surface-500 dark:text-surface-400 py-2"
                     >
                       {d}
                     </div>
@@ -177,13 +177,13 @@ export default function MySchedulePage() {
                           isToday
                             ? 'border-accent-700 bg-accent-50 dark:bg-accent-900/20'
                             : isPast
-                              ? 'border-gray-100 dark:border-gray-700/50 opacity-60'
-                              : 'border-gray-100 dark:border-gray-700/50'
+                              ? 'border-surface-100 dark:border-surface-700/50 opacity-60'
+                              : 'border-surface-100 dark:border-surface-700/50'
                         }`}
                       >
                         <p
                           className={`text-xs font-medium mb-1 ${
-                            isToday ? 'text-accent-700 dark:text-accent-400' : 'text-gray-500 dark:text-gray-400'
+                            isToday ? 'text-accent-700 dark:text-accent-400' : 'text-surface-500 dark:text-surface-400'
                           }`}
                         >
                           {date.getDate()}
@@ -199,7 +199,7 @@ export default function MySchedulePage() {
                             </div>
                           </div>
                         ) : (
-                          <p className="text-xs text-gray-300 dark:text-gray-600">OFF</p>
+                          <p className="text-xs text-surface-300 dark:text-surface-600">OFF</p>
                         )}
                       </div>
                     );
@@ -211,13 +211,13 @@ export default function MySchedulePage() {
 
           {/* Upcoming Shifts Sidebar */}
           <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+              <h3 className="font-semibold text-surface-900 dark:text-white mb-3 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-accent-700 dark:text-accent-400" />
                 Upcoming Shifts
               </h3>
               {upcomingShifts.length === 0 ? (
-                <p className="text-sm text-gray-400">No upcoming shifts</p>
+                <p className="text-sm text-surface-400">No upcoming shifts</p>
               ) : (
                 <div className="space-y-2">
                   {upcomingShifts.map((entry) => {
@@ -232,7 +232,7 @@ export default function MySchedulePage() {
                         className={`flex items-center gap-4 p-4 rounded-lg ${
                           isToday
                             ? 'bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800'
-                            : 'bg-gray-50 dark:bg-gray-700/30'
+                            : 'bg-surface-50 dark:bg-surface-700/30'
                         }`}
                       >
                         <div
@@ -240,7 +240,7 @@ export default function MySchedulePage() {
                           style={{ backgroundColor: entry.colorCode || '#6B7280' }}
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          <p className="text-sm font-medium text-surface-900 dark:text-white">
                             {entry.shiftName}
                             {isToday && (
                               <span className="ml-2 text-xs text-accent-700 dark:text-accent-400 font-normal">
@@ -248,7 +248,7 @@ export default function MySchedulePage() {
                               </span>
                             )}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-surface-500 dark:text-surface-400">
                             {d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                             {' '}
                             {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
@@ -267,20 +267,20 @@ export default function MySchedulePage() {
             </div>
 
             {/* Legend */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Legend</h3>
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+              <h3 className="text-sm font-medium text-surface-500 dark:text-surface-400 mb-2">Legend</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center gap-2">
                   <Moon className="w-3.5 h-3.5 text-accent-500" />
-                  <span className="text-gray-600 dark:text-gray-300">Night shift</span>
+                  <span className="text-surface-600 dark:text-surface-300">Night shift</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Sun className="w-3.5 h-3.5 text-warning-500" />
-                  <span className="text-gray-600 dark:text-gray-300">Day shift</span>
+                  <span className="text-surface-600 dark:text-surface-300">Day shift</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3.5 h-3.5 rounded bg-gray-200 dark:bg-gray-600" />
-                  <span className="text-gray-600 dark:text-gray-300">Day off</span>
+                  <div className="w-3.5 h-3.5 rounded bg-surface-200 dark:bg-surface-600" />
+                  <span className="text-surface-600 dark:text-surface-300">Day off</span>
                 </div>
               </div>
             </div>

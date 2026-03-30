@@ -236,11 +236,11 @@ export default function OrganizationHealthPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 pt-4">
-                                    <div className="p-4 bg-[var(--bg-secondary)] rounded-2xl">
+                                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                                         <div className="text-xs text-[var(--text-muted)] mb-1">Total Hours</div>
                                         <div className="text-2xl font-bold">{training.totalTrainingHours}</div>
                                     </div>
-                                    <div className="p-4 bg-[var(--bg-secondary)] rounded-2xl">
+                                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                                         <div className="text-xs text-[var(--text-muted)] mb-1">Active Learners</div>
                                         <div className="text-2xl font-bold">{training.activeLearners}</div>
                                     </div>

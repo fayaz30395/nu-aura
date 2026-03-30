@@ -572,7 +572,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => setSelectedEvent(null)} />
-          <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
             <div className="bg-gradient-to-r from-accent-500 to-accent-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
@@ -667,7 +667,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
       {selectedEmail && selectedEmail.emailData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => { setSelectedEmail(null); setEmailContent(''); }} />
-          <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
             <div className="bg-gradient-to-r from-danger-500 to-danger-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
@@ -709,7 +709,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)]" onClick={() => setSelectedFile(null)} />
-          <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden animate-fade-in-down">
             <div className="bg-gradient-to-r from-warning-500 to-warning-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">

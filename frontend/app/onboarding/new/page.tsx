@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
     User,
     Calendar,
@@ -27,6 +30,18 @@ import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('NewOnboardingPage');
 
+// Zod validation schema for onboarding form
+const onboardingFormSchema = z.object({
+    startDate: z.string().min(1, 'Start date is required').date('Invalid date format'),
+    expectedCompletionDate: z.string().optional().refine(
+        (val) => !val || !isNaN(Date.parse(val)),
+        'Invalid date format'
+    ),
+    notes: z.string().optional().default(''),
+});
+
+type OnboardingFormData = z.infer<typeof onboardingFormSchema>;
+
 export default function NewOnboardingPage() {
     const router = useRouter();
     const { data: templates = [] } = useOnboardingTemplates();
@@ -39,23 +54,34 @@ export default function NewOnboardingPage() {
         templates.length > 0 ? (templates.find(t => t.isDefault) || templates[0]) : null
     );
 
-    const [formData, setFormData] = useState({
-        startDate: new Date().toISOString().split('T')[0],
-        expectedCompletionDate: '',
-        notes: ''
+    const {
+        register,
+        handleSubmit: handleFormSubmit,
+        formState: { errors },
+        watch,
+        reset: resetForm,
+    } = useForm<OnboardingFormData>({
+        resolver: zodResolver(onboardingFormSchema),
+        defaultValues: {
+            startDate: new Date().toISOString().split('T')[0],
+            expectedCompletionDate: '',
+            notes: '',
+        },
     });
-    const [error, setError] = useState<string | null>(null);
+
+    const formData = watch();
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const handleNext = () => {
         if (currentStep === 1 && !selectedEmployee) {
-            setError('Please select an employee');
+            setSubmitError('Please select an employee');
             return;
         }
         if (currentStep === 2 && (!formData.startDate || !selectedTemplate)) {
-            setError('Please provide start date and select a template');
+            setSubmitError('Please provide start date and select a template');
             return;
         }
-        setError(null);
+        setSubmitError(null);
         setCurrentStep(prev => prev + 1);
     };
 
@@ -67,22 +93,22 @@ export default function NewOnboardingPage() {
         }
     };
 
-    const handleSubmit = async () => {
-        if (!selectedEmployee || !formData.startDate || !selectedTemplate) {
-            setError('Please fill in all required fields');
+    const handleSubmit = async (data: OnboardingFormData) => {
+        if (!selectedEmployee || !selectedTemplate) {
+            setSubmitError('Please fill in all required fields');
             return;
         }
 
         try {
-            setError(null);
+            setSubmitError(null);
 
             const payload: OnboardingProcessRequest = {
                 employeeId: selectedEmployee.id,
                 processType: 'ONBOARDING',
-                startDate: formData.startDate,
-                expectedCompletionDate: formData.expectedCompletionDate || undefined,
+                startDate: data.startDate,
+                expectedCompletionDate: data.expectedCompletionDate || undefined,
                 assignedBuddyId: selectedBuddy?.id,
-                notes: formData.notes,
+                notes: data.notes || '',
                 templateId: selectedTemplate.id
             };
 
@@ -90,7 +116,7 @@ export default function NewOnboardingPage() {
             router.push(`/onboarding/${result.id}`);
         } catch (err: unknown) {
             log.error('Failed to create onboarding process:', err);
-            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to initiate onboarding');
+            setSubmitError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to initiate onboarding');
         }
     };
 
@@ -169,7 +195,7 @@ export default function NewOnboardingPage() {
 
                                     {selectedEmployee && (
                                         <div className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-accent-500/10 animate-in fade-in slide-in-from-bottom-2">
-                                            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-3xl shadow-xl">
+                                            <div className="h-20 w-20 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-3xl shadow-xl">
                                                 {selectedEmployee.name.charAt(0)}
                                             </div>
                                             <div>
@@ -210,7 +236,7 @@ export default function NewOnboardingPage() {
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className={`p-4 rounded-2xl ${selectedTemplate?.id === temp.id ? 'bg-accent-500 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
+                                                    <div className={`p-4 rounded-lg ${selectedTemplate?.id === temp.id ? 'bg-accent-500 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                                                         }`}>
                                                         <Layout className="h-6 w-6" />
                                                     </div>
@@ -240,10 +266,12 @@ export default function NewOnboardingPage() {
                                         <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Kickoff Date</label>
                                         <Input
                                             type="date"
-                                            value={formData.startDate}
-                                            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                            className="rounded-2xl border-0 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-bold"
+                                            {...register('startDate')}
+                                            className="rounded-lg border-0 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-bold"
                                         />
+                                        {errors.startDate && (
+                                            <p className="text-xs text-danger-500 mt-1 font-medium">{errors.startDate.message}</p>
+                                        )}
                                     </div>
                                     <div>
                                         <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Buddy (Optional)</label>
@@ -293,9 +321,11 @@ export default function NewOnboardingPage() {
                                         className="w-full px-6 py-4 rounded-3xl bg-[var(--bg-surface)] border-0 focus:ring-2 focus:ring-accent-500 outline-none text-[var(--text-primary)] font-medium"
                                         rows={4}
                                         placeholder="Specific instructions for the onboarding buddy or HR team..."
-                                        value={formData.notes}
-                                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                        {...register('notes')}
                                     />
+                                    {errors.notes && (
+                                        <p className="text-xs text-danger-500 mt-1 font-medium">{errors.notes.message}</p>
+                                    )}
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -314,14 +344,14 @@ export default function NewOnboardingPage() {
                     </Button>
 
                     <div className="flex items-center gap-4">
-                        {error && <span className="text-sm font-bold text-danger-500 animate-pulse">{error}</span>}
+                        {submitError && <span className="text-sm font-bold text-danger-500 animate-pulse">{submitError}</span>}
                         <PermissionGate permission={Permissions.ONBOARDING_CREATE} fallback={<div />}>
                             {currentStep < 3 ? (
                                 <Button
                                     variant="primary"
                                     onClick={handleNext}
                                     size="lg"
-                                    className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs shadow-xl shadow-accent-500/20"
+                                    className="px-10 rounded-lg font-black tracking-widest uppercase text-xs shadow-xl shadow-accent-500/20"
                                     rightIcon={<ChevronRight className="h-4 w-4" />}
                                 >
                                     Continue
@@ -329,10 +359,10 @@ export default function NewOnboardingPage() {
                             ) : (
                                 <Button
                                     variant="primary"
-                                    onClick={handleSubmit}
+                                    onClick={handleFormSubmit(handleSubmit)}
                                     isLoading={createProcessMutation.isPending}
                                     size="lg"
-                                    className="btn-primary px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20"
+                                    className="btn-primary px-10 rounded-lg font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20"
                                     leftIcon={<Zap className="h-4 w-4" />}
                                 >
                                     Launch Process

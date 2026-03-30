@@ -233,7 +233,7 @@ export default function ExpenseSettingsPage() {
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-surface-900 dark:text-surface-50">{cat.name}</p>
                           {!cat.isActive && (
-                            <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">Inactive</span>
+                            <span className="px-1.5 py-0.5 bg-surface-100 text-surface-500 rounded text-xs">Inactive</span>
                           )}
                           {cat.requiresReceipt && (
                             <span className="px-1.5 py-0.5 bg-warning-100 text-warning-700 rounded text-xs">Receipt Required</span>
@@ -301,7 +301,7 @@ export default function ExpenseSettingsPage() {
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-surface-900 dark:text-surface-50">{pol.name}</p>
                           {!pol.isActive && (
-                            <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">Inactive</span>
+                            <span className="px-1.5 py-0.5 bg-surface-100 text-surface-500 rounded text-xs">Inactive</span>
                           )}
                           {pol.requiresPreApproval && (
                             <span className="px-1.5 py-0.5 bg-accent-100 text-accent-700 rounded text-xs">Pre-Approval</span>

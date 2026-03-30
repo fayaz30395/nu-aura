@@ -19,7 +19,7 @@ export default function DashboardsLoading() {
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
+            className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
           >
             <Skeleton height={16} width="60%" className="mb-3" />
             <Skeleton height={32} width="80%" className="mb-3" />
@@ -31,20 +31,20 @@ export default function DashboardsLoading() {
       {/* Charts and content skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Left chart */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
           <Skeleton height={20} width="40%" className="mb-4" />
           <Skeleton height={250} />
         </div>
 
         {/* Right chart */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
           <Skeleton height={20} width="40%" className="mb-4" />
           <Skeleton height={250} />
         </div>
       </div>
 
       {/* Full-width chart */}
-      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
+      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
         <Skeleton height={20} width="30%" className="mb-4" />
         <Skeleton height={300} />
       </div>

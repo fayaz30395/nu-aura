@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2, MapPin } from 'lucide-react';
+import { CheckCircle2, Laptop } from 'lucide-react';
 import { useEmployeesOnLeaveToday, useRemoteWorkersToday } from '@/lib/hooks/queries/useHome';
 import { OnLeaveEmployeeResponse, RemoteWorkerResponse } from '@/lib/services/home.service';
 
@@ -9,12 +9,6 @@ interface EmployeePresence {
   employeeName: string;
   initials: string;
   avatarColor: string;
-}
-
-interface TeamPresenceWidgetProps {
-  onLeaveEmployees?: EmployeePresence[];
-  remoteWorkingEmployees?: EmployeePresence[];
-  isLoading?: boolean;
 }
 
 function getInitials(name: string): string {
@@ -41,11 +35,12 @@ function mapRemoteToPresence(emp: RemoteWorkerResponse): EmployeePresence {
   };
 }
 
-function Avatar({ name }: { name: string }) {
+function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' }) {
   const initials = getInitials(name);
+  const sizeClasses = size === 'sm' ? 'h-7 w-7 text-[10px]' : 'h-9 w-9 text-xs';
   return (
     <div
-      className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-secondary)]"
+      className={`flex items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30 font-semibold text-accent-700 dark:text-accent-400 ${sizeClasses}`}
       title={name}
     >
       {initials}
@@ -66,79 +61,116 @@ function SkeletonChips() {
   );
 }
 
-export function TeamPresenceWidget({
-  onLeaveEmployees: propOnLeave,
-  remoteWorkingEmployees: propRemote,
-}: TeamPresenceWidgetProps) {
-  // Fetch on-leave data via React Query (skip if passed as prop)
-  const { data: apiOnLeave, isLoading: onLeaveLoading } = useEmployeesOnLeaveToday(!propOnLeave);
-  // Fetch remote workers data via React Query (skip if passed as prop)
-  const { data: apiRemote, isLoading: remoteLoading } = useRemoteWorkersToday(!propRemote);
+/* ─── On Leave Today Card ────────────────────────────────────────────────── */
 
-  const onLeaveEmployees: EmployeePresence[] = propOnLeave
-    ?? (apiOnLeave ? apiOnLeave.map(mapLeaveToPresence) : []);
-
-  const remoteWorkers: EmployeePresence[] = propRemote
-    ?? (apiRemote ? apiRemote.map(mapRemoteToPresence) : []);
+export function OnLeaveTodayCard() {
+  const { data: apiOnLeave, isLoading } = useEmployeesOnLeaveToday(true);
+  const onLeaveEmployees: EmployeePresence[] = apiOnLeave ? apiOnLeave.map(mapLeaveToPresence) : [];
 
   return (
-    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-6">
-      {/* On Leave Today */}
-      <div className="mb-4">
-        <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-2.5">
-          On Leave Today
-        </h3>
-        {onLeaveLoading && !propOnLeave ? (
-          <SkeletonChips />
-        ) : onLeaveEmployees.length === 0 ? (
-          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-4 py-2.5">
-            <CheckCircle2 className="h-4 w-4 text-success-500" />
-            <p className="text-xs text-[var(--text-muted)]">Everyone is working today</p>
-          </div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {onLeaveEmployees.map((e) => (
-              <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
-                <Avatar name={e.employeeName} />
-                <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
+      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-3">
+        On Leave Today
+      </h3>
 
-      {/* Working Remotely */}
-      <div className="border-t border-[var(--border-subtle)] pt-4">
-        <div className="flex items-center gap-1.5 mb-2.5">
-          <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)]" />
-          <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">
-            Working Remotely
-          </h3>
-          {!remoteLoading && (
-            <span className="ml-auto text-xs text-[var(--text-muted)]">{remoteWorkers.length}</span>
+      {isLoading ? (
+        <SkeletonChips />
+      ) : onLeaveEmployees.length === 0 ? (
+        <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
+          <CheckCircle2 className="h-4 w-4 text-success-500" />
+          <p className="text-xs text-[var(--text-muted)]">Everyone is working today!</p>
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {onLeaveEmployees.slice(0, 6).map((e) => (
+            <div key={e.employeeId} className="flex flex-col items-center gap-1 min-w-[48px]">
+              <Avatar name={e.employeeName} />
+              <span className="text-[10px] text-[var(--text-muted)] max-w-[56px] truncate text-center">
+                {e.employeeName.split(' ')[0]}
+              </span>
+            </div>
+          ))}
+          {onLeaveEmployees.length > 6 && (
+            <div className="flex flex-col items-center gap-1 min-w-[48px]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-muted)]">
+                +{onLeaveEmployees.length - 6}
+              </div>
+              <span className="text-[10px] text-[var(--text-muted)]">more</span>
+            </div>
           )}
         </div>
-        {remoteLoading && !propRemote ? (
-          <SkeletonChips />
-        ) : remoteWorkers.length === 0 ? (
-          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-4 py-2.5">
-            <CheckCircle2 className="h-4 w-4 text-accent-500" />
-            <p className="text-xs text-[var(--text-muted)]">No one is working remotely today</p>
+      )}
+    </div>
+  );
+}
+
+/* ─── Working Remotely Card ──────────────────────────────────────────────── */
+
+export function WorkingRemotelyCard() {
+  const { data: apiRemote, isLoading } = useRemoteWorkersToday(true);
+  const remoteWorkers: EmployeePresence[] = apiRemote ? apiRemote.map(mapRemoteToPresence) : [];
+
+  return (
+    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
+      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-3">
+        Working Remotely
+      </h3>
+
+      {isLoading ? (
+        <SkeletonChips />
+      ) : remoteWorkers.length === 0 ? (
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <p className="text-xs font-medium text-[var(--text-secondary)]">Everyone is at office!</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-0.5">No one is working remotely today.</p>
           </div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {remoteWorkers.map((e) => (
-              <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
-                <div className="relative">
-                  <Avatar name={e.employeeName} />
-                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-success-500 dark:border-[var(--bg-main)]" />
-                </div>
-                <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
+          {/* Decorative remote work illustration */}
+          <div className="flex items-center gap-1.5 opacity-40">
+            <Laptop className="h-8 w-8 text-[var(--text-muted)]" />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {remoteWorkers.slice(0, 6).map((e) => (
+            <div key={e.employeeId} className="flex flex-col items-center gap-1 min-w-[48px]">
+              <div className="relative">
+                <Avatar name={e.employeeName} />
+                <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-card)] bg-success-500" />
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              <span className="text-[10px] text-[var(--text-muted)] max-w-[56px] truncate text-center">
+                {e.employeeName.split(' ')[0]}
+              </span>
+            </div>
+          ))}
+          {remoteWorkers.length > 6 && (
+            <div className="flex flex-col items-center gap-1 min-w-[48px]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-muted)]">
+                +{remoteWorkers.length - 6}
+              </div>
+              <span className="text-[10px] text-[var(--text-muted)]">more</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Combined Legacy Widget (backward compatible) ───────────────────────── */
+
+interface TeamPresenceWidgetProps {
+  onLeaveEmployees?: EmployeePresence[];
+  remoteWorkingEmployees?: EmployeePresence[];
+  isLoading?: boolean;
+}
+
+export function TeamPresenceWidget(
+  _props: TeamPresenceWidgetProps,
+) {
+  return (
+    <div className="space-y-4">
+      <OnLeaveTodayCard />
+      <WorkingRemotelyCard />
     </div>
   );
 }

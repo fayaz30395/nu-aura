@@ -13,7 +13,7 @@ export default function SignLoading() {
         </div>
 
         {/* Card container skeleton */}
-        <div className="bg-[var(--bg-input)] rounded-2xl border border-surface-200 dark:border-surface-700 p-6 sm:p-8">
+        <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6 sm:p-8">
           {/* Document preview skeleton */}
           <div className="mb-6 space-y-4">
             <Skeleton height={20} width="40%" />

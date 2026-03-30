@@ -277,7 +277,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
 
                 <div>
                   {dayComplete ? (
-                    <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/20">
+                    <div className="bg-white/15 backdrop-blur-sm rounded-lg px-6 py-4 text-center border border-white/20">
                       <CheckCircle className="h-8 w-8 text-success-300 mx-auto mb-1" />
                       <div className="text-sm font-bold">Day Complete!</div>
                       <div className="text-xs text-accent-100 mt-0.5">
@@ -541,7 +541,7 @@ export default function AttendancePage() {
             <Skeleton className="h-14 w-48 rounded-xl" />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2"><Skeleton className="h-56 rounded-2xl" /></div>
+            <div className="lg:col-span-2"><Skeleton className="h-56 rounded-lg" /></div>
             <div className="space-y-4">
               <Skeleton className="h-24 rounded-xl" />
               <Skeleton className="h-24 rounded-xl" />
@@ -551,7 +551,7 @@ export default function AttendancePage() {
             {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-24 rounded-xl" />)}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2"><Skeleton className="h-80 rounded-2xl" /></div>
+            <div className="lg:col-span-2"><Skeleton className="h-80 rounded-lg" /></div>
             <div className="space-y-4">
               <Skeleton className="h-28 rounded-xl" />
               <Skeleton className="h-28 rounded-xl" />

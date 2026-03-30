@@ -1,30 +1,83 @@
 'use client';
 
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { RefreshCw, Home, Grid } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
+import { isDevelopment } from '@/lib/config';
 
-export default function Error({
-  error,
-  reset,
-}: {
+interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}
+
+export default function ShiftError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    console.error('Shift page error:', error);
+    handleError(error, { source: 'shift-error-boundary', digest: error.digest });
   }, [error]);
 
+  const category = categorizeError(error);
+  const userMessage = getUserMessage(category, error.message);
+
   return (
-    <div className="p-6 flex flex-col items-center justify-center min-h-[400px] gap-4">
-      <div className="text-center">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Something went wrong</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{error.message}</p>
-      </div>
-      <button
-        onClick={reset}
-        className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm font-medium transition-colors"
+    <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
       >
-        Try Again
-      </button>
+        <Card className="w-full max-w-md bg-[var(--bg-card)]">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+              <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400" />
+            </div>
+            <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+              App Error
+            </CardTitle>
+            <CardDescription className="text-surface-600 dark:text-surface-400">
+              {userMessage}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isDevelopment && (
+              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-4">
+                <p className="text-sm font-mono text-surface-700 dark:text-surface-300 break-all">
+                  {error.message}
+                </p>
+                {error.digest && (
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                    Error ID: {error.digest}
+                  </p>
+                )}
+              </div>
+            )}
+            <div className="flex flex-col gap-2">
+              <Button onClick={reset} className="w-full">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try Again
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = '/admin/shifts')}
+                className="w-full"
+              >
+                <Grid className="mr-2 h-4 w-4" />
+                Back to Shifts
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = '/me/dashboard')}
+                className="w-full"
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Go to Home
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }

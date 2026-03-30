@@ -487,7 +487,7 @@ function LoginPage() {
                   style={{ animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both` }}
                 >
                   <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:shadow-xl transition-all duration-300"
+                    className="w-14 h-14 rounded-lg flex items-center justify-center text-2xl group-hover:scale-110 group-hover:shadow-xl transition-all duration-300"
                     style={{
                       background: app.bg,
                       boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
@@ -542,7 +542,7 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] p-8" style={{ boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)' }}>
+            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8" style={{ boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)' }}>
               <div className="text-center mb-7">
                 <h3 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
                   Sign In

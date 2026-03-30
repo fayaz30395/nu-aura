@@ -180,7 +180,7 @@ export default function TravelPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
@@ -251,7 +251,7 @@ export default function TravelPage() {
 
         {/* Travel Requests List */}
         {error ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)]">
+          <div className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
             <AlertCircle className="h-12 w-12 text-danger-500 mb-4" />
             <p className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
@@ -282,7 +282,7 @@ export default function TravelPage() {
                 <div
                   key={request.id}
                   onClick={() => router.push(`/travel/${request.id}`)}
-                  className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 cursor-pointer"
+                  className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-4">

@@ -31,8 +31,8 @@ import {
   ProjectPriority,
   ProjectUpdateRequest,
 } from '@/lib/types/hrms-project';
-import { apiClient } from '@/lib/api/client';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 import { useToast } from '@/components/notifications/ToastProvider';
 import {
   useHrmsProjects,
@@ -43,14 +43,6 @@ import {
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('ProjectsPage');
-
-interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-}
 
 interface EmployeeSummary {
   id: string;
@@ -178,8 +170,7 @@ const parseApiError = (error: unknown): ApiErrorPayload => {
 
 function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: OwnerTypeaheadProps) {
   const [query, setQuery] = useState(value ? buildEmployeeName(value) : '');
-  const [results, setResults] = useState<EmployeeSummary[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -197,34 +188,22 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Debounce search term
   useEffect(() => {
-    if (!open) {
-      return;
-    }
-
     const term = query.trim();
     if (term.length < 2) {
-      setResults([]);
+      setDebouncedQuery('');
       return;
     }
-
-    const handle = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const response = await apiClient.get<PageResponse<EmployeeSummary>>('/employees', {
-          params: { search: term, page: 0, size: 20 },
-        });
-        setResults(response.data.content ?? []);
-      } catch (err) {
-        log.error('Owner search failed', err);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
-
+    const handle = setTimeout(() => setDebouncedQuery(term), 300);
     return () => clearTimeout(handle);
-  }, [query, open]);
+  }, [query]);
+
+  // React Query for employee search
+  const { data: searchData, isLoading: loading } = useEmployeeSearch(
+    debouncedQuery, 0, 20, open && debouncedQuery.length >= 2
+  );
+  const results: EmployeeSummary[] = (searchData?.content ?? []) as EmployeeSummary[];
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (value) {
@@ -237,13 +216,13 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
   const handleSelect = (owner: EmployeeSummary) => {
     onChange(owner);
     setOpen(false);
-    setResults([]);
+    setDebouncedQuery('');
   };
 
   const handleClear = () => {
     onChange(null);
     setQuery('');
-    setResults([]);
+    setDebouncedQuery('');
     setOpen(false);
   };
 
@@ -306,8 +285,7 @@ function MultiOwnerTypeahead({
   maxOwners = 5,
 }: MultiOwnerTypeaheadProps) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<EmployeeSummary[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -321,36 +299,26 @@ function MultiOwnerTypeahead({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Debounce search term
   useEffect(() => {
-    if (!open) {
-      return;
-    }
-
     const term = query.trim();
     if (term.length < 2) {
-      setResults([]);
+      setDebouncedQuery('');
       return;
     }
-
-    const handle = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const response = await apiClient.get<PageResponse<EmployeeSummary>>('/employees', {
-          params: { search: term, page: 0, size: 20 },
-        });
-        const selectedIds = new Set(values.map((v) => v.id));
-        const filtered = (response.data.content ?? []).filter((emp) => !selectedIds.has(emp.id));
-        setResults(filtered);
-      } catch (err) {
-        log.error('Owner search failed', err);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
-
+    const handle = setTimeout(() => setDebouncedQuery(term), 300);
     return () => clearTimeout(handle);
-  }, [query, open, values]);
+  }, [query]);
+
+  // React Query for employee search
+  const { data: searchData, isLoading: loading } = useEmployeeSearch(
+    debouncedQuery, 0, 20, open && debouncedQuery.length >= 2
+  );
+  const results: EmployeeSummary[] = useMemo(() => {
+    const content = (searchData?.content ?? []) as EmployeeSummary[];
+    const selectedIds = new Set(values.map((v) => v.id));
+    return content.filter((emp) => !selectedIds.has(emp.id));
+  }, [searchData, values]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
@@ -361,7 +329,7 @@ function MultiOwnerTypeahead({
     if (values.length < maxOwners) {
       onChange([...values, owner]);
       setQuery('');
-      setResults([]);
+      setDebouncedQuery('');
     }
   };
 

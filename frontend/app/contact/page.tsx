@@ -148,7 +148,7 @@ export default function ContactPage() {
               >
                 <Card padding="lg" className="text-center h-full">
                   <div
-                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${method.color} flex items-center justify-center mx-auto mb-4`}
+                    className={`w-14 h-14 rounded-lg bg-gradient-to-br ${method.color} flex items-center justify-center mx-auto mb-4`}
                   >
                     <method.icon className="h-7 w-7 text-white" />
                   </div>

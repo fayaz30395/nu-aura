@@ -1,13 +1,14 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { notifications } from '@mantine/notifications';
 import { useAdminStats, useAdminUsers, useUpdateUserRole, useSystemHealth } from '@/lib/hooks/queries/useAdmin';
-import { Roles } from '@/lib/hooks/usePermissions';
+import { Roles, usePermissions } from '@/lib/hooks/usePermissions';
 import { AdminUserSummary, HealthResponse, HealthComponent } from '@/lib/types/admin';
 import { AdminPageContent } from '@/components/layout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -30,6 +31,9 @@ const roleAssignmentSchema = z.object({
 type RoleAssignmentForm = z.infer<typeof roleAssignmentSchema>;
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+  const { isAdmin } = usePermissions();
+  const [authChecked, setAuthChecked] = useState(false);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [pendingSearch, setPendingSearch] = useState('');
@@ -51,6 +55,18 @@ export default function AdminDashboardPage() {
     email: '',
     role: '',
   });
+
+  // Auth guard — wait one tick for auth store to hydrate before redirecting
+  useEffect(() => {
+    const timer = setTimeout(() => setAuthChecked(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (authChecked && !isAdmin) {
+      router.push('/');
+    }
+  }, [authChecked, isAdmin, router]);
 
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   const { data: usersPage, isLoading: usersLoading } = useAdminUsers(page, PAGE_SIZE, search);
@@ -100,6 +116,9 @@ export default function AdminDashboardPage() {
 
   const canPrevious = page > 0;
   const canNext = usersPage ? page < usersPage.totalPages - 1 : false;
+
+  // Show nothing while auth store hydrates or if non-admin (redirect in-flight)
+  if (!authChecked || !isAdmin) return null;
 
   return (
     <AdminPageContent>

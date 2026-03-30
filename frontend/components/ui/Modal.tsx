@@ -134,7 +134,7 @@ const Modal: React.FC<ModalProps> = ({
           <motion.div
             ref={modalRef}
             className={cn(
-              'relative w-full rounded-2xl border',
+              'relative w-full rounded-lg border',
               'max-h-[90vh] overflow-hidden flex flex-col',
               sizeClasses[size],
               className

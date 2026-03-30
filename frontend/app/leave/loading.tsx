@@ -21,7 +21,7 @@ export default function Loading() {
           {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={index}
-              className="rounded-2xl border border-surface-200 dark:border-surface-800 p-4 space-y-4"
+              className="rounded-lg border border-surface-200 dark:border-surface-800 p-4 space-y-4"
             >
               <Skeleton height={32} width={32} radius="xl" />
               <Skeleton height={18} width="60%" />
@@ -33,7 +33,7 @@ export default function Loading() {
       </div>
 
       {/* Recent leave requests table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-800">
           <Skeleton height={20} width="25%" />
           <Skeleton height={16} width={80} />

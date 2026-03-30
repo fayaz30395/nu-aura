@@ -117,7 +117,7 @@ const SEVERITY_COLORS = {
 function TrendIcon({ trend }: { trend: 'UP' | 'DOWN' | 'STABLE' }) {
   if (trend === 'UP') return <ArrowUpRight className="h-4 w-4 text-success-500" />;
   if (trend === 'DOWN') return <ArrowDownRight className="h-4 w-4 text-danger-500" />;
-  return <Minus className="h-4 w-4 text-gray-400" />;
+  return <Minus className="h-4 w-4 text-surface-400" />;
 }
 
 function RiskBadge({ level }: { level: string }) {
@@ -434,7 +434,7 @@ function WorkforceSummaryPanel({ summary }: { summary: PredictiveAnalyticsDashbo
     {
       label: 'Headcount Trend',
       value: `${trendDirection === 'UP' ? '+' : trendDirection === 'DOWN' ? '-' : ''}${summary.headcountTrend?.changeCount ?? 0}`,
-      icon: trendDirection === 'UP' ? <TrendingUp className="h-5 w-5 text-success-500" /> : trendDirection === 'DOWN' ? <TrendingDown className="h-5 w-5 text-danger-500" /> : <Minus className="h-5 w-5 text-gray-400" />,
+      icon: trendDirection === 'UP' ? <TrendingUp className="h-5 w-5 text-success-500" /> : trendDirection === 'DOWN' ? <TrendingDown className="h-5 w-5 text-danger-500" /> : <Minus className="h-5 w-5 text-surface-400" />,
     },
   ];
 

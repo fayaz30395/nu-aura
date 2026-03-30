@@ -40,7 +40,7 @@ const itemSchema = z.object({
 type ItemFormData = z.infer<typeof itemSchema>;
 
 const STATUS_CONFIG: Record<ExpenseStatus, { color: string; icon: typeof Clock; label: string }> = {
-  DRAFT: { color: 'bg-gray-100 text-gray-700', icon: FileText, label: 'Draft' },
+  DRAFT: { color: 'bg-surface-100 text-surface-700', icon: FileText, label: 'Draft' },
   SUBMITTED: { color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Submitted' },
   PENDING_APPROVAL: { color: 'bg-warning-100 text-warning-700', icon: Clock, label: 'Pending Approval' },
   APPROVED: { color: 'bg-success-100 text-success-700', icon: CheckCircle, label: 'Approved' },
@@ -48,7 +48,7 @@ const STATUS_CONFIG: Record<ExpenseStatus, { color: string; icon: typeof Clock; 
   PROCESSING: { color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Processing' },
   REIMBURSED: { color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Reimbursed' },
   PAID: { color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Paid' },
-  CANCELLED: { color: 'bg-gray-100 text-gray-500', icon: XCircle, label: 'Cancelled' },
+  CANCELLED: { color: 'bg-surface-100 text-surface-500', icon: XCircle, label: 'Cancelled' },
 };
 
 export default function ExpenseDetailPage() {

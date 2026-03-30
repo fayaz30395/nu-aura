@@ -22,7 +22,7 @@ export default function Loading() {
       {/* Main card + side stats skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <Skeleton height={220} className="rounded-2xl" />
+          <Skeleton height={220} className="rounded-lg" />
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
           {Array.from({ length: 3 }).map((_, index) => (
@@ -33,7 +33,7 @@ export default function Loading() {
 
       {/* Chart + quick actions skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Skeleton height={300} className="lg:col-span-2 rounded-2xl" />
+        <Skeleton height={300} className="lg:col-span-2 rounded-lg" />
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (
             <Skeleton key={index} height={90} className="rounded-xl" />

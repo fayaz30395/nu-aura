@@ -59,7 +59,7 @@ export default function TemplatesPage() {
                     <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                         <Button
                             variant="primary"
-                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-2xl py-6 px-8"
+                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-lg py-6 px-8"
                             leftIcon={<Plus className="h-4 w-4" />}
                             onClick={() => router.push('/onboarding/templates/new')}
                         >
@@ -76,7 +76,7 @@ export default function TemplatesPage() {
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                                 <Input
                                     placeholder="Search templates..."
-                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-accent-500"
+                                    className="pl-12 rounded-lg bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-accent-500"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -112,7 +112,7 @@ export default function TemplatesPage() {
                                             >
                                                 <CardContent className="p-6 h-full flex flex-col">
                                                     <div className="flex justify-between items-start mb-4">
-                                                        <div className="p-4 bg-accent-500/10 rounded-2xl">
+                                                        <div className="p-4 bg-accent-500/10 rounded-lg">
                                                             <ClipboardList className="h-6 w-6 text-accent-600" />
                                                         </div>
                                                         <Badge variant="outline" className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">

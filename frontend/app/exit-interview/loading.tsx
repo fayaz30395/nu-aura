@@ -13,7 +13,7 @@ export default function ExitInterviewLoading() {
         </div>
 
         {/* Card container skeleton */}
-        <div className="bg-[var(--bg-input)] rounded-2xl border border-surface-200 dark:border-surface-700 p-6 sm:p-8">
+        <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6 sm:p-8">
           {/* Progress indicator skeleton */}
           <div className="flex items-center justify-between mb-8">
             {Array.from({ length: 4 }).map((_, index) => (

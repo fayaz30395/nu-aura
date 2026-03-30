@@ -75,11 +75,11 @@ const getStatusConfig = (status: ReferralStatus) => {
     case 'REJECTED':
       return { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Rejected' };
     case 'WITHDRAWN':
-      return { bg: 'bg-gray-100 dark:bg-gray-900/30', text: 'text-gray-700 dark:text-gray-400', label: 'Withdrawn' };
+      return { bg: 'bg-surface-100 dark:bg-surface-900/30', text: 'text-surface-700 dark:text-surface-400', label: 'Withdrawn' };
     case 'ON_HOLD':
       return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'On Hold' };
     default:
-      return { bg: 'bg-gray-100 dark:bg-gray-900/30', text: 'text-gray-700 dark:text-gray-400', label: status };
+      return { bg: 'bg-surface-100 dark:bg-surface-900/30', text: 'text-surface-700 dark:text-surface-400', label: status };
   }
 };
 
@@ -548,7 +548,7 @@ export default function ReferralsPage() {
                         className={`text-xs font-medium px-2 py-1 rounded-full ${
                           policy.isActive
                             ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
-                            : 'bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400'
+                            : 'bg-surface-100 text-surface-600 dark:bg-surface-900/30 dark:text-surface-400'
                         }`}
                       >
                         {policy.isActive ? 'Active' : 'Inactive'}

@@ -420,7 +420,7 @@
 @layer components {
   /* ── Card System (Skeuomorphic Material Depth) ──────────────── */
   .card-aura {
-    @apply rounded-2xl border;
+    @apply rounded-lg border;
     background-color: var(--bg-card);
     background-image: var(--gradient-skeuo-card);
     border-color: var(--border-main);
@@ -433,7 +433,7 @@
   }
 
   .card-elevated {
-    @apply rounded-2xl border;
+    @apply rounded-lg border;
     background-color: var(--bg-elevated);
     background-image: var(--gradient-skeuo-surface);
     border-color: var(--border-main);
@@ -441,7 +441,7 @@
   }
 
   .card-interactive {
-    @apply rounded-2xl border cursor-pointer;
+    @apply rounded-lg border cursor-pointer;
     background-color: var(--bg-card);
     background-image: var(--gradient-skeuo-card);
     border-color: var(--border-main);
@@ -774,7 +774,7 @@
 
   /* ── Skeuomorphic Card (Tangible Surface) ────────────────────── */
   .skeuo-card {
-    @apply rounded-2xl border;
+    @apply rounded-lg border;
     background-color: var(--bg-card);
     background-image: var(--gradient-skeuo-card);
     border-color: var(--border-main);

@@ -59,7 +59,7 @@ const ENTITY_TYPE_CONFIG: Record<
   SHIFT_CHANGE: { label: 'Shift Change', bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500' },
   WORK_FROM_HOME: { label: 'WFH', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
   RECRUITMENT_OFFER: { label: 'Recruitment', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  CUSTOM: { label: 'Custom', bg: 'bg-gray-100 dark:bg-gray-800/30', text: 'text-gray-700 dark:text-gray-300' },
+  CUSTOM: { label: 'Custom', bg: 'bg-surface-100 dark:bg-surface-800/30', text: 'text-surface-700 dark:text-surface-300' },
 };
 
 type StatusFilter = 'ALL' | 'ACTIVE' | 'INACTIVE';
@@ -283,10 +283,10 @@ export default function WorkflowListPage() {
                             className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold justify-center ${
                               wf.isActive
                                 ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-300'
-                                : 'bg-gray-100 text-gray-600 dark:bg-gray-800/30 dark:text-gray-400'
+                                : 'bg-surface-100 text-surface-600 dark:bg-surface-800/30 dark:text-surface-400'
                             }`}
                           >
-                            <span className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? 'bg-success-500' : 'bg-gray-400'}`} />
+                            <span className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? 'bg-success-500' : 'bg-surface-400'}`} />
                             {wf.isActive ? 'Active' : 'Inactive'}
                           </span>
                           {wf.isDefault && (

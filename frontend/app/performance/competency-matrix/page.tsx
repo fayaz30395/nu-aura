@@ -159,7 +159,7 @@ const HEATMAP_COLORS = [
 ];
 
 function getHeatmapClass(level: number): string {
-  if (level <= 0) return 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500';
+  if (level <= 0) return 'bg-surface-100 text-surface-400 dark:bg-surface-800 dark:text-surface-500';
   return HEATMAP_COLORS[Math.min(level - 1, 4)];
 }
 
@@ -462,7 +462,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                                 className={`w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-bold ${
                                   level <= skill.proficiencyLevel
                                     ? getHeatmapClass(level)
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600'
+                                    : 'bg-surface-100 dark:bg-surface-800 text-surface-300 dark:text-surface-600'
                                 }`}
                               >
                                 {level}

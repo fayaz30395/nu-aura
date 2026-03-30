@@ -165,7 +165,7 @@ export default function TimeTrackingPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                 <Timer className="h-5 w-5 text-white" />
@@ -181,7 +181,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600">
                 <DollarSign className="h-5 w-5 text-white" />
@@ -197,7 +197,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-warning-500 to-warning-600">
                 <Clock className="h-5 w-5 text-white" />
@@ -213,7 +213,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-surface-500 to-surface-600">
                 <FileText className="h-5 w-5 text-white" />
@@ -257,7 +257,7 @@ export default function TimeTrackingPage() {
         )}
 
         {/* Entries List */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Recent Time Entries
@@ -396,7 +396,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
@@ -415,7 +415,7 @@ export default function TimeTrackingPage() {
 
           <button
             onClick={() => router.push('/time-tracking?view=week')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">

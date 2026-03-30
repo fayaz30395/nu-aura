@@ -491,7 +491,7 @@ export default function FeaturesPage() {
                 key={index}
                 className="flex flex-col items-center gap-4 group cursor-pointer"
               >
-                <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-accent-500 group-hover:shadow-card-hover transition-all">
+                <div className="w-16 h-16 rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-accent-500 group-hover:shadow-card-hover transition-all">
                   <integration.icon className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-accent-500 transition-colors" />
                 </div>
                 <span className="text-sm font-medium text-[var(--text-muted)]">

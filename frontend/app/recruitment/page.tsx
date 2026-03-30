@@ -284,7 +284,7 @@ export default function RecruitmentDashboard() {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <div className="h-16 w-16 rounded-2xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
+          <div className="h-16 w-16 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
             <Briefcase className="h-8 w-8 text-accent-700 dark:text-accent-400" />
           </div>
           <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">

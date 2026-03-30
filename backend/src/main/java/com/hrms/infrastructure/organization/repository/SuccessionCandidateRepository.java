@@ -15,18 +15,18 @@ public interface SuccessionCandidateRepository extends JpaRepository<SuccessionC
 
     Optional<SuccessionCandidate> findByIdAndTenantId(UUID id, UUID tenantId);
 
-    @Query("SELECT c FROM SuccessionCandidate c WHERE c.successionPlanId = :planId ORDER BY c.priority")
-    List<SuccessionCandidate> findByPlan(@Param("planId") UUID planId);
+    @Query("SELECT c FROM SuccessionCandidate c WHERE c.tenantId = :tenantId AND c.successionPlanId = :planId ORDER BY c.priority")
+    List<SuccessionCandidate> findByPlan(@Param("tenantId") UUID tenantId, @Param("planId") UUID planId);
 
     @Query("SELECT c FROM SuccessionCandidate c WHERE c.tenantId = :tenantId AND c.candidateId = :candidateId")
     List<SuccessionCandidate> findByCandidate(@Param("tenantId") UUID tenantId, @Param("candidateId") UUID candidateId);
 
-    @Query("SELECT c FROM SuccessionCandidate c WHERE c.successionPlanId = :planId AND c.readiness = 'READY_NOW' ORDER BY c.priority")
-    List<SuccessionCandidate> findReadyNowCandidates(@Param("planId") UUID planId);
+    @Query("SELECT c FROM SuccessionCandidate c WHERE c.tenantId = :tenantId AND c.successionPlanId = :planId AND c.readiness = 'READY_NOW' ORDER BY c.priority")
+    List<SuccessionCandidate> findReadyNowCandidates(@Param("tenantId") UUID tenantId, @Param("planId") UUID planId);
 
-    boolean existsBySuccessionPlanIdAndCandidateId(UUID planId, UUID candidateId);
+    boolean existsByTenantIdAndSuccessionPlanIdAndCandidateId(UUID tenantId, UUID planId, UUID candidateId);
 
-    void deleteBySuccessionPlanIdAndCandidateId(UUID planId, UUID candidateId);
+    void deleteByTenantIdAndSuccessionPlanIdAndCandidateId(UUID tenantId, UUID planId, UUID candidateId);
 
     @Query("SELECT c.readiness, COUNT(c) FROM SuccessionCandidate c WHERE c.tenantId = :tenantId GROUP BY c.readiness")
     List<Object[]> countByReadiness(@Param("tenantId") UUID tenantId);

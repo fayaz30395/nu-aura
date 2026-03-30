@@ -28,7 +28,7 @@ export default function Loading() {
       </div>
 
       {/* Main content skeleton */}
-      <Skeleton height={400} className="rounded-2xl" />
+      <Skeleton height={400} className="rounded-lg" />
     </div>
   );
 }

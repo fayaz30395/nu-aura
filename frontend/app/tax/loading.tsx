@@ -22,7 +22,7 @@ export default function TaxLoading() {
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
+            className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
           >
             <Skeleton height={16} width="60%" className="mb-3" />
             <Skeleton height={32} width="80%" className="mb-3" />
@@ -41,7 +41,7 @@ export default function TaxLoading() {
       </div>
 
       {/* Table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
         <div className="border-b border-surface-200 dark:border-surface-800">
           <Skeleton height={44} />
         </div>

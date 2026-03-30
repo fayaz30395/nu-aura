@@ -194,7 +194,7 @@ function OfferPortalPage() {
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-accent-100 dark:bg-accent-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
             <FileText className="h-10 w-10 text-accent-700 dark:text-accent-400" />
           </div>
           <h1 className="text-2xl font-bold skeuo-emboss mb-2">

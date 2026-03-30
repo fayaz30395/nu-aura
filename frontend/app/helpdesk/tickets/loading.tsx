@@ -21,7 +21,7 @@ export default function TicketsLoading() {
       </div>
 
       {/* Table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
         <Skeleton height={44} />
         <div className="space-y-2 p-4">
           {Array.from({ length: 8 }).map((_, index) => (

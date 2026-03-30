@@ -36,7 +36,7 @@ export default function Loading() {
           ))}
         </div>
         {/* Right detail pane */}
-        <div className="lg:col-span-2 rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
+        <div className="lg:col-span-2 rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
           <Skeleton height={24} width="50%" />
           <Skeleton height={16} width="30%" />
           <Skeleton height={1} />
