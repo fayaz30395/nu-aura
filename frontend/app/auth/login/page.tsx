@@ -80,18 +80,18 @@ function AnimatedBackground() {
     <div className="fixed inset-0" style={{ zIndex: 0 }}>
       {/* Base */}
       <div className="absolute inset-0 bg-[var(--bg-main)]" />
-      {/* Light-mode: elegant blue gradient mesh */}
+      {/* Light-mode: NULogic Lapis Blue + Purple gradient mesh */}
       <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(58, 95, 217, 0.10)' }} />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(112, 146, 255, 0.08)' }} />
-        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'rgba(42, 72, 179, 0.06)' }} />
+        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(5, 7, 102, 0.08)' }} />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(137, 57, 161, 0.06)' }} />
+        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'rgba(230, 42, 50, 0.04)' }} />
       </div>
-      {/* Dark-mode: deep navy mesh with subtle grid lines */}
+      {/* Dark-mode: deep NULogic navy mesh with subtle grid lines */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0" style={{ background: '#0B0F1A' }} />
-        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(58, 95, 217, 0.12)' }} />
-        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(112, 146, 255, 0.08)' }} />
-        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'rgba(42, 72, 179, 0.06)' }} />
+        <div className="absolute inset-0" style={{ background: '#0a1218' }} />
+        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(5, 7, 102, 0.14)' }} />
+        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(137, 57, 161, 0.08)' }} />
+        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'rgba(230, 42, 50, 0.05)' }} />
         {/* Subtle grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.04]"
@@ -454,8 +454,8 @@ function LoginPage() {
             {/* Platform badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800/40 mb-8">
               <div className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse" />
-              <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase">
-                NU-AURA Platform v1.0
+              <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase" style={{ letterSpacing: '3px' }}>
+                Infinite Innovation
               </span>
             </div>
 
@@ -463,7 +463,7 @@ function LoginPage() {
             <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
               Your People.
               <br />
-              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #3a5fd9 0%, #7092ff 50%, #2a48b3 100%)' }}>
+              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #ED3027 0%, #8939A1 50%, #050766 100%)' }}>
                 Amplified.
               </span>
             </h1>
@@ -473,13 +473,13 @@ function LoginPage() {
               Management. Built for teams that move fast.
             </p>
 
-            {/* App icons row — refined with consistent accent-based palette */}
+            {/* App icons row — NULogic brand gradient palette */}
             <div className="flex gap-5 mb-8">
               {[
-                { name: 'HRMS', bg: 'linear-gradient(135deg, #3a5fd9, #2a48b3)', icon: '👥' },
-                { name: 'Hire', bg: 'linear-gradient(135deg, #7092ff, #3a5fd9)', icon: '🎯' },
-                { name: 'Grow', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', icon: '📈' },
-                { name: 'Fluence', bg: 'linear-gradient(135deg, #3a5fd9, #2a48b3)', icon: '💡' },
+                { name: 'HRMS', bg: 'linear-gradient(135deg, #050766, #25255C)', icon: '👥' },
+                { name: 'Hire', bg: 'linear-gradient(135deg, #E62A32, #D42F7B)', icon: '🎯' },
+                { name: 'Grow', bg: 'linear-gradient(135deg, #8939A1, #61629D)', icon: '📈' },
+                { name: 'Fluence', bg: 'linear-gradient(135deg, #133E49, #3E616A)', icon: '💡' },
               ].map((app, i) => (
                 <div
                   key={app.name}
@@ -521,8 +521,8 @@ function LoginPage() {
                   style={{ animation: 'pulse-ring 4s ease-in-out infinite' }}
                 />
                 <Image
-                  src="/images/logo.png"
-                  alt="NuLogic"
+                  src="/images/nulogic-logo.svg"
+                  alt="NULogic"
                   width={180}
                   height={54}
                   className="h-14 w-auto object-contain relative dark:brightness-0 dark:invert"
@@ -534,7 +534,7 @@ function LoginPage() {
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
               <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
-                Welcome to <span className="text-accent-700 dark:text-accent-400 font-extrabold">NU-AURA</span>
+                Welcome to <span className="bg-clip-text text-transparent font-extrabold" style={{ backgroundImage: 'var(--nu-gradient-brand)' }}>NU-AURA</span>
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
                 Your unified people platform

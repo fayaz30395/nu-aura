@@ -38,7 +38,6 @@ export default function CreateContractPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
     defaultValues: {
@@ -50,6 +49,8 @@ export default function CreateContractPage() {
       currency: 'USD',
     },
   });
+
+  if (!isReady || !hasAccess) return null;
 
   const onSubmit = async (data: ContractFormData) => {
     try {

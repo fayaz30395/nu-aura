@@ -68,7 +68,6 @@ export default function CoursePlayerPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const [activeContentId, setActiveContentId] = useState<string | null>(null);
   const [contentStatus, setContentStatus] = useState<ContentState>({});
   const [showCompletion, setShowCompletion] = useState(false);
@@ -128,6 +127,8 @@ export default function CoursePlayerPage() {
       }
     }
   }, [enrollment, contentStatus, totalContents, updateProgressMutation]);
+
+  if (!isReady || !hasAccess) return null;
 
   const navigateTo = (contentId: string) => {
     setActiveContentId(contentId);

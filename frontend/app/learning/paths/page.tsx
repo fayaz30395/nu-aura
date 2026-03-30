@@ -54,7 +54,6 @@ export default function LearningPathsPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
 
   // Query for learning paths
@@ -78,6 +77,8 @@ export default function LearningPathsPage() {
       toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll in learning path');
     },
   });
+
+  if (!isReady || !hasAccess) return null;
 
   // Apply filters
   const filteredPaths = (() => {

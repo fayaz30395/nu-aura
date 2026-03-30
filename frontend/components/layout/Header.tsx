@@ -99,11 +99,11 @@ const Header: React.FC<HeaderProps> = ({
           {/* Logo — only visible on mobile (sidebar has logo on desktop) */}
           <div className="flex items-center gap-2 md:hidden">
             <Image
-              src="/images/logo.png"
-              alt="NuLogic"
+              src="/images/nulogic-logo.svg"
+              alt="NULogic"
               width={120}
-              height={32}
-              className="h-7 w-auto object-contain"
+              height={35}
+              className="h-7 w-auto object-contain dark:brightness-0 dark:invert"
               priority
             />
           </div>

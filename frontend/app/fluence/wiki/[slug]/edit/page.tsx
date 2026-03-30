@@ -63,8 +63,6 @@ export default function EditWikiPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
-
   const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
   const { mutate: updateWikiPage } = useUpdateWikiPage();
   const { data: _spacesData } = useWikiSpaces(0, 100);
@@ -110,6 +108,8 @@ export default function EditWikiPage() {
   }, [page, reset]);
 
   const visibility = watch('visibility');
+
+  if (!isReady || !hasAccess) return null;
 
   const editorOptions = searchedEmployees.map((emp) => ({
     value: emp.id,

@@ -43,12 +43,12 @@ export default function FluenceDashboardPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
-
   // Fetch recent content
   const { data: wikiData, isLoading: wikiLoading } = useWikiPages(undefined, 0, 6);
   const { data: blogData, isLoading: blogLoading } = useBlogPosts(0, 6);
   const { data: templatesData, isLoading: templatesLoading } = useFluenceTemplates(0, 3);
+
+  if (!isReady || !hasAccess) return null;
 
   const recentWiki = (wikiData?.content || []).slice(0, 3);
   const recentBlogs = (blogData?.content || []).slice(0, 3);

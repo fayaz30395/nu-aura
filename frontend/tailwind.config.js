@@ -1,43 +1,43 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * NU-AURA Theme - Tailwind CSS Configuration
- * Aesthetic: Single Hue Blue (Professional, elegant enterprise)
- * Philosophy: Human clarity + tactical depth + calm momentum
+ * Brand: NULogic — Infinite Innovation
+ * Palette: Lapis Blue primary + Red-Orange/Purple accents + Dark Teal depth
  *
  * Design Principles:
- * - Neutral surfaces with maximum clarity
- * - Purposeful hierarchy (serif headings, mono metrics)
- * - Pure blue accent (bold, decisive)
- * - Minimal material depth
- * - Meaningful motion (page + stagger)
+ * - NULogic Lapis Blue (#050766) as dominant brand color
+ * - Red-Orange (#E62A32) → Purple (#8939A1) gradient for CTAs and energy
+ * - Dark Teal (#133E49) for deep backgrounds and section dividers
+ * - Near-White (#F4F5F6) for clean card surfaces
+ * - Montserrat headings + Open Sans body typography
  */
 
 const gray = {
-  50: '#f8f9fb',
-  100: '#f0f1f5',
-  200: '#e2e4ea',
-  300: '#d1d4dc',
-  400: '#a1a6b4',
-  500: '#71778a',
-  600: '#545a6e',
-  700: '#3d4255',
-  800: '#282c3a',
-  900: '#1a1d28',
-  950: '#0f1118',
+  50: '#F4F5F6',
+  100: '#ecedef',
+  200: '#d8dadd',
+  300: '#c0c3c8',
+  400: '#9a9fa8',
+  500: '#797E85',
+  600: '#5e636c',
+  700: '#3E616A',
+  800: '#1e2a30',
+  900: '#133E49',
+  950: '#0a1f26',
 };
 
-const blue = {
-  50: '#f0f4ff',
-  100: '#dce4ff',
-  200: '#b8c9ff',
-  300: '#94adff',
-  400: '#7092ff',
-  500: '#4d77ff',
-  600: '#3a5fd9',
-  700: '#2a48b3',
-  800: '#1c328d',
-  900: '#101e66',
-  950: '#081240',
+const brand = {
+  50: '#eeeeff',
+  100: '#d4d4f7',
+  200: '#a8a8ef',
+  300: '#7c7ce6',
+  400: '#5050de',
+  500: '#2525b0',
+  600: '#0f0f8a',
+  700: '#050766',
+  800: '#040555',
+  900: '#030344',
+  950: '#020233',
 };
 
 const semanticColors = {
@@ -74,9 +74,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        display: ['var(--font-display)', 'var(--font-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        mono: ['var(--font-mono)', 'SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', 'Courier New', 'monospace'],
+        sans: ['var(--font-sans)', '"Open Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        display: ['var(--font-display)', '"Montserrat"', 'var(--font-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        mono: ['var(--font-mono)', '"Roboto Mono"', 'SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', 'Courier New', 'monospace'],
       },
       colors: {
         // ── Design Token Bridge (CSS Variables → Tailwind) ──────
@@ -130,18 +130,38 @@ module.exports = {
           divider: 'var(--dropdown-divider)',
         },
 
-        // ── Accent (Single-Hue Blue) ───────────────────────────
+        // ── Accent (NULogic Lapis Blue) ───────────────────────────
         accent: {
-          DEFAULT: blue[600],
-          hover: blue[700],
-          subtle: blue[50],
-          ...blue,
+          DEFAULT: brand[700],
+          hover: brand[800],
+          subtle: brand[50],
+          ...brand,
         },
 
         // ── Primary (Alias for accent for backward compatibility) ──
         primary: {
-          DEFAULT: blue[600],
-          ...blue,
+          DEFAULT: brand[700],
+          ...brand,
+        },
+
+        // ── NULogic Brand Secondary Colors ──────────────────────
+        'nu-red': {
+          DEFAULT: '#E62A32',
+          50: '#FEF2F2', 100: '#FDE6E7', 200: '#F9B8BA', 300: '#F58A8E',
+          400: '#EE5A5F', 500: '#E62A32', 600: '#C41E25', 700: '#A2181E',
+          800: '#801217', 900: '#5E0D10', 950: '#3D0809',
+        },
+        'nu-purple': {
+          DEFAULT: '#8939A1',
+          50: '#F8F0FA', 100: '#EFDBF4', 200: '#D9ADE3', 300: '#C37FD2',
+          400: '#A95ABB', 500: '#8939A1', 600: '#702E85', 700: '#572369',
+          800: '#3E194D', 900: '#250F31', 950: '#160A1F',
+        },
+        'nu-teal': {
+          DEFAULT: '#133E49',
+          50: '#E8F3F6', 100: '#C5E0E7', 200: '#8DC1CF',
+          300: '#55A2B7', 400: '#2D7080', 500: '#133E49',
+          600: '#0F333D', 700: '#0B2831', 800: '#071D25', 900: '#041219',
         },
 
         // ── Neutrals (Neutral Gray) ────────────────────────────

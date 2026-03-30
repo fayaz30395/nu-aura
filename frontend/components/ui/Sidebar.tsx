@@ -610,22 +610,22 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             {!isCollapsed ? (
               <div className="flex items-center gap-2">
                 <Image
-                  src="/images/logo.png"
-                  alt="NuLogic"
-                  width={120}
-                  height={32}
-                  className="h-8 w-auto object-contain brightness-0 invert"
+                  src="/images/nulogic-logo-white.svg"
+                  alt="NULogic"
+                  width={130}
+                  height={38}
+                  className="h-8 w-auto object-contain"
                   priority
                 />
               </div>
             ) : (
               <div className="flex items-center justify-center">
                 <Image
-                  src="/images/logo.png"
-                  alt="NuLogic"
+                  src="/images/nulogic-icon.svg"
+                  alt="NULogic"
                   width={32}
                   height={32}
-                  className="h-8 w-8 object-contain brightness-0 invert"
+                  className="h-8 w-8 object-contain"
                   priority
                 />
               </div>

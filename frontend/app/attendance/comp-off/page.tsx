@@ -63,7 +63,6 @@ export default function CompOffPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const [activeTab, setActiveTab] = useState<'my' | 'pending'>('my');
   const [employeeId] = useState('current'); // resolved by backend from JWT
 
@@ -99,6 +98,14 @@ export default function CompOffPage() {
     onError: () => notifications.show({ title: 'Error', message: 'Failed to submit comp-off request', color: 'red' }),
   });
 
+  const approveMutation = useMutation({
+    mutationFn: ({ id, action }: { id: string; action: 'approve' | 'reject' }) =>
+      apiClient.post(`/comp-off/${id}/${action}`, { reviewerId: employeeId, note: '' }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comp-off'] }),
+  });
+
+  if (!isReady || !hasAccess) return null;
+
   const onSubmitForm = (data: CompOffFormData) => {
     requestMutation.mutate({ employeeId, attendanceDate: data.attendanceDate, reason: data.reason });
   };
@@ -107,12 +114,6 @@ export default function CompOffPage() {
     setShowRequestModal(false);
     reset();
   };
-
-  const approveMutation = useMutation({
-    mutationFn: ({ id, action }: { id: string; action: 'approve' | 'reject' }) =>
-      apiClient.post(`/comp-off/${id}/${action}`, { reviewerId: employeeId, note: '' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comp-off'] }),
-  });
 
   const requests = activeTab === 'my' ? myRequests ?? [] : pendingRequests?.content ?? [];
   const isLoading = activeTab === 'my' ? loadingMy : loadingPending;

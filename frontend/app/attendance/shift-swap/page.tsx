@@ -83,7 +83,6 @@ export default function ShiftSwapPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const [showModal, setShowModal] = useState(false);
   const [employeeId] = useState('current'); // resolved from JWT by backend
 
@@ -136,15 +135,6 @@ export default function ShiftSwapPage() {
     onError: () => notifications.show({ title: 'Error', message: 'Failed to submit shift swap request', color: 'red' }),
   });
 
-  const onSubmitForm = (data: ShiftSwapFormData) => {
-    submitMutation.mutate(data);
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-    reset();
-  };
-
   const actionMutation = useMutation({
     mutationFn: ({ id, action, payload }: { id: string; action: string; payload: Record<string, string> }) =>
       apiClient.post(`/shift-swaps/${id}/${action}`, payload),
@@ -158,6 +148,17 @@ export default function ShiftSwapPage() {
       });
     },
   });
+
+  if (!isReady || !hasAccess) return null;
+
+  const onSubmitForm = (data: ShiftSwapFormData) => {
+    submitMutation.mutate(data);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    reset();
+  };
 
   const tabs = [
     { key: 'my', label: 'My Requests' },

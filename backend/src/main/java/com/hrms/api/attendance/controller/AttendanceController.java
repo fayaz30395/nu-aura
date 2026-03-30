@@ -61,9 +61,9 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     @Operation(summary = "Check in", description = "Record employee check-in for the day")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Check-in recorded successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid request or already checked in"),
-        @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
+            @ApiResponse(responseCode = "201", description = "Check-in recorded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or already checked in"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
     })
     public ResponseEntity<AttendanceResponse> checkIn(@Valid @RequestBody CheckInRequest request) {
         LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
@@ -83,9 +83,9 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     @Operation(summary = "Check out", description = "Record employee check-out for the day")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Check-out recorded successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid request or not checked in"),
-        @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
+            @ApiResponse(responseCode = "200", description = "Check-out recorded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or not checked in"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to mark attendance")
     })
     public ResponseEntity<AttendanceResponse> checkOut(@Valid @RequestBody CheckOutRequest request) {
         LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
@@ -108,8 +108,8 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
     @Operation(summary = "Get today's attendance", description = "Retrieve the authenticated user's attendance record for today")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Today's attendance record (may be empty if not checked in)"),
-        @ApiResponse(responseCode = "403", description = "Not authorized")
+            @ApiResponse(responseCode = "200", description = "Today's attendance record (may be empty if not checked in)"),
+            @ApiResponse(responseCode = "403", description = "Not authorized")
     })
     public ResponseEntity<AttendanceResponse> getTodayAttendance() {
         UUID employeeId = requireCurrentEmployeeId();
@@ -300,8 +300,8 @@ public class AttendanceController {
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             Pageable pageable) {
         String permission = determineViewPermission();
-        org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec =
-            dataScopeService.getScopeSpecification(permission);
+        org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec = dataScopeService
+                .getScopeSpecification(permission);
 
         Page<AttendanceRecord> records = attendanceService.getAttendanceByDate(date, scopeSpec, pageable);
         return ResponseEntity.ok(records.map(this::toResponse));
@@ -311,9 +311,9 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_REGULARIZE)
     @Operation(summary = "Request regularization", description = "Request approval to regularize an attendance record")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Regularization request submitted"),
-        @ApiResponse(responseCode = "404", description = "Attendance record not found"),
-        @ApiResponse(responseCode = "409", description = "Record already has pending regularization")
+            @ApiResponse(responseCode = "200", description = "Regularization request submitted"),
+            @ApiResponse(responseCode = "404", description = "Attendance record not found"),
+            @ApiResponse(responseCode = "409", description = "Record already has pending regularization")
     })
     public ResponseEntity<AttendanceResponse> requestRegularization(
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
@@ -328,9 +328,9 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
     @Operation(summary = "Approve regularization", description = "Approve a pending attendance regularization request")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Regularization approved"),
-        @ApiResponse(responseCode = "404", description = "Attendance record not found"),
-        @ApiResponse(responseCode = "409", description = "Record is not pending regularization")
+            @ApiResponse(responseCode = "200", description = "Regularization approved"),
+            @ApiResponse(responseCode = "404", description = "Attendance record not found"),
+            @ApiResponse(responseCode = "409", description = "Record is not pending regularization")
     })
     public ResponseEntity<AttendanceResponse> approveRegularization(
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id) {
@@ -345,9 +345,9 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
     @Operation(summary = "Reject regularization", description = "Reject a pending attendance regularization request")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Regularization rejected"),
-        @ApiResponse(responseCode = "404", description = "Attendance record not found"),
-        @ApiResponse(responseCode = "409", description = "Record is not pending regularization")
+            @ApiResponse(responseCode = "200", description = "Regularization rejected"),
+            @ApiResponse(responseCode = "404", description = "Attendance record not found"),
+            @ApiResponse(responseCode = "409", description = "Record is not pending regularization")
     })
     public ResponseEntity<AttendanceResponse> rejectRegularization(
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
@@ -375,11 +375,12 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
     @Operation(summary = "Import attendance", description = "Bulk import attendance records from Excel file")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Import completed (check response for individual errors)"),
-        @ApiResponse(responseCode = "400", description = "Invalid file format or empty file")
+            @ApiResponse(responseCode = "200", description = "Import completed (check response for individual errors)"),
+            @ApiResponse(responseCode = "400", description = "Invalid file format or empty file")
     })
     public ResponseEntity<BulkAttendanceImportResponse> importAttendance(
-            @Parameter(description = "Excel file (.xlsx or .xls)") @RequestParam("file") MultipartFile file) throws IOException {
+            @Parameter(description = "Excel file (.xlsx or .xls)") @RequestParam("file") MultipartFile file)
+            throws IOException {
 
         // Validate file
         if (file.isEmpty()) {
@@ -418,15 +419,24 @@ public class AttendanceController {
         BeanUtils.copyProperties(record, response);
         response.setStatus(record.getStatus() != null ? record.getStatus().name() : "UNKNOWN");
         // Null-safe defaults for fields that may be null in legacy/imported records
-        if (response.getWorkDurationMinutes() == null) response.setWorkDurationMinutes(0);
-        if (response.getBreakDurationMinutes() == null) response.setBreakDurationMinutes(0);
-        if (response.getOvertimeMinutes() == null) response.setOvertimeMinutes(0);
-        if (response.getIsLate() == null) response.setIsLate(false);
-        if (response.getLateByMinutes() == null) response.setLateByMinutes(0);
-        if (response.getIsEarlyDeparture() == null) response.setIsEarlyDeparture(false);
-        if (response.getEarlyDepartureMinutes() == null) response.setEarlyDepartureMinutes(0);
-        if (response.getRegularizationRequested() == null) response.setRegularizationRequested(false);
-        if (response.getRegularizationApproved() == null) response.setRegularizationApproved(false);
+        if (response.getWorkDurationMinutes() == null)
+            response.setWorkDurationMinutes(0);
+        if (response.getBreakDurationMinutes() == null)
+            response.setBreakDurationMinutes(0);
+        if (response.getOvertimeMinutes() == null)
+            response.setOvertimeMinutes(0);
+        if (response.getIsLate() == null)
+            response.setIsLate(false);
+        if (response.getLateByMinutes() == null)
+            response.setLateByMinutes(0);
+        if (response.getIsEarlyDeparture() == null)
+            response.setIsEarlyDeparture(false);
+        if (response.getEarlyDepartureMinutes() == null)
+            response.setEarlyDepartureMinutes(0);
+        if (response.getRegularizationRequested() == null)
+            response.setRegularizationRequested(false);
+        if (response.getRegularizationApproved() == null)
+            response.setRegularizationApproved(false);
         return response;
     }
 
