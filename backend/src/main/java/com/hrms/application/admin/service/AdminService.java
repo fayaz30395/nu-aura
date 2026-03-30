@@ -127,6 +127,16 @@ public class AdminService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
+        // DEF-49/50: Prevent non-SuperAdmin from modifying roles of a user who holds a privileged role
+        boolean targetHasPrivilegedRole = user.getRoles().stream()
+                .anyMatch(r -> PRIVILEGED_ROLE_CODES.contains(r.getCode()));
+        if (targetHasPrivilegedRole && !SecurityContext.isSuperAdmin()) {
+            log.warn("SECURITY: Privilege demotion attempt via admin API — non-SuperAdmin tried to modify roles of privileged user {}",
+                    userId);
+            throw new AccessDeniedException(
+                    "Only SuperAdmin can modify roles of users holding privileged roles");
+        }
+
         // Get roles by code - we assume these are system-wide role codes
         List<Role> roles = roleRepository.findByCodeInAndTenantId(request.getRoleCodes(), user.getTenantId());
 
