@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PerformanceReviewService {
 
+    private static final String REVIEW_NOT_FOUND = "Review not found";
+
     private final PerformanceReviewRepository reviewRepository;
     private final ReviewCompetencyRepository competencyRepository;
     private final EmployeeRepository employeeRepository;
@@ -74,7 +76,7 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         if (request.getEmployeeId() != null)
             review.setEmployeeId(request.getEmployeeId());
@@ -115,7 +117,7 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         return mapToResponse(review);
     }
@@ -167,7 +169,7 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         review.setStatus(PerformanceReview.ReviewStatus.SUBMITTED);
         review.setSubmittedAt(LocalDateTime.now());
@@ -182,7 +184,7 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         review.setStatus(PerformanceReview.ReviewStatus.COMPLETED);
         review.setCompletedAt(LocalDateTime.now());
@@ -198,7 +200,7 @@ public class PerformanceReviewService {
 
         // Verify review exists
         reviewRepository.findByIdAndTenantId(request.getReviewId(), tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         ReviewCompetency competency = ReviewCompetency.builder()
                 .reviewId(request.getReviewId())
@@ -229,7 +231,7 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         if (review.getStatus() != PerformanceReview.ReviewStatus.DRAFT) {
             throw new IllegalStateException(
@@ -247,7 +249,7 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCompetency competency = competencyRepository.findByIdAndTenantId(competencyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Competency not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Competency not found"));
 
         competencyRepository.delete(competency);
         log.info("Deleted competency {} for tenant {}", competencyId, tenantId);

@@ -39,25 +39,25 @@ public class WikiPageController {
     private WikiPageDto toDto(WikiPage page) {
         if (page == null) return null;
 
-        String authorName = null;
-        String authorAvatarUrl = null;
-
-        // Fetch author info
-        if (page.getCreatedBy() != null) {
-            UUID tenantId = TenantContext.getCurrentTenant();
-            Employee author = employeeRepository.findByUserIdWithUser(page.getCreatedBy(), tenantId)
-                .orElse(null);
-
-            if (author != null) {
-                authorName = author.getFirstName() +
-                    (author.getLastName() != null ? " " + author.getLastName() : "");
-                if (author.getUser() != null) {
-                    authorAvatarUrl = author.getUser().getProfilePictureUrl();
-                }
-            }
+        if (page.getCreatedBy() == null) {
+            return WikiPageDto.fromEntity(page, null, null);
         }
 
-        return WikiPageDto.fromEntity(page, authorName, authorAvatarUrl);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Employee author = employeeRepository.findByUserIdWithUser(page.getCreatedBy(), tenantId)
+                .orElse(null);
+
+        if (author == null) {
+            return WikiPageDto.fromEntity(page, null, null);
+        }
+
+        String authorName = author.getFirstName() +
+                (author.getLastName() != null ? " " + author.getLastName() : "");
+        return WikiPageDto.fromEntity(page, authorName, resolveAuthorAvatarUrl(author));
+    }
+
+    private String resolveAuthorAvatarUrl(Employee author) {
+        return author != null && author.getUser() != null ? author.getUser().getProfilePictureUrl() : null;
     }
 
     @PostMapping

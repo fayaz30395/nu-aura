@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Tests CRUD for implicit role rules, bulk operations, recompute, and @RequiresPermission annotations.
  *
  * NOTE: This controller directly injects repositories (not a service layer),
- * so we mock the repositories with @MockBean.
+ * so we mock the repositories with @MockitoBean.
  */
 @WebMvcTest(ImplicitRoleRuleController.class)
 @ContextConfiguration(classes = {ImplicitRoleRuleController.class, GlobalExceptionHandler.class})
@@ -65,28 +65,28 @@ class ImplicitRoleRuleControllerTest {
     private static final UUID RULE_ID = UUID.randomUUID();
     private static final UUID ROLE_ID = UUID.randomUUID();
 
-    @MockBean
+    @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
-    @MockBean
+    @MockitoBean
     private ImplicitRoleRuleRepository ruleRepository;
 
-    @MockBean
+    @MockitoBean
     private ImplicitUserRoleRepository implicitUserRoleRepository;
 
-    @MockBean
+    @MockitoBean
     private RoleRepository roleRepository;
 
-    @MockBean
+    @MockitoBean
     private ImplicitRoleEngine implicitRoleEngine;
 
-    @MockBean
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @MockBean
+    @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockBean
+    @MockitoBean
     private MeterRegistry meterRegistry;
 
     @Autowired

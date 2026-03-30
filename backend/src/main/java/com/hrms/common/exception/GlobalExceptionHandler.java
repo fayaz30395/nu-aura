@@ -47,7 +47,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
+    private static final String URI_PREFIX = "uri=";
+
     private final MeterRegistry meterRegistry;
+
+    /**
+     * Extract the request path from the WebRequest description.
+     */
+    private static String extractPath(WebRequest request) {
+        return request.getDescription(false).replace(URI_PREFIX, "");
+    }
 
     /**
      * Track error metrics by category and type.
@@ -120,7 +129,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         logError("database", "data_integrity_violation", ex, status, path);
@@ -139,14 +148,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            if (error instanceof FieldError fieldError) {
+                errors.put(fieldError.getField(), error.getDefaultMessage());
+            }
         });
 
         logError("validation", "method_argument_invalid", ex, status, path);
@@ -169,7 +178,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEntityNotFoundException(
             EntityNotFoundException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         logError("resource", "entity_not_found", ex, status, path);
@@ -185,7 +194,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         logError("resource", "not_found", ex, status, path);
@@ -201,7 +210,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(
             BadCredentialsException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
         logError("auth", "bad_credentials", ex, status, path);
@@ -218,7 +227,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(
             AccessDeniedException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.FORBIDDEN;
 
         logError("auth", "access_denied", ex, status, path);
@@ -235,7 +244,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(
             ValidationException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         logError("validation", "validation_error", ex, status, path);
@@ -251,7 +260,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusinessException(
             BusinessException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.CONFLICT;
 
         logError("business", "business_rule_violation", ex, status, path);
@@ -268,7 +277,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthenticationException(
             AuthenticationException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
         logError("auth", "authentication_failed", ex, status, path);
@@ -285,7 +294,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
             DuplicateResourceException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.CONFLICT;
 
         logError("resource", "duplicate_resource", ex, status, path);
@@ -302,7 +311,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUnauthorizedException(
             UnauthorizedException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.FORBIDDEN;
 
         logError("auth", "unauthorized", ex, status, path);
@@ -319,7 +328,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
             IllegalArgumentException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         logError("validation", "illegal_argument", ex, status, path);
@@ -335,7 +344,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalStateException(
             IllegalStateException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         logError("state", "illegal_state", ex, status, path);
@@ -355,7 +364,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         String paramName = ex.getName();
@@ -386,7 +395,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleFeatureDisabledException(
             FeatureDisabledException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
 
         logError("feature", "feature_disabled", ex, status, path);
@@ -403,7 +412,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
 
         logError("request", "method_not_supported", ex, status, path);
@@ -420,7 +429,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMissingParameter(
             MissingServletRequestParameterException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         logError("validation", "missing_parameter", ex, status, path);
@@ -437,7 +446,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         Map<String, String> errors = new HashMap<>();
@@ -462,7 +471,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOptimisticLock(
             org.springframework.orm.ObjectOptimisticLockingFailureException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.CONFLICT;
 
         log.warn("Concurrent modification on path={}: {}", path, ex.getMessage());
@@ -483,7 +492,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMaxUploadSize(
             MaxUploadSizeExceededException ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.PAYLOAD_TOO_LARGE;
 
         logError("upload", "max_upload_size_exceeded", ex, status, path);
@@ -500,7 +509,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {
 
-        String path = request.getDescription(false).replace("uri=", "");
+        String path = extractPath(request);
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         // WebSocket/SockJS transports use Content-Type: application/javascript.

@@ -25,9 +25,8 @@ public class FluenceActivityService {
     public FluenceActivity recordActivity(UUID tenantId, UUID actorId, String action,
                                            String contentType, UUID contentId,
                                            String contentTitle, String contentExcerpt) {
-        String excerpt = contentExcerpt;
-        if (excerpt != null && excerpt.length() > 200) {
-            excerpt = excerpt.substring(0, 200) + "...";
+        if (contentExcerpt != null && contentExcerpt.length() > 200) {
+            contentExcerpt = contentExcerpt.substring(0, 200) + "...";
         }
 
         FluenceActivity activity = FluenceActivity.builder()
@@ -37,7 +36,7 @@ public class FluenceActivityService {
                 .contentType(contentType)
                 .contentId(contentId)
                 .contentTitle(contentTitle)
-                .contentExcerpt(excerpt)
+                .contentExcerpt(contentExcerpt)
                 .build();
 
         FluenceActivity saved = fluenceActivityRepository.save(activity);

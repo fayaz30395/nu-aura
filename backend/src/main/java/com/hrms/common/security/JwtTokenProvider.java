@@ -294,14 +294,14 @@ public class JwtTokenProvider {
     /**
      * Get permissions from token (NU Platform format)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // JWT claims API returns raw List; elements are always String
     public Set<String> getPermissionsFromToken(String token) {
         Claims claims = getClaims(token);
         List<String> permissions = claims.get("permissions", List.class);
         return permissions != null ? new HashSet<>(permissions) : Collections.emptySet();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // JWT claims API returns raw Map; keys/values are always String
     public Map<String, com.hrms.domain.user.RoleScope> getPermissionScopesFromToken(String token) {
         Claims claims = getClaims(token);
         Map<String, String> scopesMap = claims.get("permissionScopes", Map.class);
@@ -326,7 +326,7 @@ public class JwtTokenProvider {
     /**
      * Get roles from token (NU Platform format)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // JWT claims API returns raw List; elements are always String
     public Set<String> getRolesFromToken(String token) {
         Claims claims = getClaims(token);
         List<String> roles = claims.get("roles", List.class);
@@ -336,7 +336,7 @@ public class JwtTokenProvider {
     /**
      * Get accessible applications from token
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // JWT claims API returns raw List; elements are always String
     public Set<String> getAccessibleAppsFromToken(String token) {
         Claims claims = getClaims(token);
         List<String> apps = claims.get("accessibleApps", List.class);

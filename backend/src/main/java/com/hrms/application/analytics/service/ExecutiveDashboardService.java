@@ -44,7 +44,6 @@ public class ExecutiveDashboardService {
     /**
      * Get comprehensive executive dashboard
      */
-    @Transactional(readOnly = true)
     public ExecutiveDashboardResponse getExecutiveDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -347,12 +346,15 @@ public class ExecutiveDashboardService {
         // Get attrition risk counts
         List<Object[]> riskDistribution = attritionRepository.countByRiskLevelDistribution(tenantId);
 
-        int highRisk = 0, criticalRisk = 0;
+        int highRisk = 0;
+        int criticalRisk = 0;
         for (Object[] row : riskDistribution) {
-            AttritionPrediction.RiskLevel level = (AttritionPrediction.RiskLevel) row[0];
-            int count = ((Long) row[1]).intValue();
-            if (level == AttritionPrediction.RiskLevel.HIGH) highRisk = count;
-            if (level == AttritionPrediction.RiskLevel.CRITICAL) criticalRisk = count;
+            if (row[0] instanceof AttritionPrediction.RiskLevel level
+                    && row[1] instanceof Long countVal) {
+                int count = countVal.intValue();
+                if (level == AttritionPrediction.RiskLevel.HIGH) highRisk = count;
+                if (level == AttritionPrediction.RiskLevel.CRITICAL) criticalRisk = count;
+            }
         }
 
         return RiskIndicators.builder()
@@ -472,8 +474,9 @@ public class ExecutiveDashboardService {
         List<Object[]> riskDistribution = attritionRepository.countByRiskLevelDistribution(tenantId);
         int criticalRisk = 0;
         for (Object[] row : riskDistribution) {
-            if (row[0] == AttritionPrediction.RiskLevel.CRITICAL) {
-                criticalRisk = ((Long) row[1]).intValue();
+            if (row[0] == AttritionPrediction.RiskLevel.CRITICAL
+                    && row[1] instanceof Long countVal) {
+                criticalRisk = countVal.intValue();
             }
         }
 

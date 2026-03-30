@@ -1,30 +1,23 @@
 package com.hrms.infrastructure.kafka.consumer;
 
 import com.hrms.common.security.TenantContext;
-import com.hrms.infrastructure.kafka.KafkaTopics;
-import com.hrms.infrastructure.kafka.IdempotencyService;
-import com.hrms.infrastructure.kafka.events.EmployeeLifecycleEvent;
-import com.hrms.application.employee.service.EmployeeService;
-import com.hrms.application.leave.service.LeaveBalanceService;
-import com.hrms.application.onboarding.service.OnboardingManagementService;
-import com.hrms.application.compensation.service.CompensationService;
-import com.hrms.application.performance.service.PerformanceReviewService;
-import com.hrms.application.user.service.ImplicitRoleEngine;
 import com.hrms.application.integration.service.IntegrationEventRouter;
+import com.hrms.application.leave.service.LeaveBalanceService;
+import com.hrms.application.user.service.ImplicitRoleEngine;
 import com.hrms.domain.integration.IntegrationEvent;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.kafka.IdempotencyService;
+import com.hrms.infrastructure.kafka.KafkaTopics;
+import com.hrms.infrastructure.kafka.events.EmployeeLifecycleEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -51,11 +44,7 @@ import java.util.UUID;
 public class EmployeeLifecycleConsumer {
 
     private final IdempotencyService idempotencyService;
-    private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
-    private final OnboardingManagementService onboardingManagementService;
-    private final CompensationService compensationService;
-    private final PerformanceReviewService performanceReviewService;
     private final ImplicitRoleEngine implicitRoleEngine;
     private final EmployeeRepository employeeRepository;
     private final IntegrationEventRouter integrationEventRouter;
@@ -70,10 +59,7 @@ public class EmployeeLifecycleConsumer {
     )
     public void handleEmployeeLifecycleEvent(
             @Payload EmployeeLifecycleEvent event,
-            Acknowledgment acknowledgment,
-            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset) {
+            Acknowledgment acknowledgment) {
 
         String eventId = event.getEventId();
         UUID employeeId = event.getEmployeeId();

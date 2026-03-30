@@ -172,8 +172,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 // Populate custom SecurityContext ThreadLocal for @RequiresPermission checks
-                if (userDetails instanceof UserPrincipal) {
-                    UserPrincipal principal = (UserPrincipal) userDetails;
+                if (userDetails instanceof UserPrincipal principal) {
 
                     // Extract organizational context from token
                     UUID employeeId = tokenProvider.getEmployeeIdFromToken(jwt);

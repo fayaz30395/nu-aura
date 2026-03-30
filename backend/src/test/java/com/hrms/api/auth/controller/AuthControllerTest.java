@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -64,43 +64,43 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private AuthService authService;
 
-    @MockBean
+    @MockitoBean
     private CookieConfig cookieConfig;
 
-    @MockBean
+    @MockitoBean
     private ApiKeyService apiKeyService;
 
-    @MockBean
+    @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockBean
+    @MockitoBean
     private UserDetailsService userDetailsService;
 
-    @MockBean
+    @MockitoBean
     private EmployeeRepository employeeRepository;
 
-    @MockBean
+    @MockitoBean
     private ScopeContextService scopeContextService;
 
-    @MockBean
+    @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
 
-    @MockBean
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @MockBean
+    @MockitoBean
     private RateLimitFilter rateLimitFilter;
 
-    @MockBean
+    @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
 
-    @MockBean
+    @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockBean
+    @MockitoBean
     private com.hrms.application.auth.service.MfaService mfaService;
 
     private AuthResponse authResponse;

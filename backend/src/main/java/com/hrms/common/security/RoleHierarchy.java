@@ -2,7 +2,6 @@ package com.hrms.common.security;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,16 +45,16 @@ public final class RoleHierarchy {
     public static final String PERFORMANCE_REVIEWER = "PERFORMANCE_REVIEWER";
     public static final String ONBOARDING_BUDDY = "ONBOARDING_BUDDY";
 
-    // All explicit roles list
-    public static final List<String> ALL_EXPLICIT_ROLES = Arrays.asList(
+    // All explicit roles list (unmodifiable)
+    public static final List<String> ALL_EXPLICIT_ROLES = List.of(
             SUPER_ADMIN, TENANT_ADMIN, HR_MANAGER, PAYROLL_ADMIN, HR_EXECUTIVE,
             RECRUITMENT_ADMIN, DEPARTMENT_MANAGER, PROJECT_ADMIN, ASSET_MANAGER,
             EXPENSE_MANAGER, HELPDESK_ADMIN, TRAVEL_ADMIN, COMPLIANCE_OFFICER,
             LMS_ADMIN, TEAM_LEAD, EMPLOYEE, CONTRACTOR, INTERN
     );
 
-    // All implicit roles list
-    public static final List<String> ALL_IMPLICIT_ROLES = Arrays.asList(
+    // All implicit roles list (unmodifiable)
+    public static final List<String> ALL_IMPLICIT_ROLES = List.of(
             REPORTING_MANAGER, SKIP_LEVEL_MANAGER, DEPARTMENT_HEAD,
             MENTOR, INTERVIEWER, PERFORMANCE_REVIEWER, ONBOARDING_BUDDY
     );

@@ -292,8 +292,7 @@ public class SecurityService {
             return false;
         }
         Object principal = authentication.getPrincipal();
-        if (principal instanceof com.hrms.common.security.UserPrincipal) {
-            com.hrms.common.security.UserPrincipal userPrincipal = (com.hrms.common.security.UserPrincipal) principal;
+        if (principal instanceof UserPrincipal userPrincipal) {
             return userPrincipal.getId() != null && userPrincipal.getId().toString().equals(employeeId);
         }
         return false;

@@ -17,11 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,6 +25,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class ExitManagementService {
+
+    private static final String EXIT_PROCESS_NOT_FOUND = "Exit process not found";
+    private static final String EXIT_CLEARANCE_NOT_FOUND = "Exit clearance not found";
+    private static final String SETTLEMENT_NOT_FOUND = "Settlement not found";
+    private static final String EXIT_INTERVIEW_NOT_FOUND = "Exit interview not found";
+    private static final String ASSET_RECOVERY_NOT_FOUND = "Asset recovery not found";
 
     private final ExitProcessRepository exitProcessRepository;
     private final ExitClearanceRepository exitClearanceRepository;
@@ -83,7 +85,7 @@ public class ExitManagementService {
         log.info("Updating exit process {} for tenant {}", processId, tenantId);
 
         ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_PROCESS_NOT_FOUND));
 
         exitProcess.setResignationDate(request.getResignationDate());
         exitProcess.setLastWorkingDate(request.getLastWorkingDate());
@@ -119,7 +121,7 @@ public class ExitManagementService {
         log.info("Updating exit process {} status to {} for tenant {}", processId, status, tenantId);
 
         ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_PROCESS_NOT_FOUND));
 
         exitProcess.setStatus(status);
 
@@ -136,7 +138,7 @@ public class ExitManagementService {
     public ExitProcessResponse getExitProcessById(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_PROCESS_NOT_FOUND));
         return mapToExitProcessResponse(exitProcess);
     }
 
@@ -169,7 +171,7 @@ public class ExitManagementService {
     public void deleteExitProcess(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_PROCESS_NOT_FOUND));
         exitProcessRepository.delete(exitProcess);
     }
 
@@ -202,7 +204,7 @@ public class ExitManagementService {
         log.info("Updating exit clearance {} for tenant {}", clearanceId, tenantId);
 
         ExitClearance clearance = exitClearanceRepository.findByIdAndTenantId(clearanceId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit clearance not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_CLEARANCE_NOT_FOUND));
 
         clearance.setApproverId(request.getApproverId());
         clearance.setStatus(request.getStatus());
@@ -235,7 +237,7 @@ public class ExitManagementService {
     public void deleteExitClearance(UUID clearanceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitClearance clearance = exitClearanceRepository.findByIdAndTenantId(clearanceId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit clearance not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_CLEARANCE_NOT_FOUND));
         exitClearanceRepository.delete(clearance);
     }
 
@@ -431,7 +433,7 @@ public class ExitManagementService {
     public FullAndFinalSettlementResponse updateSettlement(UUID id, FullAndFinalSettlementRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
         // Update earnings
         if (request.getPendingSalary() != null) settlement.setPendingSalary(request.getPendingSalary());
@@ -467,7 +469,7 @@ public class ExitManagementService {
     public FullAndFinalSettlementResponse submitForApproval(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.PENDING_APPROVAL);
         return mapToSettlementResponse(settlementRepository.save(settlement));
@@ -478,7 +480,7 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.APPROVED);
         settlement.setApprovedBy(currentUserId);
@@ -490,7 +492,7 @@ public class ExitManagementService {
     public FullAndFinalSettlementResponse processPayment(UUID id, FullAndFinalSettlement.PaymentMode paymentMode, String paymentReference) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.PAID);
         settlement.setPaymentMode(paymentMode);
@@ -503,7 +505,7 @@ public class ExitManagementService {
     public FullAndFinalSettlementResponse getSettlementById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
         return mapToSettlementResponse(settlement);
     }
 
@@ -511,7 +513,7 @@ public class ExitManagementService {
     public FullAndFinalSettlementResponse getSettlementByExitProcess(UUID exitProcessId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
         return mapToSettlementResponse(settlement);
     }
 
@@ -554,7 +556,7 @@ public class ExitManagementService {
     public ExitInterviewResponse conductExitInterview(UUID id, ExitInterviewRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitInterview interview = exitInterviewRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit interview not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_INTERVIEW_NOT_FOUND));
 
         interview.setActualDate(LocalDate.now());
         interview.setStatus(ExitInterview.InterviewStatus.COMPLETED);
@@ -589,7 +591,7 @@ public class ExitManagementService {
     public ExitInterviewResponse rescheduleInterview(UUID id, LocalDate newDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitInterview interview = exitInterviewRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit interview not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_INTERVIEW_NOT_FOUND));
 
         interview.setScheduledDate(newDate);
         interview.setStatus(ExitInterview.InterviewStatus.RESCHEDULED);
@@ -600,7 +602,7 @@ public class ExitManagementService {
     public ExitInterviewResponse getExitInterviewById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitInterview interview = exitInterviewRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Exit interview not found"));
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_INTERVIEW_NOT_FOUND));
         return mapToExitInterviewResponse(interview);
     }
 
@@ -646,7 +648,7 @@ public class ExitManagementService {
         }
         analytics.put("leavingReasons", reasonStats);
 
-        return analytics;
+        return Collections.unmodifiableMap(analytics);
     }
 
     // ==================== Asset Recovery Operations ====================
@@ -678,7 +680,7 @@ public class ExitManagementService {
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         AssetRecovery asset = assetRecoveryRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Asset recovery not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ASSET_RECOVERY_NOT_FOUND));
 
         asset.setActualReturnDate(LocalDate.now());
         asset.setConditionOnReturn(request.getConditionOnReturn());
@@ -702,7 +704,7 @@ public class ExitManagementService {
     public AssetRecoveryResponse markAssetAsLost(UUID id, BigDecimal deductionAmount, String remarks) {
         UUID tenantId = TenantContext.getCurrentTenant();
         AssetRecovery asset = assetRecoveryRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Asset recovery not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ASSET_RECOVERY_NOT_FOUND));
 
         asset.setStatus(AssetRecovery.RecoveryStatus.LOST);
         asset.setDeductionAmount(deductionAmount != null ? deductionAmount : BigDecimal.ZERO);
@@ -716,7 +718,7 @@ public class ExitManagementService {
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         AssetRecovery asset = assetRecoveryRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Asset recovery not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ASSET_RECOVERY_NOT_FOUND));
 
         asset.setStatus(AssetRecovery.RecoveryStatus.WAIVED);
         asset.setIsWaived(true);
@@ -731,7 +733,7 @@ public class ExitManagementService {
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         AssetRecovery asset = assetRecoveryRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Asset recovery not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ASSET_RECOVERY_NOT_FOUND));
 
         asset.setVerifiedBy(currentUserId);
         asset.setVerificationDate(LocalDate.now());
@@ -789,7 +791,7 @@ public class ExitManagementService {
         dashboard.put("pendingAssetRecoveries", assetRecoveryRepository.findAllPending(tenantId).size());
         dashboard.put("damagedOrLostAssets", assetRecoveryRepository.findDamagedOrLost(tenantId).size());
 
-        return dashboard;
+        return Collections.unmodifiableMap(dashboard);
     }
 
     // ==================== Additional Mapper Methods ====================

@@ -15,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -50,10 +48,7 @@ public class FluenceSearchConsumer {
     )
     public void handleFluenceContentEvent(
             @Payload FluenceContentEvent event,
-            Acknowledgment acknowledgment,
-            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset) {
+            Acknowledgment acknowledgment) {
 
         String contentType = event.getContentType();
         UUID contentId = event.getContentId();

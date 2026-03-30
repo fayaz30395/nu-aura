@@ -89,15 +89,9 @@ public class ScopeContextService {
 
                         targets.forEach(target -> {
                             switch (target.getTargetType()) {
-                                case EMPLOYEE:
-                                    data.addEmployeeTarget(permissionCode, target.getTargetId());
-                                    break;
-                                case DEPARTMENT:
-                                    data.addDepartmentTarget(permissionCode, target.getTargetId());
-                                    break;
-                                case LOCATION:
-                                    data.addLocationTarget(permissionCode, target.getTargetId());
-                                    break;
+                                case EMPLOYEE -> data.addEmployeeTarget(permissionCode, target.getTargetId());
+                                case DEPARTMENT -> data.addDepartmentTarget(permissionCode, target.getTargetId());
+                                case LOCATION -> data.addLocationTarget(permissionCode, target.getTargetId());
                             }
                         });
                     });
@@ -145,43 +139,37 @@ public class ScopeContextService {
 
     /**
      * Data class to hold custom scope targets organized by permission and target type.
+     * Note: This is a plain POJO (not a Spring bean), so @Transactional has no effect here.
      */
     public static class CustomScopeTargetData {
         private final Map<String, Set<UUID>> employeeTargets = new HashMap<>();
         private final Map<String, Set<UUID>> departmentTargets = new HashMap<>();
         private final Map<String, Set<UUID>> locationTargets = new HashMap<>();
 
-        @Transactional
         public void addEmployeeTarget(String permissionCode, UUID employeeId) {
             employeeTargets.computeIfAbsent(permissionCode, k -> new HashSet<>()).add(employeeId);
         }
 
-        @Transactional
         public void addDepartmentTarget(String permissionCode, UUID departmentId) {
             departmentTargets.computeIfAbsent(permissionCode, k -> new HashSet<>()).add(departmentId);
         }
 
-        @Transactional
         public void addLocationTarget(String permissionCode, UUID locationId) {
             locationTargets.computeIfAbsent(permissionCode, k -> new HashSet<>()).add(locationId);
         }
 
-        @Transactional(readOnly = true)
         public Set<UUID> getEmployeeTargets(String permissionCode) {
             return employeeTargets.getOrDefault(permissionCode, Collections.emptySet());
         }
 
-        @Transactional(readOnly = true)
         public Set<UUID> getDepartmentTargets(String permissionCode) {
             return departmentTargets.getOrDefault(permissionCode, Collections.emptySet());
         }
 
-        @Transactional(readOnly = true)
         public Set<UUID> getLocationTargets(String permissionCode) {
             return locationTargets.getOrDefault(permissionCode, Collections.emptySet());
         }
 
-        @Transactional(readOnly = true)
         public Set<String> getPermissionsWithCustomTargets() {
             Set<String> permissions = new HashSet<>();
             permissions.addAll(employeeTargets.keySet());

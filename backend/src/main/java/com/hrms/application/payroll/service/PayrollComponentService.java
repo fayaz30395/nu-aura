@@ -314,10 +314,10 @@ public class PayrollComponentService {
             // when the root object is a Map with key "basic"
             Object result = spelParser.parseExpression(formula).getValue(context);
 
-            if (result instanceof BigDecimal) {
-                return ((BigDecimal) result).setScale(2, RoundingMode.HALF_UP);
-            } else if (result instanceof Number) {
-                return BigDecimal.valueOf(((Number) result).doubleValue())
+            if (result instanceof BigDecimal bd) {
+                return bd.setScale(2, RoundingMode.HALF_UP);
+            } else if (result instanceof Number num) {
+                return BigDecimal.valueOf(num.doubleValue())
                         .setScale(2, RoundingMode.HALF_UP);
             } else {
                 throw new BusinessException(

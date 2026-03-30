@@ -22,13 +22,13 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * N+1 Query Detection Tests
  *
  * These tests verify that API endpoints don't cause N+1 query problems.
- * Each endpoint should have a maximum expected query count based on its complexity.
+ * Each endpoint should have a maximum expected query count based on its
+ * complexity.
  *
  * How it works:
  * 1. Enable Hibernate statistics before each test
@@ -36,8 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 3. Count the number of SQL queries executed
  * 4. Assert that the query count is within expected limits
  *
- * NOTE: Run these tests with Hibernate statistics enabled in application-test.yml:
- *   spring.jpa.properties.hibernate.generate_statistics: true
+ * NOTE: Run these tests with Hibernate statistics enabled in
+ * application-test.yml:
+ * spring.jpa.properties.hibernate.generate_statistics: true
  */
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -119,13 +120,11 @@ class QueryCountTest {
     private void assertQueryCountWithinLimit(long before, long maxExpected, String endpointName) {
         long queryCount = getQueryCount() - before;
         assertTrue(
-            queryCount <= maxExpected,
-            String.format(
-                "N+1 Query detected! Endpoint '%s' executed %d queries (max expected: %d). " +
-                "Consider using JOIN FETCH or batch loading.",
-                endpointName, queryCount, maxExpected
-            )
-        );
+                queryCount <= maxExpected,
+                String.format(
+                        "N+1 Query detected! Endpoint '%s' executed %d queries (max expected: %d). " +
+                                "Consider using JOIN FETCH or batch loading.",
+                        endpointName, queryCount, maxExpected));
     }
 
     @Nested
@@ -141,10 +140,11 @@ class QueryCountTest {
             mockMvc.perform(get("/api/v1/wall/posts")
                     .param("page", "0")
                     .param("size", "10"))
-                .andExpect(statusIsAnyExpected()); // H2 may have issues
+                    .andExpect(statusIsAnyExpected()); // H2 may have issues
 
             // Assert query count
-            // Expected: 1 count query + 1 posts query + 1 batch author query + 1 batch reaction query + 1 batch comment count = ~5
+            // Expected: 1 count query + 1 posts query + 1 batch author query + 1 batch
+            // reaction query + 1 batch comment count = ~5
             assertQueryCountWithinLimit(beforeCount, 10, "GET /api/v1/wall/posts");
         }
     }
@@ -161,9 +161,10 @@ class QueryCountTest {
             mockMvc.perform(get("/api/v1/employees")
                     .param("page", "0")
                     .param("size", "20"))
-                .andExpect(statusIsAnyExpected());
+                    .andExpect(statusIsAnyExpected());
 
-            // Expected: 1 count query + 1 employee query + maybe 1-2 for department/manager lookups
+            // Expected: 1 count query + 1 employee query + maybe 1-2 for department/manager
+            // lookups
             assertQueryCountWithinLimit(beforeCount, 8, "GET /api/v1/employees");
         }
     }
@@ -180,9 +181,10 @@ class QueryCountTest {
             mockMvc.perform(get("/api/v1/leave-requests")
                     .param("page", "0")
                     .param("size", "20"))
-                .andExpect(statusIsAnyExpected());
+                    .andExpect(statusIsAnyExpected());
 
-            // Expected: 1 count + 1 main query + 1 employee batch + 1 leave type batch + 1 approval batch
+            // Expected: 1 count + 1 main query + 1 employee batch + 1 leave type batch + 1
+            // approval batch
             assertQueryCountWithinLimit(beforeCount, 10, "GET /api/v1/leave-requests");
         }
     }
@@ -197,7 +199,7 @@ class QueryCountTest {
             long beforeCount = getQueryCount();
 
             mockMvc.perform(get("/api/v1/dashboard"))
-                .andExpect(statusIsAnyExpected());
+                    .andExpect(statusIsAnyExpected());
 
             // Dashboard may need multiple aggregate queries but should be bounded
             assertQueryCountWithinLimit(beforeCount, 20, "GET /api/v1/dashboard");
@@ -215,7 +217,7 @@ class QueryCountTest {
 
             // Login endpoint typically loads user with roles and permissions
             mockMvc.perform(get("/api/v1/auth/me"))
-                .andExpect(statusIsAnyExpected());
+                    .andExpect(statusIsAnyExpected());
 
             // Expected: 1 user query with JOIN FETCH for roles, 1 for permissions
             assertQueryCountWithinLimit(beforeCount, 5, "GET /api/v1/auth/me");

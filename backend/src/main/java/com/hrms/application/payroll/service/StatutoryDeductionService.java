@@ -61,6 +61,13 @@ public class StatutoryDeductionService {
 
     private static final BigDecimal MONTHS_IN_YEAR = new BigDecimal("12");
 
+    // ─── TDS rate constants ─────────────────────────────────────────────────
+    private static final BigDecimal RATE_5_PCT  = new BigDecimal("0.05");
+    private static final BigDecimal RATE_10_PCT = new BigDecimal("0.10");
+    private static final BigDecimal RATE_15_PCT = new BigDecimal("0.15");
+    private static final BigDecimal RATE_20_PCT = new BigDecimal("0.20");
+    private static final BigDecimal RATE_30_PCT = new BigDecimal("0.30");
+
     // ─── Professional Tax state-specific constants ────────────────────────────
     private static final BigDecimal PT_KA_THRESHOLD = new BigDecimal("15000");
     private static final BigDecimal PT_KA_AMOUNT    = new BigDecimal("200");
@@ -283,31 +290,31 @@ public class StatutoryDeductionService {
         // 5% on ₹3L–₹6L band
         if (annualIncome.compareTo(SLAB_3L) > 0) {
             BigDecimal taxable = annualIncome.min(SLAB_6L).subtract(SLAB_3L);
-            tax = tax.add(taxable.multiply(new BigDecimal("0.05")));
+            tax = tax.add(taxable.multiply(RATE_5_PCT));
         }
 
         // 10% on ₹6L–₹9L band
         if (annualIncome.compareTo(SLAB_6L) > 0) {
             BigDecimal taxable = annualIncome.min(SLAB_9L).subtract(SLAB_6L);
-            tax = tax.add(taxable.multiply(new BigDecimal("0.10")));
+            tax = tax.add(taxable.multiply(RATE_10_PCT));
         }
 
         // 15% on ₹9L–₹12L band
         if (annualIncome.compareTo(SLAB_9L) > 0) {
             BigDecimal taxable = annualIncome.min(SLAB_12L).subtract(SLAB_9L);
-            tax = tax.add(taxable.multiply(new BigDecimal("0.15")));
+            tax = tax.add(taxable.multiply(RATE_15_PCT));
         }
 
         // 20% on ₹12L–₹15L band
         if (annualIncome.compareTo(SLAB_12L) > 0) {
             BigDecimal taxable = annualIncome.min(SLAB_15L).subtract(SLAB_12L);
-            tax = tax.add(taxable.multiply(new BigDecimal("0.20")));
+            tax = tax.add(taxable.multiply(RATE_20_PCT));
         }
 
         // 30% above ₹15L
         if (annualIncome.compareTo(SLAB_15L) > 0) {
             BigDecimal taxable = annualIncome.subtract(SLAB_15L);
-            tax = tax.add(taxable.multiply(new BigDecimal("0.30")));
+            tax = tax.add(taxable.multiply(RATE_30_PCT));
         }
 
         return tax.setScale(2, RoundingMode.HALF_UP);

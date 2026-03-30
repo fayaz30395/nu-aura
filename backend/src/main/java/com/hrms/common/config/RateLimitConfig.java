@@ -3,6 +3,7 @@ package com.hrms.common.config;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * Playbook Reference: Prompt 14 - Security headers + rate limiting
  */
+@Slf4j
 @Configuration
 @Component
 public class RateLimitConfig {
@@ -56,6 +58,9 @@ public class RateLimitConfig {
 
     @Value("${app.rate-limit.wall.refill-minutes:1}")
     private int wallRefillMinutes;
+
+    /** Maximum number of bucket entries per type before a forced eviction is triggered. */
+    private static final int MAX_BUCKET_ENTRIES = 10_000;
 
     // Cache buckets by IP or user+tenant
     private final Map<String, Bucket> authBuckets = new ConcurrentHashMap<>();
@@ -158,17 +163,17 @@ public class RateLimitConfig {
      * Clean up expired buckets (call periodically via scheduled task)
      */
     public void cleanupBuckets() {
-        // In production, implement LRU eviction or TTL-based cleanup
-        if (authBuckets.size() > 10000) {
+        // Evict all entries when any bucket map exceeds the hard limit
+        if (authBuckets.size() > MAX_BUCKET_ENTRIES) {
             authBuckets.clear();
         }
-        if (apiBuckets.size() > 10000) {
+        if (apiBuckets.size() > MAX_BUCKET_ENTRIES) {
             apiBuckets.clear();
         }
-        if (exportBuckets.size() > 10000) {
+        if (exportBuckets.size() > MAX_BUCKET_ENTRIES) {
             exportBuckets.clear();
         }
-        if (wallBuckets.size() > 10000) {
+        if (wallBuckets.size() > MAX_BUCKET_ENTRIES) {
             wallBuckets.clear();
         }
     }

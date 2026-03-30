@@ -33,6 +33,8 @@ import java.util.ArrayList;
 @Transactional
 public class InterviewManagementService {
 
+    private static final String INTERVIEW_NOT_FOUND = "Interview not found";
+
     private final InterviewRepository interviewRepository;
     private final CandidateRepository candidateRepository;
     private final JobOpeningRepository jobOpeningRepository;
@@ -136,7 +138,7 @@ public class InterviewManagementService {
         log.info("Updating interview {} for tenant {}", interviewId, tenantId);
 
         Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
+                .orElseThrow(() -> new IllegalArgumentException(INTERVIEW_NOT_FOUND));
 
         interview.setInterviewRound(request.getInterviewRound());
         interview.setInterviewType(request.getInterviewType());
@@ -180,7 +182,7 @@ public class InterviewManagementService {
     public InterviewResponse getInterviewById(UUID interviewId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
+                .orElseThrow(() -> new IllegalArgumentException(INTERVIEW_NOT_FOUND));
 
         String permission = determineViewPermission();
         validateInterviewAccess(interview, permission);
@@ -210,7 +212,7 @@ public class InterviewManagementService {
     public void deleteInterview(UUID interviewId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
+                .orElseThrow(() -> new IllegalArgumentException(INTERVIEW_NOT_FOUND));
 
         auditLogService.logAction(
                 "INTERVIEW",

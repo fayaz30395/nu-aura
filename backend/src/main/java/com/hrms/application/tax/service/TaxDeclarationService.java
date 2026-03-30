@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class TaxDeclarationService {
 
+    private static final BigDecimal SEC_80C_LIMIT = new BigDecimal("150000");
+
     private final TaxDeclarationRepository taxDeclarationRepository;
     private final TaxProofRepository taxProofRepository;
     private final TaxRegimeComparisonRepository taxRegimeComparisonRepository;
@@ -245,7 +247,7 @@ public class TaxDeclarationService {
                 .add(nvl(decl.getSec80cTuitionFees()))
                 .add(nvl(decl.getSec80cSukanyaSamriddhi()))
                 .add(nvl(decl.getSec80cNpsEmployee()));
-        decl.setSec80cTotal(sec80cTotal.min(new BigDecimal("150000")));
+        decl.setSec80cTotal(sec80cTotal.min(SEC_80C_LIMIT));
 
         // Calculate Section 80D total
         BigDecimal sec80dTotal = nvl(decl.getSec80dSelfFamily())

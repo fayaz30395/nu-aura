@@ -165,7 +165,8 @@ public class ReportGenerationService {
                     entityId
             );
 
-            log.info("Generated attendance report for {} from {} to {}", entityId, startDate, endDate);
+            log.info("Generated {} attendance report for {} from {} to {}",
+                    reportType, entityId, startDate, endDate);
 
             return ReportResult.builder()
                     .reportType("ATTENDANCE")
@@ -793,12 +794,9 @@ public class ReportGenerationService {
     }
 
     private String formatMetricName(String name) {
-        return name.replaceAll("([a-z])([A-Z])", "$1 $2")
-                   .replaceAll("_", " ")
-                   .substring(0, 1).toUpperCase() +
-               name.replaceAll("([a-z])([A-Z])", "$1 $2")
-                   .replaceAll("_", " ")
-                   .substring(1);
+        String formatted = name.replaceAll("([a-z])([A-Z])", "$1 $2")
+                               .replace('_', ' ');
+        return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
     }
 
     private void addFooter(Document document) throws DocumentException {
@@ -826,8 +824,8 @@ public class ReportGenerationService {
     private String getFormattedAmount(Map<String, Object> data, String key) {
         Object value = data.get(key);
         if (value == null) return "0.00";
-        if (value instanceof Number) {
-            return String.format("%.2f", ((Number) value).doubleValue());
+        if (value instanceof Number number) {
+            return String.format("%.2f", number.doubleValue());
         }
         return value.toString();
     }

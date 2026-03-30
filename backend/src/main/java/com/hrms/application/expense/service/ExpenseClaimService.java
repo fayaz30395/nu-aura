@@ -279,7 +279,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         }
         statistics.put("byCategory", byCategory);
 
-        return statistics;
+        return Collections.unmodifiableMap(statistics);
     }
 
     @Transactional(readOnly = true)
@@ -428,7 +428,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         summary.put("totalAmount", totalAmount);
         summary.put("totalClaims", claims.size());
 
-        return summary;
+        return Collections.unmodifiableMap(summary);
     }
 
     @Transactional

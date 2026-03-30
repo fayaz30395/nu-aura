@@ -40,11 +40,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -52,6 +50,11 @@ import java.util.UUID;
 @Slf4j
 @Transactional
 public class LetterService {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+    private static final String TEMPLATE_NOT_FOUND_PREFIX = "Template not found: ";
+    private static final String LETTER_NOT_FOUND_PREFIX = "Letter not found: ";
+    private static final String TEMPLATE_NOT_ACTIVE = "Template is not active";
 
     private final LetterTemplateRepository templateRepository;
     private final GeneratedLetterRepository letterRepository;
@@ -63,8 +66,6 @@ public class LetterService {
     private final ObjectMapper objectMapper;
     private final DataScopeService dataScopeService;
     private final LetterPdfService letterPdfService;
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");
 
     // ==================== Template Operations ====================
 
@@ -109,7 +110,7 @@ public class LetterService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         LetterTemplate entity = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
 
         if (entity.getIsSystemTemplate()) {
             throw new BusinessException("System templates cannot be modified");
@@ -141,7 +142,7 @@ public class LetterService {
     public LetterTemplateResponse getTemplateById(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LetterTemplate entity = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
         return LetterTemplateResponse.fromEntity(entity);
     }
 
@@ -172,7 +173,7 @@ public class LetterService {
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LetterTemplate entity = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
 
         if (entity.getIsSystemTemplate()) {
             throw new BusinessException("System templates cannot be deleted");
@@ -190,10 +191,10 @@ public class LetterService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(request.getTemplateId(), tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + request.getTemplateId()));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + request.getTemplateId()));
 
         if (!template.getIsActive()) {
-            throw new BusinessException("Template is not active");
+            throw new BusinessException(TEMPLATE_NOT_ACTIVE);
         }
 
         Employee employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
@@ -240,10 +241,10 @@ public class LetterService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(request.getTemplateId(), tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + request.getTemplateId()));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + request.getTemplateId()));
 
         if (!template.getIsActive()) {
-            throw new BusinessException("Template is not active");
+            throw new BusinessException(TEMPLATE_NOT_ACTIVE);
         }
 
         if (template.getCategory() != LetterCategory.OFFER) {
@@ -318,7 +319,7 @@ public class LetterService {
     public GeneratedLetterResponse getLetterById(UUID letterId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
+                .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
         return enrichLetterResponse(GeneratedLetterResponse.fromEntity(entity), tenantId);
     }
 
@@ -366,7 +367,7 @@ public class LetterService {
     public GeneratedLetterResponse submitForApproval(UUID letterId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
+                .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
 
         if (entity.getStatus() != LetterStatus.DRAFT) {
             throw new BusinessException("Only draft letters can be submitted for approval");
@@ -383,7 +384,7 @@ public class LetterService {
     public GeneratedLetterResponse approveLetter(UUID letterId, UUID approverId, String comments) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
+                .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
 
         if (entity.getStatus() != LetterStatus.PENDING_APPROVAL) {
             throw new BusinessException("Letter is not pending approval");
@@ -399,7 +400,7 @@ public class LetterService {
     public GeneratedLetterResponse issueLetter(UUID letterId, UUID issuerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
+                .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
 
         if (entity.getStatus() != LetterStatus.APPROVED) {
             throw new BusinessException("Only approved letters can be issued");
@@ -419,7 +420,7 @@ public class LetterService {
     public GeneratedLetterResponse issueOfferLetterWithESign(UUID letterId, UUID issuerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
+                .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
 
         if (entity.getStatus() != LetterStatus.APPROVED) {
             throw new BusinessException("Only approved letters can be issued");
@@ -507,7 +508,7 @@ public class LetterService {
     public GeneratedLetterResponse revokeLetter(UUID letterId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
+                .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
 
         if (entity.getStatus() != LetterStatus.ISSUED) {
             throw new BusinessException("Only issued letters can be revoked");
@@ -524,7 +525,7 @@ public class LetterService {
     public void markLetterDownloaded(UUID letterId, UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
+                .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
 
         if (!entity.getEmployeeId().equals(employeeId)) {
             throw new BusinessException("Letter does not belong to this employee");
@@ -661,24 +662,7 @@ public class LetterService {
                     response.setEmployeeEmail(emp.getPersonalEmail());
                 });
 
-        templateRepository.findByIdAndTenantId(response.getTemplateId(), tenantId)
-                .ifPresent(template -> response.setTemplateName(template.getName()));
-
-        if (response.getGeneratedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getGeneratedBy(), tenantId)
-                    .ifPresent(emp -> response.setGeneratedByName(emp.getFirstName() + " " + emp.getLastName()));
-        }
-
-        if (response.getApprovedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getApprovedBy(), tenantId)
-                    .ifPresent(emp -> response.setApprovedByName(emp.getFirstName() + " " + emp.getLastName()));
-        }
-
-        if (response.getIssuedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getIssuedBy(), tenantId)
-                    .ifPresent(emp -> response.setIssuedByName(emp.getFirstName() + " " + emp.getLastName()));
-        }
-
+        enrichCommonResponseFields(response, tenantId);
         return response;
     }
 
@@ -686,30 +670,29 @@ public class LetterService {
      * Enrich offer letter response with candidate details.
      */
     private GeneratedLetterResponse enrichOfferLetterResponse(GeneratedLetterResponse response, UUID tenantId, Candidate candidate) {
-        // Set candidate details
         response.setCandidateName(candidate.getFullName());
         response.setCandidateEmail(candidate.getEmail());
 
-        // Enrich template and generated by
+        enrichCommonResponseFields(response, tenantId);
+        return response;
+    }
+
+    /** Shared enrichment for template name, generatedBy, approvedBy, and issuedBy. */
+    private void enrichCommonResponseFields(GeneratedLetterResponse response, UUID tenantId) {
         templateRepository.findByIdAndTenantId(response.getTemplateId(), tenantId)
                 .ifPresent(template -> response.setTemplateName(template.getName()));
 
-        if (response.getGeneratedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getGeneratedBy(), tenantId)
-                    .ifPresent(emp -> response.setGeneratedByName(emp.getFirstName() + " " + emp.getLastName()));
-        }
+        enrichEmployeeName(response.getGeneratedBy(), tenantId, response::setGeneratedByName);
+        enrichEmployeeName(response.getApprovedBy(), tenantId, response::setApprovedByName);
+        enrichEmployeeName(response.getIssuedBy(), tenantId, response::setIssuedByName);
+    }
 
-        if (response.getApprovedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getApprovedBy(), tenantId)
-                    .ifPresent(emp -> response.setApprovedByName(emp.getFirstName() + " " + emp.getLastName()));
+    /** Resolve employee full name by ID and apply to the given setter. */
+    private void enrichEmployeeName(UUID employeeId, UUID tenantId, java.util.function.Consumer<String> setter) {
+        if (employeeId != null) {
+            employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                    .ifPresent(emp -> setter.accept(emp.getFirstName() + " " + emp.getLastName()));
         }
-
-        if (response.getIssuedBy() != null) {
-            employeeRepository.findByIdAndTenantId(response.getIssuedBy(), tenantId)
-                    .ifPresent(emp -> response.setIssuedByName(emp.getFirstName() + " " + emp.getLastName()));
-        }
-
-        return response;
     }
 
     @Transactional(readOnly = true)
@@ -784,7 +767,7 @@ public class LetterService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         LetterTemplate source = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
 
         String newCode = source.getCode() + "_COPY_" + System.currentTimeMillis();
         String newName = source.getName() + " (Copy)";
@@ -824,10 +807,10 @@ public class LetterService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
 
         if (!template.getIsActive()) {
-            throw new BusinessException("Template is not active");
+            throw new BusinessException(TEMPLATE_NOT_ACTIVE);
         }
 
         List<GeneratedLetterResponse> results = new ArrayList<>();
@@ -874,38 +857,51 @@ public class LetterService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         LetterTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Template not found: " + templateId));
+                .orElseThrow(() -> new ResourceNotFoundException(TEMPLATE_NOT_FOUND_PREFIX + templateId));
 
-        // Replace with sample data
-        String result = template.getTemplateContent();
-        result = result.replace("{{employee.name}}", "John Doe");
-        result = result.replace("{{employee.firstName}}", "John");
-        result = result.replace("{{employee.lastName}}", "Doe");
-        result = result.replace("{{employee.id}}", "EMP-0042");
-        result = result.replace("{{employee.designation}}", "Software Engineer");
-        result = result.replace("{{employee.department}}", "Engineering");
-        result = result.replace("{{employee.dateOfJoining}}", "15 March 2024");
-        result = result.replace("{{employee.salary}}", "₹12,00,000");
-        result = result.replace("{{employee.lastWorkingDay}}", "31 December 2025");
-        result = result.replace("{{company.name}}", "Acme Corp");
-        result = result.replace("{{company.address}}", "123 Business Park, Bangalore");
-        result = result.replace("{{company.phone}}", "+91 80 1234 5678");
-        result = result.replace("{{company.email}}", "hr@acmecorp.com");
-        result = result.replace("{{company.website}}", "www.acmecorp.com");
-        result = result.replace("{{currentDate}}", LocalDate.now().format(DATE_FORMATTER));
-        result = result.replace("{{letter.referenceNumber}}", "REF/2026/SAMPLE");
-        result = result.replace("{{letter.effectiveDate}}", LocalDate.now().format(DATE_FORMATTER));
-        result = result.replace("{{letter.expiryDate}}", LocalDate.now().plusMonths(1).format(DATE_FORMATTER));
-        result = result.replace("{{candidate.name}}", "Jane Smith");
-        result = result.replace("{{candidate.firstName}}", "Jane");
-        result = result.replace("{{candidate.lastName}}", "Smith");
-        result = result.replace("{{candidate.email}}", "jane@example.com");
-        result = result.replace("{{offer.ctc}}", "₹15,00,000");
-        result = result.replace("{{offer.designation}}", "Senior Engineer");
-        result = result.replace("{{offer.joiningDate}}", "15 April 2026");
-        result = result.replace("{{job.title}}", "Senior Software Engineer");
-        result = result.replace("{{job.location}}", "Bangalore");
+        Map<String, String> sampleData = buildSamplePlaceholderData();
+        return replacePlaceholders(template.getTemplateContent(), sampleData);
+    }
 
+    /** Builds sample placeholder values used for template preview. */
+    private Map<String, String> buildSamplePlaceholderData() {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("employee.name", "John Doe");
+        data.put("employee.firstName", "John");
+        data.put("employee.lastName", "Doe");
+        data.put("employee.id", "EMP-0042");
+        data.put("employee.designation", "Software Engineer");
+        data.put("employee.department", "Engineering");
+        data.put("employee.dateOfJoining", "15 March 2024");
+        data.put("employee.salary", "₹12,00,000");
+        data.put("employee.lastWorkingDay", "31 December 2025");
+        data.put("company.name", "Acme Corp");
+        data.put("company.address", "123 Business Park, Bangalore");
+        data.put("company.phone", "+91 80 1234 5678");
+        data.put("company.email", "hr@acmecorp.com");
+        data.put("company.website", "www.acmecorp.com");
+        data.put("currentDate", LocalDate.now().format(DATE_FORMATTER));
+        data.put("letter.referenceNumber", "REF/2026/SAMPLE");
+        data.put("letter.effectiveDate", LocalDate.now().format(DATE_FORMATTER));
+        data.put("letter.expiryDate", LocalDate.now().plusMonths(1).format(DATE_FORMATTER));
+        data.put("candidate.name", "Jane Smith");
+        data.put("candidate.firstName", "Jane");
+        data.put("candidate.lastName", "Smith");
+        data.put("candidate.email", "jane@example.com");
+        data.put("offer.ctc", "₹15,00,000");
+        data.put("offer.designation", "Senior Engineer");
+        data.put("offer.joiningDate", "15 April 2026");
+        data.put("job.title", "Senior Software Engineer");
+        data.put("job.location", "Bangalore");
+        return data;
+    }
+
+    /** Replace {{key}} placeholders in content with the provided values. */
+    private String replacePlaceholders(String content, Map<String, String> values) {
+        String result = content;
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            result = result.replace("{{" + entry.getKey() + "}}", entry.getValue());
+        }
         return result;
     }
 }

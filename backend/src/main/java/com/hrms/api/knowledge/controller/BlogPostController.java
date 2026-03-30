@@ -41,25 +41,25 @@ public class BlogPostController {
     private BlogPostDto toDto(BlogPost post) {
         if (post == null) return null;
 
-        String authorName = null;
-        String authorAvatarUrl = null;
-
-        // Fetch author info
-        if (post.getCreatedBy() != null) {
-            UUID tenantId = TenantContext.requireCurrentTenant();
-            Employee author = employeeRepository.findByUserIdWithUser(post.getCreatedBy(), tenantId)
-                .orElse(null);
-
-            if (author != null) {
-                authorName = author.getFirstName() +
-                    (author.getLastName() != null ? " " + author.getLastName() : "");
-                if (author.getUser() != null) {
-                    authorAvatarUrl = author.getUser().getProfilePictureUrl();
-                }
-            }
+        if (post.getCreatedBy() == null) {
+            return BlogPostDto.fromEntity(post, null, null);
         }
 
-        return BlogPostDto.fromEntity(post, authorName, authorAvatarUrl);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Employee author = employeeRepository.findByUserIdWithUser(post.getCreatedBy(), tenantId)
+                .orElse(null);
+
+        if (author == null) {
+            return BlogPostDto.fromEntity(post, null, null);
+        }
+
+        String authorName = author.getFirstName() +
+                (author.getLastName() != null ? " " + author.getLastName() : "");
+        return BlogPostDto.fromEntity(post, authorName, resolveAuthorAvatarUrl(author));
+    }
+
+    private String resolveAuthorAvatarUrl(Employee author) {
+        return author != null && author.getUser() != null ? author.getUser().getProfilePictureUrl() : null;
     }
 
     @PostMapping

@@ -57,6 +57,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private static final String LEAVE_REQUEST_NOT_FOUND = "Leave request not found";
 
     @Transactional
     public LeaveRequest createLeaveRequest(LeaveRequest leaveRequest) {
@@ -115,7 +116,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Leave request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         // L1 Approval: Validate that approver is the employee's manager
         validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
@@ -161,7 +162,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Leave request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         // L1 Approval: Validate that approver is the employee's manager
         validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
@@ -207,7 +208,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Leave request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         boolean wasApproved = request.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED;
         request.cancel(reason);
@@ -230,7 +231,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Leave request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         // Only allow updates if status is PENDING
         if (request.getStatus() != LeaveRequest.LeaveRequestStatus.PENDING) {
@@ -265,7 +266,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new ResourceNotFoundException("Leave request not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(LEAVE_REQUEST_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)

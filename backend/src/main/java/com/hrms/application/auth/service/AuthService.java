@@ -43,7 +43,6 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -153,55 +152,10 @@ public class AuthService {
             // Record successful login metric
             metricsService.recordLoginSuccess("password");
 
-            // Find employee context first (needed by implicit role/permission merge)
-            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
-
-            // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-            // Single query — result shared by both permission and role loading to avoid duplicate DB hit
-            Optional<UserAppAccess> appAccess = userAppAccessRepository
-                    .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
-
-            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
-                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-            Set<String> appRoles = loadAppRolesFromAccess(
-                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-            Set<String> accessibleApps = loadAccessibleApps(user.getId());
-
-            UUID employeeId = empOpt.map(Employee::getId).orElse(null);
-            UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-            UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-            UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
-
-            // Auto-link employee if user has SUPER_ADMIN role and no employee record
-            if (employeeId == null && isSuperAdmin(appRoles)) {
-                empOpt = autoLinkOrCreateEmployeeForSuperAdmin(user, tenantId);
-                employeeId = empOpt.map(Employee::getId).orElse(null);
-                locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-                departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-                teamId = empOpt.map(Employee::getTeamId).orElse(null);
-            }
-
-            // Generate token with app-aware permissions
-            String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                    user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
-                    employeeId, locationId, departmentId, teamId);
-            String refreshToken = tokenProvider.generateRefreshToken(request.getEmail(), tenantId);
-
-            return AuthResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .tokenType("Bearer")
-                    .expiresIn(jwtExpiration)
-                    .userId(user.getId())
-                    .employeeId(employeeId)
-                    .tenantId(tenantId)
-                    .email(user.getEmail())
-                    .fullName(user.getFullName())
-                    .profilePictureUrl(user.getProfilePictureUrl())
-                    // CRIT-001: permissions in response body (not JWT) to keep cookie under 4KB
-                    .roles(new ArrayList<>(appRoles))
-                    .permissions(new ArrayList<>(appPermissions.keySet()))
-                    .build();
+            // Build auth context (permissions, roles, employee linking) and generate response
+            AuthContext ctx = buildAuthContext(user, tenantId);
+            // CRIT-001: permissions in response body (not JWT) to keep cookie under 4KB
+            return buildAuthResponse(user, tenantId, ctx);
         } catch (AuthenticationException | ResourceNotFoundException e) {
             // Record failed login metric
             metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
@@ -307,54 +261,9 @@ public class AuthService {
                     userPrincipal, null, userPrincipal.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Find employee context first (needed by implicit role/permission merge)
-            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
-
-            // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-            // Single query — result shared by both permission and role loading to avoid duplicate DB hit
-            Optional<UserAppAccess> appAccess = userAppAccessRepository
-                    .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
-
-            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
-                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-            Set<String> appRoles = loadAppRolesFromAccess(
-                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-            Set<String> accessibleApps = loadAccessibleApps(user.getId());
-
-            UUID employeeId = empOpt.map(Employee::getId).orElse(null);
-            UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-            UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-            UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
-
-            // Auto-link employee if user has SUPER_ADMIN role and no employee record
-            if (employeeId == null && isSuperAdmin(appRoles)) {
-                empOpt = autoLinkOrCreateEmployeeForSuperAdmin(user, tenantId);
-                employeeId = empOpt.map(Employee::getId).orElse(null);
-                locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-                departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-                teamId = empOpt.map(Employee::getTeamId).orElse(null);
-            }
-
-            // Generate token with app-aware permissions
-            String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                    user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
-                    employeeId, locationId, departmentId, teamId);
-            String refreshToken = tokenProvider.generateRefreshToken(email, tenantId);
-
-            return AuthResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .tokenType("Bearer")
-                    .expiresIn(jwtExpiration)
-                    .userId(user.getId())
-                    .employeeId(employeeId)
-                    .tenantId(tenantId)
-                    .email(user.getEmail())
-                    .fullName(user.getFullName())
-                    .profilePictureUrl(user.getProfilePictureUrl())
-                    .roles(new ArrayList<>(appRoles))
-                    .permissions(new ArrayList<>(appPermissions.keySet()))
-                    .build();
+            // Build auth context and generate response
+            AuthContext ctx = buildAuthContext(user, tenantId);
+            return buildAuthResponse(user, tenantId, ctx);
         } catch (AuthenticationException e) {
             throw e;
         } catch (Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during Google login
@@ -368,7 +277,7 @@ public class AuthService {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),
                     GsonFactory.getDefaultInstance())
-                    .setAudience(Collections.singletonList(googleClientId))
+                    .setAudience(List.of(googleClientId))
                     .build();
 
             return verifier.verify(idTokenString);
@@ -437,43 +346,9 @@ public class AuthService {
             User user = userRepository.findByEmailAndTenantId(email, tenantId)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
-            // Find employee context first (needed by implicit role/permission merge)
-            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
-
-            // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-            Optional<UserAppAccess> appAccess = userAppAccessRepository
-                    .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
-
-            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
-                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-            Set<String> appRoles = loadAppRolesFromAccess(
-                    user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-            Set<String> accessibleApps = loadAccessibleApps(user.getId());
-
-            UUID employeeId = empOpt.map(Employee::getId).orElse(null);
-            UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-            UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-            UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
-
-            // Generate token with app-aware permissions
-            String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                    user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
-                    employeeId, locationId, departmentId, teamId);
-            String newRefreshToken = tokenProvider.generateRefreshToken(email, tenantId);
-
-            // Context already handled above
-
-            return AuthResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(newRefreshToken)
-                    .tokenType("Bearer")
-                    .expiresIn(jwtExpiration)
-                    .userId(user.getId())
-                    .employeeId(employeeId)
-                    .tenantId(tenantId)
-                    .email(user.getEmail())
-                    .fullName(user.getFullName())
-                    .build();
+            // Build auth context and generate response
+            AuthContext ctx = buildAuthContext(user, tenantId);
+            return buildAuthResponse(user, tenantId, ctx);
         }
         throw new AuthenticationException("Invalid or expired refresh token");
     }
@@ -645,7 +520,7 @@ public class AuthService {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
             Set<String> roles = user.getRoles().stream()
-                    .map(role -> role.getCode())
+                    .map(com.hrms.domain.user.Role::getCode)
                     .collect(Collectors.toSet());
             mergeImplicitRoles(employee, roles);
             return roles;
@@ -783,6 +658,82 @@ public class AuthService {
 
     // ==================== SuperAdmin Employee Linking ====================
 
+    // ==================== Auth Context Helper ====================
+
+    /**
+     * Holds all the resolved auth context needed to build tokens and responses.
+     * Eliminates the repeated permission/role/employee loading block that was
+     * duplicated across login(), googleLogin(), refresh(), and loginAfterMfa().
+     */
+    private record AuthContext(
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions,
+            Set<String> appRoles,
+            Set<String> accessibleApps,
+            UUID employeeId,
+            UUID locationId,
+            UUID departmentId,
+            UUID teamId
+    ) {}
+
+    /**
+     * Load permissions, roles, employee context, and auto-link SuperAdmin employee
+     * in a single reusable call. Used by all login flows (password, Google, MFA, refresh).
+     */
+    private AuthContext buildAuthContext(User user, UUID tenantId) {
+        Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
+
+        Optional<UserAppAccess> appAccess = userAppAccessRepository
+                .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+
+        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
+                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+        Set<String> appRoles = loadAppRolesFromAccess(
+                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
+        Set<String> accessibleApps = loadAccessibleApps(user.getId());
+
+        UUID employeeId = empOpt.map(Employee::getId).orElse(null);
+        UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+        UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+        UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
+        if (employeeId == null && isSuperAdmin(appRoles)) {
+            empOpt = autoLinkOrCreateEmployeeForSuperAdmin(user, tenantId);
+            employeeId = empOpt.map(Employee::getId).orElse(null);
+            locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+            departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+            teamId = empOpt.map(Employee::getTeamId).orElse(null);
+        }
+
+        return new AuthContext(appPermissions, appRoles, accessibleApps,
+                employeeId, locationId, departmentId, teamId);
+    }
+
+    /**
+     * Generate access + refresh tokens and build the common AuthResponse.
+     */
+    private AuthResponse buildAuthResponse(User user, UUID tenantId, AuthContext ctx) {
+        String accessToken = tokenProvider.generateTokenWithAppPermissions(
+                user, tenantId, HrmsPermissionInitializer.APP_CODE,
+                ctx.appPermissions(), ctx.appRoles(), ctx.accessibleApps(),
+                ctx.employeeId(), ctx.locationId(), ctx.departmentId(), ctx.teamId());
+        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), tenantId);
+
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(jwtExpiration)
+                .userId(user.getId())
+                .employeeId(ctx.employeeId())
+                .tenantId(tenantId)
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .profilePictureUrl(user.getProfilePictureUrl())
+                .roles(new ArrayList<>(ctx.appRoles()))
+                .permissions(new ArrayList<>(ctx.appPermissions().keySet()))
+                .build();
+    }
+
     /**
      * Check if the given set of role codes contains SUPER_ADMIN.
      */
@@ -887,52 +838,11 @@ public class AuthService {
         user.recordSuccessfulLogin();
         userRepository.save(user);
 
-        // Find employee context first (needed by implicit role/permission merge)
-        Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
-
-        // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-        Optional<UserAppAccess> appAccess = userAppAccessRepository
-                .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
-
-        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissionsFromAccess(
-                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-        Set<String> appRoles = loadAppRolesFromAccess(
-                user.getId(), HrmsPermissionInitializer.APP_CODE, appAccess, empOpt.orElse(null));
-        Set<String> accessibleApps = loadAccessibleApps(user.getId());
-
-        UUID employeeId = empOpt.map(Employee::getId).orElse(null);
-        UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-        UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-        UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
-
-        // Auto-link employee if user has SUPER_ADMIN role and no employee record
-        if (employeeId == null && isSuperAdmin(appRoles)) {
-            empOpt = autoLinkOrCreateEmployeeForSuperAdmin(user, tenantId);
-            employeeId = empOpt.map(Employee::getId).orElse(null);
-            locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-            departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-            teamId = empOpt.map(Employee::getTeamId).orElse(null);
-        }
-
-        // Generate token with app-aware permissions
-        String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
-                employeeId, locationId, departmentId, teamId);
-        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), tenantId);
+        // Build auth context and generate response
+        AuthContext ctx = buildAuthContext(user, tenantId);
 
         log.info("User {} logged in successfully after MFA verification", userId);
 
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(jwtExpiration)
-                .userId(user.getId())
-                .employeeId(employeeId)
-                .tenantId(tenantId)
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .profilePictureUrl(user.getProfilePictureUrl())
-                .build();
+        return buildAuthResponse(user, tenantId, ctx);
     }
 }

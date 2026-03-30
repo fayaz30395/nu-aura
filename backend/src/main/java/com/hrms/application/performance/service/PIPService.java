@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PIPService {
 
+    private static final String PIP_NOT_FOUND = "PIP not found";
+
     private final PIPRepository pipRepository;
     private final PIPCheckInRepository checkInRepository;
     private final EmployeeRepository employeeRepository;
@@ -62,7 +64,7 @@ public class PIPService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceImprovementPlan pip = pipRepository.findByIdAndTenantId(pipId, tenantId)
-                .orElseThrow(() -> new RuntimeException("PIP not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PIP_NOT_FOUND));
 
         if (pip.getStatus() != PIPStatus.ACTIVE) {
             throw new IllegalStateException("Cannot record check-in for a non-active PIP");
@@ -86,7 +88,7 @@ public class PIPService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceImprovementPlan pip = pipRepository.findByIdAndTenantId(pipId, tenantId)
-                .orElseThrow(() -> new RuntimeException("PIP not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PIP_NOT_FOUND));
 
         if (req.getFinalStatus() == PIPStatus.ACTIVE) {
             throw new IllegalArgumentException("Cannot close a PIP with status ACTIVE");
@@ -102,7 +104,7 @@ public class PIPService {
     public PIPResponse getById(UUID pipId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PerformanceImprovementPlan pip = pipRepository.findByIdAndTenantId(pipId, tenantId)
-                .orElseThrow(() -> new RuntimeException("PIP not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PIP_NOT_FOUND));
         return mapToResponse(pip, true);
     }
 

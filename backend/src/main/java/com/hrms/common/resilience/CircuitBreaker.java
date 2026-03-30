@@ -30,6 +30,15 @@ public class CircuitBreaker {
         HALF_OPEN
     }
 
+    /**
+     * Thrown when a request is rejected because the circuit breaker is in the OPEN state.
+     */
+    public static class CircuitBreakerOpenException extends RuntimeException {
+        public CircuitBreakerOpenException(String message) {
+            super(message);
+        }
+    }
+
     private final String name;
     private final int failureThreshold;
     private final int successThreshold;
@@ -95,7 +104,7 @@ public class CircuitBreaker {
     public <T> T execute(Supplier<T> supplier) {
         if (!allowRequest()) {
             log.debug("Circuit breaker [{}] is OPEN, failing fast", name);
-            throw new RuntimeException("Circuit breaker is OPEN for service: " + name);
+            throw new CircuitBreakerOpenException("Circuit breaker is OPEN for service: " + name);
         }
 
         try {
@@ -136,28 +145,20 @@ public class CircuitBreaker {
     public boolean allowRequest() {
         State currentState = state.get();
 
-        switch (currentState) {
-            case CLOSED:
-                return true;
-
-            case OPEN:
+        return switch (currentState) {
+            case CLOSED, HALF_OPEN -> true;
+            case OPEN -> {
                 // Check if we should transition to half-open
                 if (shouldAttemptReset()) {
                     if (state.compareAndSet(State.OPEN, State.HALF_OPEN)) {
                         log.info("Circuit breaker [{}] transitioned to HALF_OPEN", name);
                         successCount.set(0);
                     }
-                    return true;
+                    yield true;
                 }
-                return false;
-
-            case HALF_OPEN:
-                // Allow limited requests for testing
-                return true;
-
-            default:
-                return true;
-        }
+                yield false;
+            }
+        };
     }
 
     /**

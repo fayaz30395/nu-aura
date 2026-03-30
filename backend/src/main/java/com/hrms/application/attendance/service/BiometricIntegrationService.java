@@ -555,7 +555,7 @@ public class BiometricIntegrationService {
 
     private BiometricPunchLog buildPunchLog(UUID tenantId, UUID deviceId, UUID employeeId,
                                             String employeeIdentifier, BiometricPunchRequest request) {
-        BiometricPunchLog log = BiometricPunchLog.builder()
+        BiometricPunchLog punchLog = BiometricPunchLog.builder()
                 .deviceId(deviceId)
                 .employeeId(employeeId)
                 .employeeIdentifier(employeeIdentifier)
@@ -564,8 +564,8 @@ public class BiometricIntegrationService {
                 .rawData(request.getRawData())
                 .processedStatus(BiometricPunchLog.ProcessedStatus.PENDING)
                 .build();
-        log.setTenantId(tenantId);
-        return log;
+        punchLog.setTenantId(tenantId);
+        return punchLog;
     }
 
     private String generateSecureKey() {
@@ -579,11 +579,7 @@ public class BiometricIntegrationService {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(plaintextKey.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hex = new StringBuilder();
-            for (byte b : hash) {
-                hex.append(String.format("%02x", b));
-            }
-            return hex.toString();
+            return java.util.HexFormat.of().formatHex(hash);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 not available", e);
         }

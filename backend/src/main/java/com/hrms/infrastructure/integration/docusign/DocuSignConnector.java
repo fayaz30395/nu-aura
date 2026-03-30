@@ -10,12 +10,8 @@ import com.hrms.infrastructure.integration.repository.DocuSignTemplateMappingRep
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -117,7 +113,7 @@ public class DocuSignConnector implements IntegrationConnector {
             log.info("Testing DocuSign connection for tenant: {}", config.tenantId());
 
             // Generate JWT access token using RSA key
-            String accessToken = authService.getAccessToken(config);
+            authService.getAccessToken(config);
 
             // Call GET /v2.1/accounts/{accountId}/users to validate connection
             String accountId = getString(config, "accountId");
@@ -216,12 +212,13 @@ public class DocuSignConnector implements IntegrationConnector {
             Map<String, String> headers,
             String body) {
         try {
-            log.debug("Handling DocuSign webhook callback");
+            log.debug("Handling DocuSign webhook callback for connectorId={}, headerCount={}",
+                    connectorId, headers != null ? headers.size() : 0);
 
             // 1. Parse DocuSign Connect JSON payload
             JsonNode payload = objectMapper.readTree(body);
-            String envelopeId = payload.get("envelopeId").asText();
-            String status = payload.get("status").asText();
+            String envelopeId = payload.path("envelopeId").asText();
+            String status = payload.path("status").asText();
 
             if (envelopeId == null || envelopeId.isBlank()) {
                 log.warn("Webhook callback missing envelopeId");
@@ -314,7 +311,7 @@ public class DocuSignConnector implements IntegrationConnector {
 
         for (String field : requiredFields) {
             Object value = config.settings().get(field);
-            if (value == null || (value instanceof String && ((String) value).isBlank())) {
+            if (value == null || (value instanceof String s && s.isBlank())) {
                 throw new IllegalArgumentException("Required field missing: " + field);
             }
         }
@@ -455,7 +452,9 @@ public class DocuSignConnector implements IntegrationConnector {
             String subject) {
 
         try {
-            log.info("Creating DocuSign envelope for document type: {}", documentType);
+            log.info(
+                    "Creating DocuSign envelope for document type: {}, eventType={}, recipient={}, recipientName={}, subject={}, documentUrl={}",
+                    documentType, event.eventType(), recipientEmail, recipientName, subject, documentUrl);
 
             // Validate template ID
             if (templateId == null || templateId.isBlank()) {
@@ -601,44 +600,4 @@ public class DocuSignConnector implements IntegrationConnector {
         return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     }
 
-    /**
-     * Verify HMAC signature for webhook callback.
-     * Uses the hmacSecret from config to validate the signature header.
-     *
-     * @param body the raw webhook body
-     * @param signature the signature header value
-     * @param hmacSecret the secret key
-     * @return true if signature is valid
-     */
-    private boolean verifyHmacSignature(String body, String signature, String hmacSecret) {
-        try {
-            if (hmacSecret == null || hmacSecret.isBlank()) {
-                log.error("SEC: HMAC verification failed — HMAC secret is not configured. " +
-                        "Rejecting webhook to prevent signature bypass.");
-                return false;
-            }
-            if (signature == null || signature.isBlank()) {
-                log.error("SEC: HMAC verification failed — signature header is missing from webhook request.");
-                return false;
-            }
-
-            Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKey = new SecretKeySpec(
-                    hmacSecret.getBytes(StandardCharsets.UTF_8),
-                    "HmacSHA256"
-            );
-            mac.init(secretKey);
-
-            byte[] hash = mac.doFinal(body.getBytes(StandardCharsets.UTF_8));
-            String computed = Base64.getEncoder().encodeToString(hash);
-
-            // SEC: Use constant-time comparison to prevent timing side-channel attacks
-            return java.security.MessageDigest.isEqual(
-                    computed.getBytes(StandardCharsets.UTF_8),
-                    signature.getBytes(StandardCharsets.UTF_8));
-        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
-            log.error("Error verifying HMAC signature: {}", e.getMessage());
-            return false;
-        }
-    }
 }

@@ -5,6 +5,7 @@ import com.hrms.api.analytics.dto.OrganizationHealthResponse.*;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class OrganizationHealthService {
 
@@ -99,27 +101,29 @@ public class OrganizationHealthService {
             return TenureMetrics.builder().averageTenureYears(0).build();
         }
 
-        double totalYears = activeEmployees.stream()
-                .mapToDouble(e -> Period.between(e.getJoiningDate(), LocalDate.now()).getYears() +
-                        (Period.between(e.getJoiningDate(), LocalDate.now()).getMonths() / 12.0))
-                .sum();
+        LocalDate today = LocalDate.now();
+
+        // Pre-compute tenure years once per employee to avoid repeated Period.between() calls
+        List<Double> tenureYears = activeEmployees.stream()
+                .filter(e -> e.getJoiningDate() != null)
+                .map(e -> {
+                    Period p = Period.between(e.getJoiningDate(), today);
+                    return p.getYears() + (p.getMonths() / 12.0);
+                })
+                .toList();
+
+        double totalYears = tenureYears.stream().mapToDouble(Double::doubleValue).sum();
 
         Map<String, Long> dist = new HashMap<>();
-        dist.put("0-1 Year", activeEmployees.stream()
-                .filter(e -> Period.between(e.getJoiningDate(), LocalDate.now()).getYears() < 1).count());
-        dist.put("1-3 Years", activeEmployees.stream().filter(e -> {
-            int yrs = Period.between(e.getJoiningDate(), LocalDate.now()).getYears();
-            return yrs >= 1 && yrs < 3;
-        }).count());
-        dist.put("3-5 Years", activeEmployees.stream().filter(e -> {
-            int yrs = Period.between(e.getJoiningDate(), LocalDate.now()).getYears();
-            return yrs >= 3 && yrs < 5;
-        }).count());
-        dist.put("5+ Years", activeEmployees.stream()
-                .filter(e -> Period.between(e.getJoiningDate(), LocalDate.now()).getYears() >= 5).count());
+        dist.put("0-1 Year", tenureYears.stream().filter(y -> y < 1).count());
+        dist.put("1-3 Years", tenureYears.stream().filter(y -> y >= 1 && y < 3).count());
+        dist.put("3-5 Years", tenureYears.stream().filter(y -> y >= 3 && y < 5).count());
+        dist.put("5+ Years", tenureYears.stream().filter(y -> y >= 5).count());
+
+        double avgTenure = tenureYears.isEmpty() ? 0 : totalYears / tenureYears.size();
 
         return TenureMetrics.builder()
-                .averageTenureYears(Math.round((totalYears / activeEmployees.size()) * 10.0) / 10.0)
+                .averageTenureYears(Math.round(avgTenure * 10.0) / 10.0)
                 .tenureDistribution(dist)
                 .build();
     }

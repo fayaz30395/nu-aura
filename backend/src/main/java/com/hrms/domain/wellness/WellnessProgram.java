@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "wellness_programs")
@@ -19,7 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class WellnessProgram extends TenantAware {
-
 
     @Column(nullable = false)
     private String name;

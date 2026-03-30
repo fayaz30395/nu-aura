@@ -267,15 +267,16 @@ public class ImplicitRoleRuleController {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         List<ImplicitRoleRule> rules = ruleRepository.findByIdInAndTenantId(request.getRuleIds(), tenantId);
-        int activatedCount = 0;
+        List<ImplicitRoleRule> rulesToActivate = rules.stream()
+                .filter(rule -> !rule.getIsActive())
+                .collect(Collectors.toList());
 
-        for (ImplicitRoleRule rule : rules) {
-            if (!rule.getIsActive()) {
-                rule.setIsActive(true);
-                ruleRepository.save(rule);
-                activatedCount++;
-            }
-        }
+        rulesToActivate.forEach(rule -> {
+            rule.setIsActive(true);
+            ruleRepository.save(rule);
+        });
+
+        int activatedCount = rulesToActivate.size();
 
         log.info("Bulk activated {} implicit role rules for tenant: {}", activatedCount, tenantId);
 
@@ -300,15 +301,16 @@ public class ImplicitRoleRuleController {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         List<ImplicitRoleRule> rules = ruleRepository.findByIdInAndTenantId(request.getRuleIds(), tenantId);
-        int deactivatedCount = 0;
+        List<ImplicitRoleRule> rulesToDeactivate = rules.stream()
+                .filter(ImplicitRoleRule::getIsActive)
+                .collect(Collectors.toList());
 
-        for (ImplicitRoleRule rule : rules) {
-            if (rule.getIsActive()) {
-                rule.setIsActive(false);
-                ruleRepository.save(rule);
-                deactivatedCount++;
-            }
-        }
+        rulesToDeactivate.forEach(rule -> {
+            rule.setIsActive(false);
+            ruleRepository.save(rule);
+        });
+
+        int deactivatedCount = rulesToDeactivate.size();
 
         log.info("Bulk deactivated {} implicit role rules for tenant: {}", deactivatedCount, tenantId);
 

@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class BudgetPlanningService {
 
+    private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
+
     private final HeadcountBudgetRepository budgetRepository;
     private final HeadcountPositionRepository positionRepository;
     private final BudgetScenarioRepository scenarioRepository;
@@ -500,38 +502,18 @@ public class BudgetPlanningService {
 
         List<HeadcountBudget> budgets = budgetRepository.findByFiscalYear(tenantId, fiscalYear);
 
-        // Calculate totals
-        BigDecimal totalBudget = budgets.stream()
-                .filter(b -> b.getStatus() == HeadcountBudget.BudgetStatus.APPROVED)
-                .map(HeadcountBudget::getTotalBudget)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal allocatedBudget = budgets.stream()
-                .filter(b -> b.getStatus() == HeadcountBudget.BudgetStatus.APPROVED)
-                .map(b -> b.getAllocatedBudget() != null ? b.getAllocatedBudget() : BigDecimal.ZERO)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
+        // Calculate totals from approved budgets
+        BigDecimal totalBudget = sumApprovedBudgetField(budgets, HeadcountBudget::getTotalBudget);
+        BigDecimal allocatedBudget = sumApprovedBudgetField(budgets,
+                b -> b.getAllocatedBudget() != null ? b.getAllocatedBudget() : BigDecimal.ZERO);
         BigDecimal remainingBudget = totalBudget.subtract(allocatedBudget);
-
-        BigDecimal utilizationPercent = BigDecimal.ZERO;
-        if (totalBudget.compareTo(BigDecimal.ZERO) > 0) {
-            utilizationPercent = allocatedBudget.divide(totalBudget, 4, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100));
-        }
+        BigDecimal utilizationPercent = calculateUtilizationPercent(allocatedBudget, totalBudget);
 
         // Headcount
         Integer totalPlannedHeadcount = budgetRepository.getTotalPlannedHeadcount(tenantId, fiscalYear);
 
         // Position counts by status
-        Map<HeadcountPosition.PositionStatus, Long> positionCountsByStatus = new HashMap<>();
-        for (HeadcountBudget budget : budgets) {
-            List<Object[]> counts = positionRepository.countByStatus(budget.getId());
-            for (Object[] count : counts) {
-                HeadcountPosition.PositionStatus status = (HeadcountPosition.PositionStatus) count[0];
-                Long cnt = (Long) count[1];
-                positionCountsByStatus.merge(status, cnt, Long::sum);
-            }
-        }
+        Map<HeadcountPosition.PositionStatus, Long> positionCountsByStatus = aggregatePositionCounts(budgets);
 
         int openPositions = positionCountsByStatus.getOrDefault(HeadcountPosition.PositionStatus.OPEN, 0L).intValue()
                 + positionCountsByStatus.getOrDefault(HeadcountPosition.PositionStatus.IN_PROGRESS, 0L).intValue();
@@ -544,57 +526,9 @@ public class BudgetPlanningService {
                         HeadcountBudget::getStatus,
                         Collectors.reducing(BigDecimal.ZERO, HeadcountBudget::getTotalBudget, BigDecimal::add)));
 
-        // Department summaries
-        List<BudgetDashboard.DepartmentBudgetSummary> departmentSummaries = budgets.stream()
-                .filter(b -> b.getStatus() == HeadcountBudget.BudgetStatus.APPROVED)
-                .collect(Collectors.groupingBy(HeadcountBudget::getDepartmentId))
-                .entrySet().stream()
-                .map(entry -> {
-                    UUID deptId = entry.getKey();
-                    List<HeadcountBudget> deptBudgets = entry.getValue();
-
-                    BigDecimal deptTotal = deptBudgets.stream()
-                            .map(HeadcountBudget::getTotalBudget)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                    BigDecimal deptAllocated = deptBudgets.stream()
-                            .map(b -> b.getAllocatedBudget() != null ? b.getAllocatedBudget() : BigDecimal.ZERO)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                    BigDecimal deptUtil = BigDecimal.ZERO;
-                    if (deptTotal.compareTo(BigDecimal.ZERO) > 0) {
-                        deptUtil = deptAllocated.divide(deptTotal, 4, RoundingMode.HALF_UP)
-                                .multiply(BigDecimal.valueOf(100));
-                    }
-
-                    Integer plannedHC = deptBudgets.stream()
-                            .mapToInt(b -> b.getClosingHeadcount() != null ? b.getClosingHeadcount() : 0)
-                            .sum();
-
-                    return BudgetDashboard.DepartmentBudgetSummary.builder()
-                            .departmentId(deptId)
-                            .departmentName(deptBudgets.get(0).getDepartmentName())
-                            .totalBudget(deptTotal)
-                            .allocatedBudget(deptAllocated)
-                            .utilizationPercent(deptUtil)
-                            .plannedHeadcount(plannedHC)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        // Selected scenarios
-        List<BudgetScenario> selectedScenarios = scenarioRepository.findSelectedScenarios(tenantId);
-        List<BudgetDashboard.ScenarioSummary> scenarioSummaries = selectedScenarios.stream()
-                .map(s -> BudgetDashboard.ScenarioSummary.builder()
-                        .scenarioId(s.getId())
-                        .name(s.getName())
-                        .scenarioType(s.getScenarioType().name())
-                        .projectedHeadcount(s.getProjectedHeadcount())
-                        .projectedCost(s.getProjectedCost())
-                        .variancePercent(s.getVariancePercent())
-                        .isSelected(s.getIsSelected())
-                        .build())
-                .collect(Collectors.toList());
+        // Department summaries & scenario summaries
+        List<BudgetDashboard.DepartmentBudgetSummary> departmentSummaries = buildDepartmentSummaries(budgets);
+        List<BudgetDashboard.ScenarioSummary> scenarioSummaries = buildScenarioSummaries(tenantId);
 
         return BudgetDashboard.builder()
                 .fiscalYear(fiscalYear)
@@ -617,6 +551,85 @@ public class BudgetPlanningService {
                 .departmentSummaries(departmentSummaries)
                 .activeScenarios(scenarioSummaries)
                 .build();
+    }
+
+    private BigDecimal sumApprovedBudgetField(List<HeadcountBudget> budgets,
+                                               java.util.function.Function<HeadcountBudget, BigDecimal> fieldExtractor) {
+        return budgets.stream()
+                .filter(b -> b.getStatus() == HeadcountBudget.BudgetStatus.APPROVED)
+                .map(fieldExtractor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal calculateUtilizationPercent(BigDecimal allocated, BigDecimal total) {
+        if (total.compareTo(BigDecimal.ZERO) > 0) {
+            return allocated.divide(total, 4, RoundingMode.HALF_UP)
+                    .multiply(ONE_HUNDRED);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    private Map<HeadcountPosition.PositionStatus, Long> aggregatePositionCounts(List<HeadcountBudget> budgets) {
+        Map<HeadcountPosition.PositionStatus, Long> positionCountsByStatus = new HashMap<>();
+        for (HeadcountBudget budget : budgets) {
+            List<Object[]> counts = positionRepository.countByStatus(budget.getId());
+            for (Object[] count : counts) {
+                HeadcountPosition.PositionStatus status = (HeadcountPosition.PositionStatus) count[0];
+                Long cnt = (Long) count[1];
+                positionCountsByStatus.merge(status, cnt, Long::sum);
+            }
+        }
+        return positionCountsByStatus;
+    }
+
+    private List<BudgetDashboard.DepartmentBudgetSummary> buildDepartmentSummaries(List<HeadcountBudget> budgets) {
+        return budgets.stream()
+                .filter(b -> b.getStatus() == HeadcountBudget.BudgetStatus.APPROVED)
+                .collect(Collectors.groupingBy(HeadcountBudget::getDepartmentId))
+                .entrySet().stream()
+                .map(entry -> buildDepartmentSummary(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    private BudgetDashboard.DepartmentBudgetSummary buildDepartmentSummary(UUID deptId,
+                                                                            List<HeadcountBudget> deptBudgets) {
+        BigDecimal deptTotal = deptBudgets.stream()
+                .map(HeadcountBudget::getTotalBudget)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal deptAllocated = deptBudgets.stream()
+                .map(b -> b.getAllocatedBudget() != null ? b.getAllocatedBudget() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal deptUtil = calculateUtilizationPercent(deptAllocated, deptTotal);
+
+        int plannedHC = deptBudgets.stream()
+                .mapToInt(b -> b.getClosingHeadcount() != null ? b.getClosingHeadcount() : 0)
+                .sum();
+
+        return BudgetDashboard.DepartmentBudgetSummary.builder()
+                .departmentId(deptId)
+                .departmentName(deptBudgets.get(0).getDepartmentName())
+                .totalBudget(deptTotal)
+                .allocatedBudget(deptAllocated)
+                .utilizationPercent(deptUtil)
+                .plannedHeadcount(plannedHC)
+                .build();
+    }
+
+    private List<BudgetDashboard.ScenarioSummary> buildScenarioSummaries(UUID tenantId) {
+        List<BudgetScenario> selectedScenarios = scenarioRepository.findSelectedScenarios(tenantId);
+        return selectedScenarios.stream()
+                .map(s -> BudgetDashboard.ScenarioSummary.builder()
+                        .scenarioId(s.getId())
+                        .name(s.getName())
+                        .scenarioType(s.getScenarioType().name())
+                        .projectedHeadcount(s.getProjectedHeadcount())
+                        .projectedCost(s.getProjectedCost())
+                        .variancePercent(s.getVariancePercent())
+                        .isSelected(s.getIsSelected())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // ==================== HELPER METHODS ====================
@@ -662,7 +675,7 @@ public class BudgetPlanningService {
         BigDecimal projectedCost = baseCost;
         if (scenario.getSalaryAdjustmentPercent() != null) {
             BigDecimal adjustment = baseCost.multiply(scenario.getSalaryAdjustmentPercent())
-                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                    .divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP);
             projectedCost = projectedCost.add(adjustment);
         }
 
@@ -681,7 +694,7 @@ public class BudgetPlanningService {
 
         if (baseCost.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal variancePercent = costVariance.divide(baseCost, 4, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100));
+                    .multiply(ONE_HUNDRED);
             scenario.setVariancePercent(variancePercent);
         }
     }

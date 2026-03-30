@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
@@ -56,10 +54,7 @@ public class NotificationEventConsumer {
     )
     public void handleNotificationEvent(
             @Payload NotificationEvent event,
-            Acknowledgment acknowledgment,
-            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset) {
+            Acknowledgment acknowledgment) {
 
         String eventId = event.getEventId();
         String channel = event.getChannel();
@@ -110,7 +105,6 @@ public class NotificationEventConsumer {
     private void sendEmail(NotificationEvent event) {
         String templateName = event.getTemplateName();
         String subject = event.getSubject();
-        String body = event.getBody();
         Map<String, Object> templateData = event.getTemplateData();
 
         try {
@@ -167,8 +161,6 @@ public class NotificationEventConsumer {
      */
     private void sendPushNotification(NotificationEvent event) {
         String title = event.getSubject();
-        String body = event.getBody();
-        String actionUrl = event.getActionUrl();
 
         try {
             log.debug("Sending push notification to {}: title={}", event.getRecipientId(), title);
@@ -246,8 +238,6 @@ public class NotificationEventConsumer {
      * Send SMS notification.
      */
     private void sendSms(NotificationEvent event) {
-        String body = event.getBody();
-
         try {
             log.debug("Sending SMS to {}", event.getRecipientId());
 

@@ -28,6 +28,8 @@ import java.util.UUID;
 @Slf4j
 public class AttendanceRecordService {
 
+    private static final String ATTENDANCE_RECORD_NOT_FOUND = "Attendance record not found";
+
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final AttendanceTimeEntryRepository timeEntryRepository;
     private final AttendanceConfigProperties config;
@@ -423,7 +425,7 @@ public class AttendanceRecordService {
 
         AttendanceRecord record = attendanceRecordRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
         record.requestRegularization(reason);
         return attendanceRecordRepository.save(record);
@@ -435,7 +437,7 @@ public class AttendanceRecordService {
 
         AttendanceRecord record = attendanceRecordRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
         record.approveRegularization(approverId);
         AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
@@ -452,7 +454,7 @@ public class AttendanceRecordService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceRecordRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -641,7 +643,7 @@ public class AttendanceRecordService {
 
         AttendanceRecord record = attendanceRecordRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
+                .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
         record.rejectRegularization(rejectorId, reason);
         log.info("Regularization rejected for record {} by {}", id, rejectorId);

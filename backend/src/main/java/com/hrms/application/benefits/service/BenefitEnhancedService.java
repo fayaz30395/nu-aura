@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class BenefitEnhancedService {
 
+    private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
+
     private final BenefitPlanEnhancedRepository planRepository;
     private final BenefitEnrollmentRepository enrollmentRepository;
     private final BenefitDependentRepository dependentRepository;
@@ -44,7 +46,6 @@ public class BenefitEnhancedService {
     @Transactional
     public BenefitPlanEnhancedResponse createPlan(BenefitPlanEnhancedRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID currentUser = SecurityContext.getCurrentUserId();
 
         BenefitPlanEnhanced plan = BenefitPlanEnhanced.builder()
                 .name(request.getName())
@@ -104,7 +105,6 @@ public class BenefitEnhancedService {
     @Transactional
     public BenefitPlanEnhancedResponse updatePlan(UUID planId, BenefitPlanEnhancedRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID currentUser = SecurityContext.getCurrentUserId();
 
         BenefitPlanEnhanced plan = planRepository.findByIdAndTenantId(planId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Benefit plan not found: " + planId));
@@ -464,7 +464,7 @@ public class BenefitEnhancedService {
         BigDecimal copayPct = plan.getCopayPercentage() != null ? plan.getCopayPercentage() : BigDecimal.ZERO;
 
         BigDecimal afterDeductible = claim.getClaimedAmount().subtract(deductible).max(BigDecimal.ZERO);
-        BigDecimal copayAmount = afterDeductible.multiply(copayPct).divide(BigDecimal.valueOf(100));
+        BigDecimal copayAmount = afterDeductible.multiply(copayPct).divide(ONE_HUNDRED, 2, java.math.RoundingMode.HALF_UP);
         BigDecimal eligibleAmount = afterDeductible.subtract(copayAmount);
 
         claim.setEligibleAmount(eligibleAmount);
@@ -588,7 +588,6 @@ public class BenefitEnhancedService {
     @Transactional
     public FlexAllocationResponse createFlexAllocation(FlexAllocationRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID currentUser = SecurityContext.getCurrentUserId();
 
         // Check if allocation already exists
         Optional<FlexBenefitAllocation> existing = flexAllocationRepository

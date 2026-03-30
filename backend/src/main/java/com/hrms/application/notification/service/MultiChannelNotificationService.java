@@ -210,38 +210,29 @@ public class MultiChannelNotificationService {
 
         // Use template content if available
         if (template != null) {
+            Map<String, Object> ctx = request.getContextData();
             switch (channel) {
-                case EMAIL:
-                    subject = renderTemplate(template.getEmailSubject(), request.getContextData());
-                    body = renderTemplate(template.getEmailBody(), request.getContextData());
-                    break;
-                case SMS:
-                    body = renderTemplate(template.getSmsBody(), request.getContextData());
-                    break;
-                case PUSH:
-                    title = renderTemplate(template.getPushTitle(), request.getContextData());
-                    body = renderTemplate(template.getPushBody(), request.getContextData());
+                case EMAIL -> {
+                    subject = renderTemplate(template.getEmailSubject(), ctx);
+                    body = renderTemplate(template.getEmailBody(), ctx);
+                }
+                case SMS -> body = renderTemplate(template.getSmsBody(), ctx);
+                case PUSH -> {
+                    title = renderTemplate(template.getPushTitle(), ctx);
+                    body = renderTemplate(template.getPushBody(), ctx);
                     icon = template.getPushIcon();
                     actionUrl = template.getPushAction();
-                    break;
-                case IN_APP:
-                    title = renderTemplate(template.getInAppTitle(), request.getContextData());
-                    body = renderTemplate(template.getInAppBody(), request.getContextData());
+                }
+                case IN_APP -> {
+                    title = renderTemplate(template.getInAppTitle(), ctx);
+                    body = renderTemplate(template.getInAppBody(), ctx);
                     icon = template.getInAppIcon();
                     actionUrl = template.getInAppActionUrl();
-                    break;
-                case SLACK:
-                    body = renderTemplate(template.getSlackMessage(), request.getContextData());
-                    break;
-                case TEAMS:
-                    body = renderTemplate(template.getTeamsMessage(), request.getContextData());
-                    break;
-                case WHATSAPP:
-                    body = renderTemplate(template.getWhatsappBody(), request.getContextData());
-                    break;
-                case WEBHOOK:
-                    body = renderTemplate(template.getWebhookPayload(), request.getContextData());
-                    break;
+                }
+                case SLACK -> body = renderTemplate(template.getSlackMessage(), ctx);
+                case TEAMS -> body = renderTemplate(template.getTeamsMessage(), ctx);
+                case WHATSAPP -> body = renderTemplate(template.getWhatsappBody(), ctx);
+                case WEBHOOK -> body = renderTemplate(template.getWebhookPayload(), ctx);
             }
         }
 
@@ -278,36 +269,20 @@ public class MultiChannelNotificationService {
             notification.setStatus(NotificationStatus.QUEUED);
             notificationRepository.save(notification);
 
-            // In a real implementation, this would call the appropriate channel provider
-            // For now, we'll simulate successful delivery
+            // Dispatch to the appropriate channel provider
             switch (notification.getChannel()) {
-                case EMAIL:
-                    sendEmailNotification(notification);
-                    break;
-                case SMS:
-                    sendSmsNotification(notification);
-                    break;
-                case PUSH:
-                    sendPushNotification(notification);
-                    break;
-                case IN_APP:
-                    // In-app notifications are immediately delivered
+                case EMAIL -> sendEmailNotification(notification);
+                case SMS -> sendSmsNotification(notification);
+                case PUSH -> sendPushNotification(notification);
+                case IN_APP -> {
                     notification.setStatus(NotificationStatus.DELIVERED);
                     notification.setSentAt(LocalDateTime.now());
                     notification.setDeliveredAt(LocalDateTime.now());
-                    break;
-                case SLACK:
-                    sendSlackNotification(notification);
-                    break;
-                case TEAMS:
-                    sendTeamsNotification(notification);
-                    break;
-                case WHATSAPP:
-                    sendWhatsAppNotification(notification);
-                    break;
-                case WEBHOOK:
-                    sendWebhookNotification(notification);
-                    break;
+                }
+                case SLACK -> sendSlackNotification(notification);
+                case TEAMS -> sendTeamsNotification(notification);
+                case WHATSAPP -> sendWhatsAppNotification(notification);
+                case WEBHOOK -> sendWebhookNotification(notification);
             }
 
             notificationRepository.save(notification);

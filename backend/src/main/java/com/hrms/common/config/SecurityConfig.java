@@ -203,8 +203,9 @@ public class SecurityConfig {
         // SEC-C02 FIX: CSRF can only be disabled in dev/test profiles.
         // In production, CSRF is always enforced regardless of the property value.
         // This prevents accidental CSRF bypass from config drift or env var typos.
-        boolean isProductionProfile = Arrays.asList(environment.getActiveProfiles()).contains("prod")
-                || Arrays.asList(environment.getActiveProfiles()).contains("production");
+        List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
+        boolean isProductionProfile = activeProfiles.contains("prod")
+                || activeProfiles.contains("production");
         boolean shouldEnableCsrf = isProductionProfile || csrfEnabled;
 
         if (shouldEnableCsrf) {

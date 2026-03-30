@@ -136,13 +136,13 @@ public class DashboardService {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
                 return recentLogs.stream()
-                                .map(log -> RecentActivity.builder()
-                                                .actorName(log.getActorEmail() != null ? log.getActorEmail() : "System")
-                                                .action(log.getAction() != null ? log.getAction().name() : "UNKNOWN")
-                                                .entityType(log.getEntityType())
-                                                .description(log.getChanges() != null ? log.getChanges() : "")
-                                                .timestamp(log.getCreatedAt() != null
-                                                                ? log.getCreatedAt().format(formatter)
+                                .map(auditEntry -> RecentActivity.builder()
+                                                .actorName(auditEntry.getActorEmail() != null ? auditEntry.getActorEmail() : "System")
+                                                .action(auditEntry.getAction() != null ? auditEntry.getAction().name() : "UNKNOWN")
+                                                .entityType(auditEntry.getEntityType())
+                                                .description(auditEntry.getChanges() != null ? auditEntry.getChanges() : "")
+                                                .timestamp(auditEntry.getCreatedAt() != null
+                                                                ? auditEntry.getCreatedAt().format(formatter)
                                                                 : "")
                                                 .build())
                                 .collect(Collectors.toList());

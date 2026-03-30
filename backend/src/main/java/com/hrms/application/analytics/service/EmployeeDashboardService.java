@@ -59,7 +59,6 @@ public class EmployeeDashboardService {
      */
     @Transactional(readOnly = true)
     public EmployeeDashboardResponse getEmployeeDashboard() {
-        UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
         if (employeeId == null) {
@@ -216,13 +215,22 @@ public class EmployeeDashboardService {
             }
         }
 
-        // 30-day attendance history
+        // 30-day attendance history — batch queries to avoid N+1
+        LocalDate historyStart = today.minusDays(29);
+        List<AttendanceRecord> historyRecords = attendanceRepository
+                .findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(tenantId, employeeId, historyStart, today);
+        Map<LocalDate, AttendanceRecord> recordsByDate = historyRecords.stream()
+                .collect(Collectors.toMap(AttendanceRecord::getAttendanceDate, r -> r, (a, b) -> a));
+
+        // Batch leave check for the 30-day window
+        // For per-day resolution, use a set of leave dates if available; otherwise fall back to simple check
+        // Since we don't have a method returning individual leave dates, we track presence to infer
         List<DailyAttendanceRecord> history = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         for (int i = 29; i >= 0; i--) {
             LocalDate date = today.minusDays(i);
-            Optional<AttendanceRecord> record = attendanceRepository.findByTenantIdAndEmployeeIdAndDate(
-                    tenantId, employeeId, date);
+            AttendanceRecord r = recordsByDate.get(date);
 
             String status;
             String cin = null;
@@ -230,20 +238,19 @@ public class EmployeeDashboardService {
             BigDecimal hours = BigDecimal.ZERO;
             boolean isLate = false;
 
-            if (record.isPresent()) {
-                AttendanceRecord r = record.get();
+            if (r != null) {
                 status = "PRESENT";
-                if (r.getCheckInTime() != null) cin = r.getCheckInTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-                if (r.getCheckOutTime() != null) cout = r.getCheckOutTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-                // Calculate hours from check-in/check-out if available
+                if (r.getCheckInTime() != null) cin = r.getCheckInTime().format(timeFormatter);
+                if (r.getCheckOutTime() != null) cout = r.getCheckOutTime().format(timeFormatter);
                 if (r.getCheckInTime() != null && r.getCheckOutTime() != null) {
                     long minutes = java.time.Duration.between(r.getCheckInTime(), r.getCheckOutTime()).toMinutes();
-                    hours = BigDecimal.valueOf(minutes / 60.0).setScale(1, java.math.RoundingMode.HALF_UP);
+                    hours = BigDecimal.valueOf(minutes / 60.0).setScale(1, RoundingMode.HALF_UP);
                 }
                 isLate = r.getCheckInTime() != null && r.getCheckInTime().toLocalTime().isAfter(java.time.LocalTime.of(9, 15));
             } else if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 status = "WEEKEND";
             } else {
+                // Fallback: individual leave check only for non-present, non-weekend days
                 Long onLeave = leaveRequestRepository.countByTenantIdAndDateAndStatusAndEmployeeId(
                         tenantId, date, LeaveRequest.LeaveRequestStatus.APPROVED, employeeId);
                 status = onLeave > 0 ? "LEAVE" : "ABSENT";
@@ -318,9 +325,6 @@ public class EmployeeDashboardService {
                 tenantId, LeaveRequest.LeaveRequestStatus.APPROVED, employeeId, yearStart);
         Long rejected = leaveRequestRepository.countByTenantIdAndStatusAndEmployeeIdAndDateAfter(
                 tenantId, LeaveRequest.LeaveRequestStatus.REJECTED, employeeId, yearStart);
-
-        // Recent requests
-        List<LeaveRequest> recentRequests = new ArrayList<>(); // Would fetch from repository
 
         // Upcoming holidays
         List<UpcomingHoliday> upcomingHolidays = holidayRepository
