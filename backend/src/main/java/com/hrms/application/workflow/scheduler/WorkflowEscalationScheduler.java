@@ -435,7 +435,7 @@ public class WorkflowEscalationScheduler {
     private List<UUID> fetchActiveTenants() {
         try {
             return jdbcTemplate.queryForList(
-                    "SELECT id FROM tenants WHERE is_active = true", UUID.class);
+                    "SELECT id FROM tenants WHERE status = 'ACTIVE'", UUID.class);
         } catch (Exception e) {
             log.warn("Could not fetch active tenants: {}", e.getMessage());
             return List.of();

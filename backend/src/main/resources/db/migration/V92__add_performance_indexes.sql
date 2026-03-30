@@ -37,13 +37,13 @@
 -- -----------------------------------------------------------------------------
 
 -- Lookup by email within a tenant (login, duplicate-check, search)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_employees_tenant_email
+CREATE INDEX IF NOT EXISTS idx_employees_tenant_email
     ON employees (tenant_id, personal_email)
     WHERE is_deleted = false;
 
 -- Employee directory sorted by join date (dashboard widgets, anniversary lists)
 -- V9 has (tenant_id, joining_date) but without the active-only partial filter.
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_employees_tenant_joining_active
+CREATE INDEX IF NOT EXISTS idx_employees_tenant_joining_active
     ON employees (tenant_id, joining_date DESC)
     WHERE is_deleted = false;
 
@@ -53,17 +53,17 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_employees_tenant_joining_active
 -- -----------------------------------------------------------------------------
 
 -- Payslip list for a specific payroll run (run summary, bulk download)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_payslips_tenant_run
+CREATE INDEX IF NOT EXISTS idx_payslips_tenant_run
     ON payslips (tenant_id, payroll_run_id)
     WHERE is_deleted = false;
 
 -- Payroll run status filter (dashboard: pending/approved runs)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_payroll_runs_tenant_status
+CREATE INDEX IF NOT EXISTS idx_payroll_runs_tenant_status
     ON payroll_runs (tenant_id, status)
     WHERE is_deleted = false;
 
 -- Payroll run period lookup (find run for a given month/year)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_payroll_runs_tenant_period
+CREATE INDEX IF NOT EXISTS idx_payroll_runs_tenant_period
     ON payroll_runs (tenant_id, pay_period_year, pay_period_month)
     WHERE is_deleted = false;
 
@@ -75,12 +75,12 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_payroll_runs_tenant_period
 -- -----------------------------------------------------------------------------
 
 -- Workflow execution status per entity (e.g. "is this leave request approved?")
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_workflow_executions_tenant_status
+CREATE INDEX IF NOT EXISTS idx_workflow_executions_tenant_status
     ON workflow_executions (tenant_id, status)
     WHERE is_deleted = false;
 
 -- Workflow execution lookup by entity (most common join from leave/asset/expense)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_workflow_executions_tenant_entity
+CREATE INDEX IF NOT EXISTS idx_workflow_executions_tenant_entity
     ON workflow_executions (tenant_id, entity_type, entity_id)
     WHERE is_deleted = false;
 
@@ -92,7 +92,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_workflow_executions_tenant_entity
 -- -----------------------------------------------------------------------------
 
 -- Chronological audit trail per entity (e.g. "history of employee #X")
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_audit_logs_tenant_entity_time
+CREATE INDEX IF NOT EXISTS idx_audit_logs_tenant_entity_time
     ON audit_logs (tenant_id, entity_type, entity_id, created_at DESC)
     WHERE is_deleted = false;
 
@@ -104,7 +104,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_audit_logs_tenant_entity_time
 -- -----------------------------------------------------------------------------
 
 -- Fast unread count per user (used on every page load for the badge)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_notifications_unread
+CREATE INDEX IF NOT EXISTS idx_notifications_unread
     ON notifications (tenant_id, user_id)
     WHERE is_read = false AND is_deleted = false;
 
@@ -116,7 +116,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_notifications_unread
 -- -----------------------------------------------------------------------------
 
 -- Candidates grouped by pipeline stage (Kanban board column load)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_candidates_tenant_stage
+CREATE INDEX IF NOT EXISTS idx_candidates_tenant_stage
     ON candidates (tenant_id, current_stage, status)
     WHERE is_deleted = false;
 
@@ -126,11 +126,11 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_candidates_tenant_stage
 -- -----------------------------------------------------------------------------
 
 -- Time entries for an employee within a date range (timesheet views, billing)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_time_entries_tenant_emp_date
+CREATE INDEX IF NOT EXISTS idx_time_entries_tenant_emp_date
     ON time_entries (tenant_id, employee_id, entry_date DESC)
     WHERE is_deleted = false;
 
 -- Time entries by project (project cost rollups, project manager views)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_time_entries_tenant_project_date
+CREATE INDEX IF NOT EXISTS idx_time_entries_tenant_project_date
     ON time_entries (tenant_id, project_id, entry_date DESC)
     WHERE project_id IS NOT NULL AND is_deleted = false;
