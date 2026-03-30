@@ -286,15 +286,10 @@ public class AttendanceController {
     }
 
     @GetMapping("/all")
-    @RequiresPermission({ Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM })
+    @RequiresPermission(Permission.ATTENDANCE_MANAGE)
     public ResponseEntity<Page<AttendanceResponse>> getAllAttendance(Pageable pageable) {
-        // Use highest applicable permission for scope resolution
-        String permission = SecurityContext.hasPermission(Permission.ATTENDANCE_VIEW_ALL)
-                ? Permission.ATTENDANCE_VIEW_ALL
-                : Permission.ATTENDANCE_VIEW_TEAM;
-
         org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec = dataScopeService
-                .getScopeSpecification(permission);
+                .getScopeSpecification(Permission.ATTENDANCE_MANAGE);
         Page<AttendanceRecord> records = attendanceService.getAllAttendance(scopeSpec, pageable);
         return ResponseEntity.ok(records.map(this::toResponse));
     }

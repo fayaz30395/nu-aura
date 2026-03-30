@@ -75,7 +75,7 @@ public class PayrollController {
     }
 
     @GetMapping("/runs")
-    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
     public ResponseEntity<Page<PayrollRun>> getAllPayrollRuns(Pageable pageable) {
         Page<PayrollRun> payrollRuns = payrollRunService.getAllPayrollRuns(pageable);
         return ResponseEntity.ok(payrollRuns);
