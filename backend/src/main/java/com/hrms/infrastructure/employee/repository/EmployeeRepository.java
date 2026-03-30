@@ -130,12 +130,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
      * Each element is Object[]{year (Integer), month (Integer), count (Long)}.
      * Replaces 12 individual countByTenantIdAndJoiningDateBetween calls in trend-chart generation.
      */
-    @Query("SELECT FUNCTION('YEAR', e.joiningDate), FUNCTION('MONTH', e.joiningDate), COUNT(e) " +
-           "FROM Employee e " +
-           "WHERE e.tenantId = :tenantId " +
-           "  AND e.joiningDate >= :startDate " +
-           "  AND e.joiningDate <= :endDate " +
-           "GROUP BY FUNCTION('YEAR', e.joiningDate), FUNCTION('MONTH', e.joiningDate)")
+    @Query(value = "SELECT EXTRACT(YEAR FROM e.joining_date)::int, EXTRACT(MONTH FROM e.joining_date)::int, COUNT(e.id) " +
+           "FROM employees e " +
+           "WHERE e.tenant_id = :tenantId " +
+           "  AND e.joining_date >= :startDate " +
+           "  AND e.joining_date <= :endDate " +
+           "GROUP BY EXTRACT(YEAR FROM e.joining_date), EXTRACT(MONTH FROM e.joining_date)", nativeQuery = true)
     List<Object[]> countHiresByTenantIdAndJoiningDateRange(
         @Param("tenantId")  UUID tenantId,
         @Param("startDate") LocalDate startDate,
@@ -147,16 +147,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
      * Each element is Object[]{year (Integer), month (Integer), count (Long)}.
      * Replaces 12 individual countByTenantIdAndStatusAndExitDateBetween calls in trend-chart generation.
      */
-    @Query("SELECT FUNCTION('YEAR', e.exitDate), FUNCTION('MONTH', e.exitDate), COUNT(e) " +
-           "FROM Employee e " +
-           "WHERE e.tenantId = :tenantId " +
+    @Query(value = "SELECT EXTRACT(YEAR FROM e.exit_date)::int, EXTRACT(MONTH FROM e.exit_date)::int, COUNT(e.id) " +
+           "FROM employees e " +
+           "WHERE e.tenant_id = :tenantId " +
            "  AND e.status = :status " +
-           "  AND e.exitDate >= :startDate " +
-           "  AND e.exitDate <= :endDate " +
-           "GROUP BY FUNCTION('YEAR', e.exitDate), FUNCTION('MONTH', e.exitDate)")
+           "  AND e.exit_date >= :startDate " +
+           "  AND e.exit_date <= :endDate " +
+           "GROUP BY EXTRACT(YEAR FROM e.exit_date), EXTRACT(MONTH FROM e.exit_date)", nativeQuery = true)
     List<Object[]> countTerminationsByTenantIdAndExitDateRange(
         @Param("tenantId")  UUID tenantId,
-        @Param("status")    Employee.EmployeeStatus status,
+        @Param("status")    String status,
         @Param("startDate") LocalDate startDate,
         @Param("endDate")   LocalDate endDate
     );
