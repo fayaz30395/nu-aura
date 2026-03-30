@@ -15,7 +15,7 @@ public class CheckInRequest {
     // Nullable: when null, resolves to the authenticated user's employee ID
     private UUID employeeId;
 
-    @NotNull(message = "Check-in time is required")
+    // Nullable: defaults to current time when not provided (server-side)
     private LocalDateTime checkInTime;
 
     @Pattern(regexp = "^(WEB|MOBILE|BIOMETRIC|KIOSK)$", message = "Source must be WEB, MOBILE, BIOMETRIC, or KIOSK")
