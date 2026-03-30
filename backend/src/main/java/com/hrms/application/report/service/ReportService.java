@@ -58,7 +58,6 @@ public class ReportService {
     private final PdfExportService pdfExportService;
     private final CsvExportService csvExportService;
 
-    @Transactional(readOnly = true)
     public byte[] generateEmployeeDirectoryReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
         List<Employee> employees = employeeRepository.findByTenantId(tenantId);
@@ -84,7 +83,6 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "employee");
     }
 
-    @Transactional(readOnly = true)
     public byte[] generateAttendanceReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
@@ -128,13 +126,12 @@ public class ReportService {
 
         List<AttendanceReportRow> reportData = records.stream()
             .map(r -> mapToAttendanceRow(r, employeeMap))
-            .filter(row -> row != null)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         return exportReport(reportData, request.getFormat(), "attendance");
     }
 
-    @Transactional(readOnly = true)
     public byte[] generateDepartmentHeadcountReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
         List<Department> departments = departmentRepository.findByTenantId(tenantId);
@@ -149,7 +146,6 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "department");
     }
 
-    @Transactional(readOnly = true)
     public byte[] generateLeaveReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
@@ -215,7 +211,6 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "leave");
     }
 
-    @Transactional(readOnly = true)
     public byte[] generatePayrollReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
@@ -260,7 +255,6 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "payroll");
     }
 
-    @Transactional(readOnly = true)
     public byte[] generatePerformanceReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 

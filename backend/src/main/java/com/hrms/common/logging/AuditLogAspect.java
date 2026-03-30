@@ -210,12 +210,12 @@ public class AuditLogAspect {
             Object[] args = joinPoint.getArgs();
             if (args.length > audited.entityIdParam()) {
                 Object arg = args[audited.entityIdParam()];
-                if (arg instanceof UUID) {
-                    return (UUID) arg;
+                if (arg instanceof UUID uuid) {
+                    return uuid;
                 }
-                if (arg instanceof String) {
+                if (arg instanceof String str) {
                     try {
-                        return UUID.fromString((String) arg);
+                        return UUID.fromString(str);
                     } catch (IllegalArgumentException e) {
                         log.debug("Audit param at index {} is not a valid UUID string: {}", audited.entityIdParam(), arg);
                     }
@@ -229,8 +229,8 @@ public class AuditLogAspect {
             try {
                 java.lang.reflect.Method getIdMethod = result.getClass().getMethod("getId");
                 Object id = getIdMethod.invoke(result);
-                if (id instanceof UUID) {
-                    return (UUID) id;
+                if (id instanceof UUID uuid) {
+                    return uuid;
                 }
             } catch (ReflectiveOperationException e) {
                 log.debug("Could not extract entity ID via getId() from {}: {}", result.getClass().getSimpleName(), e.getMessage());

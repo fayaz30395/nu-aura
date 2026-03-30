@@ -10,6 +10,7 @@ import com.hrms.infrastructure.knowledge.repository.BlogCommentRepository;
 import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -149,6 +150,7 @@ public class BlogCommentService {
         return dto;
     }
 
+    @Nullable
     private WikiCommentDto toBlogCommentDto(BlogComment entity) {
         if (entity == null) return null;
 

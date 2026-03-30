@@ -28,8 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -506,12 +509,28 @@ public class CompensationService {
         SalaryRevisionResponse response = SalaryRevisionResponse.fromEntity(revision);
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        // Collect all employee IDs needed for enrichment (batch lookup to avoid N+1)
+        Set<UUID> employeeIds = new HashSet<>();
+        if (revision.getEmployeeId() != null) employeeIds.add(revision.getEmployeeId());
+        if (revision.getProposedBy() != null) employeeIds.add(revision.getProposedBy());
+        if (revision.getReviewedBy() != null) employeeIds.add(revision.getReviewedBy());
+        if (revision.getApprovedBy() != null) employeeIds.add(revision.getApprovedBy());
+
+        // Single batch query for all employee names
+        Map<UUID, String> nameMap = new HashMap<>();
+        Map<UUID, String> codeMap = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findAllById(employeeIds).forEach(emp -> {
+                nameMap.put(emp.getId(), emp.getFirstName() + " " + emp.getLastName());
+                codeMap.put(emp.getId(), emp.getEmployeeCode());
+            });
+        }
+
         // Enrich with employee info
-        employeeRepository.findByIdAndTenantId(revision.getEmployeeId(), tenantId)
-                .ifPresent(emp -> {
-                    response.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
-                    response.setEmployeeCode(emp.getEmployeeCode());
-                });
+        if (revision.getEmployeeId() != null && nameMap.containsKey(revision.getEmployeeId())) {
+            response.setEmployeeName(nameMap.get(revision.getEmployeeId()));
+            response.setEmployeeCode(codeMap.get(revision.getEmployeeId()));
+        }
 
         // Enrich with cycle name
         if (revision.getReviewCycleId() != null) {
@@ -520,17 +539,14 @@ public class CompensationService {
         }
 
         // Enrich with proposer, reviewer, approver names
-        if (revision.getProposedBy() != null) {
-            employeeRepository.findByIdAndTenantId(revision.getProposedBy(), tenantId)
-                    .ifPresent(emp -> response.setProposedByName(emp.getFirstName() + " " + emp.getLastName()));
+        if (revision.getProposedBy() != null && nameMap.containsKey(revision.getProposedBy())) {
+            response.setProposedByName(nameMap.get(revision.getProposedBy()));
         }
-        if (revision.getReviewedBy() != null) {
-            employeeRepository.findByIdAndTenantId(revision.getReviewedBy(), tenantId)
-                    .ifPresent(emp -> response.setReviewedByName(emp.getFirstName() + " " + emp.getLastName()));
+        if (revision.getReviewedBy() != null && nameMap.containsKey(revision.getReviewedBy())) {
+            response.setReviewedByName(nameMap.get(revision.getReviewedBy()));
         }
-        if (revision.getApprovedBy() != null) {
-            employeeRepository.findByIdAndTenantId(revision.getApprovedBy(), tenantId)
-                    .ifPresent(emp -> response.setApprovedByName(emp.getFirstName() + " " + emp.getLastName()));
+        if (revision.getApprovedBy() != null && nameMap.containsKey(revision.getApprovedBy())) {
+            response.setApprovedByName(nameMap.get(revision.getApprovedBy()));
         }
 
         return response;

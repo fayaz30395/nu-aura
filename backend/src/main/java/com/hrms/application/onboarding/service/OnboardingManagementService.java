@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class OnboardingManagementService implements ApprovalCallbackHandler {
 
+    private static final String PROCESS_NOT_FOUND = "Onboarding process not found";
+    private static final String TEMPLATE_NOT_FOUND = "Template not found";
+
     private final OnboardingProcessRepository onboardingRepository;
     private final EmployeeRepository employeeRepository;
     private final OnboardingChecklistTemplateRepository templateRepository;
@@ -144,7 +147,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     public OnboardingChecklistTemplateResponse getTemplateById(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .orElseThrow(() -> new IllegalArgumentException(TEMPLATE_NOT_FOUND));
         return mapToTemplateResponse(template);
     }
 
@@ -153,7 +156,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
             OnboardingChecklistTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .orElseThrow(() -> new IllegalArgumentException(TEMPLATE_NOT_FOUND));
 
         template.setName(request.getName());
         template.setDescription(request.getDescription());
@@ -173,7 +176,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .orElseThrow(() -> new IllegalArgumentException(TEMPLATE_NOT_FOUND));
 
         // Delete associated tasks first
         List<OnboardingTemplateTask> tasks = templateTaskRepository
@@ -269,7 +272,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         log.info("Updating onboarding process {} for tenant {}", processId, tenantId);
 
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Onboarding process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
 
         process.setStartDate(request.getStartDate());
         process.setExpectedCompletionDate(request.getExpectedCompletionDate());
@@ -286,7 +289,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         log.info("Updating onboarding process {} status to {} for tenant {}", processId, status, tenantId);
 
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Onboarding process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
 
         process.setStatus(status);
         if (status == OnboardingProcess.ProcessStatus.COMPLETED) {
@@ -305,7 +308,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                 tenantId);
 
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Onboarding process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
 
         process.setCompletionPercentage(completionPercentage);
         if (completionPercentage > 0 && process.getStatus() == OnboardingProcess.ProcessStatus.NOT_STARTED) {
@@ -324,7 +327,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     public OnboardingProcessResponse getProcessById(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Onboarding process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
         return mapToResponse(process);
     }
 
@@ -364,7 +367,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     public void deleteProcess(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Onboarding process not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
         onboardingRepository.delete(process);
     }
 

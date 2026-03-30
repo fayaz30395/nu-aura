@@ -44,8 +44,6 @@ public class PayrollProcessingConsumer {
     private final PayrollRunService payrollRunService;
     private final WebSocketNotificationService webSocketNotificationService;
 
-    private static final int BATCH_SIZE = 50;
-
     @KafkaListener(
             topics = KafkaTopics.PAYROLL_PROCESSING,
             groupId = KafkaTopics.GROUP_PAYROLL_PROCESSING_CONSUMER,

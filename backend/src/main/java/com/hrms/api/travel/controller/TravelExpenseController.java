@@ -81,29 +81,9 @@ public class TravelExpenseController {
             @PathVariable UUID id,
             @RequestBody(required = false) Map<String, Object> body
     ) {
-        UUID approverId = null;
-        BigDecimal approvedAmount = null;
-        String comments = null;
-
-        if (body != null) {
-            if (body.get("approverId") != null) {
-                try {
-                    approverId = UUID.fromString(body.get("approverId").toString());
-                } catch (IllegalArgumentException e) {
-                    throw new ValidationException("Invalid approverId format: " + body.get("approverId"));
-                }
-            }
-            if (body.get("approvedAmount") != null) {
-                try {
-                    approvedAmount = new BigDecimal(body.get("approvedAmount").toString());
-                } catch (NumberFormatException e) {
-                    throw new ValidationException("Invalid approvedAmount format: " + body.get("approvedAmount"));
-                }
-            }
-            if (body.get("comments") != null) {
-                comments = body.get("comments").toString();
-            }
-        }
+        UUID approverId = parseUuid(body, "approverId");
+        BigDecimal approvedAmount = parseBigDecimal(body, "approvedAmount");
+        String comments = readString(body, "comments");
 
         return ResponseEntity.ok(travelExpenseService.approveExpense(id, approverId, approvedAmount, comments));
     }
@@ -115,18 +95,8 @@ public class TravelExpenseController {
             @PathVariable UUID id,
             @RequestBody(required = false) Map<String, String> body
     ) {
-        UUID approverId = null;
-        String reason = null;
-        if (body != null) {
-            if (body.get("approverId") != null) {
-                try {
-                    approverId = UUID.fromString(body.get("approverId"));
-                } catch (IllegalArgumentException e) {
-                    throw new ValidationException("Invalid approverId format: " + body.get("approverId"));
-                }
-            }
-            reason = body.get("reason");
-        }
+        UUID approverId = parseUuid(body, "approverId");
+        String reason = body != null ? body.get("reason") : null;
         return ResponseEntity.ok(travelExpenseService.rejectExpense(id, approverId, reason));
     }
 
@@ -145,5 +115,31 @@ public class TravelExpenseController {
             @PathVariable UUID travelRequestId
     ) {
         return ResponseEntity.ok(travelExpenseService.getExpenseSummary(travelRequestId));
+    }
+
+    private UUID parseUuid(Map<String, ?> body, String key) {
+        if (body == null || body.get(key) == null) {
+            return null;
+        }
+        try {
+            return UUID.fromString(body.get(key).toString());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Invalid " + key + " format: " + body.get(key));
+        }
+    }
+
+    private BigDecimal parseBigDecimal(Map<String, ?> body, String key) {
+        if (body == null || body.get(key) == null) {
+            return null;
+        }
+        try {
+            return new BigDecimal(body.get(key).toString());
+        } catch (NumberFormatException e) {
+            throw new ValidationException("Invalid " + key + " format: " + body.get(key));
+        }
+    }
+
+    private String readString(Map<String, ?> body, String key) {
+        return body != null && body.get(key) != null ? body.get(key).toString() : null;
     }
 }

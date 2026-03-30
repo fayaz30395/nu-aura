@@ -9,9 +9,9 @@ import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.attendance.repository.HolidayRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
-import com.hrms.infrastructure.payroll.repository.PayrollRunRepository;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,20 +27,19 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class DashboardAnalyticsService {
 
     private final EmployeeRepository employeeRepository;
     private final AttendanceRecordRepository attendanceRepository;
     private final LeaveRequestRepository leaveRequestRepository;
-    private final PayrollRunRepository payrollRunRepository;
     private final PayslipRepository payslipRepository;
     private final HolidayRepository holidayRepository;
 
     /**
      * Legacy method for backward compatibility - returns admin view
      */
-    @Transactional(readOnly = true)
     public DashboardAnalyticsResponse getDashboardAnalytics(UUID tenantId) {
         DashboardContext context = DashboardContext.builder()
                 .tenantId(tenantId)
@@ -56,29 +55,20 @@ public class DashboardAnalyticsService {
      * - MANAGER: See only team/reportee data
      * - EMPLOYEE: See only personal data
      */
-    @Transactional(readOnly = true)
     public DashboardAnalyticsResponse getDashboardAnalytics(DashboardContext context) {
         LocalDate today = LocalDate.now();
         UUID tenantId = context.getTenantId();
 
-        String viewLabel;
-        Long teamSize;
-
-        switch (context.getViewType()) {
-            case ADMIN:
-                viewLabel = "Organization View";
-                teamSize = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
-                break;
-            case MANAGER:
-                viewLabel = "Team View";
-                teamSize = context.getTargetEmployeeIds() != null ? (long) context.getTargetEmployeeIds().size() : 0L;
-                break;
-            case EMPLOYEE:
-            default:
-                viewLabel = "Personal View";
-                teamSize = 1L;
-                break;
-        }
+        String viewLabel = switch (context.getViewType()) {
+            case ADMIN -> "Organization View";
+            case MANAGER -> "Team View";
+            default -> "Personal View";
+        };
+        Long teamSize = switch (context.getViewType()) {
+            case ADMIN -> employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
+            case MANAGER -> context.getTargetEmployeeIds() != null ? (long) context.getTargetEmployeeIds().size() : 0L;
+            default -> 1L;
+        };
 
         return DashboardAnalyticsResponse.builder()
                 .viewType(context.getViewType().name())
@@ -95,7 +85,6 @@ public class DashboardAnalyticsService {
     /**
      * Build DashboardContext for a user based on their role
      */
-    @Transactional(readOnly = true)
     public DashboardContext buildContext(UUID tenantId, UUID userId, UUID employeeId, boolean isAdmin, boolean isManager) {
         DashboardContext.ViewType viewType;
         List<UUID> targetEmployeeIds = null;
@@ -518,20 +507,12 @@ public class DashboardAnalyticsService {
     }
 
     private String getColorForLeaveType(String leaveType) {
-        String upperType = leaveType.toUpperCase();
-        switch (upperType) {
-            case "ANNUAL":
-            case "CASUAL":
-                return "#10b981";  // Green
-            case "SICK":
-                return "#ef4444";  // Red
-            case "MATERNITY":
-            case "PATERNITY":
-                return "#8b5cf6";  // Purple
-            case "COMPENSATORY":
-                return "#f59e0b";  // Orange
-            default:
-                return "#6b7280";  // Gray
-        }
+        return switch (leaveType.toUpperCase()) {
+            case "ANNUAL", "CASUAL" -> "#10b981";       // Green
+            case "SICK" -> "#ef4444";                     // Red
+            case "MATERNITY", "PATERNITY" -> "#8b5cf6";  // Purple
+            case "COMPENSATORY" -> "#f59e0b";             // Orange
+            default -> "#6b7280";                         // Gray
+        };
     }
 }

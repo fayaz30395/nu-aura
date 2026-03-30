@@ -4,8 +4,8 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.lang.Nullable;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -84,7 +84,8 @@ public class WorkflowDefinition extends TenantAware {
     @Builder.Default
     private List<ApprovalStep> steps = new ArrayList<>();
 
-    // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
+    // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from
+    // BaseEntity
 
     public enum EntityType {
         LEAVE_REQUEST,
@@ -111,16 +112,17 @@ public class WorkflowDefinition extends TenantAware {
     }
 
     public enum WorkflowType {
-        SEQUENTIAL,      // One after another
-        PARALLEL,        // All at once, need all approvals
-        CONDITIONAL,     // Based on conditions/rules
-        HIERARCHICAL,    // Based on reporting structure
-        HYBRID           // Mix of above
+        SEQUENTIAL, // One after another
+        PARALLEL, // All at once, need all approvals
+        CONDITIONAL, // Based on conditions/rules
+        HIERARCHICAL, // Based on reporting structure
+        HYBRID // Mix of above
     }
 
     @PrePersist
     protected void onCreate() {
-        if (workflowVersion == 0) workflowVersion = 1;
+        if (workflowVersion == 0)
+            workflowVersion = 1;
     }
 
     public void addStep(ApprovalStep step) {
@@ -133,6 +135,7 @@ public class WorkflowDefinition extends TenantAware {
         step.setWorkflowDefinition(null);
     }
 
+    @Nullable
     public ApprovalStep getNextStep(int currentStepOrder) {
         return steps.stream()
                 .filter(s -> s.getStepOrder() > currentStepOrder)

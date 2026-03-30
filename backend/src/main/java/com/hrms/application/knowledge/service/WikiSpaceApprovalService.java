@@ -5,6 +5,7 @@ import com.hrms.domain.knowledge.WikiSpace;
 import com.hrms.infrastructure.knowledge.repository.WikiSpaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class WikiSpaceApprovalService {
     }
 
     @Transactional(readOnly = true)
+    @Nullable
     public UUID getApprover(UUID spaceId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 

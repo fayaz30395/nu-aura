@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -210,7 +209,7 @@ public class Feedback360Service {
 
                     return saved;
                 })
-                .orElseThrow(() -> new RuntimeException("Response not found: " + responseId));
+                .orElseThrow(() -> new IllegalArgumentException("Response not found: " + responseId));
     }
 
     @Transactional(readOnly = true)
@@ -330,7 +329,8 @@ public class Feedback360Service {
 
         // Calculate final rating (weighted average)
         List<BigDecimal> allRatings = new ArrayList<>();
-        if (managerOverallRating != null) allRatings.add(managerOverallRating);
+        if (managerOverallRating != null)
+            allRatings.add(managerOverallRating);
         allRatings.addAll(peerRatings);
         allRatings.addAll(upwardRatings);
         summary.setFinalRating(calculateAverage(allRatings));

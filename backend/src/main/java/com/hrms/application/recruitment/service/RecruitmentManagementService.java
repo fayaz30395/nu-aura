@@ -1,17 +1,26 @@
 package com.hrms.application.recruitment.service;
 
 import com.hrms.api.recruitment.dto.*;
-import com.hrms.domain.employee.Employee;
-import com.hrms.domain.recruitment.*;
-import com.hrms.domain.user.RoleScope;
-import com.hrms.infrastructure.employee.repository.EmployeeRepository;
-import com.hrms.infrastructure.recruitment.repository.*;
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
+import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
-import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.domain.audit.AuditLog.AuditAction;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.event.recruitment.CandidateHiredEvent;
+import com.hrms.domain.recruitment.Candidate;
+import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.workflow.WorkflowDefinition;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
+import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
+import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,23 +30,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
-import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
-import com.hrms.application.workflow.service.WorkflowService;
-import com.hrms.domain.workflow.WorkflowDefinition;
-import com.hrms.application.event.DomainEventPublisher;
-import com.hrms.domain.event.recruitment.CandidateHiredEvent;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,6 +40,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class RecruitmentManagementService implements ApprovalCallbackHandler {
+
+    private static final String CANDIDATE_NOT_FOUND = "Candidate not found";
 
     private final JobOpeningRepository jobOpeningRepository;
     private final CandidateRepository candidateRepository;
@@ -148,7 +145,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         log.info("Updating candidate {} for tenant {}", candidateId, tenantId);
 
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+                .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         candidate.setFirstName(request.getFirstName());
         candidate.setLastName(request.getLastName());
@@ -186,7 +183,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     public CandidateResponse getCandidateById(UUID candidateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+                .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         String permission = determineViewPermission();
         validateCandidateAccess(candidate, permission);
@@ -265,8 +262,8 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     }
 
     private CandidateResponse mapToCandidateResponseBatch(Candidate candidate,
-                                                            Map<UUID, String> jobTitles,
-                                                            Map<UUID, String> recruiterNames) {
+                                                          Map<UUID, String> jobTitles,
+                                                          Map<UUID, String> recruiterNames) {
         String jobTitle = candidate.getJobOpeningId() != null
                 ? jobTitles.get(candidate.getJobOpeningId()) : null;
         String recruiterName = candidate.getAssignedRecruiterId() != null
@@ -310,7 +307,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     public void deleteCandidate(UUID candidateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+                .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         auditLogService.logAction(
                 "CANDIDATE",
@@ -337,7 +334,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         log.info("Processing offer acceptance for candidate {} in tenant {}", candidateId, tenantId);
 
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+                .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         if (candidate.getStatus() != Candidate.CandidateStatus.OFFER_EXTENDED) {
             throw new IllegalStateException(
@@ -378,7 +375,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         log.info("Processing offer decline for candidate {} in tenant {}", candidateId, tenantId);
 
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+                .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         if (candidate.getStatus() != Candidate.CandidateStatus.OFFER_EXTENDED) {
             throw new IllegalStateException(
@@ -415,10 +412,9 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         log.info("Moving candidate {} to stage {} for tenant {}", candidateId, stage, tenantId);
 
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+                .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         Candidate.RecruitmentStage oldStage = candidate.getCurrentStage();
-        Candidate.CandidateStatus oldStatus = candidate.getStatus();
 
         // BIZ-011: Validate stage transition — prevent skipping stages
         // Rejection (CANDIDATE_REJECTED, PANEL_REJECT) is always allowed from any stage
@@ -482,10 +478,9 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         log.info("Creating offer for candidate {} for tenant {}", candidateId, tenantId);
 
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+                .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
-        Candidate.RecruitmentStage oldStage = candidate.getCurrentStage();
 
         candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
         candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
@@ -506,8 +501,8 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
                 oldStatus.toString(),
                 Candidate.CandidateStatus.OFFER_EXTENDED.toString(),
                 "Offer extended with salary: " + (request.getOfferedSalary() != null ? request.getOfferedSalary() : "N/A") +
-                ", Position: " + (request.getPositionTitle() != null ? request.getPositionTitle() : "N/A") +
-                ", Joining Date: " + (request.getJoiningDate() != null ? request.getJoiningDate() : "N/A")
+                        ", Position: " + (request.getPositionTitle() != null ? request.getPositionTitle() : "N/A") +
+                        ", Joining Date: " + (request.getJoiningDate() != null ? request.getJoiningDate() : "N/A")
         );
 
         try {
@@ -676,6 +671,9 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
             case CANDIDATE_REJECTED:
                 candidate.setStatus(Candidate.CandidateStatus.REJECTED);
                 break;
+            default:
+                log.debug("No status mapping for stage: {}", stage);
+                break;
         }
     }
 
@@ -732,7 +730,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
      * Returns the actual permission that has a scope assigned, not just any
      * permission that passes hasPermission() check. This ensures
      * getPermissionScope() can find the scope for validation.
-     *
+     * <p>
      * Note: Checks for explicit RECRUITMENT_VIEW_* and CANDIDATE_VIEW permissions
      * first, then falls back to RECRUITMENT:MANAGE.
      * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled
@@ -818,6 +816,10 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
                 if (targetEmployeeId.equals(currentEmployeeId) || isInCustomTargets(targetEmployeeId, permission)) {
                     return;
                 }
+                break;
+
+            default:
+                log.warn("Unhandled scope type: {}", scope);
                 break;
         }
 

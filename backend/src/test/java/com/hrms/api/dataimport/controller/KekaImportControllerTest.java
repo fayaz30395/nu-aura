@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.*;
@@ -53,34 +53,34 @@ class KekaImportControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private KekaImportService kekaImportService;
 
-    @MockBean
+    @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockBean
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @MockBean
+    @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockBean
+    @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
 
-    @MockBean
+    @MockitoBean
     private RateLimitFilter rateLimitFilter;
 
-    @MockBean
+    @MockitoBean
     private UserDetailsService userDetailsService;
 
-    @MockBean
+    @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
 
-    @MockBean
+    @MockitoBean
     private ApiKeyService apiKeyService;
 
-    @MockBean
+    @MockitoBean
     private ScopeContextService scopeContextService;
 
     private static final String IMPORT_ID = "IMPORT-2026-001";

@@ -23,6 +23,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PreboardingService {
 
+    private static final String CANDIDATE_NOT_FOUND = "Candidate not found";
+
     private final PreboardingCandidateRepository candidateRepository;
 
     /**
@@ -195,7 +197,7 @@ public class PreboardingService {
     public void cancelInvitation(UUID candidateId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         PreboardingCandidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CANDIDATE_NOT_FOUND));
 
         candidate.setStatus(PreboardingStatus.CANCELLED);
         candidateRepository.save(candidate);
@@ -206,7 +208,7 @@ public class PreboardingService {
     public void resendInvitation(UUID candidateId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         PreboardingCandidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CANDIDATE_NOT_FOUND));
 
         candidate.setAccessToken(UUID.randomUUID().toString());
         candidate.setTokenExpiresAt(LocalDateTime.now().plusDays(30));
@@ -221,7 +223,7 @@ public class PreboardingService {
     public void markConverted(UUID candidateId, UUID employeeId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         PreboardingCandidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CANDIDATE_NOT_FOUND));
 
         candidate.setStatus(PreboardingStatus.CONVERTED);
         candidate.setEmployeeId(employeeId);

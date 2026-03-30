@@ -5,7 +5,6 @@ import java.util.Map;
 import com.hrms.application.auth.service.AuthService;
 import com.hrms.application.auth.service.MfaService;
 import com.hrms.common.config.CookieConfig;
-import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +14,6 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -140,12 +138,9 @@ public class AuthController {
             HttpServletResponse response) {
 
         // Extract access token from header or cookie
-        String accessToken = null;
-        if (accessTokenCookie != null) {
-            accessToken = accessTokenCookie;
-        } else if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            accessToken = authHeader.substring(7);
-        }
+        String accessToken = accessTokenCookie != null
+                ? accessTokenCookie
+                : (authHeader != null && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : null);
 
         // Revoke tokens
         if (accessToken != null) {

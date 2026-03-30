@@ -109,19 +109,17 @@ public class ApprovalEscalationController {
                 .map(WorkflowDefinition::getName)
                 .orElse(null);
 
-        String fallbackRoleName = null;
-        if (config.getFallbackRoleId() != null) {
-            fallbackRoleName = roleRepository.findById(config.getFallbackRoleId())
-                    .map(Role::getName)
-                    .orElse(null);
-        }
+        String fallbackRoleName = config.getFallbackRoleId() != null
+                ? roleRepository.findById(config.getFallbackRoleId())
+                        .map(Role::getName)
+                        .orElse(null)
+                : null;
 
-        String fallbackUserName = null;
-        if (config.getFallbackUserId() != null) {
-            fallbackUserName = userRepository.findById(config.getFallbackUserId())
-                    .map(u -> u.getFirstName() + " " + u.getLastName())
-                    .orElse(null);
-        }
+        String fallbackUserName = config.getFallbackUserId() != null
+                ? userRepository.findById(config.getFallbackUserId())
+                        .map(u -> u.getFirstName() + " " + u.getLastName())
+                        .orElse(null)
+                : null;
 
         return EscalationConfigResponse.builder()
                 .id(config.getId())

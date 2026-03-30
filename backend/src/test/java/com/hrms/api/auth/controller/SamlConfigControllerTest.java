@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -57,37 +57,37 @@ class SamlConfigControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private SamlConfigurationService samlConfigService;
 
-    @MockBean
+    @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockBean
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @MockBean
+    @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockBean
+    @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
 
-    @MockBean
+    @MockitoBean
     private UserDetailsService userDetailsService;
 
-    @MockBean
+    @MockitoBean
     private ScopeContextService scopeContextService;
 
-    @MockBean
+    @MockitoBean
     private EmployeeRepository employeeRepository;
 
-    @MockBean
+    @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
 
-    @MockBean
+    @MockitoBean
     private ApiKeyService apiKeyService;
 
-    @MockBean
+    @MockitoBean
     private RateLimitFilter rateLimitFilter;
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");

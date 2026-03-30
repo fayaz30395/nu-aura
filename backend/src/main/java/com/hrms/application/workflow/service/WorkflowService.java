@@ -40,6 +40,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WorkflowService {
 
+    // Duplicate string constants extracted for SonarQube S1192
+    private static final String WORKFLOW_DEF_NOT_FOUND = "Workflow definition not found";
+    private static final String WORKFLOW_EXEC_NOT_FOUND = "Workflow execution not found";
+    private static final String AUDIT_ENTITY_WORKFLOW_EXECUTION = "WORKFLOW_EXECUTION";
+
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
     private final ApprovalStepRepository approvalStepRepository;
     private final WorkflowExecutionRepository workflowExecutionRepository;
@@ -230,7 +235,7 @@ public class WorkflowService {
     public WorkflowDefinitionResponse getWorkflowDefinition(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WorkflowDefinition definition = workflowDefinitionRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new BusinessException("Workflow definition not found"));
+                .orElseThrow(() -> new BusinessException(WORKFLOW_DEF_NOT_FOUND));
         return WorkflowDefinitionResponse.from(definition);
     }
 
@@ -255,7 +260,7 @@ public class WorkflowService {
         UUID currentUser = SecurityContext.getCurrentUserId();
 
         WorkflowDefinition definition = workflowDefinitionRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new BusinessException("Workflow definition not found"));
+                .orElseThrow(() -> new BusinessException(WORKFLOW_DEF_NOT_FOUND));
 
         // Check for active executions
         long activeExecutions = workflowExecutionRepository.countByStatus(tenantId,
@@ -311,7 +316,7 @@ public class WorkflowService {
     public void deactivateWorkflowDefinition(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WorkflowDefinition definition = workflowDefinitionRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new BusinessException("Workflow definition not found"));
+                .orElseThrow(() -> new BusinessException(WORKFLOW_DEF_NOT_FOUND));
 
         definition.setActive(false);
         // updatedBy is handled by JPA auditing via @LastModifiedBy in BaseEntity
@@ -464,32 +469,16 @@ public class WorkflowService {
         UUID tenantId = execution.getTenantId();
         UUID approverId = null;
 
-        switch (step.getApproverType()) {
-            case SPECIFIC_USER:
-                approverId = step.getSpecificUserId();
-                break;
-            case REPORTING_MANAGER:
-                approverId = findReportingManager(execution.getRequesterId(), tenantId);
-                break;
-            case DEPARTMENT_HEAD:
-                approverId = findDepartmentHead(execution.getDepartmentId(), tenantId);
-                break;
-            case HR_MANAGER:
-                approverId = findUserByRoleCode("HR_MANAGER", tenantId);
-                break;
-            case FINANCE_MANAGER:
-                approverId = findUserByRoleCode("FINANCE_MANAGER", tenantId);
-                break;
-            case CEO:
-                approverId = findUserByRoleCode("CEO", tenantId);
-                break;
-            case ROLE:
-            case ANY_OF_ROLE:
-                approverId = findUserByRoleId(step.getRoleId(), tenantId);
-                break;
-            default:
-                approverId = step.getSpecificUserId();
-        }
+        approverId = switch (step.getApproverType()) {
+            case SPECIFIC_USER -> step.getSpecificUserId();
+            case REPORTING_MANAGER -> findReportingManager(execution.getRequesterId(), tenantId);
+            case DEPARTMENT_HEAD -> findDepartmentHead(execution.getDepartmentId(), tenantId);
+            case HR_MANAGER -> findUserByRoleCode("HR_MANAGER", tenantId);
+            case FINANCE_MANAGER -> findUserByRoleCode("FINANCE_MANAGER", tenantId);
+            case CEO -> findUserByRoleCode("CEO", tenantId);
+            case ROLE, ANY_OF_ROLE -> findUserByRoleId(step.getRoleId(), tenantId);
+            default -> step.getSpecificUserId();
+        };
 
         if (approverId == null) {
             log.warn("Could not determine approver for step '{}' with approver type '{}' in workflow execution {}",
@@ -512,7 +501,7 @@ public class WorkflowService {
 
     private UUID findReportingManager(UUID employeeUserId, UUID tenantId) {
         return employeeRepository.findByUserIdAndTenantId(employeeUserId, tenantId)
-                .map(employee -> employee.getManagerId())
+                .map(com.hrms.domain.employee.Employee::getManagerId)
                 .orElse(null);
     }
 
@@ -532,7 +521,7 @@ public class WorkflowService {
             return null;
         }
         return departmentRepository.findByIdAndTenantId(departmentId, tenantId)
-                .map(dept -> dept.getManagerId())
+                .map(com.hrms.domain.employee.Department::getManagerId)
                 .orElse(null);
     }
 
@@ -648,7 +637,7 @@ public class WorkflowService {
         UUID currentUser = SecurityContext.getCurrentUserId();
 
         WorkflowExecution execution = workflowExecutionRepository.findByIdAndTenantId(executionId, tenantId)
-                .orElseThrow(() -> new BusinessException("Workflow execution not found"));
+                .orElseThrow(() -> new BusinessException(WORKFLOW_EXEC_NOT_FOUND));
 
         // Idempotency: if the workflow is already in a terminal state, return 409 (CONFLICT)
         // BusinessException is mapped to HTTP 409 by GlobalExceptionHandler
@@ -685,7 +674,7 @@ public class WorkflowService {
                 advanceToNextStep(execution, currentStep);
                 // Audit log: step approved
                 auditLogService.logAction(
-                        "WORKFLOW_EXECUTION",
+                        AUDIT_ENTITY_WORKFLOW_EXECUTION,
                         executionId,
                         AuditAction.STATUS_CHANGE,
                         StepExecution.StepStatus.PENDING.toString(),
@@ -700,7 +689,7 @@ public class WorkflowService {
                 execution.reject(request.getComments());
                 // Audit log: workflow rejected
                 auditLogService.logAction(
-                        "WORKFLOW_EXECUTION",
+                        AUDIT_ENTITY_WORKFLOW_EXECUTION,
                         executionId,
                         AuditAction.STATUS_CHANGE,
                         oldStatus.toString(),
@@ -715,7 +704,7 @@ public class WorkflowService {
                 execution.setStatus(WorkflowExecution.ExecutionStatus.RETURNED);
                 // Audit log: workflow returned
                 auditLogService.logAction(
-                        "WORKFLOW_EXECUTION",
+                        AUDIT_ENTITY_WORKFLOW_EXECUTION,
                         executionId,
                         AuditAction.STATUS_CHANGE,
                         oldStatus.toString(),
@@ -736,7 +725,7 @@ public class WorkflowService {
                 // Audit log: approval delegated
                 String delegateName = getUserName(request.getDelegateToUserId(), tenantId);
                 auditLogService.logAction(
-                        "WORKFLOW_EXECUTION",
+                        AUDIT_ENTITY_WORKFLOW_EXECUTION,
                         executionId,
                         AuditAction.UPDATE,
                         "Assigned to: " + userName,
@@ -749,7 +738,7 @@ public class WorkflowService {
                 execution.setStatus(WorkflowExecution.ExecutionStatus.ON_HOLD);
                 // Audit log: workflow on hold
                 auditLogService.logAction(
-                        "WORKFLOW_EXECUTION",
+                        AUDIT_ENTITY_WORKFLOW_EXECUTION,
                         executionId,
                         AuditAction.STATUS_CHANGE,
                         oldStatus.toString(),
@@ -880,7 +869,7 @@ public class WorkflowService {
     public WorkflowExecutionResponse getWorkflowExecution(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WorkflowExecution execution = workflowExecutionRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new BusinessException("Workflow execution not found"));
+                .orElseThrow(() -> new BusinessException(WORKFLOW_EXEC_NOT_FOUND));
         return WorkflowExecutionResponse.from(execution);
     }
 
@@ -888,7 +877,7 @@ public class WorkflowService {
     public WorkflowExecutionResponse getWorkflowByReferenceNumber(String referenceNumber) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WorkflowExecution execution = workflowExecutionRepository.findByReferenceNumberAndTenantId(referenceNumber, tenantId)
-                .orElseThrow(() -> new BusinessException("Workflow execution not found"));
+                .orElseThrow(() -> new BusinessException(WORKFLOW_EXEC_NOT_FOUND));
         return WorkflowExecutionResponse.from(execution);
     }
 
@@ -996,10 +985,7 @@ public class WorkflowService {
 
         // Guard: if tenant or user context is unavailable, return zeros
         if (tenantId == null || currentUser == null) {
-            counts.put("pending", 0L);
-            counts.put("approvedToday", 0L);
-            counts.put("rejectedToday", 0L);
-            return counts;
+            return Map.of("pending", 0L, "approvedToday", 0L, "rejectedToday", 0L);
         }
 
         try {
@@ -1033,7 +1019,7 @@ public class WorkflowService {
             counts.putIfAbsent("rejectedToday", 0L);
         }
 
-        return counts;
+        return Collections.unmodifiableMap(counts);
     }
 
     @Transactional
@@ -1042,7 +1028,7 @@ public class WorkflowService {
         UUID currentUser = SecurityContext.getCurrentUserId();
 
         WorkflowExecution execution = workflowExecutionRepository.findByIdAndTenantId(executionId, tenantId)
-                .orElseThrow(() -> new BusinessException("Workflow execution not found"));
+                .orElseThrow(() -> new BusinessException(WORKFLOW_EXEC_NOT_FOUND));
 
         if (!execution.getRequesterId().equals(currentUser)) {
             throw new BusinessException("Only the requester can cancel this workflow");

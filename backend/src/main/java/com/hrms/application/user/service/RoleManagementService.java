@@ -7,7 +7,6 @@ import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.domain.employee.Department;
-import com.hrms.domain.employee.Employee;
 import com.hrms.domain.attendance.OfficeLocation;
 import com.hrms.domain.user.*;
 import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
@@ -20,7 +19,6 @@ import com.hrms.infrastructure.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +38,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoleManagementService {
+
+    private static final String ROLE_NOT_FOUND = "Role not found";
+    private static final String CANNOT_MODIFY_SYSTEM_ROLE = "Cannot modify permissions for system role";
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
@@ -63,7 +64,7 @@ public class RoleManagementService {
     public RoleResponse getRoleById(UUID roleId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
         return mapToResponse(role);
     }
 
@@ -116,7 +117,7 @@ public class RoleManagementService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
 
         // Prevent updating system roles
         if (role.getIsSystemRole()) {
@@ -170,7 +171,7 @@ public class RoleManagementService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
 
         // Prevent deleting system roles
         if (role.getIsSystemRole()) {
@@ -198,11 +199,11 @@ public class RoleManagementService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
 
         // Prevent modifying system roles
         if (role.getIsSystemRole()) {
-            throw new BusinessException("Cannot modify permissions for system role");
+            throw new BusinessException(CANNOT_MODIFY_SYSTEM_ROLE);
         }
 
         // Get permissions from codes
@@ -247,11 +248,11 @@ public class RoleManagementService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
 
         // Prevent modifying system roles
         if (role.getIsSystemRole()) {
-            throw new BusinessException("Cannot modify permissions for system role");
+            throw new BusinessException(CANNOT_MODIFY_SYSTEM_ROLE);
         }
 
         // Capture old permissions for audit
@@ -347,10 +348,10 @@ public class RoleManagementService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
 
         if (role.getIsSystemRole()) {
-            throw new BusinessException("Cannot modify permissions for system role");
+            throw new BusinessException(CANNOT_MODIFY_SYSTEM_ROLE);
         }
 
         RolePermission rolePermission = role.getPermissions().stream()
@@ -392,11 +393,11 @@ public class RoleManagementService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
 
         // Prevent modifying system roles
         if (role.getIsSystemRole()) {
-            throw new BusinessException("Cannot modify permissions for system role");
+            throw new BusinessException(CANNOT_MODIFY_SYSTEM_ROLE);
         }
 
         // Get permissions from codes
@@ -426,11 +427,11 @@ public class RoleManagementService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ROLE_NOT_FOUND));
 
         // Prevent modifying system roles
         if (role.getIsSystemRole()) {
-            throw new BusinessException("Cannot modify permissions for system role");
+            throw new BusinessException(CANNOT_MODIFY_SYSTEM_ROLE);
         }
 
         // Get permissions from codes
@@ -608,22 +609,17 @@ public class RoleManagementService {
     private String resolveTargetName(CustomScopeTarget target) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        switch (target.getTargetType()) {
-            case EMPLOYEE:
-                return employeeRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
+        return switch (target.getTargetType()) {
+            case EMPLOYEE -> employeeRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
                     .map(emp -> emp.getFirstName() + " " + emp.getLastName())
                     .orElse("Unknown Employee");
-            case DEPARTMENT:
-                return departmentRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
+            case DEPARTMENT -> departmentRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
                     .map(Department::getName)
                     .orElse("Unknown Department");
-            case LOCATION:
-                return officeLocationRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
+            case LOCATION -> officeLocationRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
                     .map(OfficeLocation::getLocationName)
                     .orElse("Unknown Location");
-            default:
-                return "Unknown";
-        }
+        };
     }
 
     /**
@@ -712,8 +708,8 @@ public class RoleManagementService {
         Queue<Role> toProcess = new LinkedList<>();
 
         Optional<Role> roleOpt = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId);
-        if (!roleOpt.isPresent()) {
-            throw new ResourceNotFoundException("Role not found");
+        if (roleOpt.isEmpty()) {
+            throw new ResourceNotFoundException(ROLE_NOT_FOUND);
         }
 
         toProcess.offer(roleOpt.get());

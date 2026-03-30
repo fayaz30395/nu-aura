@@ -125,12 +125,11 @@ public class CustomReportService {
 
         // Sort
         if (StringUtils.hasText(query.getSortBy())) {
-            String sortBy = query.getSortBy();
             boolean asc = !"DESC".equalsIgnoreCase(query.getSortDirection());
             Comparator<String> valueComparator = asc ? Comparator.naturalOrder() : Comparator.reverseOrder();
             rows = rows.stream()
                     .sorted(Comparator.comparing(
-                            r -> Objects.toString(r.getOrDefault(sortBy, ""), ""),
+                            r -> Objects.toString(r.getOrDefault(query.getSortBy(), ""), ""),
                             valueComparator))
                     .toList();
         }

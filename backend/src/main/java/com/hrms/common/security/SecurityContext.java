@@ -251,15 +251,10 @@ public class SecurityContext {
             return false;
         }
         Set<String> permissions = getCurrentPermissions();
+        String appCode = getCurrentAppCode();
 
         // Check for system admin (bypasses all)
-        String appCode = getCurrentAppCode();
-        if (appCode != null && permissions.contains(appCode + ":SYSTEM:ADMIN")) {
-            return true;
-        }
-
-        // Also check legacy system admin
-        if (permissions.contains(Permission.SYSTEM_ADMIN)) {
+        if (isSystemAdminPermission(permissions, appCode)) {
             return true;
         }
 
@@ -268,9 +263,36 @@ public class SecurityContext {
             return true;
         }
 
-        // BUG-012 FIX: Normalize format for comparison — handle DB format (employee.read)
-        // vs code format (EMPLOYEE:READ). The JwtAuthenticationFilter normalizes at load time,
-        // but this provides a safety net for any code path that might bypass the filter.
+        // BUG-012 FIX: Check normalized formats (dot vs colon)
+        if (matchesNormalizedFormat(permission, permissions)) {
+            return true;
+        }
+
+        // If permission doesn't have app prefix, try adding current app prefix
+        if (matchesWithAppPrefix(permission, permissions, appCode)) {
+            return true;
+        }
+
+        // Check permission hierarchy: MODULE:MANAGE implies MODULE:* (any action)
+        return matchesPermissionHierarchy(permission, permissions, appCode);
+    }
+
+    /**
+     * Check if user holds a system admin permission (bypasses all other checks).
+     */
+    private static boolean isSystemAdminPermission(Set<String> permissions, String appCode) {
+        if (appCode != null && permissions.contains(appCode + ":SYSTEM:ADMIN")) {
+            return true;
+        }
+        return permissions.contains(Permission.SYSTEM_ADMIN);
+    }
+
+    /**
+     * BUG-012 FIX: Normalize format for comparison — handle DB format (employee.read)
+     * vs code format (EMPLOYEE:READ). The JwtAuthenticationFilter normalizes at load time,
+     * but this provides a safety net for any code path that might bypass the filter.
+     */
+    private static boolean matchesNormalizedFormat(String permission, Set<String> permissions) {
         String normalizedPermission = permission.contains(".")
                 ? permission.replace('.', ':').toUpperCase()
                 : permission;
@@ -281,80 +303,75 @@ public class SecurityContext {
         String dotFormat = permission.contains(":") && !permission.contains("SYSTEM")
                 ? permission.replace(':', '.').toLowerCase()
                 : null;
-        if (dotFormat != null && permissions.contains(dotFormat)) {
+        return dotFormat != null && permissions.contains(dotFormat);
+    }
+
+    /**
+     * Check if permission matches when the current app prefix is prepended.
+     */
+    private static boolean matchesWithAppPrefix(String permission, Set<String> permissions, String appCode) {
+        if (appCode != null && !permission.startsWith(appCode + ":")) {
+            return permissions.contains(appCode + ":" + permission);
+        }
+        return false;
+    }
+
+    /**
+     * Check permission hierarchy: MANAGE implies all actions, READ implies VIEW_*,
+     * and higher view scopes imply lower ones (VIEW_ALL > VIEW_TEAM > VIEW_DEPARTMENT > VIEW_SELF).
+     */
+    private static boolean matchesPermissionHierarchy(String permission, Set<String> permissions, String appCode) {
+        String module = extractModule(permission, appCode);
+        if (module == null) {
+            return false;
+        }
+
+        // Check if user has MANAGE permission for this module
+        if (containsPermOrPrefixed(permissions, module + ":MANAGE", appCode)) {
             return true;
         }
 
-        // If permission doesn't have app prefix, try adding current app prefix
-        if (appCode != null && !permission.startsWith(appCode + ":")) {
-            String fullPermission = appCode + ":" + permission;
-            if (permissions.contains(fullPermission)) {
+        // Check if user has READ permission and requested action is VIEW_*
+        if (permission.contains(":VIEW") && containsPermOrPrefixed(permissions, module + ":READ", appCode)) {
+            return true;
+        }
+
+        // Permission scope hierarchy: VIEW_ALL > VIEW_TEAM > VIEW_DEPARTMENT > VIEW_SELF
+        return matchesViewScopeHierarchy(permission, permissions, module, appCode);
+    }
+
+    /**
+     * Check if a higher view scope grants the requested lower scope.
+     */
+    private static boolean matchesViewScopeHierarchy(String permission, Set<String> permissions,
+                                                      String module, String appCode) {
+        String[][] scopeHierarchy;
+        if (permission.endsWith(":VIEW_SELF")) {
+            scopeHierarchy = new String[][]{{":VIEW_TEAM"}, {":VIEW_DEPARTMENT"}, {":VIEW_ALL"}};
+        } else if (permission.endsWith(":VIEW_DEPARTMENT")) {
+            scopeHierarchy = new String[][]{{":VIEW_TEAM"}, {":VIEW_ALL"}};
+        } else if (permission.endsWith(":VIEW_TEAM")) {
+            scopeHierarchy = new String[][]{{":VIEW_ALL"}};
+        } else {
+            return false;
+        }
+
+        for (String[] scope : scopeHierarchy) {
+            if (containsPermOrPrefixed(permissions, module + scope[0], appCode)) {
                 return true;
             }
         }
-
-        // Check permission hierarchy: MODULE:MANAGE implies MODULE:* (any action)
-        // Extract module from permission (e.g., "ATTENDANCE:MARK" -> "ATTENDANCE")
-        String module = extractModule(permission, appCode);
-        if (module != null) {
-            // Check if user has MANAGE permission for this module
-            String managePermission = module + ":MANAGE";
-            if (permissions.contains(managePermission)) {
-                return true;
-            }
-            // Also check with app prefix
-            if (appCode != null) {
-                String fullManagePermission = appCode + ":" + module + ":MANAGE";
-                if (permissions.contains(fullManagePermission)) {
-                    return true;
-                }
-            }
-
-            // Check if user has READ permission and requested action is VIEW_*
-            if (permission.contains(":VIEW")) {
-                String readPermission = module + ":READ";
-                if (permissions.contains(readPermission)) {
-                    return true;
-                }
-                if (appCode != null && permissions.contains(appCode + ":" + readPermission)) {
-                    return true;
-                }
-            }
-
-            // Permission scope hierarchy: VIEW_ALL > VIEW_TEAM > VIEW_DEPARTMENT > VIEW_SELF
-            // A higher scope implies all lower scopes (e.g., VIEW_TEAM implies VIEW_SELF)
-            if (permission.endsWith(":VIEW_SELF")) {
-                for (String higherScope : new String[]{":VIEW_TEAM", ":VIEW_DEPARTMENT", ":VIEW_ALL"}) {
-                    String higherPerm = module + higherScope;
-                    if (permissions.contains(higherPerm)) {
-                        return true;
-                    }
-                    if (appCode != null && permissions.contains(appCode + ":" + higherPerm)) {
-                        return true;
-                    }
-                }
-            } else if (permission.endsWith(":VIEW_DEPARTMENT")) {
-                for (String higherScope : new String[]{":VIEW_TEAM", ":VIEW_ALL"}) {
-                    String higherPerm = module + higherScope;
-                    if (permissions.contains(higherPerm)) {
-                        return true;
-                    }
-                    if (appCode != null && permissions.contains(appCode + ":" + higherPerm)) {
-                        return true;
-                    }
-                }
-            } else if (permission.endsWith(":VIEW_TEAM")) {
-                String higherPerm = module + ":VIEW_ALL";
-                if (permissions.contains(higherPerm)) {
-                    return true;
-                }
-                if (appCode != null && permissions.contains(appCode + ":" + higherPerm)) {
-                    return true;
-                }
-            }
-        }
-
         return false;
+    }
+
+    /**
+     * Check if permissions contain the given permission directly or with the app prefix.
+     */
+    private static boolean containsPermOrPrefixed(Set<String> permissions, String perm, String appCode) {
+        if (permissions.contains(perm)) {
+            return true;
+        }
+        return appCode != null && permissions.contains(appCode + ":" + perm);
     }
 
     /**

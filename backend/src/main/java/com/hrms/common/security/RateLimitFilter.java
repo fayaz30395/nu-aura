@@ -107,34 +107,25 @@ public class RateLimitFilter extends OncePerRequestFilter {
      * Fallback to in-memory rate limiting when Redis is unavailable.
      */
     private RateLimitResult tryConsumeInMemory(String clientKey, RateLimitType limitType) {
-        boolean allowed;
-        long remaining;
-
-        switch (limitType) {
-            case AUTH:
-                allowed = rateLimitConfig.tryConsumeAuth(clientKey);
-                remaining = rateLimitConfig.getAuthRemainingTokens(clientKey);
-                break;
-            case EXPORT:
-                allowed = rateLimitConfig.tryConsumeExport(clientKey);
-                remaining = allowed ? limitType.getLimit() - 1 : 0;
-                break;
-            case WALL:
-                allowed = rateLimitConfig.tryConsumeWall(clientKey);
-                remaining = allowed ? limitType.getLimit() - 1 : 0;
-                break;
-            case WEBHOOK:
-                allowed = rateLimitConfig.tryConsumeApi(clientKey); // Use API bucket for webhook fallback
-                remaining = allowed ? limitType.getLimit() - 1 : 0;
-                break;
-            case API:
-            default:
-                allowed = rateLimitConfig.tryConsumeApi(clientKey);
-                remaining = allowed ? limitType.getLimit() - 1 : 0;
-                break;
-        }
-
-        return new RateLimitResult(allowed, remaining, limitType.getWindowSeconds());
+        return switch (limitType) {
+            case AUTH -> {
+                boolean allowed = rateLimitConfig.tryConsumeAuth(clientKey);
+                long remaining = rateLimitConfig.getAuthRemainingTokens(clientKey);
+                yield new RateLimitResult(allowed, remaining, limitType.getWindowSeconds());
+            }
+            case EXPORT -> {
+                boolean allowed = rateLimitConfig.tryConsumeExport(clientKey);
+                yield new RateLimitResult(allowed, allowed ? limitType.getLimit() - 1 : 0, limitType.getWindowSeconds());
+            }
+            case WALL -> {
+                boolean allowed = rateLimitConfig.tryConsumeWall(clientKey);
+                yield new RateLimitResult(allowed, allowed ? limitType.getLimit() - 1 : 0, limitType.getWindowSeconds());
+            }
+            case WEBHOOK, UPLOAD, API -> {
+                boolean allowed = rateLimitConfig.tryConsumeApi(clientKey);
+                yield new RateLimitResult(allowed, allowed ? limitType.getLimit() - 1 : 0, limitType.getWindowSeconds());
+            }
+        };
     }
 
     private String resolveClientKey(HttpServletRequest request) {

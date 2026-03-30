@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class FeedbackService {
 
+    private static final String FEEDBACK_NOT_FOUND = "Feedback not found";
+
     private final FeedbackRepository feedbackRepository;
     private final EmployeeRepository employeeRepository;
 
@@ -71,7 +73,7 @@ public class FeedbackService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Feedback feedback = feedbackRepository.findByIdAndTenantId(feedbackId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Feedback not found"));
+                .orElseThrow(() -> new IllegalArgumentException(FEEDBACK_NOT_FOUND));
 
         return mapToResponse(feedback);
     }
@@ -81,7 +83,7 @@ public class FeedbackService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Feedback feedback = feedbackRepository.findByIdAndTenantId(feedbackId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Feedback not found"));
+                .orElseThrow(() -> new IllegalArgumentException(FEEDBACK_NOT_FOUND));
 
         if (request.getRecipientId() != null) feedback.setRecipientId(request.getRecipientId());
         if (request.getGiverId() != null) feedback.setGiverId(request.getGiverId());
@@ -102,7 +104,7 @@ public class FeedbackService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Feedback feedback = feedbackRepository.findByIdAndTenantId(feedbackId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Feedback not found"));
+                .orElseThrow(() -> new IllegalArgumentException(FEEDBACK_NOT_FOUND));
 
         feedbackRepository.delete(feedback);
     }

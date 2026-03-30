@@ -98,6 +98,7 @@ public class DocuSignApiClient {
             checkRateLimit(config.tenantId());
 
             try {
+                log.debug("Creating envelope for tenant {} using documentUrl={}", config.tenantId(), documentUrl);
                 String accessToken = authService.getAccessToken(config);
                 String accountId = getString(config, "accountId");
                 String baseUrl = getString(config, "baseUrl");
@@ -120,11 +121,15 @@ public class DocuSignApiClient {
                 }
 
                 JsonNode responseJson = objectMapper.readTree(response.body());
-                String envelopeId = responseJson.get("envelopeId").asText();
-                String status = responseJson.get("status").asText("sent");
+                String envelopeId = responseJson.path("envelopeId").asText();
+                if (envelopeId.isBlank()) {
+                    throw new RuntimeException("DocuSign createEnvelope response missing envelopeId");
+                }
+                String status = responseJson.path("status").asText("sent");
+                String uri = responseJson.path("uri").asText();
 
                 log.info("Created DocuSign envelope: {} with status: {}", envelopeId, status);
-                return new EnvelopeResponse(envelopeId, status, responseJson.get("uri").asText());
+                return new EnvelopeResponse(envelopeId, status, uri);
             } catch (IOException | InterruptedException e) {
                 log.error("Error creating DocuSign envelope", e);
                 throw new RuntimeException("Error creating envelope: " + e.getMessage(), e);
@@ -308,9 +313,9 @@ public class DocuSignApiClient {
                 if (templatesArray != null && templatesArray.isArray()) {
                     for (JsonNode templateNode : templatesArray) {
                         templates.add(new TemplateResponse(
-                                templateNode.get("templateId").asText(),
-                                templateNode.get("name").asText(),
-                                templateNode.get("description").asText("")
+                                templateNode.path("templateId").asText(),
+                                templateNode.path("name").asText(),
+                                templateNode.path("description").asText("")
                         ));
                     }
                 }
@@ -340,6 +345,7 @@ public class DocuSignApiClient {
             checkRateLimit(config.tenantId());
 
             try {
+                log.debug("Registering DocuSign webhook for tenant {} with events {}", config.tenantId(), events);
                 String accessToken = authService.getAccessToken(config);
                 String accountId = getString(config, "accountId");
                 String baseUrl = getString(config, "baseUrl");

@@ -31,6 +31,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class ESignatureService {
 
+    private static final String SIGNATURE_REQUEST_NOT_FOUND = "Signature request not found";
+    private static final String SIGNATURE_APPROVAL_NOT_FOUND = "Signature approval not found";
+    private static final String DOCUMENT_ALREADY_SIGNED = "Document already signed";
+
     private final SignatureRequestRepository signatureRequestRepository;
     private final SignatureApprovalRepository signatureApprovalRepository;
     private final EmployeeRepository employeeRepository;
@@ -94,7 +98,7 @@ public class ESignatureService {
         log.info("Updating signature request {}", requestId);
 
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         // Only allow updates if in DRAFT status
         if (signatureRequest.getStatus() != SignatureRequest.SignatureStatus.DRAFT) {
@@ -122,7 +126,7 @@ public class ESignatureService {
         log.info("Sending signature request {} for signing", requestId);
 
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         if (signatureRequest.getStatus() != SignatureRequest.SignatureStatus.DRAFT) {
             throw new IllegalStateException("Only draft signature requests can be sent");
@@ -155,7 +159,7 @@ public class ESignatureService {
         log.info("Cancelling signature request {} by user {}", requestId, cancelledBy);
 
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         if (signatureRequest.getStatus() == SignatureRequest.SignatureStatus.COMPLETED ||
                 signatureRequest.getStatus() == SignatureRequest.SignatureStatus.CANCELLED) {
@@ -175,7 +179,7 @@ public class ESignatureService {
     public SignatureRequestResponse getSignatureRequestById(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
         return mapToSignatureRequestResponse(signatureRequest);
     }
 
@@ -219,7 +223,7 @@ public class ESignatureService {
     public void deleteSignatureRequest(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         // Only allow deletion if in DRAFT status
         if (signatureRequest.getStatus() != SignatureRequest.SignatureStatus.DRAFT) {
@@ -278,7 +282,7 @@ public class ESignatureService {
         log.info("Adding signer {} to signature request {}", request.getSignerId(), requestId);
 
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         // Only allow adding signers if in DRAFT status
         if (signatureRequest.getStatus() != SignatureRequest.SignatureStatus.DRAFT) {
@@ -301,10 +305,10 @@ public class ESignatureService {
         log.info("Signing document for approval {}", approvalId);
 
         SignatureApproval approval = signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature approval not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_APPROVAL_NOT_FOUND));
 
         if (approval.getStatus() == SignatureApproval.ApprovalStatus.SIGNED) {
-            throw new IllegalStateException("Document already signed");
+            throw new IllegalStateException(DOCUMENT_ALREADY_SIGNED);
         }
 
         if (approval.getStatus() == SignatureApproval.ApprovalStatus.DECLINED) {
@@ -314,7 +318,7 @@ public class ESignatureService {
         // Check sequential signing order
         SignatureRequest signatureRequest = signatureRequestRepository
                 .findByIdAndTenantId(approval.getSignatureRequestId(), tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         if (signatureRequest.getSignatureOrder() && approval.getSigningOrder() != null) {
             // Verify all previous orders are signed
@@ -354,7 +358,7 @@ public class ESignatureService {
         log.info("Declining document for approval {}", approvalId);
 
         SignatureApproval approval = signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature approval not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_APPROVAL_NOT_FOUND));
 
         if (approval.getStatus() == SignatureApproval.ApprovalStatus.SIGNED) {
             throw new IllegalStateException("Cannot decline an already signed document");
@@ -369,7 +373,7 @@ public class ESignatureService {
         // Update signature request to DECLINED
         SignatureRequest signatureRequest = signatureRequestRepository
                 .findByIdAndTenantId(approval.getSignatureRequestId(), tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         signatureRequest.setStatus(SignatureRequest.SignatureStatus.DECLINED);
         signatureRequestRepository.save(signatureRequest);
@@ -401,11 +405,11 @@ public class ESignatureService {
     public void removeSigner(UUID approvalId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         SignatureApproval approval = signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature approval not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_APPROVAL_NOT_FOUND));
 
         SignatureRequest signatureRequest = signatureRequestRepository
                 .findByIdAndTenantId(approval.getSignatureRequestId(), tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         // Only allow removal if in DRAFT status
         if (signatureRequest.getStatus() != SignatureRequest.SignatureStatus.DRAFT) {
@@ -427,7 +431,7 @@ public class ESignatureService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         long signedCount = signatureApprovalRepository.countByTenantIdAndSignatureRequestIdAndStatus(
                 tenantId, requestId, SignatureApproval.ApprovalStatus.SIGNED);
@@ -627,7 +631,7 @@ public class ESignatureService {
 
         // Check status
         if (approval.getStatus() == SignatureApproval.ApprovalStatus.SIGNED) {
-            throw new IllegalStateException("Document already signed");
+            throw new IllegalStateException(DOCUMENT_ALREADY_SIGNED);
         }
 
         if (approval.getStatus() == SignatureApproval.ApprovalStatus.DECLINED) {
@@ -693,7 +697,7 @@ public class ESignatureService {
         // Update signature request to DECLINED
         SignatureRequest signatureRequest = signatureRequestRepository
                 .findById(approval.getSignatureRequestId())
-                .orElseThrow(() -> new IllegalArgumentException("Signature request not found"));
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
 
         signatureRequest.setStatus(SignatureRequest.SignatureStatus.DECLINED);
         signatureRequestRepository.save(signatureRequest);

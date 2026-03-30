@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @Service
 public class GoalService {
 
+    private static final String GOAL_NOT_FOUND = "Goal not found";
+
     private final GoalRepository goalRepository;
     private final EmployeeRepository employeeRepository;
 
@@ -62,7 +64,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Goal not found"));
+                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
 
         if (request.getTitle() != null)
             goal.setTitle(request.getTitle());
@@ -101,7 +103,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Goal not found"));
+                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
 
         return mapToResponse(goal);
     }
@@ -129,7 +131,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Goal not found"));
+                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
 
         goal.setProgressPercentage(progressPercentage);
 
@@ -147,7 +149,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Goal not found"));
+                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
 
         goal.setApprovedBy(approverId);
         goal.setStatus(Goal.GoalStatus.ACTIVE);

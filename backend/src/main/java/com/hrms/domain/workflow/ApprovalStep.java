@@ -103,6 +103,7 @@ public class ApprovalStep extends TenantAware {
         ANY_OF_ROLE          // Any one person with the role
     }
 
+    @SuppressWarnings("unused")
     public boolean isApplicable(Object context) {
         if (condition == null || condition.isEmpty()) {
             return true;

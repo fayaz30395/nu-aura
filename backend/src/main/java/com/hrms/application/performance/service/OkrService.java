@@ -147,7 +147,7 @@ public class OkrService {
     @Transactional
     public void activateObjective(UUID id, UUID approverId, UUID tenantId) {
         Objective objective = objectiveRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new RuntimeException("Objective not found: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Objective not found: " + id));
 
         objective.setStatus(ObjectiveStatus.ACTIVE);
         objective.setApprovedBy(approverId);
@@ -218,7 +218,7 @@ public class OkrService {
     @Transactional
     public KeyResult updateKeyResultProgress(UUID tenantId, UUID id, BigDecimal newValue, String notes) {
         KeyResult keyResult = keyResultRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new RuntimeException("Key Result not found: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Key Result not found: " + id));
 
         BigDecimal previousValue = keyResult.getCurrentValue();
         BigDecimal previousProgress = keyResult.getProgressPercentage();
@@ -255,14 +255,13 @@ public class OkrService {
 
     @Transactional
     public void recalculateObjectiveProgress(UUID tenantId, UUID objectiveId) {
-        Objective objective = objectiveRepository.findByIdAndTenantId(objectiveId, tenantId).orElse(null);
-        if (objective != null) {
+        objectiveRepository.findByIdAndTenantId(objectiveId, tenantId).ifPresent(objective -> {
             List<KeyResult> keyResults = keyResultRepository.findAllByObjectiveId(objectiveId);
             objective.setKeyResults(keyResults);
             objective.calculateProgress();
             objective.setUpdatedAt(LocalDateTime.now());
             objectiveRepository.save(objective);
-        }
+        });
     }
 
     // ================== Check-ins ==================

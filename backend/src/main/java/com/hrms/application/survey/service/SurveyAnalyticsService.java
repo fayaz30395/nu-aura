@@ -386,7 +386,7 @@ public class SurveyAnalyticsService {
         long detractors = responses.stream()
                 .filter(r -> r.getNpsScore() != null && r.getNpsScore() <= 6)
                 .count();
-        if (responses.size() > 0) {
+        if (!responses.isEmpty()) {
             double nps = ((promoters - detractors) * 100.0) / responses.size();
             if (nps < 0) {
                 insights.add(createInsight(survey, tenantId,
@@ -687,9 +687,8 @@ public class SurveyAnalyticsService {
     }
 
     private String formatCategoryName(SurveyQuestion.EngagementCategory category) {
-        return category.name().replace("_", " ").toLowerCase()
-                .substring(0, 1).toUpperCase() +
-                category.name().replace("_", " ").toLowerCase().substring(1);
+        String formatted = category.name().replace("_", " ").toLowerCase();
+        return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
     }
 
     private String getCategoryRecommendation(SurveyQuestion.EngagementCategory category) {

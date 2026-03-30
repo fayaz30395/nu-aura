@@ -13,7 +13,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -24,24 +23,34 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Service for generating and caching OAuth 2.0 JWT Grant tokens for DocuSign API access.
+ * Service for generating and caching OAuth 2.0 JWT Grant tokens for DocuSign
+ * API access.
  *
- * <p><strong>Architecture:</strong>
+ * <p>
+ * <strong>Architecture:</strong>
  * DocuSign uses a server-to-server OAuth flow with RSA-signed JWT assertions:
  * <ol>
- *   <li>Generate a JWT assertion signed with the private key</li>
- *   <li>POST the JWT to the token endpoint with grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer</li>
- *   <li>Receive an access_token valid for 1 hour</li>
- *   <li>Cache the token and reuse it until 5 minutes before expiry</li>
+ * <li>Generate a JWT assertion signed with the private key</li>
+ * <li>POST the JWT to the token endpoint with
+ * grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer</li>
+ * <li>Receive an access_token valid for 1 hour</li>
+ * <li>Cache the token and reuse it until 5 minutes before expiry</li>
  * </ol>
  *
- * <p><strong>Thread Safety:</strong> Uses ConcurrentHashMap to cache tokens per tenant.
- * All public methods are thread-safe.</p>
+ * <p>
+ * <strong>Thread Safety:</strong> Uses ConcurrentHashMap to cache tokens per
+ * tenant.
+ * All public methods are thread-safe.
+ * </p>
  *
- * <p><strong>Token Lifecycle:</strong>
- * Tokens are cached with a calculated expiry time. When {@link #getAccessToken(ConnectorConfig)}
- * is called, it checks if the cached token is still valid (5 minutes buffer). If expired or
- * missing, it generates a new token.</p>
+ * <p>
+ * <strong>Token Lifecycle:</strong>
+ * Tokens are cached with a calculated expiry time. When
+ * {@link #getAccessToken(ConnectorConfig)}
+ * is called, it checks if the cached token is still valid (5 minutes buffer).
+ * If expired or
+ * missing, it generates a new token.
+ * </p>
  */
 @Service
 @Slf4j
@@ -85,10 +94,14 @@ public class DocuSignAuthService {
     }
 
     /**
-     * Get a valid access token for DocuSign API access, using the cache when possible.
+     * Get a valid access token for DocuSign API access, using the cache when
+     * possible.
      *
-     * <p>If a cached token exists and is still valid (with 5-minute buffer), it is returned.
-     * Otherwise, a new token is generated via OAuth 2.0 JWT Grant flow.</p>
+     * <p>
+     * If a cached token exists and is still valid (with 5-minute buffer), it is
+     * returned.
+     * Otherwise, a new token is generated via OAuth 2.0 JWT Grant flow.
+     * </p>
      *
      * @param config the connector configuration containing OAuth credentials
      * @return a valid DocuSign access token
@@ -118,11 +131,12 @@ public class DocuSignAuthService {
     /**
      * Generate a new access token by performing the OAuth 2.0 JWT Grant flow.
      *
-     * <p>Steps:
+     * <p>
+     * Steps:
      * <ol>
-     *   <li>Create a JWT assertion signed with the RSA private key</li>
-     *   <li>POST to DocuSign's token endpoint with the assertion</li>
-     *   <li>Extract access_token from response</li>
+     * <li>Create a JWT assertion signed with the RSA private key</li>
+     * <li>POST to DocuSign's token endpoint with the assertion</li>
+     * <li>Extract access_token from response</li>
      * </ol>
      *
      * @param config the connector configuration
@@ -151,20 +165,21 @@ public class DocuSignAuthService {
     /**
      * Create a JWT assertion signed with the DocuSign RSA private key.
      *
-     * <p>The assertion includes:
+     * <p>
+     * The assertion includes:
      * <ul>
-     *   <li>iss (issuer): integrationKey</li>
-     *   <li>sub (subject): userId</li>
-     *   <li>aud (audience): {baseUrl}/oauth/token</li>
-     *   <li>iat (issued at): current time</li>
-     *   <li>exp (expiration): iat + 10 minutes</li>
-     *   <li>scope: "signature impersonation"</li>
+     * <li>iss (issuer): integrationKey</li>
+     * <li>sub (subject): userId</li>
+     * <li>aud (audience): {baseUrl}/oauth/token</li>
+     * <li>iat (issued at): current time</li>
+     * <li>exp (expiration): iat + 10 minutes</li>
+     * <li>scope: "signature impersonation"</li>
      * </ul>
      *
-     * @param integrationKey the OAuth integration key
-     * @param userId the DocuSign user ID
+     * @param integrationKey   the OAuth integration key
+     * @param userId           the DocuSign user ID
      * @param rsaPrivateKeyPem the RSA private key in PEM format
-     * @param baseUrl the DocuSign base URL
+     * @param baseUrl          the DocuSign base URL
      * @return the signed JWT assertion
      */
     private String createJwtAssertion(String integrationKey, String userId, String rsaPrivateKeyPem, String baseUrl) {
@@ -194,7 +209,9 @@ public class DocuSignAuthService {
     /**
      * Parse an RSA private key from PEM format.
      *
-     * <p>Handles both PKCS#8 format with and without the PEM header/footer:
+     * <p>
+     * Handles both PKCS#8 format with and without the PEM header/footer:
+     * 
      * <pre>
      * -----BEGIN PRIVATE KEY-----
      * base64-encoded-key
@@ -223,11 +240,14 @@ public class DocuSignAuthService {
     /**
      * Exchange a JWT assertion for an access token via DocuSign OAuth endpoint.
      *
-     * <p>POSTs to {baseUrl}/oauth/token with grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
-     * and assertion={jwt}.</p>
+     * <p>
+     * POSTs to {baseUrl}/oauth/token with
+     * grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+     * and assertion={jwt}.
+     * </p>
      *
      * @param jwtAssertion the signed JWT assertion
-     * @param baseUrl the DocuSign base URL
+     * @param baseUrl      the DocuSign base URL
      * @return the access token
      * @throws RuntimeException if the HTTP request fails or response is invalid
      */
@@ -236,8 +256,7 @@ public class DocuSignAuthService {
             String tokenEndpoint = baseUrl.replaceAll("/+$", "") + "/oauth/token";
             String requestBody = String.format(
                     "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=%s",
-                    jwtAssertion
-            );
+                    jwtAssertion);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(tokenEndpoint))
@@ -254,18 +273,26 @@ public class DocuSignAuthService {
 
             // Parse response to extract access_token
             JsonNode responseJson = objectMapper.readTree(response.body());
-            String accessToken = responseJson.get("access_token").asText();
+            String accessToken = responseJson.path("access_token").asText();
+            if (accessToken.isBlank()) {
+                throw new RuntimeException("DocuSign token endpoint response missing access_token");
+            }
 
             log.debug("Successfully obtained DocuSign access token");
             return accessToken;
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Interrupted while exchanging JWT for access token", e);
+            throw new RuntimeException("Interrupted while exchanging JWT for access token", e);
+        } catch (IOException e) {
             log.error("Failed to exchange JWT for access token", e);
             throw new RuntimeException("Failed to exchange JWT for access token: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Clear the cached token for a specific tenant, forcing a refresh on next request.
+     * Clear the cached token for a specific tenant, forcing a refresh on next
+     * request.
      *
      * @param tenantId the tenant ID
      */
@@ -286,7 +313,7 @@ public class DocuSignAuthService {
      * Extract a string value from the connector config settings.
      *
      * @param config the connector configuration
-     * @param key the settings key
+     * @param key    the settings key
      * @return the string value
      * @throws IllegalArgumentException if the key is missing or not a string
      */

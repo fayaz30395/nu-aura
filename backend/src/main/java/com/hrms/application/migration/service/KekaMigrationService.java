@@ -37,7 +37,6 @@ import java.time.format.DateTimeParseException;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -625,6 +624,7 @@ public class KekaMigrationService {
             LocalTime time = LocalTime.parse(value.trim());
             return LocalDateTime.of(date, time);
         } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
+            log.debug("Could not parse time '{}': {}", value, e.getMessage());
             return null;
         }
     }

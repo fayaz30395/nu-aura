@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReviewCycleService {
 
+    private static final String REVIEW_CYCLE_NOT_FOUND = "Review cycle not found";
+    private static final String REVIEW_NOT_FOUND = "Review not found";
+
     private final ReviewCycleRepository reviewCycleRepository;
     private final EmployeeRepository employeeRepository;
     private final PerformanceReviewRepository performanceReviewRepository;
@@ -71,7 +74,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
 
         if (request.getCycleName() != null) cycle.setCycleName(request.getCycleName());
         if (request.getCycleType() != null) cycle.setCycleType(request.getCycleType());
@@ -92,7 +95,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
 
         return mapToResponse(cycle);
     }
@@ -121,7 +124,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
 
         cycle.setStatus(ReviewCycle.CycleStatus.COMPLETED);
 
@@ -139,7 +142,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
 
         if (cycle.getStatus() != ReviewCycle.CycleStatus.PLANNING) {
             throw new IllegalStateException("Only cycles in PLANNING status can be activated. Current status: " + cycle.getStatus());
@@ -238,7 +241,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
 
         ReviewCycle.CycleStatus next = switch (cycle.getStatus()) {
             case PLANNING, DRAFT -> ReviewCycle.CycleStatus.SELF_ASSESSMENT;
@@ -263,7 +266,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         if (request.getCompetencyRatings() != null && !request.getCompetencyRatings().isEmpty()) {
             int avg = (int) Math.round(request.getCompetencyRatings().stream()
@@ -289,7 +292,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         review.setManagerRating(request.getOverallRating());
         review.setIncrementRecommendation(request.getIncrementRecommendation());
@@ -308,7 +311,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
         if (finalRating < 1 || finalRating > 5) {
             throw new IllegalArgumentException("Final rating must be between 1 and 5");
@@ -326,7 +329,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
 
         List<PerformanceReview> reviews = performanceReviewRepository
                 .findByTenantIdAndReviewCycleId(tenantId, cycleId)
@@ -383,7 +386,7 @@ public class ReviewCycleService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
 
         if (cycle.getStatus() != ReviewCycle.CycleStatus.PLANNING
                 && cycle.getStatus() != ReviewCycle.CycleStatus.DRAFT) {

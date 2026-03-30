@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
@@ -60,10 +58,7 @@ public class ApprovalEventConsumer {
     )
     public void handleApprovalEvent(
             @Payload ApprovalEvent event,
-            Acknowledgment acknowledgment,
-            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset) {
+            Acknowledgment acknowledgment) {
 
         String eventId = event.getEventId();
         UUID tenantId = event.getTenantId();
@@ -113,7 +108,6 @@ public class ApprovalEventConsumer {
      */
     private void handleApproved(ApprovalEvent event) {
         String approvalType = event.getApprovalType();
-        UUID tenantId = event.getTenantId();
 
         switch (approvalType) {
             case "LEAVE" -> handleLeaveApproved(event);

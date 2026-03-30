@@ -101,6 +101,7 @@ public class FluenceEditLockService {
      * @param contentId   ID of the content
      * @return lock info or null if no lock exists
      */
+    @org.springframework.lang.Nullable
     public EditLockInfo getLockInfo(UUID tenantId, String contentType, UUID contentId) {
         String key = buildKey(tenantId, contentType, contentId);
         String value = redisTemplate.opsForValue().get(key);
@@ -156,6 +157,7 @@ public class FluenceEditLockService {
         }
     }
 
+    @org.springframework.lang.Nullable
     private EditLockInfo deserialize(String json) {
         try {
             @SuppressWarnings("unchecked")

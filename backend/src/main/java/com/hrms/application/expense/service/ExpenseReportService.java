@@ -5,6 +5,7 @@ import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseItemRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ExpenseReportService {
 
     private final ExpenseClaimRepository claimRepository;

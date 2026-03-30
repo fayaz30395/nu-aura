@@ -139,7 +139,7 @@ public class SmsNotificationController {
             @RequestParam(required = false, defaultValue = "1") String countryCode
     ) {
         boolean isValid = smsNotificationService.isValidPhoneNumber(phoneNumber);
-        String formatted = null;
+        String formatted;
 
         if (!isValid) {
             formatted = smsNotificationService.formatPhoneNumber(phoneNumber, countryCode);

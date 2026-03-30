@@ -11,6 +11,7 @@ import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +97,7 @@ public class OfferLetterSignatureListener {
      * Extracts candidateId from the signature request metadata JSON.
      * Expected format: {"candidateId":"uuid-here","letterId":"uuid-here"}
      */
+    @Nullable
     private UUID extractCandidateIdFromMetadata(String metadata) {
         if (metadata == null || metadata.isBlank()) {
             return null;

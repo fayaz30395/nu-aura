@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -244,6 +245,7 @@ public class WikiPageService {
         }
     }
 
+    @Nullable
     private String extractExcerpt(String content) {
         if (content == null || content.isBlank()) return null;
         String plain = content.replaceAll("<[^>]*>", " ")

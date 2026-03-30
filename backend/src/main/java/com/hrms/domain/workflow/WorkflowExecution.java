@@ -4,6 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -127,6 +128,7 @@ public class WorkflowExecution extends TenantAware {
         stepExecution.setWorkflowExecution(this);
     }
 
+    @Nullable
     public StepExecution getCurrentStepExecution() {
         return stepExecutions.stream()
                 .filter(se -> se.getStatus() == StepExecution.StepStatus.PENDING)
@@ -149,6 +151,7 @@ public class WorkflowExecution extends TenantAware {
         this.completedAt = LocalDateTime.now();
     }
 
+    @SuppressWarnings("unused")
     public void reject(String reason) {
         this.status = ExecutionStatus.REJECTED;
         this.completedAt = LocalDateTime.now();

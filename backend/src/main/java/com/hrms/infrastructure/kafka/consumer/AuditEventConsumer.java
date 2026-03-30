@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
@@ -67,10 +65,7 @@ public class AuditEventConsumer {
     )
     public void handleAuditEvent(
             @Payload AuditEvent event,
-            Acknowledgment acknowledgment,
-            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset) {
+            Acknowledgment acknowledgment) {
 
         String eventId = event.getEventId();
 

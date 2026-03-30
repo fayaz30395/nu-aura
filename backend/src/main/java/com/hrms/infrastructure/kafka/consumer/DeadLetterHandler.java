@@ -152,8 +152,9 @@ public class DeadLetterHandler {
             return;
         }
 
-        boolean truncated = rawPayload != null && rawPayload.length() > PAYLOAD_LOG_MAX_LENGTH;
-        String storedPayload = truncated ? rawPayload.substring(0, PAYLOAD_LOG_MAX_LENGTH) : rawPayload;
+        String safePayload = rawPayload == null ? "" : rawPayload;
+        boolean truncated = safePayload.length() > PAYLOAD_LOG_MAX_LENGTH;
+        String storedPayload = truncated ? safePayload.substring(0, PAYLOAD_LOG_MAX_LENGTH) : safePayload;
 
         // Derive the default replay target: strip ".dlt" suffix to get the original topic
         String targetTopic = topic.endsWith(".dlt") ? topic.substring(0, topic.length() - 4) : topic;
