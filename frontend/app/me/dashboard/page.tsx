@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
+import { useToast } from '@/components/notifications';
 import { User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
@@ -10,9 +11,10 @@ import { Loading } from '@/components/ui';
 import { WelcomeBanner, QuickAccessWidget } from '@/components/dashboard/WelcomeBanner';
 import { TimeClockWidget } from '@/components/dashboard/TimeClockWidget';
 import { HolidayCarousel } from '@/components/dashboard/HolidayCarousel';
-import { TeamPresenceWidget } from '@/components/dashboard/TeamPresenceWidget';
+import { OnLeaveTodayCard, WorkingRemotelyCard } from '@/components/dashboard/TeamPresenceWidget';
 import { LeaveBalanceWidget } from '@/components/dashboard/LeaveBalanceWidget';
 import { PostComposer } from '@/components/dashboard/PostComposer';
+import { BirthdayWishingBoard } from '@/components/dashboard/BirthdayWishingBoard';
 import { CelebrationTabs } from '@/components/dashboard/CelebrationTabs';
 import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -26,6 +28,7 @@ const log = createLogger('Dashboard');
 export default function MyDashboardPage() {
   const { user, hasHydrated } = useAuth();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [feedRefreshKey, setFeedRefreshKey] = useState(0);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -38,6 +41,26 @@ export default function MyDashboardPage() {
   );
 
   const isLoading = !hasHydrated || (!!user?.employeeId && queryLoading);
+
+  // Initialize attendance state from dashboard data
+  useEffect(() => {
+    if (dashboard) {
+      const status = dashboard.todayAttendanceStatus;
+      if (status === 'PRESENT' || status === 'HALF_DAY' || status === 'INCOMPLETE') {
+        // Has checked in today
+        if (dashboard.todayCheckOutTime) {
+          // Already completed for the day
+          setIsCheckedIn(false);
+        } else {
+          // Checked in but not out yet
+          setIsCheckedIn(true);
+        }
+        if (dashboard.todayCheckInTime) {
+          setCheckInTime(parseISO(dashboard.todayCheckInTime));
+        }
+      }
+    }
+  }, [dashboard]);
 
   // Refresh attendance state after check-in/check-out by invalidating the React Query cache
   const refreshDashboard = useCallback(async () => {
@@ -61,8 +84,11 @@ export default function MyDashboardPage() {
         setCheckInTime(new Date());
       }
       refreshDashboard();
-    } catch (error) {
+    } catch (error: unknown) {
       log.error('Check-in failed:', error);
+      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+        || 'Check-in failed. Please try again.';
+      toast.error('Attendance', message);
     } finally {
       setCheckingIn(false);
     }
@@ -80,8 +106,11 @@ export default function MyDashboardPage() {
       setIsCheckedIn(false);
       setCheckInTime(null); // Clear the timer
       refreshDashboard();
-    } catch (error) {
+    } catch (error: unknown) {
       log.error('Check-out failed:', error);
+      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+        || 'Check-out failed. Please try again.';
+      toast.error('Attendance', message);
     } finally {
       setCheckingIn(false);
     }
@@ -171,27 +200,39 @@ export default function MyDashboardPage() {
                 onCheckIn={handleCheckIn}
                 onCheckOut={handleCheckOut}
                 isLoading={checkingIn}
+                isCompleted={!isCheckedIn && !!dashboard?.todayCheckInTime && !!dashboard?.todayCheckOutTime}
+                checkOutTime={dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : null}
+                workDurationMinutes={null}
               />
             </motion.div>
           )}
 
-          {/* Holiday + Team Presence — side-by-side bento pair on large screens */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.20, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              <HolidayCarousel />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.26, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              <TeamPresenceWidget />
-            </motion.div>
-          </div>
+          {/* Holiday Carousel — full-width gradient card */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.20, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <HolidayCarousel />
+          </motion.div>
+
+          {/* On Leave Today */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.24, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <OnLeaveTodayCard />
+          </motion.div>
+
+          {/* Working Remotely */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <WorkingRemotelyCard />
+          </motion.div>
 
           {/* Leave Balance — Circular progress ring (only for employees) */}
           {user?.employeeId && (
@@ -223,6 +264,9 @@ export default function MyDashboardPage() {
 
         {/* ─── Right Column (7/12) ─── */}
         <div className="lg:col-span-7 space-y-6">
+          {/* Birthday Wishing Board — shows only on the user's birthday */}
+          <BirthdayWishingBoard />
+
           {/* Post Composer — Post / Poll / Praise */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -234,6 +278,7 @@ export default function MyDashboardPage() {
 
           {/* Celebration Tabs — Birthdays / Anniversaries / New Joiners */}
           <motion.div
+            data-section="celebrations"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.14, ease: [0.25, 0.46, 0.45, 0.94] }}
