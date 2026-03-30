@@ -130,17 +130,17 @@ module.exports = {
           divider: 'var(--dropdown-divider)',
         },
 
-        // ── Accent (Pure Blue) ───────────────────────────────────
+        // ── Accent (Single-Hue Blue) ───────────────────────────
         accent: {
-          DEFAULT: 'var(--accent-primary)',
-          hover: 'var(--accent-primary-hover)',
-          subtle: 'var(--accent-primary-subtle)',
+          DEFAULT: blue[600],
+          hover: blue[700],
+          subtle: blue[50],
           ...blue,
         },
 
         // ── Primary (Alias for accent for backward compatibility) ──
         primary: {
-          DEFAULT: 'var(--accent-primary)',
+          DEFAULT: blue[600],
           ...blue,
         },
 

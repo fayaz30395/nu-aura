@@ -33,6 +33,7 @@ public class AttendanceRecordService {
     private final AttendanceConfigProperties config;
     private final EventPublisher eventPublisher;
     private final ShiftAttendanceService shiftAttendanceService;
+    private final TenantAttendanceConfigService tenantAttendanceConfigService;
 
     /**
      * Check in an employee at the specified time.
@@ -549,9 +550,13 @@ public class AttendanceRecordService {
         record.setWorkDurationMinutes(totalWork != null ? totalWork : 0);
         record.setBreakDurationMinutes(totalBreak != null ? totalBreak : 0);
 
-        // Update status based on actual work duration (PRESENT, HALF_DAY, or
-        // INCOMPLETE)
-        record.updateStatusBasedOnWorkDuration();
+        // Load tenant-specific thresholds for status calculation
+        TenantAttendanceConfigService.TenantAttendanceConfig tenantConfig =
+                tenantAttendanceConfigService.getConfig(record.getTenantId());
+        record.updateStatusBasedOnWorkDuration(
+                tenantConfig.fullDayMinutes(),
+                tenantConfig.halfDayMinutes(),
+                tenantConfig.overtimeThresholdMinutes());
 
         // Calculate overtime using shift-aware logic (single source of truth)
         shiftAttendanceService.calculateOvertimeForRecord(record);
@@ -561,7 +566,7 @@ public class AttendanceRecordService {
             log.info(
                     "Incomplete attendance for employee {} on {}: worked {} minutes (required: {} minutes, deficit: {} minutes)",
                     record.getEmployeeId(), record.getAttendanceDate(),
-                    record.getWorkDurationMinutes(), AttendanceRecord.FULL_DAY_MINUTES,
+                    record.getWorkDurationMinutes(), tenantConfig.fullDayMinutes(),
                     record.getDeficitMinutes());
         }
     }

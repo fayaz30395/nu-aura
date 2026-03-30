@@ -56,7 +56,18 @@
     --border-strong: #a1a6b4;
     --border-focus: #4d77ff;
 
-    /* ── Accent (Pure Blue) ──────────────────────────────────────── */
+    /* ── Accent Scale (Theme-aware — swapped by data-theme attribute) ── */
+    --accent-50: #f0f4ff;
+    --accent-100: #dce4ff;
+    --accent-200: #b8c9ff;
+    --accent-300: #94adff;
+    --accent-400: #7092ff;
+    --accent-500: #4d77ff;
+    --accent-600: #3a5fd9;
+    --accent-700: #2a48b3;
+    --accent-800: #1c328d;
+    --accent-900: #101e66;
+    --accent-950: #081240;
     --accent-primary: #3a5fd9;
     --accent-primary-hover: #2a48b3;
     --accent-primary-subtle: #f0f4ff;
@@ -204,7 +215,18 @@
     --border-strong: #545a6e;
     --border-focus: #7092ff;
 
-    /* ── Accent (Bright Blue) ────────────────────────────────────── */
+    /* ── Accent Scale (Dark mode — brighter for dark backgrounds) ── */
+    --accent-50: rgba(77, 119, 255, 0.08);
+    --accent-100: rgba(77, 119, 255, 0.14);
+    --accent-200: #4d6fcc;
+    --accent-300: #6688e6;
+    --accent-400: #7092ff;
+    --accent-500: #94adff;
+    --accent-600: #7092ff;
+    --accent-700: #94adff;
+    --accent-800: #b8c9ff;
+    --accent-900: #dce4ff;
+    --accent-950: #f0f4ff;
     --accent-primary: #7092ff;
     --accent-primary-hover: #94adff;
     --accent-primary-subtle: rgba(77, 119, 255, 0.14);

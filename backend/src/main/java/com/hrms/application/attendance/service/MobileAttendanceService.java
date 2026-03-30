@@ -32,6 +32,7 @@ public class MobileAttendanceService {
     private final OfficeLocationRepository officeLocationRepository;
     private final OfficeLocationService officeLocationService;
     private final ShiftAttendanceService shiftAttendanceService;
+    private final TenantAttendanceConfigService tenantAttendanceConfigService;
 
     // ==================== MOBILE CHECK-IN/OUT ====================
 
@@ -170,8 +171,14 @@ public class MobileAttendanceService {
             record.setCheckOutLocation(geofenceResult.nearestLocation().getLocationName());
         }
 
-        // Calculate work duration and overtime
-        record.calculateWorkDuration();
+        // Calculate work duration using tenant-specific thresholds
+        TenantAttendanceConfigService.TenantAttendanceConfig tenantConfig =
+                tenantAttendanceConfigService.getConfig(record.getTenantId());
+        record.calculateWorkDuration(
+                tenantConfig.fullDayMinutes(),
+                tenantConfig.halfDayMinutes(),
+                tenantConfig.overtimeThresholdMinutes());
+        // Overtime is calculated by ShiftAttendanceService (shift-aware or default)
         shiftAttendanceService.calculateOvertimeForRecord(record);
 
         // Close open time entry
