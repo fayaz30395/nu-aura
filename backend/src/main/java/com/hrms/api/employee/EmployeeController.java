@@ -25,6 +25,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,6 +33,26 @@ import java.util.UUID;
 @RequestMapping("/api/v1/employees")
 @Tag(name = "Employees", description = "Employee management APIs for CRUD operations and hierarchy")
 public class EmployeeController {
+
+    /**
+     * Maps frontend sort field names to valid JPA entity property names.
+     * "fullName" is a computed DTO field — the Employee entity only has firstName/lastName,
+     * so we map it to "firstName" for JPA sorting. Any unmapped field falls back to "createdAt".
+     */
+    private static final Map<String, String> SORT_FIELD_MAP = Map.of(
+            "fullName", "firstName",
+            "firstName", "firstName",
+            "lastName", "lastName",
+            "employeeCode", "employeeCode",
+            "designation", "designation",
+            "joiningDate", "joiningDate",
+            "status", "status",
+            "createdAt", "createdAt",
+            "updatedAt", "updatedAt",
+            "level", "level"
+    );
+
+    private static final String DEFAULT_SORT_FIELD = "createdAt";
 
     private final EmployeeService employeeService;
 
@@ -68,7 +89,8 @@ public class EmployeeController {
             @Parameter(description = "Sort direction (ASC/DESC)") @RequestParam(defaultValue = "DESC") String sortDirection
     ) {
         Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        String resolvedSortField = SORT_FIELD_MAP.getOrDefault(sortBy, DEFAULT_SORT_FIELD);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, resolvedSortField));
         Page<EmployeeResponse> employees = employeeService.getAllEmployees(pageable);
         return ResponseEntity.ok(employees);
     }
