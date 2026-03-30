@@ -349,14 +349,10 @@ export default function MyAttendancePage() {
                   </button>
                 )}
                 {attendanceComplete && (
-                  <button
-                    onClick={handleCheckIn}
-                    disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <LogIn className="h-5 w-5" />
-                    {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In Again'}
-                  </button>
+                  <div className="flex items-center gap-2 px-6 py-4 rounded-lg border border-success-600/30 bg-success-600/10">
+                    <CheckCircle className="h-5 w-5 text-success-500" />
+                    <span className="text-sm font-semibold text-success-400">Attendance Completed</span>
+                  </div>
                 )}
               </div>
             </div>
