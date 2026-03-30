@@ -6,6 +6,8 @@ import com.hrms.application.contract.service.ContractService;
 import com.hrms.application.contract.service.ContractSignatureService;
 import com.hrms.domain.contract.ContractStatus;
 import com.hrms.domain.contract.ContractType;
+import com.hrms.domain.contract.SignatureStatus;
+import com.hrms.domain.contract.SignerRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -340,6 +342,304 @@ class ContractControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray())
                     .andExpect(jsonPath("$.length()").value(2));
+        }
+    }
+
+    @Nested
+    @DisplayName("Filtering by Type Endpoint")
+    class FilterByTypeEndpoint {
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should return contracts by type NDA")
+        void shouldReturnContractsByType() throws Exception {
+            ContractListDto dto = ContractListDto.builder()
+                    .id(UUID.randomUUID())
+                    .title("NDA Agreement")
+                    .type(ContractType.NDA)
+                    .status(ContractStatus.ACTIVE)
+                    .build();
+            Page<ContractListDto> page = new PageImpl<>(List.of(dto));
+
+            when(contractService.getContractsByType(eq(ContractType.NDA), any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(page);
+
+            mockMvc.perform(get(BASE_URL + "/type/NDA"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content[0].type").value("NDA"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Filter by Employee Endpoint")
+    class FilterByEmployeeEndpoint {
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should return contracts for a specific employee")
+        void shouldReturnContractsForEmployee() throws Exception {
+            UUID employeeId = UUID.randomUUID();
+            ContractListDto dto = ContractListDto.builder()
+                    .id(UUID.randomUUID())
+                    .title("Employee Contract")
+                    .type(ContractType.EMPLOYMENT)
+                    .status(ContractStatus.ACTIVE)
+                    .build();
+            Page<ContractListDto> page = new PageImpl<>(List.of(dto));
+
+            when(contractService.getEmployeeContracts(eq(employeeId), any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(page);
+
+            mockMvc.perform(get(BASE_URL + "/employee/" + employeeId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content[0].title").value("Employee Contract"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Search Endpoint")
+    class SearchEndpoint {
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should search contracts by keyword")
+        void shouldSearchContractsByKeyword() throws Exception {
+            ContractListDto dto = ContractListDto.builder()
+                    .id(UUID.randomUUID())
+                    .title("Freelance Agreement")
+                    .type(ContractType.FREELANCER)
+                    .status(ContractStatus.ACTIVE)
+                    .build();
+            Page<ContractListDto> page = new PageImpl<>(List.of(dto));
+
+            when(contractService.searchContracts(eq("Freelance"), any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(page);
+
+            mockMvc.perform(get(BASE_URL + "/search").param("search", "Freelance"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content[0].title").value("Freelance Agreement"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Expiry Tracking Endpoints")
+    class ExpiryTrackingEndpoints {
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should return expired contracts")
+        void shouldReturnExpiredContracts() throws Exception {
+            ContractListDto dto = ContractListDto.builder()
+                    .id(UUID.randomUUID())
+                    .title("Expired Contract")
+                    .status(ContractStatus.EXPIRED)
+                    .build();
+
+            when(contractService.getExpiredContracts()).thenReturn(List.of(dto));
+
+            mockMvc.perform(get(BASE_URL + "/expired"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0].status").value("EXPIRED"));
+        }
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should return active contracts list")
+        void shouldReturnActiveContractsList() throws Exception {
+            ContractListDto dto = ContractListDto.builder()
+                    .id(UUID.randomUUID())
+                    .title("Active Employment")
+                    .status(ContractStatus.ACTIVE)
+                    .build();
+
+            when(contractService.getActiveContracts()).thenReturn(List.of(dto));
+
+            mockMvc.perform(get(BASE_URL + "/active"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0].status").value("ACTIVE"));
+        }
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should return contracts expiring in custom days window")
+        void shouldReturnContractsExpiringInCustomDays() throws Exception {
+            ContractListDto dto = ContractListDto.builder()
+                    .id(UUID.randomUUID())
+                    .title("Expiring in 7 days")
+                    .status(ContractStatus.ACTIVE)
+                    .build();
+
+            when(contractService.getExpiringContracts(7)).thenReturn(List.of(dto));
+
+            mockMvc.perform(get(BASE_URL + "/expiring").param("days", "7"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(1));
+        }
+    }
+
+    @Nested
+    @DisplayName("Signature Management Endpoints")
+    class SignatureManagementEndpoints {
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should send contract for signing")
+        void shouldSendContractForSigning() throws Exception {
+            UUID contractId = UUID.randomUUID();
+            SendForSigningRequest request = new SendForSigningRequest();
+            request.setSignerName("John Signer");
+            request.setSignerEmail("signer@example.com");
+
+            ContractSignatureDto signatureDto =
+                    ContractSignatureDto.builder()
+                            .id(UUID.randomUUID())
+                            .contractId(contractId)
+                            .signerEmail("signer@example.com")
+                            .status(SignatureStatus.PENDING)
+                            .build();
+
+            when(signatureService.sendForSigning(eq(contractId), any()))
+                    .thenReturn(signatureDto);
+
+            mockMvc.perform(post(BASE_URL + "/" + contractId + "/send-for-signing")
+                            .with(csrf())
+                            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.signerEmail").value("signer@example.com"))
+                    .andExpect(jsonPath("$.status").value("PENDING"));
+        }
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should get all signatures for a contract")
+        void shouldGetAllSignaturesForContract() throws Exception {
+            UUID contractId = UUID.randomUUID();
+            ContractSignatureDto sig1 =
+                    ContractSignatureDto.builder()
+                            .id(UUID.randomUUID())
+                            .contractId(contractId)
+                            .signerEmail("alice@example.com")
+                            .status(SignatureStatus.SIGNED)
+                            .build();
+            ContractSignatureDto sig2 =
+                    ContractSignatureDto.builder()
+                            .id(UUID.randomUUID())
+                            .contractId(contractId)
+                            .signerEmail("bob@example.com")
+                            .status(SignatureStatus.PENDING)
+                            .build();
+
+            when(signatureService.getContractSignatures(contractId)).thenReturn(List.of(sig1, sig2));
+
+            mockMvc.perform(get(BASE_URL + "/" + contractId + "/signatures"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(2));
+        }
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should get pending signatures for a contract")
+        void shouldGetPendingSignaturesForContract() throws Exception {
+            UUID contractId = UUID.randomUUID();
+            ContractSignatureDto pending =
+                    ContractSignatureDto.builder()
+                            .id(UUID.randomUUID())
+                            .contractId(contractId)
+                            .signerEmail("pending@example.com")
+                            .status(SignatureStatus.PENDING)
+                            .build();
+
+            when(signatureService.getPendingSignatures(contractId)).thenReturn(List.of(pending));
+
+            mockMvc.perform(get(BASE_URL + "/" + contractId + "/signatures/pending"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0].status").value("PENDING"));
+        }
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should get signature summary for contract")
+        void shouldGetSignatureSummary() throws Exception {
+            UUID contractId = UUID.randomUUID();
+            Map<String, Integer> summary = Map.of("SIGNED", 2, "PENDING", 1, "DECLINED", 0);
+
+            when(signatureService.getSignatureSummary(contractId)).thenReturn(summary);
+
+            mockMvc.perform(get(BASE_URL + "/" + contractId + "/signatures/summary"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.SIGNED").value(2))
+                    .andExpect(jsonPath("$.PENDING").value(1));
+        }
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should record a signature")
+        void shouldRecordSignature() throws Exception {
+            UUID contractId = UUID.randomUUID();
+            ContractSignatureDto signed =
+                    ContractSignatureDto.builder()
+                            .id(UUID.randomUUID())
+                            .contractId(contractId)
+                            .signerEmail("signer@example.com")
+                            .status(SignatureStatus.SIGNED)
+                            .build();
+
+            when(signatureService.recordSignature(
+                    eq(contractId), anyString(), anyString(), any()))
+                    .thenReturn(signed);
+
+            mockMvc.perform(post(BASE_URL + "/" + contractId + "/record-signature")
+                            .with(csrf())
+                            .param("signerEmail", "signer@example.com")
+                            .param("signatureImageUrl", "https://storage/sig.png"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("SIGNED"));
+        }
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should record decline to sign")
+        void shouldRecordDeclineSignature() throws Exception {
+            UUID contractId = UUID.randomUUID();
+            ContractSignatureDto declined =
+                    ContractSignatureDto.builder()
+                            .id(UUID.randomUUID())
+                            .contractId(contractId)
+                            .signerEmail("signer@example.com")
+                            .status(SignatureStatus.DECLINED)
+                            .build();
+
+            when(signatureService.declineSignature(eq(contractId), anyString()))
+                    .thenReturn(declined);
+
+            mockMvc.perform(post(BASE_URL + "/" + contractId + "/decline-signature")
+                            .with(csrf())
+                            .param("signerEmail", "signer@example.com"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("DECLINED"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Status Transition — Pending Signatures")
+    class PendingSignaturesTransition {
+
+        @Test
+        @WithMockUser(roles = "ADMIN")
+        @DisplayName("Should mark contract as pending signatures")
+        void shouldMarkAsPendingSignatures() throws Exception {
+            UUID contractId = UUID.randomUUID();
+            ContractDto dto = ContractDto.builder()
+                    .id(contractId)
+                    .status(ContractStatus.PENDING_SIGNATURES)
+                    .build();
+            when(contractService.markAsPendingSignatures(contractId)).thenReturn(dto);
+
+            mockMvc.perform(patch(BASE_URL + "/" + contractId + "/mark-pending-signatures")
+                            .with(csrf()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("PENDING_SIGNATURES"));
         }
     }
 }
