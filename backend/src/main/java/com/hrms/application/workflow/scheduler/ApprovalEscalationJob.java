@@ -96,8 +96,9 @@ public class ApprovalEscalationJob {
      */
     @Transactional
     int processEscalationsForTenant(UUID tenantId) {
-        // Fetch all stale PENDING steps that are eligible for escalation
-        List<StepExecution> staleSteps = stepExecutionRepository.findStaleStepsForEscalation(tenantId);
+        // Fetch all stale PENDING steps that are eligible for escalation (assigned > 48 hours ago)
+        LocalDateTime cutoff = LocalDateTime.now().minusHours(48);
+        List<StepExecution> staleSteps = stepExecutionRepository.findStaleStepsForEscalation(tenantId, cutoff);
 
         int escalatedCount = 0;
 
