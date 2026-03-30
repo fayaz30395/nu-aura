@@ -1,5 +1,6 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.payroll.PayrollRun;
@@ -22,7 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -32,6 +33,9 @@ class PayrollRunServiceTest {
 
     @Mock
     private PayrollRunRepository payrollRunRepository;
+
+    @Mock
+    private AuditLogService auditLogService;
 
     @InjectMocks
     private PayrollRunService payrollRunService;
@@ -272,6 +276,170 @@ class PayrollRunServiceTest {
 
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(1);
+        }
+    }
+
+    @Nested
+    @DisplayName("Lock Payroll Run")
+    class LockPayrollRunTests {
+
+        @Test
+        @DisplayName("Should lock an approved payroll run successfully")
+        void shouldLockApprovedPayrollRunSuccessfully() {
+            // Given — run is in APPROVED state
+            payrollRun.setStatus(PayrollStatus.APPROVED);
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
+
+            // When
+            PayrollRun result = payrollRunService.lockPayrollRun(runId);
+
+            // Then
+            assertThat(result.getStatus()).isEqualTo(PayrollStatus.LOCKED);
+            verify(payrollRunRepository).save(payrollRun);
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalStateException when locking a DRAFT run")
+        void shouldThrowWhenLockingDraftRun() {
+            // Given — run is in DRAFT (not APPROVED)
+            payrollRun.setStatus(PayrollStatus.DRAFT);
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+
+            // When / Then
+            assertThatThrownBy(() -> payrollRunService.lockPayrollRun(runId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("approved payroll runs can be locked");
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalStateException when locking a PROCESSED run")
+        void shouldThrowWhenLockingProcessedRun() {
+            // Given — run is in PROCESSED (needs APPROVED first)
+            payrollRun.setStatus(PayrollStatus.PROCESSED);
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+
+            assertThatThrownBy(() -> payrollRunService.lockPayrollRun(runId))
+                    .isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        @DisplayName("Should throw ResourceNotFoundException when run does not exist")
+        void shouldThrowWhenRunNotFoundForLock() {
+            UUID missingId = UUID.randomUUID();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(missingId, tenantId))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> payrollRunService.lockPayrollRun(missingId))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("Delete Payroll Run")
+    class DeletePayrollRunTests {
+
+        @Test
+        @DisplayName("Should soft-delete a DRAFT payroll run and log audit event")
+        void shouldSoftDeleteDraftPayrollRun() {
+            // Given
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findById(runId)).thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            // When
+            payrollRunService.deletePayrollRun(runId);
+
+            // Then — soft-delete sets deletedAt/deletedBy, not a hard delete
+            verify(payrollRunRepository).save(payrollRun);
+            // Audit log must be called
+            verify(auditLogService).logAction(
+                    eq("PAYROLL_RUN"), eq(runId), any(), any(), any(), anyString());
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalStateException when deleting a LOCKED payroll run")
+        void shouldThrowWhenDeletingLockedPayrollRun() {
+            // Given — locked run cannot be deleted
+            payrollRun.setStatus(PayrollStatus.LOCKED);
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findById(runId)).thenReturn(Optional.of(payrollRun));
+
+            assertThatThrownBy(() -> payrollRunService.deletePayrollRun(runId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Cannot delete locked payroll run");
+        }
+
+        @Test
+        @DisplayName("Should throw ResourceNotFoundException when run does not exist")
+        void shouldThrowWhenRunNotFoundForDelete() {
+            UUID missingId = UUID.randomUUID();
+            when(payrollRunRepository.findById(missingId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> payrollRunService.deletePayrollRun(missingId))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("State machine — full lifecycle DRAFT → LOCKED")
+    class StateMachineLifecycleTests {
+
+        @Test
+        @DisplayName("Should transition payroll run through full lifecycle: DRAFT → PROCESSED → APPROVED → LOCKED")
+        void shouldTransitionThroughFullLifecycle() {
+            // Given
+            UUID runId = payrollRun.getId();
+
+            // Step 1: Process (DRAFT → PROCESSED)
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            PayrollRun processed = payrollRunService.processPayrollRun(runId, userId);
+            assertThat(processed.getStatus()).isEqualTo(PayrollStatus.PROCESSED);
+
+            // Step 2: Approve (PROCESSED → APPROVED)
+            PayrollRun approved = payrollRunService.approvePayrollRun(runId, userId);
+            assertThat(approved.getStatus()).isEqualTo(PayrollStatus.APPROVED);
+
+            // Step 3: Lock (APPROVED → LOCKED)
+            PayrollRun locked = payrollRunService.lockPayrollRun(runId);
+            assertThat(locked.getStatus()).isEqualTo(PayrollStatus.LOCKED);
+
+            verify(payrollRunRepository, times(3)).save(any());
+        }
+
+        @Test
+        @DisplayName("Should reject processing an already PROCESSED run")
+        void shouldRejectProcessingAlreadyProcessedRun() {
+            payrollRun.setStatus(PayrollStatus.PROCESSED);
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+
+            assertThatThrownBy(() -> payrollRunService.processPayrollRun(runId, userId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("draft payroll runs can be processed");
+        }
+
+        @Test
+        @DisplayName("Should reject approving a DRAFT run (must be processed first)")
+        void shouldRejectApprovingDraftRun() {
+            payrollRun.setStatus(PayrollStatus.DRAFT);
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+
+            assertThatThrownBy(() -> payrollRunService.approvePayrollRun(runId, userId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("processed payroll runs can be approved");
         }
     }
 }
