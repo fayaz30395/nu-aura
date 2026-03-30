@@ -153,10 +153,12 @@ public class AttendanceRecord extends TenantAware {
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
-    // Minimum required work hours (8 hours = 480 minutes)
+    // Default minimum required work hours (8 hours = 480 minutes)
     public static final int FULL_DAY_MINUTES = 480;
-    // Half day threshold (4 hours = 240 minutes)
+    // Default half day threshold (4 hours = 240 minutes)
     public static final int HALF_DAY_MINUTES = 240;
+    // Default overtime threshold (9 hours = 540 minutes)
+    public static final int DEFAULT_OVERTIME_THRESHOLD_MINUTES = 540;
 
     public enum AttendanceStatus {
         PRESENT,           // Worked full day (>= 8 hours)
@@ -190,7 +192,22 @@ public class AttendanceRecord extends TenantAware {
         calculateWorkDuration();
     }
 
+    /**
+     * Calculate work duration using default thresholds (backward compatible).
+     * Called from {@link #checkOut} for simple single check-in/check-out flows.
+     */
     public void calculateWorkDuration() {
+        calculateWorkDuration(FULL_DAY_MINUTES, HALF_DAY_MINUTES, DEFAULT_OVERTIME_THRESHOLD_MINUTES);
+    }
+
+    /**
+     * Calculate work duration and update status using tenant-specific thresholds.
+     *
+     * @param fullDayMinutes            minutes required for a full day (default 480)
+     * @param halfDayMinutes            minutes threshold for half day (default 240)
+     * @param overtimeThresholdMinutes  minutes after which overtime starts (default 540)
+     */
+    public void calculateWorkDuration(int fullDayMinutes, int halfDayMinutes, int overtimeThresholdMinutes) {
         if (checkInTime != null && checkOutTime != null) {
             long minutes = java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
             this.workDurationMinutes = (int) (minutes - (breakDurationMinutes != null ? breakDurationMinutes : 0));
@@ -198,17 +215,29 @@ public class AttendanceRecord extends TenantAware {
             // Update status based on work duration (overtime is NOT set here;
             // it is the responsibility of ShiftAttendanceService which knows
             // about the employee's assigned shift thresholds)
-            updateStatusBasedOnWorkDuration();
+            updateStatusBasedOnWorkDuration(fullDayMinutes, halfDayMinutes, overtimeThresholdMinutes);
         }
     }
 
     /**
-     * Updates the attendance status based on the actual work duration.
-     * - PRESENT: >= 8 hours (480 minutes)
-     * - HALF_DAY: >= 4 hours but < 8 hours (240-479 minutes)
-     * - INCOMPLETE: < 4 hours (less than 240 minutes) - needs regularization
+     * Updates the attendance status using default thresholds (backward compatible).
      */
     public void updateStatusBasedOnWorkDuration() {
+        updateStatusBasedOnWorkDuration(FULL_DAY_MINUTES, HALF_DAY_MINUTES, DEFAULT_OVERTIME_THRESHOLD_MINUTES);
+    }
+
+    /**
+     * Updates the attendance status based on the actual work duration using
+     * tenant-configurable thresholds.
+     * - PRESENT: >= fullDayMinutes
+     * - HALF_DAY: >= halfDayMinutes but < fullDayMinutes
+     * - INCOMPLETE: < halfDayMinutes - needs regularization
+     *
+     * @param fullDayMinutes            minutes required for a full day
+     * @param halfDayMinutes            minutes threshold for half day
+     * @param overtimeThresholdMinutes  minutes after which overtime starts
+     */
+    public void updateStatusBasedOnWorkDuration(int fullDayMinutes, int halfDayMinutes, int overtimeThresholdMinutes) {
         // Only update if we have a valid checkout (meaning the day is complete)
         if (this.checkInTime == null || this.checkOutTime == null) {
             return; // Wait until checkout to determine final status
@@ -226,19 +255,19 @@ public class AttendanceRecord extends TenantAware {
             return;
         }
 
-        if (this.workDurationMinutes >= FULL_DAY_MINUTES) {
-            // Full day - 8 hours or more
+        if (this.workDurationMinutes >= fullDayMinutes) {
+            // Full day
             this.status = AttendanceStatus.PRESENT;
             this.isHalfDay = false;
             // NOTE: Overtime is NOT calculated here. It is set exclusively by
             // ShiftAttendanceService.calculateOvertimeForRecord() which uses
             // the employee's assigned shift thresholds (or sensible defaults).
-        } else if (this.workDurationMinutes >= HALF_DAY_MINUTES) {
-            // Half day - between 4 and 8 hours
+        } else if (this.workDurationMinutes >= halfDayMinutes) {
+            // Half day
             this.status = AttendanceStatus.HALF_DAY;
             this.isHalfDay = true;
         } else {
-            // Incomplete - less than 4 hours (including 0 minutes)
+            // Incomplete - less than half day threshold
             this.status = AttendanceStatus.INCOMPLETE;
             this.isHalfDay = false;
         }

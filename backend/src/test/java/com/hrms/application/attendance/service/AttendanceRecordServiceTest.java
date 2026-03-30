@@ -50,6 +50,9 @@ class AttendanceRecordServiceTest {
     @Mock
     private ShiftAttendanceService shiftAttendanceService;
 
+    @Mock
+    private TenantAttendanceConfigService tenantAttendanceConfigService;
+
     @InjectMocks
     private AttendanceRecordService attendanceRecordService;
 
@@ -84,6 +87,10 @@ class AttendanceRecordServiceTest {
         // Setup config defaults
         when(config.getMaxLookbackDays()).thenReturn(2);
         when(config.getMaxOvernightShiftHours()).thenReturn(16);
+
+        // Setup tenant attendance config defaults
+        when(tenantAttendanceConfigService.getConfig(any(UUID.class)))
+                .thenReturn(TenantAttendanceConfigService.TenantAttendanceConfig.defaults());
 
         attendanceRecord = AttendanceRecord.builder()
                 .employeeId(employeeId)

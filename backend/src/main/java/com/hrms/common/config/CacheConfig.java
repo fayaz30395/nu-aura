@@ -56,6 +56,7 @@ public class CacheConfig implements CachingConfigurer {
     public static final String FEATURE_FLAGS = "featureFlags";
     public static final String ANALYTICS_SUMMARY = "analyticsSummary";
     public static final String DASHBOARD_METRICS = "dashboardMetrics";
+    public static final String TENANT_ATTENDANCE_CONFIG = "tenantAttendanceConfig";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -82,6 +83,7 @@ public class CacheConfig implements CachingConfigurer {
         cacheConfigurations.put(OFFICE_LOCATIONS, defaultConfig.entryTtl(Duration.ofHours(4)));
         cacheConfigurations.put(BENEFIT_PLANS, defaultConfig.entryTtl(Duration.ofHours(4)));
         cacheConfigurations.put(TENANT_SETTINGS, defaultConfig.entryTtl(Duration.ofHours(4)));
+        cacheConfigurations.put(TENANT_ATTENDANCE_CONFIG, defaultConfig.entryTtl(Duration.ofHours(4)));
 
         // Short-lived caches (frequent reads but may change) - 15 minutes
         cacheConfigurations.put(EMPLOYEE_BASIC, defaultConfig.entryTtl(Duration.ofMinutes(15)));

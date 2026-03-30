@@ -52,6 +52,7 @@ public class EmployeeDashboardService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final PayslipRepository payslipRepository;
     private final HolidayRepository holidayRepository;
+    private final com.hrms.application.attendance.service.TenantAttendanceConfigService tenantAttendanceConfigService;
 
     /**
      * Get employee dashboard for the currently logged-in employee
@@ -265,9 +266,9 @@ public class EmployeeDashboardService {
                 .holidayDays(holidays.intValue())
                 .workingDays(workingDays)
                 .attendancePercentage(attendancePercentage)
-                .totalHoursThisMonth(BigDecimal.valueOf(presentDays * 8)) // Simplified
+                .totalHoursThisMonth(BigDecimal.valueOf(presentDays).multiply(tenantAttendanceConfigService.getStandardWorkHours(tenantId))) // Uses tenant config
                 .avgHoursPerDay(BigDecimal.valueOf(8.2)) // Placeholder
-                .expectedHoursThisMonth(BigDecimal.valueOf(workingDays * 8))
+                .expectedHoursThisMonth(BigDecimal.valueOf(workingDays).multiply(tenantAttendanceConfigService.getStandardWorkHours(tenantId)))
                 .overtimeHours(BigDecimal.ZERO) // Would need overtime calculation
                 .lateDays(0) // Would need late tracking
                 .earlyDepartures(0)
