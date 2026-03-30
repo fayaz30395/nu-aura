@@ -43,7 +43,7 @@ public class DashboardsController {
      * For C-suite executives, provides high-level KPIs, financial metrics, and strategic insights
      */
     @GetMapping("/executive")
-    @RequiresPermission(Permission.ANALYTICS_VIEW)
+    @RequiresPermission(Permission.DASHBOARD_EXECUTIVE)
     @Operation(summary = "Get executive dashboard",
                description = "Returns C-suite level analytics with KPIs, financial summary, workforce overview, and strategic alerts")
     public ResponseEntity<ExecutiveDashboardResponse> getExecutiveDashboard() {
