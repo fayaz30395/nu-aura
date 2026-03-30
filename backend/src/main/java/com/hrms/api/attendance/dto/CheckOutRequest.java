@@ -15,7 +15,7 @@ public class CheckOutRequest {
     // Nullable: when null, resolves to the authenticated user's employee ID
     private UUID employeeId;
 
-    @NotNull(message = "Check-out time is required")
+    // Nullable: defaults to current time when not provided (server-side)
     private LocalDateTime checkOutTime;
 
     @Pattern(regexp = "^(WEB|MOBILE|BIOMETRIC|KIOSK)$", message = "Source must be WEB, MOBILE, BIOMETRIC, or KIOSK")
