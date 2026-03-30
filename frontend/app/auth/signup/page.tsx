@@ -109,8 +109,8 @@ export default function SignupPage() {
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
-              src="/images/logo.png"
-              alt="NuLogic"
+              src="/images/nulogic-logo.svg"
+              alt="NULogic"
               width={200}
               height={60}
               className="h-16 w-auto object-contain dark:brightness-110 mx-auto"
@@ -151,8 +151,8 @@ export default function SignupPage() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-4">
             <Image
-              src="/images/logo.png"
-              alt="NuLogic"
+              src="/images/nulogic-logo.svg"
+              alt="NULogic"
               width={200}
               height={60}
               className="h-16 w-auto object-contain dark:brightness-110"

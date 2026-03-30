@@ -86,7 +86,6 @@ export default function CreateWikiPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const { mutate: createWikiPage } = useCreateWikiPage();
   const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);
@@ -140,6 +139,8 @@ export default function CreateWikiPage() {
     },
     []
   );
+
+  if (!isReady || !hasAccess) return null;
 
   const onSubmit = async (data: CreateWikiPageInput) => {
     if (!data.content || Object.keys(data.content).length === 0) {

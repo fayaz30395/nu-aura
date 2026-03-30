@@ -55,7 +55,6 @@ export default function SearchPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get('q') || ''
   );
@@ -73,6 +72,8 @@ export default function SearchPage() {
     () => searchResults?.results || [],
     [searchResults?.results]
   );
+
+  if (!isReady || !hasAccess) return null;
 
   const iconMap: Record<string, typeof BookOpen> = {
     wiki: BookOpen,

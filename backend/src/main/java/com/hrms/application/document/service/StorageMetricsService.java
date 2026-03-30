@@ -12,17 +12,20 @@ import java.util.UUID;
 /**
  * Service for calculating storage metrics across the system.
  *
- * <p>Provides storage metrics:
+ * <p>
+ * Provides storage metrics:
  * <ul>
- *   <li><strong>Database-tracked storage:</strong> Sum of fileSize columns in
- *       generated_documents and document_versions tables. This is the current active
- *       source.</li>
- *   <li><strong>MinIO integration (future):</strong> Once MinIO Admin API is integrated,
- *       this service will support querying actual bucket usage statistics for more
- *       accurate billing. See NUJIRA-XXX for tracking.</li>
+ * <li><strong>Database-tracked storage:</strong> Sum of fileSize columns in
+ * generated_documents and document_versions tables. This is the current active
+ * source.</li>
+ * <li><strong>MinIO integration (future):</strong> Once MinIO Admin API is
+ * integrated,
+ * this service will support querying actual bucket usage statistics for more
+ * accurate billing.</li>
  * </ul>
  *
- * <p>For now, callers should use {@link #getStorageBytesForTenant(UUID)} and
+ * <p>
+ * For now, callers should use {@link #getStorageBytesForTenant(UUID)} and
  * {@link #getStorageBytesAcrossAllTenants()} which rely on the database-tracked
  * fileSize columns. These are populated during file uploads via
  * {@link FileStorageService#uploadFile(java.io.InputStream, String, String, long, String, UUID)}.
@@ -38,7 +41,8 @@ public class StorageMetricsService {
     /**
      * Get total storage usage in bytes for a specific tenant.
      *
-     * <p>Sums fileSize from both generated_documents and document_versions tables.
+     * <p>
+     * Sums fileSize from both generated_documents and document_versions tables.
      *
      * @param tenantId the tenant ID
      * @return total storage in bytes
@@ -61,7 +65,8 @@ public class StorageMetricsService {
      * Get total storage usage in bytes across all tenants.
      * SuperAdmin use only.
      *
-     * <p>Sums fileSize from both generated_documents and document_versions tables
+     * <p>
+     * Sums fileSize from both generated_documents and document_versions tables
      * across all tenants.
      *
      * @return total storage in bytes across the system

@@ -429,7 +429,6 @@ export default function ProjectsPage() {
     }
   }, [permissionsReady, hasAccess, router]);
 
-  if (!permissionsReady || !hasAccess) return null;
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [activeTab, setActiveTab] = useState<'active' | 'all' | 'on_hold' | 'completed' | 'archived'>('active');
@@ -816,6 +815,8 @@ export default function ProjectsPage() {
       mobilePriority: 'secondary' as const,
     },
   ], [handleOpenEdit, router]);
+
+  if (!permissionsReady || !hasAccess) return null;
 
   return (
     <AppLayout breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Projects' }]} activeMenuItem="projects">

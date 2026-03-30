@@ -23,13 +23,14 @@ export default function ContractDetailPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const contractId = params.id as string;
 
   const { data: contract, isLoading } = useContract(contractId);
   const { data: signatures } = useSignatures(contractId);
   const terminateMutation = useTerminateContract();
   const markActiveMutation = useMarkAsActive();
+
+  if (!isReady || !hasAccess) return null;
 
   if (isLoading) {
     return (

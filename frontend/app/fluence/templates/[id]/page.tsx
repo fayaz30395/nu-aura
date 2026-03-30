@@ -60,8 +60,6 @@ export default function TemplateDetailPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
-
   const { data: template, isLoading } = useFluenceTemplate(templateId, !!templateId);
   const { data: spacesData } = useWikiSpaces(0, 100);
   const instantiate = useInstantiateTemplate();
@@ -119,6 +117,8 @@ export default function TemplateDetailPage() {
       },
     });
   }, [template, deleteTemplate, router]);
+
+  if (!isReady || !hasAccess) return null;
 
   if (isLoading) {
     return (

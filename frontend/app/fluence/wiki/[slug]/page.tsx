@@ -417,7 +417,6 @@ export default function WikiPageDetailPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [showViewers, setShowViewers] = useState(false);
@@ -562,6 +561,8 @@ export default function WikiPageDetailPage() {
     },
     [page, restoreRevision]
   );
+
+  if (!isReady || !hasAccess) return null;
 
   const canEdit =
     page?.canEdit || page?.authorId === user?.id || page?.editorIds?.includes(user?.id || '');

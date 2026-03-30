@@ -3,85 +3,104 @@
 @tailwind utilities;
 
 /* ================================================================
-   NU-AURA DESIGN SYSTEM — Single Hue Blue
+   NU-AURA DESIGN SYSTEM — NULogic Brand Identity
 
-   Aesthetic: Professional, clean enterprise UI with bold blue authority
-   Philosophy: Maximum clarity + minimal noise + decisive action
+   Brand: NULogic — Infinite Innovation
+   Palette: Lapis Blue (#050766) + Red-Orange/Purple gradient accents
+   Typography: Montserrat (headings) + Open Sans (body)
 
    Core Principles:
-   - Neutral surfaces, high-contrast typography
-   - Subtle material depth, no glossy effects
-   - Pure blue accent + neutral gray foundation
-   - Purposeful motion (page + stagger), minimal micro-wiggles
-   - Backgrounds with atmosphere (soft gradients + quiet grid)
+   - NULogic Lapis Blue as dominant authority color
+   - Red-Orange → Purple gradient for energy and CTAs
+   - Dark Teal (#133E49) for deep sections and sidebar
+   - Near-White (#F4F5F6) surfaces for clarity
+   - Meaningful motion, professional depth
 
-   Differentiation: Enterprise clarity that feels human, not sterile.
+   Differentiation: Enterprise clarity infused with NULogic brand energy.
    ================================================================ */
 
 @layer base {
   :root {
-    /* ── Typography (Humanist + Editorial) ───────────────────────── */
+    /* ── Typography (Montserrat + Open Sans) ───────────────────────── */
     --font-body: var(--font-sans);
     --font-head: var(--font-display);
 
-    /* ── Surface Hierarchy (Neutral, Clean) ────────────────────────── */
-    --bg-main: #f8f9fb;
+    /* ── NULogic Brand Colors ──────────────────────────────────────── */
+    --nu-lapis-blue: #050766;
+    --nu-navy: #25255C;
+    --nu-red-orange: #E62A32;
+    --nu-purple: #8939A1;
+    --nu-dark-teal: #133E49;
+    --nu-near-white: #F4F5F6;
+    --nu-muted-teal: #3E616A;
+    --nu-soft-coral: #EE777C;
+    --nu-light-purple: #B17DC1;
+    --nu-dusty-indigo: #61629D;
+
+    /* ── NULogic Gradients ─────────────────────────────────────────── */
+    --nu-gradient-logo: linear-gradient(to bottom, #F32820, #8539A6);
+    --nu-gradient-primary: linear-gradient(135deg, #D42F7B, #E8623A);
+    --nu-gradient-dark: linear-gradient(135deg, #1B1F4E, #7B2D8E);
+    --nu-gradient-brand: linear-gradient(to right, #ED3027, #7B469B);
+
+    /* ── Surface Hierarchy (Clean, NULogic Near-White) ─────────────── */
+    --bg-main: #F4F5F6;
     --bg-surface: #FFFFFF;
     --bg-elevated: #FFFFFF;
     --bg-card: #FFFFFF;
-    --bg-card-hover: #f0f1f5;
-    --bg-page: #f8f9fb;
+    --bg-card-hover: #ecedef;
+    --bg-page: #F4F5F6;
     --bg-input: #FFFFFF;
-    --bg-sidebar: #1a1d28;
-    --bg-overlay: rgba(25, 25, 25, 0.55);
+    --bg-sidebar: #133E49;
+    --bg-overlay: rgba(5, 7, 102, 0.45);
 
-    /* ── Background Atmosphere (Soft Gradient + Quiet Grid) ─────── */
+    /* ── Background Atmosphere (NULogic Lapis Tint + Quiet Grid) ──── */
     --bg-pattern:
-      radial-gradient(1200px 600px at -10% -10%, rgba(77, 119, 255, 0.07), transparent 60%),
-      radial-gradient(900px 500px at 110% 0%, rgba(58, 95, 217, 0.05), transparent 55%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 251, 1) 60%),
-      linear-gradient(0deg, rgba(77, 119, 255, 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(77, 119, 255, 0.025) 1px, transparent 1px);
+      radial-gradient(1200px 600px at -10% -10%, rgba(5, 7, 102, 0.06), transparent 60%),
+      radial-gradient(900px 500px at 110% 0%, rgba(137, 57, 161, 0.04), transparent 55%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(244, 245, 246, 1) 60%),
+      linear-gradient(0deg, rgba(5, 7, 102, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(5, 7, 102, 0.025) 1px, transparent 1px);
     --bg-pattern-size: auto, auto, auto, 32px 32px, 32px 32px;
 
-    /* ── Text Hierarchy (Neutral High Contrast) ────────────────────── */
-    --text-primary: #1a1d28;
-    --text-secondary: #71778a;
-    --text-muted: #a1a6b4;
+    /* ── Text Hierarchy (Lapis Blue / Dark Teal) ───────────────────── */
+    --text-primary: #050766;
+    --text-secondary: #3E616A;
+    --text-muted: #797E85;
     --text-inverse: #FFFFFF;
 
-    /* ── Border & Divider (Neutral) ────────────────────────── */
-    --border-main: #d1d4dc;
-    --border-subtle: #e2e4ea;
-    --border-strong: #a1a6b4;
-    --border-focus: #4d77ff;
+    /* ── Border & Divider (NULogic Neutral) ─────────────────────── */
+    --border-main: #c0c3c8;
+    --border-subtle: #d8dadd;
+    --border-strong: #797E85;
+    --border-focus: #050766;
 
-    /* ── Accent Scale (Theme-aware — swapped by data-theme attribute) ── */
-    --accent-50: #f0f4ff;
-    --accent-100: #dce4ff;
-    --accent-200: #b8c9ff;
-    --accent-300: #94adff;
-    --accent-400: #7092ff;
-    --accent-500: #4d77ff;
-    --accent-600: #3a5fd9;
-    --accent-700: #2a48b3;
-    --accent-800: #1c328d;
-    --accent-900: #101e66;
-    --accent-950: #081240;
-    --accent-primary: #3a5fd9;
-    --accent-primary-hover: #2a48b3;
-    --accent-primary-subtle: #f0f4ff;
+    /* ── Accent Scale (NULogic Lapis Blue) ─────────────────────── */
+    --accent-50: #eeeeff;
+    --accent-100: #d4d4f7;
+    --accent-200: #a8a8ef;
+    --accent-300: #7c7ce6;
+    --accent-400: #5050de;
+    --accent-500: #2525b0;
+    --accent-600: #0f0f8a;
+    --accent-700: #050766;
+    --accent-800: #040555;
+    --accent-900: #030344;
+    --accent-950: #020233;
+    --accent-primary: #050766;
+    --accent-primary-hover: #040555;
+    --accent-primary-subtle: #eeeeff;
 
-    /* ── Sidebar (Deep Charcoal) ──────────────────────────────────── */
-    --sidebar-active-bg: rgba(58, 95, 217, 0.18);
-    --sidebar-active-border: #4d77ff;
-    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
-    --sidebar-text: rgba(255, 255, 255, 0.72);
+    /* ── Sidebar (NULogic Dark Teal) ──────────────────────────────── */
+    --sidebar-active-bg: rgba(5, 7, 102, 0.22);
+    --sidebar-active-border: #E62A32;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.10);
+    --sidebar-text: rgba(255, 255, 255, 0.78);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.40);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.42);
     --sidebar-border: rgba(255, 255, 255, 0.12);
-    --sidebar-section-text: rgba(255, 255, 255, 0.45);
-    --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.20) 100%);
+    --sidebar-section-text: rgba(255, 255, 255, 0.48);
+    --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.25) 100%);
 
     /* ── Shadows (Soft Material Depth) ──────────────────────────── */
     --shadow-card: 0 1px 0 rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.06);
@@ -89,9 +108,9 @@
     --shadow-elevated: 0 1px 0 rgba(16, 24, 40, 0.08), 0 16px 36px rgba(16, 24, 40, 0.14);
     --shadow-dropdown: 0 1px 0 rgba(16, 24, 40, 0.08), 0 24px 48px rgba(16, 24, 40, 0.18);
 
-    /* ── Ring / Focus (Accent-Forward) ──────────────────────────── */
-    --ring-primary: rgba(77, 119, 255, 0.35);
-    --ring-danger: rgba(220, 38, 38, 0.35);
+    /* ── Ring / Focus (NULogic Lapis Blue) ──────────────────────── */
+    --ring-primary: rgba(5, 7, 102, 0.35);
+    --ring-danger: rgba(230, 42, 50, 0.35);
     --ring-success: rgba(22, 163, 74, 0.35);
 
     /* ── Semantic Colors (Cool, Clear States) ───────────────────── */
@@ -111,21 +130,21 @@
     --status-neutral-text: #545a6e;
     --status-neutral-border: #d1d4dc;
 
-    /* ── Header (Quiet Surface) ─────────────────────────────────── */
-    --header-bg: rgba(248, 249, 251, 0.92);
-    --header-border: #d1d4dc;
-    --header-text: #1a1d28;
-    --header-text-muted: #71778a;
-    --header-hover-bg: rgba(58, 95, 217, 0.08);
-    --header-divider: #d1d4dc;
+    /* ── Header (NULogic Clean Surface) ──────────────────────────── */
+    --header-bg: rgba(244, 245, 246, 0.92);
+    --header-border: #c0c3c8;
+    --header-text: #050766;
+    --header-text-muted: #3E616A;
+    --header-hover-bg: rgba(5, 7, 102, 0.08);
+    --header-divider: #c0c3c8;
 
-    /* ── Dropdown (Clean + Cool) ────────────────────────────────── */
+    /* ── Dropdown (Clean + NULogic) ─────────────────────────────── */
     --dropdown-bg: #ffffff;
-    --dropdown-border: #d1d4dc;
-    --dropdown-hover: #f0f1f5;
-    --dropdown-text: #1a1d28;
-    --dropdown-text-secondary: #71778a;
-    --dropdown-divider: #d1d4dc;
+    --dropdown-border: #c0c3c8;
+    --dropdown-hover: #ecedef;
+    --dropdown-text: #050766;
+    --dropdown-text-secondary: #3E616A;
+    --dropdown-divider: #c0c3c8;
 
     /* ── Skeuomorphism Design Tokens (Modern Tactile) ────────────── */
     --shadow-skeuo-card:
@@ -167,79 +186,79 @@
     --glass-blur: 12px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 
-    /* ── Chart Colors (Balanced Spectrum) ───────────────────────── */
-    --chart-primary: #4d77ff;
-    --chart-secondary: #7092ff;
+    /* ── Chart Colors (NULogic Brand Spectrum) ──────────────────── */
+    --chart-primary: #050766;
+    --chart-secondary: #8939A1;
     --chart-success: #16a34a;
     --chart-warning: #f59e0b;
-    --chart-danger: #dc2626;
-    --chart-info: #1d4ed8;
-    --chart-accent: #f97316;
-    --chart-muted: #d1d4dc;
-    --chart-grid: #e2e4ea;
+    --chart-danger: #E62A32;
+    --chart-info: #61629D;
+    --chart-accent: #EE777C;
+    --chart-muted: #c0c3c8;
+    --chart-grid: #d8dadd;
     --chart-tooltip-bg: #ffffff;
-    --chart-tooltip-border: #d1d4dc;
-    --chart-tooltip-text: #1a1d28;
+    --chart-tooltip-border: #c0c3c8;
+    --chart-tooltip-text: #050766;
   }
 
   .dark {
-    /* ── Surface Hierarchy (Deep Charcoal) ─────────────────────────── */
-    --bg-main: #0f1118;
-    --bg-surface: #1a1d28;
-    --bg-elevated: #282c3a;
-    --bg-card: #1a1d28;
-    --bg-card-hover: #282c3a;
-    --bg-page: #0f1118;
-    --bg-input: #1a1d28;
-    --bg-sidebar: #0f1118;
+    /* ── Surface Hierarchy (NULogic Dark Teal + Navy) ──────────────── */
+    --bg-main: #0a1218;
+    --bg-surface: #0e1e25;
+    --bg-elevated: #1a3540;
+    --bg-card: #0e1e25;
+    --bg-card-hover: #1a3540;
+    --bg-page: #0a1218;
+    --bg-input: #0e1e25;
+    --bg-sidebar: #0a1218;
     --bg-overlay: rgba(0, 0, 0, 0.75);
 
-    /* ── Background Atmosphere (Subtle Night Glow) ──────────────── */
+    /* ── Background Atmosphere (NULogic Night Glow) ──────────────── */
     --bg-pattern:
-      radial-gradient(1000px 600px at 0% 0%, rgba(77, 119, 255, 0.06), transparent 60%),
-      radial-gradient(800px 500px at 100% 0%, rgba(112, 146, 255, 0.04), transparent 55%),
-      linear-gradient(180deg, rgba(15, 17, 24, 0.90), rgba(15, 17, 24, 1) 60%),
+      radial-gradient(1000px 600px at 0% 0%, rgba(5, 7, 102, 0.10), transparent 60%),
+      radial-gradient(800px 500px at 100% 0%, rgba(137, 57, 161, 0.06), transparent 55%),
+      linear-gradient(180deg, rgba(10, 18, 24, 0.90), rgba(10, 18, 24, 1) 60%),
       linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     --bg-pattern-size: auto, auto, auto, 32px 32px, 32px 32px;
 
-    /* ── Text Hierarchy (Neutral Light) ────────────────────────────── */
+    /* ── Text Hierarchy (Light on Dark) ────────────────────────────── */
     --text-primary: #FFFFFF;
-    --text-secondary: #a1a6b4;
-    --text-muted: #71778a;
-    --text-inverse: #1a1d28;
+    --text-secondary: #9aa8af;
+    --text-muted: #5e6e75;
+    --text-inverse: #050766;
 
-    /* ── Border & Divider (Night Neutrals) ──────────────────────── */
-    --border-main: #3d4255;
-    --border-subtle: #282c3a;
-    --border-strong: #545a6e;
-    --border-focus: #7092ff;
+    /* ── Border & Divider (Night Teal) ──────────────────────────── */
+    --border-main: #2a4a55;
+    --border-subtle: #1a3540;
+    --border-strong: #3E616A;
+    --border-focus: #a8a8ef;
 
-    /* ── Accent Scale (Dark mode — brighter for dark backgrounds) ── */
-    --accent-50: rgba(77, 119, 255, 0.08);
-    --accent-100: rgba(77, 119, 255, 0.14);
-    --accent-200: #4d6fcc;
-    --accent-300: #6688e6;
-    --accent-400: #7092ff;
-    --accent-500: #94adff;
-    --accent-600: #7092ff;
-    --accent-700: #94adff;
-    --accent-800: #b8c9ff;
-    --accent-900: #dce4ff;
-    --accent-950: #f0f4ff;
-    --accent-primary: #7092ff;
-    --accent-primary-hover: #94adff;
-    --accent-primary-subtle: rgba(77, 119, 255, 0.14);
+    /* ── Accent Scale (Dark mode — lighter Lapis for dark backgrounds) ─ */
+    --accent-50: rgba(5, 7, 102, 0.10);
+    --accent-100: rgba(5, 7, 102, 0.18);
+    --accent-200: #61629D;
+    --accent-300: #7c7ce6;
+    --accent-400: #a8a8ef;
+    --accent-500: #B17DC1;
+    --accent-600: #a8a8ef;
+    --accent-700: #c4c4f5;
+    --accent-800: #d4d4f7;
+    --accent-900: #eeeeff;
+    --accent-950: #f8f8ff;
+    --accent-primary: #a8a8ef;
+    --accent-primary-hover: #c4c4f5;
+    --accent-primary-subtle: rgba(5, 7, 102, 0.18);
 
-    /* ── Sidebar (Charcoal + Blue) ─────────────────────────────── */
-    --sidebar-active-bg: rgba(77, 119, 255, 0.18);
-    --sidebar-active-border: #7092ff;
+    /* ── Sidebar (Dark Teal Night) ─────────────────────────────── */
+    --sidebar-active-bg: rgba(230, 42, 50, 0.18);
+    --sidebar-active-border: #EE777C;
     --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
-    --sidebar-text: rgba(255, 255, 255, 0.75);
+    --sidebar-text: rgba(255, 255, 255, 0.78);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.40);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.42);
     --sidebar-border: rgba(255, 255, 255, 0.12);
-    --sidebar-section-text: rgba(255, 255, 255, 0.45);
+    --sidebar-section-text: rgba(255, 255, 255, 0.48);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.45) 100%);
 
     /* ── Shadows (Deep, Focused) ────────────────────────────────── */
@@ -248,43 +267,43 @@
     --shadow-elevated: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 48px rgba(0, 0, 0, 0.70);
     --shadow-dropdown: 0 0 0 1px rgba(255, 255, 255, 0.10), 0 32px 60px rgba(0, 0, 0, 0.75);
 
-    /* ── Ring / Focus (Accent-Forward) ──────────────────────────── */
-    --ring-primary: rgba(77, 119, 255, 0.35);
-    --ring-danger: rgba(248, 113, 113, 0.35);
+    /* ── Ring / Focus (NULogic Lapis Light) ──────────────────────── */
+    --ring-primary: rgba(168, 168, 239, 0.40);
+    --ring-danger: rgba(238, 119, 124, 0.35);
     --ring-success: rgba(74, 222, 128, 0.35);
 
     /* ── Semantic Colors (Dark Mode) ────────────────────────────── */
     --status-success-bg: rgba(22, 163, 74, 0.18);
     --status-success-text: #86efac;
     --status-success-border: rgba(22, 163, 74, 0.35);
-    --status-danger-bg: rgba(220, 38, 38, 0.18);
-    --status-danger-text: #fca5a5;
-    --status-danger-border: rgba(220, 38, 38, 0.35);
+    --status-danger-bg: rgba(230, 42, 50, 0.18);
+    --status-danger-text: #EE777C;
+    --status-danger-border: rgba(230, 42, 50, 0.35);
     --status-warning-bg: rgba(245, 158, 11, 0.18);
     --status-warning-text: #fcd34d;
     --status-warning-border: rgba(245, 158, 11, 0.35);
-    --status-info-bg: rgba(59, 130, 246, 0.18);
-    --status-info-text: #bfdbfe;
-    --status-info-border: rgba(59, 130, 246, 0.35);
+    --status-info-bg: rgba(97, 98, 157, 0.18);
+    --status-info-text: #c4c4f5;
+    --status-info-border: rgba(97, 98, 157, 0.35);
     --status-neutral-bg: rgba(148, 163, 184, 0.12);
-    --status-neutral-text: #d1d4dc;
+    --status-neutral-text: #c0c3c8;
     --status-neutral-border: rgba(148, 163, 184, 0.25);
 
-    /* ── Header (Deep Surface) ──────────────────────────────────── */
-    --header-bg: rgba(15, 17, 24, 0.92);
-    --header-border: #3d4255;
+    /* ── Header (NULogic Dark Surface) ─────────────────────────── */
+    --header-bg: rgba(10, 18, 24, 0.92);
+    --header-border: #2a4a55;
     --header-text: #FFFFFF;
-    --header-text-muted: #a1a6b4;
-    --header-hover-bg: rgba(77, 119, 255, 0.12);
-    --header-divider: #3d4255;
+    --header-text-muted: #9aa8af;
+    --header-hover-bg: rgba(168, 168, 239, 0.12);
+    --header-divider: #2a4a55;
 
-    /* ── Dropdown (Dark) ────────────────────────────────────────── */
-    --dropdown-bg: #1a1d28;
-    --dropdown-border: #3d4255;
-    --dropdown-hover: #282c3a;
+    /* ── Dropdown (NULogic Dark) ────────────────────────────────── */
+    --dropdown-bg: #0e1e25;
+    --dropdown-border: #2a4a55;
+    --dropdown-hover: #1a3540;
     --dropdown-text: #FFFFFF;
-    --dropdown-text-secondary: #a1a6b4;
-    --dropdown-divider: #3d4255;
+    --dropdown-text-secondary: #9aa8af;
+    --dropdown-divider: #2a4a55;
 
     /* ── Skeuomorphism Design Tokens (Dark Mode) ────────────────── */
     --shadow-skeuo-card:
@@ -321,23 +340,23 @@
       linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.10) 100%);
     --gradient-skeuo-card:
       linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-    --glass-bg: rgba(26, 29, 40, 0.75);
+    --glass-bg: rgba(14, 30, 37, 0.78);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-blur: 12px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
 
-    /* ── Chart Colors (Dark Mode) ───────────────────────────────── */
-    --chart-primary: #7092ff;
-    --chart-secondary: #94adff;
+    /* ── Chart Colors (NULogic Dark Mode) ─────────────────────── */
+    --chart-primary: #a8a8ef;
+    --chart-secondary: #B17DC1;
     --chart-success: #4ade80;
     --chart-warning: #fbbf24;
-    --chart-danger: #f87171;
-    --chart-info: #60a5fa;
-    --chart-accent: #fb923c;
-    --chart-muted: #3d4255;
-    --chart-grid: #3d4255;
-    --chart-tooltip-bg: #1a1d28;
-    --chart-tooltip-border: #3d4255;
+    --chart-danger: #EE777C;
+    --chart-info: #c4c4f5;
+    --chart-accent: #EE777C;
+    --chart-muted: #2a4a55;
+    --chart-grid: #2a4a55;
+    --chart-tooltip-bg: #0e1e25;
+    --chart-tooltip-border: #2a4a55;
     --chart-tooltip-text: #FFFFFF;
   }
 
@@ -378,7 +397,7 @@
     min-height: 100%;
   }
 
-  /* ── Typography (Humanist + Editorial) ───────────────────────── */
+  /* ── Typography (Montserrat Headings + Open Sans Body) ─────── */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
     color: var(--text-primary);
@@ -682,22 +701,22 @@
     border: none;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.20),
-      0 2px 4px rgba(0, 87, 255, 0.20),
-      0 8px 20px rgba(0, 87, 255, 0.18);
+      0 2px 4px rgba(5, 7, 102, 0.25),
+      0 8px 20px rgba(5, 7, 102, 0.20);
     transition: transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
   }
   .btn-primary:hover {
     filter: brightness(1.04);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.25),
-      0 4px 8px rgba(0, 87, 255, 0.22),
-      0 10px 24px rgba(0, 87, 255, 0.20);
+      0 4px 8px rgba(5, 7, 102, 0.28),
+      0 10px 24px rgba(5, 7, 102, 0.22);
     transform: translateY(-0.5px);
   }
   .btn-primary:active {
     box-shadow:
       inset 0 2px 4px rgba(0, 0, 0, 0.20),
-      0 1px 2px rgba(0, 87, 255, 0.15);
+      0 1px 2px rgba(5, 7, 102, 0.18);
     transform: translateY(0.5px);
     filter: brightness(0.98);
   }

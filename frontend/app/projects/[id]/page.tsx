@@ -101,8 +101,6 @@ export default function ProjectDetailPage() {
     }
   }, [permissionsReady, hasAccess, router]);
 
-  if (!permissionsReady || !hasAccess) return null;
-
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
   const [showActivateDialog, setShowActivateDialog] = useState(false);
   const [showCloseDialog, setShowCloseDialog] = useState(false);
@@ -127,6 +125,8 @@ export default function ProjectDetailPage() {
   } = useForm<EditFormData>({
     resolver: zodResolver(editProjectSchema),
   });
+
+  if (!permissionsReady || !hasAccess) return null;
 
   const loading = isLoading;
   const actionLoading = activateMutation.isPending || closeMutation.isPending;

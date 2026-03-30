@@ -159,8 +159,6 @@ function InterviewsPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
-
   // Query hooks
   const { data: candidatesData } = useCandidates(0, 100);
   const { data: jobOpeningsData } = useJobOpenings(0, 100);
@@ -220,6 +218,8 @@ function InterviewsPage() {
     resolver: zodResolver(createInterviewSchema),
     mode: 'onBlur',
   });
+
+  if (!isReady || !hasAccess) return null;
 
   const candidates = candidatesData?.content || [];
   const jobOpenings = jobOpeningsData?.content || [];

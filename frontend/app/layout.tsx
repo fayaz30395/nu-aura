@@ -29,6 +29,10 @@ const robotoMono = Roboto_Mono({
 export const metadata: Metadata = {
   title: 'NU-AURA by NULogic — Infinite Innovation',
   description: 'Unified People Platform by NULogic — HR, Recruitment, Performance & Knowledge Management',
+  icons: {
+    icon: '/images/nulogic-icon.svg',
+    apple: '/images/nulogic-icon.svg',
+  },
 };
 
 export const viewport: Viewport = {

@@ -21,34 +21,34 @@ const toMantineTuple = (scale: Record<string, string>, name: string): MantineCol
   scale[`${name}10`],
 ];
 
-// ─── New Design System (Blue/Gray) ────────────────────────────────────────
+// ─── NULogic Brand Design System ──────────────────────────────────────────
 
-// Primary/Accent - Pure blue
+// Primary/Accent - NULogic Lapis Blue
 const accent: MantineColorsTuple = [
-  '#f0f4ff',   // 0 — accent-50
-  '#dce4ff',   // 1 — accent-100
-  '#b8c9ff',   // 2 — accent-200
-  '#94adff',   // 3 — accent-300
-  '#7092ff',   // 4 — accent-400
-  '#4d77ff',   // 5 — accent-500
-  '#3a5fd9',   // 6 — accent-600
-  '#2a48b3',   // 7 — accent-700
-  '#1c328d',   // 8 — accent-800
-  '#101e66',   // 9 — accent-900
+  '#eeeeff',   // 0 — accent-50
+  '#d4d4f7',   // 1 — accent-100
+  '#a8a8ef',   // 2 — accent-200
+  '#7c7ce6',   // 3 — accent-300
+  '#5050de',   // 4 — accent-400
+  '#2525b0',   // 5 — accent-500
+  '#0f0f8a',   // 6 — accent-600
+  '#050766',   // 7 — accent-700 (NULogic Lapis Blue)
+  '#040555',   // 8 — accent-800
+  '#030344',   // 9 — accent-900
 ];
 
-// Neutrals - Neutral gray
+// Neutrals - NULogic Teal Gray
 const secondary: MantineColorsTuple = [
-  '#f8f9fb',   // 0 — neutral-50
-  '#f0f1f5',   // 1 — neutral-100
-  '#e2e4ea',   // 2 — neutral-200
-  '#d1d4dc',   // 3 — neutral-300
-  '#a1a6b4',   // 4 — neutral-400
-  '#71778a',   // 5 — neutral-500
-  '#545a6e',   // 6 — neutral-600
-  '#3d4255',   // 7 — neutral-700
-  '#282c3a',   // 8 — neutral-800
-  '#1a1d28',   // 9 — neutral-900
+  '#F4F5F6',   // 0 — neutral-50 (NULogic Near-White)
+  '#ecedef',   // 1 — neutral-100
+  '#d8dadd',   // 2 — neutral-200
+  '#c0c3c8',   // 3 — neutral-300
+  '#9a9fa8',   // 4 — neutral-400
+  '#797E85',   // 5 — neutral-500
+  '#5e636c',   // 6 — neutral-600
+  '#3E616A',   // 7 — neutral-700 (NULogic Muted Teal)
+  '#1e2a30',   // 8 — neutral-800
+  '#133E49',   // 9 — neutral-900 (NULogic Dark Teal)
 ];
 
 // Semantic colors (professional, muted)
@@ -84,12 +84,12 @@ export const theme = createTheme({
   primaryColor: 'accent',
   primaryShade: { light: 6, dark: 4 },
 
-  // Typography - IBM Plex (humanist + editorial)
-  fontFamily: 'var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-  fontFamilyMonospace: 'var(--font-mono), "SF Mono", "Monaco", "Cascadia Code", "Consolas", "Courier New", monospace',
+  // Typography - NULogic (Montserrat headings + Open Sans body)
+  fontFamily: 'var(--font-sans), "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  fontFamilyMonospace: 'var(--font-mono), "Roboto Mono", "SF Mono", "Monaco", "Cascadia Code", "Consolas", "Courier New", monospace',
 
   headings: {
-    fontFamily: 'var(--font-display), var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontFamily: 'var(--font-display), "Montserrat", var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontWeight: '600',
     sizes: {
       h1: { fontSize: '2.25rem', lineHeight: '1.15' },

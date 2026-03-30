@@ -64,7 +64,7 @@ export default function ContactPage() {
       icon: Phone,
       title: 'Call Us',
       description: 'Monday to Friday, 9AM - 6PM IST',
-      value: '+91 (800) 123-4567',
+      value: '+1 865 408 7639',
       color: 'from-success-500 to-success-600',
     },
     {

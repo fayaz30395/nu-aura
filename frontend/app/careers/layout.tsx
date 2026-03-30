@@ -24,11 +24,11 @@ export default function CareersLayout({
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/careers" className="flex items-center gap-4">
             <Image
-              src="/images/logo.png"
-              alt="NuLogic"
-              width={120}
-              height={32}
-              className="h-8 w-auto object-contain"
+              src="/images/nulogic-logo.svg"
+              alt="NULogic"
+              width={130}
+              height={38}
+              className="h-8 w-auto object-contain dark:brightness-0 dark:invert"
               priority
             />
             <span className="text-sm font-medium text-[var(--text-muted)] border-l border-[var(--border-main)] pl-3">

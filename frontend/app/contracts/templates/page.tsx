@@ -22,13 +22,14 @@ export default function ContractTemplatesPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
   const { data: templatesData, isLoading } = useTemplates({ page, size: 20 });
   const deleteMutation = useDeleteTemplate();
+
+  if (!isReady || !hasAccess) return null;
 
   const templates = templatesData?.content || [];
 
