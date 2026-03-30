@@ -23,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -127,7 +130,7 @@ public class MobileService {
                     .totalLeavesTaken(totalTaken.intValue())
                     .totalLeavesPlanned(totalPending.intValue())
                     .build();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — mobile API error boundary
             log.error("Error building leave balance summary for employee: {}", employeeId, e);
             return MobileDashboardResponse.LeaveBalanceSummary.builder()
                     .casualLeaveBalance(0)
@@ -160,7 +163,7 @@ public class MobileService {
                             .daysFromToday((int) java.time.temporal.ChronoUnit.DAYS.between(now, h.getHolidayDate()))
                             .build())
                     .toList();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — mobile API error boundary
             log.error("Error fetching upcoming holidays", e);
             return new ArrayList<>();
         }
@@ -191,7 +194,7 @@ public class MobileService {
                             .publishedAt(a.getCreatedAt())
                             .build())
                     .toList();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — mobile API error boundary
             log.error("Error fetching announcements", e);
             return new ArrayList<>();
         }
@@ -241,7 +244,7 @@ public class MobileService {
                             employees.add(emp);
                         }
                     }
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — mobile API error boundary
                     log.debug("Could not load subordinates for reminders: {}", e.getMessage());
                 }
             }
@@ -291,7 +294,7 @@ public class MobileService {
                     .sorted(Comparator.comparing(MobileDashboardResponse.EmployeeReminder::getDate))
                     .limit(10) // Limit to 10 reminders
                     .toList();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — mobile API error boundary
             log.error("Error fetching employee reminders", e);
             return new ArrayList<>();
         }

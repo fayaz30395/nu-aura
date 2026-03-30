@@ -9,8 +9,6 @@ import {
   Modal,
   Select,
   TextInput,
-  Textarea,
-  NumberInput,
   Badge,
   Progress,
   Tooltip,
@@ -82,7 +80,6 @@ import {
   PROFICIENCY_LEVEL_LABELS,
   COMPETENCY_CATEGORY_COLORS,
   GAP_LEVEL_COLORS,
-  getProficiencyColor,
 } from '@/lib/types/competency';
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────
@@ -346,7 +343,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
     [addSkillMutation, closeAddModal, form]
   );
 
-  const skills = skillsQuery.data || [];
+  const skills = useMemo(() => skillsQuery.data || [], [skillsQuery.data]);
   const gapReport = gapQuery.data;
 
   // Build radar chart data: current vs required
@@ -635,7 +632,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
 // ─── Team View Tab ───────────────────────────────────────────────────────
 
 function TeamViewTab({ managerId }: { managerId: string }) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [_selectedCategory, _setSelectedCategory] = useState<string | null>(null);
   const verifySkillMutation = useVerifySkill();
 
   // In a production system, this would call a team skills endpoint.
@@ -643,7 +640,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
   const gapQuery = useSkillGapAnalysis(managerId);
   const skillsQuery = useEmployeeSkills(managerId);
 
-  const skills = skillsQuery.data || [];
+  const skills = useMemo(() => skillsQuery.data || [], [skillsQuery.data]);
   const gapReport = gapQuery.data;
 
   // Build heatmap bar chart data

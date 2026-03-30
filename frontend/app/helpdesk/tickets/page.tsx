@@ -28,7 +28,6 @@ import {
   Filter,
   Ticket,
   Clock,
-  AlertCircle,
   CheckCircle2,
   Circle,
   Pause,

@@ -193,7 +193,7 @@ export function useDeleteComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ commentId, ticketId }: { commentId: string; ticketId: string }) =>
+    mutationFn: ({ commentId, ticketId: _ticketId }: { commentId: string; ticketId: string }) =>
       helpdeskService.deleteComment(commentId),
     onSuccess: (_, { ticketId }) => {
       queryClient.invalidateQueries({ queryKey: helpdeskKeys.comments(ticketId) });

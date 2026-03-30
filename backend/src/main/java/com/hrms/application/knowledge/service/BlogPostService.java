@@ -203,7 +203,7 @@ public class BlogPostService {
         if (eventPublisher != null) {
             try {
                 eventPublisher.publishFluenceContent("blog", postId, action, tenantId);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — content indexing error boundary
                 log.warn("Failed to publish fluence content event for blog post {}: {}", postId, e.getMessage());
             }
         }
@@ -213,7 +213,7 @@ public class BlogPostService {
         try {
             String excerpt = extractExcerpt(post.getContent());
             fluenceActivityService.recordActivity(tenantId, actorId, action, "BLOG", post.getId(), post.getTitle(), excerpt);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — content indexing error boundary
             log.warn("Failed to record activity for blog post: {}", e.getMessage());
         }
     }

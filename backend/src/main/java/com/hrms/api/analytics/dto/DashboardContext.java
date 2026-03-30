@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
+import java.util.List;
 
 /**
  * Context for role-based dashboard analytics.
@@ -32,7 +33,7 @@ public class DashboardContext {
      * For MANAGER: list of reportee employee IDs
      * For EMPLOYEE: just their own ID
      */
-    private java.util.List<UUID> targetEmployeeIds;
+    private List<UUID> targetEmployeeIds;
 
     public boolean isAdmin() {
         return viewType == ViewType.ADMIN;

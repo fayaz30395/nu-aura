@@ -59,7 +59,7 @@ export default function NewOnboardingPage() {
         handleSubmit: handleFormSubmit,
         formState: { errors },
         watch,
-        reset: resetForm,
+        reset: _resetForm,
     } = useForm<OnboardingFormData>({
         resolver: zodResolver(onboardingFormSchema),
         defaultValues: {

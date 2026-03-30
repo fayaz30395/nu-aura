@@ -26,7 +26,6 @@ import {
   LWFConfiguration,
   LWFConfigurationRequest,
   LWFFrequency,
-  LWFDeductionStatus,
   FREQUENCY_LABELS,
   STATUS_CONFIG,
 } from '@/lib/types/lwf';

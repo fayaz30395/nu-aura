@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
 import { useQuery } from '@tanstack/react-query';

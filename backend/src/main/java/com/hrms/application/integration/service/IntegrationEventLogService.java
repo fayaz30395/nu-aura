@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Map;
 
 /**
  * Service for managing integration event logs.
@@ -181,10 +182,10 @@ public class IntegrationEventLogService {
      * @param metadata the metadata map to serialize
      * @return the JSON string representation, or "{}" if serialization fails
      */
-    private String serializeMetadata(java.util.Map<String, Object> metadata) {
+    private String serializeMetadata(Map<String, Object> metadata) {
         try {
             return objectMapper.writeValueAsString(metadata);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-event integration error boundary
             log.warn("Failed to serialize event metadata", e);
             return "{}";
         }

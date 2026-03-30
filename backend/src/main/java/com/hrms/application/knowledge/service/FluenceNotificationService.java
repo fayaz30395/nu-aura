@@ -63,7 +63,7 @@ public class FluenceNotificationService {
 
             log.debug("Sent watcher notifications for page {} to {} watchers (excluding actor {})",
                     pageId, watchers.size() - 1, actorId);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — notification delivery error boundary
             log.error("Failed to notify watchers for page {}: {}", pageId, e.getMessage(), e);
         }
     }
@@ -112,7 +112,7 @@ public class FluenceNotificationService {
 
             log.debug("Sent mention notifications for {} {} to {} users",
                     contentType, contentId, mentionedUserIds.size());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — notification delivery error boundary
             log.error("Failed to notify mentioned users for {} {}: {}", contentType, contentId, e.getMessage(), e);
         }
     }
@@ -154,7 +154,7 @@ public class FluenceNotificationService {
             );
 
             log.debug("Sent comment notification for {} {} to owner {}", contentType, contentId, contentOwnerId);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — notification delivery error boundary
             log.error("Failed to notify content owner for {} {}: {}", contentType, contentId, e.getMessage(), e);
         }
     }

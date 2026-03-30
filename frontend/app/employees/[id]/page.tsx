@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -364,9 +365,12 @@ export default function EmployeeDetailPage() {
             {/* Avatar + Name + Badge */}
             <div className="flex items-center gap-6">
               {employee.profilePhotoUrl ? (
-                <img
+                <Image
                   src={employee.profilePhotoUrl}
                   alt={employee.fullName}
+                  width={80}
+                  height={80}
+                  unoptimized
                   className="h-20 w-20 rounded-full object-cover border-2 border-accent-500/30"
                 />
               ) : (

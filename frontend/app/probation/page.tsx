@@ -26,13 +26,10 @@ import {
   Clock,
   AlertTriangle,
   CheckCircle,
-  XCircle,
-  TrendingUp,
   Users,
   ClipboardList,
   Star,
   Calendar,
-  Shield,
 } from 'lucide-react';
 import type {
   ProbationPeriodResponse,
@@ -108,7 +105,7 @@ type TabKey = 'active' | 'upcoming' | 'history' | 'evaluate';
 
 export default function ProbationPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [activeTab, setActiveTab] = useState<TabKey>('active');
   const [activePage, setActivePage] = useState(0);
   const [historyPage, setHistoryPage] = useState(0);
@@ -123,11 +120,11 @@ export default function ProbationPage() {
     historyPage,
     20
   );
-  const { data: statistics, isLoading: isStatsLoading } = useProbationStatistics();
+  const { data: statistics, isLoading: _isStatsLoading } = useProbationStatistics();
 
   // Mutations
   const confirmEmployee = useConfirmEmployee();
-  const extendProbation = useExtendProbation();
+  const _extendProbation = useExtendProbation();
   const addEvaluation = useAddEvaluation();
 
   // Form

@@ -163,7 +163,7 @@ public class DocumentTemplateService {
         if (eventPublisher != null) {
             try {
                 eventPublisher.publishFluenceContent("template", templateId, action, tenantId);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — template processing error boundary
                 log.warn("Failed to publish fluence content event for template {}: {}", templateId, e.getMessage());
             }
         }
@@ -173,7 +173,7 @@ public class DocumentTemplateService {
         try {
             fluenceActivityService.recordActivity(tenantId, actorId, action, "TEMPLATE",
                     template.getId(), template.getName(), template.getDescription());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — template processing error boundary
             log.warn("Failed to record activity for template: {}", e.getMessage());
         }
     }

@@ -20,7 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -107,7 +114,7 @@ public class SamlAuthenticationHandler {
                     getAttributeByMapping(attributes, mapping, "employeeId"),
                     getAttributeByMapping(attributes, mapping, "department")
             );
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — authentication error boundary
             log.error("Failed to parse attribute mapping JSON, using defaults", e);
             return new SamlUserAttributes(
                     attributes.get("email"),

@@ -23,11 +23,7 @@ import {
   Clock,
   Plus,
   CheckCircle,
-  XCircle,
-  AlertCircle,
   Timer,
-  TrendingUp,
-  CalendarDays,
 } from 'lucide-react';
 import type { OvertimeRecordResponse } from '@/lib/types/overtime';
 

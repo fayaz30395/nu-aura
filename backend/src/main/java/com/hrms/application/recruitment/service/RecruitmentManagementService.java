@@ -30,7 +30,14 @@ import com.hrms.domain.event.recruitment.CandidateHiredEvent;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -234,7 +241,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
             try {
                 jobOpeningRepository.findAllById(jobIds).forEach(
                         jo -> jobTitles.put(jo.getId(), jo.getJobTitle()));
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
                 log.warn("Failed to batch-fetch job titles: {}", e.getMessage());
             }
         }
@@ -249,7 +256,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
             try {
                 employeeRepository.findAllById(recruiterIds).forEach(
                         emp -> recruiterNames.put(emp.getId(), emp.getFullName()));
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
                 log.warn("Failed to batch-fetch recruiter names: {}", e.getMessage());
             }
         }
@@ -325,7 +332,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
      * Updates candidate status to OFFER_ACCEPTED and records the acceptance date.
      */
     @Transactional
-    public CandidateResponse acceptOffer(UUID candidateId, java.time.LocalDate confirmedJoiningDate) {
+    public CandidateResponse acceptOffer(UUID candidateId, LocalDate confirmedJoiningDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Processing offer acceptance for candidate {} in tenant {}", candidateId, tenantId);
 
@@ -339,7 +346,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
-        candidate.setOfferAcceptedDate(java.time.LocalDate.now());
+        candidate.setOfferAcceptedDate(LocalDate.now());
 
         if (confirmedJoiningDate != null) {
             candidate.setProposedJoiningDate(confirmedJoiningDate);
@@ -380,7 +387,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
-        candidate.setOfferDeclinedDate(java.time.LocalDate.now());
+        candidate.setOfferDeclinedDate(LocalDate.now());
         candidate.setOfferDeclineReason(declineReason);
 
         Candidate savedCandidate = candidateRepository.save(candidate);
@@ -454,7 +461,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
                         .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
                 eventPublisher.publish(CandidateHiredEvent.of(this, savedCandidate, jobOpening));
                 log.info("CandidateHiredEvent published for candidate: {}", candidateId);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
                 log.error("Failed to publish CandidateHiredEvent for candidate {}: {}", candidateId, e.getMessage(), e);
                 // Don't fail the stage transition if event publishing fails
             }
@@ -518,7 +525,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for recruitment offer: candidate={}", savedCandidate.getId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
             log.warn("Could not start approval workflow for offer (candidate={}): {}",
                     savedCandidate.getId(), e.getMessage());
         }

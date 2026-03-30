@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -189,6 +190,6 @@ public class SurveyAnalyticsController {
         private Double responseRate;
         private Integer totalResponses;
         private List<SurveyInsightDto> topInsights;
-        private java.util.Map<String, Double> categoryScores;
+        private Map<String, Double> categoryScores;
     }
 }

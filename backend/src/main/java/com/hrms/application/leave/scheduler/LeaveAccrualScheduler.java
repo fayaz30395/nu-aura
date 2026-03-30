@@ -70,7 +70,7 @@ public class LeaveAccrualScheduler {
                 tenantsProcessed++;
 
                 log.info("LeaveAccrualScheduler: tenant {} — {} accrual(s) applied", tenantId, accruals);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 tenantsWithErrors++;
                 log.error("LeaveAccrualScheduler: failed for tenant {}: {}", tenantId, e.getMessage(), e);
             } finally {
@@ -122,7 +122,7 @@ public class LeaveAccrualScheduler {
                 try {
                     leaveBalanceService.accrueLeave(employee.getId(), leaveType.getId(), accrualAmount);
                     accrualCount++;
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                     log.error("LeaveAccrualScheduler: failed to accrue leave for employee {} / leaveType {} in tenant {}: {}",
                             employee.getId(), leaveType.getId(), tenantId, e.getMessage(), e);
                 }
@@ -173,7 +173,7 @@ public class LeaveAccrualScheduler {
         try {
             return jdbcTemplate.queryForList(
                     "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.warn("LeaveAccrualScheduler: could not fetch active tenants: {}", e.getMessage());
             return List.of();
         }

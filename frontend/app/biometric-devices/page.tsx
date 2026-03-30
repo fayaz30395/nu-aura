@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import {
   Fingerprint, Plus, RefreshCw, AlertTriangle, CheckCircle,
-  XCircle, Clock, Wifi, WifiOff, Key, Trash2, Eye, Settings,
+  XCircle, Clock, Wifi, WifiOff, Key, Trash2, Eye,
   Activity, Server,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
@@ -31,7 +31,6 @@ import type {
   BiometricDevice,
   BiometricDeviceRequest,
   BiometricPunchLog,
-  BiometricApiKey,
 } from '@/lib/services/biometricService';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────

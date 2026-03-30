@@ -24,8 +24,13 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -259,7 +264,7 @@ public class ShiftScheduleService {
     private List<String> parsePatternJson(String patternJson) {
         try {
             return objectMapper.readValue(patternJson, new TypeReference<List<String>>() {});
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Failed to parse shift pattern JSON: {}", patternJson, e);
             throw new IllegalArgumentException("Invalid shift pattern format");
         }

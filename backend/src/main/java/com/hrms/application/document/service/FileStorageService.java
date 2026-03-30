@@ -92,7 +92,7 @@ public class FileStorageService {
 
         } catch (BusinessException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
             log.error("Failed to upload file: {}", file.getOriginalFilename(), e);
             throw new BusinessException("Failed to upload file: " + e.getMessage());
         }
@@ -133,7 +133,7 @@ public class FileStorageService {
 
         } catch (BusinessException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
             log.error("Failed to upload file from stream: {}", filename, e);
             throw new BusinessException("Failed to upload file: " + e.getMessage());
         }
@@ -148,7 +148,7 @@ public class FileStorageService {
             return storageProvider.getDownloadUrl(objectName, urlExpiryHours);
         } catch (BusinessException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
             log.error("Failed to generate download URL for: {}", objectName, e);
             throw new BusinessException("Failed to generate download URL");
         }
@@ -163,7 +163,7 @@ public class FileStorageService {
             return storageProvider.download(objectName);
         } catch (BusinessException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
             log.error("Failed to get file: {}", objectName, e);
             throw new BusinessException("Failed to retrieve file");
         }
@@ -179,7 +179,7 @@ public class FileStorageService {
             log.info("File deleted: {}", objectName);
         } catch (BusinessException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
             log.error("Failed to delete file: {}", objectName, e);
             throw new BusinessException("Failed to delete file");
         }
@@ -206,7 +206,7 @@ public class FileStorageService {
             return storageId;
         } catch (BusinessException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
             log.error("Failed to copy file: {}", sourceObjectName, e);
             throw new BusinessException("Failed to copy file");
         }

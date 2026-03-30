@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.HashMap;
 
 /**
  * TaskDecorator that propagates both {@link TenantContext} and
@@ -83,7 +84,7 @@ public class TenantAwareTaskDecorator implements TaskDecorator {
             return Map.of();
         }
         // Rebuild as immutable map — RoleScope per permission key
-        java.util.Map<String, RoleScope> snapshot = new java.util.HashMap<>();
+        Map<String, RoleScope> snapshot = new HashMap<>();
         for (String key : permKeys) {
             RoleScope scope = SecurityContext.getPermissionScope(key);
             if (scope != null) {

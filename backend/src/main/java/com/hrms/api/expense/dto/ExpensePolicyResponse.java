@@ -69,7 +69,7 @@ public class ExpensePolicyResponse {
         if (json == null || json.isBlank()) return Collections.emptyList();
         try {
             return MAPPER.readValue(json, typeRef);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.warn("Failed to parse JSON list: {}", e.getMessage());
             return Collections.emptyList();
         }

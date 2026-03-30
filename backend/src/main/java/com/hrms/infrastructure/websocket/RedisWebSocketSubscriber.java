@@ -27,7 +27,7 @@ public class RedisWebSocketSubscriber implements MessageListener {
             if (wsMessage != null) {
                 relay.onMessage(wsMessage);
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Redis pub/sub error boundary
             log.error("Failed to deserialize Redis WebSocket relay message", e);
         }
     }

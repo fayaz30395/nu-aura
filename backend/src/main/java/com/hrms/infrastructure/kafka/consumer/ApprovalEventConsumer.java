@@ -182,7 +182,7 @@ public class ApprovalEventConsumer {
                     Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-message error boundary
                 log.warn("Failed to route LEAVE_APPROVED integration event for request {}: {}", leaveRequestId, e.getMessage());
                 // Don't fail the main consumer processing
             }
@@ -238,7 +238,7 @@ public class ApprovalEventConsumer {
                     Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-message error boundary
                 log.warn("Failed to route EXPENSE_APPROVED integration event for claim {}: {}", expenseClaimId, e.getMessage());
                 // Don't fail the main consumer processing
             }
@@ -294,7 +294,7 @@ public class ApprovalEventConsumer {
                     Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-message error boundary
                 log.warn("Failed to route ASSET_APPROVED integration event for asset {}: {}", assetId, e.getMessage());
                 // Don't fail the main consumer processing
             }
@@ -350,7 +350,7 @@ public class ApprovalEventConsumer {
                     Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-message error boundary
                 log.warn("Failed to route DOCUMENT_CREATED integration event for page {}: {}", pageId, e.getMessage());
                 // Don't fail the main consumer processing
             }

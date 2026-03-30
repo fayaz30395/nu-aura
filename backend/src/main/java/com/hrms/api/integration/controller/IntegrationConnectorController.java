@@ -25,7 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -207,7 +211,7 @@ public class IntegrationConnectorController {
                     .message(success ? "Connection successful" : "Connection failed")
                     .latencyMs(latencyMs)
                     .build());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             long latencyMs = System.currentTimeMillis() - startTime;
             log.error("Connection test failed for connector: {}", connectorId, e);
             configService.recordHealthCheckFailure(tenantId, connectorId, e.getMessage());

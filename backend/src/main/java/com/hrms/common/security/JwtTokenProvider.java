@@ -12,7 +12,15 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -265,7 +273,7 @@ public class JwtTokenProvider {
                 tokenBlacklistService.blacklistToken(jti, expiration);
             }
         } catch (JwtException | IllegalArgumentException ex) {
-            // Token may be invalid/expired, but we still want to try blacklisting
+            log.debug("Token parsing failed during revocation (may be invalid/expired): {}", ex.getMessage());
         }
     }
 

@@ -78,7 +78,7 @@ public class FluenceSearchConsumer {
             acknowledgment.acknowledge();
             log.debug("Successfully processed fluence content event: {}", event.getEventId());
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing fluence content event: type={}, id={}, action={}: {}",
                     contentType, contentId, action, e.getMessage(), e);
             // Don't acknowledge; let Kafka retry or move to DLT

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -131,7 +132,7 @@ public class PayslipService {
                 "PAYSLIP",
                 payslip.getId(),
                 AuditAction.DELETE,
-                java.util.Map.of("employeeId", payslip.getEmployeeId(),
+                Map.of("employeeId", payslip.getEmployeeId(),
                         "period", payslip.getPayPeriodYear() + "-" + payslip.getPayPeriodMonth()),
                 null,
                 "Payslip soft-deleted for employee " + payslip.getEmployeeId() +

@@ -24,7 +24,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.TextStyle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -345,7 +349,7 @@ public class SystemAdminService {
         // Single cross-tenant query replaces the previous 2N+1 queries per tenant (N+1 fix)
         try {
             return workflowExecutionRepository.countAllPendingCrossTenant();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — admin operation error boundary
             log.warn("Could not count pending approvals: {}", e.getMessage());
             return 0L;
         }
@@ -362,7 +366,7 @@ public class SystemAdminService {
                     tenantId,
                     WorkflowExecution.ExecutionStatus.IN_PROGRESS
             );
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — admin operation error boundary
             log.warn("Could not count pending approvals for tenant {}: {}", tenantId, e.getMessage());
         }
         return count;

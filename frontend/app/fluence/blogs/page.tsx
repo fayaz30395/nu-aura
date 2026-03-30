@@ -324,9 +324,12 @@ export default function BlogsPage() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                               {featuredPost.authorAvatarUrl ? (
-                                <img
+                                <Image
                                   src={featuredPost.authorAvatarUrl}
                                   alt={featuredPost.authorName || 'Author'}
+                                  width={40}
+                                  height={40}
+                                  unoptimized
                                   className="w-10 h-10 rounded-full object-cover border-2 border-warning-500/20"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;
@@ -500,9 +503,12 @@ export default function BlogsPage() {
                             {/* Author */}
                             <div className="flex items-center gap-2.5">
                               {post.authorAvatarUrl ? (
-                                <img
+                                <Image
                                   src={post.authorAvatarUrl}
                                   alt={post.authorName || 'Author'}
+                                  width={32}
+                                  height={32}
+                                  unoptimized
                                   className="w-8 h-8 rounded-full object-cover border border-warning-500/20"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;

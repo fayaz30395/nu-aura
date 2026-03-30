@@ -103,7 +103,7 @@ public class OrphanFileCleanupScheduler {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.error("OrphanFileCleanupScheduler: failed during orphan detection", e);
         }
     }

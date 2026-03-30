@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,7 +87,7 @@ public class RecognitionService {
                 saved.setWallPostId(wallPost.getId());
                 saved = recognitionRepository.save(saved);
                 log.info("Created wall post {} for recognition {}", wallPost.getId(), saved.getId());
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-award notification error boundary
                 log.error("Failed to create wall post for recognition {}: {}", saved.getId(), e.getMessage());
                 // Don't fail the recognition if wall post creation fails
             }

@@ -129,7 +129,7 @@ public class DocuSignController {
         } catch (IllegalArgumentException e) {
             log.error("Invalid webhook payload", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Error processing DocuSign webhook", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -238,7 +238,7 @@ public class DocuSignController {
             envelopeRepository.save(envelope);
 
             return ResponseEntity.ok(toEnvelopeResponse(envelope));
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Failed to void envelope: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -269,7 +269,7 @@ public class DocuSignController {
                     DocuSignApiClient.TemplateResponse::name
                 ));
             return ResponseEntity.ok(templates);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Failed to list DocuSign templates", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -411,7 +411,7 @@ public class DocuSignController {
                 //   4. Call envelopeRepository.save(envelope) — already done below, so just set the field here.
                 //   5. Handle DocuSign API errors (rate limits, expired tokens) with retry logic.
                 envelope.setCompletedAt(java.time.Instant.now());
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — DocuSign API integration
                 log.error("Failed to process completed envelope: {}", envelope.getId(), e);
             }
         }

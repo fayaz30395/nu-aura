@@ -22,11 +22,9 @@ import {
   Plus,
   Edit2,
   Trash2,
-  CalendarDays,
   X,
   ChevronLeft,
   RotateCcw,
-  Eye,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -117,11 +115,11 @@ function PatternPreview({
 
 export default function ShiftPatternsPage() {
   const router = useRouter();
-  const [page, setPage] = useState(0);
+  const [page, _setPage] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [editingPattern, setEditingPattern] = useState<ShiftPattern | null>(null);
   const [patternSlots, setPatternSlots] = useState<string[]>([]);
-  const [previewPattern, setPreviewPattern] = useState<ShiftPattern | null>(null);
+  const [_previewPattern, _setPreviewPattern] = useState<ShiftPattern | null>(null);
 
   const { data, isLoading } = useShiftPatterns(page, 20);
   const { data: activeShifts = [] } = useActiveShiftDefinitions();
@@ -167,7 +165,7 @@ export default function ShiftPatternsPage() {
     [form]
   );
 
-  const cycleDays = form.watch('cycleDays');
+  const _cycleDays = form.watch('cycleDays');
 
   // Sync slots when cycleDays changes
   const handleCycleDaysChange = useCallback(
@@ -201,7 +199,7 @@ export default function ShiftPatternsPage() {
   );
 
   const patterns = data?.content ?? [];
-  const totalPages = data?.totalPages ?? 0;
+  const _totalPages = data?.totalPages ?? 0;
 
   return (
     <AppLayout>

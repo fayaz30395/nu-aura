@@ -5,16 +5,13 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeSchedule } from '@/lib/hooks/queries/useShifts';
 import { NuAuraLoader } from '@/components/ui/Loading';
-import { EmptyState } from '@/components/ui/EmptyState';
 import { ScheduleEntry } from '@/lib/types/shift';
 import {
-  Calendar,
   ChevronLeft,
   ChevronRight,
   Clock,
   Moon,
   Sun,
-  Sunrise,
   ArrowLeftRight,
 } from 'lucide-react';
 import { motion } from 'framer-motion';

@@ -124,7 +124,7 @@ public class PayrollProcessingConsumer {
         try {
             payrollRunService.failProcessing(runId);
             log.info("Rolled payroll run {} back to DRAFT after processing failure", runId);
-        } catch (Exception rollbackEx) {
+        } catch (Exception rollbackEx) { // Intentional broad catch — per-message error boundary
             log.error("Failed to roll back payroll run {} to DRAFT: {}", runId, rollbackEx.getMessage(), rollbackEx);
         }
 
@@ -141,7 +141,7 @@ public class PayrollProcessingConsumer {
                         .build();
 
                 webSocketNotificationService.sendToUser(triggeredBy, notification);
-            } catch (Exception notifEx) {
+            } catch (Exception notifEx) { // Intentional broad catch — per-message error boundary
                 log.warn("Failed to send failure WebSocket notification to user {}: {}",
                         triggeredBy, notifEx.getMessage());
             }
@@ -170,7 +170,7 @@ public class PayrollProcessingConsumer {
                     .build();
 
             webSocketNotificationService.sendToUser(triggeredBy, notification);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to send success WebSocket notification to user {}: {}",
                     triggeredBy, e.getMessage());
         }

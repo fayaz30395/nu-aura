@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Filter for API key authentication.
@@ -123,8 +125,8 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
      * Details object for API key authentication.
      */
     public record ApiKeyAuthenticationDetails(
-            java.util.UUID tenantId,
-            java.util.UUID apiKeyId,
-            java.util.Set<String> scopes
+            UUID tenantId,
+            UUID apiKeyId,
+            Set<String> scopes
     ) {}
 }

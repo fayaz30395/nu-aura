@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +49,7 @@ public class MobileSyncService {
      * Helper method to fetch employee data changes since lastSyncAt
      */
     private void fetchEmployeeDataChanges(UUID tenantId, LocalDateTime lastSyncAt,
-                                          java.util.List<MobileSyncDto.SyncResponse.EmployeeDataChange> changes) {
+                                          List<MobileSyncDto.SyncResponse.EmployeeDataChange> changes) {
         // Query employee table for changes (created, updated, deleted) since lastSyncAt
         // Placeholder implementation
     }
@@ -57,7 +58,7 @@ public class MobileSyncService {
      * Helper method to fetch leave balance changes
      */
     private void fetchLeaveBalanceChanges(UUID userId, LocalDateTime lastSyncAt,
-                                         java.util.List<MobileSyncDto.SyncResponse.LeaveBalanceChange> changes) {
+                                         List<MobileSyncDto.SyncResponse.LeaveBalanceChange> changes) {
         // Query leave balance table for changes since lastSyncAt
         // Placeholder implementation
     }
@@ -66,7 +67,7 @@ public class MobileSyncService {
      * Helper method to fetch attendance record changes
      */
     private void fetchAttendanceChanges(UUID userId, LocalDateTime lastSyncAt,
-                                       java.util.List<MobileSyncDto.SyncResponse.AttendanceRecordChange> changes) {
+                                       List<MobileSyncDto.SyncResponse.AttendanceRecordChange> changes) {
         // Query attendance records for changes since lastSyncAt
         // Placeholder implementation
     }
@@ -75,7 +76,7 @@ public class MobileSyncService {
      * Helper method to fetch approval status changes
      */
     private void fetchApprovalChanges(UUID userId, LocalDateTime lastSyncAt,
-                                     java.util.List<MobileSyncDto.SyncResponse.ApprovalChange> changes) {
+                                     List<MobileSyncDto.SyncResponse.ApprovalChange> changes) {
         // Query approval instances for status changes since lastSyncAt
         // Placeholder implementation
     }
@@ -84,7 +85,7 @@ public class MobileSyncService {
      * Helper method to fetch new notifications
      */
     private void fetchNotificationChanges(UUID userId, LocalDateTime lastSyncAt,
-                                         java.util.List<MobileSyncDto.SyncResponse.NotificationChange> changes) {
+                                         List<MobileSyncDto.SyncResponse.NotificationChange> changes) {
         // Query notifications for new/updated notifications since lastSyncAt
         // Placeholder implementation
     }

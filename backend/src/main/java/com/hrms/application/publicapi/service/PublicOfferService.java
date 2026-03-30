@@ -279,7 +279,7 @@ public class PublicOfferService {
             return candidateRepository.findByEmailAndTenantId(email, approval.getTenantId())
                     .map(Candidate::getId)
                     .orElse(null);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — public API error boundary
             log.error("Error extracting candidateId from approval", e);
             return null;
         }

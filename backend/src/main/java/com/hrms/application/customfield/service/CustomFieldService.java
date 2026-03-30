@@ -18,7 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -364,7 +369,7 @@ public class CustomFieldService {
             try {
                 CustomFieldValueResponse response = setFieldValue(entityType, entityId, valueRequest);
                 responses.add(response);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-field validation error boundary
                 log.warn("Failed to set field value for definition {}: {}",
                         valueRequest.getFieldDefinitionId(), e.getMessage());
             }
@@ -510,14 +515,14 @@ public class CustomFieldService {
             case DATE -> {
                 try {
                     LocalDate.parse(value);
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-field validation error boundary
                     throw new IllegalArgumentException("Invalid date format (expected yyyy-MM-dd)");
                 }
             }
             case DATETIME -> {
                 try {
                     LocalDateTime.parse(value);
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-field validation error boundary
                     throw new IllegalArgumentException("Invalid datetime format");
                 }
             }

@@ -26,7 +26,11 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -173,7 +177,7 @@ public class SamlConfigurationService {
                 certExpiry = x509.getNotAfter().toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime().toString();
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — authentication error boundary
                 log.warn("Certificate validation failed for tenant {}: {}", tenantId, e.getMessage());
             }
         }
@@ -268,7 +272,7 @@ public class SamlConfigurationService {
         if (request.getCertificate() != null && !request.getCertificate().isBlank()) {
             try {
                 parseCertificate(request.getCertificate());
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — authentication error boundary
                 throw new BusinessException("Invalid X.509 certificate: " + e.getMessage());
             }
         }
@@ -277,7 +281,7 @@ public class SamlConfigurationService {
         if (request.getAttributeMapping() != null && !request.getAttributeMapping().isBlank()) {
             try {
                 objectMapper.readTree(request.getAttributeMapping());
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — authentication error boundary
                 throw new BusinessException("Invalid attribute mapping JSON: " + e.getMessage());
             }
         }
@@ -324,7 +328,7 @@ public class SamlConfigurationService {
                 sb.append(String.format("%02X", digest[i]));
             }
             return sb.toString();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — authentication error boundary
             log.warn("Failed to compute certificate fingerprint: {}", e.getMessage());
             return "Unable to compute";
         }
@@ -344,7 +348,7 @@ public class SamlConfigurationService {
                 log.warn("Metadata URL returned status {} or invalid content for {}", response.statusCode(), metadataUrl);
             }
             return reachable;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — authentication error boundary
             log.warn("Metadata URL unreachable: {} — {}", metadataUrl, e.getMessage());
             return false;
         }

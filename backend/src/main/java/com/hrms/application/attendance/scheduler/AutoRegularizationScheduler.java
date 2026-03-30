@@ -64,7 +64,7 @@ public class AutoRegularizationScheduler {
             try {
                 int fixed = regularizeTenantAttendance(tenantId);
                 totalFixed += fixed;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("Failed to regularize attendance for tenant {}: {}", tenantId, e.getMessage(), e);
             }
         }
@@ -89,7 +89,7 @@ public class AutoRegularizationScheduler {
                 TenantContext.setCurrentTenant(tenantId);
                 int approved = compOffService.autoApproveEligibleRequests(tenantId, DEFAULT_COMP_OFF_AUTO_APPROVE_DAYS);
                 totalApproved += approved;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("Failed to auto-approve comp-off for tenant {}: {}", tenantId, e.getMessage(), e);
             } finally {
                 TenantContext.clear();
@@ -145,7 +145,7 @@ public class AutoRegularizationScheduler {
                     "SELECT auto_regularize_after_days FROM attendance_regularization_config WHERE tenant_id = ?",
                     Integer.class, tenantId);
             return days != null ? days : DEFAULT_REGULARIZE_AFTER_DAYS;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             return DEFAULT_REGULARIZE_AFTER_DAYS;
         }
     }
@@ -154,7 +154,7 @@ public class AutoRegularizationScheduler {
         try {
             return jdbcTemplate.queryForList(
                     "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.warn("Could not fetch active tenants: {}", e.getMessage());
             return List.of();
         }

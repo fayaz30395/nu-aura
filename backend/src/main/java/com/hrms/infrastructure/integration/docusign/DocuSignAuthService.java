@@ -142,7 +142,7 @@ public class DocuSignAuthService {
 
             // Exchange JWT for access token
             return exchangeJwtForToken(jwtAssertion, baseUrl);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Failed to generate DocuSign access token", e);
             throw new RuntimeException("Failed to generate DocuSign access token: " + e.getMessage(), e);
         }
@@ -185,7 +185,7 @@ public class DocuSignAuthService {
                     .claim("scope", "signature impersonation")
                     .signWith(privateKey, SignatureAlgorithm.RS256)
                     .compact();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Failed to create JWT assertion", e);
             throw new RuntimeException("Failed to create JWT assertion: " + e.getMessage(), e);
         }

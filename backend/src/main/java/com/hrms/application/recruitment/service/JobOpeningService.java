@@ -21,7 +21,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -182,7 +188,7 @@ public class JobOpeningService {
             for (Object[] row : counts) {
                 candidateCounts.put((UUID) row[0], ((Number) row[1]).intValue());
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
             log.warn("Failed to batch-fetch candidate counts, falling back to 0: {}", e.getMessage());
         }
 
@@ -198,7 +204,7 @@ public class JobOpeningService {
                 for (Employee mgr : managers) {
                     managerNames.put(mgr.getId(), mgr.getFullName());
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
                 log.warn("Failed to batch-fetch hiring manager names: {}", e.getMessage());
             }
         }

@@ -17,7 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -668,7 +674,7 @@ public class BenefitEnhancedService {
                     userId, action, entityType, entityId, tenantId,
                     null, null, null, null, null, null, null, null,
                     description);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Failed to publish benefit audit event (action={}, entityId={}): {}",
                     action, entityId, e.getMessage());
         }

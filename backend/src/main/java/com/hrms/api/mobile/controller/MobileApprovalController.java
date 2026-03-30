@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/mobile/approvals")
@@ -38,7 +39,7 @@ public class MobileApprovalController {
     })
     @Operation(summary = "Approve a request", description = "Quick approve with optional notes")
     public ResponseEntity<MobileApprovalDto.ApprovalActionResponse> approveRequest(
-            @PathVariable java.util.UUID id,
+            @PathVariable UUID id,
             @Valid @RequestBody MobileApprovalDto.ApprovalActionRequest request) {
         request.setApprovalId(id);
         request.setAction("APPROVE");
@@ -53,7 +54,7 @@ public class MobileApprovalController {
     })
     @Operation(summary = "Reject a request", description = "Quick reject with mandatory reason")
     public ResponseEntity<MobileApprovalDto.ApprovalActionResponse> rejectRequest(
-            @PathVariable java.util.UUID id,
+            @PathVariable UUID id,
             @Valid @RequestBody MobileApprovalDto.ApprovalActionRequest request) {
         request.setApprovalId(id);
         request.setAction("REJECT");

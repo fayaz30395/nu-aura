@@ -97,7 +97,7 @@ public class AuthController {
             setAuthCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
 
             return ResponseEntity.ok(authResponse);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — authentication error boundary
             log.error("MFA login failed for user: {}", request.getUserId(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(AuthResponse.builder()

@@ -199,7 +199,7 @@ public class ImplicitRoleEngine {
                 totalAdded += result.added;
                 totalRemoved += result.removed;
                 totalProcessed++;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — service error boundary
                 // BP-L01 FIX: Track failures instead of silently swallowing.
                 // Batch continues processing other users but reports failures.
                 totalFailed++;

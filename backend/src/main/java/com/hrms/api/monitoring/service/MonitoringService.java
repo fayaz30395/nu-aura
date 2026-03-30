@@ -58,7 +58,7 @@ public class MonitoringService {
             HealthComponent healthComponent = healthEndpoint.health();
             overallStatus = healthComponent.getStatus().getCode();
             cacheHealth = getCacheHealthFromComponent(healthComponent);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             log.warn("Spring Boot health aggregation failed — reporting DEGRADED: {}", e.getMessage());
             overallStatus = "DEGRADED";
             cacheHealth = SystemHealthResponse.CacheHealth.builder()
@@ -107,7 +107,7 @@ public class MonitoringService {
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute("SELECT 1");
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             log.error("Database connectivity check failed", e);
             return SystemHealthResponse.DatabaseHealth.builder()
                     .status("DOWN")
@@ -130,7 +130,7 @@ public class MonitoringService {
                     .maxConnections(maxConnections.intValue())
                     .connectionPoolUsage(poolUsage)
                     .build();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             log.warn("HikariCP metrics not available — DB is UP but pool stats unknown: {}", e.getMessage());
             return SystemHealthResponse.DatabaseHealth.builder()
                     .status("UP")
@@ -158,7 +158,7 @@ public class MonitoringService {
                     .status("UNKNOWN")
                     .redisAvailable(false)
                     .build();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             return SystemHealthResponse.CacheHealth.builder()
                     .status("UNKNOWN")
                     .redisAvailable(false)
@@ -223,7 +223,7 @@ public class MonitoringService {
                     .errorRate(errorRate)
                     .avgResponseTime(avgResponseTime)
                     .build();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             log.error("Error calculating API health", e);
             return SystemHealthResponse.ApiHealth.builder().build();
         }
@@ -237,7 +237,7 @@ public class MonitoringService {
         int activeUsers = 0;
         try {
             activeUsers = (int) meterRegistry.get("active_users").gauge().value();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             log.debug("Active users metric not found");
         }
 
@@ -312,7 +312,7 @@ public class MonitoringService {
                 .mapToDouble(t -> {
                     try {
                         return t.percentile(0.95, TimeUnit.MILLISECONDS);
-                    } catch (Exception e) {
+                    } catch (Exception e) { // Intentional broad catch — health check error boundary
                         return t.mean(TimeUnit.MILLISECONDS);
                     }
                 })
@@ -347,7 +347,7 @@ public class MonitoringService {
                             moduleRequests.merge(module, (long) counter.count(), Long::sum);
                         }
                     });
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             log.debug("Error getting module requests", e);
         }
 
@@ -367,7 +367,7 @@ public class MonitoringService {
                             errorsByType.merge(errorType, (long) counter.count(), Long::sum);
                         }
                     });
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             log.debug("Error getting errors by type", e);
         }
 
@@ -382,7 +382,7 @@ public class MonitoringService {
                     .stream()
                     .mapToDouble(Counter::count)
                     .sum();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             return 0;
         }
     }
@@ -392,7 +392,7 @@ public class MonitoringService {
             return ManagementFactory.getPlatformMXBean(
                     com.sun.management.OperatingSystemMXBean.class
             ).getProcessCpuLoad() * 100;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — health check error boundary
             return 0.0;
         }
     }

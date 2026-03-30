@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * REST controller for SAML 2.0 SSO configuration management.
@@ -46,7 +47,7 @@ public class SamlConfigController {
             description = "Get the SAML IdP configuration for the current tenant")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlConfigResponse> getSamlConfig() {
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         return ResponseEntity.ok(samlConfigService.getSamlConfig(tenantId));
     }
 
@@ -56,7 +57,7 @@ public class SamlConfigController {
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlConfigResponse> createSamlConfig(
             @Valid @RequestBody SamlConfigRequest request) {
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating SAML config for tenant {} by user {}", tenantId, SecurityContext.getCurrentUserId());
 
         SamlConfigResponse response = samlConfigService.configureSamlProvider(tenantId, request);
@@ -69,7 +70,7 @@ public class SamlConfigController {
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlConfigResponse> updateSamlConfig(
             @Valid @RequestBody SamlConfigRequest request) {
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating SAML config for tenant {} by user {}", tenantId, SecurityContext.getCurrentUserId());
 
         SamlConfigResponse response = samlConfigService.updateSamlConfig(tenantId, request);
@@ -81,7 +82,7 @@ public class SamlConfigController {
             description = "Soft-delete the SAML IdP configuration for the current tenant")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<Void> deleteSamlConfig() {
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Deleting SAML config for tenant {} by user {}", tenantId, SecurityContext.getCurrentUserId());
 
         samlConfigService.deleteSamlConfig(tenantId);
@@ -93,7 +94,7 @@ public class SamlConfigController {
             description = "Generate and download Service Provider metadata XML for the IdP")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<String> getServiceProviderMetadata() {
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
 
         String metadataXml = samlConfigService.generateServiceProviderMetadata(tenantId);
         return ResponseEntity.ok()
@@ -107,7 +108,7 @@ public class SamlConfigController {
             description = "Validate the SAML IdP configuration by testing metadata URL and certificate")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SamlTestConnectionResponse> testConnection() {
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Testing SAML connection for tenant {}", tenantId);
 
         SamlTestConnectionResponse response = samlConfigService.testConnection(tenantId);

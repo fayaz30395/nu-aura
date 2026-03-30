@@ -56,7 +56,7 @@ public class AnalyticsInsightDto {
                 actionItemsList = new com.fasterxml.jackson.databind.ObjectMapper()
                         .readValue(insight.getActionItems(),
                                    new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — controller error boundary
                 actionItemsList = List.of(insight.getActionItems());
             }
         }

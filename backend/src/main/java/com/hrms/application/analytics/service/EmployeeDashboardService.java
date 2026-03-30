@@ -129,8 +129,8 @@ public class EmployeeDashboardService {
         try {
             leavesRemaining = leaveBalanceRepository.sumBalanceByEmployeeId(tenantId, employeeId, today.getYear());
             if (leavesRemaining == null) leavesRemaining = BigDecimal.ZERO;
-        } catch (Exception e) {
-            // Handle if balance table doesn't exist or query fails
+        } catch (Exception e) { // Intentional broad catch — analytics query error boundary
+            log.debug("Could not fetch leave balance for employee {}: {}", employeeId, e.getMessage());
         }
 
         // Last month salary
@@ -140,8 +140,8 @@ public class EmployeeDashboardService {
             lastSalary = payslipRepository.findNetSalaryByEmployeeIdAndYearAndMonth(
                     tenantId, employeeId, lastMonth.getYear(), lastMonth.getMonthValue());
             if (lastSalary == null) lastSalary = BigDecimal.ZERO;
-        } catch (Exception e) {
-            // Handle if payslip not found
+        } catch (Exception e) { // Intentional broad catch — analytics query error boundary
+            log.debug("Could not fetch last month payslip for employee {}: {}", employeeId, e.getMessage());
         }
 
         // Pending approvals (as employee, you might have tasks pending)
@@ -298,7 +298,7 @@ public class EmployeeDashboardService {
                             .carryForward(BigDecimal.ZERO)
                             .build())
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — analytics query error boundary
             log.warn("Could not fetch leave balances: {}", e.getMessage());
         }
 
@@ -359,7 +359,7 @@ public class EmployeeDashboardService {
         List<Payslip> currentYearPayslips;
         try {
             currentYearPayslips = payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, currentYear);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — analytics query error boundary
             log.warn("Could not fetch payslip data for year {}: {}", currentYear, e.getMessage());
             currentYearPayslips = new ArrayList<>();
         }
@@ -368,7 +368,7 @@ public class EmployeeDashboardService {
         List<Payslip> previousYearPayslips;
         try {
             previousYearPayslips = payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, currentYear - 1);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — analytics query error boundary
             log.warn("Could not fetch payslip data for year {}: {}", currentYear - 1, e.getMessage());
             previousYearPayslips = new ArrayList<>();
         }

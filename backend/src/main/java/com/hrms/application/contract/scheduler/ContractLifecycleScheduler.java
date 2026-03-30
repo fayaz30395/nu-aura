@@ -95,7 +95,7 @@ public class ContractLifecycleScheduler {
                 // Record per-tenant metrics
                 metricsService.recordContractExpiryAlert(tenantId, reminders, expired);
 
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 tenantsWithErrors++;
                 log.error("ContractLifecycleScheduler: failed for tenant {}: {}",
                         tenantId, e.getMessage(), e);
@@ -337,7 +337,7 @@ public class ContractLifecycleScheduler {
                 reminderRepository.save(reminder);
 
                 notificationsSent++;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("Failed to dispatch reminder {} for contract {}: {}",
                         reminder.getId(), reminder.getContractId(), e.getMessage(), e);
             }
@@ -384,7 +384,7 @@ public class ContractLifecycleScheduler {
                         return new TenantLifecycleConfig(autoExpire, autoRenew, days);
                     },
                     tenantId);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.debug("Using default lifecycle config for tenant {} (no config row found)", tenantId);
             return TenantLifecycleConfig.DEFAULTS;
         }
@@ -441,7 +441,7 @@ public class ContractLifecycleScheduler {
             return jdbcTemplate.queryForObject(
                     "SELECT user_id FROM employees WHERE id = ? AND tenant_id = ?",
                     UUID.class, employeeId, tenantId);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             return null;
         }
     }
@@ -452,7 +452,7 @@ public class ContractLifecycleScheduler {
         try {
             return jdbcTemplate.queryForList(
                     "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.warn("Could not fetch active tenants: {}", e.getMessage());
             return List.of();
         }

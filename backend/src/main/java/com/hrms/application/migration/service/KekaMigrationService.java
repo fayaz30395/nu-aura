@@ -36,7 +36,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -84,12 +89,12 @@ public class KekaMigrationService {
                 try {
                     importEmployeeRow(row, rowNum, tenantId, departmentCache, result);
                     result.setSuccessCount(result.getSuccessCount() + 1);
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
                     result.addError(rowNum, "row", "", e.getMessage());
                     log.error("Error importing employee row {}: {}", rowNum, e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
             log.error("Error parsing employee file: {}", e.getMessage());
         }
@@ -195,11 +200,11 @@ public class KekaMigrationService {
                 try {
                     importAttendanceRow(row, rowNum, tenantId, employeeCache, result);
                     result.setSuccessCount(result.getSuccessCount() + 1);
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
                     result.addError(rowNum, "row", "", e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
@@ -274,11 +279,11 @@ public class KekaMigrationService {
                 try {
                     importLeaveBalanceRow(row, rowNum, tenantId, employeeCache, leaveTypeCache, result);
                     result.setSuccessCount(result.getSuccessCount() + 1);
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
                     result.addError(rowNum, "row", "", e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
@@ -347,11 +352,11 @@ public class KekaMigrationService {
                 try {
                     importSalaryRow(row, rowNum, tenantId, employeeCache, result);
                     result.setSuccessCount(result.getSuccessCount() + 1);
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
                     result.addError(rowNum, "row", "", e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
@@ -436,11 +441,11 @@ public class KekaMigrationService {
 
                     departmentRepository.save(dept);
                     result.setSuccessCount(result.getSuccessCount() + 1);
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
                     result.addError(rowNum, "row", "", e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
             result.addError(0, "file", file.getOriginalFilename(), "Failed to parse file: " + e.getMessage());
         }
 
@@ -606,6 +611,7 @@ public class KekaMigrationService {
             try {
                 return LocalDate.parse(value.trim(), formatter);
             } catch (DateTimeParseException ignored) {
+                log.debug("Date '{}' did not match formatter '{}', trying next", value, formatter);
             }
         }
         log.warn("Could not parse date: {}", value);
@@ -618,7 +624,7 @@ public class KekaMigrationService {
         try {
             LocalTime time = LocalTime.parse(value.trim());
             return LocalDateTime.of(date, time);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-record migration error boundary
             return null;
         }
     }

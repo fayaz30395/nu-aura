@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -77,7 +78,7 @@ public class InterviewManagementService {
                         + "Position: " + jobTitle + "\n"
                         + "Round: " + interview.getInterviewRound();
 
-                List<String> attendeeEmails = new java.util.ArrayList<>();
+                List<String> attendeeEmails = new ArrayList<>();
                 candidateRepository.findById(request.getCandidateId())
                         .map(Candidate::getEmail)
                         .ifPresent(attendeeEmails::add);
@@ -109,7 +110,7 @@ public class InterviewManagementService {
                 } else {
                     log.warn("Google Meet creation failed: {}. Interview will be saved without Meet link.", meetResult.errorMessage());
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
                 log.error("Error creating Google Meet for interview: {}", e.getMessage(), e);
                 // Don't fail the interview creation if Meet creation fails
             }

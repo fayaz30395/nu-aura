@@ -186,7 +186,7 @@ export default function TeamDirectoryPage() {
 
   const isLoading = isSearching ? searchLoading : allLoading;
   const response = isSearching ? searchResponse : allEmployeesResponse;
-  const employees = response?.content ?? [];
+  const employees = useMemo(() => response?.content ?? [], [response?.content]);
   const totalElements = response?.totalElements ?? 0;
   const totalPages = response?.totalPages ?? 0;
 

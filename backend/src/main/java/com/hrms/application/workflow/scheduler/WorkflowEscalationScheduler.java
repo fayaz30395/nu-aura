@@ -79,7 +79,7 @@ public class WorkflowEscalationScheduler {
                 totalAutoActioned += autoActioned;
                 totalReminders += reminders;
 
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("Failed to process escalations for tenant {}: {}", tenantId, e.getMessage(), e);
             } finally {
                 TenantContext.clear();
@@ -274,7 +274,7 @@ public class WorkflowEscalationScheduler {
                         approvalStepDef.getEscalateToRoleId(),
                         tenantId);
                 return userId;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.warn("Could not find user with escalation role {}: {}",
                         approvalStepDef.getEscalateToRoleId(), e.getMessage());
             }
@@ -293,7 +293,7 @@ public class WorkflowEscalationScheduler {
                         step.getAssignedToUserId(),
                         tenantId);
                 return skipLevelManager;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 // Try just the direct manager
                 try {
                     UUID directManager = jdbcTemplate.queryForObject(
@@ -304,7 +304,7 @@ public class WorkflowEscalationScheduler {
                             step.getAssignedToUserId(),
                             tenantId);
                     return directManager;
-                } catch (Exception e2) {
+                } catch (Exception e2) { // Intentional broad catch — scheduled job error boundary
                     log.warn("Could not find manager for escalation: {}", e2.getMessage());
                 }
             }
@@ -334,7 +334,7 @@ public class WorkflowEscalationScheduler {
                     "/approvals/inbox",
                     Notification.Priority.HIGH
             );
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.error("Failed to send escalation notification: {}", e.getMessage());
         }
     }
@@ -366,7 +366,7 @@ public class WorkflowEscalationScheduler {
                         Notification.Priority.NORMAL
                 );
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.error("Failed to send escalation originator notification: {}", e.getMessage());
         }
     }
@@ -394,7 +394,7 @@ public class WorkflowEscalationScheduler {
                     "/approvals/my-requests",
                     "rejected".equals(action) ? Notification.Priority.HIGH : Notification.Priority.NORMAL
             );
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.error("Failed to send auto-action notification: {}", e.getMessage());
         }
     }
@@ -427,7 +427,7 @@ public class WorkflowEscalationScheduler {
                     "/approvals/inbox",
                     Notification.Priority.NORMAL
             );
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.error("Failed to send reminder notification: {}", e.getMessage());
         }
     }
@@ -436,7 +436,7 @@ public class WorkflowEscalationScheduler {
         try {
             return jdbcTemplate.queryForList(
                     "SELECT id FROM tenants WHERE status = 'ACTIVE'", UUID.class);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.warn("Could not fetch active tenants: {}", e.getMessage());
             return List.of();
         }

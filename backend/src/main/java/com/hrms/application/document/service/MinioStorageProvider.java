@@ -34,7 +34,7 @@ public class MinioStorageProvider implements StorageProvider {
 
             log.info("MinIO upload complete: {} to bucket: {}", objectName, defaultBucket);
             return objectName;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — MinIO SDK declares throws Exception
             log.error("MinIO upload failed for object: {}", objectName, e);
             throw new BusinessException("Failed to upload file to MinIO: " + e.getMessage());
         }
@@ -49,7 +49,7 @@ public class MinioStorageProvider implements StorageProvider {
                     .method(Method.GET)
                     .expiry(expiryHours, TimeUnit.HOURS)
                     .build());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — MinIO SDK declares throws Exception
             log.error("MinIO download URL generation failed for: {}", objectName, e);
             throw new BusinessException("Failed to generate download URL");
         }
@@ -62,7 +62,7 @@ public class MinioStorageProvider implements StorageProvider {
                     .bucket(defaultBucket)
                     .object(objectName)
                     .build());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — MinIO SDK declares throws Exception
             log.error("MinIO download failed for: {}", objectName, e);
             throw new BusinessException("Failed to retrieve file from MinIO");
         }
@@ -76,7 +76,7 @@ public class MinioStorageProvider implements StorageProvider {
                     .object(objectName)
                     .build());
             log.info("MinIO file deleted: {}", objectName);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — MinIO SDK declares throws Exception
             log.error("MinIO delete failed for: {}", objectName, e);
             throw new BusinessException("Failed to delete file from MinIO");
         }
@@ -90,7 +90,7 @@ public class MinioStorageProvider implements StorageProvider {
                     .object(objectName)
                     .build());
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — MinIO SDK declares throws Exception
             return false;
         }
     }
@@ -109,7 +109,7 @@ public class MinioStorageProvider implements StorageProvider {
 
             log.info("MinIO file copied from {} to {}", sourceObjectName, destinationObjectName);
             return destinationObjectName;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — MinIO SDK declares throws Exception
             log.error("MinIO copy failed from {} to {}", sourceObjectName, destinationObjectName, e);
             throw new BusinessException("Failed to copy file in MinIO");
         }
@@ -128,7 +128,7 @@ public class MinioStorageProvider implements StorageProvider {
                         .build());
                 log.info("Created MinIO bucket: {}", defaultBucket);
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — MinIO SDK declares throws Exception
             log.error("Failed to ensure MinIO bucket exists: {}", defaultBucket, e);
             throw new BusinessException("Failed to initialize MinIO storage");
         }

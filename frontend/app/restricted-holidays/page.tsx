@@ -21,7 +21,6 @@ import {
   CalendarDays,
   Settings,
   Star,
-  ChevronDown,
   Trash2,
   Edit3,
   Ban,
@@ -110,11 +109,11 @@ const categoryColors: Record<HolidayCategory, string> = {
 
 export default function RestrictedHolidaysPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [activeTab, setActiveTab] = useState<TabView>('browse');
   const [showHolidayForm, setShowHolidayForm] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<RestrictedHoliday | null>(null);
-  const [showPolicyForm, setShowPolicyForm] = useState(false);
+  const [_showPolicyForm, _setShowPolicyForm] = useState(false);
   const [deleteHolidayId, setDeleteHolidayId] = useState<string | null>(null);
 
   const year = new Date().getFullYear();
@@ -126,7 +125,7 @@ export default function RestrictedHolidaysPage() {
   const { data: mySelections = [], isLoading: isSelectionsLoading } =
     useMyRestrictedHolidaySelections(year, isAuthenticated);
 
-  const { data: summary, isLoading: isSummaryLoading } =
+  const { data: summary, isLoading: _isSummaryLoading } =
     useMyRestrictedHolidaySummary(year, isAuthenticated);
 
   const { data: pendingSelections, isLoading: isPendingLoading } =

@@ -151,7 +151,7 @@ public class NotificationEventConsumer {
                     Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-message error boundary
                 log.warn("Failed to route email notification integration event: {}", e.getMessage());
                 // Don't fail the main consumer processing
             }
@@ -231,7 +231,7 @@ public class NotificationEventConsumer {
                     Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-message error boundary
                 log.warn("Failed to route in-app notification integration event: {}", e.getMessage());
                 // Don't fail the main consumer processing
             }

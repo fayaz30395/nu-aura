@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 /**
  * Represents a user's access to a specific NU application.
@@ -66,7 +67,7 @@ public class UserAppAccess extends TenantAware {
      * Who granted the access (admin user ID)
      */
     @Column
-    private java.util.UUID grantedBy;
+    private UUID grantedBy;
 
     /**
      * When the user last accessed this application

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import {
   ArrowLeft, Receipt, CheckCircle, XCircle, Clock, DollarSign,
-  FileText, User, Calendar, Tag, AlertTriangle, Plus, Trash2,
+  FileText, User, Calendar, Tag, Plus, Trash2,
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

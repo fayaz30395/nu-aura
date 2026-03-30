@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generic export controller for data exports.
@@ -150,7 +151,7 @@ public class ExportController {
 
     public record ExportRequest(
             List<String> headers,
-            List<java.util.Map<String, Object>> data,
+            List<Map<String, Object>> data,
             List<String> columnKeys
     ) {}
 }

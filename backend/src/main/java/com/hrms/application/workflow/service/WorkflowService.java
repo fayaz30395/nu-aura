@@ -25,7 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -629,7 +636,7 @@ public class WorkflowService {
             // If the user-employee mapping is via a separate User entity, resolve it.
             // However, in this codebase managerId stores the employee ID directly.
             return leaveRequestRepository.isEmployeeOnLeave(tenantId, employeeId, date);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — workflow processing error boundary
             log.warn("Failed to check leave status for user {}: {}", userId, e.getMessage());
             return false; // assume available on error
         }
@@ -794,7 +801,7 @@ public class WorkflowService {
                 handler.onRejected(execution.getTenantId(), execution.getEntityId(), actingUser, comments);
                 log.info("Callback onRejected invoked for {} entity {}", execution.getEntityType(), execution.getEntityId());
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — workflow processing error boundary
             log.error("Approval callback failed for {} entity {}: {}",
                     execution.getEntityType(), execution.getEntityId(), e.getMessage(), e);
         }
@@ -962,7 +969,7 @@ public class WorkflowService {
                 tenantId, currentUser, statusStr, entityTypeStr, fromDate, toDate, searchTerm, pageable);
 
         // BUG-003 FIX: Filter out steps with null workflowExecution to prevent NPE
-        java.util.List<WorkflowExecutionResponse> responses = steps.getContent().stream()
+        List<WorkflowExecutionResponse> responses = steps.getContent().stream()
                 .filter(step -> {
                     if (step.getWorkflowExecution() == null) {
                         log.warn("StepExecution {} has null workflowExecution - skipping", step.getId());
@@ -971,7 +978,7 @@ public class WorkflowService {
                     return true;
                 })
                 .map(step -> WorkflowExecutionResponse.from(step.getWorkflowExecution()))
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
 
         return new org.springframework.data.domain.PageImpl<>(responses, pageable, steps.getTotalElements());
     }
@@ -1001,7 +1008,7 @@ public class WorkflowService {
 
             LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
             List<Object[]> todayActions = stepExecutionRepository.countTodayActionsByUser(tenantId, currentUser, startOfDay,
-                    java.util.List.of(StepExecution.ApprovalAction.APPROVE, StepExecution.ApprovalAction.REJECT));
+                    List.of(StepExecution.ApprovalAction.APPROVE, StepExecution.ApprovalAction.REJECT));
 
             long approvedToday = 0;
             long rejectedToday = 0;
@@ -1019,7 +1026,7 @@ public class WorkflowService {
             }
             counts.put("approvedToday", approvedToday);
             counts.put("rejectedToday", rejectedToday);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — workflow processing error boundary
             log.warn("Error getting inbox counts for user {}: {}", currentUser, e.getMessage());
             counts.putIfAbsent("pending", 0L);
             counts.putIfAbsent("approvedToday", 0L);

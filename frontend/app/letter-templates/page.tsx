@@ -18,8 +18,6 @@ import {
   AlertCircle,
   Tag,
   Variable,
-  FileCheck,
-  X,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -38,7 +36,6 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import {
   useLetterTemplates,
-  useLetterTemplate,
   useCreateLetterTemplate,
   useUpdateLetterTemplate,
   useDeleteLetterTemplate,
@@ -257,7 +254,7 @@ export default function LetterTemplatesPage() {
   const cloneMutation = useCloneLetterTemplate();
 
   // Derived data
-  const templates = templatesData?.content ?? [];
+  const templates = useMemo(() => templatesData?.content ?? [], [templatesData?.content]);
   const totalPages = templatesData?.totalPages ?? 0;
 
   // Filtered templates

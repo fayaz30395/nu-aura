@@ -701,11 +701,11 @@ function KekaMigrationSection() {
   const executeMutation = useKekaExecuteImport();
 
   // Target fields matching KekaEmployee interface keys
-  const targetFields: Array<keyof KekaEmployee> = [
+  const targetFields = useMemo<Array<keyof KekaEmployee>>(() => [
     'employeeNumber', 'email', 'firstName', 'lastName',
     'personalEmail', 'phone', 'department', 'designation', 'joiningDate',
     'dateOfBirth', 'gender', 'employmentType', 'bankName', 'bankAccountNumber',
-  ];
+  ], []);
 
   const handleUpload = useCallback(() => {
     if (!file) return;

@@ -23,7 +23,13 @@ import io.jsonwebtoken.JwtException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -91,7 +97,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         UUID userId = null;
                         try {
                             userId = tokenProvider.getUserIdFromToken(jwt);
-                        } catch (Exception e) {
+                        } catch (Exception e) { // Intentional broad catch — security filter error boundary
                             log.debug("Could not extract userId from JWT, falling back to role-based cache", e);
                         }
 
@@ -144,7 +150,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UUID userId = null;
                     try {
                         userId = tokenProvider.getUserIdFromToken(jwt);
-                    } catch (Exception e) {
+                    } catch (Exception e) { // Intentional broad catch — security filter error boundary
                         log.debug("Could not extract userId from JWT for principal construction", e);
                     }
                     userDetails = new UserPrincipal(

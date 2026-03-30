@@ -20,7 +20,11 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Manages job postings to external job boards: Naukri, Indeed, LinkedIn.
@@ -106,7 +110,7 @@ public class JobBoardIntegrationService {
                 posting.setExpiresAt(LocalDateTime.now().plusDays(30));
                 posting.setLastSyncedAt(LocalDateTime.now());
                 posting.setErrorMessage(null);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — external job board API integration
                 log.error("Failed to post job {} to {}: {}", jobOpeningId, board, e.getMessage());
                 posting.setStatus(JobBoardPosting.PostingStatus.FAILED);
                 posting.setErrorMessage(e.getMessage());
@@ -134,7 +138,7 @@ public class JobBoardIntegrationService {
                 default       -> log.warn("Pause not implemented for {}", posting.getBoardName());
             }
             posting.setStatus(JobBoardPosting.PostingStatus.PAUSED);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — external job board API integration
             log.error("Failed to pause posting {} on {}: {}", postingId, posting.getBoardName(), e.getMessage());
             posting.setErrorMessage(e.getMessage());
         }
@@ -159,7 +163,7 @@ public class JobBoardIntegrationService {
                     try {
                         syncPostingStats(posting);
                         jobBoardPostingRepository.save(posting);
-                    } catch (Exception e) {
+                    } catch (Exception e) { // Intentional broad catch — external job board API integration
                         log.warn("Failed to sync stats for posting {}: {}", posting.getId(), e.getMessage());
                     }
                 }
@@ -201,7 +205,7 @@ public class JobBoardIntegrationService {
         try {
             return jdbcTemplate.queryForList(
                     "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — external job board API integration
             log.warn("Could not fetch active tenants for job board sync: {}", e.getMessage());
             return List.of();
         }
@@ -452,7 +456,7 @@ public class JobBoardIntegrationService {
                 if (apps != null) posting.setApplicationsCount(Integer.parseInt(apps.toString()));
                 if (views != null) posting.setViewsCount(Integer.parseInt(views.toString()));
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — external job board API integration
             log.debug("Naukri stats sync failed for {}: {}", posting.getId(), e.getMessage());
         }
     }
@@ -481,7 +485,7 @@ public class JobBoardIntegrationService {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — external job board API integration
             log.debug("Indeed stats sync failed for {}: {}", posting.getId(), e.getMessage());
         }
     }
@@ -501,7 +505,7 @@ public class JobBoardIntegrationService {
                 if (apps != null) posting.setApplicationsCount(Integer.parseInt(apps.toString()));
                 if (views != null) posting.setViewsCount(Integer.parseInt(views.toString()));
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — external job board API integration
             log.debug("LinkedIn stats sync failed for {}: {}", posting.getId(), e.getMessage());
         }
     }

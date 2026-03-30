@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 import static com.hrms.common.security.Permission.*;
 
@@ -222,7 +223,7 @@ public class LetterController {
 
     @PostMapping("/bulk-generate")
     @RequiresPermission(LETTER_GENERATE)
-    public ResponseEntity<java.util.List<GeneratedLetterResponse>> bulkGenerate(
+    public ResponseEntity<List<GeneratedLetterResponse>> bulkGenerate(
             @RequestParam UUID templateId,
             @Valid @NotEmpty @RequestBody List<UUID> employeeIds) {
         UUID generatedBy = SecurityContext.getCurrentEmployeeId();
@@ -241,7 +242,7 @@ public class LetterController {
 
     @GetMapping("/placeholders")
     @RequiresPermission(LETTER_TEMPLATE_VIEW)
-    public ResponseEntity<java.util.Map<String, java.util.List<java.util.Map<String, String>>>> getAvailablePlaceholders() {
+    public ResponseEntity<Map<String, List<Map<String, String>>>> getAvailablePlaceholders() {
         return ResponseEntity.ok(letterService.getAvailablePlaceholders());
     }
 }

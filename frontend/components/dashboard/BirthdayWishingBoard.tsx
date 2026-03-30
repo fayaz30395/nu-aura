@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { PartyPopper, Gift } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -130,7 +131,7 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
             title={w.name}
           >
             {w.avatarUrl ? (
-              <img src={w.avatarUrl} alt={w.name} className="h-full w-full rounded-full object-cover" />
+              <Image src={w.avatarUrl} alt={w.name} width={32} height={32} unoptimized className="h-full w-full rounded-full object-cover" />
             ) : (
               initials
             )}

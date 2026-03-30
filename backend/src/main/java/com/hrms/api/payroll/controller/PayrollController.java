@@ -34,6 +34,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -132,7 +134,7 @@ public class PayrollController {
                     payrollRun.getPayPeriodMonth(),
                     payrollRun.getPayPeriodYear()
             ).get(); // block briefly to confirm broker accepted the message
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("Failed to publish payroll processing event for run {}, rolling back to DRAFT: {}",
                     id, e.getMessage(), e);
             payrollRunService.failProcessing(id);
@@ -525,12 +527,12 @@ public class PayrollController {
     }
 
     private boolean isReportee(UUID employeeId) {
-        java.util.Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
         return reporteeIds != null && reporteeIds.contains(employeeId);
     }
 
     private boolean isEmployeeInUserLocations(UUID employeeId) {
-        java.util.Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
+        Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
         if (locationIds == null || locationIds.isEmpty()) {
             return false;
         }
@@ -553,16 +555,16 @@ public class PayrollController {
 
     private boolean isInCustomTargets(UUID employeeId, String permission) {
         // Check if employee is directly in custom employee targets
-        java.util.Set<UUID> customEmployeeTargets = SecurityContext.getCustomEmployeeIds(permission);
+        Set<UUID> customEmployeeTargets = SecurityContext.getCustomEmployeeIds(permission);
         if (customEmployeeTargets != null && customEmployeeTargets.contains(employeeId)) {
             return true;
         }
 
         // Check if employee's department is in custom department targets
-        java.util.Set<UUID> customDepartmentTargets = SecurityContext.getCustomDepartmentIds(permission);
+        Set<UUID> customDepartmentTargets = SecurityContext.getCustomDepartmentIds(permission);
         if (customDepartmentTargets != null && !customDepartmentTargets.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<com.hrms.domain.employee.Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
+            Optional<com.hrms.domain.employee.Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
             if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
                     && customDepartmentTargets.contains(empOpt.get().getDepartmentId())) {
                 return true;
@@ -570,10 +572,10 @@ public class PayrollController {
         }
 
         // Check if employee's location is in custom location targets
-        java.util.Set<UUID> customLocationTargets = SecurityContext.getCustomLocationIds(permission);
+        Set<UUID> customLocationTargets = SecurityContext.getCustomLocationIds(permission);
         if (customLocationTargets != null && !customLocationTargets.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<com.hrms.domain.employee.Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
+            Optional<com.hrms.domain.employee.Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
             if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
                     && customLocationTargets.contains(empOpt.get().getOfficeLocationId())) {
                 return true;

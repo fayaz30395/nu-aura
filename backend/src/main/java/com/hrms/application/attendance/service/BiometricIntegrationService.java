@@ -24,7 +24,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -190,7 +195,7 @@ public class BiometricIntegrationService {
         for (BiometricPunchRequest punch : request.getPunches()) {
             try {
                 results.add(receivePunch(tenantId, punch));
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — attendance processing error boundary
                 log.error("Failed to process punch for employee '{}': {}",
                         punch.getEmployeeIdentifier(), e.getMessage());
                 BiometricPunchLog failedLog = BiometricPunchLog.builder()
@@ -236,7 +241,7 @@ public class BiometricIntegrationService {
             try {
                 processSinglePunch(punch);
                 processed++;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — attendance processing error boundary
                 log.error("Failed to process punch {}: {}", punch.getId(), e.getMessage());
                 punch.markFailed(e.getMessage());
                 punchLogRepository.save(punch);
@@ -533,7 +538,7 @@ public class BiometricIntegrationService {
                 return candidateId;
             }
         } catch (IllegalArgumentException ignored) {
-            // Not a UUID, try employee code
+            log.debug("Identifier '{}' is not a UUID, trying employee code lookup", employeeIdentifier);
         }
 
         // Try to find by employee code
@@ -591,7 +596,7 @@ public class BiometricIntegrationService {
                     null, action, entityType, entityId, tenantId,
                     null, null, null, null, null, null, null, null,
                     description);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — attendance processing error boundary
             log.warn("Failed to publish biometric audit event (action={}, entityId={}): {}",
                     action, entityId, e.getMessage());
         }

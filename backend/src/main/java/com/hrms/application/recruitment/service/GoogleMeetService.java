@@ -125,7 +125,7 @@ public class GoogleMeetService {
                     null
             );
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Meet API integration
             log.error("Failed to create Google Meet event: {}", e.getMessage(), e);
             return new GoogleMeetResult(null, null, false, e.getMessage());
         }
@@ -144,7 +144,7 @@ public class GoogleMeetService {
                     .execute();
             log.info("Google Calendar event deleted: {}", calendarEventId);
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Meet API integration
             log.error("Failed to delete Google Calendar event {}: {}", calendarEventId, e.getMessage(), e);
             return false;
         }

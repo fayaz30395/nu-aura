@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Main payment service orchestrating payment operations
@@ -58,12 +60,12 @@ public class PaymentService {
         adapter.initialize(config);
 
         PaymentGatewayAdapter.PaymentGatewayResponse providerResponse = adapter.initiatePayment(transaction);
-        if (!providerResponse.success) {
+        if (!providerResponse.isSuccess()) {
             transaction.setStatus(PaymentTransaction.PaymentStatus.FAILED);
-            transaction.setFailedReason(providerResponse.message);
+            transaction.setFailedReason(providerResponse.getMessage());
         } else {
             transaction.setStatus(PaymentTransaction.PaymentStatus.PROCESSING);
-            transaction.setExternalRef(providerResponse.externalPaymentId);
+            transaction.setExternalRef(providerResponse.getExternalPaymentId());
         }
 
         PaymentTransaction saved = paymentTransactionRepository.save(transaction);
@@ -110,13 +112,13 @@ public class PaymentService {
             PaymentTransaction txn = transactions.get(i);
             PaymentGatewayAdapter.PaymentGatewayResponse response = responses.get(i);
 
-            if (response.success) {
+            if (response.isSuccess()) {
                 txn.setStatus(PaymentTransaction.PaymentStatus.PROCESSING);
-                txn.setExternalRef(response.externalPaymentId);
+                txn.setExternalRef(response.getExternalPaymentId());
                 savedBatch.setSuccessCount(savedBatch.getSuccessCount() + 1);
             } else {
                 txn.setStatus(PaymentTransaction.PaymentStatus.FAILED);
-                txn.setFailedReason(response.message);
+                txn.setFailedReason(response.getMessage());
                 savedBatch.setFailedCount(savedBatch.getFailedCount() + 1);
             }
 
@@ -153,10 +155,10 @@ public class PaymentService {
         PaymentGatewayAdapter.PaymentStatusResponse statusResponse = adapter.checkStatus(transaction.getExternalRef());
         if (statusResponse != null) {
             // Update transaction status based on provider response
-            if ("COMPLETED".equals(statusResponse.status)) {
+            if ("COMPLETED".equals(statusResponse.getStatus())) {
                 transaction.setStatus(PaymentTransaction.PaymentStatus.COMPLETED);
                 transaction.setCompletedAt(LocalDateTime.now());
-            } else if ("FAILED".equals(statusResponse.status)) {
+            } else if ("FAILED".equals(statusResponse.getStatus())) {
                 transaction.setStatus(PaymentTransaction.PaymentStatus.FAILED);
             }
             paymentTransactionRepository.save(transaction);
@@ -202,9 +204,9 @@ public class PaymentService {
         adapter.initialize(config);
 
         PaymentGatewayAdapter.PaymentGatewayResponse refundResponse = adapter.processRefund(refund);
-        if (refundResponse.success) {
+        if (refundResponse.isSuccess()) {
             refund.setStatus(PaymentRefund.RefundStatus.PROCESSING);
-            refund.setExternalRefundId(refundResponse.externalPaymentId);
+            refund.setExternalRefundId(refundResponse.getExternalPaymentId());
         } else {
             refund.setStatus(PaymentRefund.RefundStatus.FAILED);
         }
@@ -252,8 +254,8 @@ public class PaymentService {
         // Parse and process webhook
         try {
             PaymentGatewayAdapter.PaymentWebhookData data = adapter.parseWebhookPayload(payload);
-            webhook.setEventType(data.eventType);
-            webhook.setExternalEventId(data.externalPaymentId);
+            webhook.setEventType(data.getEventType());
+            webhook.setExternalEventId(data.getExternalPaymentId());
 
             // Update transaction status based on webhook
             Optional<PaymentTransaction> txnOpt = paymentTransactionRepository.findByExternalRef(data.externalPaymentId);
@@ -266,7 +268,7 @@ public class PaymentService {
             webhook.setProcessed(true);
             webhook.setProcessedAt(LocalDateTime.now());
             webhook.setStatus("PROCESSED");
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Error processing webhook", e);
             webhook.setStatus("FAILED");
             webhook.setErrorMessage(e.getMessage());
@@ -347,10 +349,10 @@ public class PaymentService {
      */
     private void updateTransactionFromWebhook(PaymentTransaction transaction,
                                                PaymentGatewayAdapter.PaymentWebhookData data) {
-        if ("completed".equalsIgnoreCase(data.status) || "succeeded".equalsIgnoreCase(data.status)) {
+        if ("completed".equalsIgnoreCase(data.getStatus()) || "succeeded".equalsIgnoreCase(data.getStatus())) {
             transaction.setStatus(PaymentTransaction.PaymentStatus.COMPLETED);
             transaction.setCompletedAt(LocalDateTime.now());
-        } else if ("failed".equalsIgnoreCase(data.status)) {
+        } else if ("failed".equalsIgnoreCase(data.getStatus())) {
             transaction.setStatus(PaymentTransaction.PaymentStatus.FAILED);
         }
     }

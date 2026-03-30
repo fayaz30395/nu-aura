@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -534,9 +535,12 @@ export default function WikiPage() {
                           {page.authorName && (
                             <div className="flex items-center gap-2 pt-4 border-t border-[var(--border-main)]">
                               {page.authorAvatarUrl ? (
-                                <img
+                                <Image
                                   src={page.authorAvatarUrl}
                                   alt={page.authorName}
+                                  width={24}
+                                  height={24}
+                                  unoptimized
                                   className="w-6 h-6 rounded-full object-cover border border-[var(--border-subtle)]"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;

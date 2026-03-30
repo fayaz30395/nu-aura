@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import java.util.List;
+import java.util.Map;
 
 import static com.hrms.common.security.Permission.SYSTEM_ADMIN;
 
@@ -143,9 +145,9 @@ public class KafkaAdminController {
             description = "Returns failed events with replayCount > 3 still in PENDING_REPLAY status. " +
                     "These should be investigated and then either ignored or manually fixed."
     )
-    public ResponseEntity<java.util.List<FailedKafkaEvent>> listPoisonPills() {
+    public ResponseEntity<List<FailedKafkaEvent>> listPoisonPills() {
         // Mirror MAX_SAFE_REPLAY_COUNT from DeadLetterHandler
-        java.util.List<FailedKafkaEvent> poisonPills = failedKafkaEventRepository.findSuspectedPoisonPills(3);
+        List<FailedKafkaEvent> poisonPills = failedKafkaEventRepository.findSuspectedPoisonPills(3);
         return ResponseEntity.ok(poisonPills);
     }
 
@@ -162,7 +164,7 @@ public class KafkaAdminController {
             description = "Marks all PENDING_REPLAY events for the specified topic as IGNORED. " +
                     "Use when an entire topic contains known poison pills."
     )
-    public ResponseEntity<java.util.Map<String, Object>> ignoreAllForTopic(
+    public ResponseEntity<Map<String, Object>> ignoreAllForTopic(
             @Parameter(description = "The DLT topic name (e.g. nu-aura.approvals.dlt)")
             @RequestParam String topic) {
 
@@ -171,7 +173,7 @@ public class KafkaAdminController {
 
         int updated = failedKafkaEventRepository.ignoreAllPendingForTopic(topic);
         log.info("[KafkaAdmin] Bulk-ignored {} events for topic={}", updated, topic);
-        return ResponseEntity.ok(java.util.Map.of("topic", topic, "updatedCount", updated));
+        return ResponseEntity.ok(Map.of("topic", topic, "updatedCount", updated));
     }
 
     /**

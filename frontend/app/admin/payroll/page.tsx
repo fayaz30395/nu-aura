@@ -9,7 +9,7 @@ export default function AdminPayrollPage() {
       <div className="p-6">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
+            <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
               <Briefcase className="h-6 w-6 text-white" />
             </div>
             <div>

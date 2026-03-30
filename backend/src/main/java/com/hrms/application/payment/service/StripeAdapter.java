@@ -34,15 +34,15 @@ public class StripeAdapter implements PaymentGatewayAdapter {
             // Integration point: Call Stripe API to create payment intent
             // Example: PaymentIntent.create(...)
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.externalPaymentId = "stripe_" + transaction.getId();
-            response.status = "PROCESSING";
-            response.success = true;
+            response.setExternalPaymentId("stripe_" + transaction.getId());
+            response.setStatus("PROCESSING");
+            response.setSuccess(true);
             return response;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Stripe payment initiation failed", e);
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.success = false;
-            response.message = e.getMessage();
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
             return response;
         }
     }
@@ -62,10 +62,10 @@ public class StripeAdapter implements PaymentGatewayAdapter {
             // Integration point: Call Stripe API to fetch payment intent status
             // Example: PaymentIntent.retrieve(externalPaymentId)
             PaymentStatusResponse response = new PaymentStatusResponse();
-            response.status = "COMPLETED";
-            response.timestamp = System.currentTimeMillis();
+            response.setStatus("COMPLETED");
+            response.setTimestamp(System.currentTimeMillis());
             return response;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Stripe status check failed", e);
             return null;
         }
@@ -78,15 +78,15 @@ public class StripeAdapter implements PaymentGatewayAdapter {
             // Integration point: Call Stripe API to create refund
             // Example: Refund.create(...)
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.externalPaymentId = "stripe_refund_" + refund.getId();
-            response.status = "PROCESSING";
-            response.success = true;
+            response.setExternalPaymentId("stripe_refund_" + refund.getId());
+            response.setStatus("PROCESSING");
+            response.setSuccess(true);
             return response;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Stripe refund processing failed", e);
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.success = false;
-            response.message = e.getMessage();
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
             return response;
         }
     }
@@ -107,9 +107,9 @@ public class StripeAdapter implements PaymentGatewayAdapter {
             // Integration point: Parse Stripe webhook payload
             // Example: Parse Event object and extract payment data
             PaymentWebhookData data = new PaymentWebhookData();
-            data.eventType = "payment_intent.succeeded"; // Parse from payload
+            data.setEventType("payment_intent.succeeded"); // Parse from payload
             return data;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Stripe webhook parsing failed", e);
             return null;
         }
@@ -127,7 +127,7 @@ public class StripeAdapter implements PaymentGatewayAdapter {
             // Example: Stripe.apiKey = config.getApiKey(); Customer.list(...)
             log.info("Stripe connection test successful");
             return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Stripe connection test failed", e);
             return false;
         }

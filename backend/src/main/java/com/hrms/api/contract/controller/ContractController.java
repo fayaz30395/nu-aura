@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 /**
  * REST Controller for contract management.
@@ -302,9 +303,9 @@ public class ContractController {
     })
     @GetMapping("/{contractId}/versions")
     @RequiresPermission(Permission.CONTRACT_VIEW)
-    public ResponseEntity<List<java.util.Map<String, Object>>> getVersionHistory(
+    public ResponseEntity<List<Map<String, Object>>> getVersionHistory(
             @Parameter(description = "Contract UUID") @PathVariable UUID contractId) {
-        List<java.util.Map<String, Object>> versions = contractService.getVersionHistory(contractId);
+        List<Map<String, Object>> versions = contractService.getVersionHistory(contractId);
         return ResponseEntity.ok(versions);
     }
 
@@ -395,9 +396,9 @@ public class ContractController {
     })
     @GetMapping("/{contractId}/signatures/summary")
     @RequiresPermission(Permission.CONTRACT_VIEW)
-    public ResponseEntity<java.util.Map<String, Integer>> getSignatureSummary(
+    public ResponseEntity<Map<String, Integer>> getSignatureSummary(
             @Parameter(description = "Contract UUID") @PathVariable UUID contractId) {
-        java.util.Map<String, Integer> summary = signatureService.getSignatureSummary(contractId);
+        Map<String, Integer> summary = signatureService.getSignatureSummary(contractId);
         return ResponseEntity.ok(summary);
     }
 }
