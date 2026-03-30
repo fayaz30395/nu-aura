@@ -71,7 +71,7 @@ export function useJobOpeningsByStatus(status: JobStatus) {
   return useQuery({
     queryKey: recruitmentKeys.jobsByStatus(status),
     queryFn: () => recruitmentService.getJobOpeningsByStatus(status),
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity, // never stale — invalidated explicitly on status change mutations
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });

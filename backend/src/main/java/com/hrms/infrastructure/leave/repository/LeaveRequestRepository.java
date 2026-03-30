@@ -127,4 +127,48 @@ public interface LeaveRequestRepository
                      @Param("status") LeaveRequest.LeaveRequestStatus status,
                      @Param("employeeId") UUID employeeId,
                      @Param("startDate") LocalDate startDate);
+
+       // ==================== N+1 PREVENTION: NATIVE JOIN QUERIES ====================
+
+       /**
+        * Fetch leave requests for an employee with leave type and employee name data
+        * resolved in a single SQL JOIN — prevents N+1 when displaying leave history
+        * lists where each row needs leave type label and employee display name.
+        *
+        * <p>LeaveRequest stores leaveTypeId and employeeId as plain UUID scalar columns
+        * (no @ManyToOne ORM association), so JPQL JOIN FETCH is not applicable here.
+        * This native query joins leave_types and employees in one round-trip.</p>
+        *
+        * <p>Returns Object[] per row: {lr.*, lt.leave_name, e.first_name, e.last_name}</p>
+        * Use this instead of findAllByTenantIdAndEmployeeId when the caller also needs
+        * leave type name or employee display name rendered in the response DTO.</p>
+        */
+       @Query(value = "SELECT lr.*, lt.leave_name, e.first_name, e.last_name " +
+                     "FROM leave_requests lr " +
+                     "LEFT JOIN leave_types lt ON lt.id = lr.leave_type_id AND lt.tenant_id = :tenantId " +
+                     "LEFT JOIN employees e ON e.id = lr.employee_id AND e.tenant_id = :tenantId " +
+                     "WHERE lr.tenant_id = :tenantId AND lr.employee_id = :employeeId " +
+                     "ORDER BY lr.start_date DESC",
+                     nativeQuery = true)
+       List<Object[]> findByEmployeeWithTypeAndName(
+                     @Param("tenantId") UUID tenantId,
+                     @Param("employeeId") UUID employeeId);
+
+       /**
+        * Fetch all leave requests for a tenant in a date window with leave type and
+        * employee data joined in one query — used by manager/HR list views that display
+        * leave type name and employee name per row without N+1 secondary lookups.
+        */
+       @Query(value = "SELECT lr.*, lt.leave_name, e.first_name, e.last_name " +
+                     "FROM leave_requests lr " +
+                     "LEFT JOIN leave_types lt ON lt.id = lr.leave_type_id AND lt.tenant_id = :tenantId " +
+                     "LEFT JOIN employees e ON e.id = lr.employee_id AND e.tenant_id = :tenantId " +
+                     "WHERE lr.tenant_id = :tenantId " +
+                     "AND lr.start_date BETWEEN :startDate AND :endDate " +
+                     "ORDER BY lr.start_date DESC",
+                     nativeQuery = true)
+       List<Object[]> findByDateRangeWithTypeAndName(
+                     @Param("tenantId") UUID tenantId,
+                     @Param("startDate") LocalDate startDate,
+                     @Param("endDate") LocalDate endDate);
 }

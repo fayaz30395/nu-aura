@@ -206,8 +206,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   }, [isReady, isSuperAdmin, permissions, user, hasPermission]);
 
   // Filter sections by active app, then by RBAC permissions, then drop empty sections.
-  const allowedSectionIds = APP_SIDEBAR_SECTIONS[appCode] || APP_SIDEBAR_SECTIONS.HRMS;
+  // allowedSectionIds is derived inside useMemo so it doesn't create a new array
+  // reference on every render (which would invalidate this memo on every pathname change).
   const filteredSections: SidebarSection[] = useMemo(() => {
+    const allowedSectionIds = APP_SIDEBAR_SECTIONS[appCode] || APP_SIDEBAR_SECTIONS.HRMS;
     return menuSections
       // Show only sections that belong to the active app
       .filter((section) => allowedSectionIds.includes(section.id))
@@ -216,7 +218,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         items: filterSidebarItems(section.items),
       }))
       .filter((section) => section.items.length > 0);
-  }, [menuSections, allowedSectionIds, filterSidebarItems]);
+  }, [menuSections, appCode, filterSidebarItems]);
 
   // Flatten sections to items for backward compatibility (memoized)
   const menuItems: SidebarItem[] = useMemo(() =>

@@ -15,7 +15,7 @@ export function useFeatureFlags() {
   return useQuery({
     queryKey: featureFlagKeys.list(),
     queryFn: () => featureFlagService.getAll().then(r => r.data),
-    staleTime: 5 * 60 * 1000, // 5 minutes — flags change rarely
+    staleTime: 15 * 60 * 1000, // 15 minutes — flags change rarely
   });
 }
 
@@ -23,7 +23,7 @@ export function useFeatureFlagMap() {
   return useQuery({
     queryKey: featureFlagKeys.map(),
     queryFn: () => featureFlagService.getMap().then(r => r.data),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 15 * 60 * 1000, // 15 minutes
   });
 }
 
@@ -31,7 +31,7 @@ export function useEnabledFeatures() {
   return useQuery({
     queryKey: featureFlagKeys.enabled(),
     queryFn: () => featureFlagService.getEnabled().then(r => r.data),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 15 * 60 * 1000, // 15 minutes
   });
 }
 
@@ -52,7 +52,7 @@ export function useFeatureFlagsByCategory(category: string) {
   return useQuery({
     queryKey: featureFlagKeys.category(category),
     queryFn: () => featureFlagService.getByCategory(category).then(r => r.data),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 15 * 60 * 1000, // 15 minutes
     enabled: !!category,
   });
 }

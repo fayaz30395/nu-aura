@@ -32,6 +32,7 @@ export function useRoles() {
   return useQuery({
     queryKey: roleKeys.lists(),
     queryFn: () => rolesApi.getAllRoles(),
+    staleTime: 30 * 60 * 1000, // 30 minutes — roles rarely change
   });
 }
 
@@ -43,6 +44,7 @@ export function useRole(roleId: string, enabled: boolean = true) {
     queryKey: roleKeys.detail(roleId),
     queryFn: () => rolesApi.getRoleById(roleId),
     enabled: enabled && !!roleId,
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 
@@ -53,6 +55,7 @@ export function usePermissions() {
   return useQuery({
     queryKey: roleKeys.permissions(),
     queryFn: () => permissionsApi.getAllPermissions(),
+    staleTime: 30 * 60 * 1000, // 30 minutes — permission catalogue is static
   });
 }
 
@@ -64,6 +67,7 @@ export function usePermissionsByResource(resource: string) {
     queryKey: [...roleKeys.permissions(), 'resource', resource] as const,
     queryFn: () => permissionsApi.getPermissionsByResource(resource),
     enabled: !!resource,
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 
@@ -89,6 +93,7 @@ export function useRoleAdminUsers() {
   return useQuery({
     queryKey: roleKeys.users(),
     queryFn: () => usersApi.getAllUsers(),
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 

@@ -15,6 +15,8 @@ import com.hrms.infrastructure.statutory.repository.LWFConfigurationRepository;
 import com.hrms.infrastructure.statutory.repository.LWFDeductionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,16 @@ public class LWFService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.debug("Fetching LWF configurations for tenant {}", tenantId);
         return configRepository.findByTenantIdOrderByStateNameAsc(tenantId);
+    }
+
+    /**
+     * Retrieves LWF state configurations for the current tenant with pagination.
+     */
+    @Transactional(readOnly = true)
+    public Page<LWFConfiguration> getStateConfigurations(Pageable pageable) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        log.debug("Fetching LWF configurations (pageable) for tenant {}", tenantId);
+        return configRepository.findByTenantId(tenantId, pageable);
     }
 
     /**
@@ -339,6 +351,16 @@ public class LWFService {
         return deductionRepository
                 .findByTenantIdAndDeductionMonthAndDeductionYearOrderByStateCodeAsc(
                         tenantId, month, year);
+    }
+
+    /**
+     * Gets LWF deductions for a specific month/year with pagination.
+     */
+    @Transactional(readOnly = true)
+    public Page<LWFDeduction> getDeductionsByPeriod(int month, int year, Pageable pageable) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return deductionRepository
+                .findByTenantIdAndDeductionMonthAndDeductionYear(tenantId, month, year, pageable);
     }
 
     /**

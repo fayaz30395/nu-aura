@@ -781,4 +781,11 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
 Sidebar.displayName = 'Sidebar';
 
-export { Sidebar };
+// Wrap in memo so React skips re-rendering the sidebar when the parent
+// (AppLayout) re-renders due to unrelated state changes (e.g. breadcrumb
+// updates, header interactions). The sidebar only needs to re-render when
+// its own props change — sections, activeId, or collapsed state.
+const MemoizedSidebar = memo(Sidebar);
+MemoizedSidebar.displayName = 'Sidebar';
+
+export { MemoizedSidebar as Sidebar };

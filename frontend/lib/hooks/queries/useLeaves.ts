@@ -35,7 +35,7 @@ export function useLeaveTypes(page: number = 0, size: number = 20) {
   return useQuery({
     queryKey: leaveKeys.typesList(page, size),
     queryFn: () => leaveService.getAllLeaveTypes(page, size),
-    staleTime: 10 * 60 * 1000, // 10 minutes - leave types rarely change
+    staleTime: 30 * 60 * 1000, // 30 minutes — leave types are admin-configured, rarely change
   });
 }
 
@@ -45,7 +45,7 @@ export function useActiveLeaveTypes(enabled: boolean = true) {
     queryKey: leaveKeys.typesActive(),
     queryFn: () => leaveService.getActiveLeaveTypes(),
     enabled,
-    staleTime: 10 * 60 * 1000,
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 
@@ -55,7 +55,7 @@ export function useLeaveType(id: string, enabled: boolean = true) {
     queryKey: leaveKeys.typeDetail(id),
     queryFn: () => leaveService.getLeaveTypeById(id),
     enabled: enabled && !!id,
-    staleTime: 10 * 60 * 1000,
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 

@@ -62,13 +62,46 @@ public class PayrollRun extends TenantAware {
         LOCKED
     }
 
-    public void process(UUID processedBy) {
+    /**
+     * Transition DRAFT → PROCESSING.
+     * Called synchronously by the controller before publishing the Kafka event.
+     * Prevents duplicate submissions: a second POST while the run is PROCESSING
+     * will hit the same state guard and throw.
+     */
+    public void markProcessing(UUID triggeredBy) {
         if (this.status != PayrollStatus.DRAFT) {
-            throw new IllegalStateException("Only draft payroll runs can be processed");
+            throw new IllegalStateException(
+                    "Payroll run cannot be submitted for processing in status: " + this.status);
+        }
+        this.status = PayrollStatus.PROCESSING;
+        this.processedBy = triggeredBy;
+    }
+
+    /**
+     * Transition PROCESSING → PROCESSED.
+     * Called by the Kafka consumer after all employees have been computed.
+     */
+    public void process(UUID processedBy) {
+        if (this.status != PayrollStatus.PROCESSING && this.status != PayrollStatus.DRAFT) {
+            throw new IllegalStateException("Only DRAFT or PROCESSING payroll runs can be transitioned to PROCESSED");
         }
         this.status = PayrollStatus.PROCESSED;
         this.processedBy = processedBy;
         this.processedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Transition PROCESSING → DRAFT (rollback on failure).
+     * Called by the Kafka consumer when an unrecoverable error occurs so that
+     * the run can be resubmitted after the issue is resolved.
+     */
+    public void markFailed() {
+        if (this.status != PayrollStatus.PROCESSING) {
+            throw new IllegalStateException(
+                    "Only PROCESSING payroll runs can be rolled back to DRAFT on failure");
+        }
+        this.status = PayrollStatus.DRAFT;
+        this.processedBy = null;
     }
 
     public void approve(UUID approvedBy) {

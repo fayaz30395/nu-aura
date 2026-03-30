@@ -23,7 +23,7 @@ export function useAllDepartments(page: number = 0, size: number = 20) {
   return useQuery({
     queryKey: departmentKeys.list(page, size),
     queryFn: () => departmentService.getAllDepartments(page, size),
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 30 * 60 * 1000, // 30 minutes — departments rarely change
   });
 }
 
@@ -32,7 +32,7 @@ export function useActiveDepartments() {
   return useQuery({
     queryKey: departmentKeys.active(),
     queryFn: () => departmentService.getActiveDepartments(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 
@@ -41,7 +41,7 @@ export function useDepartmentHierarchy() {
   return useQuery({
     queryKey: departmentKeys.hierarchy(),
     queryFn: () => departmentService.getDepartmentHierarchy(),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 
@@ -51,7 +51,7 @@ export function useDepartment(id: string, enabled: boolean = true) {
     queryKey: departmentKeys.detail(id),
     queryFn: () => departmentService.getDepartment(id),
     enabled: enabled && !!id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 

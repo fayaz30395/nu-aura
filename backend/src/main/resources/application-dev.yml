@@ -122,9 +122,12 @@ logging:
     com.hrms: DEBUG
     # Security DEBUG generates hundreds of lines during startup — use INFO
     org.springframework.security: INFO
-    org.hibernate.SQL: WARN
+    # SQL DEBUG: logs every statement — useful for N+1 diagnosis; set to WARN when not needed
+    org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
-    org.hibernate.stat: WARN
+    # Statistics DEBUG: logs session-level query counts — enables N+1 detection via
+    # generate_statistics=true in application.yml (off by default; enable per-session as needed)
+    org.hibernate.stat: DEBUG
     org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: ERROR
     org.springframework.kafka: WARN
     org.apache.kafka: WARN

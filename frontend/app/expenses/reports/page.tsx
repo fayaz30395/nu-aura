@@ -1,21 +1,32 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { AppLayout } from '@/components/layout';
 import { BarChart3, PieChart, TrendingUp, Download, Calendar, Filter } from 'lucide-react';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { useExpenseReport } from '@/lib/hooks/queries';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart as RechartsPieChart, Pie, Cell, Legend, LineChart, Line,
-} from 'recharts';
 
-const COLORS = [
-  '#0369a1', '#0891b2', '#059669', '#d97706', '#dc2626',
-  '#7c3aed', '#db2777', '#ea580c', '#65a30d', '#4f46e5',
-];
+// Chart skeleton displayed while the recharts bundle lazy-loads.
+// Recharts uses browser-only SVG/ResizeObserver APIs so ssr: false is required.
+const ChartSkeleton = () => (
+  <div className="w-full h-[300px] animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg" />
+);
+
+const ExpenseTrendChart = dynamic(
+  () => import('./ExpenseCharts').then(m => ({ default: m.ExpenseTrendChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
+const ExpenseCategoryChart = dynamic(
+  () => import('./ExpenseCharts').then(m => ({ default: m.ExpenseCategoryChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
+const ExpenseStatusChart = dynamic(
+  () => import('./ExpenseCharts').then(m => ({ default: m.ExpenseStatusChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
 
 export default function ExpenseReportsPage() {
   const [startDate, setStartDate] = useState(
@@ -133,22 +144,7 @@ export default function ExpenseReportsPage() {
                     Monthly Trend
                   </h3>
                   {trendData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={trendData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-surface-200)" />
-                        <XAxis dataKey="month" tick={{ fontSize: 12, fill: 'var(--color-surface-500)' }} />
-                        <YAxis tick={{ fontSize: 12, fill: 'var(--color-surface-500)' }} />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: 'var(--bg-input)',
-                            borderColor: 'var(--color-surface-200)',
-                            borderRadius: '8px',
-                          }}
-                        />
-                        <Line type="monotone" dataKey="amount" stroke="#0369a1" strokeWidth={2} dot={{ r: 4 }} name="Amount" />
-                        <Line type="monotone" dataKey="count" stroke="#059669" strokeWidth={2} dot={{ r: 4 }} name="Claims" />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    <ExpenseTrendChart data={trendData} />
                   ) : (
                     <p className="text-center text-surface-500 py-12">No trend data</p>
                   )}
@@ -161,28 +157,7 @@ export default function ExpenseReportsPage() {
                     By Category
                   </h3>
                   {categoryChartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
-                      <RechartsPieChart>
-                        <Pie
-                          data={categoryChartData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={100}
-                          paddingAngle={2}
-                          dataKey="amount"
-                          nameKey="name"
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          labelLine={false}
-                        >
-                          {categoryChartData.map((_entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                      </RechartsPieChart>
-                    </ResponsiveContainer>
+                    <ExpenseCategoryChart data={categoryChartData} />
                   ) : (
                     <p className="text-center text-surface-500 py-12">No category data</p>
                   )}
@@ -196,22 +171,7 @@ export default function ExpenseReportsPage() {
                   By Status
                 </h3>
                 {statusChartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={statusChartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-surface-200)" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'var(--color-surface-500)' }} />
-                      <YAxis tick={{ fontSize: 12, fill: 'var(--color-surface-500)' }} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'var(--bg-input)',
-                          borderColor: 'var(--color-surface-200)',
-                          borderRadius: '8px',
-                        }}
-                      />
-                      <Bar dataKey="amount" fill="#0369a1" radius={[4, 4, 0, 0]} name="Amount" />
-                      <Bar dataKey="count" fill="#059669" radius={[4, 4, 0, 0]} name="Claims" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <ExpenseStatusChart data={statusChartData} />
                 ) : (
                   <p className="text-center text-surface-500 py-12">No status data</p>
                 )}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Heart, Send } from 'lucide-react';
 import { wallService } from '@/lib/services/wall.service';
 import type { CommentResponse } from '@/lib/services/wall.service';
@@ -110,8 +111,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
     <div className={depth > 0 ? 'ml-6 mt-1.5' : ''}>
       <div className="flex gap-2">
         <div className="flex-shrink-0 w-6 h-6 rounded-full overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={commentAvatarUrl} alt={comment.author.fullName} width={24} height={24} className="rounded-full object-cover w-6 h-6" />
+          <Image src={commentAvatarUrl} alt={comment.author.fullName} width={24} height={24} className="rounded-full object-cover w-6 h-6" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="rounded-lg bg-[var(--bg-secondary)] px-2.5 py-1.5">

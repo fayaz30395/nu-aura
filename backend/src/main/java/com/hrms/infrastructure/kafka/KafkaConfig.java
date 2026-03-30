@@ -330,6 +330,70 @@ public class KafkaConfig {
     }
 
     /**
+     * Consumer factory for PayrollProcessingEvent.
+     */
+    @Bean
+    public ConsumerFactory<String, com.hrms.infrastructure.kafka.events.PayrollProcessingEvent> payrollProcessingEventConsumerFactory() {
+        return createConsumerFactory(
+                com.hrms.infrastructure.kafka.events.PayrollProcessingEvent.class,
+                KafkaTopics.GROUP_PAYROLL_PROCESSING_CONSUMER);
+    }
+
+    /**
+     * Container factory for PayrollProcessingEvent listeners.
+     * Single-threaded (concurrency=1) to prevent concurrent processing of the same run.
+     */
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, com.hrms.infrastructure.kafka.events.PayrollProcessingEvent>> payrollProcessingEventListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, com.hrms.infrastructure.kafka.events.PayrollProcessingEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(payrollProcessingEventConsumerFactory());
+        factory.setConcurrency(1); // Payroll runs must be serialized per partition
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+
+        ExponentialBackOff backOff = new ExponentialBackOff();
+        backOff.setInitialInterval(1000L);
+        backOff.setMultiplier(5.0);
+        backOff.setMaxInterval(30000L);
+        backOff.setMaxElapsedTime(36000L);
+
+        DeadLetterPublishingRecoverer recoverer = deadLetterPublishingRecoverer(kafkaTemplate());
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, backOff);
+        factory.setCommonErrorHandler(errorHandler);
+
+        return factory;
+    }
+
+    /**
+     * Create payroll processing events topic.
+     * Low partition count — payroll runs are sequenced; high parallelism is not desirable.
+     */
+    @Bean
+    public NewTopic payrollProcessingTopic() {
+        return TopicBuilder.name(KafkaTopics.PAYROLL_PROCESSING)
+                .partitions(2)
+                .replicas(1)
+                .config("retention.ms", "86400000") // 24 hours
+                .config("compression.type", "snappy")
+                .config("cleanup.policy", "delete")
+                .build();
+    }
+
+    /**
+     * Create dead letter topic for payroll processing events.
+     * Extended retention (7 days) to allow manual inspection and replay.
+     */
+    @Bean
+    public NewTopic payrollProcessingDeadLetterTopic() {
+        return TopicBuilder.name(KafkaTopics.PAYROLL_PROCESSING_DLT)
+                .partitions(1)
+                .replicas(1)
+                .config("retention.ms", "604800000") // 7 days
+                .config("cleanup.policy", "delete")
+                .build();
+    }
+
+    /**
      * Create fluence content events topic.
      */
     @Bean

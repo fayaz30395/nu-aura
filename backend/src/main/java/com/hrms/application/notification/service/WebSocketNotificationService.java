@@ -157,6 +157,23 @@ public class WebSocketNotificationService {
     }
 
     /**
+     * Send payroll processing complete notification to the user who triggered processing.
+     */
+    public void notifyPayrollProcessed(UUID triggeredBy, String period, int totalEmployees) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.PAYROLL_PROCESSED)
+                .title("Payroll Processing Complete")
+                .message(String.format(
+                        "Payroll run for %s has been processed successfully. Total employees: %d.",
+                        period, totalEmployees))
+                .priority(NotificationMessage.Priority.HIGH)
+                .actionUrl("/payroll/runs")
+                .build();
+
+        sendToUser(triggeredBy, notification);
+    }
+
+    /**
      * Send payslip available notification.
      */
     public void notifyPayslipAvailable(UUID employeeId, String month, String year) {

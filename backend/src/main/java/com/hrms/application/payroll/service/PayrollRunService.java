@@ -101,10 +101,68 @@ public class PayrollRunService {
     }
 
     /**
-     * Transition a payroll run from DRAFT → PROCESSED.
-     * Uses pessimistic locking to prevent concurrent processing of the same run.
-     * R2-011: State guard is enforced in {@link PayrollRun#process}
-     * (throws IllegalStateException if not in DRAFT).
+     * Transition DRAFT → PROCESSING (async path).
+     *
+     * <p>Called synchronously in the HTTP request thread. Marks the run as
+     * PROCESSING and saves it before the controller publishes the Kafka event.
+     * If the Kafka publish subsequently fails the caller is expected to call
+     * {@link #failProcessing} to roll the run back to DRAFT.</p>
+     *
+     * <p>Pessimistic locking prevents a second concurrent POST from also
+     * transitioning the same run.</p>
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PayrollRun initiateProcessing(UUID id, UUID triggeredBy) {
+        PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        payrollRun.markProcessing(triggeredBy);
+        return payrollRunRepository.save(payrollRun);
+    }
+
+    /**
+     * Transition PROCESSING → PROCESSED (called by the Kafka consumer).
+     * Uses pessimistic locking to be safe against concurrent state transitions.
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PayrollRun completeProcessing(UUID id, UUID processedBy) {
+        PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        payrollRun.process(processedBy);
+        auditLogService.logAction(
+                "PAYROLL_RUN",
+                payrollRun.getId(),
+                AuditAction.UPDATE,
+                java.util.Map.of(
+                        "status", PayrollStatus.PROCESSED.name(),
+                        "period", payrollRun.getPayPeriodYear() + "-" + payrollRun.getPayPeriodMonth()),
+                null,
+                "Payroll run asynchronously processed for period "
+                        + payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth());
+        return payrollRunRepository.save(payrollRun);
+    }
+
+    /**
+     * Roll back PROCESSING → DRAFT on consumer failure.
+     * Allows the payroll admin to resubmit after fixing the root cause.
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PayrollRun failProcessing(UUID id) {
+        PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        payrollRun.markFailed();
+        auditLogService.logAction(
+                "PAYROLL_RUN",
+                payrollRun.getId(),
+                AuditAction.UPDATE,
+                java.util.Map.of(
+                        "status", PayrollStatus.DRAFT.name(),
+                        "reason", "Async processing failed; rolled back to DRAFT"),
+                null,
+                "Payroll run processing failed — rolled back to DRAFT");
+        return payrollRunRepository.save(payrollRun);
+    }
+
+    /**
+     * Transition a payroll run from DRAFT → PROCESSED (legacy synchronous path).
+     * Kept for backward compatibility with tests and direct service calls.
+     * New code should use {@link #initiateProcessing} + Kafka consumer instead.
      */
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun processPayrollRun(UUID id, UUID processedBy) {
